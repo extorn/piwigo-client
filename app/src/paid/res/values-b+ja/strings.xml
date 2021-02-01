@@ -33,7 +33,6 @@
     <string name="slideshow_auto_drive_paused">スライドショーオートドライブは次のスライドまで一時停止しました</string>
     <string name="progress_loading_orphan_ids">孤児の読み込み</string>
     <string name="orphans_heading">孤立したリソース</string>
-    <string name="orphans_menu_title">孤児</string>
     <string name="orphans_album_description">PiwigoClientアプリによって収集されたすべての孤立したリソース</string>
     <string name="orphans_no_orphans_found_on_server">孤児は見つかりませんでした</string>
     <string name="orphans_found_on_server_pattern">孤児が見つかりました：%1$d</string>

@@ -1045,5 +1045,5 @@ SOFTWARE.
     <string name="import_x_of_type_y_cancelled_pattern">Import of %2$s %1$s cancelled</string>
     <string name="import_cancelled">Import cancelled</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">The item must belong to at least one album unless being deleted. Please select one and try again.</string>
-
+    <string name="orphans_menu_title">Orphans</string>
 </resources>

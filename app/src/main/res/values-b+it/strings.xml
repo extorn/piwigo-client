@@ -688,5 +688,5 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="import_x_of_type_y_cancelled_pattern">Importazione di%2$s%1$s annullata</string>
     <string name="import_cancelled">Importazione annullata</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">L\'elemento deve appartenere ad almeno un album a meno che non venga eliminato. Seleziona uno e riprova.</string>
-
+    <string name="orphans_menu_title">Orfani</string>
 </resources>

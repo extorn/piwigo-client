@@ -33,7 +33,6 @@
     <string name="slideshow_auto_drive_paused">La lecture automatique du diaporama a été interrompue jusqu\'à la diapositive suivante</string>
     <string name="progress_loading_orphan_ids">Chargement des orphelins</string>
     <string name="orphans_heading">Ressources orphelines</string>
-    <string name="orphans_menu_title">Orphelins</string>
     <string name="orphans_album_description">Toutes les ressources orphelines collectées par l\'application PiwigoClient</string>
     <string name="orphans_no_orphans_found_on_server">Aucun orphelin trouvé</string>
     <string name="orphans_found_on_server_pattern">Orphelins trouvés:%1$d</string>

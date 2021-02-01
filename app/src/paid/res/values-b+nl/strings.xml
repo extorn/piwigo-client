@@ -33,7 +33,6 @@
     <string name="slideshow_auto_drive_paused">Slideshow Autodrive onderbroken tot volgende dia</string>
     <string name="progress_loading_orphan_ids">Wezen laden</string>
     <string name="orphans_heading">Verweesde bronnen</string>
-    <string name="orphans_menu_title">Wezen</string>
     <string name="orphans_album_description">Alle verweesde bronnen verzameld door de PiwigoClient-app</string>
     <string name="orphans_no_orphans_found_on_server">Geen wezen gevonden</string>
     <string name="orphans_found_on_server_pattern">Wezen gevonden:%1$d</string>

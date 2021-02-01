@@ -688,5 +688,5 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="import_x_of_type_y_cancelled_pattern">Импорт%2$s%1$s отменен</string>
     <string name="import_cancelled">Импорт отменен</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">Если элемент не удален, он должен принадлежать хотя бы к одному альбому. Пожалуйста, выберите один и попробуйте еще раз.</string>
-
+    <string name="orphans_menu_title">Сирот</string>
 </resources>

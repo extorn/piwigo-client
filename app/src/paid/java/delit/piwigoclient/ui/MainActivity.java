@@ -28,6 +28,7 @@ import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
 import delit.piwigoclient.ui.favorites.ViewFavoritesFragment;
+import delit.piwigoclient.ui.orphans.ViewOrphansFragment;
 import delit.piwigoclient.ui.tags.TagRecyclerViewAdapter;
 import delit.piwigoclient.ui.tags.TagSelectFragment;
 import delit.piwigoclient.ui.tags.TagsListFragment;
@@ -59,6 +60,27 @@ public class MainActivity extends AbstractMainActivity {
             showFragmentNow(ViewFavoritesFragment.newInstance());
         } else {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_plugin_required_pattern, "PiwigoClientWsExts", "1.0.8"), R.string.button_close);
+        }
+    }
+
+    @Override
+    protected void showOrphans() {
+        boolean restore = false;
+        // check if we've shown any albums before. If so, pop everything off the stack.
+        if (null == getSupportFragmentManager().findFragmentByTag(ViewOrphansFragment.class.getName())) {
+            // we're opening the activity freshly.
+
+            // check for reopen details and use them instead if possible.
+            if (ViewOrphansFragment.canHandleReopenAction(getUiHelper())) {
+                restore = true;
+            }
+        }
+        AdsManager.getInstance(this).showAlbumBrowsingAdvertIfAppropriate(this);
+
+        if (restore) {
+            showFragmentNow(ViewOrphansFragment.newInstance());
+        } else {
+            showFragmentNow(ViewOrphansFragment.newInstance(), false);
         }
     }
 

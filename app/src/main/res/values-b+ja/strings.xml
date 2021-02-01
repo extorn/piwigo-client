@@ -688,5 +688,5 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="import_x_of_type_y_cancelled_pattern">%2$s%1$sのインポートがキャンセルされました</string>
     <string name="import_cancelled">インポートがキャンセルされました</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">アイテムは、削除されない限り、少なくとも1つのアルバムに属している必要があります。 いずれかを選択して、再試行してください。</string>
-
+    <string name="orphans_menu_title">孤児</string>
 </resources>

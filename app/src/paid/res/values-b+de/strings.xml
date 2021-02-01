@@ -33,7 +33,6 @@
     <string name="slideshow_auto_drive_paused">Diashow Autodrive pausierte bis zur nächsten Folie</string>
     <string name="progress_loading_orphan_ids">Waisenkinder laden</string>
     <string name="orphans_heading">Verwaiste Ressourcen</string>
-    <string name="orphans_menu_title">Waisenkinder</string>
     <string name="orphans_album_description">Alle verwaisten Ressourcen, die von der PiwigoClient-App gesammelt wurden</string>
     <string name="orphans_no_orphans_found_on_server">Keine Waisen gefunden</string>
     <string name="orphans_found_on_server_pattern">Gefundene Waisen:%1$d</string>

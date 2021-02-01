@@ -688,5 +688,5 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="import_x_of_type_y_cancelled_pattern">Import von%2$s%1$s abgebrochen</string>
     <string name="import_cancelled">Import abgebrochen</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">Der Artikel muss zu mindestens einem Album gehören, sofern er nicht gelöscht wird. Bitte wählen Sie eine aus und versuchen Sie es erneut.</string>
-
+    <string name="orphans_menu_title">Waisenkinder</string>
 </resources>

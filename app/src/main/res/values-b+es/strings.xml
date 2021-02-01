@@ -688,5 +688,5 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="import_x_of_type_y_cancelled_pattern">Importación de%2$s%1$s cancelada</string>
     <string name="import_cancelled">Importación cancelada</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">El elemento debe pertenecer al menos a un álbum a menos que se elimine. Seleccione uno y vuelva a intentarlo.</string>
-
+    <string name="orphans_menu_title">Huérfanos</string>
 </resources>

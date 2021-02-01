@@ -375,25 +375,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
 
     protected abstract void showFavorites();
 
-    private void showOrphans() {
-        boolean restore = false;
-        // check if we've shown any albums before. If so, pop everything off the stack.
-        if (null == getSupportFragmentManager().findFragmentByTag(ViewOrphansFragment.class.getName())) {
-            // we're opening the activity freshly.
-
-            // check for reopen details and use them instead if possible.
-            if (ViewOrphansFragment.canHandleReopenAction(getUiHelper())) {
-                restore = true;
-            }
-        }
-        AdsManager.getInstance(this).showAlbumBrowsingAdvertIfAppropriate(this);
-
-        if (restore) {
-            showFragmentNow(ViewOrphansFragment.newInstance());
-        } else {
-            showFragmentNow(ViewOrphansFragment.newInstance(), false);
-        }
-    }
+    protected abstract void showOrphans();
 
     private void showGallery(final CategoryItem gallery) {
         boolean restore = false;

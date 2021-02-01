@@ -35,6 +35,7 @@ Add or alter albums, their permissions, description, etc
 Add, view and edit gallery users
 Add, view and edit gallery groups
 Copy or move images around within the gallery
+Manage Orphan resources (those without an album)
 Select image(s) for upload using other apps and share them with PIWIGO
 Special app read-only mode available to prevent any unwanted alterations to the gallery
 Some control over the layout of screens on the app (use to customise for the screen on your device)

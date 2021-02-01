@@ -688,5 +688,5 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="import_x_of_type_y_cancelled_pattern">Import%2$s%1$s byl zrušen</string>
     <string name="import_cancelled">Import zrušen</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">Pokud položka nebude odstraněna, musí patřit alespoň do jednoho alba. Vyberte jednu a zkuste to znovu.</string>
-
+    <string name="orphans_menu_title">Sirotci</string>
 </resources>

@@ -688,5 +688,5 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="import_x_of_type_y_cancelled_pattern">Import van%2$s%1$s geannuleerd</string>
     <string name="import_cancelled">Import geannuleerd</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">Het item moet tot ten minste één album behoren, tenzij het wordt verwijderd. Selecteer er een en probeer het opnieuw.</string>
-
+    <string name="orphans_menu_title">Wezen</string>
 </resources>

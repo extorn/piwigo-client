@@ -110,6 +110,11 @@ public class MainActivity<A extends MainActivity<A, AUIH>, AUIH extends Activity
     }
 
     @Override
+    protected void showOrphans() {
+        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_feature_only), R.string.button_close);
+    }
+
+    @Override
     protected void showTags() {
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_feature_only), R.string.button_close);
     }

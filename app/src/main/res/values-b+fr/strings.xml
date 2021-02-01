@@ -688,5 +688,5 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="import_x_of_type_y_cancelled_pattern">Importation de%2$s%1$s annulée</string>
     <string name="import_cancelled">Importation annulée</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">L\'élément doit appartenir à au moins un album à moins d\'être supprimé. Veuillez en sélectionner un et réessayer.</string>
-
+    <string name="orphans_menu_title">Orphelins</string>
 </resources>

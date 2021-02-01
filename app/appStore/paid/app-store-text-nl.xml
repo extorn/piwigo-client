@@ -32,6 +32,7 @@ Albums toevoegen of wijzigen, hun rechten, beschrijving, enz
 Galerijgebruikers toevoegen, bekijken en bewerken
 Galeriegroepen toevoegen, bekijken en bewerken
 Kopieer of verplaats afbeeldingen binnen de galerij
+Beheer weesbronnen (die zonder album)
 Selecteer afbeelding (en) om te uploaden met andere apps en deel ze met PIWIGO
 Speciale app alleen-lezen modus beschikbaar om ongewenste wijzigingen aan de galerij te voorkomen
 Enige controle over de lay-out van schermen op de app (gebruik om aan te passen voor het scherm op uw apparaat)
@@ -47,5 +48,5 @@ https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.ht
 
 Bekende beperkingen:
 
-1. Opmerkingen worden momenteel niet ondersteund. U kunt opmerkingen niet zien of toevoegen. Als deze ontbrekende functie belangrijk voor je is, neem dan contact met me op.</string>
+1. Opmerkingen worden momenteel niet ondersteund - u kunt geen opmerkingen zien of toevoegen. Als deze ontbrekende functie belangrijk voor je is, neem dan contact met me op.</string>
 </resources>

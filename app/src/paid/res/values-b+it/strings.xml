@@ -33,7 +33,6 @@
     <string name="slideshow_auto_drive_paused">Slideshow Autodrive in pausa fino alla diapositiva successiva</string>
     <string name="progress_loading_orphan_ids">Caricamento di orfani</string>
     <string name="orphans_heading">Risorse orfane</string>
-    <string name="orphans_menu_title">Orfani</string>
     <string name="orphans_album_description">Tutte le risorse orfane raccolte dall\'app PiwigoClient</string>
     <string name="orphans_no_orphans_found_on_server">Nessun orfano trovato</string>
     <string name="orphans_found_on_server_pattern">Orfani trovati:%1$d</string>

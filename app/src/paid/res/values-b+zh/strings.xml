@@ -33,7 +33,6 @@
     <string name="slideshow_auto_drive_paused">幻灯片自动驱动暂停，直到下一张幻灯片</string>
     <string name="progress_loading_orphan_ids">加载孤儿</string>
     <string name="orphans_heading">孤儿资源</string>
-    <string name="orphans_menu_title">孤儿</string>
     <string name="orphans_album_description">PiwigoClient应用程序收集的所有孤立资源</string>
     <string name="orphans_no_orphans_found_on_server">找不到孤儿</string>
     <string name="orphans_found_on_server_pattern">找到的孤儿：%1$d</string>

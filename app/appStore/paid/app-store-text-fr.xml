@@ -32,6 +32,7 @@ Ajouter ou modifier des albums, leurs autorisations, leur description, etc.
 Ajouter, afficher et modifier les utilisateurs de la galerie
 Ajouter, afficher et modifier des groupes de galeries
 Copiez ou déplacez des images dans la galerie
+Gérer les ressources orphelines (celles sans album)
 Sélectionnez les images à télécharger à l\'aide d\'autres applications et partagez-les avec PIWIGO
 Mode lecture seule de l\'application spéciale disponible pour éviter toute modification indésirable de la galerie
 Un certain contrôle sur la disposition des écrans sur l\'application (à utiliser pour personnaliser l\'écran de votre appareil)
@@ -42,7 +43,7 @@ Vous voulez quelque chose d\'autre non répertorié? Essayez l\'appli. Si cela n
 
 Changements à venir:
 
-L\'intention est d\'améliorer progressivement l\'interface utilisateur, et l\'un des utilisateurs, David Klement, a gentiment fourni quelques suggestions pour les mises en page d\'écran que j\'ai commencé à utiliser à partir de la version 1.3.95 et dont je prendrai sans aucun doute d\'autres idées. Les propositions sont disponibles dans leur intégralité:
+L\'intention est d\'améliorer progressivement l\'interface utilisateur, et l\'un des utilisateurs, David Klement, a gentiment fourni quelques suggestions pour les mises en page d\'écran que j\'ai commencé à utiliser à partir de la version 1.3.95 et dont je prendrai sans aucun doute plus d\'idées. Les propositions sont disponibles dans leur intégralité:
 https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
 
 Limitations connues:

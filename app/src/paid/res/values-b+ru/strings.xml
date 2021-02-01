@@ -33,7 +33,6 @@
     <string name="slideshow_auto_drive_paused">Слайд-шоу Autodrive приостановлено до следующего слайда</string>
     <string name="progress_loading_orphan_ids">Загрузка сирот</string>
     <string name="orphans_heading">Осиротевшие ресурсы</string>
-    <string name="orphans_menu_title">Сирот</string>
     <string name="orphans_album_description">Все потерянные ресурсы, собранные приложением PiwigoClient</string>
     <string name="orphans_no_orphans_found_on_server">Сирот не найдено</string>
     <string name="orphans_found_on_server_pattern">Найдено сирот:%1$d</string>
