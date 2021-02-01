@@ -43,29 +43,33 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         this.gallery = gallery;
         galleryResourceItemsFullGalleryIdx = new ArrayList<>(gallery.getResourcesCount());
         this.shouldShowVideos = shouldShowVideos;
-        int firstGalleryIdxToImport = 0;
+        int firstGalleryIdxToImport = gallery.getItemCount() - gallery.getResourcesCount();
         addResourcesToIndex(firstGalleryIdxToImport, gallery.getResourcesCount() - firstGalleryIdxToImport, showGalleryItemIdx); // use get items.size to ignore issues when hide
     }
 
-    private void addResourcesToIndex(int firstGalleryIdxToImport, int itemsToAdd, int selectedItem) {
-        int toIndex = itemsToAdd - 1 - firstGalleryIdxToImport;
+    private void addResourcesToIndex(int firstGalleryIdxToImport, int maxSlideshowItemCount, int selectedItem) {
+        int scanToRawIndex = gallery.getItemCount() - 1;
         if (firstGalleryIdxToImport == 0) {
             // need to reload all items.
             galleryResourceItemsFullGalleryIdx.clear();
         }
-
-        int resourcesScanned = 0;
-        for (int rawGalleryIdx = firstGalleryIdxToImport; rawGalleryIdx <= toIndex; rawGalleryIdx++) {
+        int resourcesAddedToSlideshow = 0;
+        for (int rawGalleryIdx = firstGalleryIdxToImport; rawGalleryIdx <= scanToRawIndex; rawGalleryIdx++) {
             GalleryItem currentItem = gallery.getItemByIdx(rawGalleryIdx);
             if (!(currentItem instanceof ResourceItem)) {
+                // skip any child albums and other non resource items
                 continue;
             }
-            resourcesScanned++;
+            if(!currentItem.isFromServer()) {
+                // skip any blanks, heading, etc
+                continue;
+            }
             if (!shouldShowVideos && currentItem instanceof VideoResourceItem && rawGalleryIdx != selectedItem) {
                 continue;
             }
             galleryResourceItemsFullGalleryIdx.add(rawGalleryIdx);
-            if(resourcesScanned == itemsToAdd) {
+            resourcesAddedToSlideshow++;
+            if(resourcesAddedToSlideshow == maxSlideshowItemCount) {
                 break;
             }
         }
