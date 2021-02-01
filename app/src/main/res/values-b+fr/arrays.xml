@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.107</item>
+        <item>"Correction d\'un bug:
+                 - Possibilité de manquer une ressource du diaporama des ressources de l\'album (aperçu en plein écran)
+                 - crash sur l\'aperçu du fichier orphelin
+                Changement:
+                 - aperçu des fichiers orphelins et affichage dans un diaporama si vous le souhaitez est maintenant pris en charge
+                 - L\'option de menu orphelins n\'est disponible que pour les utilisateurs administrateurs lorsque l\'application n\'est pas en lecture seule"</item>
         <item>1.4.0.106</item>
         <item>"Correction d\'un bug:
                  - Espérons que le dernier bug où les miniatures d\'album semblaient ne pas se charger correctement

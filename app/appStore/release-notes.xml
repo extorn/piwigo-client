@@ -1,70 +1,80 @@
 <en-GB>
 Bugfix:
-- Hopefully the final bug where album thumbnails appeared not to be loading correctly
-Changes:
-- When deleting an album, child resources can be either unlinked, or deleted from the server
-- Paid Only: There is a new orphaned resource management page
+- Potential for one resource to be missed from the album resource slideshow (full screen preview)
+- crash on preview of orphaned file
+Change:
+- preview of orphaned files and view within a slideshow if wished is now supported
+- orphans menu option is only available to admin users when app not readonly
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Doufejme, že poslední chyba, kde se miniatury alb nezdály správně načítat
-Změny:
-- Při mazání alba lze podřízené prostředky buď odpojit, nebo odstranit ze serveru
-- Paid Only: There are a new orphaned resource management page
+- Potenciál pro vynechání jednoho zdroje z prezentace zdroje alba (náhled na celou obrazovku)
+- havárie na náhledu osiřelého souboru
+Změna:
+- náhled osamocených souborů a prohlížení v rámci prezentace, pokud si přejete, je nyní podporován
+- možnost nabídky pro sirotky je k dispozici pouze správcům, když aplikace není jen pro čtení
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Hoffentlich wurde der letzte Fehler, bei dem die Miniaturansichten des Albums nicht richtig geladen wurden
-Änderungen:
-- Beim Löschen eines Albums können untergeordnete Ressourcen entweder nicht verbunden oder vom Server gelöscht werden
-- Nur bezahlt: Es gibt eine neue verwaiste Ressourcenverwaltungsseite
+- Möglicherweise wird eine Ressource in der Diashow der Albumressource übersehen (Vollbildvorschau).
+- Absturz bei Vorschau der verwaisten Datei
+Veränderung:
+- Die Vorschau verwaister Dateien und die Ansicht innerhalb einer Diashow, falls gewünscht, wird jetzt unterstützt
+- Die Menüoption "Waisen" steht nur Administratoren zur Verfügung, wenn die App nicht schreibgeschützt ist
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Con suerte, el error final en el que las miniaturas de los álbumes parecían no cargarse correctamente
-Cambios:
-- Al eliminar un álbum, los recursos secundarios se pueden desvincular o eliminar del servidor
-- Solo pago: hay una nueva página de gestión de recursos huérfana
+- Posibilidad de que se pierda un recurso de la presentación de diapositivas de recursos del álbum (vista previa a pantalla completa)
+- falla en la vista previa del archivo huérfano
+Cambio:
+- Vista previa de archivos huérfanos y ver dentro de una presentación de diapositivas si lo desea ahora es compatible
+- la opción de menú huérfanos solo está disponible para los usuarios administradores cuando la aplicación no es de solo lectura
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Espérons que le dernier bug où les miniatures d\'album semblaient ne pas se charger correctement
-Changements:
-- Lors de la suppression d\'un album, les ressources enfants peuvent être dissociées ou supprimées du serveur
-- Payé uniquement: il existe une nouvelle page de gestion des ressources orphelines
+- Possibilité de manquer une ressource du diaporama des ressources de l\'album (aperçu en plein écran)
+- crash sur l\'aperçu du fichier orphelin
+Changement:
+- aperçu des fichiers orphelins et affichage dans un diaporama si vous le souhaitez est maintenant pris en charge
+- L\'option de menu orphelins n\'est disponible que pour les utilisateurs administrateurs lorsque l\'application n\'est pas en lecture seule
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Si spera che il bug finale in cui le miniature degli album sembravano non essere caricate correttamente
-I cambiamenti:
-- Quando si elimina un album, le risorse figlio possono essere scollegate o eliminate dal server
-- Solo a pagamento: c\'è una nuova pagina di gestione delle risorse orfane
+- Possibilità di perdere una risorsa dalla presentazione delle risorse dell\'album (anteprima a schermo intero)
+- arresto anomalo durante l\'anteprima del file orfano
+Modificare:
+- l\'anteprima dei file orfani e la visualizzazione all\'interno di una presentazione se lo si desidera è ora supportata
+- L\'opzione di menu orfani è disponibile solo per gli utenti amministratori quando l\'app non è di sola lettura
 </it-IT>
 <ja-JP>
 バグ修正：
--うまくいけば、アルバムのサムネイルが正しく読み込まれていないように見える最後のバグ
-変更点：
--アルバムを削除する場合、子リソースはリンクを解除するか、サーバーから削除できます
--有料のみ：新しい孤立したリソース管理ページがあります
+-アルバムリソースのスライドショーから1つのリソースが失われる可能性（全画面プレビュー）
+-孤立したファイルのプレビューでクラッシュする
+変化する：
+-孤立したファイルのプレビューと、必要に応じてスライドショー内での表示がサポートされるようになりました
+-孤立メニューオプションは、アプリが読み取り専用でない場合にのみ管理ユーザーが使用できます
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Hopelijk de laatste bug waarbij albumminiaturen niet correct leken te laden
-Veranderingen:
-- Bij het verwijderen van een album kunnen onderliggende bronnen worden ontkoppeld of van de server worden verwijderd
-- Alleen betaald: er is een nieuwe beheerpagina voor verweesde bronnen
+- Mogelijk dat één bron wordt gemist in de diavoorstelling van de albumbronnen (voorbeeld op volledig scherm)
+- crash bij voorbeeld van verweesd bestand
+Verandering:
+- preview van verweesde bestanden en weergave in een diavoorstelling, indien gewenst, wordt nu ondersteund
+- de menuoptie wezen is alleen beschikbaar voor beheerders als de app niet alleen-lezen is
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Надеюсь, последняя ошибка, из-за которой миниатюры альбомов не загружались правильно.
-Изменения:
-- При удалении альбома дочерние ресурсы можно либо отвязать, либо удалить с сервера
-- Только платные: появилась новая страница управления потерянными ресурсами.
+- Возможность пропуска одного ресурса из слайд-шоу ресурсов альбома (полноэкранный просмотр)
+- сбой при предварительном просмотре потерянного файла
+Изменить:
+- теперь поддерживается предварительный просмотр потерянных файлов и просмотр в слайд-шоу при желании
+- пункт меню для сирот доступен только администраторам, если приложение не доступно только для чтения
 </ru-RU>
 <zh-CN>
 错误修正：
--希望专辑缩略图似乎无法正确加载的最终错误
-变化：
--删除相册时，子资源可以取消链接，也可以从服务器中删除
--仅限付费：有一个新的孤立资源管理页面
+-相册资源幻灯片放映中可能丢失一种资源的可能性（全屏预览）
+-在孤立文件预览时崩溃
+更改：
+-现在支持孤立文件的预览并在幻灯片中查看（如果需要）
+-“孤儿”菜单选项仅在应用程序非只读时才对管理员用户可用
 </zh-CN>

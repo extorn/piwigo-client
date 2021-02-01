@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.107</item>
+        <item>"Risoluzione del problema:
+                 - Possibilità di perdere una risorsa dalla presentazione delle risorse dell\'album (anteprima a schermo intero)
+                 - arresto anomalo durante l\'anteprima del file orfano
+                Modificare:
+                 - l\'anteprima dei file orfani e la visualizzazione all\'interno di una presentazione se lo si desidera è ora supportata
+                 - L\'opzione di menu orfani è disponibile solo per gli utenti amministratori quando l\'app non è di sola lettura"</item>
         <item>1.4.0.106</item>
         <item>"Risoluzione del problema:
                  - Si spera che il bug finale in cui le miniature degli album sembravano non essere caricate correttamente

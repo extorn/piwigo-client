@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.107</item>
+        <item>"Bugfix:
+                 - Mogelijk dat één bron wordt gemist in de diavoorstelling van de albumbronnen (voorbeeld op volledig scherm)
+                 - crash bij voorbeeld van verweesd bestand
+                Verandering:
+                 - preview van verweesde bestanden en weergave in een diavoorstelling, indien gewenst, wordt nu ondersteund
+                 - de menuoptie wezen is alleen beschikbaar voor beheerders als de app niet alleen-lezen is"</item>
         <item>1.4.0.106</item>
         <item>"Bugfix:
                  - Hopelijk de laatste bug waarbij albumminiaturen niet correct leken te laden
