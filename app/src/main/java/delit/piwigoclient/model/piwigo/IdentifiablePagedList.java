@@ -1,6 +1,5 @@
 package delit.piwigoclient.model.piwigo;
 
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
