@@ -89,7 +89,6 @@ import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
-import delit.piwigoclient.ui.orphans.ViewOrphansFragment;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupRecyclerViewAdapter;
