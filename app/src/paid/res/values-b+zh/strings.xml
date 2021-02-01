@@ -31,4 +31,11 @@
     <string name="ignoring_job_no_file_types_selected_for_upload">没有选择要上传的文件扩展名。忽略工作</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">连接配置文件设置为脱机模式。忽略工作</string>
     <string name="slideshow_auto_drive_paused">幻灯片自动驱动暂停，直到下一张幻灯片</string>
+    <string name="progress_loading_orphan_ids">加载孤儿</string>
+    <string name="orphans_heading">孤儿资源</string>
+    <string name="orphans_menu_title">孤儿</string>
+    <string name="orphans_album_description">PiwigoClient应用程序收集的所有孤立资源</string>
+    <string name="orphans_no_orphans_found_on_server">找不到孤儿</string>
+    <string name="orphans_found_on_server_pattern">找到的孤儿：%1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">有孤儿在场。 要查看这些内容，我们必须创建一个仅供管理员访问的专用文件夹。 之后您可以随时删除相册。 如果您不同意，则必须自己在服务器上进行处理。</string>
 </resources>

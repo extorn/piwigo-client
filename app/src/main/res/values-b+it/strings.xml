@@ -417,8 +417,9 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_title_select_album">Seleziona Album</string>
     <string name="alert_title_set_album_thumbnail">Aggiornare la miniatura dell\'album?</string>
     <string name="alert_message_set_album_thumbnail">Aggiornare la miniatura dell\'album a questa immagine?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Sei sicuro di voler eliminare l\'album (%1$s) e tutto il contenuto in modo permanente (a meno che non sia collegato ad album altrove)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Sei assolutamente certo di voler eliminare l\'album (%1$s) con%2$d foto e%3$d album secondari contenenti altre%4$d foto per sempre? Tieni presente che le foto collegate ad altri album rimarranno lì, ma tutte le altre verranno eliminate per sempre. Non esiste una funzione di annullamento per questa azione.</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Sei sicuro di voler eliminare l\'album (%1$s)?\n\nNon esiste una funzione di annullamento</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Stai eliminando l\'album (%1$s) con%2$d foto.\n\nVuoi eliminare definitivamente i contenuti orfani?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Stai eliminando l\'album (%1$s) con%2$d foto e%3$d album secondari contenenti altre%4$d foto.\n\nVuoi eliminare definitivamente i contenuti orfani?</string>
     <string name="alert_confirm_copy_items_here_pattern">Copiare qui gli%1$d articoli nel carrello (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Spostare qui gli%1$d articoli nel carrello (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Album collegati</string>
@@ -686,5 +687,6 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_password_entry">Password richiesta</string>
     <string name="import_x_of_type_y_cancelled_pattern">Importazione di%2$s%1$s annullata</string>
     <string name="import_cancelled">Importazione annullata</string>
+    <string name="alert_error_item_must_belong_to_at_least_one_album">L\'elemento deve appartenere ad almeno un album a meno che non venga eliminato. Seleziona uno e riprova.</string>
 
 </resources>

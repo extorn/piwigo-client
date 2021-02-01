@@ -417,8 +417,9 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="alert_title_select_album">Selecteer Album</string>
     <string name="alert_title_set_album_thumbnail">Albumminiatuur bijwerken?</string>
     <string name="alert_message_set_album_thumbnail">Albumminiatuur bijwerken naar deze afbeelding?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Weet u zeker dat u het album (%1$s) en alle inhoud permanent wilt verwijderen (tenzij gelinkt aan albums elders)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Weet u absoluut zeker dat u het album (%1$s) met%2$d foto\'s en%3$d kinderalbums met nog eens%4$d foto\'s voor altijd wilt verwijderen? Houd er rekening mee dat foto\'s die aan andere albums zijn gekoppeld, daar blijven, maar alle andere worden voor altijd verwijderd. Er is geen functie voor het ongedaan maken van deze actie.</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Weet u zeker dat u het album (%1$s) wilt verwijderen?\n\nEr is geen functie voor ongedaan maken</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">U verwijdert album (%1$s) met%2$d foto\'s.\n\nWilt u verweesde inhoud permanent verwijderen?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">U verwijdert album (%1$s) met%2$d foto\'s en%3$d onderliggende albums met nog eens%4$d foto\'s.\n\nWilt u verweesde inhoud permanent verwijderen?</string>
     <string name="alert_confirm_copy_items_here_pattern">Kopieer hier de%1$d item (s) in de winkelwagen (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Verplaats de%1$d item (s) in de winkelwagen hier (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Gekoppelde albums</string>
@@ -686,5 +687,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="alert_password_entry">Wachtwoord benodigd</string>
     <string name="import_x_of_type_y_cancelled_pattern">Import van%2$s%1$s geannuleerd</string>
     <string name="import_cancelled">Import geannuleerd</string>
+    <string name="alert_error_item_must_belong_to_at_least_one_album">Het item moet tot ten minste één album behoren, tenzij het wordt verwijderd. Selecteer er een en probeer het opnieuw.</string>
 
 </resources>

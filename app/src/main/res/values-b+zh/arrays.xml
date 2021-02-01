@@ -146,6 +146,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.106</item>
+        <item>"错误修正：
+                 -希望专辑缩略图似乎无法正确加载的最终错误
+                变化：
+                 -删除相册时，子资源可以取消链接，也可以从服务器中删除
+                 -仅限付费：有一个新的孤立资源管理页面"</item>
         <item>1.4.0.105</item>
         <item>"错误修正：
                  -重写专辑，标签和喜欢的排序代码，因为它充满了错误

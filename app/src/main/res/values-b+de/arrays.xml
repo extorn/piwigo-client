@@ -146,6 +146,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.106</item>
+        <item>"Bug-Fix:
+                 - Hoffentlich wurde der letzte Fehler, bei dem die Miniaturansichten des Albums nicht richtig geladen wurden
+                Änderungen:
+                 - Beim Löschen eines Albums können untergeordnete Ressourcen entweder nicht verbunden oder vom Server gelöscht werden
+                 - Nur bezahlt: Es gibt eine neue verwaiste Ressourcenverwaltungsseite"</item>
         <item>1.4.0.105</item>
         <item>"Bug-Fix:
                  - Schreiben Sie das Album, das Tag und den bevorzugten Sortiercode neu, da es voller Fehler war

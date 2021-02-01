@@ -1,94 +1,70 @@
 <en-GB>
 Bugfix:
-- Rewrite of the album, tag, and favorite sorting code because it was riddled with bugs
-: If something in this area now doesn't work as you expect, please let me know.
-: This should solve crashes that were occurring on the slideshow page
-- The recently altered yellow star icon wasn't appearing in some sort orders
-- Correct the loading of thumbnails
-- Fix bug preventing manual reload of failed thumbnail load by clicking - just once so it isn't too iritating if you want to change album..."
+- Hopefully the final bug where album thumbnails appeared not to be loading correctly
+Changes:
+- When deleting an album, child resources can be either unlinked, or deleted from the server
+- Paid Only: There is a new orphaned resource management page
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Přepište album, značku a oblíbený třídicí kód, protože byl plný chyb
-: Pokud nyní něco v této oblasti nefunguje tak, jak očekáváte, dejte mi prosím vědět.
-: To by mělo vyřešit pády, ke kterým došlo na stránce prezentace
-- Nedávno pozměněná ikona žluté hvězdy se neobjevila v nějakém pořadí
-- Opravte načítání miniatur
-- Opravte chybu, která brání manuálnímu opětovnému načtení neúspěšného načtení miniatur kliknutím - pouze jednou, takže to není příliš iritující, pokud chcete změ..."
+- Doufejme, že poslední chyba, kde se miniatury alb nezdály správně načítat
+Změny:
+- Při mazání alba lze podřízené prostředky buď odpojit, nebo odstranit ze serveru
+- Paid Only: There are a new orphaned resource management page
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Schreiben Sie das Album, das Tag und den bevorzugten Sortiercode neu, da es voller Fehler war
-: Wenn etwas in diesem Bereich jetzt nicht wie erwartet funktioniert, lassen Sie es mich bitte wissen.
-: Dies sollte Abstürze beheben, die auf der Diashow-Seite aufgetreten sind
-- Das kürzlich geänderte gelbe Sternsymbol wurde in einigen Sortierreihenfolgen nicht angezeigt
-- Korrigieren Sie das Laden von Thumbnails
-- Fehler behoben, der das manuelle Neuladen fehlgeschlagener Miniaturansic..."
+- Hoffentlich wurde der letzte Fehler, bei dem die Miniaturansichten des Albums nicht richtig geladen wurden
+Änderungen:
+- Beim Löschen eines Albums können untergeordnete Ressourcen entweder nicht verbunden oder vom Server gelöscht werden
+- Nur bezahlt: Es gibt eine neue verwaiste Ressourcenverwaltungsseite
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Reescriba el álbum, la etiqueta y el código de clasificación favorito porque estaba plagado de errores
-: Si algo en esta área ahora no funciona como esperaba, hágamelo saber.
-: Esto debería resolver los bloqueos que estaban ocurriendo en la página de la presentación de diapositivas.
-- El ícono de la estrella amarilla recientemente modificado no aparecía en algún orden de clasificación
-- Corregir la carga de miniaturas
-- Solucione el error que evita la recarga manual de l..."
+- Con suerte, el error final en el que las miniaturas de los álbumes parecían no cargarse correctamente
+Cambios:
+- Al eliminar un álbum, los recursos secundarios se pueden desvincular o eliminar del servidor
+- Solo pago: hay una nueva página de gestión de recursos huérfana
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Réécriture de l\'album, du tag et du code de tri favori car il était criblé de bugs
-: Si quelque chose dans ce domaine ne fonctionne pas comme prévu, veuillez me le faire savoir.
-: Cela devrait résoudre les plantages qui se produisaient sur la page du diaporama
-- L\'icône d\'étoile jaune récemment modifiée n\'apparaissait pas dans certains ordres de tri
-- Corriger le chargement des vignettes
-- Correction d\'un bug empêchant le rechargement manuel de l\'échec du charge..."
+- Espérons que le dernier bug où les miniatures d\'album semblaient ne pas se charger correctement
+Changements:
+- Lors de la suppression d\'un album, les ressources enfants peuvent être dissociées ou supprimées du serveur
+- Payé uniquement: il existe une nouvelle page de gestion des ressources orphelines
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Riscrittura dell\'album, tag e codice di ordinamento preferito perché era pieno di bug
-: Se qualcosa in quest\'area ora non funziona come previsto, fammelo sapere.
-: Questo dovrebbe risolvere i crash che si stavano verificando nella pagina della presentazione
-- L\'icona della stella gialla modificata di recente non appariva in alcuni ordinamenti
-- Correggere il caricamento delle miniature
-- Risolto il bug che impediva il ricaricamento manuale del caricamento della..."
+- Si spera che il bug finale in cui le miniature degli album sembravano non essere caricate correttamente
+I cambiamenti:
+- Quando si elimina un album, le risorse figlio possono essere scollegate o eliminate dal server
+- Solo a pagamento: c\'è una nuova pagina di gestione delle risorse orfane
 </it-IT>
 <ja-JP>
 バグ修正：
--アルバム、タグ、お気に入りのソートコードがバグだらけだったので書き直しました
-：この領域の何かが期待どおりに機能しない場合は、お知らせください。
-：これにより、スライドショーページで発生していたクラッシュが解決されるはずです。
--最近変更された黄色い星のアイコンがいくつかの並べ替え順序で表示されていませんでした
--サムネイルの読み込みを修正します
--クリックして失敗したサムネイルの読み込みを手動で再読み込みできないバグを修正しました-アルバムを変更したい場合にイライラしすぎないように1回だけ
+-うまくいけば、アルバムのサムネイルが正しく読み込まれていないように見える最後のバグ
 変更点：
--子アルバムとリソースの独立した並べ替え順序の反転を許可する新しい設定
+-アルバムを削除する場合、子リソースはリンクを解除するか、サーバーから削除できます
+-有料のみ：新しい孤立したリソース管理ページがあります
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Herschrijf het album, de tag en de favoriete sorteercode omdat deze vol zat met bugs
-: Als iets op dit gebied nu niet werkt zoals u verwacht, laat het me dan weten.
-: Dit zou crashes moeten oplossen die optraden op de diavoorstellingspagina
-- Het onlangs gewijzigde gele sterpictogram verscheen niet in sommige sorteringen
-- Corrigeer het laden van miniaturen
-- Bug verholpen waardoor handmatig opnieuw laden van mislukte miniaturen wordt voorkomen door te klikken - slechts één keer, z..."
+- Hopelijk de laatste bug waarbij albumminiaturen niet correct leken te laden
+Veranderingen:
+- Bij het verwijderen van een album kunnen onderliggende bronnen worden ontkoppeld of van de server worden verwijderd
+- Alleen betaald: er is een nieuwe beheerpagina voor verweesde bronnen
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Перепишите альбом, тег и любимый код сортировки, потому что он был пронизан ошибками
-: Если что-то в этой области сейчас работает не так, как вы ожидали, дайте мне знать.
-: Это должно устранить сбои, которые происходили на странице слайд-шоу.
-- Недавно измененный значок желтой звездочки не отображался в некоторых порядках сортировки.
-- Исправить загрузку миниатюр
-- Исправлена ошибка, предотвращающая ручную перезагрузку неудавшейся загрузки миниатюр, щелкнув - всего один ..."
+- Надеюсь, последняя ошибка, из-за которой миниатюры альбомов не загружались правильно.
+Изменения:
+- При удалении альбома дочерние ресурсы можно либо отвязать, либо удалить с сервера
+- Только платные: появилась новая страница управления потерянными ресурсами.
 </ru-RU>
 <zh-CN>
 错误修正：
--重写专辑，标签和喜欢的排序代码，因为它充满了错误
-：如果此区域的某些内容现在无法按预期工作，请告诉我。
-：这应该可以解决幻灯片页面上发生的崩溃
--最近更改的黄色星形图标未按某种排序顺序显示
--更正缩略图的加载
--修复了通过单击防止阻止手动重新加载失败的缩略图加载的错误-仅一次，因此如果您要更改相册不会太令人讨厌
+-希望专辑缩略图似乎无法正确加载的最终错误
 变化：
--新的首选项允许子相册和资源的独立排序顺序反转
+-删除相册时，子资源可以取消链接，也可以从服务器中删除
+-仅限付费：有一个新的孤立资源管理页面
 </zh-CN>

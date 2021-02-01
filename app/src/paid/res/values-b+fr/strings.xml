@@ -31,4 +31,11 @@
     <string name="ignoring_job_no_file_types_selected_for_upload">Aucune extension de fichier sélectionnée pour l\'importation. Ignorer le travail</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Profil de connexion défini sur le mode hors ligne. Ignorer le travail</string>
     <string name="slideshow_auto_drive_paused">La lecture automatique du diaporama a été interrompue jusqu\'à la diapositive suivante</string>
+    <string name="progress_loading_orphan_ids">Chargement des orphelins</string>
+    <string name="orphans_heading">Ressources orphelines</string>
+    <string name="orphans_menu_title">Orphelins</string>
+    <string name="orphans_album_description">Toutes les ressources orphelines collectées par l\'application PiwigoClient</string>
+    <string name="orphans_no_orphans_found_on_server">Aucun orphelin trouvé</string>
+    <string name="orphans_found_on_server_pattern">Orphelins trouvés:%1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Il y a des orphelins présents. Pour les visualiser, nous devons créer un dossier privé accessible uniquement aux administrateurs. Vous pouvez ensuite supprimer l\'album à tout moment. Si vous n\'êtes pas d\'accord, vous devrez les traiter vous-même sur le serveur.</string>
 </resources>

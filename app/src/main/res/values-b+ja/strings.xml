@@ -417,8 +417,9 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_title_select_album">アルバムを選択</string>
     <string name="alert_title_set_album_thumbnail">アルバムのサムネイルを更新しますか？</string>
     <string name="alert_message_set_album_thumbnail">アルバムのサムネイルをこの画像に更新しますか？</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">アルバム（%1$s）とすべてのコンテンツを完全に削除してもよろしいですか（他の場所のアルバムにリンクされている場合を除く）。</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">%2$dの写真を含むアルバム（%1$s）と、さらに%4$dの写真を含む%3$dの子アルバムを永久に削除することを絶対に確信していますか？他のアルバムにリンクされている写真はそのまま残りますが、他の写真は完全に削除されます。このアクションには元に戻す機能はありません。</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">アルバム（%1$s）を削除してもよろしいですか？\n\n元に戻す機能はありません</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">%2$dの写真を含むアルバム（%1$s）を削除しています。\n\n孤立したコンテンツを完全に削除しますか？</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">%2$dの写真を含むアルバム（%1$s）と、さらに%4$dの写真を含む%3$dの子アルバムを削除しています。\n\n孤立したコンテンツを完全に削除しますか？</string>
     <string name="alert_confirm_copy_items_here_pattern">ここのバスケットにある%1$dアイテムをコピーしますか（%2$s）？</string>
     <string name="alert_confirm_move_items_here_pattern">バスケット内の%1$dアイテムをここに移動しますか（%2$s）？</string>
     <string name="slideshow_image_details_linked_albums_title">リンクされたアルバム</string>
@@ -686,5 +687,6 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_password_entry">パスワードが必要</string>
     <string name="import_x_of_type_y_cancelled_pattern">%2$s%1$sのインポートがキャンセルされました</string>
     <string name="import_cancelled">インポートがキャンセルされました</string>
+    <string name="alert_error_item_must_belong_to_at_least_one_album">アイテムは、削除されない限り、少なくとも1つのアルバムに属している必要があります。 いずれかを選択して、再試行してください。</string>
 
 </resources>

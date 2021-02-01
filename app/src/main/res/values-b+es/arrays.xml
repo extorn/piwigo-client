@@ -146,6 +146,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.106</item>
+        <item>"Arreglo del fallo:
+                 - Con suerte, el error final en el que las miniaturas de los álbumes parecían no cargarse correctamente
+                Cambios:
+                 - Al eliminar un álbum, los recursos secundarios se pueden desvincular o eliminar del servidor
+                 - Solo pago: hay una nueva página de gestión de recursos huérfana"</item>
         <item>1.4.0.105</item>
         <item>"Arreglo del fallo:
                  - Reescriba el álbum, la etiqueta y el código de clasificación favorito porque estaba plagado de errores

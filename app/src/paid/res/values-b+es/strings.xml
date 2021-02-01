@@ -31,4 +31,11 @@
     <string name="ignoring_job_no_file_types_selected_for_upload">No se seleccionaron extensiones de archivo para cargar. Ignorando el trabajo</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Perfil de conexión configurado en modo fuera de línea. Ignorando el trabajo</string>
     <string name="slideshow_auto_drive_paused">Autodrive de presentación de diapositivas en pausa hasta la siguiente diapositiva</string>
+    <string name="progress_loading_orphan_ids">Cargando huérfanos</string>
+    <string name="orphans_heading">Recursos huérfanos</string>
+    <string name="orphans_menu_title">Huérfanos</string>
+    <string name="orphans_album_description">Todos los recursos huérfanos recopilados por la aplicación PiwigoClient</string>
+    <string name="orphans_no_orphans_found_on_server">No se encontraron huérfanos</string>
+    <string name="orphans_found_on_server_pattern">Huérfanos encontrados:%1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Hay huérfanos presentes. Para verlos, debemos crear una carpeta privada a la que solo puedan acceder los administradores. Puede eliminar el álbum en cualquier momento después. Si no está de acuerdo, tendrá que procesarlos usted mismo en el servidor.</string>
 </resources>

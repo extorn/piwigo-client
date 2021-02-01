@@ -417,8 +417,9 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_title_select_album">Seleccionar álbum</string>
     <string name="alert_title_set_album_thumbnail">¿Actualizar la miniatura del álbum?</string>
     <string name="alert_message_set_album_thumbnail">¿Actualizar la miniatura del álbum a esta imagen?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">¿Estás seguro de que deseas eliminar el álbum (%1$s) y todo el contenido de forma permanente (a menos que esté vinculado a álbumes en otro lugar)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">¿Está absolutamente seguro de que desea eliminar el álbum (%1$s) con%2$d fotos y%3$d álbumes secundarios que contienen%4$d fotos más para siempre? Tenga en cuenta que las fotos vinculadas a otros álbumes permanecerán allí, pero las demás se eliminarán para siempre. No hay función de deshacer para esta acción.</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">¿Estás seguro de que deseas eliminar el álbum (%1$s)?\n\nNo hay función de deshacer</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Está eliminando el álbum (%1$s) con%2$d fotos.\n\n¿Le gustaría eliminar de forma permanente cualquier contenido huérfano?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Está eliminando el álbum (%1$s) con%2$d fotos y%3$d álbumes secundarios que contienen%4$d fotos más.\n\n¿Le gustaría eliminar de forma permanente cualquier contenido huérfano?</string>
     <string name="alert_confirm_copy_items_here_pattern">¿Copiar los%1$d artículo (s) de la cesta aquí (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">¿Mover los%1$d artículo (s) de la cesta aquí (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Álbumes vinculados</string>
@@ -686,5 +687,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_password_entry">Se requiere contraseña</string>
     <string name="import_x_of_type_y_cancelled_pattern">Importación de%2$s%1$s cancelada</string>
     <string name="import_cancelled">Importación cancelada</string>
+    <string name="alert_error_item_must_belong_to_at_least_one_album">El elemento debe pertenecer al menos a un álbum a menos que se elimine. Seleccione uno y vuelva a intentarlo.</string>
 
 </resources>

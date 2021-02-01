@@ -417,8 +417,9 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_title_select_album">选择专辑</string>
     <string name="alert_title_set_album_thumbnail">更新相册缩略图？</string>
     <string name="alert_message_set_album_thumbnail">将相册缩略图更新为该图像？</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">您确定要永久删除相册（%1$s）和所有内容（除非链接到其他地方的相册）吗？</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">您是否确定要删除包含%2$d张照片的相册（%1$s）和永远包含另外%4$d张照片的%3$d个儿童相册？请注意，链接到其他相册的照片将保留在其中，但所有其他照片将被永久删除。此操作没有撤消功能。</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">您确定要删除相册（%1$s）吗？\n\n没有撤消功能</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">您正在删除包含%2$d张照片的相册（%1$s）。\n\n您要永久删除任何孤立的内容吗？</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">您正在删除包含%2$d张照片的相册（%1$s），以及包含另外%4$d张照片的%3$d个儿童相册。\n\n您要永久删除任何孤立的内容吗？</string>
     <string name="alert_confirm_copy_items_here_pattern">将篮子中的%1$d个项目复制到这里（%2$s）？</string>
     <string name="alert_confirm_move_items_here_pattern">将购物篮中的%1$d个项目移到这里（%2$s）？</string>
     <string name="slideshow_image_details_linked_albums_title">连结相簿</string>
@@ -686,5 +687,6 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_password_entry">要求输入密码</string>
     <string name="import_x_of_type_y_cancelled_pattern">已取消导入%2$s%1$s</string>
     <string name="import_cancelled">导入已取消</string>
+    <string name="alert_error_item_must_belong_to_at_least_one_album">该项目必须至少属于一个相册，除非被删除。 请选择一个，然后重试。</string>
 
 </resources>

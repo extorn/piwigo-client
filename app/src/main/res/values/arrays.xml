@@ -255,7 +255,7 @@
                 - Hopefully the final bug where album thumbnails appeared not to be loading correctly
                Changes:
                 - When deleting an album, child resources can be either unlinked, or deleted from the server
-                - There is a new orphaned resource management page"</item>
+                - Paid Only: There is a new orphaned resource management page"</item>
         <item>1.4.0.105</item>
         <item>"Bugfix:
                 - Rewrite of the album, tag, and favorite sorting code because it was riddled with bugs

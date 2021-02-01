@@ -417,8 +417,9 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_title_select_album">Vyberte album</string>
     <string name="alert_title_set_album_thumbnail">Aktualizovat miniaturu alba?</string>
     <string name="alert_message_set_album_thumbnail">Aktualizovat miniaturu alba na tento obrázek?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Opravdu chcete trvale smazat album (%1$s) a veškerý obsah (pokud není propojen s alby jinde)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Jste si naprosto jisti, že chcete smazat album (%1$s) s%2$d fotografiemi a%3$d podřízenými alby obsahujícími další%4$d fotografie navždy? Fotky propojené s jinými alby zde zůstanou, ale všechny ostatní budou smazány navždy. Tuto akci nelze vrátit zpět.</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Opravdu chcete smazat album (%1$s)?\n\nNeexistuje žádná funkce zpět</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Mazáte album (%1$s) s%2$d fotkami.\n\nChcete trvale smazat veškerý osiřelý obsah?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Mazáte album (%1$s) s%2$d fotkami a%3$d podřízenými alby obsahujícími další%4$d fotografie.\n\nChcete trvale smazat veškerý osiřelý obsah?</string>
     <string name="alert_confirm_copy_items_here_pattern">Zkopírovat sem položky (%1$d) v košíku (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Přesunout sem položky (%1$d) v košíku sem (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Propojená alba</string>
@@ -686,5 +687,6 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_password_entry">Vyžaduje se heslo</string>
     <string name="import_x_of_type_y_cancelled_pattern">Import%2$s%1$s byl zrušen</string>
     <string name="import_cancelled">Import zrušen</string>
+    <string name="alert_error_item_must_belong_to_at_least_one_album">Pokud položka nebude odstraněna, musí patřit alespoň do jednoho alba. Vyberte jednu a zkuste to znovu.</string>
 
 </resources>

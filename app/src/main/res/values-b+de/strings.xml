@@ -417,8 +417,9 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_title_select_album">Wählen Sie Album</string>
     <string name="alert_title_set_album_thumbnail">Album-Miniaturansicht aktualisieren?</string>
     <string name="alert_message_set_album_thumbnail">Album-Miniaturbild auf dieses Bild aktualisieren?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Möchten Sie das Album (%1$s) und den gesamten Inhalt dauerhaft löschen (sofern nicht anderweitig mit Alben verknüpft)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Sind Sie absolut sicher, dass Sie ein Album (%1$s) mit%2$d Fotos und%3$d Kinderalben mit weiteren%4$d Fotos für immer löschen möchten? Beachten Sie, dass Fotos, die mit anderen Alben verknüpft sind, dort verbleiben, andere jedoch für immer gelöscht werden. Für diese Aktion gibt es keine Rückgängig-Funktion.</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Möchten Sie das Album wirklich löschen (%1$s)?\n\nEs gibt keine Rückgängig-Funktion</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Sie löschen ein Album (%1$s) mit%2$d Fotos.\n\nMöchten Sie verwaiste Inhalte dauerhaft löschen?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Sie löschen ein Album (%1$s) mit%2$d Fotos und%3$d untergeordneten Alben, die weitere%4$d Fotos enthalten.\n\nMöchten Sie verwaiste Inhalte dauerhaft löschen?</string>
     <string name="alert_confirm_copy_items_here_pattern">Kopieren Sie die%1$d Artikel in den Warenkorb hier (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Verschieben Sie die%1$d-Artikel im Warenkorb hierher (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Verknüpfte Alben</string>
@@ -686,5 +687,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_password_entry">Passwort erforderlich</string>
     <string name="import_x_of_type_y_cancelled_pattern">Import von%2$s%1$s abgebrochen</string>
     <string name="import_cancelled">Import abgebrochen</string>
+    <string name="alert_error_item_must_belong_to_at_least_one_album">Der Artikel muss zu mindestens einem Album gehören, sofern er nicht gelöscht wird. Bitte wählen Sie eine aus und versuchen Sie es erneut.</string>
 
 </resources>

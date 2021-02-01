@@ -417,8 +417,9 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_title_select_album">Sélectionnez l\'album</string>
     <string name="alert_title_set_album_thumbnail">Mettre à jour la vignette de l\'album?</string>
     <string name="alert_message_set_album_thumbnail">Mettre à jour la vignette de l\'album sur cette image?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Voulez-vous vraiment supprimer l\'album (%1$s) et tout le contenu de façon permanente (sauf s\'il est lié à des albums ailleurs)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Êtes-vous absolument certain de vouloir supprimer l\'album (%1$s) avec%2$d photos et%3$d albums enfants contenant%4$d photos supplémentaires pour toujours? Notez que les photos liées à d\'autres albums y resteront, mais toutes les autres seront supprimées pour toujours. Il n\'y a pas de fonction d\'annulation pour cette action.</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Voulez-vous vraiment supprimer l\'album (%1$s)?\n\nIl n\'y a pas de fonction d\'annulation</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Vous supprimez l\'album (%1$s) avec%2$d photos.\n\nSouhaitez-vous supprimer définitivement tout contenu orphelin?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Vous supprimez l\'album (%1$s) avec%2$d photos et%3$d albums enfants contenant%4$d photos supplémentaires.\n\nSouhaitez-vous supprimer définitivement tout contenu orphelin?</string>
     <string name="alert_confirm_copy_items_here_pattern">Copier les%1$d élément (s) dans le panier ici (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Déplacer le ou les éléments%1$d dans le panier ici (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Albums liés</string>
@@ -686,5 +687,6 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_password_entry">Mot de passe requis</string>
     <string name="import_x_of_type_y_cancelled_pattern">Importation de%2$s%1$s annulée</string>
     <string name="import_cancelled">Importation annulée</string>
+    <string name="alert_error_item_must_belong_to_at_least_one_album">L\'élément doit appartenir à au moins un album à moins d\'être supprimé. Veuillez en sélectionner un et réessayer.</string>
 
 </resources>
