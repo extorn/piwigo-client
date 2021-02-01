@@ -95,7 +95,7 @@ public class MainActivityDrawerNavigationView extends BaseActivityDrawerNavigati
         m.findItem(R.id.nav_upload).setVisible((isAdminUser || hasCommunityPlugin) && !isReadOnly);
         m.findItem(R.id.nav_groups).setVisible(isAdminUser && !isReadOnly);
         m.findItem(R.id.nav_users).setVisible(isAdminUser && !isReadOnly);
-
+        m.findItem(R.id.nav_orphans).setVisible(isAdminUser && !isReadOnly);
         m.findItem(R.id.nav_settings).setVisible(!isReadOnly);
         // only allow locking of the app if we've got an active login to PIWIGO.
         m.findItem(R.id.nav_lock).setVisible(!isReadOnly && sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isGuest());

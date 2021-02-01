@@ -31,6 +31,7 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageAddToAlbumResponseHandler;
@@ -48,6 +49,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     public static final String RESUME_ACTION = "ORPHANS";
     public static final String CATEGORY_NAME_PIWIGO_CLIENT_ORPHANS = "PiwigoClient.Orphans";
     public static final String STATE_ORPHAN_RESCUE_CALLS = "orphansView.orphanRescueCalls";
+    public static final String ORPHANS_PAGE_LOAD_PREFIX = "orphans_";
     private Set<Long> orphanRescueCalls = new HashSet<>();
     private long orphanAlbumCreateActionId;
     private ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse orphansToBeRescuedResponse;
@@ -118,7 +120,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
         for(CategoryItem cat : rootLevelAlbums) {
             if(cat.getName().equals(CATEGORY_NAME_PIWIGO_CLIENT_ORPHANS)) {
                 // there is now a point trying to get the child images (we know the album id)
-                getGalleryModel().setContainerDetails(cat);
+                updatePiwigoAlbumModel(cat);
                 loadAlbumPermissionsIfNeeded();
             }
         }
@@ -134,33 +136,43 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     }
     protected void onPiwigoResponseOrphanAlbumCreated(AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse response) {
         CategoryItem orphansAlbum = response.getAlbumDetails().asCategoryItem(new Date(), 0, 0, 0, null);
-        getGalleryModel().setContainerDetails(orphansAlbum);
+        // Add the newly created album to the view model and switch to it.
+        switchViewToShowContentsAndDetailsForAlbum(orphansAlbum);
+    }
+
+    private void switchViewToShowContentsAndDetailsForAlbum(CategoryItem orphansAlbum) {
+        // there is now a point trying to get the child images (we know the album id)
+        PiwigoAlbum<CategoryItem, GalleryItem> model = updatePiwigoAlbumModelAndOurCopyOfIt(orphansAlbum);
+        model.setContainerDetails(orphansAlbum);// force set the category (might be the admin copy).
         processPageOfOrphansResponse(orphansToBeRescuedResponse);
         orphansToBeRescuedResponse = null;
+        replaceListViewAdapter(model, null);
         fillGalleryEditFields();
         loadAlbumPermissionsIfNeeded();
+    }
+
+    protected void onPiwigoResponseGetResources(final AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse response) {
+        // this is so we can capture the event as being for the orphans page.
+        super.onPiwigoResponseGetResources(response);
     }
 
     @Override
     protected void onPiwigoResponseAlbumDeleted(AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse response) {
         CategoryItem galleryDetails = getGalleryModel().getContainerDetails();
         if (galleryDetails.getId() == response.getAlbumId()) {
-            getGalleryModel().setContainerDetails(CategoryItem.ORPHANS_ROOT_ALBUM.clone());
-            forceReloadAlbumContent();
+            switchViewToShowContentsAndDetailsForAlbum(CategoryItem.ORPHANS_ROOT_ALBUM.clone());
         } else {
             super.onPiwigoResponseAlbumDeleted(response);
         }
     }
 
-    protected void loadAlbumSubCategories() {
-        // we need to use the root if the orphans folder doesn't already exist.
-        CategoryItem currentCat = getGalleryModel().getContainerDetails();
-        if(currentCat.equals(CategoryItem.ORPHANS_ROOT_ALBUM)) {
-            getGalleryModel().setContainerDetails(CategoryItem.ROOT_ALBUM.clone());
-            super.loadAlbumSubCategories();
-            getGalleryModel().setContainerDetails(currentCat);
+    @Override
+    protected void loadAlbumSubCategories(@NonNull CategoryItem album) {
+        // we need to use the root if we're at the orphan root (it doesn't actually exist)
+        if(album.equals(CategoryItem.ORPHANS_ROOT_ALBUM)) {
+            super.loadAlbumSubCategories(CategoryItem.ROOT_ALBUM.clone());
         } else {
-            super.loadAlbumSubCategories();
+            super.loadAlbumSubCategories(album);
         }
     }
 
@@ -171,7 +183,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
             if(CATEGORY_NAME_PIWIGO_CLIENT_ORPHANS.equals(cat.getName())
                     && !CATEGORY_NAME_PIWIGO_CLIENT_ORPHANS.equals(getGalleryModel().getContainerDetails().getName())) {
                 // there is now a point trying to get the child images (we know the album id)
-                getGalleryModel().setContainerDetails(cat);
+                updatePiwigoAlbumModelAndOurCopyOfIt(cat);
                 loadAlbumPermissionsIfNeeded();
             }
         }
@@ -186,12 +198,11 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
         if(response.getParentAlbum().equals(CategoryItem.ROOT_ALBUM)) {
             for (CategoryItem cat : response.getAlbums()) {
                 if (cat.getName().equals(CATEGORY_NAME_PIWIGO_CLIENT_ORPHANS)) {
-                    // there is now a point trying to get the child images (we know the album id)
-                    getGalleryModel().setContainerDetails(cat);
-                    fillGalleryEditFields();
-                    loadAlbumPermissionsIfNeeded();
+                    switchViewToShowContentsAndDetailsForAlbum(cat);
                 }
             }
+            // wipe the model  so it is reloaded
+            getGalleryModel().clear();
             // load any true orphans.
             loadOrphanedResourceIdsPage(0);
         } else {
@@ -274,7 +285,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
                 addOrphanToOrphansFolder(resourceId);
             }
             if (response.getPageSize() == response.getTotalCount()) {
-                // load the next page
+                // load the next page (under the orphans album - possibly newly created)
                 loadOrphanedResourceIdsPage(response.getPage() + 1);
             }
         }
@@ -320,7 +331,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     protected void loadOrphanedResourceIdsPage(int pageToLoad) {
         synchronized (getLoadingMessageIds()) {
 //            PiwigoAlbum<CategoryItem, GalleryItem> galleryModel = getGalleryModel();
-            //galleryModel.acquirePageLoadLock();
+//            galleryModel.acquirePageLoadLock();
             try {
                 int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
                 int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
@@ -335,7 +346,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
 
                 long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_orphan_ids, new ImagesListOrphansResponseHandler(pageToActuallyLoad, pageSize));
 //                galleryModel.recordPageBeingLoaded(loadingMessageId, pageToActuallyLoad);
-                getLoadingMessageIds().put(loadingMessageId, String.valueOf(pageToLoad));
+                getLoadingMessageIds().put(loadingMessageId, ORPHANS_PAGE_LOAD_PREFIX +pageToLoad);
             } finally {
 //                galleryModel.releasePageLoadLock();
             }

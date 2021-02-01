@@ -5,22 +5,25 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
+import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 
 public class PiwigoAlbumModel extends ViewModelContainer {
-    private final MutableLiveData<PiwigoAlbum> albumLiveData = new MutableLiveData<>();
+    private final MutableLiveData<PiwigoAlbum<CategoryItem, GalleryItem>> albumLiveData = new MutableLiveData<>();
 
     public PiwigoAlbumModel() {
     }
 
-    public LiveData<PiwigoAlbum> getPiwigoAlbum() {
+    public LiveData<PiwigoAlbum<CategoryItem, GalleryItem>> getPiwigoAlbum() {
         return albumLiveData;
     }
 
-    public LiveData<PiwigoAlbum> getPiwigoAlbum(@NonNull CategoryItem categoryItem) {
+    public LiveData<PiwigoAlbum<CategoryItem, GalleryItem>> getPiwigoAlbum(@NonNull CategoryItem categoryItem) {
         if (albumLiveData.getValue() == null) {
-            albumLiveData.setValue(new PiwigoAlbum(categoryItem));
+            albumLiveData.setValue(new PiwigoAlbum<>(categoryItem));
+        } else {
+            albumLiveData.getValue().setContainerDetails(categoryItem);
         }
         return albumLiveData;
     }

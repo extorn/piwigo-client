@@ -250,6 +250,13 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.107</item>
+        <item>"Bugfix:
+                - Potential for one resource to be missed from the album resource slideshow (full screen preview)
+                - crash on preview of orphaned file
+               Change:
+                - preview of orphaned files and view within a slideshow if wished is now supported
+                - orphans menu option is only available to admin users when app not readonly"</item>
         <item>1.4.0.106</item>
         <item>"Bugfix:
                 - Hopefully the final bug where album thumbnails appeared not to be loading correctly
