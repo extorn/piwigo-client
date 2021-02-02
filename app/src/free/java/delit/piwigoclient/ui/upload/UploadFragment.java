@@ -25,7 +25,7 @@ public class UploadFragment<F extends AbstractUploadFragment<F,FUIH>,FUIH extend
         Set<Uri> allFiles = adapter.getFilesAndSizes().keySet();
         boolean maxItemCountReached = false;
         Iterator<Uri> iter = allFiles.iterator();
-        while(allFiles.size() > 5) {
+        while(iter.hasNext() && adapter.getFilesAndSizes().size() > 5) {
             maxItemCountReached = true;
             adapter.remove(iter.next());
         }
