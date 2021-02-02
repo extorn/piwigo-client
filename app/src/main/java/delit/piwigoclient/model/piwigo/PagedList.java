@@ -235,16 +235,27 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
                 sortedItems.addAll(firstInsertPos, newItems);
             }
             pagesLoadedIdxToSizeMap.put(page, pageSize);
-            if ((newItems.size() < pageSize && pagesLoadedIdxToSizeMap.size() == page + 1)
-            || (page == 0 && isRetrieveItemsInReverseOrder() && getNextPageToReload() == null)) {
-                fullyLoaded = true;
-            }
+            updateIsFullyLoaded(page, pageSize, itemsToAdd);
         } catch(IllegalStateException e) {
             // page already loaded (can occur after resume...)
             Logging.log(Log.DEBUG, TAG, "ignoring page already loaded");
         }
         postPageInsert(sortedItems, newItems);
         return firstInsertPos;
+    }
+
+    protected void updateIsFullyLoaded(int page, int pageSize, List<T> itemsToAdd) {
+        if(isRetrieveItemsInReverseOrder()) {
+            if(page == 0 && getNextPageToReload() == null) {
+                // we're processing page 0 and no pages need reloaded
+                fullyLoaded = true;
+            }
+        } else {
+            if(itemsToAdd.size() < pageSize && pagesLoadedIdxToSizeMap.size() == page + 1) {
+                // the current page contained less items than it could and all pages with a number less than this one are already loaded.
+                fullyLoaded = true;
+            }
+        }
     }
 
     private void postPageInsert(ArrayList<T> sortedItems, List<T> newItems) {
