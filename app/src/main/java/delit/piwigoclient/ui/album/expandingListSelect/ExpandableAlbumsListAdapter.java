@@ -231,7 +231,12 @@ public class ExpandableAlbumsListAdapter extends BaseExpandableListAdapter {
     }
 
     public static class ExpandableAlbumsListAdapterPreferences extends BaseRecyclerViewAdapterPreferences<ExpandableAlbumsListAdapterPreferences> {
+
         private boolean allowRootAlbumSelection;
+
+        public ExpandableAlbumsListAdapterPreferences(Bundle bundle) {
+            loadFromBundle(bundle);
+        }
 
         public ExpandableAlbumsListAdapterPreferences withRootAlbumSelectionAllowed() {
             allowRootAlbumSelection = true;
