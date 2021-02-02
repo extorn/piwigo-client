@@ -512,7 +512,12 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
             }
             logStatus("resuming buffering - in case paused");
             player.prepare(videoSource, false, false);
-            loadControl.resumeBuffering();
+            try {
+                loadControl.resumeBuffering();
+            } catch (IllegalStateException e) {
+                Logging.log(Log.ERROR, TAG, e.getMessage());
+                Logging.recordException(e);
+            }
             player.addListener(new ExoPlayerEventAdapter() {
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
