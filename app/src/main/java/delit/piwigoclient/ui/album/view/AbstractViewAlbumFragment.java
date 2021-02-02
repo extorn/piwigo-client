@@ -193,7 +193,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     private int albumsPerRow; // calculated each time view created.
 
     //******  cached view references (all need clearing down)
-    AlbumItemRecyclerViewAdapter viewAdapter;
+    AlbumItemRecyclerViewAdapter viewAdapter; // cant use generics as the effect cascades too much
     ExtendedFloatingActionButton bulkActionButtonTag;
     private ExtendedFloatingActionButton retryActionButton;
     private TextView galleryNameHeader;
@@ -723,7 +723,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
     private HashSet<GalleryItem> getSelectedItemsNoException() {
         try {
-            return getSelectedItems();
+            return getSelectedItems(GalleryItem.class);
         } catch (IllegalStateException e) {
             return new HashSet<>(0);
         }
@@ -863,24 +863,14 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         loadingMessageIds.put(loadingMessageId, SERVER_CALL_ID_ADMIN_LIST_ALBUMS);
     }
 
-    private void onDownloadAllItemsButtonClick(HashSet<Long> imageIds, HashSet<GalleryItem> selectedItems) {
-        HashSet<ResourceItem> itemsToAction = CollectionUtils.copyAllOfType(selectedItems, new HashSet<>(selectedItems.size()), ResourceItem.class);
-        int itemsRemoved = selectedItems.size() - itemsToAction.size();
-        if(itemsRemoved > 0) {
-            Logging.log(Log.WARN, TAG, "Removed %1$d unsuitable items", itemsRemoved);
-        }
-        BulkResourceActionData bulkActionData = new BulkResourceActionData(imageIds, itemsToAction, BulkResourceActionData.ACTION_DOWNLOAD_ALL);
+    private void onDownloadAllItemsButtonClick(HashSet<Long> imageIds, HashSet<ResourceItem> selectedItems) {
+        BulkResourceActionData bulkActionData = new BulkResourceActionData(imageIds, selectedItems, BulkResourceActionData.ACTION_DOWNLOAD_ALL);
         this.bulkResourceActionData = bulkActionData;
         onDownloadAllItems(bulkActionData);
     }
 
-    private void onUpdateImagePermissionsButtonClick(HashSet<Long> imageIds, HashSet<GalleryItem> selectedItems) {
-        HashSet<ResourceItem> itemsToAction = CollectionUtils.copyAllOfType(selectedItems, new HashSet<>(selectedItems.size()), ResourceItem.class);
-        int itemsRemoved = selectedItems.size() - itemsToAction.size();
-        if(itemsRemoved > 0) {
-            Logging.log(Log.WARN, TAG, "Removed %1$d unsuitable items", itemsRemoved);
-        }
-        BulkResourceActionData bulkActionData = new BulkResourceActionData(imageIds, itemsToAction, BulkResourceActionData.ACTION_UPDATE_PERMISSIONS);
+    private void onUpdateImagePermissionsButtonClick(HashSet<Long> imageIds, HashSet<ResourceItem> selectedItems) {
+        BulkResourceActionData bulkActionData = new BulkResourceActionData(imageIds, selectedItems, BulkResourceActionData.ACTION_UPDATE_PERMISSIONS);
         this.bulkResourceActionData = bulkActionData;
         onUpdateImagePermissions(bulkActionData);
     }
@@ -902,13 +892,13 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
     }
 
-    protected HashSet<GalleryItem> getSelectedItems() {
+    protected <T extends GalleryItem> HashSet<T> getSelectedItems(Class<T> type) {
         try {
-            return viewAdapter.getSelectedItems();
+            return viewAdapter.getSelectedItemsOfType(type);
         } catch (IllegalStateException e) {
             if (galleryModel.isFullyLoaded()) {
                 viewAdapter.clearSelectedItemIds(); // the items aren't here any more, but we have all items
-                return viewAdapter.getSelectedItems();
+                return viewAdapter.getSelectedItemsOfType(type);
             } else {
                 throw e;
             }
@@ -967,7 +957,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     private void onBulkActionDownloadButtonPressed() {
         HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
         if (selectedItemIds.size() > 0) {
-            onDownloadAllItemsButtonClick(selectedItemIds, viewAdapter.getSelectedItems());
+            onDownloadAllItemsButtonClick(selectedItemIds, viewAdapter.getSelectedItemsOfType(ResourceItem.class));
         }
     }
 
@@ -976,7 +966,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         if (bulkActionsAllowed) {
             HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
             if (selectedItemIds.size() > 0) {
-                onUpdateImagePermissionsButtonClick(selectedItemIds, viewAdapter.getSelectedItems());
+                onUpdateImagePermissionsButtonClick(selectedItemIds, viewAdapter.getSelectedItemsOfType(ResourceItem.class));
             }
         }
     }
@@ -989,7 +979,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 //continue with previous action
                 onDeleteResources(bulkResourceActionData);
             } else if (selectedItemIds.size() > 0) {
-                HashSet<ResourceItem> selectedItems = viewAdapter.getSelectedItems();
+                HashSet<ResourceItem> selectedItems = viewAdapter.getSelectedItemsOfType(ResourceItem.class);
                 BulkResourceActionData deleteActionData = new BulkResourceActionData(selectedItemIds, selectedItems, BulkResourceActionData.ACTION_DELETE);
                 if (!deleteActionData.isResourceInfoAvailable()) {
                     this.bulkResourceActionData = deleteActionData;
@@ -2533,8 +2523,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             // Apply the adapter to the spinner
             privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
 
-            HashSet<GalleryItem> selectedItems = getUiHelper().getParent().getSelectedItems();
-            HashSet<ResourceItem> itemsToAction = CollectionUtils.copyAllOfType(selectedItems, new HashSet<>(selectedItems.size()), ResourceItem.class);
+            HashSet<ResourceItem> itemsToAction = getUiHelper().getParent().getSelectedItems(ResourceItem.class);
             
             byte privacyLevel = -1;
             for (ResourceItem item : itemsToAction) {

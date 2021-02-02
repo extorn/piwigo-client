@@ -152,6 +152,21 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
      *
      * @return
      */
+    public <IT extends T> HashSet<IT> getSelectedItemsOfType(Class<IT> type) {
+        HashSet<IT> selectedItems = new HashSet<>();
+        for(T item : getSelectedItems()) {
+            if(type.isInstance(item)) {
+                selectedItems.add(type.cast(item));
+            }
+        }
+        return selectedItems;
+    }
+
+    /**
+     * Note: May throw an IllegalStateException if not all items loaded yet
+     *
+     * @return
+     */
     @Override
     public HashSet<T> getSelectedItems() {
         try {

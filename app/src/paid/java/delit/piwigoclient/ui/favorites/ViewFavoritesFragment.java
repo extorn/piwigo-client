@@ -345,7 +345,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
                 //continue with previous action
                 onDeleteResources(deleteActionData);
             } else if(selectedItemIds.size() > 0) {
-                HashSet<ResourceItem> selectedItems = viewAdapter.getSelectedItems();
+                HashSet<ResourceItem> selectedItems = viewAdapter.getSelectedItemsOfType(ResourceItem.class);
                 DeleteActionData deleteActionData = new DeleteActionData(selectedItemIds, selectedItems);
                 if(!deleteActionData.isResourceInfoAvailable()) {
                     this.deleteActionData = deleteActionData;

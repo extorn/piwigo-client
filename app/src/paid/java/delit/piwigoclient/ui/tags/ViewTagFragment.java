@@ -398,7 +398,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
                 //continue with previous action
                 onDeleteResources(deleteActionData);
             } else if(selectedItemIds.size() > 0) {
-                HashSet<ResourceItem> selectedItems = viewAdapter.getSelectedItems();
+                HashSet<ResourceItem> selectedItems = viewAdapter.getSelectedItemsOfType(ResourceItem.class);
                 DeleteActionData deleteActionData = new DeleteActionData(selectedItemIds, selectedItems);
                 if(!deleteActionData.isResourceInfoAvailable()) {
                     this.deleteActionData = deleteActionData;

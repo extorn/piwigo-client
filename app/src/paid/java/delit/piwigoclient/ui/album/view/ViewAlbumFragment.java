@@ -133,7 +133,7 @@ public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH 
     }
 
     private boolean showBulkTagAction(Basket basket) {
-        return isTagSelectionAllowed() && viewAdapter != null && viewAdapter.isItemSelectionAllowed() && getSelectedItems().size() > 0 && basket.isEmpty();
+        return isTagSelectionAllowed() && viewAdapter != null && viewAdapter.isItemSelectionAllowed() && getSelectedItems(ResourceItem.class).size() > 0 && basket.isEmpty();
     }
 
     protected void updateBasketDisplay(Basket basket) {
@@ -150,7 +150,7 @@ public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH 
     }
 
     private void onBulkActionTagButtonPressed() {
-        tagMembershipChangesAction = new AddTagsToResourcesAction(viewAdapter.getSelectedItems());
+        tagMembershipChangesAction = new AddTagsToResourcesAction(viewAdapter.getSelectedItemsOfType(ResourceItem.class));
         onShowTagsSelection();
     }
 
