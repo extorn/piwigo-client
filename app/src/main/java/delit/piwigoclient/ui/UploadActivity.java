@@ -359,7 +359,7 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final UsernameSelectionNeededEvent event) {
-        UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs = new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs = new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences(allowMultiSelect).selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         if (!event.isAllowEditing()) {
             prefs.readonly();
         }

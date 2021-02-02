@@ -13,6 +13,24 @@ public class AlbumSelectionListAdapterPreferences extends BaseRecyclerViewAdapte
         loadFromBundle(bundle);
     }
 
+    public AlbumSelectionListAdapterPreferences(boolean allowEdit) {
+        setFlattenAlbumHierarchy(true);
+        setShowThumbnails(false); // thumbnails aren't supported for category item stubs.
+        selectable(true, false);
+        if (!allowEdit) {
+            readonly();
+        }
+    }
+
+    public AlbumSelectionListAdapterPreferences(boolean flattenAlbumHierarchy, boolean showThumbnails, boolean allowEditing, boolean allowMultiSelect, boolean initialSelectionLocked) {
+        setFlattenAlbumHierarchy(flattenAlbumHierarchy);
+        setShowThumbnails(showThumbnails);
+        selectable(allowMultiSelect, initialSelectionLocked);
+        if (!allowEditing) {
+            readonly();
+        }
+    }
+
     public boolean isFlattenAlbumHierarchy() {
         return flattenAlbumHierarchy;
     }

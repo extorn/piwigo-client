@@ -33,6 +33,11 @@ public class GroupRecyclerViewAdapter<RVA extends GroupRecyclerViewAdapter<RVA, 
     }
 
     public static class GroupViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<GroupViewAdapterPreferences> {
+
+        public GroupViewAdapterPreferences(boolean allowMultiSelect, boolean initialSelectionLocked) {
+            selectable(allowMultiSelect, initialSelectionLocked);
+        }
+
         public GroupViewAdapterPreferences(Bundle bundle) {
             loadFromBundle(bundle);
         }

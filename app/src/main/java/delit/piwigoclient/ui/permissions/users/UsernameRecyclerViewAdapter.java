@@ -28,6 +28,10 @@ public class UsernameRecyclerViewAdapter<LVA extends UsernameRecyclerViewAdapter
     private final HashSet<Long> indirectlySelectedItems;
 
     public static class UsernameRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<UsernameRecyclerViewAdapterPreferences> {
+
+        public UsernameRecyclerViewAdapterPreferences(boolean allowMultiSelect, boolean initialSelectionLocked) {
+            selectable(allowMultiSelect, initialSelectionLocked);
+        }
         public UsernameRecyclerViewAdapterPreferences(Bundle bundle) {
             loadFromBundle(bundle);
         }

@@ -291,7 +291,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
                 Fragment currentFragment = getActiveFragment();
                 if (currentFragment instanceof ViewAlbumFragment && currentAlbum != null && !currentAlbum.isRoot()) {
                     // get the next album to show
-                    CategoryItem nextAlbumToShow = ((ViewAlbumFragment) currentFragment).getParentAlbum();
+                    CategoryItem nextAlbumToShow = ((ViewAlbumFragment<?,?>) currentFragment).getParentAlbum();
                     if (nextAlbumToShow != null) {
                         Logging.log(Log.INFO, TAG, "removing from activity to show next (parent) album");
                         getSupportFragmentManager().popBackStack();
@@ -525,17 +525,17 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
     }
 
     private void showTopTips() {
-        TopTipsFragment fragment = TopTipsFragment.newInstance();
+        TopTipsFragment<?,?> fragment = TopTipsFragment.newInstance();
         showFragmentNow(fragment);
     }
 
     private void showAboutFragment() {
-        AboutFragment fragment = AboutFragment.newInstance();
+        AboutFragment<?,?> fragment = AboutFragment.newInstance();
         showFragmentNow(fragment);
     }
 
     private void showLicencesFragment() {
-        LicencesFragment fragment = LicencesFragment.newInstance();
+        LicencesFragment<?,?> fragment = LicencesFragment.newInstance();
         showFragmentNow(fragment);
     }
 
@@ -548,7 +548,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
     }
 
     private void showGroups() {
-        GroupsListFragment fragment = GroupsListFragment.newInstance();
+        GroupsListFragment<?,?> fragment = GroupsListFragment.newInstance();
         showFragmentNow(fragment);
     }
 
@@ -559,14 +559,8 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
     protected abstract void showTags();
 
     private void showAlbumPermissions(final ArrayList<CategoryItemStub> availableAlbums, final HashSet<Long> directAlbumPermissions, final HashSet<Long> indirectAlbumPermissions, boolean allowEdit, int actionId) {
-        AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences();
-        adapterPreferences.setFlattenAlbumHierarchy(true);
-        adapterPreferences.setShowThumbnails(false); // thumbnails aren't supported for category item stubs.
-        adapterPreferences.selectable(true, false);
-        if (!allowEdit) {
-            adapterPreferences.readonly();
-        }
-        delit.piwigoclient.ui.permissions.AlbumSelectFragment fragment = delit.piwigoclient.ui.permissions.AlbumSelectFragment.newInstance(availableAlbums, adapterPreferences, actionId, indirectAlbumPermissions, directAlbumPermissions);
+        AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences(allowEdit);
+        delit.piwigoclient.ui.permissions.AlbumSelectFragment<?,?> fragment = delit.piwigoclient.ui.permissions.AlbumSelectFragment.newInstance(availableAlbums, adapterPreferences, actionId, indirectAlbumPermissions, directAlbumPermissions);
         showFragmentNow(fragment);
     }
 
@@ -604,7 +598,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final AlbumCreateNeededEvent event) {
 
-        CreateAlbumFragment fragment = CreateAlbumFragment.newInstance(event.getActionId(), event.getParentAlbum());
+        CreateAlbumFragment<?,?> fragment = CreateAlbumFragment.newInstance(event.getActionId(), event.getParentAlbum());
         showFragmentNow(fragment);
     }
 
@@ -723,38 +717,38 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final UsernameSelectionNeededEvent event) {
-        UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs = new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs = new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         if (!event.isAllowEditing()) {
             prefs.readonly();
         }
-        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
+        UsernameSelectFragment<?,?> fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ViewUserEvent event) {
-        UserFragment fragment = UserFragment.newInstance(event.getUser());
+        UserFragment<?,?> fragment = UserFragment.newInstance(event.getUser());
         showFragmentNow(fragment);
     }
 
     private void showAlbumSelectionFragment(int actionId, AlbumSelectionListAdapterPreferences prefs, HashSet<Long> currentSelection) {
-        AlbumSelectFragment fragment = AlbumSelectFragment.newInstance(prefs, actionId, currentSelection);
+        AlbumSelectFragment<?,?> fragment = AlbumSelectFragment.newInstance(prefs, actionId, currentSelection);
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ViewGroupEvent event) {
-        GroupFragment fragment = GroupFragment.newInstance(event.getGroup());
+        GroupFragment<?,?> fragment = GroupFragment.newInstance(event.getGroup());
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final GroupSelectionNeededEvent event) {
-        GroupRecyclerViewAdapter.GroupViewAdapterPreferences prefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        GroupRecyclerViewAdapter.GroupViewAdapterPreferences prefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         if (!event.isAllowEditing()) {
             prefs.readonly();
         }
-        GroupSelectFragment fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
+        GroupSelectFragment<?,?> fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
@@ -892,13 +886,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumSelectionNeededEvent event) {
-        AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences();
-        adapterPreferences.setFlattenAlbumHierarchy(false);
-        adapterPreferences.setShowThumbnails(true);
-        adapterPreferences.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        if (!event.isAllowEditing()) {
-            adapterPreferences.readonly();
-        }
+        AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences(false, true, event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         showAlbumSelectionFragment(event.getActionId(), adapterPreferences, event.getInitialSelection());
     }
 
@@ -906,17 +894,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
     public void onEvent(ExpandingAlbumSelectionNeededEvent event) {
 //        ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs = new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences();
 //        AlbumSelectExpandableFragment f = AlbumSelectExpandableFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
-        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences();
-        if(event.isAllowEditing()) {
-            prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        }
-        if(event.getInitialRoot() != null) {
-            prefs.withInitialRoot(new CategoryItemStub("???", event.getInitialRoot()));
-        } else {
-            prefs.withInitialRoot(CategoryItemStub.ROOT_GALLERY);
-        }
-        prefs.setAllowItemAddition(true);
-        prefs.withInitialSelection(event.getInitialSelection());
+        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences(event.getInitialRoot(), event.isAllowEditing(), event.getInitialSelection(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         RecyclerViewCategoryItemSelectFragment<?,?> f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
         showFragmentNow(f);
     }

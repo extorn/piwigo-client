@@ -22,6 +22,19 @@ public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterP
         loadFromBundle(bundle);
     }
 
+    public CategoryItemViewAdapterPreferences(Long initialRoot, boolean allowEditing, HashSet<Long> initialSelection, boolean allowMultiSelect, boolean initialSelectionLocked) {
+        if(allowEditing) {
+            selectable(allowMultiSelect, initialSelectionLocked);
+        }
+        if(initialRoot != null) {
+            withInitialRoot(new CategoryItemStub("???", initialRoot));
+        } else {
+            withInitialRoot(CategoryItemStub.ROOT_GALLERY);
+        }
+        setAllowItemAddition(true);
+        withInitialSelection(initialSelection);
+    }
+
     public CategoryItemViewAdapterPreferences withConnectionProfile(@Nullable String connectionProfileKey) {
         this.connectionProfileKey = connectionProfileKey;
         return this;
