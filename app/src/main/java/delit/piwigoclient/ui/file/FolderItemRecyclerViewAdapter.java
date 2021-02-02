@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -321,9 +322,10 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
             return null;
         }
 
-        for(T item : displayContent) {
-            if(!item.isFolder() && (item.getLastModified() == 0 /*&& MimeTypeFilter.matches(folderItem.getMime(), permissableMimeTypes) != null*/)) { // 0 length check hides system files.
-                displayContent.remove(item); // this isn't a file we can do anything useful with.
+        for (Iterator<T> iterator = displayContent.iterator(); iterator.hasNext(); ) {
+            T item = iterator.next();
+            if (!item.isFolder() && (item.getLastModified() == 0 /*&& MimeTypeFilter.matches(folderItem.getMime(), permissableMimeTypes) != null*/)) { // 0 length check hides system files.
+                iterator.remove(); // this isn't a file we can do anything useful with.
             }
         }
 
