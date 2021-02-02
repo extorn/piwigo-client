@@ -47,6 +47,10 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
     protected FolderItemViewAdapterPreferences() {
     }
 
+    public FolderItemViewAdapterPreferences(Bundle bundle) {
+        loadFromBundle(bundle);
+    }
+
     public FolderItemViewAdapterPreferences(boolean allowFileSelection, boolean allowFolderSelection, boolean multiSelectAllowed) {
         this.allowFileSelection = allowFileSelection;
         this.allowFolderSelection = allowFolderSelection;
@@ -158,22 +162,29 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return fileSortOrder;
     }
 
-    public SortedSet<String> getVisibleFileTypes() {
-        return new TreeSet<>(visibleFileTypes);
+    public @NonNull SortedSet<String> getVisibleFileTypes() {
+        if(visibleFileTypes != null) {
+            return new TreeSet<>(visibleFileTypes);
+        } else {
+            return new TreeSet<>();
+        }
     }
 
-    public SortedSet<String> getVisibleMimeTypes() {
-        return new TreeSet<>(visibleMimeTypes);
+    public @NonNull SortedSet<String> getVisibleMimeTypes() {
+        if(visibleMimeTypes != null) {
+            return new TreeSet<>(visibleMimeTypes);
+        }
+        return new TreeSet<>();
     }
 
 
-    public SortedSet<String> getAcceptableFileExts(@NonNull Map<String,String> extToMimeMap) {
+    public @NonNull SortedSet<String> getAcceptableFileExts(@NonNull Map<String,String> extToMimeMap) {
         SortedSet<String> wantedExts = new TreeSet<>();
         if (visibleMimeTypes != null) {
             String[] visibleMimeTypesArray = CollectionUtils.asStringArray(visibleMimeTypes);
             for(Map.Entry<String,String> extToMime : extToMimeMap.entrySet()) {
                 if(null != MimeTypeFilter.matches(extToMime.getValue(), visibleMimeTypesArray)
-                        || visibleFileTypes.contains(extToMime.getKey())) {
+                        || (visibleFileTypes != null && visibleFileTypes.contains(extToMime.getKey()))) {
                     wantedExts.add(extToMime.getKey());
                 }
             }
@@ -181,11 +192,11 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return wantedExts;
     }
 
-    public SortedSet<Uri> getInitialSelection() {
+    public @Nullable SortedSet<Uri> getInitialSelection() {
         return initialSelection;
     }
 
-    public void setInitialSelection(Set<Uri> initialSelection) {
+    public void setInitialSelection(@Nullable Set<Uri> initialSelection) {
         if (initialSelection != null) {
             this.initialSelection = new TreeSet<>(initialSelection);
         }
