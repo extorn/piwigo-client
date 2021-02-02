@@ -62,7 +62,7 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
         if (activeJob == null) {
 
             if (uploadToAlbum == null || CategoryItemStub.ROOT_GALLERY.equals(uploadToAlbum)) {
-                getOwner().onUploadJobSettingsNeeded();
+                DisplayUtils.runOnUiThread(()->getOwner().onUploadJobSettingsNeeded());
                 return null;
             }
 
@@ -148,7 +148,7 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
             filesForReview.remove(uri);
         }
         if (filesForReview.size() > 0) {
-            getOwner().onFilesForUploadTooLarge(filenameListStrB.toString(), filesForReview);
+            DisplayUtils.runOnUiThread(()->getOwner().onFilesForUploadTooLarge(filenameListStrB.toString(), filesForReview));
             return false;
         }
         return true;
