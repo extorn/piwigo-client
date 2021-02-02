@@ -6,18 +6,18 @@ import java.util.List;
 
 import delit.piwigoclient.model.piwigo.GalleryItem;
 
-public class ItemLoadPage {
+public class ItemLoadPage<T> {
     private static int nextLoadId = 0;
     private static int nextPageId = 0;
     private long loadId;
     private int pageIdx;
-    private List<GalleryItem> items;
+    private List<T> items;
 
-    public ItemLoadPage(GalleryItem ... items) {
+    public ItemLoadPage(T ... items) {
         this(Arrays.asList(items));
     }
 
-    public ItemLoadPage(List<GalleryItem> items) {
+    public ItemLoadPage(List<T> items) {
         this.loadId = nextLoadId++;
         this.pageIdx = nextPageId++;
         this.setItems(items);
@@ -35,11 +35,11 @@ public class ItemLoadPage {
         return nextPageId;
     }
 
-    public List<GalleryItem> getItems() {
+    public List<T> getItems() {
         return items;
     }
 
-    public void add(GalleryItem item) {
+    public void add(T item) {
         getItems().add(item);
     }
 
@@ -47,7 +47,7 @@ public class ItemLoadPage {
         return pageIdx;
     }
 
-    public void setItems(List<GalleryItem> items) {
+    public void setItems(List<T> items) {
         this.items = items;
     }
 }

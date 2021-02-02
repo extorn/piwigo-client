@@ -1,14 +1,12 @@
 package delit.piwigoclient.test;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import delit.libs.core.util.Logging;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
@@ -16,7 +14,6 @@ import delit.piwigoclient.model.piwigo.PiwigoAlbumTest;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
 
 public class PiwigoResourceUtil {
 
@@ -24,10 +21,10 @@ public class PiwigoResourceUtil {
     //Adding this doesn't seem to help.  -Djava.util.logging.config.file=src/test/resources/logging.properties
     private static Logger logger = Logger.getLogger(PiwigoAlbumTest.class.getName());
 
-    public static ArrayList<ItemLoadPage> initialiseResourceItemLoadPages(ResourceItemFactory resourceItemFactory, int sortOrder, int pagesWanted, int pageSizeWanted) {
-        ArrayList<ItemLoadPage> resourceItemLoadPages = new ArrayList<>();
+    public static ArrayList<ItemLoadPage<GalleryItem>> initialiseResourceItemLoadPages(ResourceItemFactory resourceItemFactory, int sortOrder, int pagesWanted, int pageSizeWanted) {
+        ArrayList<ItemLoadPage<GalleryItem>> resourceItemLoadPages = new ArrayList<>();
         for(int pageIdx = 0; pageIdx < pagesWanted; pageIdx++) {
-            ItemLoadPage page = new ItemLoadPage();
+            ItemLoadPage<GalleryItem> page = new ItemLoadPage<GalleryItem>();
             for(int pageSize = 0; pageSize < pageSizeWanted; pageSize++) {
                 switch(sortOrder) {
                     case PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT:
@@ -96,12 +93,12 @@ public class PiwigoResourceUtil {
         }
     }
 
-    public static List<GalleryItem> buildExpectedResult(boolean addHeader, boolean reverseOrder, List<ItemLoadPage> resourceItemLoadPages) {
+    public static List<GalleryItem> buildExpectedResult(boolean addHeader, boolean reverseOrder, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages) {
         boolean addedHeading = false;
         ArrayList<GalleryItem> expected = new ArrayList<>();
-        ListIterator<ItemLoadPage> iterator = resourceItemLoadPages.listIterator(reverseOrder?resourceItemLoadPages.size():0);
+        ListIterator<ItemLoadPage<GalleryItem>> iterator = resourceItemLoadPages.listIterator(reverseOrder?resourceItemLoadPages.size():0);
         while (reverseOrder != iterator.hasNext() || reverseOrder == iterator.hasPrevious()) {
-            ItemLoadPage page = reverseOrder?iterator.previous():iterator.next();
+            ItemLoadPage<GalleryItem> page = reverseOrder?iterator.previous():iterator.next();
             ArrayList<GalleryItem> pageOfItems = new ArrayList<>(page.getItems());
             if (addHeader && pageOfItems.size() > 0 && !addedHeading) {
                 addedHeading = true;

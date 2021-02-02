@@ -434,7 +434,6 @@ public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends
 
     private void insertNewTagToList(Tag newTag) {
         tagsModel.addItem(newTag);
-        tagsModel.sort();
         int firstIndexChanged = tagsModel.getItemIdx(newTag);
         getListAdapter().setItemSelected(newTag.getId());
         getListAdapter().notifyItemRangeInserted(firstIndexChanged, 1);

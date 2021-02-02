@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
 
-public class CategoryItemFactory extends GalleryItemFactory {
+public class CategoryItemFactory extends IdentifiableItemFactory {
     private Calendar lastAlteredCalendar = buildCalendar(2000,01,01);
 
     public CategoryItemFactory() {

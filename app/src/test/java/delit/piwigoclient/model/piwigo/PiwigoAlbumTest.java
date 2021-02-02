@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 import delit.libs.core.util.Logging;
 import delit.piwigoclient.test.CategoryItemFactory;
-import delit.piwigoclient.test.GalleryItemFactory;
+import delit.piwigoclient.test.IdentifiableItemFactory;
 import delit.piwigoclient.test.ItemLoadPage;
 import delit.piwigoclient.test.PiwigoResourceUtil;
 import delit.piwigoclient.test.ResourceItemFactory;
@@ -53,7 +53,7 @@ public class PiwigoAlbumTest {
         logger.log(Level.ALL, "Logger initialised");
         resourceItemFactory = new ResourceItemFactory();
         categoryItemFactory = new CategoryItemFactory();
-        GalleryItemFactory.resetId();
+        IdentifiableItemFactory.resetId();
     }
 
     @After
@@ -70,7 +70,7 @@ public class PiwigoAlbumTest {
     public void testItemReplacementJustResources() {
         int sortOrder = PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
         boolean reversed = false;
-        List<ItemLoadPage> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, 5, 3);
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, 5, 3);
         PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(5, 15));
         album.setAlbumSortOrder(sortOrder);
         album.setRetrieveChildAlbumsInReverseOrder(reversed);
@@ -296,7 +296,7 @@ public class PiwigoAlbumTest {
     }
 
     public void loadMixedOrder(int sortOrder, boolean reversed,  AlbumAction... actions) {
-        List<ItemLoadPage> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, 5, 3);
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, 5, 3);
         ArrayList<CategoryItem> categoryItemLoad = initialiseCategoryItemLoadData(sortOrder, 5);
         PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(5, 15));
         album.setAlbumSortOrder(sortOrder);
@@ -306,7 +306,7 @@ public class PiwigoAlbumTest {
         int loadCategoriesAfterPages = 3;
         boolean headingAdded = false;
         int pagesLoaded = 0;
-        for(ItemLoadPage resourceItemLoadPage : resourceItemLoadPages) {
+        for(ItemLoadPage<GalleryItem> resourceItemLoadPage : resourceItemLoadPages) {
             if(loadCategoriesAfterPages == pagesLoaded) {
                 loadCategoriesCheckingSortOrder(album, categoryItemLoad,true);
             }
@@ -333,12 +333,12 @@ public class PiwigoAlbumTest {
     }
 
     private static interface AlbumAction {
-        void doWithAlbumPostLoad(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, @Nullable ArrayList<CategoryItem> categoryItemLoad, @Nullable List<ItemLoadPage> resourceItemLoadPages, @Nullable List<GalleryItem> expectedResult);
+        void doWithAlbumPostLoad(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, @Nullable ArrayList<CategoryItem> categoryItemLoad, @Nullable List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, @Nullable List<GalleryItem> expectedResult);
     }
 
     public PiwigoAlbum<CategoryItem,GalleryItem> loadCategoriesFirst(int sortOrder, boolean reversed, AlbumAction... actions) {
 
-        List<ItemLoadPage> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, 5, 3);
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, 5, 3);
         ArrayList<CategoryItem> categoryItemLoad = initialiseCategoryItemLoadData(sortOrder, 5);
         PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(5, 15));
         album.setAlbumSortOrder(sortOrder);
@@ -360,9 +360,9 @@ public class PiwigoAlbumTest {
         return album;
     }
 
-    private void loadResourceItemPages(List<ItemLoadPage> resourceItemLoadPages, PiwigoAlbum<CategoryItem, GalleryItem> album, AlbumAction ... actions) {
+    private void loadResourceItemPages(List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, PiwigoAlbum<CategoryItem, GalleryItem> album, AlbumAction ... actions) {
         boolean headingAdded = false;
-        for(ItemLoadPage resourceItemLoadPage : resourceItemLoadPages) {
+        for(ItemLoadPage<GalleryItem> resourceItemLoadPage : resourceItemLoadPages) {
             if(!headingAdded && resourceItemLoadPage.getItems().size() > 0) {
                 album.addItem(ResourceItem.PICTURE_HEADING);
                 headingAdded= true;
@@ -376,7 +376,7 @@ public class PiwigoAlbumTest {
         }
     }
 
-    private List<GalleryItem> buildExpectedOutcome(ArrayList<CategoryItem> categoryItemLoad, List<ItemLoadPage> resourceItemLoadPages, boolean reverseOrder) {
+    private List<GalleryItem> buildExpectedOutcome(ArrayList<CategoryItem> categoryItemLoad, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, boolean reverseOrder) {
         ArrayList<GalleryItem> expected = new ArrayList<>();
         if(categoryItemLoad.size() > 0) {
             expected.add(CategoryItem.ALBUM_HEADING);
@@ -436,7 +436,7 @@ public class PiwigoAlbumTest {
     private static class MultiItemReplacementAction extends AlbumItemReplacementAction {
 
         @Override
-        public void doWithAlbumPostLoad(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, ArrayList<CategoryItem> categoryItemLoad, List<ItemLoadPage> resourceItemLoadPages, List<GalleryItem> expectedResult) {
+        public void doWithAlbumPostLoad(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, ArrayList<CategoryItem> categoryItemLoad, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, List<GalleryItem> expectedResult) {
             replaceXthCategory(album, categoryItemLoad, expectedResult, 0);
             replaceXthCategory(album, categoryItemLoad, expectedResult, 3);
             replaceXthResource(album, resourceItemLoadPages, expectedResult, 0);
@@ -447,7 +447,7 @@ public class PiwigoAlbumTest {
 
     private static class CategoryItemReplacementAction extends AlbumItemReplacementAction {
         @Override
-        public void doWithAlbumPostLoad(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, ArrayList<CategoryItem> categoryItemLoad, List<ItemLoadPage> resourceItemLoadPages, List<GalleryItem> expectedResult) {
+        public void doWithAlbumPostLoad(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, ArrayList<CategoryItem> categoryItemLoad, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, List<GalleryItem> expectedResult) {
             replaceXthCategory(album, categoryItemLoad, expectedResult, 0);
         }
     }
@@ -479,7 +479,7 @@ public class PiwigoAlbumTest {
             removeAndReplaceItem(album, categoryItemLoad.get(removeItemAtOffset), idxItemToRemove, expectedResult);
         }
 
-        protected void replaceXthResource(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, List<ItemLoadPage> resourceItemLoadPages, List<GalleryItem> expectedResult, int removeItemAtOffset) {
+        protected void replaceXthResource(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, List<GalleryItem> expectedResult, int removeItemAtOffset) {
             int idxItemToRemove;
             if(album.isRetrieveItemsInReverseOrder()) {
                 idxItemToRemove = album.getItemCount() -1 - removeItemAtOffset;
@@ -490,9 +490,9 @@ public class PiwigoAlbumTest {
             removeAndReplaceItem(album, itemToRemove, idxItemToRemove, expectedResult);
         }
 
-        private GalleryItem getResourceByLoadIdx(List<ItemLoadPage> resourceItemLoadPages, int removeItemAtOffset) {
+        private GalleryItem getResourceByLoadIdx(List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, int removeItemAtOffset) {
             int offset = 0;
-            for(ItemLoadPage loadPage : resourceItemLoadPages) {
+            for(ItemLoadPage<GalleryItem> loadPage : resourceItemLoadPages) {
                 if(removeItemAtOffset < offset + loadPage.getItems().size()) {
                     return loadPage.getItems().get(removeItemAtOffset - offset);
                 }
@@ -504,7 +504,7 @@ public class PiwigoAlbumTest {
 
     private static class ResourceItemReplacementAction extends AlbumItemReplacementAction {
         @Override
-        public void doWithAlbumPostLoad(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, ArrayList<CategoryItem> categoryItemLoad, List<ItemLoadPage> resourceItemLoadPages, List<GalleryItem> expectedResult) {
+        public void doWithAlbumPostLoad(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, ArrayList<CategoryItem> categoryItemLoad, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, List<GalleryItem> expectedResult) {
             // remove the first resource item
             replaceXthResource(album, resourceItemLoadPages, expectedResult, 0);
             // remove the third resource item

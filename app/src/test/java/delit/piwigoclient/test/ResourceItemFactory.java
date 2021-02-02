@@ -4,7 +4,7 @@ import java.util.Date;
 
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
-public class ResourceItemFactory extends GalleryItemFactory {
+public class ResourceItemFactory extends IdentifiableItemFactory {
 
 
     public ResourceItemFactory() {

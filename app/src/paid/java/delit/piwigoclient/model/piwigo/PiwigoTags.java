@@ -43,7 +43,7 @@ public class PiwigoTags<T extends Tag> extends IdentifiablePagedList<T> {
 
     @Override
     protected void sortItems(List<T> items) {
-        throw new UnsupportedOperationException("cannot sort the items");
+        Collections.sort(items, tagComparator);
     }
 
     public int getPageSources() {
@@ -78,31 +78,27 @@ public class PiwigoTags<T extends Tag> extends IdentifiablePagedList<T> {
         return false;
     }
 
-    public void sort() {
-        Collections.sort(getItems(), tagComparator);
-    }
-
     @Override
     public int addItemPage(int page, int pageSize, List<T> newItems) {
         throw new UnsupportedOperationException("use addItemPage specifying a page source indicator");
     }
 
     public int addItemPage(@IntRange(from = 0, to = 5) int pageSourceId, boolean preferExistingItems, int page, int pageSize, List<T> newItems) {
-        ArrayList<T> items = getItems();
+
         int realPage = (page * pageSources) + pageSourceId;
-        if (items.size() == 0) {
+        if (getItemCount() == 0) {
             super.addItemPage(realPage, pageSize, newItems);
         } else {
+            ArrayList<T> itemsToAdd = new ArrayList<>(newItems);
             if (preferExistingItems) {
                 // remove any items loaded into the store already from the new items as the admin items contain less information
-                newItems.removeAll(getItems());
+                itemsToAdd.removeAll(getItems());
             } else {
                 // remove any items loaded into the store already by the admin page so there are no duplicates
-                items.removeAll(newItems);
+                removeAll(itemsToAdd);
             }
-            super.addItemPage(realPage, pageSize, newItems);
+            super.addItemPage(realPage, pageSize, itemsToAdd);
         }
-        sort();
         return -1;
     }
 
@@ -113,11 +109,13 @@ public class PiwigoTags<T extends Tag> extends IdentifiablePagedList<T> {
      */
     public void addRandomItems(Collection<T> tags, boolean preferExistingItems) {
         if(preferExistingItems) {
-            tags.removeAll(getItems());
+            addMissingItems(tags);
         } else {
-            getItems().removeAll(tags);
+            removeAll(tags);
+            for(T tag : tags) {
+                addItem(tag);
+            }
         }
-        getItems().addAll(tags);
     }
 
     private static class TagComparator implements Comparator<Tag>, Serializable {
@@ -138,14 +136,14 @@ public class PiwigoTags<T extends Tag> extends IdentifiablePagedList<T> {
         }
     }
 
-    public static final Parcelable.Creator<PiwigoTags> CREATOR
-            = new Parcelable.Creator<PiwigoTags>() {
-        public PiwigoTags createFromParcel(Parcel in) {
-            return new PiwigoTags(in);
+    public static final Parcelable.Creator<PiwigoTags<?>> CREATOR
+            = new Parcelable.Creator<PiwigoTags<?>>() {
+        public PiwigoTags<?> createFromParcel(Parcel in) {
+            return new PiwigoTags<>(in);
         }
 
-        public PiwigoTags[] newArray(int size) {
-            return new PiwigoTags[size];
+        public PiwigoTags<?>[] newArray(int size) {
+            return new PiwigoTags<?>[size];
         }
     };
 }

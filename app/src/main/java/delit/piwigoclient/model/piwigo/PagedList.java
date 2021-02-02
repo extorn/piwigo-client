@@ -423,7 +423,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return changed;
     }
 
-    public boolean addMissingItems(List<? extends T> newItems) {
+    public boolean addMissingItems(Collection<? extends T> newItems) {
         if (newItems == null) {
             return false;
         }

@@ -14,12 +14,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import delit.libs.core.util.Logging;
-import delit.piwigoclient.test.GalleryItemFactory;
+import delit.piwigoclient.test.IdentifiableItemFactory;
 import delit.piwigoclient.test.ItemLoadPage;
 import delit.piwigoclient.test.PiwigoResourceUtil;
 import delit.piwigoclient.test.ResourceItemFactory;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
 
 public class PiwigoFavoritesTest {
     private static MockedStatic<Logging> mockLogging;
@@ -42,7 +42,7 @@ public class PiwigoFavoritesTest {
     public void setUp() throws Exception {
         logger.log(Level.ALL, "Logger initialised");
         resourceItemFactory = new ResourceItemFactory();
-        GalleryItemFactory.resetId();
+        IdentifiableItemFactory.resetId();
     }
 
     @After
@@ -71,14 +71,14 @@ public class PiwigoFavoritesTest {
     }
 
     private PiwigoFavorites loadResourcePages(boolean reversed) {
-        List<ItemLoadPage> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, 5, 3);
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, 5, 3);
 
         int photoCount = 20;
         PiwigoFavorites.FavoritesSummaryDetails favoritesSummaryDetails = new PiwigoFavorites.FavoritesSummaryDetails(photoCount);
         PiwigoFavorites favs = new PiwigoFavorites(favoritesSummaryDetails);
         favs.setRetrieveItemsInReverseOrder(reversed);
 
-        for(ItemLoadPage resourceItemLoadPage : resourceItemLoadPages) {
+        for(ItemLoadPage<GalleryItem> resourceItemLoadPage : resourceItemLoadPages) {
             favs.addItemPage(resourceItemLoadPage.getPageIdx(), resourceItemLoadPage.getItems().size(), resourceItemLoadPage.getItems());
         }
 
@@ -87,7 +87,7 @@ public class PiwigoFavoritesTest {
         return favs;
     }
 
-    private List<GalleryItem> buildExpectedOutcome(List<ItemLoadPage> resourceItemLoadPages, boolean reverseOrder) {
+    private List<GalleryItem> buildExpectedOutcome(List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, boolean reverseOrder) {
         return PiwigoResourceUtil.buildExpectedResult(false, reverseOrder, resourceItemLoadPages);
     }
 

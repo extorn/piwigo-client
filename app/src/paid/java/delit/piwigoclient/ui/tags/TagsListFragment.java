@@ -418,7 +418,6 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
 
     protected void onTagCreated(Tag newTag) {
         tagsModel.addItem(newTag);
-        tagsModel.sort();
         int firstIndexChanged = tagsModel.getItemIdx(newTag);
         viewAdapter.notifyItemRangeInserted(firstIndexChanged, 1);
     }

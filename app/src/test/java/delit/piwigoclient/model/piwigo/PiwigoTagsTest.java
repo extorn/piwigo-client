@@ -1,5 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
+import androidx.annotation.NonNull;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,10 +16,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import delit.libs.core.util.Logging;
-import delit.piwigoclient.test.GalleryItemFactory;
+import delit.piwigoclient.test.IdentifiableItemFactory;
 import delit.piwigoclient.test.ItemLoadPage;
-import delit.piwigoclient.test.PiwigoResourceUtil;
-import delit.piwigoclient.test.ResourceItemFactory;
+import delit.piwigoclient.test.PiwigoTagUtil;
+import delit.piwigoclient.test.PiwigoTagUtil;
+import delit.piwigoclient.test.TagFactory;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -26,7 +29,7 @@ public class PiwigoTagsTest {
     //NOTE: this is being ignored at the moment!
     //Adding this doesn't seem to help.  -Djava.util.logging.config.file=src/test/resources/logging.properties
     private Logger logger = Logger.getLogger(PiwigoTagsTest.class.getName());
-    private ResourceItemFactory resourceItemFactory;
+    private TagFactory tagFactory;
 
     @BeforeClass
     public static void beforeClass() {
@@ -41,8 +44,8 @@ public class PiwigoTagsTest {
     @Before
     public void setUp() throws Exception {
         logger.log(Level.ALL, "Logger initialised");
-        resourceItemFactory = new ResourceItemFactory();
-        GalleryItemFactory.resetId();
+        tagFactory = new TagFactory();
+        IdentifiableItemFactory.resetId();
     }
 
     @After
@@ -55,39 +58,119 @@ public class PiwigoTagsTest {
     }
 
     @Test
-    public void testSortOrder() {
-        PiwigoTags tags = loadResourcePages(false);
-        List<GalleryItem> originalOrder = new ArrayList<>(tags.getItems());
+    public void testSortOrderSingleSource() {
+        PiwigoTags<Tag> tags = loadTagPages(false, new TagLoadAction(0, false));
+        List<Tag> originalOrder = new ArrayList<>(tags.getItems());
         tags.setRetrieveItemsInReverseOrder(!tags.isRetrieveItemsInReverseOrder());
-        PiwigoResourceUtil.assertHasBeenReversed(originalOrder, tags.getItems(), true, true);
+        PiwigoTagUtil.assertHasBeenReversed(originalOrder, tags.getItems());
     }
 
     @Test
-    public void testSortOrderReversed() {
-        PiwigoTags tags = loadResourcePages(true);
-        List<GalleryItem> originalOrder = new ArrayList<>(tags.getItems());
+    public void testSortOrderReversedSingleSource() {
+        PiwigoTags<Tag> tags = loadTagPages(true, new TagLoadAction(0, false));
+        List<Tag> originalOrder = new ArrayList<>(tags.getItems());
         tags.setRetrieveItemsInReverseOrder(!tags.isRetrieveItemsInReverseOrder());
-        PiwigoResourceUtil.assertHasBeenReversed(originalOrder, tags.getItems(),true, true);
+        PiwigoTagUtil.assertHasBeenReversed(originalOrder, tags.getItems());
     }
 
-    private PiwigoTags loadResourcePages(boolean reversed) {
-        List<ItemLoadPage> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, 5, 3);
+    @Test
+    public void testSortOrderPreferFirstSource() {
+        TagLoadAction page1 = new TagLoadAction(0, false);
+        TagLoadAction page2 = new TagLoadAction(1, true);
+        page2.injectFrom(page1, 0, 0);
+        PiwigoTags<Tag> tags = loadTagPages(false, page1, page2);
+        List<Tag> originalOrder = new ArrayList<>(tags.getItems());
+        tags.setRetrieveItemsInReverseOrder(!tags.isRetrieveItemsInReverseOrder());
+        PiwigoTagUtil.assertHasBeenReversed(originalOrder, tags.getItems());
+    }
 
-        int photoCount = 20;
-        PiwigoTags tags = new PiwigoTags();
-        tags.setRetrieveItemsInReverseOrder(reversed);
+    @Test
+    public void testSortOrderReversedPreferFirstSource() {
+        TagLoadAction page1 = new TagLoadAction(0, false);
+        TagLoadAction page2 = new TagLoadAction(1, true);
+        PiwigoTags<Tag> tags = loadTagPages(true, page1, page2);
+        List<Tag> originalOrder = new ArrayList<>(tags.getItems());
+        tags.setRetrieveItemsInReverseOrder(!tags.isRetrieveItemsInReverseOrder());
+        PiwigoTagUtil.assertHasBeenReversed(originalOrder, tags.getItems());
+    }
 
-        for(ItemLoadPage resourceItemLoadPage : resourceItemLoadPages) {
-            tags.addItemPage(resourceItemLoadPage.getPageIdx(), resourceItemLoadPage.getItems().size(), resourceItemLoadPage.getItems());
+    @Test
+    public void testSortOrderPreferNextSource() {
+        TagLoadAction page1 = new TagLoadAction(0, false);
+        TagLoadAction page2 = new TagLoadAction(1, false);
+        page2.injectFrom(page1, 0, 0);
+        PiwigoTags<Tag> tags = loadTagPages(false, page1, page2);
+        List<Tag> originalOrder = new ArrayList<>(tags.getItems());
+        tags.setRetrieveItemsInReverseOrder(!tags.isRetrieveItemsInReverseOrder());
+        PiwigoTagUtil.assertHasBeenReversed(originalOrder, tags.getItems());
+    }
+
+    @Test
+    public void testSortOrderReversedPreferNextSource() {
+        TagLoadAction page1 = new TagLoadAction(0, false);
+        TagLoadAction page2 = new TagLoadAction(1, false);
+        PiwigoTags<Tag> tags = loadTagPages(true, page1, page2);
+        List<Tag> originalOrder = new ArrayList<>(tags.getItems());
+        tags.setRetrieveItemsInReverseOrder(!tags.isRetrieveItemsInReverseOrder());
+        PiwigoTagUtil.assertHasBeenReversed(originalOrder, tags.getItems());
+    }
+
+    private class TagLoadAction {
+
+        private final ArrayList<ItemLoadPage<Tag>> itemLoadPages;
+        private int loadSourceId;
+        private boolean preferExistingItems;
+        private int pages = 5;
+        private int itemsPerPage = 3;
+
+        public TagLoadAction(int loadSourceId, boolean preferExistingItems) {
+            this.loadSourceId = loadSourceId;
+            this.preferExistingItems = preferExistingItems;
+            itemLoadPages = PiwigoTagUtil.initialiseTagItemLoadPages(tagFactory,pages, itemsPerPage);
         }
 
-        List<GalleryItem> expectedResult = buildExpectedOutcome(resourceItemLoadPages, tags.isRetrieveItemsInReverseOrder());
-        assertArrayEquals("Final gallery should match expected content", expectedResult.toArray(), tags.getItems().toArray());
+        public TagLoadAction(int loadSourceId, boolean preferExistingItems, int pages, int itemsPerPage) {
+            this.loadSourceId = loadSourceId;
+            this.preferExistingItems = preferExistingItems;
+            this.pages = pages;
+            this.itemsPerPage = itemsPerPage;
+            itemLoadPages = PiwigoTagUtil.initialiseTagItemLoadPages(tagFactory,pages, itemsPerPage);
+        }
+
+        public ArrayList<ItemLoadPage<Tag>> getItemLoadPages() {
+            return itemLoadPages;
+        }
+
+        private void loadTagsPage(PiwigoTags<Tag> tags) {
+            for(ItemLoadPage<Tag> itemLoadPage : itemLoadPages) {
+                tags.addItemPage(loadSourceId, preferExistingItems, itemLoadPage.getPageIdx(), itemLoadPage.getItems().size(), itemLoadPage.getItems());
+            }
+            List<Tag> expectedResult = buildExpectedOutcome(tags, itemLoadPages, preferExistingItems);
+            assertArrayEquals("Final list should match expected content", expectedResult.toArray(), tags.getItems().toArray());
+        }
+
+        public void injectFrom(TagLoadAction page1, int srcPage, int srcPageIdx) {
+            Tag item = page1.getItemLoadPages().get(srcPage).getItems().get(srcPageIdx);
+            itemLoadPages.add(new ItemLoadPage<>(item));
+        }
+    }
+
+    private PiwigoTags<Tag> loadTagPages(boolean reversed, TagLoadAction ... loadActions) {
+
+
+        PiwigoTags<Tag> tags = new PiwigoTags<>();
+        tags.setRetrieveItemsInReverseOrder(reversed);
+
+        for(TagLoadAction action : loadActions) {
+            action.loadTagsPage(tags);
+        }
+
         return tags;
     }
 
-    private List<GalleryItem> buildExpectedOutcome(List<ItemLoadPage> resourceItemLoadPages, boolean reverseOrder) {
-        return PiwigoResourceUtil.buildExpectedResult(false, reverseOrder, resourceItemLoadPages);
+
+    private List<Tag> buildExpectedOutcome(PiwigoTags<Tag> tags, List<ItemLoadPage<Tag>> itemLoadPages, boolean preferExistingContent) {
+        return PiwigoTagUtil.buildExpectedResult(tags, itemLoadPages, preferExistingContent);
     }
 
 }

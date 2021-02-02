@@ -3,7 +3,7 @@ package delit.piwigoclient.test;
 import java.util.Calendar;
 import java.util.Date;
 
-public class GalleryItemFactory {
+public class IdentifiableItemFactory {
     protected Calendar createDateCalendar = buildCalendar(2000,01,01);
     protected Calendar alterDateCalendar = buildCalendar(2000,01,01);
     protected static long nextItemId = 1;
@@ -13,7 +13,7 @@ public class GalleryItemFactory {
         nextItemId = 1;
     }
 
-    public GalleryItemFactory(String type) {
+    public IdentifiableItemFactory(String type) {
         this.type = type;
     }
 
