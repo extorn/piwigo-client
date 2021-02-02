@@ -21,6 +21,10 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
     public BaseRecyclerViewAdapterPreferences() {
     }
 
+    public BaseRecyclerViewAdapterPreferences(Bundle bundle) {
+        loadFromBundle(bundle);
+    }
+
     public BaseRecyclerViewAdapterPreferences<Q> readonly() {
         readonly = true;
         return this;
@@ -75,6 +79,7 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
     protected String getBundleName() {
         return "BaseRecyclerViewAdapterPreferences";
     }
+
 
     public final Q loadFromBundle(Bundle parent) {
         if(parent == null) {
