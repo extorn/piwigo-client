@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 
@@ -57,6 +58,7 @@ public class FileSelectActivity<A extends FileSelectActivity<A, AUIH>, AUIH exte
 
     public static final String INTENT_SELECTED_FILES = "FileSelectActivity.selectedFiles";
     public static final String ACTION_TIME_MILLIS = "FileSelectActivity.actionTimeMillis";
+    public static final String STATE_ADAPTER_PREFS = "fsa.adapterPrefs";
     public static String INTENT_DATA = "configData";
     private FolderItemViewAdapterPreferences folderItemSelectPrefs;
 
@@ -84,6 +86,9 @@ public class FileSelectActivity<A extends FileSelectActivity<A, AUIH>, AUIH exte
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        if(folderItemSelectPrefs != null) {
+            folderItemSelectPrefs.storeToBundle(outState);
+        }
         if(BuildConfig.DEBUG) {
             BundleUtils.logSize("Current File Select Activity", outState);
         }
@@ -92,6 +97,9 @@ public class FileSelectActivity<A extends FileSelectActivity<A, AUIH>, AUIH exte
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState != null) {
+            folderItemSelectPrefs = new FolderItemViewAdapterPreferences(savedInstanceState);
+        }
 
         if (hasNotAcceptedEula()) {
             finish();
