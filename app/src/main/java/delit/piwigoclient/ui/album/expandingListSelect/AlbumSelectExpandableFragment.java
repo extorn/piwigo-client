@@ -105,8 +105,7 @@ public class AlbumSelectExpandableFragment<F extends AlbumSelectExpandableFragme
             return;
         }
         actionId = in.getInt(STATE_ACTION_ID);
-        viewPrefs = createEmptyPrefs();
-        viewPrefs.loadFromBundle(in);
+        viewPrefs = createPrefs(in);
         in.getInt(STATE_ACTION_ID);
         currentSelection = BundleUtils.getLongHashSet(in, STATE_CURRENT_SELECTION);
         initialSelection = BundleUtils.getLongHashSet(in, STATE_INITIAL_SELECTION);
@@ -118,8 +117,8 @@ public class AlbumSelectExpandableFragment<F extends AlbumSelectExpandableFragme
         selectToggle = in.getBoolean(STATE_SELECT_TOGGLE);
     }
 
-    protected ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences createEmptyPrefs() {
-        return new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences();
+    protected ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences createPrefs(Bundle b) {
+        return new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences(b);
     }
 
     @Override
