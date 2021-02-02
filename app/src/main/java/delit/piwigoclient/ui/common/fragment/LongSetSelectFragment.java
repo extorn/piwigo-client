@@ -351,9 +351,4 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         }
         setToggleSelectionButtonText();
     }
-
-    public boolean isEditingEnabled() {
-        return !viewPrefs.isReadOnly();
-    }
-
 }

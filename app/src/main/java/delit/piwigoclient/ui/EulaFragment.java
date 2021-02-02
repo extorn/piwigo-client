@@ -31,8 +31,8 @@ import delit.piwigoclient.ui.events.EulaNotAgreedEvent;
  */
 
 public class EulaFragment<F extends EulaFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
-    public static EulaFragment newInstance() {
-        EulaFragment fragment = new EulaFragment();
+    public static EulaFragment<?,?> newInstance() {
+        EulaFragment<?,?> fragment = new EulaFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         return fragment;
     }

@@ -93,22 +93,18 @@ public class MainActivity extends AbstractMainActivity {
 //        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
 //            prefs.deletable();
 //        }
-        TagsListFragment fragment = TagsListFragment.newInstance(prefs);
+        TagsListFragment<?,?> fragment = TagsListFragment.newInstance(prefs);
         showFragmentNow(fragment);
     }
 
     private void showTagSelectionFragment(int actionId, TagRecyclerViewAdapter.TagViewAdapterPreferences prefs, HashSet<Long> initialSelection, HashSet<Tag> unsavedTags) {
-        TagSelectFragment fragment = TagSelectFragment.newInstance(prefs, actionId, initialSelection, unsavedTags);
+        TagSelectFragment<?,?> fragment = TagSelectFragment.newInstance(prefs, actionId, initialSelection, unsavedTags);
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(TagSelectionNeededEvent event) {
-        TagRecyclerViewAdapter.TagViewAdapterPreferences prefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        prefs.setAllowItemAddition(true);
-        if(!event.isAllowEditing()) {
-            prefs.readonly();
-        }
+        TagRecyclerViewAdapter.TagViewAdapterPreferences prefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         showTagSelectionFragment(event.getActionId(), prefs , event.getInitialSelection(), event.getNewUnsavedTags());
     }
 
@@ -144,7 +140,7 @@ public class MainActivity extends AbstractMainActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ViewTagEvent event) {
-        ViewTagFragment fragment = ViewTagFragment.newInstance(event.getTag());
+        ViewTagFragment<?,?> fragment = ViewTagFragment.newInstance(event.getTag());
         showFragmentNow(fragment);
     }
 
@@ -153,7 +149,7 @@ public class MainActivity extends AbstractMainActivity {
         if (event.isHandled()) {
             return;
         }
-        UploadJobStatusDetailsFragment fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
+        UploadJobStatusDetailsFragment<?,?> fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
         showFragmentNow(fragment);
     }
 

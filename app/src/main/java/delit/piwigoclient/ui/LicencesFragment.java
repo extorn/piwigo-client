@@ -22,8 +22,8 @@ import delit.piwigoclient.ui.common.fragment.MyFragment;
  */
 
 public class LicencesFragment<F extends LicencesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
-    public static LicencesFragment newInstance() {
-        LicencesFragment fragment = new LicencesFragment();
+    public static LicencesFragment<?,?> newInstance() {
+        LicencesFragment<?,?> fragment = new LicencesFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         return fragment;
     }

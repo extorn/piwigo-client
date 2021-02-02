@@ -137,7 +137,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
     private long userGetPermissionsCallId;
 
     public static UserFragment newInstance(User user) {
-        UserFragment fragment = new UserFragment();
+        UserFragment<?,?> fragment = new UserFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = new Bundle();
         args.putParcelable(ARG_USER, user);
@@ -834,11 +834,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
     protected synchronized void populateAlbumPermissionsList(HashSet<Long> initialSelection, HashSet<Long> indirectAlbumPermissions) {
         AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter) albumPermissionsField.getAdapter();
         if (adapter == null) {
-            AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences();
-            adapterPreferences.setFlattenAlbumHierarchy(true);
-            adapterPreferences.setShowThumbnails(false);
-            adapterPreferences.selectable(true, false);
-            adapterPreferences.readonly();
+            AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences(true, false, false, true, false);
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableGalleries, indirectAlbumPermissions, adapterPreferences);
             availableItemsAdapter.linkToListView(albumPermissionsField, initialSelection, initialSelection);
         } else if (!CollectionUtils.equals(adapter.getSelectedItems(), initialSelection)

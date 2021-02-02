@@ -56,7 +56,7 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH exten
     private SlideshowDriver currentSlideshowDriver = new SlideshowDriver();
 
     public static <F extends SlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> F  newInstance(Class<ViewModelContainer> modelType, ResourceContainer<T, GalleryItem> gallery, GalleryItem currentGalleryItem) {
-        F fragment = (F) new SlideshowFragment();
+        F fragment = (F) new SlideshowFragment<>();
         fragment.setArguments(buildArgs(modelType, gallery, currentGalleryItem));
         return fragment;
     }

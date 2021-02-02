@@ -114,7 +114,7 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
     private int selectUsersActionId;
 
     public static GroupFragment newInstance(Group group) {
-        GroupFragment fragment = new GroupFragment();
+        GroupFragment<?,?> fragment = new GroupFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = new Bundle();
         args.putParcelable(CURRENT_GROUP, group);
@@ -464,7 +464,7 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                GroupFragment fragment = getUiHelper().getParent();
+                GroupFragment<?,?> fragment = getUiHelper().getParent();
                 fragment.deleteGroupNow(group);
             }
         }
@@ -695,11 +695,7 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
     private void populateAlbumPermissionsList() {
         AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter) albumAccessRightsField.getAdapter();
         if (adapter == null) {
-            AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences();
-            adapterPreferences.setFlattenAlbumHierarchy(true);
-            adapterPreferences.setShowThumbnails(false);
-            adapterPreferences.selectable(true, false);
-            adapterPreferences.readonly();
+            AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences(true, false, false, true, false);
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableGalleries, adapterPreferences);
             availableItemsAdapter.linkToListView(albumAccessRightsField, getLatestAlbumPermissions(), getLatestAlbumPermissions());
         } else {

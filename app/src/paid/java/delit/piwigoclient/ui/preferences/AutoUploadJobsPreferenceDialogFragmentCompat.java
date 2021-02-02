@@ -31,10 +31,18 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewRequestedEvent;
+import delit.piwigoclient.ui.permissions.users.UserRecyclerViewAdapter;
 
 public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
     private ListView itemListView;
     private AutoUploadJobsListAdapter adapter;
+    private AutoUploadJobsListAdapterPreferences viewPrefs;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        viewPrefs = new AutoUploadJobsListAdapterPreferences(savedInstanceState);
+    }
 
     @Override
     public AutoUploadJobsPreference findPreference(@NonNull CharSequence key) {
@@ -174,7 +182,6 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
             uploadJobConfigs.add(new AutoUploadJobConfig((int) Math.rint(jobId)));
         }
 
-        BaseRecyclerViewAdapterPreferences viewPrefs = new BaseRecyclerViewAdapterPreferences();
         adapter = new AutoUploadJobsListAdapter(uploadJobConfigs, viewPrefs);
 
         if(itemListView != null) {
@@ -182,9 +189,31 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         }
     }
 
-    private class AutoUploadJobsListAdapter extends MultiSourceListAdapter<AutoUploadJobConfig, BaseRecyclerViewAdapterPreferences> {
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(adapter != null) {
+            adapter.getAdapterPrefs().storeToBundle(outState);
+        }
+    }
 
-        public AutoUploadJobsListAdapter(ArrayList<AutoUploadJobConfig> availableItems, BaseRecyclerViewAdapterPreferences adapterPrefs) {
+    protected static class AutoUploadJobsListAdapterPreferences extends BaseRecyclerViewAdapterPreferences<AutoUploadJobsListAdapterPreferences>{
+
+        public AutoUploadJobsListAdapterPreferences(){}
+
+        public AutoUploadJobsListAdapterPreferences(Bundle bundle) {
+            loadFromBundle(bundle);
+        }
+
+        @Override
+        protected String getBundleName() {
+            return "AutoUploadJobsListAdapterPreferences";
+        }
+    }
+
+    private class AutoUploadJobsListAdapter extends MultiSourceListAdapter<AutoUploadJobConfig, AutoUploadJobsListAdapterPreferences> {
+
+        public AutoUploadJobsListAdapter(ArrayList<AutoUploadJobConfig> availableItems, AutoUploadJobsListAdapterPreferences adapterPrefs) {
             super(availableItems, adapterPrefs);
         }
 

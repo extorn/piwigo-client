@@ -320,7 +320,8 @@
     <string name="preference_page_upload">Uploaden</string>
     <string name="preference_upload_category_data_upload_display">Visuele instellingen</string>
     <string name="preference_upload_category_data_upload">Gegevens uploaden</string>
-    <string name="preference_upload_category_pre_data_upload_compression">Pre-upload compressie</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression">Pre-upload beeldcompressie</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression">Videocompressie vooraf uploaden</string>
     <string name="preference_upload_category_advanced">Geavanceerd</string>
 
     

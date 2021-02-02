@@ -46,7 +46,7 @@ public class UsernameSelectFragment<F extends UsernameSelectFragment<F,FUIH>, FU
     private HashSet<Long> indirectSelection;
 
     public static UsernameSelectFragment newInstance(UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
-        UsernameSelectFragment fragment = new UsernameSelectFragment();
+        UsernameSelectFragment<?,?> fragment = new UsernameSelectFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if (indirectSelection != null) {

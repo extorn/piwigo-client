@@ -42,7 +42,7 @@ public class DebugCompressionListener implements ExoPlayerCompression.Compressio
             DisplayUtils.runOnUiThread(() -> {
                 uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression started");
                 startCompressionAt = System.currentTimeMillis();
-                AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
+                AbstractUploadFragment<?,?> fragment = (AbstractUploadFragment) uiHelper.getParent();
                 fragment.getFilesForUploadViewAdapter().updateCompressionProgress(inputFile, outputFile, 0);
                 linkedView.setEnabled(false);
             });
@@ -56,7 +56,7 @@ public class DebugCompressionListener implements ExoPlayerCompression.Compressio
                 linkedView.setEnabled(true);
                 Logging.log(Log.ERROR, TAG, "Video Compression failed");
                 Logging.recordException(e);
-                AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
+                AbstractUploadFragment<?,?> fragment = (AbstractUploadFragment) uiHelper.getParent();
                 fragment.getFilesForUploadViewAdapter().updateCompressionProgress(inputFile, outputFile, 0);
                 IOUtils.delete(uiHelper.getAppContext(), outputFile);
             });
@@ -68,7 +68,7 @@ public class DebugCompressionListener implements ExoPlayerCompression.Compressio
             DisplayUtils.runOnUiThread(() -> {
                 uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression finished");
                 linkedView.setEnabled(true);
-                AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
+                AbstractUploadFragment<?,?> fragment = (AbstractUploadFragment) uiHelper.getParent();
                 fragment.getFilesForUploadViewAdapter().updateCompressionProgress(inputFile, outputFile, 0);
                 Uri compressedFileUri = IOUtils.addFileToMediaStore(uiHelper.getAppContext(), outputFile);
                 //FIXME - This works because even though the compressed file (media store) uri is not written to, it is one already (I think!).
@@ -87,7 +87,7 @@ public class DebugCompressionListener implements ExoPlayerCompression.Compressio
                 }
                 return;
             }
-            AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
+            AbstractUploadFragment<?,?> fragment = (AbstractUploadFragment) uiHelper.getParent();
             FilesToUploadRecyclerViewAdapter adapter = fragment.getFilesForUploadViewAdapter();
             if(adapter != null) {
                 adapter.updateCompressionProgress(inputFile, outputFile, (int) Math.rint(compressionProgress));

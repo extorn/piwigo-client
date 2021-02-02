@@ -13,7 +13,7 @@ import delit.piwigoclient.ui.upload.list.UploadDataItem;
 
 public class UploadFragment<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends AbstractUploadFragment<F,FUIH> {
     public static UploadFragment newInstance(CategoryItemStub currentGallery, int actionId) {
-        UploadFragment fragment = new UploadFragment<>();
+        UploadFragment<?,?> fragment = new UploadFragment<>();
         fragment.setArguments(fragment.buildArgs(currentGallery, actionId));
         return fragment;
     }

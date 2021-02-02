@@ -15,8 +15,8 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
     private boolean multiSelectionEnabled;
     private boolean allowItemDeletion;
     private boolean allowItemAddition;
-    private boolean enabled;
-    private boolean readonly;
+    private boolean enabled; //Whether the items are clickable for example
+    private boolean readonly; // if the selection can be altered, items added or removed.
 
     protected BaseRecyclerViewAdapterPreferences() {
     }
@@ -107,6 +107,10 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
         readonly = b.getBoolean("readonly");
     }
 
+    /**
+     * if the selection can be altered, items added or removed.
+     * @return
+     */
     public boolean isReadOnly() {
         return readonly;
     }
@@ -143,10 +147,19 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
         return allowItemDeletion && !readonly;
     }
 
+    /**
+     * If items can be clicked. NOTE readonly will override and disable enabled
+     * Enabled is just to control clickablity of item in the list perhaps
+     * @return (!readonly && enabled)
+     */
     public boolean isEnabled() {
         return enabled && !readonly;
     }
 
+    /**
+     * Allow click on item to work. Note: if readonly, this won't have an effect
+     * @param enabled
+     */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }

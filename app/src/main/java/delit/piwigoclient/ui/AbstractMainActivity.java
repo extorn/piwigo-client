@@ -438,7 +438,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
                     newFragment = new SlideshowFragment<>();
                     newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
                 } else if (allowVideoPlayback) {
-                    newFragment = new AlbumVideoItemFragment();
+                    newFragment = new AlbumVideoItemFragment<>();
                     newFragment.setArguments(AlbumVideoItemFragment.buildStandaloneArgs(event.getModelType(), albumOpen.getId(), selectedItem.getId(), 1, 1, 1, true));
                     ((AlbumVideoItemFragment) newFragment).onPageSelected();
                 }
@@ -717,10 +717,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final UsernameSelectionNeededEvent event) {
-        UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs = new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        if (!event.isAllowEditing()) {
-            prefs.readonly();
-        }
+        UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs = new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences(event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         UsernameSelectFragment<?,?> fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
@@ -744,10 +741,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final GroupSelectionNeededEvent event) {
-        GroupRecyclerViewAdapter.GroupViewAdapterPreferences prefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        if (!event.isAllowEditing()) {
-            prefs.readonly();
-        }
+        GroupRecyclerViewAdapter.GroupViewAdapterPreferences prefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences(event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         GroupSelectFragment<?,?> fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
         showFragmentNow(fragment);
     }

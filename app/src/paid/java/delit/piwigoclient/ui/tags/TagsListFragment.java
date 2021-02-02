@@ -72,7 +72,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
     private RecyclerView recyclerView;
 
     public static TagsListFragment newInstance(TagRecyclerViewAdapter.TagViewAdapterPreferences viewPrefs) {
-        TagsListFragment fragment = new TagsListFragment();
+        TagsListFragment<?,?> fragment = new TagsListFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(viewPrefs.storeToBundle(new Bundle()));
         return fragment;
@@ -92,7 +92,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        viewPrefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences().loadFromBundle(getArguments());
+        viewPrefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(savedInstanceState);
         super.onCreate(savedInstanceState);
     }
 
@@ -118,7 +118,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
             if(!isSessionDetailsChanged()) {
                 tagsModel = savedInstanceState.getParcelable(TAGS_MODEL);
             }
-            viewPrefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences().loadFromBundle(savedInstanceState);
+            viewPrefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(savedInstanceState);
         }
         if(tagsModel == null) {
             tagsModel = new PiwigoTags();

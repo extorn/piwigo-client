@@ -64,9 +64,7 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
     private UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences viewPrefs;
 
     public static UsersListFragment<?,?> newInstance() {
-        UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences prefs = new UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences().deletable();
-        prefs.setAllowItemAddition(true);
-        prefs.setEnabled(true);
+        UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences prefs = new UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences(true);
         Bundle args = new Bundle();
         prefs.storeToBundle(args);
         UsersListFragment<?,?> fragment = new UsersListFragment<>();
@@ -82,7 +80,7 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
             b = getArguments();
         }
         if (b != null) {
-            viewPrefs = new UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences().loadFromBundle(b);
+            viewPrefs = new UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences(b);
         }
         super.onCreate(savedInstanceState);
     }
@@ -121,7 +119,7 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
         if (isSessionDetailsChanged()) {
             usersModel.clear();
         } else if (savedInstanceState != null) {
-            viewPrefs = new UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
+            viewPrefs = new UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences(savedInstanceState);
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);

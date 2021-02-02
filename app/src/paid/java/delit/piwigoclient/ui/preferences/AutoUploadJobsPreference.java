@@ -31,7 +31,6 @@ import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 
 public class AutoUploadJobsPreference extends DialogPreference {
 
-    private static final String STATE_ACTIVE_VALS = "active_state";
     private boolean mValueSet;
     private String mValue;
     private ActiveState currentState;

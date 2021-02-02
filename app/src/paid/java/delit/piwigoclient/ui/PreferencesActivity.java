@@ -12,16 +12,16 @@ import org.greenrobot.eventbus.ThreadMode;
 import delit.libs.ui.util.BundleUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.AppPreferences;
-import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
+import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewRequestedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.preferences.AutoUploadJobPreferenceFragment;
 import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
 
-public class PreferencesActivity extends AbstractPreferencesActivity {
+public class PreferencesActivity<A extends PreferencesActivity<A,AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends AbstractPreferencesActivity<A,AUIH> {
 
     private static final String TAG = "PrefAct";
 
@@ -52,13 +52,13 @@ public class PreferencesActivity extends AbstractPreferencesActivity {
         if (event.isHandled()) {
             return;
         }
-        UploadJobStatusDetailsFragment fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
+        UploadJobStatusDetailsFragment<?,?> fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AutoUploadJobViewRequestedEvent event) {
-        AutoUploadJobPreferenceFragment fragment = AutoUploadJobPreferenceFragment.newInstance(event.getActionId(), event.getJobId());
+        AutoUploadJobPreferenceFragment<?,?> fragment = AutoUploadJobPreferenceFragment.newInstance(event.getActionId(), event.getJobId());
         showFragmentNow(fragment);
     }
 
@@ -66,18 +66,8 @@ public class PreferencesActivity extends AbstractPreferencesActivity {
     public void onEvent(ExpandingAlbumSelectionNeededEvent event) {
 //        ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs = new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences();
 //        AlbumSelectExpandableFragment f = AlbumSelectExpandableFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
-        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences();
-        if(event.isAllowEditing()) {
-            prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        }
-        if(event.getInitialRoot() != null) {
-            prefs.withInitialRoot(new CategoryItemStub("???", event.getInitialRoot()));
-        } else {
-            prefs.withInitialRoot(CategoryItemStub.ROOT_GALLERY);
-        }
-        prefs.setAllowItemAddition(true);
-        prefs.withInitialSelection(event.getInitialSelection());
-        RecyclerViewCategoryItemSelectFragment f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
+        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences(event.getInitialRoot(), event.isAllowEditing(), event.getInitialSelection(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        RecyclerViewCategoryItemSelectFragment<?,?> f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
         showFragmentNow(f);
     }
 

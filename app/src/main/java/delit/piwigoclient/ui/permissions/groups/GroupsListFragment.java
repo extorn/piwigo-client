@@ -64,13 +64,13 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
     private GroupRecyclerViewAdapter viewAdapter;
     private GroupRecyclerViewAdapter.GroupViewAdapterPreferences viewPrefs;
 
-    public static GroupsListFragment newInstance() {
+    public static GroupsListFragment<?,?> newInstance() {
         GroupRecyclerViewAdapter.GroupViewAdapterPreferences prefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences().deletable();
         prefs.setAllowItemAddition(true);
         prefs.setEnabled(true);
         Bundle args = new Bundle();
         prefs.storeToBundle(args);
-        GroupsListFragment fragment = new GroupsListFragment();
+        GroupsListFragment<?,?> fragment = new GroupsListFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(args);
         return fragment;
@@ -83,7 +83,7 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
             b = getArguments();
         }
         if (b != null) {
-            viewPrefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences().loadFromBundle(b);
+            viewPrefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences(b);
         }
         super.onCreate(savedInstanceState);
     }
@@ -122,7 +122,7 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
         if (isSessionDetailsChanged()) {
             groupsModel.clear();
         } else if (savedInstanceState != null) {
-            viewPrefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences().loadFromBundle(savedInstanceState);
+            viewPrefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences(savedInstanceState);
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
@@ -293,7 +293,7 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                GroupsListFragment fragment = getUiHelper().getParent();
+                GroupsListFragment<?,?> fragment = getUiHelper().getParent();
                 fragment.deleteGroupNow(group);
             }
         }

@@ -33,6 +33,8 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
     private ListView listView;
     private String selectedValue;
     private String STATE_SELECTED_VALUE = "ServerConnectionsListPreference.SelectedValue";
+    private ServerConnectionProfilesListAdapter adapter;
+    private ServerConnectionProfilesListAdapter.ServerConnectionProfilesListAdapterPreferences viewPrefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,12 +45,16 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         } else {
             selectedValue = savedInstanceState.getString(STATE_SELECTED_VALUE);
         }
+        viewPrefs = new ServerConnectionProfilesListAdapter.ServerConnectionProfilesListAdapterPreferences(savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_SELECTED_VALUE, selectedValue);
+        if(adapter != null) {
+            adapter.getAdapterPrefs().storeToBundle(outState);
+        }
     }
 
     @Override
@@ -128,9 +134,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
             idxToSelect++;
         }
 
-
-        ServerConnectionProfilesListAdapter.ServerConnectionProfilesListAdapterPreferences viewPrefs = new ServerConnectionProfilesListAdapter.ServerConnectionProfilesListAdapterPreferences();
-        ServerConnectionProfilesListAdapter adapter = new ServerConnectionProfilesListAdapter(serverConnections, viewPrefs);
+        adapter = new ServerConnectionProfilesListAdapter(serverConnections, viewPrefs);
         adapter.linkToListView(listView, selectedIdx, selectedIdx);
     }
 

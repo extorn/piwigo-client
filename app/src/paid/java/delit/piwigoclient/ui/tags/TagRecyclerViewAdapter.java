@@ -34,8 +34,19 @@ public class TagRecyclerViewAdapter<LVA extends TagRecyclerViewAdapter<LVA, MSL,
     }
 
     public static class TagViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<TagViewAdapterPreferences>{
+
+        public TagViewAdapterPreferences(){}
+
         public TagViewAdapterPreferences(Bundle bundle) {
             loadFromBundle(bundle);
+        }
+
+        public TagViewAdapterPreferences(boolean allowEditing, boolean allowMultiSelect, boolean initialSelectionLocked) {
+            selectable(allowMultiSelect, initialSelectionLocked);
+            setAllowItemAddition(true);
+            if(!allowEditing) {
+                readonly();
+            }
         }
 
         @Override

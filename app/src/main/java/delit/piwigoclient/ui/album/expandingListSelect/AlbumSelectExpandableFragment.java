@@ -73,7 +73,7 @@ public class AlbumSelectExpandableFragment<F extends AlbumSelectExpandableFragme
     private ExtendedFloatingActionButton reloadListButton;
 
     public static AlbumSelectExpandableFragment newInstance(ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
-        AlbumSelectExpandableFragment fragment = new AlbumSelectExpandableFragment();
+        AlbumSelectExpandableFragment<?,?> fragment = new AlbumSelectExpandableFragment<>();
         fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
         return fragment;
     }

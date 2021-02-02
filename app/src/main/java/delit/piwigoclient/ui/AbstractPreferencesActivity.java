@@ -25,7 +25,6 @@ import delit.libs.ui.view.CustomToolbar;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
-import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
@@ -130,7 +129,7 @@ public abstract class AbstractPreferencesActivity<A extends AbstractPreferencesA
         if (event.isHandled()) {
             return;
         }
-        UploadJobStatusDetailsFragment fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
+        UploadJobStatusDetailsFragment<?,?> fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
         showFragmentNow(fragment);
     }
 
@@ -138,18 +137,8 @@ public abstract class AbstractPreferencesActivity<A extends AbstractPreferencesA
     public void onEvent(ExpandingAlbumSelectionNeededEvent event) {
 //        ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs = new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences();
 //        AlbumSelectExpandableFragment f = AlbumSelectExpandableFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
-        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences();
-        if(event.isAllowEditing()) {
-            prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        }
-        if(event.getInitialRoot() != null) {
-            prefs.withInitialRoot(new CategoryItemStub("???", event.getInitialRoot()));
-        } else {
-            prefs.withInitialRoot(CategoryItemStub.ROOT_GALLERY);
-        }
-        prefs.setAllowItemAddition(true);
-        prefs.withInitialSelection(event.getInitialSelection());
-        RecyclerViewCategoryItemSelectFragment f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
+        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences(event.getInitialRoot(), event.isAllowEditing(), event.getInitialSelection(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        RecyclerViewCategoryItemSelectFragment<?,?> f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
         showFragmentNow(f);
     }
 

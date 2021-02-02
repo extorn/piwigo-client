@@ -22,8 +22,8 @@ import delit.piwigoclient.ui.common.fragment.MyFragment;
 
 public class TopTipsFragment<F extends TopTipsFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
-    public static TopTipsFragment newInstance() {
-        TopTipsFragment fragment = new TopTipsFragment();
+    public static TopTipsFragment<?,?> newInstance() {
+        TopTipsFragment<?,?> fragment = new TopTipsFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         return fragment;
     }

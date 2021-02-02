@@ -12,6 +12,7 @@ public class AlbumSelectionListAdapterPreferences extends BaseRecyclerViewAdapte
     public AlbumSelectionListAdapterPreferences(Bundle bundle) {
         loadFromBundle(bundle);
     }
+    public AlbumSelectionListAdapterPreferences() {}
 
     public AlbumSelectionListAdapterPreferences(boolean allowEdit) {
         setFlattenAlbumHierarchy(true);
@@ -30,6 +31,13 @@ public class AlbumSelectionListAdapterPreferences extends BaseRecyclerViewAdapte
             readonly();
         }
     }
+
+    public AlbumSelectionListAdapterPreferences(boolean flattenAlbumHierarchy, boolean showThumbnails, boolean allowMultiSelect, boolean initialSelectionLocked) {
+        setFlattenAlbumHierarchy(flattenAlbumHierarchy);
+        setShowThumbnails(showThumbnails);
+        selectable(allowMultiSelect, initialSelectionLocked);
+    }
+
 
     public boolean isFlattenAlbumHierarchy() {
         return flattenAlbumHierarchy;

@@ -326,7 +326,8 @@
     <string name="preference_page_upload">Upload</string>
     <string name="preference_upload_category_data_upload_display">Visual settings</string>
     <string name="preference_upload_category_data_upload">Data Upload</string>
-    <string name="preference_upload_category_pre_data_upload_compression">Pre-Upload Compression</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression">Pre-Upload Image Compression</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression">Pre-Upload Video Compression</string>
     <string name="preference_upload_category_advanced">Advanced</string>
 
     <!-- prefs -->
@@ -379,7 +380,7 @@
     <string name="preference_data_upload_compress_videos_quality_title">Video Quality</string>
     <string name="preference_data_upload_compress_videos_quality_summary">Video compression quality %1$s</string>
     <string name="preference_data_upload_compress_videos_quality_key" translatable="false">preference_data_upload_compress_videos_quality</string>
-    <integer name="preference_data_upload_compress_videos_quality_default">700</integer>
+    <integer name="preference_data_upload_compress_videos_quality_default">50</integer>
 
     <string name="preference_data_upload_compress_videos_audio_bitrate_title">Audio Bitrate</string>
     <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Audio Bitrate %1$s</string>

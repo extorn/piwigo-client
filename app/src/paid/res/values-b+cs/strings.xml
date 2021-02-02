@@ -26,7 +26,8 @@
     <string name="button_unfavorite">Není oblíbené</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">Nastavení serveru</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Místní nastavení</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Komprese před nahráním</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Komprese obrazu před nahráním</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Komprese videa před nahráním</string>
     <string name="ignoring_job_local_folder_not_found">Místní složka již neexistuje. Ignorování práce</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">Pro nahrání nebyly vybrány žádné přípony souborů. Ignorování práce</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Profil připojení nastaven do režimu offline. Ignorování práce</string>

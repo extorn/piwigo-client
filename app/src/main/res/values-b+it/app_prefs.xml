@@ -320,7 +320,8 @@
     <string name="preference_page_upload">Caricare</string>
     <string name="preference_upload_category_data_upload_display">Impostazioni visive</string>
     <string name="preference_upload_category_data_upload">Caricamento dei dati</string>
-    <string name="preference_upload_category_pre_data_upload_compression">Compressione pre-caricamento</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression">Compressione immagine pre-caricamento</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression">Compressione video pre-caricamento</string>
     <string name="preference_upload_category_advanced">Avanzate</string>
 
     

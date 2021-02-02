@@ -130,7 +130,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
     }
 
     public static ViewTagFragment newInstance(Tag tag) {
-        ViewTagFragment fragment = new ViewTagFragment();
+        ViewTagFragment<?,?> fragment = new ViewTagFragment<>();
         Bundle args = new Bundle();
         args.putParcelable(ARG_TAG, tag);
         fragment.setArguments(args);
@@ -241,8 +241,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
             tagIsDirty = true;
         } else if (savedInstanceState != null) {
             //restore saved state
-            viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
-            viewPrefs.loadFromBundle(savedInstanceState);
+            viewPrefs = new AlbumItemRecyclerViewAdapterPreferences(savedInstanceState);
             currentTag = savedInstanceState.getParcelable(ARG_TAG);
             tagModel = new ViewModelProvider(requireActivity()).get(PiwigoTagModel.class).getPiwigoTag().getValue();
             // if tagIsDirty then this fragment was updated while on the backstack - need to refresh it.

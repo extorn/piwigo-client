@@ -325,18 +325,9 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
     public void onEvent(ExpandingAlbumSelectionNeededEvent event) {
 //        ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs = new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences();
 //        AlbumSelectExpandableFragment f = AlbumSelectExpandableFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
-        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences();
-        if(event.isAllowEditing()) {
-            prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        }
-        if(event.getInitialRoot() != null) {
-            prefs.withInitialRoot(new CategoryItemStub("???", event.getInitialRoot()));
-        } else {
-            prefs.withInitialRoot(CategoryItemStub.ROOT_GALLERY);
-        }
-        prefs.setAllowItemAddition(true);
-        prefs.withInitialSelection(event.getInitialSelection());
-        RecyclerViewCategoryItemSelectFragment f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
+        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences(event.getInitialRoot(), event.isAllowEditing(), event.getInitialSelection(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+
+        RecyclerViewCategoryItemSelectFragment<?,?> f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
         showFragmentNow(f);
     }
 
@@ -345,25 +336,22 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
         if (event.isHandled()) {
             return;
         }
-        UploadJobStatusDetailsFragment fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
+        UploadJobStatusDetailsFragment<?,?> fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
         showFragmentNow(fragment);
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final AlbumCreateNeededEvent event) {
-        CreateAlbumFragment fragment = CreateAlbumFragment.newInstance(event.getActionId(), event.getParentAlbum());
+        CreateAlbumFragment<?,?> fragment = CreateAlbumFragment.newInstance(event.getActionId(), event.getParentAlbum());
         showFragmentNow(fragment);
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final UsernameSelectionNeededEvent event) {
-        UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs = new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences(allowMultiSelect).selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        if (!event.isAllowEditing()) {
-            prefs.readonly();
-        }
-        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
+        UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs = new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences(event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        UsernameSelectFragment<?,?> fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
@@ -373,7 +361,7 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
         if (!event.isAllowEditing()) {
             prefs.readonly();
         }
-        GroupSelectFragment fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
+        GroupSelectFragment<?,?> fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 

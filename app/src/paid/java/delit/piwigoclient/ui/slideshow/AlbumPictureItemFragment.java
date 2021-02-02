@@ -38,8 +38,8 @@ public class AlbumPictureItemFragment<F extends AlbumPictureItemFragment<F,FUIH,
     private static final String TAG = "AlbumPicItemFr";
     private ViewPager resourceDetailsViewPager;
 
-    public static AlbumPictureItemFragment newInstance(Class<? extends ViewModelContainer> modelType, long albumId, long albumItemId, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
-        AlbumPictureItemFragment fragment = new AlbumPictureItemFragment();
+    public static AlbumPictureItemFragment<?,?,?> newInstance(Class<? extends ViewModelContainer> modelType, long albumId, long albumItemId, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
+        AlbumPictureItemFragment<?,?,?> fragment = new AlbumPictureItemFragment<>();
         fragment.setArguments(AbstractSlideshowItemFragment.buildArgs(modelType, albumId, albumItemId, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount));
         return fragment;
     }

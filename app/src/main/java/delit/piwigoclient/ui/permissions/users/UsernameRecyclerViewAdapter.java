@@ -29,8 +29,11 @@ public class UsernameRecyclerViewAdapter<LVA extends UsernameRecyclerViewAdapter
 
     public static class UsernameRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<UsernameRecyclerViewAdapterPreferences> {
 
-        public UsernameRecyclerViewAdapterPreferences(boolean allowMultiSelect, boolean initialSelectionLocked) {
+        public UsernameRecyclerViewAdapterPreferences(boolean isAllowEdit, boolean allowMultiSelect, boolean initialSelectionLocked) {
             selectable(allowMultiSelect, initialSelectionLocked);
+            if (!isAllowEdit) {
+                readonly();
+            }
         }
         public UsernameRecyclerViewAdapterPreferences(Bundle bundle) {
             loadFromBundle(bundle);

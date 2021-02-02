@@ -320,7 +320,8 @@
     <string name="preference_page_upload">Hochladen</string>
     <string name="preference_upload_category_data_upload_display">Visuelle Einstellungen</string>
     <string name="preference_upload_category_data_upload">Daten hochladen</string>
-    <string name="preference_upload_category_pre_data_upload_compression">Komprimierung vor dem Hochladen</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression">Bildkomprimierung vor dem Hochladen</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression">Videokomprimierung vor dem Hochladen</string>
     <string name="preference_upload_category_advanced">Fortgeschrittene</string>
 
     

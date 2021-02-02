@@ -47,7 +47,7 @@ public class GroupSelectFragment<F extends GroupSelectFragment<F,FUIH>,FUIH exte
     private PiwigoGroups groupsModel;
 
     public static GroupSelectFragment newInstance(GroupRecyclerViewAdapter.GroupViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
-        GroupSelectFragment fragment = new GroupSelectFragment();
+        GroupSelectFragment<?,?> fragment = new GroupSelectFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
         return fragment;

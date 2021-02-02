@@ -26,7 +26,8 @@
     <string name="button_unfavorite">Not Favorite</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">Server Settings</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Local Settings</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Pre-Upload Compression</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Pre-Upload Image Compression</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Pre-Upload Video Compression</string>
     <string name="ignoring_job_local_folder_not_found">Local folder no longer exists. Ignoring job</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">No file extensions selected for upload. Ignoring job</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Connection profile set to offline mode. Ignoring job</string>

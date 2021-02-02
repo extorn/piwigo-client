@@ -252,7 +252,8 @@
         -->
         <item>1.4.0.108</item>
         <item>"Bugfix:
-                - Tidy up of a lot of issues causing crashes across the app following the last month of changes"</item>
+                - Tidy up of a lot of issues causing crashes across the app following the last month of changes
+                - Default setting for video compression corrected"</item>
         <item>1.4.0.107</item>
         <item>"Bugfix:
                 - Potential for one resource to be missed from the album resource slideshow (full screen preview)

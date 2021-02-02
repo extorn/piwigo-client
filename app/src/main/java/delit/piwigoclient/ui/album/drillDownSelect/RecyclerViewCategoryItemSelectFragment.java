@@ -65,7 +65,7 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
 
 
     public static RecyclerViewCategoryItemSelectFragment newInstance(CategoryItemViewAdapterPreferences prefs, int actionId) {
-        RecyclerViewCategoryItemSelectFragment fragment = new RecyclerViewCategoryItemSelectFragment();
+        RecyclerViewCategoryItemSelectFragment<?,?> fragment = new RecyclerViewCategoryItemSelectFragment<>();
         fragment.setArguments(RecyclerViewCategoryItemSelectFragment.buildArgsBundle(prefs, actionId));
         return fragment;
     }

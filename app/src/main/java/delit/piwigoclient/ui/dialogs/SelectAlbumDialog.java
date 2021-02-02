@@ -33,9 +33,7 @@ public class SelectAlbumDialog {
     }
 
     public AlertDialog buildDialog(ArrayList<CategoryItemStub> albumNames, CategoryItem parentAlbum, final DialogInterface.OnClickListener positiveActionListener) {
-        AlbumSelectionListAdapterPreferences viewPrefs = new AlbumSelectionListAdapterPreferences();
-        viewPrefs.selectable(false, false);
-        viewPrefs.setFlattenAlbumHierarchy(true);
+        AlbumSelectionListAdapterPreferences viewPrefs = new AlbumSelectionListAdapterPreferences(true, false, false, false);
         availableGalleries = new AvailableAlbumsListAdapter(viewPrefs, parentAlbum, context);
 
         this.availableGalleries.clear();

@@ -35,7 +35,7 @@ public class UploadJobStatusDetailsFragment<F extends UploadJobStatusDetailsFrag
     private UploadJob uploadJob;
 
     public static UploadJobStatusDetailsFragment newInstance(UploadJob job) {
-        UploadJobStatusDetailsFragment fragment = new UploadJobStatusDetailsFragment();
+        UploadJobStatusDetailsFragment<?,?> fragment = new UploadJobStatusDetailsFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(buildArgs(job));
         return fragment;

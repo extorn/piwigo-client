@@ -26,7 +26,8 @@
     <string name="button_unfavorite">Niet favoriet</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">Serverinstellingen</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Lokale instellingen</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Pre-upload compressie</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Pre-upload beeldcompressie</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Videocompressie vooraf uploaden</string>
     <string name="ignoring_job_local_folder_not_found">Lokale map bestaat niet meer. Baan negeren</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">Geen bestandsextensies geselecteerd om te uploaden. Baan negeren</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Verbindingsprofiel ingesteld op offlinemodus. Baan negeren</string>

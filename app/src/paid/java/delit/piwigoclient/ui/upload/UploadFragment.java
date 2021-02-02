@@ -5,7 +5,7 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 
 public class UploadFragment<F extends UploadFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends AbstractUploadFragment<F,FUIH> {
     public static UploadFragment newInstance(CategoryItemStub currentAlbum, int actionId) {
-        UploadFragment fragment = new UploadFragment();
+        UploadFragment<?,?> fragment = new UploadFragment<>();
         fragment.setArguments(fragment.buildArgs(currentAlbum, actionId));
         return fragment;
     }

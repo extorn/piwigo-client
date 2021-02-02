@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -25,7 +26,25 @@ public class UserRecyclerViewAdapter<RVA extends UserRecyclerViewAdapter<RVA, VH
     private final List<String> userTypes;
     private final List<String> userTypeValues;
 
-    protected static class UserRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<UserRecyclerViewAdapterPreferences>{}
+    protected static class UserRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<UserRecyclerViewAdapterPreferences>{
+
+        public UserRecyclerViewAdapterPreferences(Bundle bundle) {
+            loadFromBundle(bundle);
+        }
+
+        public UserRecyclerViewAdapterPreferences(boolean deletable) {
+            if(deletable) {
+                deletable();
+            }
+            setAllowItemAddition(true);
+            setEnabled(true);
+        }
+
+        @Override
+        protected String getBundleName() {
+            return "UserRecyclerViewAdapterPreferences";
+        }
+    }
 
     public UserRecyclerViewAdapter(final Context context, final PiwigoUsers users, MSL multiSelectStatusListener, UserRecyclerViewAdapterPreferences prefs) {
         super(context, null, users, multiSelectStatusListener, prefs);

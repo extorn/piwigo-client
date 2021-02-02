@@ -26,7 +26,8 @@
     <string name="button_unfavorite">Nicht Favorit</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">Server Einstellungen</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Lokale Einstellungen</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Komprimierung vor dem Hochladen</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Bildkomprimierung vor dem Hochladen</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Videokomprimierung vor dem Hochladen</string>
     <string name="ignoring_job_local_folder_not_found">Lokaler Ordner existiert nicht mehr. Job ignorieren</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">Keine Dateierweiterungen zum Hochladen ausgewählt. Job ignorieren</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Verbindungsprofil auf Offline-Modus eingestellt. Job ignorieren</string>

@@ -34,8 +34,13 @@ public class GroupRecyclerViewAdapter<RVA extends GroupRecyclerViewAdapter<RVA, 
 
     public static class GroupViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<GroupViewAdapterPreferences> {
 
-        public GroupViewAdapterPreferences(boolean allowMultiSelect, boolean initialSelectionLocked) {
+        public GroupViewAdapterPreferences() {}
+
+        public GroupViewAdapterPreferences(boolean isAllowEdit, boolean allowMultiSelect, boolean initialSelectionLocked) {
             selectable(allowMultiSelect, initialSelectionLocked);
+            if (!isAllowEdit) {
+                readonly();
+            }
         }
 
         public GroupViewAdapterPreferences(Bundle bundle) {

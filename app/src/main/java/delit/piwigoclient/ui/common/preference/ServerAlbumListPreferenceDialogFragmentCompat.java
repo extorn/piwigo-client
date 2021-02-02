@@ -229,9 +229,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
 
     void addAlbumsToUI(boolean isAdminList, ArrayList<CategoryItemStub> albumNames) {
 
-        AlbumSelectionListAdapterPreferences viewPrefs = new AlbumSelectionListAdapterPreferences();
-        viewPrefs.selectable(false, false);
-        viewPrefs.setFlattenAlbumHierarchy(true);
+        AlbumSelectionListAdapterPreferences viewPrefs = new AlbumSelectionListAdapterPreferences(true, false,false, false);
         AvailableAlbumsListAdapter adapter = new AvailableAlbumsListAdapter(viewPrefs, CategoryItem.ROOT_ALBUM, requireContext());
         adapter.addAll(albumNames);
         if (!viewPrefs.isAllowRootAlbumSelection()) {

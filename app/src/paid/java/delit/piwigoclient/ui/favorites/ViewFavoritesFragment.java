@@ -115,8 +115,8 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
     public ViewFavoritesFragment() {
     }
 
-    public static ViewFavoritesFragment newInstance() {
-        ViewFavoritesFragment fragment = new ViewFavoritesFragment();
+    public static ViewFavoritesFragment<?,?> newInstance() {
+        ViewFavoritesFragment<?,?> fragment = new ViewFavoritesFragment<>();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -217,8 +217,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             favoritesIsDirty = true;
         } else if (savedInstanceState != null) {
             //restore saved state
-            viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
-            viewPrefs.loadFromBundle(savedInstanceState);
+            viewPrefs = new AlbumItemRecyclerViewAdapterPreferences(savedInstanceState);
 
             // if favoritesIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
