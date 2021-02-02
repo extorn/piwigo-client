@@ -111,8 +111,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     }
 
     @Override
-    protected FolderItemViewAdapterPreferences createEmptyPrefs() {
-        return new FolderItemViewAdapterPreferences();
+    protected FolderItemViewAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
+        return new FolderItemViewAdapterPreferences(bundle);
     }
 
     @Override

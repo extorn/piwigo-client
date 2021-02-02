@@ -9,6 +9,10 @@ public class AlbumSelectionListAdapterPreferences extends BaseRecyclerViewAdapte
     private boolean showThumbnails;
     private boolean allowRootAlbumSelection;
 
+    public AlbumSelectionListAdapterPreferences(Bundle bundle) {
+        loadFromBundle(bundle);
+    }
+
     public boolean isFlattenAlbumHierarchy() {
         return flattenAlbumHierarchy;
     }

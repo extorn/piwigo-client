@@ -66,8 +66,8 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH ext
     }
 
     @Override
-    protected AlbumSelectionListAdapterPreferences createEmptyPrefs() {
-        return new AlbumSelectionListAdapterPreferences();
+    protected AlbumSelectionListAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
+        return new AlbumSelectionListAdapterPreferences(bundle);
     }
 
     @Override

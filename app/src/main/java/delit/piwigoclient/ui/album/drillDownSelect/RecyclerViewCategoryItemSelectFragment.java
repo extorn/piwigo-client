@@ -82,8 +82,8 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
     }
 
     @Override
-    protected CategoryItemViewAdapterPreferences createEmptyPrefs() {
-        return new CategoryItemViewAdapterPreferences();
+    protected CategoryItemViewAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
+        return new CategoryItemViewAdapterPreferences(bundle);
     }
 
     @Override

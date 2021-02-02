@@ -54,8 +54,8 @@ public class GroupSelectFragment<F extends GroupSelectFragment<F,FUIH>,FUIH exte
     }
 
     @Override
-    protected GroupRecyclerViewAdapter.GroupViewAdapterPreferences createEmptyPrefs() {
-        return new GroupRecyclerViewAdapter.GroupViewAdapterPreferences();
+    protected GroupRecyclerViewAdapter.GroupViewAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
+        return new GroupRecyclerViewAdapter.GroupViewAdapterPreferences(bundle);
     }
 /*
     public static class GroupSelectAdapterPreferences extends BaseRecyclerViewAdapterPreferences<GroupSelectAdapterPreferences> {

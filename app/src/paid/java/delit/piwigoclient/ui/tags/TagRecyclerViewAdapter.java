@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.tags;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -32,7 +33,16 @@ public class TagRecyclerViewAdapter<LVA extends TagRecyclerViewAdapter<LVA, MSL,
         return (VH)new TagViewHolder(view, this);
     }
 
-    public static class TagViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<TagViewAdapterPreferences>{}
+    public static class TagViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<TagViewAdapterPreferences>{
+        public TagViewAdapterPreferences(Bundle bundle) {
+            loadFromBundle(bundle);
+        }
+
+        @Override
+        protected String getBundleName() {
+            return "TagViewAdapterPreferences";
+        }
+    }
 
     public static class TagViewHolder<VH extends TagViewHolder<VH,LVA,MSL>, LVA extends TagRecyclerViewAdapter<LVA, MSL,VH>,MSL extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag,VH>> extends BaseViewHolder<VH, TagViewAdapterPreferences, Tag, LVA,MSL> {
         private final LVA parentAdapter;

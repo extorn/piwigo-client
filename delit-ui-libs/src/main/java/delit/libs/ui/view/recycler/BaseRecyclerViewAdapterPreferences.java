@@ -18,7 +18,7 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
     private boolean enabled;
     private boolean readonly;
 
-    public BaseRecyclerViewAdapterPreferences() {
+    protected BaseRecyclerViewAdapterPreferences() {
     }
 
     public BaseRecyclerViewAdapterPreferences(Bundle bundle) {
@@ -81,7 +81,7 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
     }
 
 
-    public final Q loadFromBundle(Bundle parent) {
+    protected final Q loadFromBundle(Bundle parent) {
         if(parent == null) {
             return (Q) this;
         }

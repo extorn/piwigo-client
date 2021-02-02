@@ -421,8 +421,6 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
         if (viewPrefs == null) {
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
-            viewPrefs.selectable(true, false); // set multi select mode enabled (side effect is it enables selection
-            viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
         }
 
         String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs, requireContext());
@@ -511,8 +509,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             albumsPerRow = 0;
         } else if (savedInstanceState != null) {
             //restore saved state
-            viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
-            viewPrefs.loadFromBundle(savedInstanceState);
+            viewPrefs = new AlbumItemRecyclerViewAdapterPreferences(savedInstanceState);
             editingItemDetails = savedInstanceState.getBoolean(STATE_EDITING_ITEM_DETAILS);
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);

@@ -6,11 +6,14 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.Collections;
 import java.util.List;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
+import delit.piwigoclient.BuildConfig;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -75,15 +78,6 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         dest.writeInt(comparator.getAlbumSortOrder());
         ParcelUtils.writeBool(dest, hideAlbums);
         ParcelUtils.writeBool(dest, retrieveAlbumsInReverseOrder);
-    }
-
-    @Override
-    public int getItemCount() {
-        int itemCount = super.getItemCount();
-        if (hideAlbums) {
-            itemCount -= subAlbumCount + spacerAlbums;
-        }
-        return itemCount;
     }
 
     public boolean setAlbumSortOrder(int albumSortOrder) {
@@ -256,8 +250,46 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     }
 
     @Override
+    public int getItemCount() {
+        int itemCount = super.getItemCount();
+        if (hideAlbums) {
+            itemCount -= subAlbumCount + spacerAlbums;
+        }
+        return itemCount;
+    }
+
+    @Override
     public int getResourcesCount() {
-        return super.getItemCount() - subAlbumCount - spacerAlbums - bannerCount;
+        int resourceCount = super.getItemCount() - subAlbumCount - spacerAlbums - bannerCount;
+        if(resourceCount < 0) {
+            Logging.log(Log.ERROR, TAG, "PiwigoAlbum Resource count is wrong - %1$d items - %2$d childAlbums - %3$d spacerAlbums - %4$d banners = %5$d", super.getItemCount(), subAlbumCount, spacerAlbums, bannerCount, resourceCount);
+            int actualSubAlbumCount = 0;
+            int actualSpacerAlbums = 0;
+            int actualBannerCount = 0;
+            for(T item : getItems()) {
+                if(CategoryItem.BLANK.equals(item)) {
+                    actualSpacerAlbums++;
+                } else if(CategoryItem.ALBUM_HEADING.equals(item)) {
+                    actualBannerCount++;
+                } else if(item instanceof CategoryItem) {
+                    actualSubAlbumCount++;
+                } else if(ResourceItem.PICTURE_HEADING.equals(item)) {
+                    actualBannerCount++;
+                }
+            }
+            if(BuildConfig.DEBUG) {
+                String msg = "subAlbums (%1$d|%2$d)\n"
+                            +"spacers (%3$d|%4$d)\n"
+                            +"banners (%5$d|%6$d)\n";
+                throw new IllegalStateException(String.format(msg, subAlbumCount, actualSubAlbumCount, spacerAlbums, actualSpacerAlbums, bannerCount, actualBannerCount));
+            }
+            subAlbumCount = actualSubAlbumCount;
+            spacerAlbums = actualSpacerAlbums;
+            bannerCount = actualBannerCount;
+
+            Logging.log(Log.ERROR, TAG, "Corrected PiwigoAlbum Resource count: - %1$d items - %2$d childAlbums - %3$d spacerAlbums - %4$d banners = %5$d", super.getItemCount(), subAlbumCount, spacerAlbums, bannerCount, resourceCount);
+        }
+        return resourceCount;
     }
 
     public int getSubAlbumCount() {

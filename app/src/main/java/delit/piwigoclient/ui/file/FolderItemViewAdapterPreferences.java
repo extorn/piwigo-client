@@ -44,9 +44,6 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
     private String selectedUriPermissionConsumerPurpose;
     private int selectedUriPermissionFlags;
 
-    protected FolderItemViewAdapterPreferences() {
-    }
-
     public FolderItemViewAdapterPreferences(Bundle bundle) {
         loadFromBundle(bundle);
     }

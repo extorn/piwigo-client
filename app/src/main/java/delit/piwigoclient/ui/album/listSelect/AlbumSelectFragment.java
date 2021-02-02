@@ -48,8 +48,8 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>,FUIH exte
     }
 
     @Override
-    protected AlbumSelectionListAdapterPreferences createEmptyPrefs() {
-        return new AlbumSelectionListAdapterPreferences();
+    protected AlbumSelectionListAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
+        return new AlbumSelectionListAdapterPreferences(bundle);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>,FUIH exte
 
         if (savedInstanceState != null) {
             availableAlbums = savedInstanceState.getParcelableArrayList(STATE_AVAILABLE_ITEMS);
-            createEmptyPrefs().loadFromBundle(savedInstanceState);
+            loadPreferencesFromBundle(savedInstanceState);
         }
 
         return v;

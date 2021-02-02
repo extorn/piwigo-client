@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -27,8 +28,15 @@ public class UsernameRecyclerViewAdapter<LVA extends UsernameRecyclerViewAdapter
     private final HashSet<Long> indirectlySelectedItems;
 
     public static class UsernameRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<UsernameRecyclerViewAdapterPreferences> {
-    }
+        public UsernameRecyclerViewAdapterPreferences(Bundle bundle) {
+            loadFromBundle(bundle);
+        }
 
+        @Override
+        protected String getBundleName() {
+            return "UsernameRecyclerViewAdapterPreferences";
+        }
+    }
 
     public UsernameRecyclerViewAdapter(final Context context, final PiwigoUsernames<T> usernames, HashSet<Long> indirectlySelectedItems, MSL multiSelectStatusListener, UsernameRecyclerViewAdapterPreferences prefs) {
         super(context, null, usernames, multiSelectStatusListener, prefs);

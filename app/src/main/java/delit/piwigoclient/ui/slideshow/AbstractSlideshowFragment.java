@@ -78,6 +78,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
 
     public static <T extends Identifiable & Parcelable> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, ResourceContainer<T, GalleryItem> resourceContainer, GalleryItem currentItem) {
         Bundle args = new Bundle();
+        Logging.log(Log.INFO, TAG, "Building slideshow using model type " + modelType);
         storeGalleryModelClassToBundle(args, modelType);
         args.putLong(ARG_GALLERY_ID, resourceContainer.getId());
         args.putInt(ARG_GALLERY_ITEM_DISPLAYED, resourceContainer.getItemIdx(currentItem));

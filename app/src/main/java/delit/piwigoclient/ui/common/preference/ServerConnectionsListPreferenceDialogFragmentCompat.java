@@ -99,7 +99,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
     }
 
     private SharedPreferences getAppSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
+        return PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
     }
 
     @Override
@@ -129,8 +129,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         }
 
 
-        BaseRecyclerViewAdapterPreferences viewPrefs = new BaseRecyclerViewAdapterPreferences();
-        viewPrefs.selectable(false, false);
+        ServerConnectionProfilesListAdapter.ServerConnectionProfilesListAdapterPreferences viewPrefs = new ServerConnectionProfilesListAdapter.ServerConnectionProfilesListAdapterPreferences();
         ServerConnectionProfilesListAdapter adapter = new ServerConnectionProfilesListAdapter(serverConnections, viewPrefs);
         adapter.linkToListView(listView, selectedIdx, selectedIdx);
     }
@@ -171,9 +170,24 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         return fragment;
     }
 
-    private static class ServerConnectionProfilesListAdapter extends MultiSourceListAdapter<ServerConnectionsListPreference.ServerConnection, BaseRecyclerViewAdapterPreferences> {
+    private static class ServerConnectionProfilesListAdapter extends MultiSourceListAdapter<ServerConnectionsListPreference.ServerConnection, ServerConnectionProfilesListAdapter.ServerConnectionProfilesListAdapterPreferences> {
 
-        public ServerConnectionProfilesListAdapter(ArrayList<ServerConnectionsListPreference.ServerConnection> availableItems, BaseRecyclerViewAdapterPreferences adapterPrefs) {
+        public static class ServerConnectionProfilesListAdapterPreferences extends BaseRecyclerViewAdapterPreferences<ServerConnectionProfilesListAdapterPreferences> {
+            public ServerConnectionProfilesListAdapterPreferences(){
+                selectable(false, false);
+            }
+
+            public ServerConnectionProfilesListAdapterPreferences(Bundle bundle) {
+                loadFromBundle(bundle);
+            }
+
+            @Override
+            protected String getBundleName() {
+                return "ServerConnectionProfilesListAdapterPreferences";
+            }
+        }
+
+        public ServerConnectionProfilesListAdapter(ArrayList<ServerConnectionsListPreference.ServerConnection> availableItems, ServerConnectionProfilesListAdapterPreferences adapterPrefs) {
             super(availableItems, adapterPrefs);
         }
 

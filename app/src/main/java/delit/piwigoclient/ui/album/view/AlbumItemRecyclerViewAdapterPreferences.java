@@ -18,6 +18,12 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
     private boolean showResourceNames;
 
     public AlbumItemRecyclerViewAdapterPreferences() {
+        selectable(true, false); // set multi select mode enabled (side effect is it enables selection
+        setAllowItemSelection(false); // prevent selection until a long click enables it.
+    }
+
+    public AlbumItemRecyclerViewAdapterPreferences(Bundle bundle) {
+        loadFromBundle(bundle);
     }
 
     @Override

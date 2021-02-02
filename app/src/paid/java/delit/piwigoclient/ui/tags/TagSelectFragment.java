@@ -67,8 +67,8 @@ public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends
     }
 
     @Override
-    protected TagRecyclerViewAdapter.TagViewAdapterPreferences createEmptyPrefs() {
-        return new TagRecyclerViewAdapter.TagViewAdapterPreferences();
+    protected TagRecyclerViewAdapter.TagViewAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
+        return new TagRecyclerViewAdapter.TagViewAdapterPreferences(bundle);
     }
 
     @Override

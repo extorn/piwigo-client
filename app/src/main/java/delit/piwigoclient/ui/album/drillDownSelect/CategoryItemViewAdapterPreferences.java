@@ -18,7 +18,8 @@ public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterP
     private HashSet<Long> initialSelection;
     private int columns = 1;
 
-    public CategoryItemViewAdapterPreferences() {
+    public CategoryItemViewAdapterPreferences(Bundle bundle) {
+        loadFromBundle(bundle);
     }
 
     public CategoryItemViewAdapterPreferences withConnectionProfile(@Nullable String connectionProfileKey) {

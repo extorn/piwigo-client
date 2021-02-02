@@ -68,8 +68,8 @@ public class UsernameSelectFragment<F extends UsernameSelectFragment<F,FUIH>, FU
     }
 
     @Override
-    protected UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences createEmptyPrefs() {
-        return new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences();
+    protected UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
+        return new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences(bundle);
     }
 
     @Override

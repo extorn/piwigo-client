@@ -77,8 +77,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         if (bundle == null) {
             return;
         }
-        viewPrefs = createEmptyPrefs();
-        viewPrefs.loadFromBundle(bundle);
+        viewPrefs = loadPreferencesFromBundle(bundle);
         actionId = bundle.getInt(ARG_ACTION_ID);
         initialSelection = BundleUtils.getLongHashSet(bundle, ARG_INITIAL_SELECTION);
     }
@@ -118,7 +117,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     }
 
-    protected abstract Z createEmptyPrefs();
+    protected abstract Z loadPreferencesFromBundle(Bundle bundle);
 
     private void loadStateFromBundle(Bundle bundle) {
 

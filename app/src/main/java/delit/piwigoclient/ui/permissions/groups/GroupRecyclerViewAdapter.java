@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -32,6 +33,14 @@ public class GroupRecyclerViewAdapter<RVA extends GroupRecyclerViewAdapter<RVA, 
     }
 
     public static class GroupViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<GroupViewAdapterPreferences> {
+        public GroupViewAdapterPreferences(Bundle bundle) {
+            loadFromBundle(bundle);
+        }
+
+        @Override
+        protected String getBundleName() {
+            return "GroupViewAdapterPreferences";
+        }
     }
 
     public static class GroupViewHolder<VH extends GroupViewHolder<VH, LVA,MSL>, LVA extends GroupRecyclerViewAdapter<LVA,VH,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,GroupViewAdapterPreferences,Group,VH>> extends BaseViewHolder<VH, GroupViewAdapterPreferences, Group, LVA,MSL> {
