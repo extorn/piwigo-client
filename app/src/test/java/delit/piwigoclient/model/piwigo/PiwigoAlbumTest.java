@@ -101,6 +101,40 @@ public class PiwigoAlbumTest {
     }
 
     @Test
+    public void testAllCategoriesHideAlbums() {
+        PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false);
+        int albumsCount = album.getSubAlbumCount();
+        int resourceCount = album.getResourcesCount();
+        int itemCount = album.getItemCount();
+        album.setHideAlbums(true);
+        assertEquals(resourceCount, album.getItemCount());
+        assertEquals(resourceCount, album.getResourcesCount());
+        assertEquals(albumsCount, album.getSubAlbumCount());
+        assertEquals(album.getItemByIdx(0), CategoryItem.ALBUM_HEADING);
+        assertEquals(album.getItemByIdx(1), ResourceItem.PICTURE_HEADING);
+        for(int i = 2; i <= resourceCount; i++) {
+            assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
+        }
+    }
+
+    @Test
+    public void testAllCategoriesHideAlbumsReversed() {
+        PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true);
+        int albumsCount = album.getSubAlbumCount();
+        int resourceCount = album.getResourcesCount();
+        int itemCount = album.getItemCount();
+        album.setHideAlbums(true);
+        assertEquals(resourceCount, album.getItemCount());
+        assertEquals(resourceCount, album.getResourcesCount());
+        assertEquals(albumsCount, album.getSubAlbumCount());
+        assertEquals(album.getItemByIdx(0), CategoryItem.ALBUM_HEADING);
+        assertEquals(album.getItemByIdx(1), ResourceItem.PICTURE_HEADING);
+        for(int i = 2; i <= resourceCount; i++) {
+            assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
+        }
+    }
+
+    @Test
     public void testAllCategoriesFirstSortingByName() {
         loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false);
     }

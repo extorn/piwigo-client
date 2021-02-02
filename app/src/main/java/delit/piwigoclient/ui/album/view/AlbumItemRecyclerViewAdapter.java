@@ -172,6 +172,8 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
         }
 
         protected abstract void onCategoryClick(CategoryItem item);
+
+        public void onAlbumHeadingClick(RC itemStore) {};
     }
 
     private static class AlbumItemCustomClickListener<T extends GalleryItem, LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH,RC>, MSL extends AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>, VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>> extends CustomClickListener<MSL,LVA, AlbumItemRecyclerViewAdapterPreferences, T, VH> {
@@ -254,12 +256,15 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
         private void onAlbumsHeadingClick() {
             RC itemStore = getParentAdapter().getItemStore();
             if (itemStore instanceof PiwigoAlbum) {
+//                if (getParentAdapter().getMultiSelectStatusListener() != null) {
+//                    MSL multiSelectListener = getParentAdapter().getMultiSelectStatusListener();
+//                    multiSelectListener.onAlbumHeadingClick(itemStore);
+//                }
                 PiwigoAlbum album = (PiwigoAlbum)itemStore;
                 boolean hideAlbums = !album.isHideAlbums();
                 album.setHideAlbums(hideAlbums);
-                AlbumHeadingViewHolder<?,?,?,?,?> viewHolder = (AlbumHeadingViewHolder<?,?,?,?,?>) getViewHolder();
+                AlbumHeadingViewHolder<?, ?, ?, ?, ?> viewHolder = (AlbumHeadingViewHolder<?, ?, ?, ?, ?>) getViewHolder();
                 viewHolder.setSubAlbumCount(album.getSubAlbumCount());
-                viewHolder.setShowAlbumCount(hideAlbums);
                 getParentAdapter().notifyDataSetChanged();
             }
         }

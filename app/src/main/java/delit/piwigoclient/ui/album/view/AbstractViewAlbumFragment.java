@@ -60,7 +60,6 @@ import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.libs.util.ArrayUtils;
@@ -615,7 +614,6 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         gridLayoutMan.setSpanSizeLookup(cellSpanLookup);
         galleryListView.setLayoutManager(gridLayoutMan);
 
-        viewAdapterListener = new AlbumViewAdapterListener();
         replaceListViewAdapter(galleryModel, savedInstanceState);
         // basket depends on then adapter being available
         Basket basket = getBasket();
@@ -649,6 +647,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
     protected void replaceListViewAdapter(@NonNull PiwigoAlbum<CategoryItem,GalleryItem> newModel, @Nullable Bundle savedInstanceState) {
         cellSpanLookup.replaceGalleryModel(newModel);
+        viewAdapterListener = new AlbumViewAdapterListener(this);
         viewAdapter = new AlbumItemRecyclerViewAdapter(requireContext(), PiwigoAlbumModel.class, newModel, viewAdapterListener, viewPrefs);
         if (savedInstanceState != null) {
             viewAdapter.setInitiallySelectedItems(new HashSet<>());
@@ -1142,7 +1141,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         return pageToActuallyLoad;
     }
 
-    private void onAlbumDeleteRequest(final CategoryItem album) {
+    protected void onAlbumDeleteRequest(final CategoryItem album) {
         if (album.getTotalPhotos() > 0 || album.getSubCategories() > 0) {
             String msg;
             if(album.getSubCategories() > 0) {
@@ -1816,7 +1815,16 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     protected void onPiwigoResponseUpdateResourceInfo(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<?> response) {
-        if (!viewAdapterListener.handleAlbumThumbnailInfoLoaded(response.getMessageId(), response.getPiwigoResource())) {
+        if (viewAdapterListener.handleAlbumThumbnailInfoLoaded(response.getMessageId(), response.getPiwigoResource())) {
+            int itemIdx = viewAdapter.getItemPosition(response.getPiwigoResource());
+            viewAdapter.notifyItemChanged(itemIdx);
+            /* FIXME check the code above does the trick!
+            VH vh = parentAdapter.findViewHolderForItemId(item.getId());
+            if (vh != null) {
+                // item currently displaying.
+                viewAdapter.redrawItem(vh, item);
+            }*/
+        } else {
             if (bulkResourceActionData != null && bulkResourceActionData.isTrackingMessageId(response.getMessageId())) {
                 switch (bulkResourceActionData.getAction()) {
                     case BulkResourceActionData.ACTION_DELETE:
@@ -3419,9 +3427,14 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
     }
 
-    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter {
+    private static class AlbumViewAdapterListener<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>,LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC> , VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>, T extends GalleryItem> extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T> {
 
+        private F parentFragment;
         private Map<Long, CategoryItem> albumThumbnailLoadActions = new HashMap<>();
+
+        public AlbumViewAdapterListener(F parentFragment) {
+            this.parentFragment = parentFragment;
+        }
 
         public Map<Long, CategoryItem> getAlbumThumbnailLoadActions() {
             return albumThumbnailLoadActions;
@@ -3432,36 +3445,40 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
 
         @Override
-        public void onMultiSelectStatusChanged(BaseRecyclerViewAdapter adapter, boolean multiSelectEnabled) {
+        public void onMultiSelectStatusChanged(LVA adapter, boolean multiSelectEnabled) {
 //            bulkActionsContainer.setVisibility(multiSelectEnabled?VISIBLE:GONE);
         }
 
         @Override
-        public void onItemSelectionCountChanged(BaseRecyclerViewAdapter adapter, int size) {
-            bulkActionsContainer.setVisibility(size > 0 || getBasket().getItemCount() > 0 ? VISIBLE : GONE);
-            updateBasketDisplay(getBasket());
+        public void onItemSelectionCountChanged(LVA adapter, int selectionCount) {
+            getParentFragment().onListSelectionChanged(selectionCount);
         }
 
         @Override
         public void onCategoryLongClick(CategoryItem album) {
-            onAlbumDeleteRequest(album);
+            getParentFragment().onAlbumDeleteRequest(album);
+        }
+
+        public F getParentFragment() {
+            return parentFragment;
         }
 
         @Override
         protected void onCategoryClick(CategoryItem item) {
-            if (viewAdapter.isItemSelectionAllowed()) {
-                viewAdapter.toggleItemSelection();
-            }
+            getParentFragment().onListItemCategoryClick(item);
+        }
+
+        @Override
+        public void onAlbumHeadingClick(RC itemStore) {
+//            PiwigoAlbum album = (PiwigoAlbum)itemStore;
+//            int firstResourceIdx = itemStore.getItems().size() - itemStore.getResourcesCount();
+//            getParentFragment().scrollToListItem(firstResourceIdx);
         }
 
         @Override
         public void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem) {
             PictureResourceItem resourceItem = new PictureResourceItem(mItem.getRepresentativePictureId(), null, null, null, null, null);
-            Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
-            ImageGetInfoResponseHandler<?> handler = new ImageGetInfoResponseHandler<>(resourceItem, multimediaExtensionList);
-            long messageId = handler.invokeAsync(getContext());
-            albumThumbnailLoadActions.put(messageId, mItem);
-            getUiHelper().addBackgroundServiceCall(messageId);
+            albumThumbnailLoadActions.put(getParentFragment().requestThumbnailLoad(resourceItem), mItem);
         }
 
         public boolean handleAlbumThumbnailInfoLoaded(long messageId, ResourceItem thumbnailResource) {
@@ -3471,13 +3488,31 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             }
             item.setThumbnailUrl(thumbnailResource.getThumbnailUrl());
 
-            AlbumItemViewHolder<?,?,?,?,?> vh = (AlbumItemViewHolder<?, ?, ?, ?, ?>) galleryListView.findViewHolderForItemId(item.getId());
-            if (vh != null) {
-                // item currently displaying.
-                viewAdapter.redrawItem(vh, item);
-            }
 
             return true;
         }
+    }
+
+    protected void onListItemCategoryClick(CategoryItem item) {
+        if (viewAdapter.isItemSelectionAllowed()) {
+            viewAdapter.toggleItemSelection();
+        }
+    }
+
+    protected void scrollToListItem(int scrollToItemIdx) {
+        galleryListView.getLayoutManager().scrollToPosition(scrollToItemIdx);
+    }
+
+    protected void onListSelectionChanged(int selectionCount) {
+        bulkActionsContainer.setVisibility(selectionCount > 0 || getBasket().getItemCount() > 0 ? VISIBLE : GONE);
+        updateBasketDisplay(getBasket());
+    }
+
+    protected long requestThumbnailLoad(PictureResourceItem resourceItem) {
+        Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
+        ImageGetInfoResponseHandler<?> handler = new ImageGetInfoResponseHandler<>(resourceItem, multimediaExtensionList);
+        long messageId = handler.invokeAsync(getContext());
+        getUiHelper().addBackgroundServiceCall(messageId);
+        return messageId;
     }
 }

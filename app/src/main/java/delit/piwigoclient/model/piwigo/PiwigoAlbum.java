@@ -187,6 +187,27 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     }
 
     @Override
+    public T getItemByIdx(int idx) {
+        if(hideAlbums) {
+            if(idx == 0) {
+                super.getItemByIdx(0);
+            } else {
+                return super.getItemByIdx(idx + subAlbumCount);
+            }
+        }
+        return super.getItemByIdx(idx);
+    }
+
+    @Override
+    public int getItemIdx(T item) {
+        int itemIdx = super.getItemIdx(item);
+        if(hideAlbums && itemIdx >= subAlbumCount) {
+            itemIdx -= (subAlbumCount);
+        }
+        return itemIdx;
+    }
+
+    @Override
     protected int getPageInsertPosition(int page, int pageSize) {
         int insertAtIdx = super.getPageInsertPosition(page, pageSize);
         // ensure the pages of resources are placed after the albums
@@ -251,7 +272,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     public int getItemCount() {
         int itemCount = super.getItemCount();
         if (hideAlbums) {
-            itemCount -= subAlbumCount + spacerAlbums;
+            itemCount -= subAlbumCount + spacerAlbums + bannerCount;
         }
         return itemCount;
     }
