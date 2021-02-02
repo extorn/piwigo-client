@@ -235,7 +235,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
                 sortedItems.addAll(firstInsertPos, newItems);
             }
             pagesLoadedIdxToSizeMap.put(page, pageSize);
-            updateIsFullyLoaded(page, pageSize, itemsToAdd);
+            fullyLoaded = internalIsFullyLoadedCheck(page, pageSize, itemsToAdd);
         } catch(IllegalStateException e) {
             // page already loaded (can occur after resume...)
             Logging.log(Log.DEBUG, TAG, "ignoring page already loaded");
@@ -244,18 +244,26 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return firstInsertPos;
     }
 
-    protected void updateIsFullyLoaded(int page, int pageSize, List<T> itemsToAdd) {
+    /**
+     * This method is called internally. It make no sense to call it directly.
+     * @param page page just loaded
+     * @param pageSize size of page loaded
+     * @param itemsToAdd items in the page (some might have been filtered out prior to load, but this is the full list provided)
+     * @return boolean if the list is fully loaded
+     */
+    protected boolean internalIsFullyLoadedCheck(int page, int pageSize, List<T> itemsToAdd) {
         if(isRetrieveItemsInReverseOrder()) {
             if(page == 0 && getNextPageToReload() == null) {
                 // we're processing page 0 and no pages need reloaded
-                fullyLoaded = true;
+                return true;
             }
         } else {
             if(itemsToAdd.size() < pageSize && pagesLoadedIdxToSizeMap.size() == page + 1) {
                 // the current page contained less items than it could and all pages with a number less than this one are already loaded.
-                fullyLoaded = true;
+                return true;
             }
         }
+        return false;
     }
 
     private void postPageInsert(ArrayList<T> sortedItems, List<T> newItems) {
