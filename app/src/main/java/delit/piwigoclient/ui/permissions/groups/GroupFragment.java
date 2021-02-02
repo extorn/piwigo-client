@@ -113,7 +113,7 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
     private SwitchMaterial isDefaultField;
     private int selectUsersActionId;
 
-    public static GroupFragment newInstance(Group group) {
+    public static GroupFragment<?,?> newInstance(Group group) {
         GroupFragment<?,?> fragment = new GroupFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = new Bundle();
@@ -290,14 +290,14 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
             return 0;
         }
 
-        public static final Creator<GroupFragmentAction> CREATOR = new Creator<GroupFragmentAction>() {
+        public static final Creator<GroupFragmentAction<?,?>> CREATOR = new Creator<GroupFragmentAction<?,?>>() {
             @Override
-            public GroupFragmentAction createFromParcel(Parcel in) {
+            public GroupFragmentAction<?,?> createFromParcel(Parcel in) {
                 return new GroupFragmentAction<>(in);
             }
 
             @Override
-            public GroupFragmentAction[] newArray(int size) {
+            public GroupFragmentAction<?,?>[] newArray(int size) {
                 return new GroupFragmentAction[size];
             }
         };
@@ -449,14 +449,14 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
             return 0;
         }
 
-        public static final Creator<OnDeleteGroupAction> CREATOR = new Creator<OnDeleteGroupAction>() {
+        public static final Creator<OnDeleteGroupAction<?,?>> CREATOR = new Creator<OnDeleteGroupAction<?,?>>() {
             @Override
-            public OnDeleteGroupAction createFromParcel(Parcel in) {
+            public OnDeleteGroupAction<?,?> createFromParcel(Parcel in) {
                 return new OnDeleteGroupAction<>(in);
             }
 
             @Override
-            public OnDeleteGroupAction[] newArray(int size) {
+            public OnDeleteGroupAction<?,?>[] newArray(int size) {
                 return new OnDeleteGroupAction[size];
             }
         };

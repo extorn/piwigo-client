@@ -74,18 +74,6 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        Bundle b = savedInstanceState;
-        if(b == null) {
-            b = getArguments();
-        }
-        if (b != null) {
-            viewPrefs = new UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences(b);
-        }
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         EventBus.getDefault().register(this);
@@ -118,8 +106,11 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
 
         if (isSessionDetailsChanged()) {
             usersModel.clear();
-        } else if (savedInstanceState != null) {
+        }
+        if (savedInstanceState != null) {
             viewPrefs = new UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences(savedInstanceState);
+        } else {
+            viewPrefs = new UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences(getArguments());
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);

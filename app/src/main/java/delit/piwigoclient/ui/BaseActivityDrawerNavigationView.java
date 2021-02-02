@@ -231,14 +231,14 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
             return 0;
         }
 
-        public static final Creator<OnAppLockAction> CREATOR = new Creator<OnAppLockAction>() {
+        public static final Creator<OnAppLockAction<?,?>> CREATOR = new Creator<OnAppLockAction<?,?>>() {
             @Override
-            public OnAppLockAction createFromParcel(Parcel in) {
+            public OnAppLockAction<?,?> createFromParcel(Parcel in) {
                 return new OnAppLockAction<>(in);
             }
 
             @Override
-            public OnAppLockAction[] newArray(int size) {
+            public OnAppLockAction<?,?>[] newArray(int size) {
                 return new OnAppLockAction[size];
             }
         };
@@ -328,14 +328,14 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
             return 0;
         }
 
-        public static final Creator<OnLoginAction> CREATOR = new Creator<OnLoginAction>() {
+        public static final Creator<OnLoginAction<?,?>> CREATOR = new Creator<OnLoginAction<?,?>>() {
             @Override
-            public OnLoginAction createFromParcel(Parcel in) {
+            public OnLoginAction<?,?> createFromParcel(Parcel in) {
                 return new OnLoginAction<>(in);
             }
 
             @Override
-            public OnLoginAction[] newArray(int size) {
+            public OnLoginAction<?,?>[] newArray(int size) {
                 return new OnLoginAction[size];
             }
         };
@@ -385,14 +385,14 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
             return 0;
         }
 
-        public static final Creator<OnUnlockAction> CREATOR = new Creator<OnUnlockAction>() {
+        public static final Creator<OnUnlockAction<?,?>> CREATOR = new Creator<OnUnlockAction<?,?>>() {
             @Override
-            public OnUnlockAction createFromParcel(Parcel in) {
+            public OnUnlockAction<?,?> createFromParcel(Parcel in) {
                 return new OnUnlockAction<>(in);
             }
 
             @Override
-            public OnUnlockAction[] newArray(int size) {
+            public OnUnlockAction<?,?>[] newArray(int size) {
                 return new OnUnlockAction[size];
             }
         };

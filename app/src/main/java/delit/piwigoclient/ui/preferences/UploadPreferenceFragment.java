@@ -82,14 +82,14 @@ public class UploadPreferenceFragment<F extends UploadPreferenceFragment<F,FUIH>
             return 0;
         }
 
-        public static final Creator<OnLoginAction> CREATOR = new Creator<OnLoginAction>() {
+        public static final Creator<OnLoginAction<?,?>> CREATOR = new Creator<OnLoginAction<?,?>>() {
             @Override
-            public OnLoginAction createFromParcel(Parcel in) {
+            public OnLoginAction<?,?> createFromParcel(Parcel in) {
                 return new OnLoginAction<>(in);
             }
 
             @Override
-            public OnLoginAction[] newArray(int size) {
+            public OnLoginAction<?,?>[] newArray(int size) {
                 return new OnLoginAction[size];
             }
         };
@@ -127,14 +127,14 @@ public class UploadPreferenceFragment<F extends UploadPreferenceFragment<F,FUIH>
             return 0;
         }
 
-        public static final Creator<FailedUploadCleanAction> CREATOR = new Creator<FailedUploadCleanAction>() {
+        public static final Creator<FailedUploadCleanAction<?,?>> CREATOR = new Creator<FailedUploadCleanAction<?,?>>() {
             @Override
-            public FailedUploadCleanAction createFromParcel(Parcel in) {
+            public FailedUploadCleanAction<?,?> createFromParcel(Parcel in) {
                 return new FailedUploadCleanAction<>(in);
             }
 
             @Override
-            public FailedUploadCleanAction[] newArray(int size) {
+            public FailedUploadCleanAction<?,?>[] newArray(int size) {
                 return new FailedUploadCleanAction[size];
             }
         };

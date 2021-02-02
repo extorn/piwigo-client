@@ -136,7 +136,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
     private int selectGroupsActionId;
     private long userGetPermissionsCallId;
 
-    public static UserFragment newInstance(User user) {
+    public static UserFragment<?,?> newInstance(User user) {
         UserFragment<?,?> fragment = new UserFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = new Bundle();
@@ -448,14 +448,14 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
             return 0;
         }
 
-        public static final Creator<UserFragmentAction> CREATOR = new Creator<UserFragmentAction>() {
+        public static final Creator<UserFragmentAction<?,?>> CREATOR = new Creator<UserFragmentAction<?,?>>() {
             @Override
-            public UserFragmentAction createFromParcel(Parcel in) {
+            public UserFragmentAction<?,?> createFromParcel(Parcel in) {
                 return new UserFragmentAction<>(in);
             }
 
             @Override
-            public UserFragmentAction[] newArray(int size) {
+            public UserFragmentAction<?,?>[] newArray(int size) {
                 return new UserFragmentAction[size];
             }
         };
@@ -607,14 +607,14 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
             return 0;
         }
 
-        public static final Creator<OnDeleteUserAction> CREATOR = new Creator<OnDeleteUserAction>() {
+        public static final Creator<OnDeleteUserAction<?,?>> CREATOR = new Creator<OnDeleteUserAction<?,?>>() {
             @Override
-            public OnDeleteUserAction createFromParcel(Parcel in) {
+            public OnDeleteUserAction<?,?> createFromParcel(Parcel in) {
                 return new OnDeleteUserAction<>(in);
             }
 
             @Override
-            public OnDeleteUserAction[] newArray(int size) {
+            public OnDeleteUserAction<?,?>[] newArray(int size) {
                 return new OnDeleteUserAction[size];
             }
         };

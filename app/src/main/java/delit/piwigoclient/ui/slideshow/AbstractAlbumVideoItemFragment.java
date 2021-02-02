@@ -677,14 +677,14 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
             return 0;
         }
 
-        public static final Creator<ClearCachedContentAction> CREATOR = new Creator<ClearCachedContentAction>() {
+        public static final Creator<ClearCachedContentAction<?,?,?>> CREATOR = new Creator<ClearCachedContentAction<?,?,?>>() {
             @Override
-            public ClearCachedContentAction createFromParcel(Parcel in) {
+            public ClearCachedContentAction<?,?,?> createFromParcel(Parcel in) {
                 return new ClearCachedContentAction<>(in);
             }
 
             @Override
-            public ClearCachedContentAction[] newArray(int size) {
+            public ClearCachedContentAction<?,?,?>[] newArray(int size) {
                 return new ClearCachedContentAction[size];
             }
         };

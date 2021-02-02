@@ -58,7 +58,7 @@ public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFr
     private int jobConfigId = -1;
     private SharedPreferences appPrefs;
 
-    public static AutoUploadJobPreferenceFragment newInstance(int actionId, int jobId) {
+    public static AutoUploadJobPreferenceFragment<?,?> newInstance(int actionId, int jobId) {
         AutoUploadJobPreferenceFragment<?,?> fragment = new AutoUploadJobPreferenceFragment<>();
         Bundle args = new Bundle();
         args.putInt(ACTION_ID_ARG, actionId);

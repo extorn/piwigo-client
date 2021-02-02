@@ -40,7 +40,7 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>,FUIH exte
     private static final String TAG = "AlbumSelFrag";
     private ArrayList<CategoryItemStub> availableAlbums;
 
-    public static AlbumSelectFragment newInstance(AlbumSelectionListAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+    public static AlbumSelectFragment<?,?> newInstance(AlbumSelectionListAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         AlbumSelectFragment<?,?> fragment = new AlbumSelectFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));

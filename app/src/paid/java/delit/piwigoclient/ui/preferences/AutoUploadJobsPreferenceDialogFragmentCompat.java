@@ -31,7 +31,6 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewRequestedEvent;
-import delit.piwigoclient.ui.permissions.users.UserRecyclerViewAdapter;
 
 public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
     private ListView itemListView;
@@ -39,11 +38,13 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
     private AutoUploadJobsListAdapterPreferences viewPrefs;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // this will load default values if not found in the saved state
         viewPrefs = new AutoUploadJobsListAdapterPreferences(savedInstanceState);
     }
 
+    @Nullable
     @Override
     public AutoUploadJobsPreference findPreference(@NonNull CharSequence key) {
         return getPreference();

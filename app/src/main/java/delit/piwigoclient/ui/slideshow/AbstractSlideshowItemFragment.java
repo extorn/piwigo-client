@@ -753,14 +753,14 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             return 0;
         }
 
-        public static final Creator<UseAsAlbumThumbnailForParentAction> CREATOR = new Creator<UseAsAlbumThumbnailForParentAction>() {
+        public static final Creator<UseAsAlbumThumbnailForParentAction<?,?,?>> CREATOR = new Creator<UseAsAlbumThumbnailForParentAction<?,?,?>>() {
             @Override
-            public UseAsAlbumThumbnailForParentAction createFromParcel(Parcel in) {
+            public UseAsAlbumThumbnailForParentAction<?,?,?> createFromParcel(Parcel in) {
                 return new UseAsAlbumThumbnailForParentAction<>(in);
             }
 
             @Override
-            public UseAsAlbumThumbnailForParentAction[] newArray(int size) {
+            public UseAsAlbumThumbnailForParentAction<?,?,?>[] newArray(int size) {
                 return new UseAsAlbumThumbnailForParentAction[size];
             }
         };
@@ -942,14 +942,14 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             return 0;
         }
 
-        public static final Creator<OnDeleteItemAction> CREATOR = new Creator<OnDeleteItemAction>() {
+        public static final Creator<OnDeleteItemAction<?,?,?>> CREATOR = new Creator<OnDeleteItemAction<?,?,?>>() {
             @Override
-            public OnDeleteItemAction createFromParcel(Parcel in) {
+            public OnDeleteItemAction<?,?,?> createFromParcel(Parcel in) {
                 return new OnDeleteItemAction<>(in);
             }
 
             @Override
-            public OnDeleteItemAction[] newArray(int size) {
+            public OnDeleteItemAction<?,?,?>[] newArray(int size) {
                 return new OnDeleteItemAction[size];
             }
         };

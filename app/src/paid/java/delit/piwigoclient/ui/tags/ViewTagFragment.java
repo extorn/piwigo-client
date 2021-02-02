@@ -129,7 +129,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
     public ViewTagFragment() {
     }
 
-    public static ViewTagFragment newInstance(Tag tag) {
+    public static ViewTagFragment<?,?> newInstance(Tag tag) {
         ViewTagFragment<?,?> fragment = new ViewTagFragment<>();
         Bundle args = new Bundle();
         args.putParcelable(ARG_TAG, tag);
@@ -183,7 +183,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
     }
 
-    private AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
+    private AlbumItemRecyclerViewAdapterPreferences createOrUpdateViewPrefs() {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
@@ -265,7 +265,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
             tagModel = null;
         }
 
-        updateViewPrefs();
+        createOrUpdateViewPrefs();
 
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(tagModel == null) {
@@ -534,12 +534,12 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         if (!deleteActionData.isResourceInfoAvailable()) {
             Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, getContext());
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
-                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList)));
+                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler<>(item, multimediaExtensionList)));
             }
             return;
         }
 
-        UIHelper.QuestionResultListener dialogListener = new OnDeleteTagsAction<>(getUiHelper());
+        UIHelper.QuestionResultListener<FUIH,F> dialogListener = new OnDeleteTagsAction<>(getUiHelper());
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean isTagAlterationSupported = sessionDetails != null && (sessionDetails.isUseUserTagPluginForUpdate() || sessionDetails.isAdminUser());
@@ -618,14 +618,14 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
             return 0;
         }
 
-        public static final Creator<OnDeleteTagsAction> CREATOR = new Creator<OnDeleteTagsAction>() {
+        public static final Creator<OnDeleteTagsAction<?,?>> CREATOR = new Creator<OnDeleteTagsAction<?,?>>() {
             @Override
-            public OnDeleteTagsAction createFromParcel(Parcel in) {
+            public OnDeleteTagsAction<?,?> createFromParcel(Parcel in) {
                 return new OnDeleteTagsAction<>(in);
             }
 
             @Override
-            public OnDeleteTagsAction[] newArray(int size) {
+            public OnDeleteTagsAction<?,?>[] newArray(int size) {
                 return new OnDeleteTagsAction[size];
             }
         };
@@ -719,14 +719,14 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
             return 0;
         }
 
-        public static final Creator<OnDeleteTagsForeverAction> CREATOR = new Creator<OnDeleteTagsForeverAction>() {
+        public static final Creator<OnDeleteTagsForeverAction<?,?>> CREATOR = new Creator<OnDeleteTagsForeverAction<?,?>>() {
             @Override
-            public OnDeleteTagsForeverAction createFromParcel(Parcel in) {
+            public OnDeleteTagsForeverAction<?,?> createFromParcel(Parcel in) {
                 return new OnDeleteTagsForeverAction<>(in);
             }
 
             @Override
-            public OnDeleteTagsForeverAction[] newArray(int size) {
+            public OnDeleteTagsForeverAction<?,?>[] newArray(int size) {
                 return new OnDeleteTagsForeverAction[size];
             }
         };
@@ -734,7 +734,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems));
+                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler<>(selectedItemIds, selectedItems));
             }
         }
     }
@@ -892,14 +892,14 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
             return 0;
         }
 
-        public static final Creator<TagLoadedAction> CREATOR = new Creator<TagLoadedAction>() {
+        public static final Creator<TagLoadedAction<?,?>> CREATOR = new Creator<TagLoadedAction<?,?>>() {
             @Override
-            public TagLoadedAction createFromParcel(Parcel in) {
+            public TagLoadedAction<?,?> createFromParcel(Parcel in) {
                 return new TagLoadedAction<>(in);
             }
 
             @Override
-            public TagLoadedAction[] newArray(int size) {
+            public TagLoadedAction<?,?>[] newArray(int size) {
                 return new TagLoadedAction[size];
             }
         };

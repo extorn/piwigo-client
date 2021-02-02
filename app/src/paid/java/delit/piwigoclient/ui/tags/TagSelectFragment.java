@@ -58,7 +58,7 @@ public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends
     private static final String TAG = "TagSelFrag";
     private PiwigoTags tagsModel;
 
-    public static TagSelectFragment newInstance(TagRecyclerViewAdapter.TagViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection, HashSet<Tag> unsavedNewTags) {
+    public static TagSelectFragment<?,?> newInstance(TagRecyclerViewAdapter.TagViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection, HashSet<Tag> unsavedNewTags) {
         TagSelectFragment<?,?> fragment = new TagSelectFragment<>();
         Bundle b = buildArgsBundle(prefs, actionId, initialSelection);
         BundleUtils.putSet(b, ARGS_UNSAVED_TAGS, unsavedNewTags);

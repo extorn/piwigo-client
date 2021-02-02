@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 
@@ -97,15 +96,15 @@ public class FileSelectActivity<A extends FileSelectActivity<A, AUIH>, AUIH exte
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState != null) {
-            folderItemSelectPrefs = new FolderItemViewAdapterPreferences(savedInstanceState);
-        }
 
         if (hasNotAcceptedEula()) {
             finish();
         } else {
             if (savedInstanceState == null) {
                 showFileSelectFragment();
+            } else {
+                // reload the items from the saved state
+                folderItemSelectPrefs = new FolderItemViewAdapterPreferences(savedInstanceState);
             }
         }
     }

@@ -122,14 +122,6 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-        }
-    }
-
     private float getScreenWidth() {
         DisplayMetrics dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -164,7 +156,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
     }
 
-    private AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
+    private void createOrUpdateViewPrefs() {
 
 //        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
@@ -186,7 +178,6 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
 //        viewPrefs.withAlbumWidth(getScreenWidth() / albumsPerRow);
         viewPrefs.withRecentlyAlteredThresholdDate(recentlyAlteredThresholdDate);
-        return viewPrefs;
     }
 
     boolean getMultiSelectionAllowed() {
@@ -242,7 +233,8 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             favoritesModel = null;
         }
 
-        updateViewPrefs();
+        // Update the view preferences because though they can be loaded from saved state, some app preferences may have altered since
+        createOrUpdateViewPrefs();
 
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(favoritesModel == null) {
@@ -580,14 +572,14 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             return 0;
         }
 
-        public static final Creator<OnDeleteFavoritesAction> CREATOR = new Creator<OnDeleteFavoritesAction>() {
+        public static final Creator<OnDeleteFavoritesAction<?,?>> CREATOR = new Creator<OnDeleteFavoritesAction<?,?>>() {
             @Override
-            public OnDeleteFavoritesAction createFromParcel(Parcel in) {
+            public OnDeleteFavoritesAction<?,?> createFromParcel(Parcel in) {
                 return new OnDeleteFavoritesAction<>(in);
             }
 
             @Override
-            public OnDeleteFavoritesAction[] newArray(int size) {
+            public OnDeleteFavoritesAction<?,?>[] newArray(int size) {
                 return new OnDeleteFavoritesAction[size];
             }
         };
@@ -674,14 +666,14 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             return 0;
         }
 
-        public static final Creator<OnDeleteFavoritesForeverAction> CREATOR = new Creator<OnDeleteFavoritesForeverAction>() {
+        public static final Creator<OnDeleteFavoritesForeverAction<?,?>> CREATOR = new Creator<OnDeleteFavoritesForeverAction<?,?>>() {
             @Override
-            public OnDeleteFavoritesForeverAction createFromParcel(Parcel in) {
+            public OnDeleteFavoritesForeverAction<?,?> createFromParcel(Parcel in) {
                 return new OnDeleteFavoritesForeverAction<>(in);
             }
 
             @Override
-            public OnDeleteFavoritesForeverAction[] newArray(int size) {
+            public OnDeleteFavoritesForeverAction<?,?>[] newArray(int size) {
                 return new OnDeleteFavoritesForeverAction[size];
             }
         };

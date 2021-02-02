@@ -64,7 +64,7 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
     private LinkedHashMap<Long, Parcelable> listViewStates = new LinkedHashMap<>(5); // one state for each level within the list (created and deleted on demand)
 
 
-    public static RecyclerViewCategoryItemSelectFragment newInstance(CategoryItemViewAdapterPreferences prefs, int actionId) {
+    public static RecyclerViewCategoryItemSelectFragment<?,?> newInstance(CategoryItemViewAdapterPreferences prefs, int actionId) {
         RecyclerViewCategoryItemSelectFragment<?,?> fragment = new RecyclerViewCategoryItemSelectFragment<>();
         fragment.setArguments(RecyclerViewCategoryItemSelectFragment.buildArgsBundle(prefs, actionId));
         return fragment;

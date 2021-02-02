@@ -86,8 +86,8 @@ class BitmapHunter implements Runnable {
   int networkPolicy;
   final RequestHandler requestHandler;
 
-  Action action;
-  List<Action> actions;
+  Action<?> action;
+  List<Action<?>> actions;
   Bitmap result;
   Future<?> future;
   Picasso.LoadedFrom loadedFrom;
@@ -378,7 +378,7 @@ class BitmapHunter implements Runnable {
     return data;
   }
 
-  Action getAction() {
+  Action<?> getAction() {
     return action;
   }
 
@@ -386,7 +386,7 @@ class BitmapHunter implements Runnable {
     return picasso;
   }
 
-  List<Action> getActions() {
+  List<Action<?>> getActions() {
     return actions;
   }
 

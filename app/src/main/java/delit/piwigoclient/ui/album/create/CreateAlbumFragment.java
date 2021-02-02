@@ -91,7 +91,7 @@ public class CreateAlbumFragment<F extends CreateAlbumFragment<F,FUIH>,FUIH exte
      * @param uploadToGallery
      * @return A pkg instance of fragment UploadFragment.
      */
-    public static CreateAlbumFragment newInstance(int actionId, CategoryItemStub uploadToGallery) {
+    public static CreateAlbumFragment<?,?> newInstance(int actionId, CategoryItemStub uploadToGallery) {
         CreateAlbumFragment<?,?> fragment = new CreateAlbumFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = new Bundle();

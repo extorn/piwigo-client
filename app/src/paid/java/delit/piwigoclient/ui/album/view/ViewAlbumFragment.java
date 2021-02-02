@@ -74,8 +74,7 @@ public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH 
 
     @Override
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
-        AlbumItemRecyclerViewAdapterPreferences prefs = super.updateViewPrefs();
-        return prefs;
+        return super.updateViewPrefs();
     }
 
     @Override

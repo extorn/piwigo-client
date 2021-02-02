@@ -77,18 +77,6 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        Bundle b = savedInstanceState;
-        if(b == null) {
-            b = getArguments();
-        }
-        if (b != null) {
-            viewPrefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences(b);
-        }
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         EventBus.getDefault().register(this);
@@ -121,8 +109,11 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
 
         if (isSessionDetailsChanged()) {
             groupsModel.clear();
-        } else if (savedInstanceState != null) {
+        }
+        if (savedInstanceState != null) {
             viewPrefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences(savedInstanceState);
+        } else {
+            viewPrefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences(getArguments());
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
@@ -278,14 +269,14 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
             return 0;
         }
 
-        public static final Creator<OnDeleteGroupAction> CREATOR = new Creator<OnDeleteGroupAction>() {
+        public static final Creator<OnDeleteGroupAction<?,?>> CREATOR = new Creator<OnDeleteGroupAction<?,?>>() {
             @Override
-            public OnDeleteGroupAction createFromParcel(Parcel in) {
+            public OnDeleteGroupAction<?,?> createFromParcel(Parcel in) {
                 return new OnDeleteGroupAction<>(in);
             }
 
             @Override
-            public OnDeleteGroupAction[] newArray(int size) {
+            public OnDeleteGroupAction<?,?>[] newArray(int size) {
                 return new OnDeleteGroupAction[size];
             }
         };

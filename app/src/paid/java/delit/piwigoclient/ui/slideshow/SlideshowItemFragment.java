@@ -335,14 +335,14 @@ public abstract class SlideshowItemFragment<F extends SlideshowItemFragment<F,FU
             return 0;
         }
 
-        public static final Creator<FavoriteRemoveAction> CREATOR = new Creator<FavoriteRemoveAction>() {
+        public static final Creator<FavoriteRemoveAction<?,?,?>> CREATOR = new Creator<FavoriteRemoveAction<?,?,?>>() {
             @Override
-            public FavoriteRemoveAction createFromParcel(Parcel in) {
+            public FavoriteRemoveAction<?,?,?> createFromParcel(Parcel in) {
                 return new FavoriteRemoveAction<>(in);
             }
 
             @Override
-            public FavoriteRemoveAction[] newArray(int size) {
+            public FavoriteRemoveAction<?,?,?>[] newArray(int size) {
                 return new FavoriteRemoveAction[size];
             }
         };
@@ -377,14 +377,14 @@ public abstract class SlideshowItemFragment<F extends SlideshowItemFragment<F,FU
             return 0;
         }
 
-        public static final Creator<FavoriteAddAction> CREATOR = new Creator<FavoriteAddAction>() {
+        public static final Creator<FavoriteAddAction<?,?,?>> CREATOR = new Creator<FavoriteAddAction<?,?,?>>() {
             @Override
-            public FavoriteAddAction createFromParcel(Parcel in) {
+            public FavoriteAddAction<?,?,?> createFromParcel(Parcel in) {
                 return new FavoriteAddAction<>(in);
             }
 
             @Override
-            public FavoriteAddAction[] newArray(int size) {
+            public FavoriteAddAction<?,?,?>[] newArray(int size) {
                 return new FavoriteAddAction[size];
             }
         };
