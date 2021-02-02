@@ -71,7 +71,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
     private TagRecyclerViewAdapter.TagViewAdapterPreferences viewPrefs;
     private RecyclerView recyclerView;
 
-    public static TagsListFragment newInstance(TagRecyclerViewAdapter.TagViewAdapterPreferences viewPrefs) {
+    public static TagsListFragment<?,?> newInstance(TagRecyclerViewAdapter.TagViewAdapterPreferences viewPrefs) {
         TagsListFragment<?,?> fragment = new TagsListFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(viewPrefs.storeToBundle(new Bundle()));
@@ -88,12 +88,6 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
     public void onDetach() {
         EventBus.getDefault().unregister(this);
         super.onDetach();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        viewPrefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(savedInstanceState);
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -119,9 +113,11 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
                 tagsModel = savedInstanceState.getParcelable(TAGS_MODEL);
             }
             viewPrefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(savedInstanceState);
+        } else {
+            viewPrefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(getArguments());
         }
         if(tagsModel == null) {
-            tagsModel = new PiwigoTags();
+            tagsModel = new PiwigoTags<>();
             setTagsModelPageSourceCount();
         }
 
