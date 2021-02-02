@@ -268,9 +268,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         setArguments(args);
     }
 
-    protected void loadModelFromArguments() {
+    protected void loadModelFromArguments(Bundle args) {
         Log.e(TAG, "Loading model from args");
-        Bundle args = getArguments();
         if (args != null) {
             albumDetails = args.getParcelable(ARG_ALBUM);
         }
@@ -459,7 +458,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         super.onViewCreated(view, savedInstanceState);
 
         if (getArguments() != null) {
-            loadModelFromArguments();
+            loadModelFromArguments(getArguments());
         } else {
             // restore previous viewed album.
             ConnectionPreferences.ResumeActionPreferences resumePrefs = getUiHelper().getResumePrefs();
@@ -472,7 +471,9 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                     getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
                 }
             } else {
-                throw new IllegalStateException("Unable to resume album fragment - no resume details stored");
+                Logging.log(Log.WARN, TAG, "Unable to resume album fragment - no resume details stored. Changing to gallery root");
+                addArguments(CategoryItem.ROOT_ALBUM.clone());
+                loadModelFromArguments(getArguments());
             }
         }
 
@@ -1322,7 +1323,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
         if (galleryModel == null) {
             if (getArguments() != null) {
-                loadModelFromArguments(); // restoring view.
+                loadModelFromArguments(getArguments()); // restoring view.
             } else {
                 Logging.log(Log.ERROR, TAG, "Gallery model is null, but there are no arguments available from which to load one - unable to populate view");
                 return;
@@ -3325,13 +3326,13 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
         @Override
         public int getSpanSize(int position) {
-            // ensure that app cannot crash due to position being out of bounds.
-            //FIXME - why would position be outside model size? What happens next now it doesn't crash here?
-            if (position < 0 || galleryModel.getItemCount() <= position) {
-                return 1;
+            int itemType = -1;
+            try {
+                itemType = galleryModel.getItemByIdx(position).getType();
+            } catch(ArrayIndexOutOfBoundsException e) {
+                Logging.log(Log.WARN, TAG, "SpanSizeLookup gallery out of sync with the gallery being shown");
+                Logging.recordException(e);
             }
-
-            int itemType = galleryModel.getItemByIdx(position).getType();
             switch (itemType) {
                 case GalleryItem.ALBUM_HEADING_TYPE:
                     return totalSpans;
