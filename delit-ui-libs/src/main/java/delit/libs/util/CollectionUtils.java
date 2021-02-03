@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -196,5 +197,13 @@ public class CollectionUtils {
             output.add(i.toString());
         }
         return output;
+    }
+
+    public static <T> ArrayList<T> toArrayList(T[] objects) {
+        ArrayList<T> wrapper = new ArrayList<>(objects != null ? objects.length : 0);
+        if(objects != null) {
+            Collections.addAll(wrapper, objects);
+        }
+        return wrapper;
     }
 }

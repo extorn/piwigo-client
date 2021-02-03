@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import delit.libs.util.CollectionUtils;
+
 
 public class MappedArrayAdapter<T, S> extends ArrayAdapter<T> {
     private final List<S> objectValues;
@@ -22,8 +24,8 @@ public class MappedArrayAdapter<T, S> extends ArrayAdapter<T> {
     }
 
     public MappedArrayAdapter(@NonNull Context context, @LayoutRes int resource, @IdRes int textViewResourceId, @NonNull T[] objects, @NonNull S[] objectValues) {
-        super(context, resource, textViewResourceId, com.google.android.gms.common.util.ArrayUtils.toArrayList(objects));
-        this.objectValues = com.google.android.gms.common.util.ArrayUtils.toArrayList(objectValues);
+        super(context, resource, textViewResourceId, CollectionUtils.toArrayList(objects));
+        this.objectValues = CollectionUtils.toArrayList(objectValues);
     }
 
     public MappedArrayAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<T> objects, @NonNull List<S> objectValues) {

@@ -7,9 +7,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import delit.libs.util.ArrayUtils;
+import delit.libs.util.CollectionUtils;
 
 
 public class BiArrayAdapter<T> extends ArrayAdapter<T> {
@@ -24,7 +26,7 @@ public class BiArrayAdapter<T> extends ArrayAdapter<T> {
     }
 
     public BiArrayAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull T[] objects, @NonNull long[] objectIds) {
-        super(context, resource, textViewResourceId, com.google.android.gms.common.util.ArrayUtils.toArrayList(objects));
+        super(context, resource, textViewResourceId, CollectionUtils.toArrayList(objects));
         this.objectIds = new ArrayList<>(objectIds.length);
         this.objectIds.addAll(ArrayUtils.toList(objectIds));
     }

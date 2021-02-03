@@ -20,6 +20,7 @@ import com.google.firebase.installations.FirebaseInstallations;
 
 import java.util.Map;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.list.StringMapExpandableListAdapterBuilder;
 import delit.libs.util.ArrayUtils;
 import delit.piwigoclient.R;
