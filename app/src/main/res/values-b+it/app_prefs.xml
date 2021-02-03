@@ -207,6 +207,10 @@
     
 
     
+    <string name="preference_check_for_server_updates_title">Notifica degli aggiornamenti</string>
+    <string name="preference_check_for_server_updates_summary">Ricevi una notifica se sono disponibili aggiornamenti per il tuo server</string>
+
+    
     <string name="preference_video_cache_enabled_title">Memorizza nella cache i video visualizzati su file</string>
     <string name="preference_video_cache_enabled_summary">Se abilitato, tutti i video in streaming verranno memorizzati nella cache per la riproduzione successiva</string>
     

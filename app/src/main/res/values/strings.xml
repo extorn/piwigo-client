@@ -1046,4 +1046,31 @@ SOFTWARE.
     <string name="import_cancelled">Import cancelled</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">The item must belong to at least one album unless being deleted. Please select one and try again.</string>
     <string name="orphans_menu_title">Orphans</string>
+    <string name="piwigo_server">Piwigo Server</string>
+    <string name="piwigo_server_plugin">Server Plugin</string>
+    <string name="piwigo_server_updates_available_pattern">Piwigo Update Available:\n\n%1$s\n%2$s</string>
+    <string name="support_email_pattern" translatable="false"><![CDATA[
+%1$s
+\n\n
+Comments:
+\n\n
+Feature Request:
+\n\n
+Bug Summary:
+\n\n
+Bug Details:
+\n\n
+Version of Piwigo Server Connected to: %2$s
+\n\n
+Piwigo Plugins Active on Server:
+\n
+%6$s
+\n\n
+Version of PIWIGO Client: %3$s
+\n\n
+Android version of this device: %4$s
+\n\n
+App Install UUID: %5$s
+    ]]></string>
+    <string name="localizedEmailHelp">This email template is for your convenience.\nIf you feel it is not relevant to provide any of the following details, please delete them.\n\nThe UUID allows me to filter all logged data to show just those relevant to you. This will only be needed if I\'m struggling to fix a bug you\'re experiencing.</string>
 </resources>

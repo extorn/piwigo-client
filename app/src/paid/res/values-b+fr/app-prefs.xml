@@ -23,6 +23,9 @@
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d emplois</string>
 
     
+    
+
+    
 
     
     <string name="preference_data_upload_automatic_job_view_status_title">Afficher l\'état du téléchargement</string>

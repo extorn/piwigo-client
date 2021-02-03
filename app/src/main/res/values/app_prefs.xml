@@ -206,6 +206,10 @@
     <string name="preference_gallery_enable_video_playback_summary">Enable if you want to download and play videos on demand</string>
     <bool name="preference_gallery_enable_video_playback_default">true</bool>
 
+    <string name="preference_check_for_server_updates_key" translatable="false">preference_check_for_server_updates</string>
+    <string name="preference_check_for_server_updates_title">Notification of Updates</string>
+    <string name="preference_check_for_server_updates_summary">Receive notification if there are updates available for your server</string>
+
     <string name="preference_video_cache_enabled_key" translatable="false">preference_video_cache_enabled</string>
     <string name="preference_video_cache_enabled_title">Cache videos viewed to file</string>
     <string name="preference_video_cache_enabled_summary">When enabled, any streamed videos will be cached for later playback</string>

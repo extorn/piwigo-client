@@ -1,7 +1,5 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import java.util.Set;
-
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 /**

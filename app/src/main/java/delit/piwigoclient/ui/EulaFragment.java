@@ -14,6 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.installations.FirebaseInstallations;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -25,6 +27,7 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;
 import delit.piwigoclient.ui.events.EulaNotAgreedEvent;
+import delit.piwigoclient.ui.util.EmailSender;
 
 /**
  * Created by gareth on 07/06/17.
@@ -80,21 +83,9 @@ public class EulaFragment<F extends EulaFragment<F,FUIH>,FUIH extends FragmentUI
         return getString(R.string.app_licence_heading);
     }
 
-    private void sendEmail(String email) {
-
-        final String appVersion = ProjectUtils.getVersionName(requireContext());
-
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain"); // send email as plain text
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
-        intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
-        String serverVersion = "Unknown";
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            serverVersion = sessionDetails.getPiwigoVersion();
-        }
-        intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: " + appVersion + "\nType and model of Device Being Used:\n");
-        requireContext().startActivity(Intent.createChooser(intent, getString(R.string.create_email_using_app)));
+    private void sendEmail(String emailToAddress) {
+        Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
+        idTask.addOnCompleteListener(new EmailSender(getContext(), emailToAddress));
     }
 
     private void onDontAgreeToEula() {

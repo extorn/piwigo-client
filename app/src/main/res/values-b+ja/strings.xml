@@ -689,4 +689,9 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="import_cancelled">インポートがキャンセルされました</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">アイテムは、削除されない限り、少なくとも1つのアルバムに属している必要があります。 いずれかを選択して、再試行してください。</string>
     <string name="orphans_menu_title">孤児</string>
+    <string name="piwigo_server">Piwigoサーバー</string>
+    <string name="piwigo_server_plugin">サーバープラグイン</string>
+    <string name="piwigo_server_updates_available_pattern">利用可能なPiwigoアップデート：\n\n%1$s\n%2$s</string>
+    
+    <string name="localizedEmailHelp">このメールテンプレートはあなたの便宜のためのものです。\n以下の詳細のいずれかを提供することが適切でないと思われる場合は、それらを削除してください。\n\nUUIDを使用すると、ログに記録されたすべてのデータをフィルタリングして、関連するデータのみを表示できます。 これは、発生しているバグの修正に苦労している場合にのみ必要になります。</string>
 </resources>

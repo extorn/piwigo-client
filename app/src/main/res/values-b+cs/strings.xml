@@ -689,4 +689,9 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="import_cancelled">Import zrušen</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">Pokud položka nebude odstraněna, musí patřit alespoň do jednoho alba. Vyberte jednu a zkuste to znovu.</string>
     <string name="orphans_menu_title">Sirotci</string>
+    <string name="piwigo_server">Server Piwigo</string>
+    <string name="piwigo_server_plugin">Plugin serveru</string>
+    <string name="piwigo_server_updates_available_pattern">Aktualizace Piwigo k dispozici:\n\n%1$s\n%2$s</string>
+    
+    <string name="localizedEmailHelp">Tato e-mailová šablona slouží pro vaše pohodlí.\nPokud se domníváte, že není relevantní poskytnout některou z následujících podrobností, odstraňte je.\n\nUUID mi umožňuje filtrovat všechna zaznamenaná data, abych zobrazil pouze ta, která jsou pro vás relevantní. To bude nutné pouze v případě, že se snažím opravit chybu, na kterou narazíte.</string>
 </resources>

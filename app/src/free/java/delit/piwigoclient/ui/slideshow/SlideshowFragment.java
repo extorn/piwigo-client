@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.Set;
-
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;

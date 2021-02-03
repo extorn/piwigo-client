@@ -5,8 +5,6 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
-import java.util.Set;
-
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;

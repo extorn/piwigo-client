@@ -1,9 +1,7 @@
 package delit.piwigoclient.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,11 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.installations.FirebaseInstallations;
 
@@ -40,19 +36,9 @@ import delit.piwigoclient.piwigoApi.handlers.LogoutResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.ViewGroupUIHelper;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
+import delit.piwigoclient.ui.util.EmailSender;
 
 public class NavBarHeaderView<V extends NavBarHeaderView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends FrameLayout {
-
-    public static final String EMAIL_TEMPLATE_PATTERN = "Comments:\n" +
-            "Feature Request:\n" +
-            "Bug Summary:\n" +
-            "Bug Details:\n" +
-            "Version of Piwigo Server Connected to: %1$s\n" +
-            "Version of PIWIGO Client: %2$s\n" +
-            "Android version of this device: %3$s\n" +
-            "App Install UUID:%4$s\n" +
-            "Type and model of Device Being Used:\n";
-
     private boolean refreshSessionInProgress;
     private TextView currentUsernameField;
     private TextView currentServerField;
@@ -175,40 +161,7 @@ public class NavBarHeaderView<V extends NavBarHeaderView<V,VUIH>, VUIH extends V
 
     private void sendEmail(String emailToAddress) {
         Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
-        idTask.addOnCompleteListener(new EmailSender(emailToAddress));
-    }
-
-    private class EmailSender implements OnCompleteListener<String> {
-
-        private final String toEmailAddress;
-
-        public EmailSender(String toEmailAddress) {
-            this.toEmailAddress = toEmailAddress;
-        }
-
-        @Override
-        public void onComplete(@NonNull Task<String> uuidTask) {
-            String uuid = null;
-            if(uuidTask.isSuccessful()) {
-                uuid = uuidTask.getResult();
-            }
-            final String appVersion = ProjectUtils.getVersionName(getContext());
-
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain"); // send email as plain text
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{toEmailAddress});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
-            String serverVersion = "Unknown";
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-            if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-                serverVersion = sessionDetails.getPiwigoVersion();
-            }
-            String emailContent = String.format(EMAIL_TEMPLATE_PATTERN, serverVersion, appVersion, Build.VERSION.CODENAME + "(" + Build.VERSION.SDK_INT + ")", uuid);
-            intent.putExtra(Intent.EXTRA_TEXT, emailContent);
-            getContext().startActivity(Intent.createChooser(intent, ""));
-        }
-
-
+        idTask.addOnCompleteListener(new EmailSender(getContext(), emailToAddress));
     }
 
     protected void markRefreshSessionComplete() {

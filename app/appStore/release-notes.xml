@@ -1,90 +1,50 @@
 <en-GB>
-Bugfix:
-- Tidy up of a lot of issues causing crashes across the app following the last month of changes
-- Default setting for video compression corrected
-- Re-added support for minimise albums
-- fix videos not being detected
-Changes:
-- Removed option to specify which files are video playable. This is done based on file extension derived mimetype
+Change:
+- Added statement for your clarity at the top of the email template created by this app for support requests
+- Paid Only: Added support for notification of updates being available for the server or plugins
 </en-GB>
 <cs-CZ>
-Oprava chyby:
-- Uspořádejte spoustu problémů způsobujících zhroucení aplikace po posledním měsíci změn
-- Výchozí nastavení pro kompresi videa opraveno
-- Znovu přidaná podpora pro minimalizaci alb
-- opravit videa nebyla detekována
-Změny:
-- Odebraná možnost určit, které soubory lze přehrávat video. To se děje na základě mimetypu odvozeného od přípony souboru
+Změna:
+- Přidané prohlášení pro vaši srozumitelnost v horní části šablony e-mailu vytvořené touto aplikací pro žádosti o podporu
+- Paid Only: Přidaná podpora pro upozornění na aktualizace dostupné pro server nebo pluginy
 </cs-CZ>
 <de-DE>
-Bug-Fix:
-- Beheben Sie viele Probleme, die nach dem letzten Monat der Änderungen zu Abstürzen in der gesamten App führen
-- Standardeinstellung für Videokomprimierung korrigiert
-- Unterstützung für das Minimieren von Alben wurde hinzugefügt
-- Korrigieren Sie nicht erkannte Videos
-Änderungen:
-- Option entfernt, um anzugeben, welche Dateien per Video abgespielt werden können. Dies erfolgt basierend auf dem von der Dateierweiterung abgeleiteten Mimetyp
+Veränderung:
+- Erklärung zu Ihrer Klarheit oben in der von dieser App für Supportanfragen erstellten E-Mail-Vorlage hinzugefügt
+- Nur bezahlt: Unterstützung für Benachrichtigung über Updates für den Server oder die Plugins hinzugefügt
 </de-DE>
 <es-ES>
-Arreglo del fallo:
-- Arregle muchos problemas que causan fallas en la aplicación luego del último mes de cambios
-- Se corrigió la configuración predeterminada para la compresión de video
-- Soporte re-agregado para minimizar álbumes
-- corregir videos que no se detectan
-Cambios:
-- Opción eliminada para especificar qué archivos se pueden reproducir en video. Esto se hace en función del tipo mime derivado de la extensión de archivo
+Cambio:
+- Declaración agregada para su claridad en la parte superior de la plantilla de correo electrónico creada por esta aplicación para solicitudes de soporte
+- Solo pago: soporte agregado para la notificación de actualizaciones disponibles para el servidor o los complementos
 </es-ES>
 <fr-FR>
-Correction d\'un bug:
-- Remédier à de nombreux problèmes provoquant des plantages dans l\'application après le dernier mois de modifications
-- Réglage par défaut de la compression vidéo corrigé
-- Prise en charge ré-ajoutée pour minimiser les albums
-- corriger les vidéos non détectées
-Changements:
-- Option supprimée pour spécifier les fichiers pouvant être lus par vidéo. Ceci est fait en fonction du type MIME dérivé de l\'extension de fichier
+Changement:
+- Ajout d\'une déclaration pour votre clarté en haut du modèle d\'e-mail créé par cette application pour les demandes d\'assistance
+- Payé uniquement: Ajout de la prise en charge de la notification des mises à jour disponibles pour le serveur ou les plugins
 </fr-FR>
 <it-IT>
-Risoluzione del problema:
-- Riordina molti problemi che causano arresti anomali nell\'app dopo l\'ultimo mese di modifiche
-- Impostazione predefinita per la compressione video corretta
-- Aggiunto nuovamente il supporto per ridurre al minimo gli album
-- risolto i video che non vengono rilevati
-I cambiamenti:
-- Opzione rimossa per specificare quali file sono riproducibili video. Questa operazione viene eseguita in base al tipo MIME derivato dall\'estensione del file
+Modificare:
+- Aggiunta una dichiarazione per la tua chiarezza nella parte superiore del modello di email creato da questa app per le richieste di supporto
+- Solo a pagamento: aggiunto il supporto per la notifica degli aggiornamenti disponibili per il server o i plug-in
 </it-IT>
 <ja-JP>
-バグ修正：
--先月の変更後、アプリ全体でクラッシュを引き起こす多くの問題を整理します
--ビデオ圧縮のデフォルト設定が修正されました
--アルバムを最小化するためのサポートが再度追加されました
--ビデオが検出されない問題を修正
-変更点：
--ビデオ再生可能なファイルを指定するオプションを削除しました。 これは、ファイル拡張子から派生したmimetypeに基づいて行われます
+変化する：
+-サポートリクエストのためにこのアプリによって作成されたメールテンプレートの上部に明確にするためのステートメントを追加しました
+-有料のみ：サーバーまたはプラグインで利用可能な更新の通知のサポートが追加されました
 </ja-JP>
 <nl-NL>
-Bugfix:
-- Ruim veel problemen op die crashes veroorzaken in de app na de laatste maand van wijzigingen
-- Standaardinstelling voor videocompressie gecorrigeerd
-- Opnieuw toegevoegde ondersteuning voor het minimaliseren van albums
-- repareer video\'s die niet worden gedetecteerd
-Veranderingen:
-- Optie verwijderd om aan te geven welke bestanden video afspeelbaar zijn. Dit wordt gedaan op basis van het mime-type dat is afgeleid van de bestandsextensie
+Verandering:
+- Verklaring toegevoegd voor uw duidelijkheid bovenaan de e-mailsjabloon gemaakt door deze app voor ondersteuningsverzoeken
+- Alleen betaald: ondersteuning toegevoegd voor het melden van updates die beschikbaar zijn voor de server of plug-ins
 </nl-NL>
 <ru-RU>
-Исправлена ошибка:
-- Устранение множества проблем, вызывающих сбои в приложении после последнего месяца изменений.
-- Исправлены настройки по умолчанию для сжатия видео.
-- Снова добавлена поддержка сворачивания альбомов.
-- исправить видео, которые не обнаруживаются
-Изменения:
-- Удалена возможность указывать, какие файлы воспроизводить видео. Это делается на основе mimetype, производного от расширения файла.
+Изменить:
+- Добавлено заявление для вашей ясности в верхней части шаблона электронной почты, созданного этим приложением для запросов поддержки.
+- Только платные: добавлена поддержка уведомления об обновлениях, доступных для сервера или плагинов.
 </ru-RU>
 <zh-CN>
-错误修正：
--整理了导致上个月更改后整个应用崩溃的许多问题
--修正了视频压缩的默认设置
--重新添加了对专辑最小化的支持
--修复未检测到的视频
-变化：
--删除了用于指定哪些文件可播放视频的选项。 这是基于文件扩展名导出的mimetype来完成的
+更改：
+-在此应用为支持请求创建的电子邮件模板的顶部添加了为清楚起见的声明
+-仅限付费：增加了对服务器或插件可用更新通知的支持
 </zh-CN>

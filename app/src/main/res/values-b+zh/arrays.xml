@@ -146,6 +146,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.109</item>
+        <item>"更改：
+                 -在此应用为支持请求创建的电子邮件模板的顶部添加了为清楚起见的声明
+                 -仅限付费：增加了对服务器或插件可用更新通知的支持"</item>
         <item>1.4.0.108</item>
         <item>"错误修正：
                  -整理了导致上个月更改后整个应用崩溃的许多问题

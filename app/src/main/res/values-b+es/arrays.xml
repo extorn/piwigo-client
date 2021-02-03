@@ -146,6 +146,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.109</item>
+        <item>"Cambio:
+                 - Declaración agregada para su claridad en la parte superior de la plantilla de correo electrónico creada por esta aplicación para solicitudes de soporte
+                 - Solo pago: soporte agregado para la notificación de actualizaciones disponibles para el servidor o los complementos"</item>
         <item>1.4.0.108</item>
         <item>"Arreglo del fallo:
                  - Arregle muchos problemas que causan fallas en la aplicación luego del último mes de cambios

@@ -689,4 +689,9 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="import_cancelled">Importation annulée</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">L\'élément doit appartenir à au moins un album à moins d\'être supprimé. Veuillez en sélectionner un et réessayer.</string>
     <string name="orphans_menu_title">Orphelins</string>
+    <string name="piwigo_server">Serveur Piwigo</string>
+    <string name="piwigo_server_plugin">Plugin serveur</string>
+    <string name="piwigo_server_updates_available_pattern">Mise à jour Piwigo disponible:\n\n%1$s\n%2$s</string>
+    
+    <string name="localizedEmailHelp">Ce modèle d\'e-mail est pour votre commodité.\nSi vous pensez qu\'il n\'est pas pertinent de fournir l\'un des détails suivants, veuillez les supprimer.\n\nL\'UUID me permet de filtrer toutes les données enregistrées pour n\'afficher que celles qui vous concernent. Cela ne sera nécessaire que si j\'ai du mal à résoudre un bogue que vous rencontrez.</string>
 </resources>

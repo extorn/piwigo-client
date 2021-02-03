@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
 import com.google.gson.JsonElement;
@@ -26,27 +28,27 @@ import delit.piwigoclient.ui.events.BlockingUserInteractionQuestion;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
-public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler<T>> extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "LoginRspHdlr";
     private String password = null;
     private boolean haveValidSessionKey;
     private boolean acceptCachedResponse;
 
-    public LoginResponseHandler() {
+    public AbstractLoginResponseHandler() {
         super("n/a", TAG);
         setPerformingLogin();
     }
 
-    public LoginResponseHandler(String password) {
+    public AbstractLoginResponseHandler(String password) {
         super(null, TAG);
         this.password = password;
         setPerformingLogin();
     }
 
-    public LoginResponseHandler withCachedResponsesAllowed(boolean acceptCachedResponse) {
+    public T withCachedResponsesAllowed(boolean acceptCachedResponse) {
         this.acceptCachedResponse = acceptCachedResponse;
-        return this;
+        return (T)this;
     }
 
     @Override
@@ -88,6 +90,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             canContinue = loadMethodsAvailable();
         }
 
+
         if (canContinue) {
             if (PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
                 canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
@@ -121,6 +124,14 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             loadGalleryConfig();
         }
 
+        if(canContinue) {
+            loadActiveServerPlugins(getContext(), connectionPrefs);
+        }
+
+        if(canContinue) {
+            performExtraServerCalls(getContext(), connectionPrefs);
+        }
+
         setRequestURI(getNestedRequestURI());
         setError(getNestedFailure());
         storeResponse(loginResponse);
@@ -131,6 +142,9 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         }
 
         return null;
+    }
+
+    protected void performExtraServerCalls(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs) {
     }
 
     private boolean loadGalleryConfig() {
@@ -306,6 +320,22 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         public void setNewSessionDetails(PiwigoSessionDetails sessionDetails) {
             this.sessionDetails = sessionDetails;
         }
+    }
+
+    private boolean loadActiveServerPlugins(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        if(sessionDetails.isAdminUser()) {
+            ServerAdminGetPluginsResponseHandler pluginsResponseHandler = new ServerAdminGetPluginsResponseHandler();
+            pluginsResponseHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
+            pluginsResponseHandler.invokeAndWait(context, connectionPrefs);
+            if (pluginsResponseHandler.isSuccess()) {
+                ServerAdminGetPluginsResponseHandler.ServerPluginListResponse response = (ServerAdminGetPluginsResponseHandler.ServerPluginListResponse) pluginsResponseHandler.getResponse();
+                sessionDetails.setActiveServerPlugins(response.getActivePlugins());
+                return true;
+            }
+            return false;
+        }
+        return true;
     }
 
 }

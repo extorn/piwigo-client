@@ -23,7 +23,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
 
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -76,6 +75,7 @@ import delit.piwigoclient.ui.events.GenericLowMemoryEvent;
 import delit.piwigoclient.ui.events.MemoryTrimmedEvent;
 import delit.piwigoclient.ui.events.MemoryTrimmedRunningAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
+import delit.piwigoclient.ui.events.PiwigoActivePluginsReceivedEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
@@ -833,11 +833,16 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
 //    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PiwigoActivePluginsReceivedEvent event) {
+        Logging.addContext(this, event.getCredentials().getSessionDebugInfoMap());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PiwigoLoginSuccessEvent event) {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        FirebaseCrashlytics.getInstance().setCustomKey("ServerVersion", sessionDetails.getPiwigoVersion() /* string value */);
-        FirebaseCrashlytics.getInstance().setCustomKey("AppLanguage", AppPreferences.getDesiredLanguage(getSharedPrefs(), this));
+        Logging.addContext(this, sessionDetails.getSessionDebugInfoMap());
+        Logging.addContext(this,"app.language", AppPreferences.getDesiredLanguage(getSharedPrefs(), this));
 
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.

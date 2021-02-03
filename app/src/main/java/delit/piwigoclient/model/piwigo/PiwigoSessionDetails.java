@@ -2,7 +2,6 @@ package delit.piwigoclient.model.piwigo;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.webkit.MimeTypeMap;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +47,7 @@ public class PiwigoSessionDetails {
     private Boolean useCommunityPlugin;
     private ServerConfig serverConfig;
     private boolean isCached;
+    private Set<ServerPlugin> activeServerPlugins;
 
     public PiwigoSessionDetails(ConnectionPreferences.ProfilePreferences connectionPrefs, String serverUrl, long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, String sessionToken) {
         this.connectionPrefs = connectionPrefs;
@@ -361,6 +361,44 @@ public class PiwigoSessionDetails {
         out.putString("piwigo_client_ws_ext_plugin_version", getPiwigoClientPluginVersion());
     }
 
+    /**
+     * Get a map of key value pairs representing the details of the server
+     * @return
+     */
+    public Map<String,String> getSessionDebugInfoMap() {
+        Map<String,String> sessionInfoMap = new HashMap<>();
+        sessionInfoMap.put("piwigo.version", piwigoVersion);
+        sessionInfoMap.put("piwigo.plugins.community", ""+useCommunityPlugin);
+        sessionInfoMap.put("piwigo.plugins.active", getActivePluginSummary());
+        sessionInfoMap.put("piwigo.user.isAdmin", ""+isAdminUser());
+        sessionInfoMap.put("piwigo.user.type", ""+getUserType());
+        sessionInfoMap.put("piwigo.login.status", ""+loginStatus);
+        return sessionInfoMap;
+    }
+
+    public String getActivePluginSummary() {
+        if(activeServerPlugins == null) {
+            return "not known";
+        }
+        if(activeServerPlugins.isEmpty()) {
+            return "none";
+        }
+        StringBuilder sb = new StringBuilder(activeServerPlugins.size() + "[");
+        for (Iterator<ServerPlugin> iterator = activeServerPlugins.iterator(); iterator.hasNext(); ) {
+            ServerPlugin plugin = iterator.next();
+            sb.append('{');
+            sb.append(plugin.getName());
+            sb.append(',');
+            sb.append(plugin.getVersion());
+            sb.append('}');
+            if(iterator.hasNext()) {
+                sb.append(',');
+            }
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
     public void setServerConfig(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
     }
@@ -377,15 +415,7 @@ public class PiwigoSessionDetails {
         return new Username(getUserId(), getUsername(), getUserType());
     }
 
-    public Set<String> getAllowedMimeTypes() {
-        Set<String> fileExts = getAllowedFileTypes();
-        Set<String> mimeTypes = new HashSet<>();
-        for(String fileExt : fileExts) {
-            String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
-            if(mime != null) {
-                mimeTypes.add(mime);
-            }
-        }
-        return mimeTypes;
+    public void setActiveServerPlugins(ArrayList<ServerPlugin> activePlugins) {
+        activeServerPlugins = new HashSet<>(activePlugins);
     }
 }

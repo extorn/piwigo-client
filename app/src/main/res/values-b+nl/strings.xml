@@ -689,4 +689,9 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="import_cancelled">Import geannuleerd</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">Het item moet tot ten minste één album behoren, tenzij het wordt verwijderd. Selecteer er een en probeer het opnieuw.</string>
     <string name="orphans_menu_title">Wezen</string>
+    <string name="piwigo_server">Piwigo-server</string>
+    <string name="piwigo_server_plugin">Server-plug-in</string>
+    <string name="piwigo_server_updates_available_pattern">Piwigo-update beschikbaar:\n\n%1$s\n%2$s</string>
+    
+    <string name="localizedEmailHelp">Dit e-mailsjabloon is bedoeld voor uw gemak.\nAls u denkt dat het niet relevant is om een van de volgende gegevens te verstrekken, verwijder deze dan.\n\nMet de UUID kan ik alle gelogde gegevens filteren om alleen die gegevens te tonen die voor jou relevant zijn. Dit is alleen nodig als ik moeite heb om een bug op te lossen die u ondervindt.</string>
 </resources>

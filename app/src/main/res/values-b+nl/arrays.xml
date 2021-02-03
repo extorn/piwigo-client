@@ -146,6 +146,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.109</item>
+        <item>"Verandering:
+                 - Verklaring toegevoegd voor uw duidelijkheid bovenaan de e-mailsjabloon gemaakt door deze app voor ondersteuningsverzoeken
+                 - Alleen betaald: ondersteuning toegevoegd voor het melden van updates die beschikbaar zijn voor de server of plug-ins"</item>
         <item>1.4.0.108</item>
         <item>"Bugfix:
                  - Ruim veel problemen op die crashes veroorzaken in de app na de laatste maand van wijzigingen

@@ -22,6 +22,9 @@
     <string name="preference_data_upload_automatic_upload_jobs_title">Auto Upload Jobs</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Jobs</string>
 
+    <!-- preference_check_for_server_updates is a general preference, but disabled for free version -->
+    <bool name="preference_check_for_server_updates_default">true</bool>
+
     <!-- boolean flag set that if false will stop the job running -->
 
     <string name="preference_data_upload_automatic_job_view_status_key" translatable="false">preference_data_upload_automatic_job_view_status</string>

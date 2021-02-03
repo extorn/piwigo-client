@@ -23,7 +23,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;

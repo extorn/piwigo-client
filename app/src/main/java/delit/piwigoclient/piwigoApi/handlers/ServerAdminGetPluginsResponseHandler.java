@@ -17,7 +17,7 @@ public class ServerAdminGetPluginsResponseHandler extends AbstractPiwigoWsRespon
 
     private static final String TAG = "GetPluginsHndlr";
 
-    public ServerAdminGetPluginsResponseHandler(int page, int pageSize) {
+    public ServerAdminGetPluginsResponseHandler() {
         super("pwg.plugins.getList", TAG);
     }
 

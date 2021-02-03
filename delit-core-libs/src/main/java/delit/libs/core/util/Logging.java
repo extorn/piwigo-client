@@ -12,6 +12,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 
 import delit.libs.util.ObjectUtils;
 
@@ -125,6 +126,35 @@ public class Logging {
             firebaseAnalytics.setUserId(userGuid);
         } else {
             log(Log.ERROR, TAG, "Unable to add user GUID to FirebaseAnalytics.");
+        }
+    }
+
+    public static void addContext(Context context, String key, Object val) {
+        FirebaseAnalytics firebaseAnalytics = getFirebaseAnalytics(context);
+        FirebaseCrashlytics firebaseCrashlytics = FirebaseCrashlytics.getInstance();
+        if(firebaseAnalytics != null) {
+            firebaseAnalytics.setUserProperty(key, (String)val);
+        }
+        if(val instanceof Long) {
+            firebaseCrashlytics.setCustomKey(key, (Long) val);
+        } else if(val instanceof Integer) {
+            firebaseCrashlytics.setCustomKey(key, (Integer) val);
+        } else if(val instanceof Double) {
+            firebaseCrashlytics.setCustomKey(key, (Double) val);
+        } else if(val instanceof Float) {
+            firebaseCrashlytics.setCustomKey(key, (Float) val);
+        } else if(val instanceof Boolean) {
+            firebaseCrashlytics.setCustomKey(key, (Boolean) val);
+        } else {
+            if(val != null) {
+                firebaseCrashlytics.setCustomKey(key, val.toString());
+            }
+        }
+    }
+
+    public static void addContext(Context context, Map<String, ?> contextInfoMap) {
+        for(Map.Entry<String,?> contextInfoEntry : contextInfoMap.entrySet()) {
+            addContext(context, contextInfoEntry.getKey(), contextInfoEntry.getValue());
         }
     }
 }

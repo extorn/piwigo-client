@@ -24,6 +24,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Tag;
+import delit.piwigoclient.ui.events.ServerUpdatesAvailableEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
@@ -106,6 +107,24 @@ public class MainActivity extends AbstractMainActivity {
     public void onEvent(TagSelectionNeededEvent event) {
         TagRecyclerViewAdapter.TagViewAdapterPreferences prefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         showTagSelectionFragment(event.getActionId(), prefs , event.getInitialSelection(), event.getNewUnsavedTags());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ServerUpdatesAvailableEvent event) {
+        String serverText = "";
+        String pluginsText = "";
+        boolean showMsg = false;
+        if(event.isServerUpdateAvailable()) {
+            serverText = getString(R.string.piwigo_server);
+            showMsg = true;
+        }
+        if(event.isPluginUpdateAvailable()) {
+            pluginsText = getString(R.string.piwigo_server_plugin);
+            showMsg = true;
+        }
+        if(showMsg) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.piwigo_server_updates_available_pattern, serverText, pluginsText));
+        }
     }
 
     protected void showPrivacy() {

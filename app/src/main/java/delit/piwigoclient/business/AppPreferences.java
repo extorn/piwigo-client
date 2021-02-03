@@ -93,6 +93,10 @@ public class AppPreferences {
         return IOUtils.allUriFlagsAreSet(havePerms, neededPermissions);
     }
 
+    public static boolean isCheckForPiwigoServerUpdates(Context context, SharedPreferences prefs) {
+        return prefs.getBoolean(context.getString(R.string.preference_check_for_server_updates_key), context.getResources().getBoolean(R.bool.preference_check_for_server_updates_default));
+    }
+
     public static class UriPermissionUseCheckResult {
         Uri uri;
         String uses;

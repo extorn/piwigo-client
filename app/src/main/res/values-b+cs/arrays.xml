@@ -146,6 +146,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.109</item>
+        <item>"Změna:
+                 - Přidané prohlášení pro vaši srozumitelnost v horní části šablony e-mailu vytvořené touto aplikací pro žádosti o podporu
+                 - Paid Only: Přidaná podpora pro upozornění na aktualizace dostupné pro server nebo pluginy"</item>
         <item>1.4.0.108</item>
         <item>"Oprava chyby:
                  - Uspořádejte spoustu problémů způsobujících zhroucení aplikace po posledním měsíci změn

@@ -689,4 +689,9 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="import_cancelled">Importazione annullata</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">L\'elemento deve appartenere ad almeno un album a meno che non venga eliminato. Seleziona uno e riprova.</string>
     <string name="orphans_menu_title">Orfani</string>
+    <string name="piwigo_server">Piwigo Server</string>
+    <string name="piwigo_server_plugin">Plugin del server</string>
+    <string name="piwigo_server_updates_available_pattern">Aggiornamento Piwigo disponibile:\n\n%1$s\n%2$s</string>
+    
+    <string name="localizedEmailHelp">Questo modello di email è per tua comodità.\nSe ritieni che non sia rilevante fornire uno dei seguenti dettagli, eliminali.\n\nL\'UUID mi consente di filtrare tutti i dati registrati per mostrare solo quelli rilevanti per te. Questo sarà necessario solo se sto lottando per correggere un bug che stai riscontrando.</string>
 </resources>

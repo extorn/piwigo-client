@@ -689,4 +689,9 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="import_cancelled">导入已取消</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">该项目必须至少属于一个相册，除非被删除。 请选择一个，然后重试。</string>
     <string name="orphans_menu_title">孤儿</string>
+    <string name="piwigo_server">Piwigo服务器</string>
+    <string name="piwigo_server_plugin">服务器插件</string>
+    <string name="piwigo_server_updates_available_pattern">Piwigo更新可用：\n\n%1$s\n%2$s</string>
+    
+    <string name="localizedEmailHelp">此电子邮件模板是为了您的方便。\n如果您认为提供以下任何详细信息无关紧要，请删除它们。\n\nUUID使我可以过滤所有记录的数据，以仅显示与您相关的数据。 仅当我正在努力修复您遇到的错误时才需要这样做。</string>
 </resources>

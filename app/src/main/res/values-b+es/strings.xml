@@ -689,4 +689,9 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="import_cancelled">Importación cancelada</string>
     <string name="alert_error_item_must_belong_to_at_least_one_album">El elemento debe pertenecer al menos a un álbum a menos que se elimine. Seleccione uno y vuelva a intentarlo.</string>
     <string name="orphans_menu_title">Huérfanos</string>
+    <string name="piwigo_server">Servidor Piwigo</string>
+    <string name="piwigo_server_plugin">Complemento de servidor</string>
+    <string name="piwigo_server_updates_available_pattern">Actualización de Piwigo disponible:\n\n%1$s\n%2$s</string>
+    
+    <string name="localizedEmailHelp">Esta plantilla de correo electrónico es para su conveniencia.\nSi cree que no es relevante proporcionar alguno de los siguientes detalles, elimínelos.\n\nEl UUID me permite filtrar todos los datos registrados para mostrar solo aquellos que son relevantes para usted. Esto solo será necesario si estoy luchando por solucionar un error que está experimentando.</string>
 </resources>

@@ -207,6 +207,10 @@
     
 
     
+    <string name="preference_check_for_server_updates_title">Kennisgeving van updates</string>
+    <string name="preference_check_for_server_updates_summary">Ontvang een melding als er updates beschikbaar zijn voor uw server</string>
+
+    
     <string name="preference_video_cache_enabled_title">Cache video\'s die zijn bekeken naar een bestand</string>
     <string name="preference_video_cache_enabled_summary">Indien ingeschakeld, worden alle gestreamde video\'s in de cache opgeslagen om later af te spelen</string>
     

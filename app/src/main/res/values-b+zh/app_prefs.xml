@@ -207,6 +207,10 @@
     
 
     
+    <string name="preference_check_for_server_updates_title">更新通知</string>
+    <string name="preference_check_for_server_updates_summary">接收有关服务器可用更新的通知</string>
+
+    
     <string name="preference_video_cache_enabled_title">缓存观看到文件的视频</string>
     <string name="preference_video_cache_enabled_summary">启用后，所有流式传输的视频都将被缓存以供以后播放</string>
     

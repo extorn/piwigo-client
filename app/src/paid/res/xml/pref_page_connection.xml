@@ -59,6 +59,13 @@
             android:summary="@string/preference_gallery_unique_id_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_check_for_server_updates_default"
+            android:key="@string/preference_check_for_server_updates_key"
+            android:summary="@string/preference_check_for_server_updates_summary"
+            android:title="@string/preference_check_for_server_updates_title" />
         <androidx.preference.PreferenceCategory
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
