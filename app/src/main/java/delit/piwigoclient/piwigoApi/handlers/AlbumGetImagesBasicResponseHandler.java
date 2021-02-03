@@ -3,7 +3,6 @@ package delit.piwigoclient.piwigoApi.handlers;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -21,6 +20,7 @@ import java.util.regex.Pattern;
 
 import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
@@ -115,17 +115,17 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
         if (resourceParser.isFixedImageUrisForPrivacyPluginUser()) {
             Bundle b = new Bundle();
             PiwigoSessionDetails.writeToBundle(b, getConnectionPrefs());
-            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX_2", b);
+            Logging.logAnalyticEvent(getContext(),"PRIVACY_PLUGIN_URI_FIX_2", b);
         }
         if (resourceParser.isFixedImageUrisWithAmpEscaping()) {
             Bundle b = new Bundle();
             PiwigoSessionDetails.writeToBundle(b, getConnectionPrefs());
-            FirebaseAnalytics.getInstance(getContext()).logEvent("AMPERSAND_URI_FIX", b);
+            Logging.logAnalyticEvent(getContext(),"AMPERSAND_URI_FIX", b);
         }
         if (resourceParser.isFixedPrivacyPluginImageUrisForPrivacyPluginUser()) {
             Bundle b = new Bundle();
             PiwigoSessionDetails.writeToBundle(b, getConnectionPrefs());
-            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX_1", b);
+            Logging.logAnalyticEvent(getContext(),"PRIVACY_PLUGIN_URI_FIX_1", b);
         }
 
         PiwigoGetResourcesResponse r = new PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalResourceCount, resources, isCached);
@@ -171,16 +171,21 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
         public BasicCategoryImageResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
             this.basePiwigoUrl = basePiwigoUrl;
             StringBuilder extList = new StringBuilder();
-            Iterator<String> extIter = multimediaExtensionList.iterator();
-            while (extIter.hasNext()) {
-                String ext = extIter.next();
-                extList.append(ext);
-                if (extIter.hasNext()) {
-                    extList.append('|');
+
+            if(multimediaExtensionList.isEmpty()) {
+                extList.append("[a-zA-Z]{3,5}");
+            } else {
+                Iterator<String> extIter = multimediaExtensionList.iterator();
+                while (extIter.hasNext()) {
+                    String ext = extIter.next();
+                    extList.append(ext);
+                    if (extIter.hasNext()) {
+                        extList.append('|');
+                    }
                 }
             }
             String basePiwigoUri = basePiwigoUrl;
-            if(basePiwigoUri.lastIndexOf('/') != basePiwigoUri.length() -1) {
+            if(basePiwigoUri.charAt(basePiwigoUri.length() -1) != '/') {
                 basePiwigoUri += '/';
             }
             String pattern = "^("+basePiwigoUri+")([\\d]*/.*)?((?<=/)upload/.*\\.("+extList+"))$";
@@ -212,7 +217,7 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
             }
             JsonObject derivatives = image.get("derivatives").getAsJsonObject();
 
-            ResourceItem item;
+            ResourceItem item = null;
 
             if(originalResourceUrl != null) {
                 if (multimediaPatternMatcher == null) {
@@ -272,6 +277,7 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
                 String serverBasePath = multimediaPatternMatcher.group(1); // "Https://myserver.com/piwigo/"
                 String pathPrefix = multimediaPatternMatcher.group(2);  // "12344/.*/"
                 String uploadsPath = multimediaPatternMatcher.group(3); // "upload.*"
+                String fileExt = multimediaPatternMatcher.group(4); // "upload.*"
                 //FIXME Ask PiwigoPrivacy dev why must we do something special for the privacy plugin?
                 // is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
 
@@ -284,11 +290,15 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
                     originalResourceUrl = serverBasePath + id + '/' + uploadsPath;
                     fixedImageUrisForPrivacyPluginUser = true;
                 }
-                item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
-                item.setThumbnailUrl(thumbnailUriStr); // note we are using this as is. Only the original resource Uri gets altered.
-                item.addResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
 
-            } else {
+                String mimeType = IOUtils.getMimeType(fileExt);
+                if(IOUtils.isVideoPlayable(mimeType)) {
+                    item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
+                    item.setThumbnailUrl(thumbnailUriStr); // note we are using this as is. Only the original resource Uri gets altered.
+                    item.addResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
+                }
+            }
+            if(item == null) {
 
                 Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
 

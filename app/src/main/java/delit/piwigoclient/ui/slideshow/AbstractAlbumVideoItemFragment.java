@@ -35,7 +35,6 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -420,7 +419,7 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
                                 mgr.setPrimaryClip(clipData);
                                 getUiHelper().showShortMsg(R.string.copied_to_clipboard);
                             } else {
-                                FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
+                                Logging.logAnalyticEvent(context,"NoClipMgr", null);
                             }
                             EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), item));
                         }

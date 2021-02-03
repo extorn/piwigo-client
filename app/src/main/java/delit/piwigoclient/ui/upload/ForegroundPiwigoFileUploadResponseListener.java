@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -59,7 +58,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
                 }
             }
         } else {
-            FirebaseAnalytics.getInstance(context).logEvent("noJobDelFile", null);
+            Logging.logAnalyticEvent(context,"noJobDelFile", null);
         }
     }
 

@@ -35,7 +35,6 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -581,7 +580,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     if (sessionDetails == null) {
                         Bundle b = new Bundle();
                         b.putString("location", "upload - get login");
-                        FirebaseAnalytics.getInstance(this).logEvent("SessionNull", b);
+                        Logging.logAnalyticEvent(this,"SessionNull", b);
                         recordAndPostNewResponse(thisUploadJob, new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
                         return;
                     }
@@ -815,7 +814,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             b.putSerializable("error", error);
         }
         PiwigoSessionDetails.writeToBundle(b, connectionPrefs);
-        FirebaseAnalytics.getInstance(this).logEvent("uploadError", b);
+        Logging.logAnalyticEvent(this,"uploadError", b);
         Logging.log(Log.WARN, TAG, "PwgMethod: %1$s, ReqP: %2$s, RespT: %3$s", handler.getPiwigoMethod(), handler.getRequestParameters(), handler.getResponse().getClass());
         if(handler.getError() != null) {
             Logging.recordException(handler.getError());
@@ -1052,7 +1051,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             if (uploadJob.isAllowUploadOfRawVideosIfIncompressible()) {
                 Bundle b = new Bundle();
                 b.putString("file_ext", IOUtils.getFileExt(rawVideo.toString()));
-                FirebaseAnalytics.getInstance(this).logEvent("incompressible_video_encountered", b);
+                Logging.logAnalyticEvent(this,"incompressible_video_encountered", b);
                 uploadJob.markFileAsCompressed(rawVideo);
                 outputVideo = IOUtils.getSingleDocFile(this, rawVideo);
             } else {
@@ -1094,7 +1093,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 if (listener.isUnsupportedVideoFormat() && uploadJob.isAllowUploadOfRawVideosIfIncompressible()) {
                     Bundle b = new Bundle();
                     b.putString("file_ext", IOUtils.getFileExt(rawVideo.toString()));
-                    FirebaseAnalytics.getInstance(this).logEvent("incompressible_video_encountered", b);
+                    Logging.logAnalyticEvent(this,"incompressible_video_encountered", b);
                     uploadJob.markFileAsCompressed(rawVideo);
                     outputVideo = IOUtils.getSingleDocFile(this, rawVideo);
                 } else {
@@ -1282,7 +1281,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         // theoretically this will never occur.
                         Bundle b = new Bundle();
                         b.putString("error", "error calculating md5sum for compressed file.");
-                        FirebaseAnalytics.getInstance(this).logEvent("md5sum", b);
+                        Logging.logAnalyticEvent(this,"md5sum", b);
                         recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), compressedFile.getUri(), e));
                     }
                 }

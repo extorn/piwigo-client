@@ -554,7 +554,9 @@ public class ConnectionPreferences {
         public Set<String> readStringSet(SharedPreferences prefs, Context context, Set<String> defaultVal) {
             try {
                 Set<String> val = prefs.getStringSet(getPrefKeyInProfile(context, prefKey), defaultVal);
-                if(val != null) {
+                if(val == null && defaultVal == null) {
+                    return null;
+                } else if(val != null) {
                     return new HashSet<>(val);
                 }
                 return new HashSet<>(); // don't ever return null

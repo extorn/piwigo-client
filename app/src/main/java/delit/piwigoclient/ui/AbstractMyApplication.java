@@ -17,8 +17,6 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory;
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.installations.FirebaseInstallations;
 
 import java.util.ArrayList;
@@ -110,7 +108,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             Bundle bundle = new Bundle();
             bundle.putInt("from_version", currentPrefsVersion);
             bundle.putInt("to_version", latestAppVersion);
-            FirebaseAnalytics.getInstance(this).logEvent("app_upgraded", bundle);
+            Logging.logAnalyticEvent(this,"app_upgraded", bundle);
             Logging.log(Log.DEBUG, TAG, "Upgraded app Preferences from " + currentPrefsVersion +" to " + latestAppVersion + " and saved");
         }
     }
@@ -146,10 +144,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         PicassoFactory.initialise();
 //        AdsManager.getInstance(this).updateShowAdvertsSetting(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
-        FirebaseCrashlytics.getInstance().setCustomKey("global_app_version", BuildConfig.VERSION_NAME);
-        FirebaseCrashlytics.getInstance().setCustomKey("global_app_version_code", "" + BuildConfig.VERSION_CODE);
-        FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version", BuildConfig.VERSION_NAME);
-        FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version_code", "" + BuildConfig.VERSION_CODE);
+        Logging.initialise(this, BuildConfig.class);
         Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
         idTask.addOnSuccessListener(this::withInstallGuid);
 
@@ -163,8 +158,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     private void withInstallGuid(String userGuid) {
         //This is used so that I can identify the logs that pertain to a given user having issues they want me to look at.
         // It will be displayed in the app about screen.
-        FirebaseCrashlytics.getInstance().setUserId(userGuid);
-        FirebaseAnalytics.getInstance(this).setUserId(userGuid);
+        Logging.addUserGuid(this, userGuid);
     }
 
     protected abstract void onAppCreate();

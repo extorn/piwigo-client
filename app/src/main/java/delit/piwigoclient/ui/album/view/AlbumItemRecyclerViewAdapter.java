@@ -256,10 +256,10 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
         private void onAlbumsHeadingClick() {
             RC itemStore = getParentAdapter().getItemStore();
             if (itemStore instanceof PiwigoAlbum) {
-//                if (getParentAdapter().getMultiSelectStatusListener() != null) {
-//                    MSL multiSelectListener = getParentAdapter().getMultiSelectStatusListener();
-//                    multiSelectListener.onAlbumHeadingClick(itemStore);
-//                }
+                if (getParentAdapter().getMultiSelectStatusListener() != null) {
+                    MSL multiSelectListener = getParentAdapter().getMultiSelectStatusListener();
+                    multiSelectListener.onAlbumHeadingClick(itemStore);
+                }
                 PiwigoAlbum album = (PiwigoAlbum)itemStore;
                 boolean hideAlbums = !album.isHideAlbums();
                 album.setHideAlbums(hideAlbums);

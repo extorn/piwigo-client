@@ -42,7 +42,6 @@ import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.greenrobot.eventbus.EventBus;
@@ -435,7 +434,7 @@ public class AdsManager {
             bundle.putLong("User_Reward_Time_Remaining", (totalRewardTime / 1000));
             bundle.putInt("app_version", BuildConfig.VERSION_CODE);
             bundle.putString("app_version_name", BuildConfig.VERSION_NAME);
-            FirebaseAnalytics.getInstance(context).logEvent("User_Rewarded", bundle);
+            Logging.logAnalyticEvent(context,"User_Rewarded", bundle);
             prefUtil.writeSecurePreference(sharedPreferences, context.getString(R.string.preference_advert_free_time_key), endsAt.toByteArray());
             AdsManager.RewardCountDownAction action = AdsManager.RewardCountDownAction.getInstance(context, rewardCountUpdateFrequency);
             action.start();
@@ -752,7 +751,7 @@ public class AdsManager {
 
         @Override
         public void onDismiss(AlertDialog dialog) {
-            FirebaseAnalytics.getInstance(dialog.getContext()).logEvent("ad_warning_shown", null);
+            Logging.logAnalyticEvent(dialog.getContext(),"ad_warning_shown", null);
         }
     }
 
@@ -855,7 +854,7 @@ public class AdsManager {
                     lastAdPaid = Boolean.TRUE;
                     Context context = contextRef.get();
                     if(context != null) {
-                        FirebaseAnalytics.getInstance(context).logEvent("ad_watched_minimum", null);
+                        Logging.logAnalyticEvent(context,"ad_watched_minimum", null);
                     }
                 }
             }

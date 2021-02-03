@@ -36,7 +36,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -647,7 +646,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
                 fileSelectButton.setEnabled(false);
                 Bundle b = new Bundle();
                 sessionDetails.writeToBundle(b);
-                FirebaseAnalytics.getInstance(requireContext()).logEvent("IncompleteUserSession", b);
+                Logging.logAnalyticEvent(requireContext(),"IncompleteUserSession", b);
                 getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_user_session_no_allowed_filetypes);
                 requireView().postDelayed(() -> {
                     fileSelectButton.setEnabled(true);

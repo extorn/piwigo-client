@@ -43,8 +43,8 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         this.gallery = gallery;
         galleryResourceItemsFullGalleryIdx = new ArrayList<>(gallery.getResourcesCount());
         this.shouldShowVideos = shouldShowVideos;
-        int firstGalleryIdxToImport = gallery.getItemCount() - gallery.getResourcesCount();
-        addResourcesToIndex(firstGalleryIdxToImport, gallery.getResourcesCount() - firstGalleryIdxToImport, showGalleryItemIdx); // use get items.size to ignore issues when hide
+        int firstGalleryIdxToImport = gallery.getFirstResourceIdx();
+        addResourcesToIndex(firstGalleryIdxToImport, gallery.getResourcesCount(), showGalleryItemIdx); // use get items.size to ignore issues when hide
     }
 
     private void addResourcesToIndex(int firstGalleryIdxToImport, int maxSlideshowItemCount, int selectedItem) {

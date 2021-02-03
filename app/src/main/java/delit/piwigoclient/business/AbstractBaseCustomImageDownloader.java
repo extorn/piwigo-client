@@ -14,7 +14,6 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.CustomNetworkRequestHandler;
 import com.squareup.picasso.Downloader;
 import com.squareup.picasso.NetworkPolicy;
@@ -189,7 +188,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
                 if (paramAdded) {
                     Bundle b = new Bundle();
                     b.putString("uri", uri.toString());
-                    FirebaseAnalytics.getInstance(c).logEvent("uri_error", b);
+                    Logging.logAnalyticEvent(c,"uri_error", b);
                     Logging.log(Log.ERROR, TAG, "Corrupting uri : " + uri.toString());
                 }
                 builder.encodedQuery(param);

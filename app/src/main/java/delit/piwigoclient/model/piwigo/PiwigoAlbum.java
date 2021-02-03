@@ -169,6 +169,14 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     }
 
     @Override
+    public int getFirstResourceIdx() {
+        if(hideAlbums) {
+            return subAlbumCount + (bannerCount > 0 ? bannerCount - 1 : 0);
+        }
+        return subAlbumCount + bannerCount;
+    }
+
+    @Override
     protected int getItemInsertPosition(T item) {
         if(item instanceof CategoryItem) {
             int itemsToPreceedThisOne = getSubAlbumCount();

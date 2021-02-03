@@ -22,7 +22,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.ortiz.touchview.TouchImageView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -398,7 +397,7 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
                 mgr.setPrimaryClip(clipData);
                 getUiHelper().showShortMsg(R.string.copied_to_clipboard);
             } else {
-                FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
+                Logging.logAnalyticEvent(context,"NoClipMgr", null);
             }
             EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), item));
         }

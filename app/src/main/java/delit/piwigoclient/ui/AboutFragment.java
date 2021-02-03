@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.installations.FirebaseInstallations;
 
 import java.util.Map;
@@ -95,7 +94,7 @@ public class AboutFragment<F extends AboutFragment<F,FUIH>,FUIH extends Fragment
                         mgr.setPrimaryClip(clipData);
                         getUiHelper().showShortMsg(R.string.copied_to_clipboard);
                     } else {
-                        FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
+                        Logging.logAnalyticEvent(context,"NoClipMgr", null);
                     }
                 });
             }

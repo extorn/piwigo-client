@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 import androidx.preference.PreferenceManager;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -98,7 +97,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
                 } else {
                     Bundle b = new Bundle();
                     b.putString("location", "LoginCode");
-                    FirebaseAnalytics.getInstance(getContext()).logEvent("SessionNull", b);
+                    Logging.logAnalyticEvent(getContext(),"SessionNull", b);
                 }
             }
         }
@@ -264,7 +263,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             PiwigoResponseBufferingHandler.ErrorResponse response = (PiwigoResponseBufferingHandler.ErrorResponse) userInfoHandler.getResponse();
             if((response instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse && ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) response).getStatusCode() == 401)
              && sessionDetails.isAdminUser()) {
-                FirebaseAnalytics.getInstance(getContext()).logEvent("UserDowngrade_General", null);
+                Logging.logAnalyticEvent(getContext(),"UserDowngrade_General", null);
                 sessionDetails.updateUserType("general");
                 if (!canContinue) {
                     EventBus.getDefault().post(new ServerConfigErrorEvent(getContext().getString(R.string.admin_user_missing_admin_permissions_after_login_warning_pattern, userInfoHandler.getPiwigoServerUrl())));

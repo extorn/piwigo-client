@@ -25,8 +25,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
@@ -464,7 +462,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         if (fileExtsToUpload == null) {
             Bundle b = new Bundle();
             b.putString("message", "No File extensions selected for upload - nothing can be uploaded. Ignoring job");
-            FirebaseAnalytics.getInstance(context).logEvent("uploadError", b);
+            Logging.logAnalyticEvent(context,"uploadError", b);
             postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(), getString(R.string.ignoring_job_no_file_types_selected_for_upload)));
             return null;
         }

@@ -383,25 +383,30 @@ public class IOUtils {
             if("file".equals(uri.getScheme())) {
                 String path = uri.getPath();
                 if(path != null) {
-                    File f = new File(path);
                     fileExt = IOUtils.getFileExt(new File(path).getName());
                 }
             }
             if(fileExt == null) {
                 fileExt = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
             }
-            if(fileExt != null) {
-                mimeType = knownExtsToMimes.get(fileExt.toLowerCase());
-                if(mimeType == null) {
-                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
-                    knownExtsToMimes.put(fileExt.toLowerCase(), mimeType);
-                    if(knownExtsToMimes.size() > 50) {
-                        knownExtsToMimes.entrySet().iterator().remove();
-                    }
-                }
-            }
+            mimeType = getMimeType(fileExt);
         }
         return mimeType;
+    }
+
+    public static String getMimeType(@Nullable String fileExt) {
+        if(fileExt != null) {
+            String mimeType = knownExtsToMimes.get(fileExt.toLowerCase());
+            if(mimeType == null) {
+                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
+                knownExtsToMimes.put(fileExt.toLowerCase(), mimeType);
+                if(knownExtsToMimes.size() > 50) {
+                    knownExtsToMimes.entrySet().iterator().remove();
+                }
+            }
+            return mimeType;
+        }
+        return null;
     }
 
     public static String bytesToNormalizedText(long sizeInBytes) {
@@ -1396,5 +1401,12 @@ public class IOUtils {
             mimeTypesArray[mimeTypesArray.length - 1] = DocumentsContract.Document.MIME_TYPE_DIR;
         }
         return mimeTypesArray;
+    }
+
+
+    public static boolean isVideoPlayable(@Nullable String mimeType) {
+        boolean isVideo = MimeTypeFilter.matches(mimeType, "video/*");
+        boolean isAudio = MimeTypeFilter.matches(mimeType, "audio/*");
+        return isAudio || isVideo;
     }
 }

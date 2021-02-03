@@ -44,7 +44,6 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.NoSubscriberEvent;
@@ -106,8 +105,6 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
     public BaseMyActivity(@LayoutRes int contentView) {
         super(contentView);
     }
-
-//    private FirebaseAnalytics mFirebaseAnalytics;
 
     public SharedPreferences getSharedPrefs() {
         return prefs;
@@ -273,8 +270,6 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        // Obtain the FirebaseAnalytics instance.
-//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 //        setTheme(R.style.Theme_App);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ActivityManager.TaskDescription taskDesc;
@@ -528,7 +523,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         bundle.putInt("requestCode", requestCode);
         bundle.putString("intent", intent.toString());
         bundle.putString("intentClass", intent.getClass().getName());
-        FirebaseAnalytics.getInstance(this).logEvent("invalidRequestCode", bundle);
+        Logging.logAnalyticEvent(this,"invalidRequestCode", bundle);
     }
 
     @Override
@@ -631,7 +626,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         Bundle b = new Bundle();
         b.putInt("app_version", BuildConfig.VERSION_CODE);
         b.putString("app_version_name", BuildConfig.VERSION_NAME);
-        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("usernameNotUniqueOnPiwigoServer", b);
+        Logging.logAnalyticEvent(getApplicationContext(),"usernameNotUniqueOnPiwigoServer", b);
         getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_warning_multiple_users_found_pattern, event.getOtherUsers().size(), event.getUserSelected().getUsername()));
     }
 
@@ -640,7 +635,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         Bundle b = new Bundle();
         b.putInt("app_version", BuildConfig.VERSION_CODE);
         b.putString("app_version_name", BuildConfig.VERSION_NAME);
-        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("serverKilledConnectionLots", b);
+        Logging.logAnalyticEvent(getApplicationContext(),"serverKilledConnectionLots", b);
         getUiHelper().showDetailedMsg(R.string.alert_warning, event.getMessage());
     }
 
@@ -649,7 +644,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         Bundle b = new Bundle();
         b.putInt("app_version", BuildConfig.VERSION_CODE);
         b.putString("app_version_name", BuildConfig.VERSION_NAME);
-        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("serverCfgErrAdminMissingPerm", b);
+        Logging.logAnalyticEvent(getApplicationContext(),"serverCfgErrAdminMissingPerm", b);
         getUiHelper().showDetailedMsg(R.string.alert_warning, event.getMessage());
     }
 

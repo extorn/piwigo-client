@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -130,7 +129,7 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
                 bundle.putString("username", username);
                 bundle.putString("status", userType);
             }
-            FirebaseAnalytics.getInstance(getContext()).logEvent("noUserFound", bundle);
+            Logging.logAnalyticEvent(getContext(),"noUserFound", bundle);
         }
         PiwigoGetUserDetailsResponse r = new PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users, isCached);
         storeResponse(r);

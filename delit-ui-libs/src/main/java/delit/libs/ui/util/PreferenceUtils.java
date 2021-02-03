@@ -8,8 +8,6 @@ import android.os.Bundle;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,7 +45,7 @@ public class PreferenceUtils {
                     b.putString("error", "unexpected_resource_type");
                     b.putString("prefKey", preference.getKey());
                     b.putString("resType", resourceType);
-                    FirebaseAnalytics.getInstance(preference.getContext()).logEvent("pref_init", b);
+                    Logging.logAnalyticEvent(preference.getContext(),"pref_init", b);
                     defaultValue = null;
                 }
             }
@@ -79,7 +77,7 @@ public class PreferenceUtils {
                     b.putString("error", "unexpected_resource_type");
                     b.putString("prefKey", preference.getKey());
                     b.putString("resType", resourceType);
-                    FirebaseAnalytics.getInstance(preference.getContext()).logEvent("pref_init", b);
+                    Logging.logAnalyticEvent(preference.getContext(),"pref_init", b);
                     defaultValue = null;
                 }
             }

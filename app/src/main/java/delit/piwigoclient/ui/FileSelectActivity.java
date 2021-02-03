@@ -15,8 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -170,7 +168,7 @@ public class FileSelectActivity<A extends FileSelectActivity<A, AUIH>, AUIH exte
     private FileSelectionNeededEvent getFileSelectionNeededEvent() {
         FileSelectionNeededEvent event = getIntent().getParcelableExtra(INTENT_DATA);
         if(event == null) {
-            FirebaseAnalytics.getInstance(this).logEvent("FileSelectStandalone", null);
+            Logging.logAnalyticEvent(this,"FileSelectStandalone", null);
             HashSet<String> mimeTypes = getVisibleMimeTypes(getIntent());
             boolean allowFolderSelection = false;
             if(mimeTypes != null) {
@@ -260,7 +258,7 @@ public class FileSelectActivity<A extends FileSelectActivity<A, AUIH>, AUIH exte
             String itemName;
             if(!item.isFieldsCached()) {
                 Logging.log(Log.ERROR, TAG, "Having to cache fields before return - app hangs!" );
-                FirebaseAnalytics.getInstance(this).logEvent("app_hangs_caching_fields", null);
+                Logging.logAnalyticEvent(this,"app_hangs_caching_fields", null);
                 if(!item.cacheFields(this)) {
                     itemName = item.getContentUri().toString();
                 } else {

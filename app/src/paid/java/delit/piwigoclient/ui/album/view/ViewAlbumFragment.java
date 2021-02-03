@@ -16,8 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -401,7 +399,7 @@ public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH 
                 mgr.setPrimaryClip(clipData);
                 getUiHelper().showShortMsg(R.string.copied_to_clipboard);
             } else {
-                FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
+                Logging.logAnalyticEvent(context,"NoClipMgr", null);
             }
         }
     }

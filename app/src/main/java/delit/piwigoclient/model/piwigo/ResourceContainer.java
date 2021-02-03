@@ -74,4 +74,12 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
         }
         return newItems;
     }
+
+    public int getFirstResourceIdx() {
+        if(getItemCount() > 0) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
 }

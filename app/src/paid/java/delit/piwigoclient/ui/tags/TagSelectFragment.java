@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -382,7 +381,7 @@ public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends
         if(tagsNeededToBeLoaded.size() > 0) {
             Bundle b = new Bundle();
             b.putLongArray("tagIds", CollectionUtils.asLongArray(tagsNeededToBeLoaded));
-            FirebaseAnalytics.getInstance(requireContext()).logEvent("non_existent_tags", b);
+            Logging.logAnalyticEvent(requireContext(),"non_existent_tags", b);
         }
         for (Long tagId : tagsNeededToBeLoaded) {
             listAdapter.deselectItem(tagId, true);

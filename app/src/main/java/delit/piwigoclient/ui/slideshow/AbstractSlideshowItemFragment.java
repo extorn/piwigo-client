@@ -31,7 +31,6 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -265,7 +264,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             String modelClassname = galleryModelClass == null ? null : galleryModelClass.getName();
             errBundle.putString("class", modelClassname);
             errBundle.putLong("modelId", galleryModelId);
-            FirebaseAnalytics.getInstance(requireContext()).logEvent("modelNull", errBundle);
+            Logging.logAnalyticEvent(requireContext(),"modelNull", errBundle);
             Logging.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow model is null - %1$s(%2$d)", modelClassname, galleryModelId));
             throw new ModelUnavailableException();
         }
@@ -290,7 +289,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             }
 
             errBundle.putInt("sortOrder", modelStore.isRetrieveItemsInReverseOrder() ? 1 : 0);
-            FirebaseAnalytics.getInstance(requireContext()).logEvent("modelClassWrong", null);
+            Logging.logAnalyticEvent(requireContext(),"modelClassWrong", null);
             String errMsg = String.format(Locale.UK, "slideshow model is wrong type - %1$s(%2$d)\n%3$s", galleryModelClass.getName(), galleryModelId, errBundle.toString());
             Logging.log(Log.ERROR, TAG, errMsg);
             ModelUnavailableException er = new ModelUnavailableException(errMsg, e);
