@@ -27,7 +27,7 @@ public class ObjectUtils {
         return o1.compareTo(o2);
     }
 
-    private static int geStaticIntFieldValue(@NonNull Class<?> clazz, @NonNull String fieldName) {
+    public static int getStaticIntFieldValue(@NonNull Class<?> clazz, @NonNull String fieldName) {
         try {
             return clazz.getField(fieldName).getInt(null);
         } catch (IllegalAccessException | NoSuchFieldException e) {
@@ -36,7 +36,7 @@ public class ObjectUtils {
         return -1;
     }
 
-    private static String geStaticStringFieldValue(Class<?> clazz, @NonNull String fieldName) {
+    public static String getStaticStringFieldValue(Class<?> clazz, @NonNull String fieldName) {
         try {
             return (String)clazz.getField(fieldName).get(null);
         } catch (IllegalAccessException | NoSuchFieldException e) {

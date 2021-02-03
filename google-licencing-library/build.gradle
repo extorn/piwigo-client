@@ -24,5 +24,5 @@ android {
 dependencies {
     implementation project(path: ':delit-core-libs')
     implementation 'com.loopj.android:android-async-http:1.4.9'
-    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
+    implementation "androidx.annotation:annotation:1.1.0"
 }

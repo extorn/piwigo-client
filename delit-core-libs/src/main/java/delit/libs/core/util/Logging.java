@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.firebase.BuildConfig;
@@ -13,6 +12,8 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.util.Arrays;
 import java.util.Locale;
+
+import delit.libs.util.ObjectUtils;
 
 public class Logging {
 
@@ -98,42 +99,23 @@ public class Logging {
         getFirebaseAnalytics(context).logEvent(message, detailBundle);
     }
 
-    public static void initialiseLogger(Class buildConfigClass) {
-        String versionName = geStaticStringFieldValue(buildConfigClass, "VERSION_NAME");
-        int versionCode = geStaticIntFieldValue(buildConfigClass, "VERSION_CODE");
+    public static void initialiseLogger(String versionName, int versionCode) {
         FirebaseCrashlytics.getInstance().setCustomKey("global_app_version", versionName);
         FirebaseCrashlytics.getInstance().setCustomKey("global_app_version_code", versionCode);
     }
 
-    private static int geStaticIntFieldValue(@NonNull Class<?> clazz, @NonNull String fieldName) {
-        try {
-            return clazz.getField(fieldName).getInt(null);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            log(Log.ERROR, TAG, "Unable to get static field from class");
-        }
-        return -1;
-    }
+    public static void initialiseAnalytics(Context context, String versionName, int versionCode) {
 
-    private static String geStaticStringFieldValue(Class<?> clazz, @NonNull String fieldName) {
-        try {
-            return (String)clazz.getField(fieldName).get(null);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            log(Log.ERROR, TAG, "Unable to get static field from class");
-        }
-        return null;
-    }
-
-    public static void initialiseAnalytics(Context context, Class<?> buildConfigClass) {
         FirebaseAnalytics firebaseAnalytics = getFirebaseAnalytics(context);
-        String versionName = geStaticStringFieldValue(buildConfigClass, "VERSION_NAME");
-        int versionCode = geStaticIntFieldValue(buildConfigClass, "VERSION_CODE");
         firebaseAnalytics.setUserProperty("global_app_version", versionName);
         firebaseAnalytics.setUserProperty("global_app_version_code", "" + versionCode);
     }
 
     public static void initialise(Context context, Class<?> buildConfigClass) {
-        Logging.initialiseLogger(buildConfigClass);
-        Logging.initialiseAnalytics(context, buildConfigClass);
+        String versionName = ObjectUtils.getStaticStringFieldValue(buildConfigClass, "VERSION_NAME");
+        int versionCode = ObjectUtils.getStaticIntFieldValue(buildConfigClass, "VERSION_CODE");
+        Logging.initialiseLogger(versionName, versionCode);
+        Logging.initialiseAnalytics(context, versionName, versionCode);
     }
 
     public static void addUserGuid(Context context, String userGuid) {
