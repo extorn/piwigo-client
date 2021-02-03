@@ -97,7 +97,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
 
     private HashMap<Long, Integer> trackedActionIntentsMap = new HashMap<>(3);
     private UIH uiHelper;
-    private LicenceCheckingHelper licencingHelper;
+    private LicenceCheckingHelper<T,UIH> licencingHelper;
 
     private String initialisedWithLanguage;
     private boolean isAttachedToWindow;
@@ -121,7 +121,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         return activitiesResumed;
     }
 
-    public LicenceCheckingHelper getLicencingHelper() {
+    public LicenceCheckingHelper<T,UIH> getLicencingHelper() {
         return licencingHelper;
     }
 
@@ -289,8 +289,8 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         initialisedWithLanguage  = AppPreferences.getDesiredLanguage(getSharedPrefs(), this);
 
         if (BuildConfig.PAID_VERSION && !BuildConfig.DEBUG) {
-            licencingHelper = new LicenceCheckingHelper();
-            licencingHelper.onCreate(this);
+            licencingHelper = new LicenceCheckingHelper<>();
+            licencingHelper.onCreate((T)this);
         }
         try {
             super.onCreate(savedInstanceState);
