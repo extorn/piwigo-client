@@ -2,14 +2,10 @@ package delit.piwigoclient.ui.upgrade;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import java.net.URI;
-import java.util.HashSet;
 import java.util.Set;
 
-import delit.libs.core.util.Logging;
-import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 
@@ -49,26 +45,6 @@ public class PreferenceMigrator226 extends PreferenceMigrator {
                 if (currentTimeout >= 1000) {
                     currentTimeout = (int) Math.round(Math.ceil((double) currentTimeout / 1000));
                     actor.writeInt(editor, context, currentTimeout);
-                }
-            });
-            upgradeConnectionProfilePreference(context, profileId, R.string.preference_piwigo_playable_media_extensions_key, actor -> {
-                try {
-                    String multimediaCsvList = actor.readString(prefs, context, null);
-                    HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
-                    HashSet<String> cleanedValues = new HashSet<>(values.size());
-                    for (String value : values) {
-                        int dotIdx = value.indexOf('.');
-                        if (dotIdx < 0) {
-                            cleanedValues.add(value.toLowerCase());
-                        } else {
-                            cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
-                        }
-                    }
-                    actor.remove(editor, context);
-                    actor.writeStringSet(editor, context, cleanedValues);
-                    Logging.log(Log.DEBUG, getLogTag(), "Upgraded media extensions preference from string to Set<String>");
-                } catch (ClassCastException e) {
-                    // will occur if the user has previously migrated preferences at version 222!
                 }
             });
         }

@@ -15,14 +15,12 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
 
     private static final String TAG = "GetResourceInfoRspHdlr";
     private final T resourceItem;
-    private final Set<String> multimediaExtensionList;
     private boolean usingPiwigoClientOveride;
     private String piwigoMethodToUse;
 
-    public BaseImageGetInfoResponseHandler(T piwigoResource, Set<String> multimediaExtensionList) {
+    public BaseImageGetInfoResponseHandler(T piwigoResource) {
         super("pwg.images.getInfo", TAG);
         this.resourceItem = piwigoResource;
-        this.multimediaExtensionList = multimediaExtensionList;
     }
 
     @Override
@@ -48,7 +46,7 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
 
-        AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser resourceParser = buildResourceParser(multimediaExtensionList, usingPiwigoClientOveride);
+        AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser resourceParser = buildResourceParser(usingPiwigoClientOveride);
         
         ResourceItem loadedResourceItem = resourceParser.parseAndProcessResourceData(result);
 
@@ -62,14 +60,14 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
         storeResponse(r);
     }
 
-    protected abstract AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, boolean usingPiwigoClientOveride);
+    protected abstract AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser buildResourceParser(boolean usingPiwigoClientOveride);
     
     public static abstract class BaseImageGetInfoResourceParser extends AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser {
 
         private final boolean usingPiwigoClientOveride;
 
-        public BaseImageGetInfoResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl, boolean usingPiwigoClientOveride) {
-            super(multimediaExtensionList, basePiwigoUrl);
+        public BaseImageGetInfoResourceParser(String basePiwigoUrl, boolean usingPiwigoClientOveride) {
+            super(basePiwigoUrl);
             this.usingPiwigoClientOveride = usingPiwigoClientOveride;
         }
 

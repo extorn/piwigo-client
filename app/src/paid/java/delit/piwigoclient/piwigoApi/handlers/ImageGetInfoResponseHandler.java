@@ -18,18 +18,18 @@ import delit.piwigoclient.model.piwigo.Tag;
  */
 
 public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseImageGetInfoResponseHandler<T> {
-    public ImageGetInfoResponseHandler(T piwigoResource, Set<String> multimediaExtensionList) {
-        super(piwigoResource, multimediaExtensionList);
+    public ImageGetInfoResponseHandler(T piwigoResource) {
+        super(piwigoResource);
     }
 
-    protected AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, boolean usingPiwigoClientOveride) {
-        return new ImageGetInfoResourceParser(multimediaExtensionList, getPiwigoServerUrl(), usingPiwigoClientOveride);
+    protected AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser buildResourceParser( boolean usingPiwigoClientOveride) {
+        return new ImageGetInfoResourceParser(getPiwigoServerUrl(), usingPiwigoClientOveride);
     }
 
     public static class ImageGetInfoResourceParser extends BaseImageGetInfoResourceParser {
 
-        public ImageGetInfoResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl, boolean usingPiwigoClientOveride) {
-            super(multimediaExtensionList, basePiwigoUrl, usingPiwigoClientOveride);
+        public ImageGetInfoResourceParser(String basePiwigoUrl, boolean usingPiwigoClientOveride) {
+            super(basePiwigoUrl, usingPiwigoClientOveride);
         }
 
         @Override

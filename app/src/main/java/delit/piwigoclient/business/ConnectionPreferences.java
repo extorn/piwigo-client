@@ -311,15 +311,6 @@ public class ConnectionPreferences {
             return getPrefActor().with(R.string.preference_server_connection_max_redirects_key).readInt(prefs, context, defaultVal);
         }
 
-        public Set<String> getKnownMultimediaExtensions(SharedPreferences prefs, Context context) {
-            Set<String> value = getPrefActor().with(R.string.preference_piwigo_playable_media_extensions_key).readStringSet(prefs, context, null);
-            if (value == null) {
-                value = new HashSet<>();
-                Collections.addAll(value, context.getResources().getStringArray(R.array.preference_piwigo_playable_media_extensions_default));
-            }
-            return value;
-        }
-
         public int getMaxServerConnectRetries(SharedPreferences prefs, Context context) {
             int defaultVal = context.getResources().getInteger(R.integer.preference_server_connection_retries_default);
             return getPrefActor().with(R.string.preference_server_connection_retries_key).readInt(prefs, context, defaultVal);
@@ -358,7 +349,6 @@ public class ConnectionPreferences {
 
             // piwigo server specific details.
             getPrefActor().with(R.string.preference_gallery_unique_id_key).writeString(editor, context, fromPrefs.getPiwigoUniqueResourceKey(prefs, context));
-            getPrefActor().with(R.string.preference_piwigo_playable_media_extensions_key).writeStringSet(editor, context, fromPrefs.getKnownMultimediaExtensions(prefs, context));
 
             // fine grained http connection configuration bits and bobs
             getPrefActor().with(R.string.preference_server_connection_allow_redirects_key).writeBoolean(editor, context, fromPrefs.getFollowHttpRedirects(prefs, context));
@@ -410,7 +400,6 @@ public class ConnectionPreferences {
 
             // piwigo server specific details.
             getPrefActor().with(R.string.preference_gallery_unique_id_key).remove(editor, context);
-            getPrefActor().with(R.string.preference_piwigo_playable_media_extensions_key).remove(editor, context);
 
             // fine grained http connection configuration bits and bobs
             getPrefActor().with(R.string.preference_server_connection_allow_redirects_key).remove(editor, context);
@@ -535,10 +524,6 @@ public class ConnectionPreferences {
         }
 
         public SharedPreferences.Editor writeString(SharedPreferences.Editor editor, Context context, String newValue) {
-            if(prefKey == R.string.preference_piwigo_playable_media_extensions_key) {
-                //TODO remove this once I find what is inserting a string into this key!
-                throw new RuntimeException();
-            }
             editor.putString(getPrefKeyInProfile(context, prefKey), newValue);
             return editor;
         }

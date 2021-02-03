@@ -416,9 +416,9 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
             }
 
             String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
-            Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
 
-            long loadingMessageId = invokeResourcePageLoader(resourceContainer, sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList);
+
+            long loadingMessageId = invokeResourcePageLoader(resourceContainer, sortOrder, pageToActuallyLoad, pageSize);
             resourceContainer.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId, "loadResources"), pageToActuallyLoad);
         } finally {
             resourceContainer.releasePageLoadLock();
@@ -439,7 +439,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         return pageToActuallyLoad;
     }
 
-    protected abstract long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> containerDetails, String sortOrder, int pageToLoad, int pageSize, Set<String> multimediaExtensionList);
+    protected abstract long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> containerDetails, String sortOrder, int pageToLoad, int pageSize);
 
     @Override
     protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {

@@ -14,7 +14,6 @@ public class PreferenceMigrator282 extends PreferenceMigrator {
     @Override
     protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
         copyStringPreferenceToConnectionSettingsProfiles(context, prefs, editor, R.string.preference_gallery_unique_id_default);
-        copyStringSetPreferenceToConnectionSettingsProfiles(context, prefs, editor, R.string.preference_piwigo_playable_media_extensions_key);
         editor.remove(context.getString(R.string.usage_hints_shown_list_key)); // force all hints to be shown once more.
     }
 }

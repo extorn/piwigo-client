@@ -207,12 +207,6 @@
     
 
     
-    <string name="preference_piwigo_playable_media_extensions_title">Ondersteunde multimedia-extensies</string>
-    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
-
-    
-
-    
     <string name="preference_video_cache_enabled_title">Cache video\'s die zijn bekeken naar een bestand</string>
     <string name="preference_video_cache_enabled_summary">Indien ingeschakeld, worden alle gestreamde video\'s in de cache opgeslagen om later af te spelen</string>
     

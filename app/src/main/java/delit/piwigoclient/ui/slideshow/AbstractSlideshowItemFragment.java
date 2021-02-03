@@ -242,8 +242,8 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             Logging.log(Log.ERROR, TAG, "Resource Item unavailable to process multimedia info from");
         } else if (model.isResourceDetailsLikelyOutdated() || model.isLikelyOutdated()) {
             // call this quietly in the background to avoid it ruining the slideshow experience.
-            Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
-            long messageId = new ImageGetInfoResponseHandler<>(model, multimediaExtensionList).invokeAsync(getContext());
+
+            long messageId = new ImageGetInfoResponseHandler<>(model).invokeAsync(getContext());
             getUiHelper().addBackgroundServiceCall(messageId);
         }
     }

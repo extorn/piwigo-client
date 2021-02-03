@@ -148,8 +148,12 @@
         
         <item>1.4.0.108</item>
         <item>"Risoluzione del problema:
-                 - Riordina molti problemi che causano arresti anomali in tutta l\'app dopo l\'ultimo mese di modifiche
-                 - Impostazione predefinita per la compressione video corretta"</item>
+                 - Riordina molti problemi che causano arresti anomali nell\'app dopo l\'ultimo mese di modifiche
+                 - Impostazione predefinita per la compressione video corretta
+                 - Aggiunto nuovamente il supporto per ridurre al minimo gli album
+                 - risolto i video che non vengono rilevati
+               I cambiamenti:
+                 - Opzione rimossa per specificare quali file sono riproducibili video. Questa operazione viene eseguita in base al tipo MIME derivato dall\'estensione del file"</item>
         <item>1.4.0.107</item>
         <item>"Risoluzione del problema:
                  - Possibilità di perdere una risorsa dalla presentazione delle risorse dell\'album (anteprima a schermo intero)

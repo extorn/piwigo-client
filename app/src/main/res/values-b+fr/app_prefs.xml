@@ -207,12 +207,6 @@
     
 
     
-    <string name="preference_piwigo_playable_media_extensions_title">Extensions multimédias prises en charge</string>
-    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
-
-    
-
-    
     <string name="preference_video_cache_enabled_title">Mettre en cache les vidéos vues dans un fichier</string>
     <string name="preference_video_cache_enabled_summary">Lorsqu\'elle est activée, toutes les vidéos diffusées seront mises en cache pour une lecture ultérieure</string>
     

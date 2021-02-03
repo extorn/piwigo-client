@@ -960,7 +960,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(thisUploadJob.getConnectionPrefs());
 
-        Set<String> multimediaExtensionList = thisUploadJob.getConnectionPrefs().getKnownMultimediaExtensions(prefs, this);
+
         for (Map.Entry<Uri, Long> entry : resourcesToRetrieve.entrySet()) {
 
             long imageId = entry.getValue();
@@ -970,7 +970,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 item.setLinkedAlbums(new HashSet<>(1));
                 thisUploadJob.addFileUploaded(entry.getKey(), item);
             } else {
-                ImageGetInfoResponseHandler<ResourceItem> getImageInfoHandler = new ImageGetInfoResponseHandler<>(new ResourceItem(imageId, null, null, null, null, null), multimediaExtensionList);
+                ImageGetInfoResponseHandler<ResourceItem> getImageInfoHandler = new ImageGetInfoResponseHandler<>(new ResourceItem(imageId, null, null, null, null, null));
                 int allowedAttempts = 2;
                 boolean success = false;
                 while (!success && allowedAttempts > 0) {
@@ -1692,9 +1692,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         invokeWithRetries(uploadJob, imageFileCheckHandler, 2);
         Boolean val = imageFileCheckHandler.isSuccess() ? imageFileCheckHandler.isFileMatch() : null;
         if (Boolean.FALSE.equals(val)) {
-            Set<String> multimediaExtensionList = uploadJob.getConnectionPrefs().getKnownMultimediaExtensions(prefs, this);
+
             ResourceItem uploadedResourceDummy = new ResourceItem(uploadedResource.getId(), uploadedResource.getName(), null, null, null, null);
-            ImageGetInfoResponseHandler<ResourceItem> imageDetailsHandler = new ImageGetInfoResponseHandler<>(uploadedResourceDummy, multimediaExtensionList);
+            ImageGetInfoResponseHandler<ResourceItem> imageDetailsHandler = new ImageGetInfoResponseHandler<>(uploadedResourceDummy);
             invokeWithRetries(uploadJob, imageDetailsHandler, 2);
             if (imageDetailsHandler.isSuccess()) {
                 BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?> rsp = (ImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) imageDetailsHandler.getResponse();

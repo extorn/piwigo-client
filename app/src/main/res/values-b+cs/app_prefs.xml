@@ -207,12 +207,6 @@
     
 
     
-    <string name="preference_piwigo_playable_media_extensions_title">Podporovaná multimediální rozšíření</string>
-    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
-
-    
-
-    
     <string name="preference_video_cache_enabled_title">Ukládání videí do mezipaměti do souboru</string>
     <string name="preference_video_cache_enabled_summary">Pokud je povoleno, všechna streamovaná videa se uloží do mezipaměti pro pozdější přehrávání</string>
     

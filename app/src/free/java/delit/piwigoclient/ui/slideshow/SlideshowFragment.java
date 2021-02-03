@@ -43,11 +43,11 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>,FUIH extend
     }
 
     @Override
-    protected long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> container, String sortOrder, int pageToLoad, int pageSize, Set<String> multimediaExtensionList) {
+    protected long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> container, String sortOrder, int pageToLoad, int pageSize) {
         T containerDetails = container.getContainerDetails();
         long loadingMessageId;
         if(containerDetails instanceof CategoryItem) {
-            loadingMessageId = new AlbumGetImagesResponseHandler((CategoryItem) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
+            loadingMessageId = new AlbumGetImagesResponseHandler((CategoryItem) containerDetails, sortOrder, pageToLoad, pageSize).invokeAsync(getContext());
         } else {
             throw new IllegalArgumentException("unsupported container type : " + container);
         }

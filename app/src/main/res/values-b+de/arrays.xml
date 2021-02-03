@@ -149,7 +149,11 @@
         <item>1.4.0.108</item>
         <item>"Bug-Fix:
                  - Beheben Sie viele Probleme, die nach dem letzten Monat der Änderungen zu Abstürzen in der gesamten App führen
-                 - Standardeinstellung für Videokomprimierung korrigiert"</item>
+                 - Standardeinstellung für Videokomprimierung korrigiert
+                 - Unterstützung für das Minimieren von Alben wurde hinzugefügt
+                 - Korrigieren Sie nicht erkannte Videos
+               Änderungen:
+                 - Option entfernt, um anzugeben, welche Dateien per Video abgespielt werden können. Dies erfolgt basierend auf dem von der Dateierweiterung abgeleiteten Mimetyp"</item>
         <item>1.4.0.107</item>
         <item>"Bug-Fix:
                  - Möglicherweise wird eine Ressource in der Diashow der Albumressource übersehen (Vollbildvorschau).

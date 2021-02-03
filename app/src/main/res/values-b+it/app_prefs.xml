@@ -207,12 +207,6 @@
     
 
     
-    <string name="preference_piwigo_playable_media_extensions_title">Estensioni multimediali supportate</string>
-    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
-
-    
-
-    
     <string name="preference_video_cache_enabled_title">Memorizza nella cache i video visualizzati su file</string>
     <string name="preference_video_cache_enabled_summary">Se abilitato, tutti i video in streaming verranno memorizzati nella cache per la riproduzione successiva</string>
     

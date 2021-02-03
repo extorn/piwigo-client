@@ -17,19 +17,17 @@ import delit.piwigoclient.model.piwigo.Tag;
 public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "TagGetResRspHdlr";
-    private final Set<String> multimediaExtensionList;
     private final Tag tag;
     private final String sortOrder;
     private final int pageSize;
     private final int page;
 
-    public TagGetImagesResponseHandler(Tag tag, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
+    public TagGetImagesResponseHandler(Tag tag, String sortOrder, int page, int pageSize) {
         super("pwg.tags.getImages", TAG);
         this.tag = tag;
         this.sortOrder = sortOrder;
         this.page = page;
         this.pageSize = pageSize;
-        this.multimediaExtensionList = multimediaExtensionList;
     }
 
     @Override
@@ -64,7 +62,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
 
         JsonArray images = result.get("images").getAsJsonArray();
 
-        AlbumGetImagesResponseHandler.ResourceParser resourceParser = new AlbumGetImagesResponseHandler.ResourceParser(multimediaExtensionList, getPiwigoServerUrl());
+        AlbumGetImagesResponseHandler.ResourceParser resourceParser = new AlbumGetImagesResponseHandler.ResourceParser(getPiwigoServerUrl());
 
         if(images != null) {
             for (int i = 0; i < images.size(); i++) {

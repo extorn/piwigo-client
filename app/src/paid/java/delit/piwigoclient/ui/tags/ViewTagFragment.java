@@ -532,9 +532,9 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
     private void onDeleteResources(final DeleteActionData deleteActionData) {
 
         if (!deleteActionData.isResourceInfoAvailable()) {
-            Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, getContext());
+
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
-                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler<>(item, multimediaExtensionList)));
+                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler<>(item)));
             }
             return;
         }
@@ -571,9 +571,9 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
 
 
                 String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
-                Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
 
-                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new TagGetImagesResponseHandler(currentTag, sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
+
+                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new TagGetImagesResponseHandler(currentTag, sortOrder, pageToActuallyLoad, pageSize));
                 tagModel.recordPageBeingLoaded(loadingMessageId, pageToLoad);
                 loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
             } finally {

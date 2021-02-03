@@ -149,7 +149,11 @@
         <item>1.4.0.108</item>
         <item>"Arreglo del fallo:
                  - Arregle muchos problemas que causan fallas en la aplicación luego del último mes de cambios
-                 - Se corrigió la configuración predeterminada para la compresión de video"</item>
+                 - Se corrigió la configuración predeterminada para la compresión de video
+                 - Soporte re-agregado para minimizar álbumes
+                 - corregir videos que no se detectan
+               Cambios:
+                 - Opción eliminada para especificar qué archivos se pueden reproducir en video. Esto se hace en función del tipo mime derivado de la extensión de archivo"</item>
         <item>1.4.0.107</item>
         <item>"Arreglo del fallo:
                  - Posibilidad de que se pierda un recurso de la presentación de diapositivas de recursos del álbum (vista previa a pantalla completa)

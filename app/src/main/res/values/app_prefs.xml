@@ -206,18 +206,6 @@
     <string name="preference_gallery_enable_video_playback_summary">Enable if you want to download and play videos on demand</string>
     <bool name="preference_gallery_enable_video_playback_default">true</bool>
 
-    <string name="preference_piwigo_playable_media_extensions_key" translatable="false">preference_piwigo_playable_media_extensions</string>
-    <string name="preference_piwigo_playable_media_extensions_title">Supported multimedia extensions</string>
-    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
-
-    <string-array name="preference_piwigo_playable_media_extensions_default" translatable="false">
-        <item>mpg</item>
-        <item>avi</item>
-        <item>mp3</item>
-        <item>ogg</item>
-        <item>mp4</item>
-    </string-array>
-
     <string name="preference_video_cache_enabled_key" translatable="false">preference_video_cache_enabled</string>
     <string name="preference_video_cache_enabled_title">Cache videos viewed to file</string>
     <string name="preference_video_cache_enabled_summary">When enabled, any streamed videos will be cached for later playback</string>

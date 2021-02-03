@@ -254,7 +254,10 @@
         <item>"Bugfix:
                 - Tidy up of a lot of issues causing crashes across the app following the last month of changes
                 - Default setting for video compression corrected
-                - Re-added support for minimise albums"</item>
+                - Re-added support for minimise albums
+                - fix videos not being detected
+              Changes:
+                - Removed option to specify which files are video playable. This is done based on file extension derived mimetype"</item>
         <item>1.4.0.107</item>
         <item>"Bugfix:
                 - Potential for one resource to be missed from the album resource slideshow (full screen preview)

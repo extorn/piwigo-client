@@ -1115,10 +1115,10 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 }
 
                 String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
-                Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
 
 
-                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetImagesResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
+
+                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetImagesResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToActuallyLoad, pageSize));
                 galleryModel.recordPageBeingLoaded(loadingMessageId, pageToActuallyLoad);
                 loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
             } finally {
@@ -3245,12 +3245,11 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
 
         void getResourcesInfoIfNeeded(AbstractViewAlbumFragment<?,?> fragment) {
-            Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(fragment.getPrefs(), fragment.requireContext());
             int simultaneousCalls = trackedMessageIds.size();
             if (maxHttpRequestsQueued > simultaneousCalls) {
                 for (ResourceItem item : getItemsWithoutLinkedAlbumData()) {
                     simultaneousCalls++;
-                    itemsUpdating.put(item.getId(), trackMessageId(fragment.addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler<>(item, multimediaExtensionList))));
+                    itemsUpdating.put(item.getId(), trackMessageId(fragment.addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler<>(item))));
                     if (simultaneousCalls >= maxHttpRequestsQueued) {
                         break;
                     }
@@ -3510,8 +3509,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     protected long requestThumbnailLoad(PictureResourceItem resourceItem) {
-        Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
-        ImageGetInfoResponseHandler<?> handler = new ImageGetInfoResponseHandler<>(resourceItem, multimediaExtensionList);
+
+        ImageGetInfoResponseHandler<?> handler = new ImageGetInfoResponseHandler<>(resourceItem);
         long messageId = handler.invokeAsync(getContext());
         getUiHelper().addBackgroundServiceCall(messageId);
         return messageId;

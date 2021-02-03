@@ -207,12 +207,6 @@
     
 
     
-    <string name="preference_piwigo_playable_media_extensions_title">Extensiones multimedia compatibles</string>
-    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
-
-    
-
-    
     <string name="preference_video_cache_enabled_title">Guardar en caché los videos vistos en un archivo</string>
     <string name="preference_video_cache_enabled_summary">Cuando está habilitado, todos los videos transmitidos se almacenarán en caché para su posterior reproducción</string>
     

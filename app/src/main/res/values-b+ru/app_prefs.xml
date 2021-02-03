@@ -207,12 +207,6 @@
     
 
     
-    <string name="preference_piwigo_playable_media_extensions_title">Поддерживаемые мультимедийные расширения</string>
-    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
-
-    
-
-    
     <string name="preference_video_cache_enabled_title">Кешировать просмотренные видео в файл</string>
     <string name="preference_video_cache_enabled_summary">Если этот параметр включен, любые потоковые видео будут кэшироваться для последующего воспроизведения.</string>
     

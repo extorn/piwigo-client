@@ -33,19 +33,17 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
 
     private static final String TAG = "GetResourcesRspHdlr";
     private final static String AMP_HTML_TAG = "&amp;";
-    private final Set<String> multimediaExtensionList;
     private final CategoryItem parentAlbum;
     private final String sortOrder;
     private final int pageSize;
     private final int page;
 
-    public AlbumGetImagesBasicResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
+    public AlbumGetImagesBasicResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize) {
         super("pwg.categories.getImages", TAG);
         this.parentAlbum = parentAlbum;
         this.sortOrder = sortOrder;
         this.page = page;
         this.pageSize = pageSize;
-        this.multimediaExtensionList = multimediaExtensionList;
     }
 
     @Override
@@ -97,7 +95,7 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
             images = null;
         }
 
-        BasicCategoryImageResourceParser resourceParser = buildResourceParser(multimediaExtensionList, getPiwigoServerUrl());
+        BasicCategoryImageResourceParser resourceParser = buildResourceParser(getPiwigoServerUrl());
 
         if(images != null) {
             for (int i = 0; i < images.size(); i++) {
@@ -132,15 +130,15 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
         storeResponse(r);
     }
 
-    protected BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
-        return new BasicCategoryImageResourceParser(multimediaExtensionList, basePiwigoUrl);
+    protected BasicCategoryImageResourceParser buildResourceParser(String basePiwigoUrl) {
+        return new BasicCategoryImageResourceParser(basePiwigoUrl);
     }
 
     public static class BasicCategoryImageResourceParser {
 
         private final Pattern multimediaPattern;
         private Matcher multimediaPatternMatcher;
-        private String basePiwigoUrl;
+        private final String basePiwigoUrl;
         private boolean fixedImageUrisForPrivacyPluginUser;
         private boolean fixedImageUrisWithAmpEscaping;
         private boolean fixedPrivacyPluginImageUrisForPrivacyPluginUser;
@@ -160,35 +158,19 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
         /**
          * Sets up the multimedia pattern to have 3 groups.
          * For input: http://myserver.com/piwigo/2021/_data/i/upload/2021/01/01/myFile.jpg
-         * Group 1: 2021/_data/i
-         * Group 2: /upload/2021/01/01/myfile.mp4
-         * Group 3: mp4
-         * @param multimediaExtensionList list of all extensions that would flag the resource as multimedia
-         * @param basePiwigoUrl
-         *
-         *
+         * Group 1: http://myserver.com/piwigo/
+         * Group 2: 2021/_data/i
+         * Group 3: upload/2021/01/01/myfile.mp4
+         * Group 4: mp4
+         * @param basePiwigoUrl the Uri path to piwigo homepage
          */
-        public BasicCategoryImageResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
+        public BasicCategoryImageResourceParser(String basePiwigoUrl) {
             this.basePiwigoUrl = basePiwigoUrl;
-            StringBuilder extList = new StringBuilder();
-
-            if(multimediaExtensionList.isEmpty()) {
-                extList.append("[a-zA-Z]{3,5}");
-            } else {
-                Iterator<String> extIter = multimediaExtensionList.iterator();
-                while (extIter.hasNext()) {
-                    String ext = extIter.next();
-                    extList.append(ext);
-                    if (extIter.hasNext()) {
-                        extList.append('|');
-                    }
-                }
-            }
             String basePiwigoUri = basePiwigoUrl;
             if(basePiwigoUri.charAt(basePiwigoUri.length() -1) != '/') {
                 basePiwigoUri += '/';
             }
-            String pattern = "^("+basePiwigoUri+")([\\d]*/.*)?((?<=/)upload/.*\\.("+extList+"))$";
+            String pattern = "^("+basePiwigoUri+")([\\d]*/.*)?((?<=/)upload/.*\\.([a-zA-Z0-9]{3,5}))$";
             multimediaPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
             multimediaPatternMatcher = null;
         }

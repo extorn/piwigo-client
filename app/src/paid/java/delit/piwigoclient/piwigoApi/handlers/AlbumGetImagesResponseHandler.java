@@ -11,19 +11,19 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 
 public class AlbumGetImagesResponseHandler extends AlbumGetImagesBasicResponseHandler {
 
-    public AlbumGetImagesResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
-        super(parentAlbum, sortOrder, page, pageSize, multimediaExtensionList);
+    public AlbumGetImagesResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize) {
+        super(parentAlbum, sortOrder, page, pageSize);
     }
 
     @Override
-    protected ResourceParser buildResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
-        return new ResourceParser(multimediaExtensionList, basePiwigoUrl);
+    protected ResourceParser buildResourceParser(String basePiwigoUrl) {
+        return new ResourceParser(basePiwigoUrl);
     }
 
     public static class ResourceParser extends BasicCategoryImageResourceParser {
 
-        public ResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
-            super(multimediaExtensionList, basePiwigoUrl);
+        public ResourceParser(String basePiwigoUrl) {
+            super(basePiwigoUrl);
         }
 
         @Override

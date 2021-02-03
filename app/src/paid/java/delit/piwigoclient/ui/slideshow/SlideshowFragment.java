@@ -156,13 +156,13 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH exten
     }
 
     @Override
-    protected long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> container, String sortOrder, int pageToLoad, int pageSize, Set<String> multimediaExtensionList) {
+    protected long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> container, String sortOrder, int pageToLoad, int pageSize) {
         T containerDetails = container.getContainerDetails();
         long loadingMessageId;
         if(containerDetails instanceof CategoryItem) {
-            loadingMessageId = new AlbumGetImagesResponseHandler((CategoryItem) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
+            loadingMessageId = new AlbumGetImagesResponseHandler((CategoryItem) containerDetails, sortOrder, pageToLoad, pageSize).invokeAsync(getContext());
         } else if(containerDetails instanceof Tag) {
-            loadingMessageId = new TagGetImagesResponseHandler((Tag) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
+            loadingMessageId = new TagGetImagesResponseHandler((Tag) containerDetails, sortOrder, pageToLoad, pageSize).invokeAsync(getContext());
         } else if(container instanceof PiwigoFavorites) {
             // not sure which of these blocks is irrelevant if either!
             if(container.getImgResourceCount() > 0) {
@@ -170,7 +170,7 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH exten
                 loadingMessageId = 0;
             } else {
                 //TODO maybe this occurs when the favorites are not available as the page has been reopened after closing the app. Maybe need to reload the favorites here...
-                loadingMessageId = new FavoritesGetImagesResponseHandler(sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
+                loadingMessageId = new FavoritesGetImagesResponseHandler(sortOrder, pageToLoad, pageSize).invokeAsync(getContext());
             }
         } else {
             throw new IllegalArgumentException("unsupported container type : " + container);

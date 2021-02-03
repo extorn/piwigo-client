@@ -149,7 +149,11 @@
         <item>1.4.0.108</item>
         <item>"Bugfix:
                  - Ruim veel problemen op die crashes veroorzaken in de app na de laatste maand van wijzigingen
-                 - Standaardinstelling voor videocompressie gecorrigeerd"</item>
+                 - Standaardinstelling voor videocompressie gecorrigeerd
+                 - Opnieuw toegevoegde ondersteuning voor het minimaliseren van albums
+                 - repareer video\'s die niet worden gedetecteerd
+               Veranderingen:
+                 - Optie verwijderd om aan te geven welke bestanden video afspeelbaar zijn. Dit wordt gedaan op basis van het mime-type dat is afgeleid van de bestandsextensie"</item>
         <item>1.4.0.107</item>
         <item>"Bugfix:
                  - Mogelijk dat één bron wordt gemist in de diavoorstelling van de albumbronnen (voorbeeld op volledig scherm)

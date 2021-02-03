@@ -149,7 +149,11 @@
         <item>1.4.0.108</item>
         <item>"Oprava chyby:
                  - Uspořádejte spoustu problémů způsobujících zhroucení aplikace po posledním měsíci změn
-                 - Výchozí nastavení pro kompresi videa opraveno"</item>
+                 - Výchozí nastavení pro kompresi videa opraveno
+                 - Znovu přidaná podpora pro minimalizaci alb
+                 - opravit videa nebyla detekována
+               Změny:
+                 - Odebraná možnost určit, které soubory lze přehrávat video. To se děje na základě mimetypu odvozeného od přípony souboru"</item>
         <item>1.4.0.107</item>
         <item>"Oprava chyby:
                  - Potenciál pro vynechání jednoho zdroje z prezentace zdroje alba (náhled na celou obrazovku)

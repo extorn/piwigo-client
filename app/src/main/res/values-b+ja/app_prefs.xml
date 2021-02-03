@@ -207,12 +207,6 @@
     
 
     
-    <string name="preference_piwigo_playable_media_extensions_title">サポートされているマルチメディア拡張機能</string>
-    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
-
-    
-
-    
     <string name="preference_video_cache_enabled_title">ファイルに表示されたビデオをキャッシュする</string>
     <string name="preference_video_cache_enabled_summary">有効にすると、ストリーミングされたビデオは後で再生できるようにキャッシュされます</string>
     
