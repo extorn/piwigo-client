@@ -252,7 +252,7 @@
         -->
         <item>1.4.0.110</item>
         <item>"Bugfix:
-                - Crash if spacers are used to balance the album view display grid (likely to affect large screen devices)."</item>
+                - Crash multiple child albums show next to each other with an odd number of child albums present (landscape mode or large screen devices)"</item>
         <item>1.4.0.109</item>
         <item>"Change:
                 - Added statement for your clarity at the top of the email template created by this app for support requests
