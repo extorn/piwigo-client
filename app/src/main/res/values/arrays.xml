@@ -252,7 +252,11 @@
         -->
         <item>1.4.0.110</item>
         <item>"Bugfix:
-                - Crash multiple child albums show next to each other with an odd number of child albums present (landscape mode or large screen devices)"</item>
+                - Crash multiple child albums show next to each other with an odd number of child albums present (landscape mode or large screen devices)
+                - Upload Job - Upload to Piwigo server list not selectable (impact for users with more than one server connection profile configured in the app)
+                - TODO: Category selection fragment crash with non loaded selected item
+                - TODO: No categories loading in the automatic upload job select a category preference
+                "</item>
         <item>1.4.0.109</item>
         <item>"Change:
                 - Added statement for your clarity at the top of the email template created by this app for support requests

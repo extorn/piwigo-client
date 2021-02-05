@@ -190,7 +190,11 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
             }
 
             public ServerConnectionProfilesListAdapterPreferences(Bundle bundle) {
-                loadFromBundle(bundle);
+                if(bundle != null) {
+                    loadFromBundle(bundle);
+                } else {
+                    selectable(false, false);
+                }
             }
 
             @Override
