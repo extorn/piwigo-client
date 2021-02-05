@@ -413,8 +413,8 @@ public class CategoryItem extends GalleryItem implements PhotoContainer, Parcela
             idMap.put(existingChildAlbum.getId(), i);
         }
         for(CategoryItem newAlbum : newAlbums) {
-            int idxExisting = idMap.get(newAlbum.getId());
-            if (idxExisting < 0) {
+            Integer idxExisting = idMap.get(newAlbum.getId());
+            if (idxExisting == null) {
                 // add to the end (won't affect the index we've just built).
                 childAlbums.add(newAlbum);
             } else {
@@ -487,5 +487,16 @@ public class CategoryItem extends GalleryItem implements PhotoContainer, Parcela
             totalPhotoCount += (thisAlbumPhotoCount - photoCount);
         }
         photoCount = thisAlbumPhotoCount;
+    }
+
+    public boolean hasNonAdminCopyChildren() {
+        if(childAlbums != null) {
+            for (CategoryItem child : childAlbums) {
+                if(!child.isAdminCopy) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

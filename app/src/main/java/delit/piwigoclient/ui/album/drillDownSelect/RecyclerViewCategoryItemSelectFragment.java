@@ -63,6 +63,7 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
     private long startedActionAtTime;
     private CategoryItemRecyclerViewAdapter.NavigationListener navListener;
     private LinkedHashMap<Long, Parcelable> listViewStates = new LinkedHashMap<>(5); // one state for each level within the list (created and deleted on demand)
+    private boolean adminDataLoaded;
 
 
     public static RecyclerViewCategoryItemSelectFragment<?,?> newInstance(CategoryItemViewAdapterPreferences prefs, int actionId) {
@@ -125,6 +126,9 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
 
         navListener = (oldCategory, newCategory) -> {
 
+            if(!newCategory.hasNonAdminCopyChildren() && oldCategory.getId() != newCategory.getId()) {
+                loadDataForAlbum(newCategory);
+            }
             if(oldCategory != null) {
                 listViewStates.put(oldCategory.getId(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
             }
@@ -217,7 +221,7 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
         if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
             // invoke a call to admin list to pick up any missed.
 
-            if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
+            if (PiwigoSessionDetails.isAdminUser(connectionPrefs) && !adminDataLoaded) {
                 // trigger admin category load
                 AbstractPiwigoWsResponseHandler handler = new AlbumGetSubAlbumsAdminResponseHandler();
                 handler.withConnectionPreferences(connectionPrefs);
@@ -319,18 +323,33 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
 
     void onPiwigoResponseAlbumsLoaded(final ArrayList<CategoryItem> albums, boolean isAdminList) {
 
+        adminDataLoaded |= isAdminList;
+
         getUiHelper().hideProgressIndicator();
+        CategoryItem currentAlbum = getActiveAlbum();
+        if(currentAlbum.getChildAlbumCount() == 0) {
+            currentAlbum.setChildAlbums(albums);
+        } else {
+            if(albums.size() == 1 && currentAlbum.getId() == albums.get(0).getId()) {
+                // merge the children.
+                currentAlbum.mergeChildrenWith(albums.get(0).getChildAlbums(), isAdminList);
+            } else {
+                // presume this is just a list of the children.
+                currentAlbum.mergeChildrenWith(albums, isAdminList);
+            }
+
+        }
+        bindDataToView(null);
+    }
+
+    private CategoryItem getActiveAlbum() {
+        if(getListAdapter() != null) {
+            return getListAdapter().getActiveItem();
+        }
         if(rootAlbum == null) {
             rootAlbum = StaticCategoryItem.ROOT_ALBUM.toInstance();
         }
-        if(rootAlbum.getChildAlbumCount() == 0) {
-            rootAlbum.setChildAlbums(albums);
-        } else {
-            rootAlbum.mergeChildrenWith(albums, isAdminList);
-            CategoryItem activeItem = getListAdapter().getActiveItem();
-            getListAdapter().setActiveItem(rootAlbum.findChild(activeItem.getId()));
-        }
-        bindDataToView(null);
+        return rootAlbum;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
