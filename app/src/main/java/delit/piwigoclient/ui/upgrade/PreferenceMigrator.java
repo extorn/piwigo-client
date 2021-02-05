@@ -61,92 +61,122 @@ public abstract class PreferenceMigrator implements Comparable<PreferenceMigrato
 
     protected void encryptAndSaveValue(Context context, SharedPreferences prefs, SharedPreferences.Editor editor, int keyId, String defaultVal) {
         String key = context.getString(keyId);
-        String currentVal = prefs.getString(key, defaultVal);
-        if (currentVal != null && !currentVal.equals(defaultVal)) {
-            String encryptedVal = SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID).encryptValue(key, currentVal);
-            editor.putString(key, encryptedVal);
+        try {
+            String currentVal = prefs.getString(key, defaultVal);
+            if (currentVal != null && !currentVal.equals(defaultVal)) {
+                String encryptedVal = SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID).encryptValue(key, currentVal);
+                editor.putString(key, encryptedVal);
+            }
+        } catch (RuntimeException e) {
+            Logging.log(Log.ERROR, TAG, "Error handling preference with key %1$s", key);
+            throw e;
         }
     }
 
     protected void copyStringSetPreferenceToConnectionSettingsProfiles(Context context, SharedPreferences prefs, SharedPreferences.Editor editor, @StringRes int prefId) {
         // move into all profiles
         String prefKey = context.getString(prefId);
-        if(prefs.contains(prefKey)) {
-            Set<String> value = prefs.getStringSet(prefKey, null); // default value is NEVER used
-            if(value != null) {
-                value = new HashSet<>(value);
-            }
-            Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, context);
-            Set<String> finalValue = value;
-            for (String profileId : connectionProfiles) {
+        try {
+            if (prefs.contains(prefKey)) {
+                Set<String> value = prefs.getStringSet(prefKey, null); // default value is NEVER used
+                if (value != null) {
+                    value = new HashSet<>(value);
+                }
+                Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, context);
+                Set<String> finalValue = value;
+                for (String profileId : connectionProfiles) {
 
-                upgradeConnectionProfilePreference(context, profileId, prefId, actor -> {
+                    upgradeConnectionProfilePreference(context, profileId, prefId, actor -> {
 
-                    if(!actor.isForActiveProfile()) { // because its already in the active profile.
-                        actor.writeStringSet(editor, context, finalValue);
-                    }
-                });
+                        if (!actor.isForActiveProfile()) { // because its already in the active profile.
+                            actor.writeStringSet(editor, context, finalValue);
+                        }
+                    });
+                }
             }
+        } catch (RuntimeException e) {
+            Logging.log(Log.ERROR, TAG, "Error handling preference with key %1$s", prefKey);
+            throw e;
         }
     }
 
     protected void copyStringPreferenceToConnectionSettingsProfiles(Context context, SharedPreferences prefs, SharedPreferences.Editor editor, @StringRes int prefId) {
         // delete and move into all profiles
         String prefKey = context.getString(prefId);
-        if(prefs.contains(prefKey)) {
-            String value = prefs.getString(prefKey, null); // default value is NEVER used
-            Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, context);
-            for (String profileId : connectionProfiles) {
-                upgradeConnectionProfilePreference(context, profileId, prefId, actor -> {
+        try {
+            if(prefs.contains(prefKey)) {
+                String value = prefs.getString(prefKey, null); // default value is NEVER used
+                Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, context);
+                for (String profileId : connectionProfiles) {
+                    upgradeConnectionProfilePreference(context, profileId, prefId, actor -> {
 
-                    if(!actor.isForActiveProfile()) { // because its already in the active profile.
-                        actor.writeString(editor, context, value);
-                    }
-                });
+                        if(!actor.isForActiveProfile()) { // because its already in the active profile.
+                            actor.writeString(editor, context, value);
+                        }
+                    });
+                }
             }
+        } catch (RuntimeException e) {
+            Logging.log(Log.ERROR, TAG, "Error handling preference with key %1$s", prefKey);
+            throw e;
         }
     }
 
     public boolean rekeyBooleanPref(Context context, SharedPreferences prefs, SharedPreferences.Editor editor, String fromOldKey, @StringRes int toNewKey, @BoolRes int defaultValRes) {
-        boolean defaultVal = context.getResources().getBoolean(defaultValRes);
-        if (prefs.contains(fromOldKey)) {
-            // this is the old generic preference, now split into two
-            boolean val = prefs.getBoolean(fromOldKey, defaultVal);
-            editor.remove(fromOldKey);
-            if(val != defaultVal) {
-                editor.putBoolean(context.getString(toNewKey), val);
+        try {
+            boolean defaultVal = context.getResources().getBoolean(defaultValRes);
+            if (prefs.contains(fromOldKey)) {
+                // this is the old generic preference, now split into two
+                boolean val = prefs.getBoolean(fromOldKey, defaultVal);
+                editor.remove(fromOldKey);
+                if(val != defaultVal) {
+                    editor.putBoolean(context.getString(toNewKey), val);
+                }
+                return true;
             }
-            return true;
+            return false;
+        } catch (RuntimeException e) {
+            Logging.log(Log.ERROR, TAG, "Error handling preference with key %1$s -> %2$s", fromOldKey, toNewKey);
+            throw e;
         }
-        return false;
     }
 
     public boolean rekeyIntPref(Context context, SharedPreferences prefs, SharedPreferences.Editor editor, String fromOldKey, @StringRes int toNewKey, @IntegerRes int defaultValRes) {
-        int defaultVal = context.getResources().getInteger(defaultValRes);
-        if (prefs.contains(fromOldKey)) {
-            // this is the old generic preference, now split into two
-            int val = prefs.getInt(fromOldKey, defaultVal);
-            editor.remove(fromOldKey);
-            if(val != defaultVal) {
-                editor.putInt(context.getString(toNewKey), val);
+        try {
+            int defaultVal = context.getResources().getInteger(defaultValRes);
+            if (prefs.contains(fromOldKey)) {
+                // this is the old generic preference, now split into two
+                int val = prefs.getInt(fromOldKey, defaultVal);
+                editor.remove(fromOldKey);
+                if(val != defaultVal) {
+                    editor.putInt(context.getString(toNewKey), val);
+                }
+                return true;
             }
-            return true;
+            return false;
+        } catch (RuntimeException e) {
+            Logging.log(Log.ERROR, TAG, "Error handling preference with key %1$s -> %2$s", fromOldKey, toNewKey);
+            throw e;
         }
-        return false;
     }
 
     public boolean rekeyStringPref(Context context, SharedPreferences prefs, SharedPreferences.Editor editor, String fromOldKey, @StringRes int toNewKey, @StringRes int defaultValRes) {
-        String defaultVal = context.getString(defaultValRes);
-        if (prefs.contains(fromOldKey)) {
-            // this is the old generic preference, now split into two
-            String val = prefs.getString(fromOldKey, defaultVal);
-            editor.remove(fromOldKey);
-            if(!Objects.equals(val,defaultVal)) {
-                editor.putString(context.getString(toNewKey), val);
+        try {
+            String defaultVal = context.getString(defaultValRes);
+            if (prefs.contains(fromOldKey)) {
+                // this is the old generic preference, now split into two
+                String val = prefs.getString(fromOldKey, defaultVal);
+                editor.remove(fromOldKey);
+                if(!Objects.equals(val,defaultVal)) {
+                    editor.putString(context.getString(toNewKey), val);
+                }
+                return true;
             }
-            return true;
+            return false;
+        } catch (RuntimeException e) {
+            Logging.log(Log.ERROR, TAG, "Error handling preference with key %1$s -> %2$s", fromOldKey, toNewKey);
+            throw e;
         }
-        return false;
     }
 
     protected interface ConnectionPreferenceUpgradeAction {

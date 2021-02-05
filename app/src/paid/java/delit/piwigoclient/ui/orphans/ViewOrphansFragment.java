@@ -27,6 +27,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
@@ -102,7 +103,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     public static <F extends ViewOrphansFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> ViewOrphansFragment<F,FUIH> newInstance() {
         ViewOrphansFragment<F,FUIH> fragment = new ViewOrphansFragment<>();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_ALBUM, CategoryItem.ORPHANS_ROOT_ALBUM.clone());
+        args.putParcelable(ARG_ALBUM, StaticCategoryItem.ORPHANS_ROOT_ALBUM.toInstance());
         fragment.setArguments(args);
         return fragment;
     }
@@ -160,7 +161,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     protected void onPiwigoResponseAlbumDeleted(AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse response) {
         CategoryItem galleryDetails = getGalleryModel().getContainerDetails();
         if (galleryDetails.getId() == response.getAlbumId()) {
-            switchViewToShowContentsAndDetailsForAlbum(CategoryItem.ORPHANS_ROOT_ALBUM.clone());
+            switchViewToShowContentsAndDetailsForAlbum(StaticCategoryItem.ORPHANS_ROOT_ALBUM.toInstance());
         } else {
             super.onPiwigoResponseAlbumDeleted(response);
         }
@@ -169,8 +170,8 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     @Override
     protected void loadAlbumSubCategories(@NonNull CategoryItem album) {
         // we need to use the root if we're at the orphan root (it doesn't actually exist)
-        if(album.equals(CategoryItem.ORPHANS_ROOT_ALBUM)) {
-            super.loadAlbumSubCategories(CategoryItem.ROOT_ALBUM.clone());
+        if(album.equals(StaticCategoryItem.ORPHANS_ROOT_ALBUM)) {
+            super.loadAlbumSubCategories(StaticCategoryItem.ROOT_ALBUM.toInstance());
         } else {
             super.loadAlbumSubCategories(album);
         }
@@ -195,7 +196,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     @Override
     protected synchronized void onPiwigoResponseListOfAlbumsLoaded(AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
         // don't do the normal (inject into the list)
-        if(response.getParentAlbum().equals(CategoryItem.ROOT_ALBUM)) {
+        if(response.getParentAlbum().equals(StaticCategoryItem.ROOT_ALBUM)) {
             for (CategoryItem cat : response.getAlbums()) {
                 if (cat.getName().equals(CATEGORY_NAME_PIWIGO_CLIENT_ORPHANS)) {
                     switchViewToShowContentsAndDetailsForAlbum(cat);
@@ -213,14 +214,14 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     protected void onPiwigoResponseGetOrphanIds(ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse response) {
 
         if(response.getTotalCount() == 0) {
-            if(!getGalleryModel().getContainerDetails().equals(CategoryItem.ORPHANS_ROOT_ALBUM)) {
+            if(!getGalleryModel().getContainerDetails().equals(StaticCategoryItem.ORPHANS_ROOT_ALBUM)) {
                 // there are no true orphans on this server
                 loadAlbumResourcesPage(0);
             } else {
                 refreshEmptyAlbumText(R.string.orphans_no_orphans_found_on_server);
             }
         } else {
-            if(!getGalleryModel().getContainerDetails().equals(CategoryItem.ORPHANS_ROOT_ALBUM)) {
+            if(!getGalleryModel().getContainerDetails().equals(StaticCategoryItem.ORPHANS_ROOT_ALBUM)) {
                 // first move any orphans into our orphan folder
                 processPageOfOrphansResponse(response);
             } else {
@@ -322,7 +323,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     }
     @Override
     protected void loadAlbumResourcesPage(int pageToLoad) {
-        if(getGalleryModel().getContainerDetails() == null || getGalleryModel().getContainerDetails().equals(CategoryItem.ORPHANS_ROOT_ALBUM)) {
+        if(getGalleryModel().getContainerDetails() == null || getGalleryModel().getContainerDetails().equals(StaticCategoryItem.ORPHANS_ROOT_ALBUM)) {
             // no idea what to load yet
             return;
         }

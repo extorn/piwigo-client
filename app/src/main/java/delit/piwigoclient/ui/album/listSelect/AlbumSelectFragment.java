@@ -20,8 +20,8 @@ import java.util.HashSet;
 
 import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
-import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
@@ -107,10 +107,10 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>,FUIH exte
     @Override
     protected void rerunRetrievalForFailedPages() {
         if (availableAlbums == null) {
-            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
+            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), true));
         } else if (getListAdapter() == null) {
             synchronized (this) {
-                AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(getViewPrefs(), CategoryItem.ROOT_ALBUM, requireContext());
+                AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(getViewPrefs(), StaticCategoryItem.ROOT_ALBUM, requireContext());
                 availableGalleries.clear();
                 // leaving the root album out prevents it's selection (not wanted).
 //            availableGalleries.add(CategoryItemStub.ROOT_GALLERY);

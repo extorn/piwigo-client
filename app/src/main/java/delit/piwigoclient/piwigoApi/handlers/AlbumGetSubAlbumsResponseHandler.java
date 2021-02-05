@@ -17,6 +17,7 @@ import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
 public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -211,7 +212,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             item.setParentageChain(directParentAlbum.getParentageChain(), directParentAlbum.getId());
             directParentAlbum.addChildAlbum(item);
         } else {
-            item.setParentageChain(CategoryItem.ROOT_ALBUM.getParentageChain(), CategoryItem.ROOT_ALBUM.getId());
+            item.setParentageChain(StaticCategoryItem.ROOT_ALBUM.getParentageChain(), StaticCategoryItem.ROOT_ALBUM.getId());
         }
 
         // this is superfluous as handled by the above code.

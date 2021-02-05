@@ -11,7 +11,7 @@ import java.util.List;
 
 import delit.libs.util.CollectionUtils;
 
-import static delit.piwigoclient.model.piwigo.CategoryItem.ROOT_ALBUM;
+import static delit.piwigoclient.model.piwigo.StaticCategoryItem.ROOT_ALBUM;
 
 /**
  * Created by gareth on 10/12/17.

@@ -20,26 +20,8 @@ import delit.libs.util.CollectionUtils;
 /**
  * An item representing a piece of content.
  */
-public class CategoryItem extends GalleryItem implements Cloneable, PhotoContainer, Parcelable {
+public class CategoryItem extends GalleryItem implements PhotoContainer, Parcelable {
     private static final String TAG = "CategoryItem";
-    private static final String BLANK_TAG = "PIWIGO_CLIENT_INTERNAL_BLANK";
-    public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
-    public static final CategoryItem ORPHANS_ROOT_ALBUM = new CategoryItem(-1, "Orphans", null, false, null, 0, 0, 0, null);
-    public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, BLANK_TAG, null, true, null, 0, 0, 0, null);
-    public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 100, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
-
-        @Override
-        public int getType() {
-            return GalleryItem.ALBUM_HEADING_TYPE;
-        }
-    };
-    public static final CategoryItem ADVERT = new CategoryItem(Long.MIN_VALUE + 1, null, null, true, null, 0, 0, 0, null) {
-
-        @Override
-        public int getType() {
-            return GalleryItem.ADVERT_TYPE;
-        }
-    };
 
     private List<CategoryItem> childAlbums;
     private int photoCount;
@@ -99,7 +81,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     }
 
     public static boolean isRoot(long albumId) {
-        return ROOT_ALBUM.getId() == albumId;
+        return StaticCategoryItem.ROOT_ALBUM.getId() == albumId;
     }
 
     @Override
@@ -176,7 +158,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     public boolean equals(Object other) {
         if(other instanceof CategoryItem) {
             CategoryItem otherItem = (CategoryItem) other;
-            return (otherItem.getId() == this.getId() && otherItem.isAdminCopy() == this.isAdminCopy) || (BLANK_TAG.equals(getName()) && BLANK_TAG.equals(otherItem.getName()));
+            return (otherItem.getId() == this.getId() && otherItem.isAdminCopy() == this.isAdminCopy) || (StaticCategoryItem.BLANK_TAG.equals(getName()) && StaticCategoryItem.BLANK_TAG.equals(otherItem.getName()));
         }
         return false;
     }
@@ -197,7 +179,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     }
 
     public boolean isRoot() {
-        return this.getId() == ROOT_ALBUM.getId() && getParentId() == null;
+        return this.getId() == StaticCategoryItem.ROOT_ALBUM.getId() && getParentId() == null;
     }
 
     public CategoryItemStub toStub() {
@@ -343,32 +325,6 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
             return 0;
         }
         return childAlbums.size();
-    }
-
-    @NonNull
-    @Override
-    public CategoryItem clone() {
-        Parcel p = Parcel.obtain();
-        byte[] dataBytes;
-        try {
-            writeToParcel(p, 0);
-            dataBytes = p.marshall();
-        } finally {
-            p.recycle();
-        }
-
-        // get a fresh parcel.
-        p = Parcel.obtain();
-
-        CategoryItem clone;
-        try {
-            p.unmarshall(dataBytes, 0, dataBytes.length);
-            p.setDataPosition(0);
-            clone = new CategoryItem(p);
-        } finally {
-            p.recycle();
-        }
-        return clone;
     }
 
     public CategoryItem findChild(long id) {
@@ -523,7 +479,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     }
 
     public boolean isParentRoot() {
-        return getParentId() != null && getParentId() == CategoryItem.ROOT_ALBUM.getId();
+        return getParentId() != null && getParentId() == StaticCategoryItem.ROOT_ALBUM.getId();
     }
 
     public boolean isUserCommentsAllowed() {

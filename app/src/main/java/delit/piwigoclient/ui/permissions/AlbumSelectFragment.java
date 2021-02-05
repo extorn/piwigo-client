@@ -20,8 +20,8 @@ import java.util.HashSet;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
@@ -129,7 +129,7 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH ext
     protected void rerunRetrievalForFailedPages() {
         if (availableItems == null) {
             //TODO FEATURE: Support albums list paging (load page size from settings)
-            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), !getViewPrefs().isFlattenAlbumHierarchy()));
+            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), !getViewPrefs().isFlattenAlbumHierarchy()));
         } else if (getListAdapter() == null) {
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableItems, indirectSelection, getViewPrefs());
             ListView listView = getList();

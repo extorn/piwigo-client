@@ -13,8 +13,8 @@ import delit.libs.ui.util.ParcelUtils;
 
 public class CategoryItemStub implements Parcelable, Identifiable {
 
-    public static final CategoryItemStub ROOT_GALLERY = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId());
-    private static final CategoryItemStub ROOT_GALLERY_NON_SELECTABLE = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId()).markNonUserSelectable();
+    public static final CategoryItemStub ROOT_GALLERY = new CategoryItemStub(StaticCategoryItem.ROOT_ALBUM.getName(), StaticCategoryItem.ROOT_ALBUM.getId());
+    private static final CategoryItemStub ROOT_GALLERY_NON_SELECTABLE = new CategoryItemStub(StaticCategoryItem.ROOT_ALBUM.getName(), StaticCategoryItem.ROOT_ALBUM.getId()).markNonUserSelectable();
 
     private final long id;
     private final String name;

@@ -37,6 +37,7 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
@@ -203,7 +204,7 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
     }
 
     private void loadData() {
-        loadDataForAlbum(CategoryItem.ROOT_ALBUM);
+        loadDataForAlbum(StaticCategoryItem.ROOT_ALBUM);
     }
 
     private void loadDataForAlbum(CategoryItem album) {
@@ -312,7 +313,7 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
     void onAlbumsLoaded(final ArrayList<CategoryItem> albums, boolean isAdminList) {
         getUiHelper().hideProgressIndicator();
         if(rootAlbum == null) {
-            rootAlbum = CategoryItem.ROOT_ALBUM.clone();
+            rootAlbum = StaticCategoryItem.ROOT_ALBUM.toInstance();
         }
         if(rootAlbum.getChildAlbumCount() == 0) {
             rootAlbum.setChildAlbums(albums);

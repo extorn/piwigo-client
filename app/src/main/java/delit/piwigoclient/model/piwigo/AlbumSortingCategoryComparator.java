@@ -44,17 +44,17 @@ public class AlbumSortingCategoryComparator implements Comparator<GalleryItem>, 
         boolean secondIsCategory = o2 instanceof CategoryItem;
         int autoReverse = sortInReverseOrder ? -1 : 1;
         if (firstIsCategory && secondIsCategory) {
-            if (o1 == CategoryItem.ALBUM_HEADING) {
+            if (o1 == StaticCategoryItem.ALBUM_HEADING) {
                 return -1; // push album heading to the start of albums
-            } else if (o2 == CategoryItem.ALBUM_HEADING) {
+            } else if (o2 == StaticCategoryItem.ALBUM_HEADING) {
                 return 1; // push album heading to the start of albums
             } else {
-                if (CategoryItem.BLANK.equals(o1)) {
-                    if (!CategoryItem.BLANK.equals(o2)) {
-                        return -1;
-                    } else {
-                        return 0; // avoid perpetual sorting of blank items
-                    }
+                // avoid perpetual sorting of blank items
+                boolean sortInList = albumSortOrder == PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT;
+                if (StaticCategoryItem.BLANK.equals(o1)) {
+                    return StaticCategoryItem.BLANK.equals(o2) ? 0 : sortInList ? -autoReverse : autoReverse; // push the spacers to the end
+                } else if (StaticCategoryItem.BLANK.equals(o2)) {
+                    return StaticCategoryItem.BLANK.equals(o1) ? 0 : sortInList ? autoReverse : -autoReverse;  // push the spacers to the end
                 }
                 switch (albumSortOrder) {
                     case PiwigoAlbum.ALBUM_SORT_ORDER_DATE:

@@ -8,6 +8,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 
 import static android.view.View.INVISIBLE;
 
@@ -33,7 +34,7 @@ public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, M
             super.fillValues(newItem, allowItemDeletion);
             updateRecentlyViewedMarker(newItem);
 
-            if (CategoryItem.BLANK.equals(newItem)) {
+            if (StaticCategoryItem.BLANK.equals(newItem)) {
                 itemView.setVisibility(View.INVISIBLE);
                 imageLoader.resetAll();
                 return;

@@ -54,13 +54,13 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
-import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -443,7 +443,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
 
     private boolean onUseAsAlbumThumbnailSelectAlbum() {
         // Invoke call to retrieve all album names (will show a dialog once this is done).
-        addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
+        addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), true));
         return true;
     }
 
@@ -711,7 +711,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             defaultAlbumSelectionId = albumNames.get(0).getId();
         }
         final SelectAlbumDialog dialogFact = new SelectAlbumDialog(activity, defaultAlbumSelectionId);
-        AlertDialog dialog = dialogFact.buildDialog(albumNames, CategoryItem.ROOT_ALBUM, (dialog1, which) -> {
+        AlertDialog dialog = dialogFact.buildDialog(albumNames, StaticCategoryItem.ROOT_ALBUM, (dialog1, which) -> {
             long selectedAlbumId = dialogFact.getSelectedAlbumId();
             Long selectedAlbumParentId = dialogFact.getSelectedAlbumParentId();
             addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(selectedAlbumId, selectedAlbumParentId, model.getId()));

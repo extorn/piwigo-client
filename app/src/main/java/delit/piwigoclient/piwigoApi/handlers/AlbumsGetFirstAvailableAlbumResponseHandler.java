@@ -9,6 +9,7 @@ import delit.libs.http.RequestParams;
 import delit.libs.http.cache.CachingAsyncHttpClient;
 import delit.libs.http.cache.RequestHandle;
 import delit.piwigoclient.model.piwigo.CategoryItem;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
 public class AlbumsGetFirstAvailableAlbumResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -36,14 +37,14 @@ public class AlbumsGetFirstAvailableAlbumResponseHandler extends AbstractPiwigoW
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
 
-        CategoryItem albumTreeRoot = CategoryItem.ROOT_ALBUM.clone();
+        CategoryItem albumTreeRoot = StaticCategoryItem.ROOT_ALBUM.toInstance();
         CategoryItem currentAlbumItem = albumTreeRoot;
         boolean isAnElementCached = false;
 
         if (!albumPath.isEmpty()) {
 //            long desiredAlbumId = albumPath.get(albumPath.size() - 1);
             for (Long albumId : albumPath) {
-                if (albumId.equals(CategoryItem.ROOT_ALBUM.getId())) {
+                if (albumId.equals(StaticCategoryItem.ROOT_ALBUM.getId())) {
                     continue;
                 }
                 AlbumGetSubAlbumsResponseHandler albumListLoadHandler = new AlbumGetSubAlbumsResponseHandler(currentAlbumItem, preferredThumbnailSize, false);

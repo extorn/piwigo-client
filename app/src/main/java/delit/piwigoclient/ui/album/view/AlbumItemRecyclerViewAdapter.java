@@ -264,7 +264,7 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
                 boolean hideAlbums = !album.isHideAlbums();
                 album.setHideAlbums(hideAlbums);
                 AlbumHeadingViewHolder<?, ?, ?, ?, ?> viewHolder = (AlbumHeadingViewHolder<?, ?, ?, ?, ?>) getViewHolder();
-                viewHolder.setSubAlbumCount(album.getSubAlbumCount());
+                viewHolder.setSubAlbumCount(album.getChildAlbumCount());
                 getParentAdapter().notifyDataSetChanged();
             }
         }

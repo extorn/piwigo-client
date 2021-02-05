@@ -54,6 +54,7 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
@@ -116,7 +117,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
     private static final String STATE_ACTIVE_PIWIGO_SERVER = "ActiveServerUri";
     private final CustomBackStackListener backStackListener;
     // these fields are persisted.
-    private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
+    private CategoryItem currentAlbum = StaticCategoryItem.ROOT_ALBUM;
     private String onLoginActionMethodName = null;
     private final ArrayList<Parcelable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
@@ -240,7 +241,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
             currentAlbum = null;
             // need to remove historic fragments - not valid.
             clearBackStack();
-            showGallery(CategoryItem.ROOT_ALBUM);
+            showGallery(StaticCategoryItem.ROOT_ALBUM);
         }
     }
 
@@ -471,7 +472,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         } else if (id == R.id.nav_top_tips) {
             showTopTips();
         } else if (id == R.id.nav_gallery) {
-            showGallery(CategoryItem.ROOT_ALBUM);
+            showGallery(StaticCategoryItem.ROOT_ALBUM);
         } else if(id == R.id.nav_orphans) {
             showOrphans();
         } else if (id == R.id.nav_favorites) {
@@ -762,7 +763,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         if (ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
             showPreferences();
         } else {
-            showGallery(CategoryItem.ROOT_ALBUM);
+            showGallery(StaticCategoryItem.ROOT_ALBUM);
         }
     }
 
@@ -846,7 +847,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
 
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.
-            showGallery(CategoryItem.ROOT_ALBUM);
+            showGallery(StaticCategoryItem.ROOT_ALBUM);
         } else {
             //TODO notify all pages that need it that they need to be reloaded - i.e. flush them out of the fragment manager or send an event forcing reload.
         }

@@ -365,7 +365,7 @@ public class PiwigoSessionDetails {
      * Get a map of key value pairs representing the details of the server
      * @return
      */
-    public Map<String,String> getSessionDebugInfoMap() {
+    public synchronized Map<String,String> getSessionDebugInfoMap() {
         Map<String,String> sessionInfoMap = new HashMap<>();
         sessionInfoMap.put("piwigo.version", piwigoVersion);
         sessionInfoMap.put("piwigo.plugins.community", ""+useCommunityPlugin);
@@ -376,7 +376,7 @@ public class PiwigoSessionDetails {
         return sessionInfoMap;
     }
 
-    public String getActivePluginSummary() {
+    public synchronized String getActivePluginSummary() {
         if(activeServerPlugins == null) {
             return "not known";
         }
@@ -415,7 +415,7 @@ public class PiwigoSessionDetails {
         return new Username(getUserId(), getUsername(), getUserType());
     }
 
-    public void setActiveServerPlugins(ArrayList<ServerPlugin> activePlugins) {
+    public synchronized void setActiveServerPlugins(ArrayList<ServerPlugin> activePlugins) {
         activeServerPlugins = new HashSet<>(activePlugins);
     }
 }

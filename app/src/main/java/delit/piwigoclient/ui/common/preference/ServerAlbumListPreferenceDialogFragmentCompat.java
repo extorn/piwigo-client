@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
@@ -150,10 +150,10 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
             return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler(), connectionPrefs);
         } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
             final boolean recursive = true;
-            return addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
+            return addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
         } else {
             final boolean recursive = true;
-            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
+            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
         }
     }
 
@@ -230,7 +230,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
     void addAlbumsToUI(boolean isAdminList, ArrayList<CategoryItemStub> albumNames) {
 
         AlbumSelectionListAdapterPreferences viewPrefs = new AlbumSelectionListAdapterPreferences(true, false,false, false);
-        AvailableAlbumsListAdapter adapter = new AvailableAlbumsListAdapter(viewPrefs, CategoryItem.ROOT_ALBUM, requireContext());
+        AvailableAlbumsListAdapter adapter = new AvailableAlbumsListAdapter(viewPrefs, StaticCategoryItem.ROOT_ALBUM, requireContext());
         adapter.addAll(albumNames);
         if (!viewPrefs.isAllowRootAlbumSelection()) {
             CategoryItemStub catItem = adapter.getItemById(CategoryItemStub.ROOT_GALLERY.getId());

@@ -24,7 +24,7 @@ import delit.libs.ui.util.ParcelUtils;
  * Created by gareth on 02/01/18.
  */
 
-public abstract class PagedList<T extends Parcelable> implements IdentifiableItemStore<T>, Parcelable {
+public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, Parcelable {
 
     private static final String TAG = "PagedList";
     public static int MISSING_ITEMS_PAGE = -1;
@@ -338,16 +338,6 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return getItemIdx(item) >= 0;
     }
 
-    @Override
-    public T getItemById(long selectedItemId) {
-        for (T item : items) {
-            if (getItemId(item) == selectedItemId) {
-                return item;
-            }
-        }
-        throw new IllegalArgumentException("No " + itemType + " present with id : " + selectedItemId);
-    }
-
     /**
      * WARNING: duplicates WILL be added here if provided.
      *
@@ -391,11 +381,22 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return false;
     }
 
+    @Override
     public T remove(int idx) {
         updatePageLoadedCount(idx, -1);
         T item = sortedItems.remove(idx);
-        items.remove(item);
+        items.remove(item);//FIXME - this is potentially not the right item if we used id (not available here!) to find the index and sort order isn't original
         return item;
+    }
+
+    @Override
+    public boolean removeByEquality(T item) {
+        int idx = sortedItems.indexOf(item);
+        if(idx >= 0) {
+            remove(idx);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -434,10 +435,14 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     }
 
     @Override
-    public boolean removeAll(Collection<T> itemsForDeletion) {
+    public boolean removeAllByEquality(Collection<T> itemsForDeletion) {
         boolean changed = false;
         for(T item : itemsForDeletion) {
-            changed = remove(item);
+            boolean removed;
+            do {
+                removed = removeByEquality(item);
+                changed |= removed;
+            } while (removed);
         }
         return changed;
     }

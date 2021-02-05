@@ -27,7 +27,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
     public static final int PICTURE_HEADING_TYPE = 4;
     public static final int ADVERT_TYPE = 5;
 
-    public static final GalleryItem PICTURE_HEADING = new GalleryItem(Long.MIN_VALUE + 2, null, null, null, null) {
+    public static final GalleryItem PICTURE_HEADING = new GalleryItem(Long.MIN_VALUE + 101, null, null, null, null) {
 
         @Override
         public int getType() {
@@ -149,9 +149,9 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         }
         // both are categories
         if (isCategory) {
-            if (CategoryItem.BLANK.equals(this)  || CategoryItem.ALBUM_HEADING.equals(o)) {
+            if (StaticCategoryItem.BLANK.equals(this)  || StaticCategoryItem.ALBUM_HEADING.equals(o)) {
                 return 1;
-            } else if (CategoryItem.BLANK.equals(o) || CategoryItem.ALBUM_HEADING.equals(this)) {
+            } else if (StaticCategoryItem.BLANK.equals(o) || StaticCategoryItem.ALBUM_HEADING.equals(this)) {
                 return -1;
             }
             return -this.name.compareTo(o.name);

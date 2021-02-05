@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import delit.piwigoclient.BuildConfig;
  * Created by gareth on 02/01/18.
  */
 
-public abstract class IdentifiablePagedList<T extends Identifiable&Parcelable> extends PagedList<T> {
+public abstract class IdentifiablePagedList<T extends Identifiable&Parcelable> extends PagedList<T> implements IdentifiableItemStore<T> {
 
     private static final String TAG = "IdentifiablePagedList";
 
@@ -50,6 +51,26 @@ public abstract class IdentifiablePagedList<T extends Identifiable&Parcelable> e
     @Override
     public Long getItemId(T item) {
         return item.getId();
+    }
+
+    @Override
+    public T getItemById(long selectedItemId) {
+        ArrayList<T> items = getItems();
+        for (T item : items) {
+            if (getItemId(item) == selectedItemId) {
+                return item;
+            }
+        }
+        throw new IllegalArgumentException("No " + getItemType() + " present with id : " + selectedItemId);
+    }
+
+    @Override
+    public boolean removeAllById(Collection<T> itemsForDeletion) {
+        boolean changed = false;
+        for(T item : itemsForDeletion) {
+            changed = remove(item);
+        }
+        return changed;
     }
 
     public long findAnIdNotYetPresentInTheList() {

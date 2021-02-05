@@ -80,37 +80,40 @@ public class PiwigoAlbumTest {
 
     @Test
     public void testItemReplacementJustCategories() {
-        int sortOrder = PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
-        boolean reversed = false;
+        loadCategoriesInNameOrder(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false);
+    }
+
+    private PiwigoAlbum<CategoryItem, GalleryItem> loadCategoriesInNameOrder(int sortOrder, boolean reversed) {
         ArrayList<CategoryItem> categoryItemLoad = initialiseCategoryItemLoadData(sortOrder, 5);
-        PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(5, 15));
+        PiwigoAlbum<CategoryItem, GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(5, 15));
         album.setAlbumSortOrder(sortOrder);
         album.setRetrieveChildAlbumsInReverseOrder(reversed);
         album.setRetrieveItemsInReverseOrder(reversed);
-        loadCategoriesCheckingSortOrder(album, categoryItemLoad, false, new CategoryItemReplacementAction());
+        loadCategoriesCheckingSortOrder(album, categoryItemLoad, false, 0, new CategoryItemReplacementAction());
+        return album;
     }
 
     @Test
-    public void testItemReplacementMixedContent() {
-        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, new MultiItemReplacementAction());
+    public void testItemReplacementMixedContentSortingByName() {
+        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, 2, new MultiItemReplacementAction());
     }
 
     @Test
-    public void testItemReplacementMixedContentReversed() {
-        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true, new MultiItemReplacementAction());
+    public void testItemReplacementMixedContentSortingByNameReversed() {
+        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true, 2, new MultiItemReplacementAction());
     }
 
     @Test
     public void testAllCategoriesHideAlbums() {
-        PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false);
-        int albumsCount = album.getSubAlbumCount();
+        PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, 2);
+        int albumsCount = album.getChildAlbumCount();
         int resourceCount = album.getResourcesCount();
         int itemCount = album.getItemCount();
         album.setHideAlbums(true);
         assertEquals(resourceCount, album.getItemCount());
         assertEquals(resourceCount, album.getResourcesCount());
-        assertEquals(albumsCount, album.getSubAlbumCount());
-        assertEquals(album.getItemByIdx(0), CategoryItem.ALBUM_HEADING);
+        assertEquals(albumsCount, album.getChildAlbumCount());
+        assertEquals(album.getItemByIdx(0), StaticCategoryItem.ALBUM_HEADING);
         assertEquals(album.getItemByIdx(1), ResourceItem.PICTURE_HEADING);
         for(int i = 2; i <= resourceCount; i++) {
             assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
@@ -119,15 +122,15 @@ public class PiwigoAlbumTest {
 
     @Test
     public void testAllCategoriesHideAlbumsReversed() {
-        PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true);
-        int albumsCount = album.getSubAlbumCount();
+        PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true, 2);
+        int albumsCount = album.getChildAlbumCount();
         int resourceCount = album.getResourcesCount();
         int itemCount = album.getItemCount();
         album.setHideAlbums(true);
         assertEquals(resourceCount, album.getItemCount());
         assertEquals(resourceCount, album.getResourcesCount());
-        assertEquals(albumsCount, album.getSubAlbumCount());
-        assertEquals(album.getItemByIdx(0), CategoryItem.ALBUM_HEADING);
+        assertEquals(albumsCount, album.getChildAlbumCount());
+        assertEquals(album.getItemByIdx(0), StaticCategoryItem.ALBUM_HEADING);
         assertEquals(album.getItemByIdx(1), ResourceItem.PICTURE_HEADING);
         for(int i = 2; i <= resourceCount; i++) {
             assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
@@ -135,38 +138,78 @@ public class PiwigoAlbumTest {
     }
 
     @Test
+    public void testAddSpacerAlbumsMixedContent() {
+        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, 0);
+        int startCount = album.getItemCount();
+        int startAlbumCount = album.getChildAlbumCount();
+        int startResourceCount = album.getResourcesCount();
+        album.setSpacerAlbumCount(3);
+        assertEquals(startCount + 3, album.getItemCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startResourceCount, album.getResourcesCount());
+        assertEquals(3, album.getItemCount() - (album.getResourcesCount() + album.getChildAlbumCount() + album.getBannerCount()));
+        // try changing the spacer album count
+        album.setSpacerAlbumCount(5);
+        assertEquals(startCount + 5, album.getItemCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startResourceCount, album.getResourcesCount());
+        assertEquals(5, album.getItemCount() - (album.getResourcesCount() + album.getChildAlbumCount() + album.getBannerCount()));
+    }
+
+    @Test
+    public void testAddSpacerAlbumsCategoriesOnly() {
+        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesInNameOrder(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false);
+        int startCount = album.getItemCount();
+        int startAlbumCount = album.getChildAlbumCount();
+        int startResourceCount = album.getResourcesCount();
+        album.setSpacerAlbumCount(3);
+        assertEquals(startCount + 3, album.getItemCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startResourceCount, album.getResourcesCount());
+        assertEquals(3, album.getItemCount() - (album.getResourcesCount() + album.getChildAlbumCount() + album.getBannerCount()));
+        // try changing the spacer album count
+        album.setSpacerAlbumCount(5);
+        assertEquals(startCount + 5, album.getItemCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startResourceCount, album.getResourcesCount());
+        assertEquals(5, album.getItemCount() - (album.getResourcesCount() + album.getChildAlbumCount() + album.getBannerCount()));
+    }
+
+    @Test
     public void testAllCategoriesFirstSortingByName() {
-        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false);
+        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, 2);
     }
 
     @Test
     public void testAllCategoriesFirstSortingByNameReversed() {
-        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true);
+        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true, 2);
     }
 
     @Test
     public void testAllCategoriesFirstSortingByDefault() {
-        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, false);
+        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, false, 2);
     }
 
     @Test
     public void testAllCategoriesFirstSortingByDefaultReversed() {
-        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, true);
+        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, true, 2);
     }
 
     @Test
     public void testAllCategoriesFirstSortingByDate() {
-        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DATE, false);
+        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DATE, false, 2);
     }
 
     @Test
     public void testAllCategoriesFirstSortingByDateReversed() {
-        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DATE, true);
+        loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DATE, true, 2);
     }
 
     @Test
     public void testReverseOriginalSortingByName() {
-        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, 2);
         //Now do the actual test
         //First reverse the list
         List<GalleryItem> originalOrder = new ArrayList<>(album.getItems());
@@ -177,13 +220,13 @@ public class PiwigoAlbumTest {
         assertTrue(album.setRetrieveChildAlbumsInReverseOrder(!album.isRetrieveAlbumsInReverseOrder()));
         assertTrue(album.setRetrieveItemsInReverseOrder(!album.isRetrieveItemsInReverseOrder()));
         assertArrayEquals("Order has been reversed again", originalOrder.toArray(), album.getItems().toArray());
-        assertEquals(getAlbumCount(album.getItems()), album.getSubAlbumCount());
+        assertEquals(getAlbumCount(album.getItems()), album.getChildAlbumCount());
         assertEquals(getResourcesCount(album.getItems()), album.getResourcesCount());
     }
 
     @Test
     public void testReverseOriginalSortingByNameReversed() {
-        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true, 2);
         //First reverse the list
         List<GalleryItem> originalOrder = new ArrayList<>(album.getItems());
         assertTrue(album.setRetrieveChildAlbumsInReverseOrder(!album.isRetrieveAlbumsInReverseOrder()));
@@ -193,13 +236,13 @@ public class PiwigoAlbumTest {
         assertTrue(album.setRetrieveChildAlbumsInReverseOrder(!album.isRetrieveAlbumsInReverseOrder()));
         assertTrue(album.setRetrieveItemsInReverseOrder(!album.isRetrieveItemsInReverseOrder()));
         assertArrayEquals("Order has been reversed again", originalOrder.toArray(), album.getItems().toArray());
-        assertEquals(getAlbumCount(album.getItems()), album.getSubAlbumCount());
+        assertEquals(getAlbumCount(album.getItems()), album.getChildAlbumCount());
         assertEquals(getResourcesCount(album.getItems()), album.getResourcesCount());
     }
 
     @Test
     public void testReverseOriginalSortingByDefault() {
-        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, false);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, false, 2);
         //First reverse the list
         List<GalleryItem> originalOrder = new ArrayList<>(album.getItems());
         assertTrue(album.setRetrieveItemsInReverseOrder(!album.isRetrieveItemsInReverseOrder()));
@@ -209,7 +252,7 @@ public class PiwigoAlbumTest {
         assertTrue(album.setRetrieveItemsInReverseOrder(!album.isRetrieveItemsInReverseOrder()));
         assertTrue(album.setRetrieveChildAlbumsInReverseOrder(!album.isRetrieveAlbumsInReverseOrder()));
         assertArrayEquals("Order has been reversed again", originalOrder.toArray(), album.getItems().toArray());
-        assertEquals(getAlbumCount(album.getItems()), album.getSubAlbumCount());
+        assertEquals(getAlbumCount(album.getItems()), album.getChildAlbumCount());
         assertEquals(getResourcesCount(album.getItems()), album.getResourcesCount());
     }
 
@@ -226,7 +269,7 @@ public class PiwigoAlbumTest {
     private int getAlbumCount(List<? extends GalleryItem> items) {
         int count = 0;
         for(GalleryItem gi : items) {
-            if(gi instanceof CategoryItem && !CategoryItem.ALBUM_HEADING.equals(gi)) {
+            if(gi instanceof CategoryItem && !StaticCategoryItem.ALBUM_HEADING.equals(gi) && !StaticCategoryItem.BLANK.equals(gi)) {
                 count++;
             }
         }
@@ -235,7 +278,7 @@ public class PiwigoAlbumTest {
 
     @Test
     public void testReverseOriginalSortingByDefaultReversed() {
-        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, true);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, true, 2);
         //First reverse the list
         List<GalleryItem> originalOrder = new ArrayList<>(album.getItems());
         assertTrue(album.setRetrieveItemsInReverseOrder(!album.isRetrieveItemsInReverseOrder()));
@@ -245,13 +288,13 @@ public class PiwigoAlbumTest {
         assertTrue(album.setRetrieveItemsInReverseOrder(!album.isRetrieveItemsInReverseOrder()));
         assertTrue(album.setRetrieveChildAlbumsInReverseOrder(!album.isRetrieveAlbumsInReverseOrder()));
         assertArrayEquals("Order has been reversed again", originalOrder.toArray(), album.getItems().toArray());
-        assertEquals(getAlbumCount(album.getItems()), album.getSubAlbumCount());
+        assertEquals(getAlbumCount(album.getItems()), album.getChildAlbumCount());
         assertEquals(getResourcesCount(album.getItems()), album.getResourcesCount());
     }
 
     @Test
     public void testReverseOriginalSortingByDate() {
-        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DATE, false);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DATE, false, 2);
         //First reverse the list
         List<GalleryItem> originalOrder = new ArrayList<>(album.getItems());
         assertTrue(album.setRetrieveItemsInReverseOrder(!album.isRetrieveItemsInReverseOrder()));
@@ -261,13 +304,13 @@ public class PiwigoAlbumTest {
         assertTrue(album.setRetrieveItemsInReverseOrder(!album.isRetrieveItemsInReverseOrder()));
         assertTrue(album.setRetrieveChildAlbumsInReverseOrder(!album.isRetrieveAlbumsInReverseOrder()));
         assertArrayEquals("Order has been reversed again", originalOrder.toArray(), album.getItems().toArray());
-        assertEquals(getAlbumCount(album.getItems()), album.getSubAlbumCount());
+        assertEquals(getAlbumCount(album.getItems()), album.getChildAlbumCount());
         assertEquals(getResourcesCount(album.getItems()), album.getResourcesCount());
     }
 
     @Test
     public void testReverseOriginalSortingByDateReversed() {
-        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DATE, true);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_DATE, true, 2);
         //First reverse the list
         List<GalleryItem> originalOrder = new ArrayList<>(album.getItems());
         assertTrue(album.setRetrieveItemsInReverseOrder(!album.isRetrieveItemsInReverseOrder()));
@@ -277,7 +320,7 @@ public class PiwigoAlbumTest {
         assertTrue(album.setRetrieveItemsInReverseOrder(!album.isRetrieveItemsInReverseOrder()));
         assertTrue(album.setRetrieveChildAlbumsInReverseOrder(!album.isRetrieveAlbumsInReverseOrder()));
         assertArrayEquals("Order has been reversed again", originalOrder.toArray(), album.getItems().toArray());
-        assertEquals(getAlbumCount(album.getItems()), album.getSubAlbumCount());
+        assertEquals(getAlbumCount(album.getItems()), album.getChildAlbumCount());
         assertEquals(getResourcesCount(album.getItems()), album.getResourcesCount());
     }
 
@@ -326,6 +369,7 @@ public class PiwigoAlbumTest {
                     break;
             }
         }
+
         return categoryItemLoad;
     }
 
@@ -340,9 +384,11 @@ public class PiwigoAlbumTest {
         int loadCategoriesAfterPages = 3;
         boolean headingAdded = false;
         int pagesLoaded = 0;
+        int spacerAlbumCount = 2;
+
         for(ItemLoadPage<GalleryItem> resourceItemLoadPage : resourceItemLoadPages) {
             if(loadCategoriesAfterPages == pagesLoaded) {
-                loadCategoriesCheckingSortOrder(album, categoryItemLoad,true);
+                loadCategoriesCheckingSortOrder(album, categoryItemLoad,  true, spacerAlbumCount);
             }
 
             if(!headingAdded && resourceItemLoadPage.getItems().size() > 0) {
@@ -354,7 +400,7 @@ public class PiwigoAlbumTest {
             pagesLoaded++;
         }
 
-        List<GalleryItem> expectedResult = buildExpectedOutcome(categoryItemLoad, resourceItemLoadPages, album.isRetrieveItemsInReverseOrder());
+        List<GalleryItem> expectedResult = buildExpectedOutcome(categoryItemLoad, resourceItemLoadPages, spacerAlbumCount, album.isRetrieveItemsInReverseOrder());
 
         for(AlbumAction action : actions) {
             action.doWithAlbumPostLoad(album, categoryItemLoad, resourceItemLoadPages, expectedResult);
@@ -362,7 +408,7 @@ public class PiwigoAlbumTest {
 
 
         assertArrayEquals("Final gallery should match expected content", expectedResult.toArray(), album.getItems().toArray());
-        assertEquals(getAlbumCount(expectedResult), album.getSubAlbumCount());
+        assertEquals(getAlbumCount(expectedResult), album.getChildAlbumCount());
         assertEquals(getResourcesCount(expectedResult), album.getResourcesCount());
     }
 
@@ -370,7 +416,7 @@ public class PiwigoAlbumTest {
         void doWithAlbumPostLoad(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, @Nullable ArrayList<CategoryItem> categoryItemLoad, @Nullable List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, @Nullable List<GalleryItem> expectedResult);
     }
 
-    public PiwigoAlbum<CategoryItem,GalleryItem> loadCategoriesFirst(int sortOrder, boolean reversed, AlbumAction... actions) {
+    public PiwigoAlbum<CategoryItem,GalleryItem> loadCategoriesFirst(int sortOrder, boolean reversed, int spacerAlbumCount, AlbumAction... actions) {
 
         List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, 5, 3);
         ArrayList<CategoryItem> categoryItemLoad = initialiseCategoryItemLoadData(sortOrder, 5);
@@ -379,17 +425,18 @@ public class PiwigoAlbumTest {
         album.setRetrieveChildAlbumsInReverseOrder(reversed);
         album.setRetrieveItemsInReverseOrder(reversed);
 
-        loadCategoriesCheckingSortOrder(album, categoryItemLoad, false);
+        loadCategoriesCheckingSortOrder(album, categoryItemLoad, false, spacerAlbumCount);
+        album.setSpacerAlbumCount(spacerAlbumCount);
         loadResourceItemPages(resourceItemLoadPages, album);
 
-        List<GalleryItem> expectedResult = buildExpectedOutcome(categoryItemLoad, resourceItemLoadPages, album.isRetrieveItemsInReverseOrder());
+        List<GalleryItem> expectedResult = buildExpectedOutcome(categoryItemLoad, resourceItemLoadPages, spacerAlbumCount, album.isRetrieveItemsInReverseOrder());
 
         for(AlbumAction action : actions) {
             action.doWithAlbumPostLoad(album, categoryItemLoad, resourceItemLoadPages, expectedResult);
         }
 
         assertArrayEquals("Final gallery should match expected content", expectedResult.toArray(), album.getItems().toArray());
-        assertEquals(getAlbumCount(expectedResult), album.getSubAlbumCount());
+        assertEquals(getAlbumCount(expectedResult), album.getChildAlbumCount());
         assertEquals(getResourcesCount(expectedResult), album.getResourcesCount());
         return album;
     }
@@ -410,12 +457,15 @@ public class PiwigoAlbumTest {
         }
     }
 
-    private List<GalleryItem> buildExpectedOutcome(ArrayList<CategoryItem> categoryItemLoad, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, boolean reverseOrder) {
+    private List<GalleryItem> buildExpectedOutcome(ArrayList<CategoryItem> categoryItemLoad, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, int spacerAlbumCount, boolean reverseOrder) {
         ArrayList<GalleryItem> expected = new ArrayList<>();
         if(categoryItemLoad.size() > 0) {
-            expected.add(CategoryItem.ALBUM_HEADING);
+            expected.add(StaticCategoryItem.ALBUM_HEADING);
         }
         ArrayList<CategoryItem> cats = new ArrayList<>(categoryItemLoad);
+        for(int i = 0; i < spacerAlbumCount; i++) {
+            cats.add(StaticCategoryItem.BLANK.toInstance());
+        }
         if(reverseOrder) {
             Collections.reverse(cats);
         }
@@ -426,28 +476,35 @@ public class PiwigoAlbumTest {
     }
 
     private void testSortOrder(PiwigoAlbum<CategoryItem, GalleryItem> album, String assertionMsg) {
-        if(album.getSubAlbumCount() > 0) {
-            assertEquals(assertionMsg, CategoryItem.ALBUM_HEADING, album.getItemByIdx(0));
-            assertEquals(assertionMsg, album.getImgResourceCount() == 0 ? 0 : album.getSubAlbumCount() + 1, album.getItemIdx(ResourceItem.PICTURE_HEADING));
+        if(album.getChildAlbumCount() > 0) {
+            assertEquals(assertionMsg, StaticCategoryItem.ALBUM_HEADING, album.getItemByIdx(0));
+            assertEquals(assertionMsg, album.getImgResourceCount() == 0 ? 0 : album.getFirstResourceIdx() - 1, album.getItemIdx(ResourceItem.PICTURE_HEADING));
         } else {
             assertEquals(assertionMsg, album.getImgResourceCount() == 0 ? -1 : 0, album.getItemIdx(ResourceItem.PICTURE_HEADING));
         }
     }
 
 
-    protected void loadCategoriesCheckingSortOrder(PiwigoAlbum<CategoryItem, GalleryItem> album, ArrayList<CategoryItem> categoryItemLoad, boolean trimToMatchExpectedLength, AlbumAction ... actions) {
+    protected void loadCategoriesCheckingSortOrder(PiwigoAlbum<CategoryItem, GalleryItem> album, ArrayList<CategoryItem> categoryItemLoad, boolean trimToMatchExpectedLength, int spacerAlbumCount, AlbumAction ... actions) {
         if(categoryItemLoad.size() > 0) {
-            album.addItem(CategoryItem.ALBUM_HEADING);
+            album.addItem(StaticCategoryItem.ALBUM_HEADING);
         }
         for(CategoryItem item : categoryItemLoad) {
             album.addItem(item);
         }
+        album.setSpacerAlbumCount(spacerAlbumCount);
+
         List<CategoryItem> expected = new ArrayList<>(categoryItemLoad);
+        for(int i = 0; i < spacerAlbumCount; i++) {
+            CategoryItem spacer = StaticCategoryItem.BLANK.toInstance();
+            expected.add(spacer);
+        }
+
         if(album.isRetrieveItemsInReverseOrder()) {
             Collections.reverse(expected);
         }
         if(expected.size() > 0) {
-            expected.add(0, CategoryItem.ALBUM_HEADING);
+            expected.add(0, StaticCategoryItem.ALBUM_HEADING);
         }
         List<GalleryItem> actual = new ArrayList<>(album.getItems());
         if(trimToMatchExpectedLength && actual.size() > expected.size()) {
@@ -463,7 +520,7 @@ public class PiwigoAlbumTest {
         }
 
         assertArrayEquals(expected.toArray(), actual.toArray());
-        assertEquals(getAlbumCount(expected), album.getSubAlbumCount());
+        assertEquals(getAlbumCount(expected), album.getChildAlbumCount());
         assertEquals(getResourcesCount(album.getItems()), album.getResourcesCount());
     }
 
@@ -509,7 +566,8 @@ public class PiwigoAlbumTest {
         }
 
         protected void replaceXthCategory(PiwigoAlbum<CategoryItem, GalleryItem> album, ArrayList<CategoryItem> categoryItemLoad, List<GalleryItem> expectedResult, int removeItemAtOffset) {
-            int idxItemToRemove = (album.isRetrieveAlbumsInReverseOrder() ? album.getSubAlbumCount() - removeItemAtOffset : 1 + removeItemAtOffset);
+            int lastAlbumIdx = album.getFirstResourceIdx() - 2;
+            int idxItemToRemove = (album.isRetrieveAlbumsInReverseOrder() ? lastAlbumIdx - removeItemAtOffset : 1 + removeItemAtOffset);
             removeAndReplaceItem(album, categoryItemLoad.get(removeItemAtOffset), idxItemToRemove, expectedResult);
         }
 
@@ -518,7 +576,7 @@ public class PiwigoAlbumTest {
             if(album.isRetrieveItemsInReverseOrder()) {
                 idxItemToRemove = album.getItemCount() -1 - removeItemAtOffset;
             } else {
-                idxItemToRemove = removeItemAtOffset + (album.getSubAlbumCount() == 0 ? 1 : album.getSubAlbumCount() + 2);
+                idxItemToRemove = removeItemAtOffset + album.getFirstResourceIdx();
             }
             GalleryItem itemToRemove = getResourceByLoadIdx(resourceItemLoadPages, removeItemAtOffset);
             removeAndReplaceItem(album, itemToRemove, idxItemToRemove, expectedResult);

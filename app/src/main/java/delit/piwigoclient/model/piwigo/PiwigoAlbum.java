@@ -35,7 +35,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     };
     private static final String TAG = "PwgAlb";
     private final AlbumSortingComparator comparator;
-    private int subAlbumCount;
+    private int childAlbumCount;
     private int spacerAlbums;
     private int bannerCount;
     private boolean hideAlbums;
@@ -53,7 +53,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     
     public PiwigoAlbum(Parcel in) {
         super(in);
-        subAlbumCount = in.readInt();
+        childAlbumCount = in.readInt();
         spacerAlbums = in.readInt();
         bannerCount = in.readInt();
         comparator = new AlbumSortingComparator(in.readInt());
@@ -70,7 +70,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeInt(subAlbumCount);
+        dest.writeInt(childAlbumCount);
         dest.writeInt(spacerAlbums);
         dest.writeInt(bannerCount);
         dest.writeInt(comparator.getAlbumSortOrder());
@@ -100,11 +100,18 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
 
     @Override
     public void addItem(T item) {
-        if(item instanceof CategoryItem) {
-            addCategoryItem((CategoryItem) item);
-            return;
+        try {
+            if (item instanceof CategoryItem) {
+                addCategoryItem((CategoryItem) item);
+                return;
+            }
+            addNonCategoryItem(item);
+        } catch(RuntimeException e) {
+            // the purpose of this is to ensure we can debug any issue.
+            Logging.log(Log.ERROR, TAG, "Current State : Albums %1$d, Spacers %2$d, Banners %3$d, TotalItems %4$d, itemToAdd : %5$s", childAlbumCount, spacerAlbums, bannerCount, super.getItemCount(), item);
+            Logging.recordException(e);
+            throw e;
         }
-        addNonCategoryItem(item);
     }
 
     private void addNonCategoryItem(T item) {
@@ -125,8 +132,12 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             super.postItemInsert(item);
         }
         if(item instanceof CategoryItem) {
-            if (item != CategoryItem.ADVERT && item != CategoryItem.ALBUM_HEADING) {
-                subAlbumCount++;
+            if (item != StaticCategoryItem.ADVERT && item != StaticCategoryItem.ALBUM_HEADING) {
+                if(item.equals(StaticCategoryItem.BLANK)) {
+                    spacerAlbums++;
+                } else {
+                    childAlbumCount++;
+                }
             } else {
                 bannerCount++;
             }
@@ -138,15 +149,15 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         Collections.sort(items, comparator);
         if(albumsNeedReversing) {
             albumsNeedReversing = false;
-            int fromIdx = Math.max(0,getItemIdx((T)CategoryItem.ALBUM_HEADING) + 1);
-            int toIdx = Math.min(Math.max(0,getItemIdx((T)ResourceItem.PICTURE_HEADING)), getItems().size());
+            int fromIdx = Math.max(0,getItemIdx((T)StaticCategoryItem.ALBUM_HEADING) + 1);
+            int toIdx = Math.min(Math.max(0,getFirstResourceIdx() - 1), getItems().size());
             Collections.reverse(getItems().subList(fromIdx, toIdx));
         }
     }
 
     @Override
     protected int getPageIndexContaining(int resourceIdx) {
-        if(resourceIdx < getSubAlbumCount() + bannerCount) {
+        if(resourceIdx < childAlbumCount + spacerAlbums + bannerCount) {
             return -1; // only the resource items are paged
         }
         return super.getPageIndexContaining(resourceIdx);
@@ -161,7 +172,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     public int addItemPage(int page, int pageSize, List<T> newItems) {
         int firstInsertPosition = super.addItemPage(page, pageSize, newItems);
         for (GalleryItem item : newItems) {
-            if (item == CategoryItem.ALBUM_HEADING || item == GalleryItem.PICTURE_HEADING) {
+            if (item == StaticCategoryItem.ALBUM_HEADING || item == GalleryItem.PICTURE_HEADING) {
                 bannerCount++;
             }
         }
@@ -171,21 +182,21 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     @Override
     public int getFirstResourceIdx() {
         if(hideAlbums) {
-            return subAlbumCount + (bannerCount > 0 ? bannerCount - 1 : 0);
+            return spacerAlbums + childAlbumCount + (bannerCount > 0 ? bannerCount - 1 : 0);
         }
-        return subAlbumCount + bannerCount;
+        return spacerAlbums + childAlbumCount + bannerCount;
     }
 
     @Override
     protected int getItemInsertPosition(T item) {
         if(item instanceof CategoryItem) {
-            int itemsToPreceedThisOne = getSubAlbumCount();
-            if(itemsToPreceedThisOne > 0) {
+            int itemsToPrecedeThisOne = childAlbumCount;
+            if(itemsToPrecedeThisOne > 0) {
                 if(comparator.isSortCategoriesInReverseOrder()) {
-                    itemsToPreceedThisOne = 0;
+                    itemsToPrecedeThisOne = 0;
                 }
-                itemsToPreceedThisOne += this.bannerCount > 0 ? 1 : 0;
-                return itemsToPreceedThisOne;
+                itemsToPrecedeThisOne += this.bannerCount > 0 ? 1 : 0;
+                return itemsToPrecedeThisOne;
             }
             int offset = getResourcesCount() > 0 ? -1 : 0;
             return (this.bannerCount + offset) > 0 ? 1 : 0; // insert at the start if no albums.
@@ -200,7 +211,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             if(idx == 0) {
                 super.getItemByIdx(0);
             } else {
-                return super.getItemByIdx(idx + subAlbumCount);
+                return super.getItemByIdx(idx + spacerAlbums + childAlbumCount);
             }
         }
         return super.getItemByIdx(idx);
@@ -209,8 +220,8 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     @Override
     public int getItemIdx(T item) {
         int itemIdx = super.getItemIdx(item);
-        if(hideAlbums && itemIdx >= subAlbumCount) {
-            itemIdx -= (subAlbumCount);
+        if(hideAlbums && itemIdx >= (spacerAlbums + childAlbumCount)) {
+            itemIdx -= (spacerAlbums + childAlbumCount);
         }
         return itemIdx;
     }
@@ -219,7 +230,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     protected int getPageInsertPosition(int page, int pageSize) {
         int insertAtIdx = super.getPageInsertPosition(page, pageSize);
         // ensure the pages of resources are placed after the albums
-        insertAtIdx += subAlbumCount;
+        insertAtIdx += childAlbumCount;
         insertAtIdx += spacerAlbums;
         insertAtIdx += bannerCount;
         return insertAtIdx;
@@ -230,10 +241,11 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     public String toString() {
         final StringBuilder sb = new StringBuilder("PiwigoAlbum{");
         sb.append("comparator=").append(comparator);
-        sb.append(", subAlbumCount=").append(subAlbumCount);
-        sb.append(", spacerAlbums=").append(spacerAlbums);
+        sb.append(", childAlbumCount=").append(childAlbumCount);
+        sb.append(", childSpacerAlbums=").append(spacerAlbums);
         sb.append(", bannerCount=").append(bannerCount);
         sb.append(", hideAlbums=").append(hideAlbums);
+        sb.append(", itemType=").append(getItemType());
         sb.append('}');
         return sb.toString();
     }
@@ -241,11 +253,11 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     private void reduceCountOnRemoval(T item) {
         if (item.isFromServer()) {
             if (item instanceof CategoryItem) {
-                subAlbumCount--;
+                childAlbumCount--;
             }
-        } else if (CategoryItem.BLANK.equals(item)) {
+        } else if (StaticCategoryItem.BLANK.equals(item)) {
             spacerAlbums--;
-        } else if (CategoryItem.ALBUM_HEADING.equals(item)) {
+        } else if (StaticCategoryItem.ALBUM_HEADING.equals(item)) {
             bannerCount--;
         } else if (GalleryItem.PICTURE_HEADING.equals(item)) {
             bannerCount--;
@@ -254,16 +266,15 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
 
     public void setSpacerAlbumCount(int spacerAlbumsNeeded) {
         // remove all spacers
-        boolean removed = removeAll(Collections.singletonList((T)CategoryItem.BLANK));
+        boolean removed = removeAllByEquality(Collections.singletonList((T)StaticCategoryItem.BLANK));
         if(removed) {
             Logging.log(Log.DEBUG, TAG, "removing spacer album");
         }
-        spacerAlbums = spacerAlbumsNeeded;
         if (spacerAlbumsNeeded > 0) {
             // add correct number of spacers
-            long blankId = CategoryItem.BLANK.getId();
+            long blankId = StaticCategoryItem.BLANK.getId();
             for (int i = 0; i < spacerAlbumsNeeded; i++) {
-                addItem((T)CategoryItem.BLANK.clone().withId(blankId++));
+                addItem((T)StaticCategoryItem.BLANK.toInstance(blankId++));
             }
         }
     }
@@ -271,7 +282,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     @Override
     public void clear() {
         super.clear();
-        subAlbumCount = 0;
+        childAlbumCount = 0;
         spacerAlbums = 0;
         bannerCount = 0;
     }
@@ -280,23 +291,23 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     public int getItemCount() {
         int itemCount = super.getItemCount();
         if (hideAlbums) {
-            itemCount -= subAlbumCount + spacerAlbums + bannerCount;
+            itemCount -= childAlbumCount + spacerAlbums + bannerCount;
         }
         return itemCount;
     }
 
     @Override
     public int getResourcesCount() {
-        int resourceCount = super.getItemCount() - subAlbumCount - spacerAlbums - bannerCount;
+        int resourceCount = super.getItemCount() - childAlbumCount - spacerAlbums - bannerCount;
         if(resourceCount < 0) {
-            Logging.log(Log.ERROR, TAG, "PiwigoAlbum Resource count is wrong - %1$d items - %2$d childAlbums - %3$d spacerAlbums - %4$d banners = %5$d", super.getItemCount(), subAlbumCount, spacerAlbums, bannerCount, resourceCount);
+            Logging.log(Log.ERROR, TAG, "PiwigoAlbum Resource count is wrong - %1$d items - %2$d childAlbums - %3$d spacerAlbums - %4$d banners = %5$d", super.getItemCount(), childAlbumCount, spacerAlbums, bannerCount, resourceCount);
             int actualSubAlbumCount = 0;
             int actualSpacerAlbums = 0;
             int actualBannerCount = 0;
             for(T item : getItems()) {
-                if(CategoryItem.BLANK.equals(item)) {
+                if(StaticCategoryItem.BLANK.equals(item)) {
                     actualSpacerAlbums++;
-                } else if(CategoryItem.ALBUM_HEADING.equals(item)) {
+                } else if(StaticCategoryItem.ALBUM_HEADING.equals(item)) {
                     actualBannerCount++;
                 } else if(item instanceof CategoryItem) {
                     actualSubAlbumCount++;
@@ -307,20 +318,21 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             if(BuildConfig.DEBUG) {
                 String msg = "subAlbums (%1$d|%2$d)\n"
                             +"spacers (%3$d|%4$d)\n"
-                            +"banners (%5$d|%6$d)\n";
-                throw new IllegalStateException(String.format(msg, subAlbumCount, actualSubAlbumCount, spacerAlbums, actualSpacerAlbums, bannerCount, actualBannerCount));
+                            +"banners (%5$d|%6$d)\n"
+                            +"total (%7$d)";
+                throw new IllegalStateException(String.format(msg, childAlbumCount, actualSubAlbumCount, spacerAlbums, actualSpacerAlbums, bannerCount, actualBannerCount, super.getItemCount()));
             }
-            subAlbumCount = actualSubAlbumCount;
+            childAlbumCount = actualSubAlbumCount;
             spacerAlbums = actualSpacerAlbums;
             bannerCount = actualBannerCount;
 
-            Logging.log(Log.ERROR, TAG, "Corrected PiwigoAlbum Resource count: - %1$d items - %2$d childAlbums - %3$d spacerAlbums - %4$d banners = %5$d", super.getItemCount(), subAlbumCount, spacerAlbums, bannerCount, resourceCount);
+            Logging.log(Log.ERROR, TAG, "Corrected PiwigoAlbum Resource count: - %1$d items - %2$d childAlbums - %3$d spacerAlbums - %4$d banners = %5$d", super.getItemCount(), childAlbumCount, spacerAlbums, bannerCount, resourceCount);
         }
         return resourceCount;
     }
 
-    public int getSubAlbumCount() {
-        return subAlbumCount;
+    public int getChildAlbumCount() {
+        return childAlbumCount;
     }
 
     public boolean isRetrieveAlbumsInReverseOrder() {
@@ -333,7 +345,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             this.retrieveAlbumsInReverseOrder = retrieveAlbumsInReverseOrder;
             if (getItems().size() > 0) {
                 if(comparator.getAlbumSortOrder() == PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT
-                        && subAlbumCount > 0) {
+                        && childAlbumCount > 0) {
                     albumsNeedReversing = true;
                 }
                 sortItems();
@@ -349,7 +361,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     }
 
     public void updateSpacerAlbumCount(int albumsPerRow) {
-        int spacerAlbumsNeeded = getSubAlbumCount() % albumsPerRow;
+        int spacerAlbumsNeeded = childAlbumCount % albumsPerRow;
         if (spacerAlbumsNeeded > 0) {
             spacerAlbumsNeeded = albumsPerRow - spacerAlbumsNeeded;
         }
@@ -382,4 +394,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         return null;
     }
 
+    public int getBannerCount() {
+        return bannerCount;
+    }
 }

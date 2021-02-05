@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.libs.ui.view.list.MultiSourceListAdapter;
@@ -30,9 +32,10 @@ import delit.piwigoclient.ui.AdsManager;
 
 public class ServerConnectionsListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
 
+    private static final String TAG = "SvrConListPrefFrag";
     private ListView listView;
     private String selectedValue;
-    private String STATE_SELECTED_VALUE = "ServerConnectionsListPreference.SelectedValue";
+    private static final String STATE_SELECTED_VALUE = "ServerConnectionsListPreference.SelectedValue";
     private ServerConnectionProfilesListAdapter adapter;
     private ServerConnectionProfilesListAdapter.ServerConnectionProfilesListAdapterPreferences viewPrefs;
 
@@ -111,7 +114,12 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
     @Override
     public void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-            ServerConnectionsListPreference.ServerConnection selectedItem = ((ServerConnectionProfilesListAdapter) listView.getAdapter()).getSelectedItems().iterator().next();
+            HashSet<ServerConnectionsListPreference.ServerConnection> selectedItems = ((ServerConnectionProfilesListAdapter) listView.getAdapter()).getSelectedItems();
+            if(selectedItems == null || selectedItems.isEmpty()) {
+                Logging.log(Log.WARN,TAG, "OK selected, but no item selected");
+                return;
+            }
+            ServerConnectionsListPreference.ServerConnection selectedItem = selectedItems.iterator().next();
 
             ServerConnectionsListPreference pref = getPreference();
             String selectedItemStr = selectedItem == null ? null : selectedItem.getProfileName();

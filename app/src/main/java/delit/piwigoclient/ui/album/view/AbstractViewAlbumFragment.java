@@ -81,6 +81,7 @@ import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.ServerConfig;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
@@ -469,7 +470,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 }
             } else {
                 Logging.log(Log.WARN, TAG, "Unable to resume album fragment - no resume details stored. Changing to gallery root");
-                addArguments(CategoryItem.ROOT_ALBUM.clone());
+                addArguments(StaticCategoryItem.ROOT_ALBUM.toInstance());
                 loadModelFromArguments(getArguments());
             }
         }
@@ -749,7 +750,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     private boolean showBulkPasteAction(Basket basket) {
-        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !viewAdapter.isItemSelectionAllowed() && basket.getItemCount() > 0 && galleryModel.getContainerDetails().getId() != CategoryItem.ROOT_ALBUM.getId() && galleryModel.getContainerDetails().getId() != basket.getContentParentId();
+        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !viewAdapter.isItemSelectionAllowed() && basket.getItemCount() > 0 && galleryModel.getContainerDetails().getId() != StaticCategoryItem.ROOT_ALBUM.getId() && galleryModel.getContainerDetails().getId() != basket.getContentParentId();
     }
 
     private boolean showBulkActionsContainer(Basket basket) {
@@ -1326,7 +1327,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             onReloadAlbum();
         } else {
 
-            int spacerAlbumsNeeded = galleryModel.getSubAlbumCount() % albumsPerRow;
+            int spacerAlbumsNeeded = galleryModel.getChildAlbumCount() % albumsPerRow;
             if (spacerAlbumsNeeded > 0) {
                 spacerAlbumsNeeded = albumsPerRow - spacerAlbumsNeeded;
             }
@@ -1516,7 +1517,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     protected boolean isPermitUserToViewExtraDetailsSheet() {
-        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || (galleryModel != null && galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM);
+        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || (galleryModel != null && galleryModel.getContainerDetails() != StaticCategoryItem.ROOT_ALBUM);
     }
 
     private void setupBottomSheetButtons(View bottomSheet, int editFieldsVisibility) {
@@ -1772,7 +1773,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
 
 
-        if (galleryModel.getContainerDetails().getDescription() != null && !galleryModel.getContainerDetails().getDescription().isEmpty() && CategoryItem.ROOT_ALBUM != galleryModel.getContainerDetails()) {
+        if (galleryModel.getContainerDetails().getDescription() != null && !galleryModel.getContainerDetails().getDescription().isEmpty() && StaticCategoryItem.ROOT_ALBUM != galleryModel.getContainerDetails()) {
             // support for the extended description plugin.
             String description = PiwigoUtils.getResourceDescriptionInsideAlbum(galleryModel.getContainerDetails().getDescription());
             Spanned spannedText = PiwigoUtils.getSpannedHtmlText(description);
@@ -1858,8 +1859,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
 
         if (adminOnlyChildCategories.size() > 1) {
-            if (!galleryModel.containsItem(CategoryItem.ALBUM_HEADING)) {
-                galleryModel.addItem(CategoryItem.ALBUM_HEADING);
+            if (!galleryModel.containsItem(StaticCategoryItem.ALBUM_HEADING)) {
+                galleryModel.addItem(StaticCategoryItem.ALBUM_HEADING);
             }
         }
         updateAlbumWithAdminChildCategories(galleryModel, adminOnlyChildCategories);
@@ -2053,14 +2054,14 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             galleryModel.updateMaxExpectedItemCount(response.getAlbums().size());
         }
         if (response.getAlbums().size() > 1) {
-            if (!galleryModel.containsItem(CategoryItem.ALBUM_HEADING)) {
-                galleryModel.addItem(CategoryItem.ALBUM_HEADING);
+            if (!galleryModel.containsItem(StaticCategoryItem.ALBUM_HEADING)) {
+                galleryModel.addItem(StaticCategoryItem.ALBUM_HEADING);
             }
         }
         long currentGalleryId = galleryModel.getContainerDetails().getId();
         boolean itemsReplaced = false;
         boolean itemsAdded = false;
-        boolean hasAlbumsAlready = galleryModel.getSubAlbumCount() > 0;
+        boolean hasAlbumsAlready = galleryModel.getChildAlbumCount() > 0;
         for (CategoryItem item : response.getAlbums()) {
             if (item.getId() != currentGalleryId) {
                 if(hasAlbumsAlready) {
@@ -2070,7 +2071,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                         GalleryItem existing = galleryModel.getItemById(item.getId());
                         itemsReplaced = galleryModel.replace(existing, item);
                     } catch (IllegalArgumentException e) {
-                        Logging.log(Log.DEBUG, TAG, "Item not found. Adapter size : %1$d", galleryModel.getSubAlbumCount());
+                        Logging.log(Log.DEBUG, TAG, "Item not found. Adapter size : %1$d", galleryModel.getChildAlbumCount());
                         // just means it isn't present - sink.
                     }
                 } else {
@@ -2109,8 +2110,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             int firstPage = invertSortOrder ? galleryModel.getContainerDetails().getPagesOfPhotos(pageSize) : 0;
 
             if (response.getPage() == firstPage && response.getResources().size() > 0) {
-                if (!galleryModel.containsItem(CategoryItem.PICTURE_HEADING)) {
-                    galleryModel.addItem(CategoryItem.PICTURE_HEADING);
+                if (!galleryModel.containsItem(StaticCategoryItem.PICTURE_HEADING)) {
+                    galleryModel.addItem(StaticCategoryItem.PICTURE_HEADING);
                 }
             }
             ArrayList<GalleryItem> resources = response.getResources();
@@ -2453,7 +2454,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             if (currentItem != null) {
                 FragmentActivity activity = uiHelper.getParent().requireActivity();
                 for (Long albumId : response.getAlbumPath()) {
-                    if (albumId.equals(CategoryItem.ROOT_ALBUM.getId())) {
+                    if (albumId.equals(StaticCategoryItem.ROOT_ALBUM.getId())) {
                         continue;
                     }
                     new ViewModelProvider(activity).get("" + currentItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(currentItem).getValue();
@@ -2477,7 +2478,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
         @Override
         public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            uiHelper.getParent().onReopenModelRetrieved(CategoryItem.ROOT_ALBUM.clone(), CategoryItem.ROOT_ALBUM.clone());
+            uiHelper.getParent().onReopenModelRetrieved(StaticCategoryItem.ROOT_ALBUM.toInstance(), StaticCategoryItem.ROOT_ALBUM.toInstance());
             return true; // to close the progress indicator
         }
     }

@@ -12,6 +12,7 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoAlbumTest;
 import delit.piwigoclient.model.piwigo.ResourceItem;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -47,7 +48,7 @@ public class PiwigoResourceUtil {
         List<Integer> bannersAtIdx = new ArrayList<>();
         int i = 0;
         for(GalleryItem item : originalOrder) {
-            if(item == ResourceItem.PICTURE_HEADING || item == CategoryItem.ALBUM_HEADING || item == CategoryItem.ADVERT || item == CategoryItem.BLANK) {
+            if(item == ResourceItem.PICTURE_HEADING || item == StaticCategoryItem.ALBUM_HEADING || item == StaticCategoryItem.ADVERT) {
                 bannersAtIdx.add(i);
             }
             i++;
@@ -66,7 +67,7 @@ public class PiwigoResourceUtil {
             if(toIdx != fromIdx) {
                 if(toIdx - fromIdx > 1) {
                     boolean reverseExpected = true; // default is to assume we want to test against the reverse
-                    if(originalOrder.get(fromIdx-1) == CategoryItem.ALBUM_HEADING) {
+                    if(originalOrder.get(fromIdx-1) == StaticCategoryItem.ALBUM_HEADING) {
                         reverseExpected = categoriesReversed;
                     } else if(originalOrder.get(fromIdx-1) == CategoryItem.PICTURE_HEADING) {
                         reverseExpected = resourcesReversed;

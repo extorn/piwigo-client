@@ -250,6 +250,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.110</item>
+        <item>"Bugfix:
+                - Crash if spacers are used to balance the album view display grid (likely to affect large screen devices)."</item>
         <item>1.4.0.109</item>
         <item>"Change:
                 - Added statement for your clarity at the top of the email template created by this app for support requests

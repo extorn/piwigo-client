@@ -40,7 +40,7 @@ public class AlbumHeadingViewHolder<VH extends AlbumHeadingViewHolder<VH,LVA, T,
     @Override
     public void fillValues(GalleryItem newItem, boolean allowItemDeletion) {
         RC album = getParentAdapter().getItemStore();
-        setSubAlbumCount(album.getSubAlbumCount());
+        setSubAlbumCount(album.getChildAlbumCount());
         showAlbumCount = album.isHideAlbums();
         switch(viewType) {
             case GalleryItem.ALBUM_HEADING_TYPE:

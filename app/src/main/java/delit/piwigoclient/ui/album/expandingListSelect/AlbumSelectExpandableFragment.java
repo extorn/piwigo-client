@@ -34,6 +34,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
@@ -321,13 +322,13 @@ public class AlbumSelectExpandableFragment<F extends AlbumSelectExpandableFragme
                 addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler());
             } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
                 final boolean recursive = true;
-                addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
+                addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
             } else {
                 final boolean recursive = true;
-                addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
+                addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
             }
         } else if (getListAdapter() == null) {
-            CategoryItem rootItem = CategoryItem.ROOT_ALBUM.clone();
+            CategoryItem rootItem = StaticCategoryItem.ROOT_ALBUM.toInstance();
             rootItem.setChildAlbums(availableAlbums);
             listAdapter = new ExpandableAlbumsListAdapter(rootItem, getViewPrefs());
             ExpandableListView listView = getListView();

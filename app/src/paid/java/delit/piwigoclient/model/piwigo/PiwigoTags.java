@@ -95,7 +95,7 @@ public class PiwigoTags<T extends Tag> extends IdentifiablePagedList<T> {
                 itemsToAdd.removeAll(getItems());
             } else {
                 // remove any items loaded into the store already by the admin page so there are no duplicates
-                removeAll(itemsToAdd);
+                removeAllById(itemsToAdd);
             }
             super.addItemPage(realPage, pageSize, itemsToAdd);
         }
@@ -111,7 +111,7 @@ public class PiwigoTags<T extends Tag> extends IdentifiablePagedList<T> {
         if(preferExistingItems) {
             addMissingItems(tags);
         } else {
-            removeAll(tags);
+            removeAllById(tags);
             for(T tag : tags) {
                 addItem(tag);
             }
