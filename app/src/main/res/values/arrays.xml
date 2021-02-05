@@ -255,8 +255,9 @@
                 - Crash multiple child albums show next to each other with an odd number of child albums present (landscape mode or large screen devices)
                 - Upload Job - Upload to Piwigo server list not selectable (impact for users with more than one server connection profile configured in the app)
                 - TODO: Category selection fragment crash with non loaded selected item
-                - TODO: No categories loading in the automatic upload job select a category preference
-                "</item>
+                - No categories loading in the automatic upload job select a category preference
+                - Unable to select upload to server album for automatic upload job using non default server
+                - Admin copy of categories remain showing in the automatic upload job select a category preference once non admin categories are loaded"</item>
         <item>1.4.0.109</item>
         <item>"Change:
                 - Added statement for your clarity at the top of the email template created by this app for support requests

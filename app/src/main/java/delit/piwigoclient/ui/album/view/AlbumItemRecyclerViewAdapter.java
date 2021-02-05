@@ -19,80 +19,74 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
-import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
+import delit.piwigoclient.ui.album.AlbumItemBaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
 import delit.piwigoclient.ui.model.ViewModelContainer;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
  */
-public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH, RC>, T extends GalleryItem, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA, VH,RC,T>, VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>> extends IdentifiableListViewAdapter<LVA, AlbumItemRecyclerViewAdapterPreferences, T, RC, VH, MSL> {
+public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH, RC>, T extends GalleryItem, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA, VH,RC,T>, VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>> extends AlbumItemBaseRecyclerViewAdapter<LVA, T, MSL, VH, RC> {
 
     public AlbumItemRecyclerViewAdapter(@NonNull final Context context, final Class<? extends ViewModelContainer> modelType, final RC gallery, MSL multiSelectStatusListener, AlbumItemRecyclerViewAdapterPreferences prefs) {
         super(context, modelType, gallery, multiSelectStatusListener, prefs);
     }
 
-    @NonNull
-    protected View inflateView(@NonNull ViewGroup parent, int viewType) {
-        View view;
-        switch(viewType) {
-            case GalleryItem.CATEGORY_TYPE:
-                view = inflateNonMasonryAlbumView(parent);
-                break;
-            case GalleryItem.PICTURE_RESOURCE_TYPE:
-            case GalleryItem.VIDEO_RESOURCE_TYPE:
-                view = inflateNonMasonryResourceItemView(parent);
-                break;
-            case GalleryItem.ALBUM_HEADING_TYPE:
-                view = inflateAlbumsHeadingView(parent);
-                break;
-            case GalleryItem.PICTURE_HEADING_TYPE:
-                view = inflateResourcesHeadingView(parent);
-                break;
-            default:
-                throw new RuntimeException("viewType not found ("+viewType+")");
-        }
-        return view;
-    }
-
-    private View inflateAlbumsHeadingView(ViewGroup parent) {
+    @Override
+    protected View inflateChildAlbumsHeader(ViewGroup parent) {
         return LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_list_item_heading_album, parent, false);
     }
 
-    private View inflateResourcesHeadingView(ViewGroup parent) {
+    @Override
+    protected View inflateChildResourcesHeader(ViewGroup parent) {
         return LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_list_item_heading_resources, parent, false);
     }
 
-    private View inflateNonMasonryResourceItemView(ViewGroup parent) {
+    @Override
+    protected View inflateVideoResourceView(ViewGroup parent) {
         return LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_list_item_album_resource, parent, false);
     }
 
-    private View inflateNonMasonryAlbumView(ViewGroup parent) {
+    @Override
+    protected View inflatePictureResourceView(ViewGroup parent) {
+        return LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.layout_list_item_album_resource, parent, false);
+    }
+
+    @Override
+    protected View inflateChildAlbumView(ViewGroup parent) {
         View view;
         view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_list_item_album, parent, false);
         return view;
     }
 
-    @NonNull
     @Override
-    public VH buildViewHolder(View view, int viewType) {
+    protected VH buildViewHolderChildAlbum(View view, int viewType) {
+        return (VH) new CategoryItemViewHolder(view, this, viewType);
+    }
 
-        switch (viewType) {
-            case GalleryItem.CATEGORY_TYPE:
-                return (VH) new CategoryItemViewHolder(view, this, viewType);
-            case GalleryItem.VIDEO_RESOURCE_TYPE:
-            case GalleryItem.PICTURE_RESOURCE_TYPE:
-                return (VH) new ResourceItemViewHolder(view, this, viewType);
-            case GalleryItem.ALBUM_HEADING_TYPE:
-            case GalleryItem.PICTURE_HEADING_TYPE:
-                return (VH) new AlbumHeadingViewHolder(view, this, viewType);
-            default:
-                throw new IllegalStateException("No matching viewholder could be found");
-        }
+    @Override
+    protected VH buildViewHolderChildAlbumsHeader(View view, int viewType) {
+        return (VH) new AlbumHeadingViewHolder(view, this, viewType);
+    }
+
+    @Override
+    protected VH buildViewHolderChildPictureResource(View view, AlbumItemBaseRecyclerViewAdapter<LVA, T, MSL, VH, RC> lvatmslvhrcAlbumItemBaseRecyclerViewAdapter, int viewType) {
+        return (VH) new ResourceItemViewHolder(view, this, viewType);
+    }
+
+    @Override
+    protected VH buildViewHolderChildResourcesHeader(View view, int viewType) {
+        return (VH) new AlbumHeadingViewHolder(view, this, viewType);
+    }
+
+    @Override
+    protected VH buildViewHolderChildVideoResources(View view, int viewType) {
+        return (VH) new ResourceItemViewHolder(view, this, viewType);
     }
 
     @Override
@@ -106,46 +100,17 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VH holder, int position) {
-        T newItem = getItemByPosition(position);
-        if (!isHolderOutOfSync(holder, newItem)) {
-            // rendering the same item
-            switch (newItem.getType()) {
-                case GalleryItem.VIDEO_RESOURCE_TYPE:
-                case GalleryItem.PICTURE_RESOURCE_TYPE:
-                    ((ResourceItemViewHolder) holder).updateCheckableStatus();
-                    break;
-                case GalleryItem.ALBUM_HEADING_TYPE:
-                    break;
-                default:
-            }
-
-        } else {
-            super.onBindViewHolder(holder, position);
+    protected void onRebindViewHolderWithSameData(@NonNull VH holder, int position, T newItem) {
+        // rendering the same item
+        switch (newItem.getType()) {
+            case GalleryItem.VIDEO_RESOURCE_TYPE:
+            case GalleryItem.PICTURE_RESOURCE_TYPE:
+                ((ResourceItemViewHolder) holder).updateCheckableStatus();
+                break;
+            case GalleryItem.ALBUM_HEADING_TYPE:
+                break;
+            default:
         }
-    }
-
-    @Override
-    protected boolean isDirtyItemViewHolder(VH holder, T newItem) {
-        if(!super.isDirtyItemViewHolder(holder, newItem)) {
-            boolean catDirty = (holder.getItem() instanceof CategoryItem
-            && newItem instanceof CategoryItem
-            && ((CategoryItem) holder.getItem()).isAdminCopy() != ((CategoryItem) newItem).isAdminCopy());
-            return catDirty;
-        }
-        return true;
-    }
-
-    public void redrawItem(VH vh, CategoryItem item) {
-        // clone the item into the view holder item (will not be same object if serialization has occurred)
-        vh.getItem().copyFrom(item, true);
-        // find item index.
-
-        int idx = getItemPosition(vh.getItem());
-        notifyItemChanged(idx);
-        // clear the item in the view holder (to ensure it is redrawn - will be reloaded from the galleryList).
-        vh.setItem(null);
-        onBindViewHolder(vh, idx);
     }
 
     @Override

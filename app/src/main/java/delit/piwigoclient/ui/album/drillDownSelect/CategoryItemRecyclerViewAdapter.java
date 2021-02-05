@@ -27,7 +27,6 @@ import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 
-//private static class UriPermissionsListAdapter<LVA extends UriPermissionsListPreferenceDialogFragmentCompat.UriPermissionsListAdapter<LVA,MSL,VH,T>, MSL extends UriPermissionsListPreferenceDialogFragmentCompat.UriPermissionsListAdapter.UriPermissionsMultiSelectStatusAdapter<MSL,LVA, VH,T>, VH extends UriPermissionsListPreferenceDialogFragmentCompat.UriPermissionsListAdapter.UriPermissionsViewHolder<VH, T, LVA, MSL>, T extends UriPermissionUse> extends SimpleRecyclerViewAdapter<LVA, T, UriPermissionsListPreferenceDialogFragmentCompat.UriPermissionsListAdapter.UriPermissionsAdapterPrefs, VH, MSL> {
 public class CategoryItemRecyclerViewAdapter<LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,CategoryItemViewAdapterPreferences,CategoryItem,VH>, VH extends CategoryItemRecyclerViewAdapter.CategoryItemViewHolder<VH, LVA, MSL>> extends SimpleRecyclerViewAdapter<LVA, CategoryItem, CategoryItemViewAdapterPreferences, VH, MSL> {
 
     public final static int VIEW_TYPE_FOLDER = 0;
@@ -102,6 +101,17 @@ public class CategoryItemRecyclerViewAdapter<LVA extends CategoryItemRecyclerVie
     @Override
     protected CustomClickListener<MSL, LVA, CategoryItemViewAdapterPreferences, CategoryItem, VH> buildCustomClickListener(VH viewHolder) {
         return new CategoryItemCustomClickListener(viewHolder, (LVA)this);
+    }
+
+    @Override
+    protected boolean isDirtyItemViewHolder(VH holder, CategoryItem newItem) {
+        if(!super.isDirtyItemViewHolder(holder, newItem)) {
+            boolean catDirty = (holder.getItem() instanceof CategoryItem
+                    && newItem instanceof CategoryItem
+                    && ((CategoryItem) holder.getItem()).isAdminCopy() != ((CategoryItem) newItem).isAdminCopy());
+            return catDirty;
+        }
+        return true;
     }
 
     @Override

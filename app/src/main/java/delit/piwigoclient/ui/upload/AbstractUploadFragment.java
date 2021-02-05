@@ -632,6 +632,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         HashSet<Long> selection = new HashSet<>();
         selection.add(uploadToAlbum.getId());
         ExpandingAlbumSelectionNeededEvent evt = new ExpandingAlbumSelectionNeededEvent(false, true, selection, uploadToAlbum.getParentId());
+        evt.setConnectionProfileName(null);// change this if we allow upload to other servers from this page.
         getUiHelper().setTrackingRequest(evt.getActionId());
         EventBus.getDefault().post(evt);
     }

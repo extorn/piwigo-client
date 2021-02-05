@@ -29,7 +29,8 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
     public static final String TAG = "SrvAlbSelPref";
     private String connectionProfileNamePreferenceKey;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
-    
+    private String connectionProfileName;
+
     public ServerAlbumSelectPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
@@ -55,7 +56,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         a.recycle();
         listener = (sharedPreferences, key) -> {
             if(key != null && key.equals(connectionProfileNamePreferenceKey)) {
-                String connectionProfileName = sharedPreferences.getString(connectionProfileNamePreferenceKey, null);
+                connectionProfileName = sharedPreferences.getString(connectionProfileNamePreferenceKey, null);
                 setEnabled(connectionProfileName != null && ConnectionPreferences.getPreferences(connectionProfileName, sharedPreferences, context).isValid(getContext()));
             }
         };
@@ -103,7 +104,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
             defaultRootAlbumId = getSelectedServerAlbumDetails().getParentage().get(getSelectedServerAlbumDetails().getParentage().size() -1);
         }
         ExpandingAlbumSelectionNeededEvent event = new ExpandingAlbumSelectionNeededEvent(false, true, currentSelection, defaultRootAlbumId);
-        event.setConnectionProfileName(connectionProfileNamePreferenceKey);
+        event.setConnectionProfileName(connectionProfileName);
         return event;
     }
 

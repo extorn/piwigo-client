@@ -10,8 +10,10 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
@@ -405,38 +407,28 @@ public class CategoryItem extends GalleryItem implements PhotoContainer, Parcela
         if(newAlbums == null) {
             return;
         }
-        for(int i = 0; i < getChildAlbumCount(); i++) {
-            CategoryItem existingMatchingItem = childAlbums.get(i);
-            int matchItemIdx = newAlbums.indexOf(existingMatchingItem);
-            if(matchItemIdx < 0) {
-                continue;
-            }
-            CategoryItem newMatchingItem = newAlbums.get(matchItemIdx);
-            newAlbums.remove(matchItemIdx);
-            if(newMatchingItem != null) {
-                if(!preferExisting) {
-                    // swap to the new copy. Note still need to merge old child albums across.
-//                    childAlbums.remove(i);
-                    childAlbums.set(i, newMatchingItem);
-                    mergeChildrenWith(i, newMatchingItem, existingMatchingItem, false);
+        Map<Long,Integer> idMap = new HashMap<>(childAlbums.size());
+        for (int i = 0; i < childAlbums.size(); i++) {
+            CategoryItem existingChildAlbum = childAlbums.get(i);
+            idMap.put(existingChildAlbum.getId(), i);
+        }
+        for(CategoryItem newAlbum : newAlbums) {
+            int idxExisting = idMap.get(newAlbum.getId());
+            if (idxExisting < 0) {
+                // add to the end (won't affect the index we've just built).
+                childAlbums.add(newAlbum);
+            } else {
+                CategoryItem existingMatchingItem = childAlbums.get(idxExisting);
+                if (preferExisting) {
+                    // merge any missing children from the new one in
+                    existingMatchingItem.mergeChildrenWith(newAlbum.getChildAlbums(), false);
                 } else {
-                    mergeChildrenWith(i, existingMatchingItem, newMatchingItem, true);
+                    // replace the existing copy
+                    childAlbums.set(idxExisting, newAlbum);
+                    // now merge any missing children from the old one into the replacement
+                    newAlbum.mergeChildrenWith(existingMatchingItem.getChildAlbums(), false);
                 }
             }
-        }
-        if(childAlbums == null) {
-            childAlbums = new ArrayList<>();
-        }
-        childAlbums.addAll(newAlbums);
-    }
-
-    private void mergeChildrenWith(int thisItemIdx, CategoryItem thisItem, CategoryItem otherItem, boolean preferExisting) {
-        if(preferExisting) {
-            thisItem.mergeChildrenWith(otherItem.getChildAlbums(), true);
-        } else {
-            otherItem.mergeChildrenWith(thisItem.getChildAlbums(), false);
-            childAlbums.remove(thisItemIdx);
-            childAlbums.add(thisItemIdx, otherItem);
         }
     }
 
