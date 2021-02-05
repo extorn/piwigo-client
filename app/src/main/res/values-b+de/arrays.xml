@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.110</item>
+        <item>"Bug-Fix:
+                 - Mehrere untergeordnete Alben stürzen nebeneinander ab, wobei eine ungerade Anzahl von untergeordneten Alben vorhanden ist (Querformat oder Großbildgeräte).
+                 - Upload-Auftrag - Upload auf Piwigo-Serverliste nicht auswählbar (Auswirkung für Benutzer mit mehr als einem in der App konfigurierten Serververbindungsprofil)
+                 - Serveralben werden beim ersten Eintrag für den automatischen Upload-Auftrag nicht geladen. Wählen Sie eine Kategorieeinstellung aus
+                 - Miniaturansichten des Serveralbums werden beim Hochladen in die Ordnerauswahl nicht für untergeordnete Ordner geladen
+                 - Upload auf Serveralbum für automatischen Upload-Auftrag mit nicht standardmäßigem Server kann nicht ausgewählt werden"</item>
         <item>1.4.0.109</item>
         <item>"Veränderung:
                  - Erklärung zu Ihrer Klarheit oben in der von dieser App für Supportanfragen erstellten E-Mail-Vorlage hinzugefügt

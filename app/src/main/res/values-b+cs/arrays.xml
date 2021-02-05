@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.110</item>
+        <item>"Oprava chyby:
+                 - Crash více podřízených alb se zobrazí vedle sebe s lichým počtem podřízených alb (režim na šířku nebo zařízení s velkou obrazovkou)
+                 - Upload Job - Upload to Piwigo server list not selectable (impact for users with more than one server connection profile configured in the app)
+                 - alba serveru se nenačtou při prvním vstupu do úlohy automatického nahrávání, vyberte předvolbu kategorie
+                 - náhledy alb serveru se nenačítají pro podřízené složky při nahrávání do výběru složky
+                 - Nelze vybrat nahrávání do alba serveru pro úlohu automatického nahrávání pomocí jiného než výchozího serveru"</item>
         <item>1.4.0.109</item>
         <item>"Změna:
                  - Přidané prohlášení pro vaši srozumitelnost v horní části šablony e-mailu vytvořené touto aplikací pro žádosti o podporu

@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.110</item>
+        <item>"Risoluzione del problema:
+                 - Crash di più album figlio visualizzati uno accanto all\'altro con un numero dispari di album figli presenti (modalità orizzontale o dispositivi con schermo grande)
+                 - Carica lavoro - Carica su elenco server Piwigo non selezionabile (impatto per gli utenti con più di un profilo di connessione al server configurato nell\'app)
+                 - gli album del server non vengono caricati alla prima voce per il caricamento automatico del lavoro selezionare una preferenza di categoria
+                 - le miniature degli album del server non vengono caricate per le cartelle secondarie durante il caricamento nella selezione della cartella
+                 - Impossibile selezionare il caricamento sull\'album del server per il caricamento automatico del lavoro utilizzando un server non predefinito"</item>
         <item>1.4.0.109</item>
         <item>"Modificare:
                  - Aggiunta una dichiarazione per la tua chiarezza nella parte superiore del modello di email creato da questa app per le richieste di supporto

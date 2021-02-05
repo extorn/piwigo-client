@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.110</item>
+        <item>"Correction d\'un bug:
+                 - Crash plusieurs albums enfants s\'affichent les uns à côté des autres avec un nombre impair d\'albums enfants présents (mode paysage ou appareils grand écran)
+                 - Télécharger le travail - Télécharger vers la liste des serveurs Piwigo non sélectionnable (impact pour les utilisateurs avec plus d\'un profil de connexion serveur configuré dans l\'application)
+                 - les albums du serveur ne se chargent pas lors de la première entrée pour la tâche de téléchargement automatique sélectionnez une préférence de catégorie
+                 - Les miniatures des albums du serveur ne se chargent pas pour les dossiers enfants lors du téléchargement vers la sélection de dossiers
+                 - Impossible de sélectionner le téléchargement vers l\'album du serveur pour la tâche de téléchargement automatique en utilisant un serveur non par défaut"</item>
         <item>1.4.0.109</item>
         <item>"Changement:
                  - Ajout d\'une déclaration pour votre clarté en haut du modèle d\'e-mail créé par cette application pour les demandes d\'assistance

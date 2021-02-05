@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.110</item>
+        <item>"Bugfix:
+                 - Crash meerdere kinderalbums naast elkaar met een oneven aantal aanwezige kinderalbums (liggende modus of apparaten met groot scherm)
+                 - Job uploaden - Uploaden naar Piwigo-serverlijst kan niet worden geselecteerd (gevolgen voor gebruikers met meer dan één serververbindingsprofiel geconfigureerd in de app)
+                 - serveralbums worden niet geladen bij de eerste invoer voor de automatische uploadtaak, selecteer een categorievoorkeur
+                 - miniaturen van serveralbums worden niet geladen voor onderliggende mappen bij uploaden naar mapselectie
+                 - Kan upload naar serveralbum niet selecteren voor automatische uploadtaak met een niet-standaardserver"</item>
         <item>1.4.0.109</item>
         <item>"Verandering:
                  - Verklaring toegevoegd voor uw duidelijkheid bovenaan de e-mailsjabloon gemaakt door deze app voor ondersteuningsverzoeken

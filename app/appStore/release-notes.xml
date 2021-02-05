@@ -1,50 +1,71 @@
 <en-GB>
-Change:
-- Added statement for your clarity at the top of the email template created by this app for support requests
-- Paid Only: Added support for notification of updates being available for the server or plugins
+Bugfix:
+- Crash multiple child albums show next to each other with an odd number of child albums present (landscape mode or large screen devices)
+- Upload Job - Upload to Piwigo server list not selectable (impact for users with more than one server connection profile configured in the app)
+- server albums don't load on first entry to automatic upload job select a category preference
+- server album thumbnails not loading for child folders on upload to folder selection
+- Unable to select uploa..."
 </en-GB>
 <cs-CZ>
-Změna:
-- Přidané prohlášení pro vaši srozumitelnost v horní části šablony e-mailu vytvořené touto aplikací pro žádosti o podporu
-- Paid Only: Přidaná podpora pro upozornění na aktualizace dostupné pro server nebo pluginy
+Oprava chyby:
+- Crash více podřízených alb se zobrazí vedle sebe s lichým počtem podřízených alb (režim na šířku nebo zařízení s velkou obrazovkou)
+- Upload Job - Upload to Piwigo server list not selectable (impact for users with more than one server connection profile configured in the app)
+- alba serveru se nenačtou při prvním vstupu do úlohy automatického nahrávání, vyberte předvolbu kategorie
+- náhledy alb serveru se nenačítají pro podřízené složky při nahrávání do výběru složky
+- Nelze ..."
 </cs-CZ>
 <de-DE>
-Veränderung:
-- Erklärung zu Ihrer Klarheit oben in der von dieser App für Supportanfragen erstellten E-Mail-Vorlage hinzugefügt
-- Nur bezahlt: Unterstützung für Benachrichtigung über Updates für den Server oder die Plugins hinzugefügt
+Bug-Fix:
+- Mehrere untergeordnete Alben stürzen nebeneinander ab, wobei eine ungerade Anzahl von untergeordneten Alben vorhanden ist (Querformat oder Großbildgeräte).
+- Upload-Auftrag - Upload auf Piwigo-Serverliste nicht auswählbar (Auswirkung für Benutzer mit mehr als einem in der App konfigurierten Serververbindungsprofil)
+- Serveralben werden beim ersten Eintrag für den automatischen Upload-Auftrag nicht geladen. Wählen Sie eine Kategorieeinstellung aus
+- Miniaturansichten des Serveralbu..."
 </de-DE>
 <es-ES>
-Cambio:
-- Declaración agregada para su claridad en la parte superior de la plantilla de correo electrónico creada por esta aplicación para solicitudes de soporte
-- Solo pago: soporte agregado para la notificación de actualizaciones disponibles para el servidor o los complementos
+Arreglo del fallo:
+- Bloquear varios álbumes secundarios que se muestran uno al lado del otro con un número impar de álbumes secundarios presentes (modo horizontal o dispositivos de pantalla grande)
+- Cargar trabajo: cargar a la lista de servidores Piwigo no se puede seleccionar (impacto para usuarios con más de un perfil de conexión de servidor configurado en la aplicación)
+- los álbumes del servidor no se cargan en la primera entrada al trabajo de carga automática seleccione una preferenci..."
 </es-ES>
 <fr-FR>
-Changement:
-- Ajout d\'une déclaration pour votre clarté en haut du modèle d\'e-mail créé par cette application pour les demandes d\'assistance
-- Payé uniquement: Ajout de la prise en charge de la notification des mises à jour disponibles pour le serveur ou les plugins
+Correction d\'un bug:
+- Crash plusieurs albums enfants s\'affichent les uns à côté des autres avec un nombre impair d\'albums enfants présents (mode paysage ou appareils grand écran)
+- Télécharger le travail - Télécharger vers la liste des serveurs Piwigo non sélectionnable (impact pour les utilisateurs avec plus d\'un profil de connexion serveur configuré dans l\'application)
+- les albums du serveur ne se chargent pas lors de la première entrée pour la tâche de téléchargement automatique sé..."
 </fr-FR>
 <it-IT>
-Modificare:
-- Aggiunta una dichiarazione per la tua chiarezza nella parte superiore del modello di email creato da questa app per le richieste di supporto
-- Solo a pagamento: aggiunto il supporto per la notifica degli aggiornamenti disponibili per il server o i plug-in
+Risoluzione del problema:
+- Crash di più album figlio visualizzati uno accanto all\'altro con un numero dispari di album figli presenti (modalità orizzontale o dispositivi con schermo grande)
+- Carica lavoro - Carica su elenco server Piwigo non selezionabile (impatto per gli utenti con più di un profilo di connessione al server configurato nell\'app)
+- gli album del server non vengono caricati alla prima voce per il caricamento automatico del lavoro selezionare una preferenza di categoria
+- ..."
 </it-IT>
 <ja-JP>
-変化する：
--サポートリクエストのためにこのアプリによって作成されたメールテンプレートの上部に明確にするためのステートメントを追加しました
--有料のみ：サーバーまたはプラグインで利用可能な更新の通知のサポートが追加されました
+バグ修正：
+-クラッシュする複数の子アルバムが隣り合って表示され、奇数の子アルバムが存在します（ランドスケープモードまたは大画面デバイス）
+-ジョブのアップロード-Piwigoサーバーリストへのアップロードを選択できません（アプリで複数のサーバー接続プロファイルが構成されているユーザーに影響します）
+-自動アップロードジョブの最初のエントリでサーバーアルバムが読み込まれないカテゴリ設定を選択する
+-フォルダ選択へのアップロード時に子フォルダのサーバーアルバムサムネイルが読み込まれない
+-デフォルト以外のサーバーを使用した自動アップロードジョブのサーバーアルバムへのアップロードを選択できません
 </ja-JP>
 <nl-NL>
-Verandering:
-- Verklaring toegevoegd voor uw duidelijkheid bovenaan de e-mailsjabloon gemaakt door deze app voor ondersteuningsverzoeken
-- Alleen betaald: ondersteuning toegevoegd voor het melden van updates die beschikbaar zijn voor de server of plug-ins
+Bugfix:
+- Crash meerdere kinderalbums naast elkaar met een oneven aantal aanwezige kinderalbums (liggende modus of apparaten met groot scherm)
+- Job uploaden - Uploaden naar Piwigo-serverlijst kan niet worden geselecteerd (gevolgen voor gebruikers met meer dan één serververbindingsprofiel geconfigureerd in de app)
+- serveralbums worden niet geladen bij de eerste invoer voor de automatische uploadtaak, selecteer een categorievoorkeur
+- miniaturen van serveralbums worden niet geladen voor onde..."
 </nl-NL>
 <ru-RU>
-Изменить:
-- Добавлено заявление для вашей ясности в верхней части шаблона электронной почты, созданного этим приложением для запросов поддержки.
-- Только платные: добавлена поддержка уведомления об обновлениях, доступных для сервера или плагинов.
+Исправлена ошибка:
+- Ошибка отображения нескольких дочерних альбомов рядом друг с другом с нечетным количеством присутствующих дочерних альбомов (альбомный режим или устройства с большим экраном)
+- Загрузить задание - загрузка в список серверов Piwigo не может быть выбрана (влияние на пользователей с более чем одним профилем подключения к серверу, настроенным в приложении)
+- серверные альбомы не загружаются при первой записи для задания автоматической загрузки выберите предпочтение категории..."
 </ru-RU>
 <zh-CN>
-更改：
--在此应用为支持请求创建的电子邮件模板的顶部添加了为清楚起见的声明
--仅限付费：增加了对服务器或插件可用更新通知的支持
+错误修正：
+-崩溃的多个子相册彼此相邻显示，并且子相册的数量为奇数（横向模式或大屏幕设备）
+-上载作业-无法选择上载到Piwigo服务器列表（对在应用程序中配置了多个服务器连接配置文件的用户有影响）
+-服务器相册不会在第一个条目上加载以自动上传作业选择类别首选项
+-子文件夹在上传到文件夹中时未加载服务器相册缩略图
+-无法选择使用非默认服务器上载到服务器相册进行自动上载作业
 </zh-CN>
