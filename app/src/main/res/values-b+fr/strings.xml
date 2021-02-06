@@ -694,4 +694,5 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="piwigo_server_updates_available_pattern">Mise à jour Piwigo disponible:\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">Ce modèle d\'e-mail est pour votre commodité.\nSi vous pensez qu\'il n\'est pas pertinent de fournir l\'un des détails suivants, veuillez les supprimer.\n\nL\'UUID me permet de filtrer toutes les données enregistrées pour n\'afficher que celles qui vous concernent. Cela ne sera nécessaire que si j\'ai du mal à résoudre un bogue que vous rencontrez.</string>
+    <string name="try_enabling_privacy_plugin_media_uris">La ressource est introuvable sur le serveur. Souhaitez-vous activer le correctif de l\'URI multimédia du plugin de confidentialité?</string>
 </resources>

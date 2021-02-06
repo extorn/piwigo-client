@@ -246,6 +246,12 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
+    
+    <string name="preference_fix_privacy_plugin_media_uris_title">プライバシープラグインの使用時に壊れたMediaUrisを修正</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s。 マルチメディアリソースで4xxエラーが発生した場合にのみ有効にします。</string>
+    
+
+
     <string name="preference_gallery_clearMemoryCache_title">インメモリキャッシュをクリアする</string>
     
     <string name="preference_gallery_clearMemoryCache_summary">メモリにキャッシュされているすべての画像を削除します</string>

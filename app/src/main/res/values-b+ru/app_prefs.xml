@@ -246,6 +246,12 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
+    
+    <string name="preference_fix_privacy_plugin_media_uris_title">Исправить Media Uris, сломанный при использовании плагина конфиденциальности</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Включайте, только если вы получаете ошибку 4xx для мультимедийных ресурсов.</string>
+    
+
+
     <string name="preference_gallery_clearMemoryCache_title">Очистить кеш в памяти</string>
     
     <string name="preference_gallery_clearMemoryCache_summary">Удаляет все изображения, кэшированные в памяти</string>

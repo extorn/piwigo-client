@@ -246,6 +246,12 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
+    
+    <string name="preference_fix_privacy_plugin_media_uris_title">Fix Media Uris verbroken bij gebruik van de privacy-plug-in</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Alleen inschakelen als u een 4xx-fout krijgt voor multimediabronnen.</string>
+    
+
+
     <string name="preference_gallery_clearMemoryCache_title">Wis de cache in het geheugen</string>
     
     <string name="preference_gallery_clearMemoryCache_summary">Verwijdert alle afbeeldingen die in het geheugen zijn opgeslagen</string>

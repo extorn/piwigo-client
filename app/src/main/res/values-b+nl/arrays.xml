@@ -146,6 +146,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.111</item>
+        <item>"Bugfix:
+                 - Multimedia URI\'s werken niet voor gebruikers die geen privacy-plug-in hebben.
+                 - het afspelen van video\'s start niet als de voorkeur is ingesteld om geen video\'s op te nemen in diavoorstellingen
+                Verandering:
+                 - er is een nieuwe instelling in de verbindingsvoorkeuren voor reparatie van de privacy-plug-in uri"</item>
         <item>1.4.0.110</item>
         <item>"Bugfix:
                  - Crash meerdere kinderalbums naast elkaar met een oneven aantal aanwezige kinderalbums (liggende modus of apparaten met groot scherm)
@@ -208,113 +214,5 @@
                  - Recente wijzigingen maakten het onmogelijk om zowel de gratis als de betaalde versie tegelijkertijd op één apparaat te installeren
                  - albumminiaturen worden niet altijd weergegeven voor de admin-gebruiker
                  - getest tegen Piwigo 11. Het openen van een afbeelding werkte niet"</item>
-        <item>1.4.0.101</item>
-        <item>Niet gepubliceerd</item>
-        <item>1.4.0.100</item>
-        <item>"Bugfix:
-                 - Meer testen van het uploadgebied heeft een aantal bugs verwijderd, waaronder:
-                     - uploadtaak kan vastlopen waar gedeelde bestanden niet langer beschikbaar zijn
-                     - uploadtaak kan stoppen als de laatste bijgewerkte datum niet beschikbaar was voor een video die werd gecomprimeerd
-                 - Slechte prestaties bij het scrollen door albums
-                 - nieuw afbeeldingspictogram en mediatype-pictogram verdwijnen tijdens het bladeren door het album
-                 - het comprimeren van een video om slechts een audiobestand te zijn, resulteerde in een videobestand
-                 - multimediabestanden kunnen niet worden afgespeeld als de miniatuur een standaard is in plaats van een bestand dat is gegenereerd
-               Veranderingen:
-                 - Optie toegevoegd voor de voorkeursoptie voor de standaard sorteervolgorde van de server - wordt gebruikt bij het ophalen van albuminhoud.
-                   Dit is nu de standaardinstelling voor app-installatie."</item>
-        <item>1.4.0.99</item>
-        <item>"Bugfix:
-                 - nam geen Uri-machtigingen voor bestanden die door een andere app werden gedeeld, waardoor het uploaden mislukte bij het herstarten van de taak
-                 - de berekening van de voltooiingsstatus van de uploadtaak was te duur voor grote taken, waardoor de app niet reageerde"</item>
-        <item>1.4.0.98</item>
-        <item>"Bugfix:
-                 - Verdere verbeteringen aan verzoeken om bestandssysteemrechten"</item>
-        <item>1.4.0.97</item>
-        <item>"Bugfix:
-                 - Laatste map niet standaard in mapkeuzeweergave
-                 - Het vrijgeven van Uri-machtigingen veroorzaakte een crash
-                 - Uploadtaak op de achtergrond vroeg niet om de juiste mapmachtigingen"</item>
-        <item>1.4.0.96</item>
-        <item>"Bugfix:
-                 - UI lijkt niet te reageren (wit scherm) na het delen van een groot aantal bestanden van een externe app
-                 - Er verschijnen geen bestanden op de uploadpagina nadat ze zijn gedeeld vanuit een andere app
-                 - voortgang onjuist gerapporteerd tijdens het importeren van bestanden om te uploaden
-                 - prestaties van het importeren van bestanden en het verwijderen van bestanden uit de uploadlijst"</item>
-        <item>1.4.0.95</item>
-        <item>"Bugfix:
-                - Onvoldoende bestandsrechten gebruikt, waardoor uploads mislukken
-                - Bestanden gedownload die niet zichtbaar zijn voor andere apps
-                - downloaden werkt voor zowel de standaard map Downloads als een map die door de gebruiker is geselecteerd
-                - App verzocht om lees- of schrijfbestandsmachtigingen wanneer ze niet vereist waren.
-               Veranderingen:
-                - Nieuwe voorkeur in app-instellingen met een lijst van alle Uri-machtigingen en hun doel
-                - New DocumentProvider toont bestanden die zijn gedownload op de standaard downloadlocatie naar de systeembestandsselectie.
-                - Voeg geen bestanden meer toe die zijn gedownload naar de Android MediaStore - Ze zijn beschikbaar in elke bestandskiezer.
-                - Nieuwe menukoppeling om de locatie van de gedownloade bestanden te openen
-               Aanbeveling:
-                - 1. Bekijk alle bestandsrechten van de app in de nieuwe voorkeur en verwijder alle machtigingen waarvan je niet wilt dat de app ze vasthoudt.
-                - 2. Controleer al uw uploadopdrachten op de achtergrond, selecteer de map die u wilt uploaden opnieuw
-                - 3. Selecteer opnieuw de map waarnaar u bestanden van uw server wilt downloaden"</item>
-        <item>1.4.0.94</item>
-        <item>"Bugfix:
-                 - Zorg ervoor dat de bestanden die in de app zijn geselecteerd om te uploaden, worden verwerkt in een achtergrondthread bij verzending naar de uploadpagina, zodat de gebruikersinterface zichtbaar blijft."</item>
-        <item>1.4.0.93</item>
-        <item>"Veranderingen:
-                 - Update van de PiwigoClientWsExts-plug-in (update uw server). Dit lost de categorienamen op als je geen ExtendedDescription-plug-in hebt geïnstalleerd.
-                 - Nederlandse vertalingen toegevoegd"</item>
-        <item>1.4.0.92</item>
-        <item>"Bugfix:
-                 - Vaste code die problemen veroorzaakte bij het herladen van klassen uit oude versies"</item>
-        <item>1.4.0.91</item>
-        <item>"Bugfix:
-                 - Verandering van het formaat van de compressie van afbeeldingen veroorzaakte een crash tijdens het uploaden
-                 - Bestandsselectie voor uploadprobleem"</item>
-        <item>1.4.0.90</item>
-        <item>"Bugfix:
-                 - Caches kunnen onnodig onleesbaar worden tussen versies"</item>
-        <item>1.4.0.89</item>
-        <item>"Bugfix:
-                 - Een aantal problemen opgelost waardoor sommige gebruikers crashten
-                Veranderingen:
-                 - Een UUID toegevoegd aan logs en het over-scherm waardoor ik logs kan volgen naar een specifieke gebruiker als ze me hun UUID geven (voor het oplossen van specifieke bugs die ze ervaren)."</item>
-        <item>1.4.0.88</item>
-        <item>"Bugfix:
-             - Beeldcompressor werkt niet op recente versies van Android
-             - Lay-outproblemen met bulkactieknoppen na lang indrukken in een album"
-        </item>
-        <item>1.4.0.87</item>
-        <item>"Veranderingen:
-             - Ondersteuning voor plug-in met uitgebreide beschrijving wanneer de nieuwste versie van de PiwigoClientExt-plug-in is geïnstalleerd.
-             Bugfix:
-             - Nieuwe code voor opmerkingen in Html-stijl ondersteunde geen null-waarden - Sorry!"
-        </item>
-
-        <item>1.4.0.86</item>
-        <item>"Verandering:
-             - App-ondersteuning toegevoegd voor de Extended Description-plug-in (opmerking: deze plug-in ondersteunt de WS-API nog niet)
-             - Veel betere afhandeling van opmerkingen in HTML-stijl
-             - Scrollen voor zeer lange albumbeschrijvingen
-             - Max. 10 regels voor beschrijvingen van subalbums"</item>
-        <item>1.4.0.85</item>
-        <item>"Verandering:
-                 - vertalingen toegevoegd voor een fout die kan optreden tijdens videocompressie
-                 - Gebruik Firebase App Installation GUID voor berichtversleuteling indien beschikbaar
-                Bugfix:
-                 - Stringvertaling voor Russisch gecorrigeerd waardoor de diavoorstelling vastloopt"</item>
-        <item>1.4.0.84</item>
-        <item>"Verandering:
-                 - De waarschuwing op het scherm roteren verwijderd halverwege een diavoorstelling.
-                Bugfix:
-                 - Het downloaden van bestanden of het delen van bronnen kan mislukken en vervolgens de functie vergrendelen totdat deze opnieuw wordt opgestart op Android 10
-                 - Gecorrigeerde voorkeuren verschijnen onzichtbaar in Android Dark-modus (nu bruikbaar)
-                 - opgelost contrastprobleem bij pop-upvenster in hoofdapp (donkere modus)"</item>
-        <item>1.4.0.83</item>
-        <item>"Bugfix:
-                 - Knoppositie in itemactiebalk gecorrigeerd bij het bewerken van een resource-item"</item>
-        <item>1.4.0.82</item>
-        <item>"Veranderingen:
-                 - Het overschakelen van een Android-bestandsmachtiging naar een submap is niet toegestaan door Android 30. (deze functie verwijderen).
-                Bugfix:
-                 - Bewerken en opslaan van automatische uploadtaken werkt niet"</item>
     </string-array>
 </resources>

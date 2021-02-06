@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 /**
@@ -11,13 +12,15 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseIma
     }
 
     protected AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser buildResourceParser( boolean usingPiwigoClientOverride) {
-        return new ImageGetInfoResourceParser(getPiwigoServerUrl(), usingPiwigoClientOverride);
+        boolean defaultVal = Boolean.TRUE.equals(PiwigoSessionDetails.getInstance(getConnectionPrefs()).isUsingPiwigoPrivacyPlugin());
+        boolean isApplyPrivacyPluginUriFix = getConnectionPrefs().isFixPiwigoPrivacyPluginMediaUris(getSharedPrefs(), getContext(), defaultVal);
+        return new ImageGetInfoResourceParser(getPiwigoServerUrl(), isApplyPrivacyPluginUriFix, usingPiwigoClientOverride);
     }
 
     public static class ImageGetInfoResourceParser extends BaseImageGetInfoResourceParser {
 
-        public ImageGetInfoResourceParser(String basePiwigoUrl, boolean usingPiwigoClientOverride) {
-            super(basePiwigoUrl, usingPiwigoClientOverride);
+        public ImageGetInfoResourceParser(String basePiwigoUrl, boolean isApplyPrivacyPluginUriFix, boolean usingPiwigoClientOverride) {
+            super(basePiwigoUrl, isApplyPrivacyPluginUriFix, usingPiwigoClientOverride);
         }
     }
 }

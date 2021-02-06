@@ -694,4 +694,5 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="piwigo_server_updates_available_pattern">Aggiornamento Piwigo disponibile:\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">Questo modello di email è per tua comodità.\nSe ritieni che non sia rilevante fornire uno dei seguenti dettagli, eliminali.\n\nL\'UUID mi consente di filtrare tutti i dati registrati per mostrare solo quelli rilevanti per te. Questo sarà necessario solo se sto lottando per correggere un bug che stai riscontrando.</string>
+    <string name="try_enabling_privacy_plugin_media_uris">La risorsa non è stata trovata sul server. Vorresti abilitare il plug-in per la privacy multimedia uri fix?</string>
 </resources>

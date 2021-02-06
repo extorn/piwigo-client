@@ -7,10 +7,10 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 
@@ -62,7 +62,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
 
         JsonArray images = result.get("images").getAsJsonArray();
 
-        AlbumGetImagesResponseHandler.ResourceParser resourceParser = new AlbumGetImagesResponseHandler.ResourceParser(getPiwigoServerUrl());
+        AlbumGetImagesResponseHandler.ResourceParser resourceParser = buildResourceParser();
 
         if(images != null) {
             for (int i = 0; i < images.size(); i++) {
@@ -75,6 +75,12 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
 
         AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse r = new AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalResourceCount, resources, isCached);
         storeResponse(r);
+    }
+
+    private AlbumGetImagesResponseHandler.ResourceParser buildResourceParser() {
+        boolean defaultVal = Boolean.TRUE.equals(PiwigoSessionDetails.getInstance(getConnectionPrefs()).isUsingPiwigoPrivacyPlugin());
+        boolean isApplyPrivacyPluginUriFix = getConnectionPrefs().isFixPiwigoPrivacyPluginMediaUris(getSharedPrefs(), getContext(), defaultVal);
+        return new AlbumGetImagesResponseHandler.ResourceParser(getPiwigoServerUrl(), isApplyPrivacyPluginUriFix);
     }
 
     public boolean isUseHttpGet() {

@@ -146,6 +146,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.111</item>
+        <item>"Arreglo del fallo:
+                 - Los URI multimedia no funcionan para usuarios de complementos que no son de privacidad.
+                 - la reproducción de video no comienza si se establece la preferencia para no incluir videos en presentaciones de diapositivas
+                Cambio:
+                 - hay una nueva configuración en las preferencias de conexión para la reparación de uri del complemento de privacidad"</item>
         <item>1.4.0.110</item>
         <item>"Arreglo del fallo:
                  - Bloquear varios álbumes secundarios que se muestran uno al lado del otro con un número impar de álbumes secundarios presentes (modo horizontal o dispositivos de pantalla grande)
@@ -208,113 +214,5 @@
                  - Los cambios recientes hicieron imposible tener las versiones gratuitas y de pago instaladas al mismo tiempo en un solo dispositivo
                  - las miniaturas de álbumes no siempre se muestran para el usuario administrador
                  - probado contra Piwigo 11. Abrir una imagen no funcionaba"</item>
-        <item>1.4.0.101</item>
-        <item>No publicado</item>
-        <item>1.4.0.100</item>
-        <item>"Arreglo del fallo:
-                 - Más pruebas del área de cargas han eliminado una serie de errores que incluyen:
-                     - el trabajo de carga puede atascarse donde los archivos compartidos ya no están disponibles
-                     - el trabajo de carga puede detenerse si la última fecha actualizada no estaba disponible para un video que se está comprimiendo
-                 - Rendimiento deficiente al desplazarse por los álbumes
-                 - El icono de nueva imagen y el icono de tipo de medio desaparecen mientras se desplaza por el álbum
-                 - comprimir un video para que sea solo un archivo de audio resultaba en una imagen fija de video
-                 - los archivos multimedia no se reproducirán si la miniatura es predeterminada en lugar de generar un archivo
-               Cambios:
-                 - Opción agregada para la opción de preferencia de orden de clasificación predeterminada del servidor: se usa al recuperar el contenido del álbum.
-                   Esta es ahora la configuración predeterminada en la instalación de la aplicación."</item>
-        <item>1.4.0.99</item>
-        <item>"Arreglo del fallo:
-                 - no estaba tomando permisos de Uri para archivos compartidos por otra aplicación, lo que provocó un error de carga al reiniciar el trabajo
-                 - el cálculo del estado de finalización del trabajo de carga era demasiado caro para trabajos grandes, lo que hacía que la aplicación no respondiera"</item>
-        <item>1.4.0.98</item>
-        <item>"Arreglo del fallo:
-                 - Más mejoras en las solicitudes de permisos del sistema de archivos"</item>
-        <item>1.4.0.97</item>
-        <item>"Arreglo del fallo:
-                 - Última carpeta no predeterminada en la vista de selección de carpeta
-                 - Liberar los permisos de Uri causó un bloqueo
-                 - El trabajo de carga en segundo plano no solicitaba los permisos de carpeta correctos"</item>
-        <item>1.4.0.96</item>
-        <item>"Arreglo del fallo:
-                 - La interfaz de usuario parece no responder (pantalla blanca) después de compartir una gran cantidad de archivos desde una aplicación externa
-                 - No aparecen archivos en la página de carga después de compartirlos desde otra aplicación
-                 - progreso informado incorrectamente al importar archivos para cargar
-                 - rendimiento de la importación de archivos y eliminación de archivos de la lista de carga"</item>
-        <item>1.4.0.95</item>
-        <item>"Arreglo del fallo:
-                - Se han utilizado permisos de archivo insuficientes, lo que provoca errores en las cargas
-                - Archivos descargados no visibles para otras aplicaciones
-                - descarga que funciona tanto para la carpeta de descargas predeterminada como para una seleccionada por el usuario
-                - La aplicación solicitó permisos de lectura o escritura de archivos cuando no eran necesarios.
-               Cambios:
-                - Nueva preferencia en la configuración de la aplicación que enumera todos los permisos de Uri y su propósito
-                - Nuevo DocumentProvider que expone los archivos descargados en la ubicación de descarga predeterminada al selector de archivos del sistema.
-                - Ya no agregue archivos descargados a Android MediaStore - Están disponibles en cualquier selector de archivos.
-                - Nuevo enlace de menú para abrir la ubicación de los archivos descargados
-               Recomendación:
-                - 1. Ver todos los permisos de archivo que tiene la aplicación en la nueva preferencia, eliminando los que no desea que la aplicación mantenga.
-                - 2. Verifique cada uno de sus trabajos de carga en segundo plano, vuelva a seleccionar la carpeta para cargar
-                - 3. Vuelva a seleccionar la carpeta para descargar archivos de su servidor a"</item>
-        <item>1.4.0.94</item>
-        <item>"Arreglo del fallo:
-                 - Asegúrese de que los archivos seleccionados en la aplicación para cargar se procesen en un hilo en segundo plano al enviarlos a la página de carga para que la interfaz de usuario permanezca visible."</item>
-        <item>1.4.0.93</item>
-        <item>"Cambios:
-                 - Actualización del complemento PiwigoClientWsExts (Actualice su servidor). Esto corrige los nombres de las categorías si no tiene instalado el complemento ExtendedDescription.
-                 - Añadidas traducciones al holandés"</item>
-        <item>1.4.0.92</item>
-        <item>"Arreglo del fallo:
-                 - Se corrigió el código que causaba problemas al recargar clases de versiones anteriores"</item>
-        <item>1.4.0.91</item>
-        <item>"Arreglo del fallo:
-                 - El cambio de formato de compresión de la imagen provocó un bloqueo durante la carga
-                 - Selección de archivos para problemas de carga"</item>
-        <item>1.4.0.90</item>
-        <item>"Arreglo del fallo:
-                 - Los cachés pueden volverse ilegibles entre versiones innecesariamente"</item>
-        <item>1.4.0.89</item>
-        <item>"Arreglo del fallo:
-                 - Se corrigieron un par de problemas que causaban bloqueos para algunos usuarios.
-                Cambios:
-                 - Se agregó un UUID a los registros y la pantalla Acerca de, lo que me permite rastrear los registros de un usuario específico si me dan su UUID (para resolver errores específicos que experimentan)."</item>
-        <item>1.4.0.88</item>
-        <item>"Arreglo del fallo:
-             - El compresor de imágenes no funciona en versiones recientes de Android
-             - Problemas de diseño con botones de acción masiva después de una pulsación larga en un álbum"
-        </item>
-        <item>1.4.0.87</item>
-        <item>"Cambios:
-             - Soporte para el complemento de descripción extendida cuando se instala la última versión del complemento PiwigoClientExt.
-             Arreglo del fallo:
-             - El nuevo código para comentarios de estilo Html no admitía nulos - ¡Lo sentimos!"
-        </item>
-
-        <item>1.4.0.86</item>
-        <item>"Cambio:
-             - Soporte de aplicaciones agregado para el complemento de descripción extendida (nota: este complemento aún no es compatible con WS-API)
-             - Manejo mucho mejor de la visualización de comentarios de estilo HTML
-             - Desplazamiento para descripciones de álbumes ultralargas
-             - Máximo de 10 líneas para descripciones de sublbumes"</item>
-        <item>1.4.0.85</item>
-        <item>"Cambio:
-                 - traducciones agregadas para un error que puede ocurrir durante la compresión de video
-                 - Use el GUID de instalación de la aplicación Firebase para el cifrado de mensajes cuando esté disponible
-                Arreglo del fallo:
-                 - Se corrigió la traducción de cadenas para el ruso que causaba un bloqueo en la presentación de diapositivas"</item>
-        <item>1.4.0.84</item>
-        <item>"Cambio:
-                 - Se eliminó la advertencia en la pantalla de girar cuando se encuentra en la mitad de una presentación de diapositivas.
-                Arreglo del fallo:
-                 - La descarga de archivos o el uso compartido de recursos pueden fallar y luego bloquear la función hasta que se reinicie en Android 10
-                 - Preferencias corregidas que aparecen invisibles en el modo oscuro de Android (ahora utilizable)
-                 - problema de contraste solucionado en la ventana emergente de diálogo en la aplicación principal (modo oscuro)"</item>
-        <item>1.4.0.83</item>
-        <item>"Arreglo del fallo:
-                 - Se corrigió la posición del botón en la barra de acciones del elemento al editar un elemento de recurso"</item>
-        <item>1.4.0.82</item>
-        <item>"Cambios:
-                 - Android 30 no permite cambiar una concesión de permisos de archivos de Android a una subcarpeta (eliminando esta función).
-                Arreglo del fallo:
-                 - Editar y guardar trabajos de carga automática no funciona"</item>
     </string-array>
 </resources>

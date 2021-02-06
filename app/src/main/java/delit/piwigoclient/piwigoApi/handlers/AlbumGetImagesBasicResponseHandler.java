@@ -3,6 +3,7 @@ package delit.piwigoclient.piwigoApi.handlers;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.drew.lang.annotations.Nullable;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -130,13 +131,15 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
     }
 
     protected BasicCategoryImageResourceParser buildResourceParser(String basePiwigoUrl) {
-        return new BasicCategoryImageResourceParser(basePiwigoUrl);
+        boolean defaultVal = Boolean.TRUE.equals(PiwigoSessionDetails.getInstance(getConnectionPrefs()).isUsingPiwigoPrivacyPlugin());
+        boolean isApplyPrivacyPluginUriFix = getConnectionPrefs().isFixPiwigoPrivacyPluginMediaUris(getSharedPrefs(), getContext(), defaultVal);
+        return new BasicCategoryImageResourceParser(basePiwigoUrl, isApplyPrivacyPluginUriFix);
     }
 
     public static class BasicCategoryImageResourceParser {
 
-        private final Pattern multimediaPattern;
-        private Matcher multimediaPatternMatcher;
+        private final boolean usePrivacyPluginFix;
+        private MultimediaUriMatcherUtil multimediaUriMatcherUtil;
         private final String basePiwigoUrl;
         private boolean fixedImageUrisForPrivacyPluginUser;
         private boolean fixedImageUrisWithAmpEscaping;
@@ -161,17 +164,12 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
          * Group 2: 2021/_data/i
          * Group 3: upload/2021/01/01/myfile.mp4
          * Group 4: mp4
+         *
          * @param basePiwigoUrl the Uri path to piwigo homepage
          */
-        public BasicCategoryImageResourceParser(String basePiwigoUrl) {
+        public BasicCategoryImageResourceParser(String basePiwigoUrl, boolean usePrivacyPluginFix) {
             this.basePiwigoUrl = basePiwigoUrl;
-            String basePiwigoUri = basePiwigoUrl;
-            if(basePiwigoUri.charAt(basePiwigoUri.length() -1) != '/') {
-                basePiwigoUri += '/';
-            }
-            String pattern = "^("+basePiwigoUri+")([\\d]*/.*)?((?<=/)upload/.*\\.([a-zA-Z0-9]{3,5}))$";
-            multimediaPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-            multimediaPatternMatcher = null;
+            this.usePrivacyPluginFix = usePrivacyPluginFix;
         }
 
         public ResourceItem parseAndProcessResourceData(JsonObject image) throws JSONException {
@@ -200,11 +198,11 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
 
             ResourceItem item = null;
 
-            if(originalResourceUrl != null) {
-                if (multimediaPatternMatcher == null) {
-                    multimediaPatternMatcher = multimediaPattern.matcher(originalResourceUrl);
+            if (originalResourceUrl != null) {
+                if (multimediaUriMatcherUtil == null) {
+                    multimediaUriMatcherUtil = new MultimediaUriMatcherUtil(basePiwigoUrl, originalResourceUrl);
                 } else {
-                    multimediaPatternMatcher.reset(originalResourceUrl);
+                    multimediaUriMatcherUtil.withNewUri(originalResourceUrl);
                 }
             }
 
@@ -236,7 +234,7 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
 
             HashSet<Long> linkedAlbums = new HashSet<>();
             JsonElement elem = image.get("categories");
-            if(elem != null && elem.isJsonArray()) {
+            if (elem != null && elem.isJsonArray()) {
                 JsonArray linkedAlbumsJsonArr = image.get("categories").getAsJsonArray();
                 for (int j = 0; j < linkedAlbumsJsonArr.size(); j++) {
                     JsonObject catJsonObj = linkedAlbumsJsonArr.get(j).getAsJsonObject();
@@ -254,32 +252,34 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
                 originalResourceUrlHeight = image.get("height").getAsInt();
             }
 
-            if (originalResourceUrl != null && multimediaPatternMatcher.matches()) {
-                String serverBasePath = multimediaPatternMatcher.group(1); // "Https://myserver.com/piwigo/"
-                String pathPrefix = multimediaPatternMatcher.group(2);  // "12344/.*/"
-                String uploadsPath = multimediaPatternMatcher.group(3); // "upload.*"
-                String fileExt = multimediaPatternMatcher.group(4); // "upload.*"
+
+            if (originalResourceUrl != null && multimediaUriMatcherUtil.matchesUri()) {
                 //FIXME Ask PiwigoPrivacy dev why must we do something special for the privacy plugin?
-                // is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
 
                 String thumbnailUriStr = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
-                if (thumbnailUriStr.matches(".*piwigo_privacy/get\\.php\\?.*")) {
-                    // I think this is piwigo_privacy simple mode.
-                    originalResourceUrl = thumbnailUriStr.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + uploadsPath + "$3");
-                    fixedPrivacyPluginImageUrisForPrivacyPluginUser = true;
-                } else if(pathPrefix == null) {
-                    originalResourceUrl = serverBasePath + id + '/' + uploadsPath;
-                    fixedImageUrisForPrivacyPluginUser = true;
-                }
 
-                String mimeType = IOUtils.getMimeType(fileExt);
-                if(IOUtils.isVideoPlayable(mimeType)) {
+                // don't need to explicit instruction about privacy plugin this mode. we just do it if we find the uri matches.
+                String fixedUri = multimediaUriMatcherUtil.fixUsingThumbnailUri(thumbnailUriStr);
+                if (fixedUri != null) {
+                    originalResourceUrl = fixedUri;
+                    fixedPrivacyPluginImageUrisForPrivacyPluginUser = true;
+                } else if (usePrivacyPluginFix) {
+                    //is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
+                    //NOTE, it will be null if we aren't admin user.
+                    fixedUri = multimediaUriMatcherUtil.ensurePathContainsResourceId(id);
+                    if (fixedUri != null) {
+                        originalResourceUrl = fixedUri;
+                        fixedImageUrisForPrivacyPluginUser = true;
+                    }
+                }
+                String mimeType = IOUtils.getMimeType(multimediaUriMatcherUtil.getFileExt());
+                if (IOUtils.isVideoPlayable(mimeType)) {
                     item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
                     item.setThumbnailUrl(thumbnailUriStr); // note we are using this as is. Only the original resource Uri gets altered.
                     item.addResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
                 }
             }
-            if(item == null) {
+            if (item == null) {
 
                 Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
 
@@ -307,9 +307,9 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
                     }
                     int thisImageHeight = jsonElem.getAsInt();
 
-                    if(needToFixUrl) {
+                    if (needToFixUrl) {
                         String fixed = fixUrl(url);
-                        if(fixed.equals(url)) {
+                        if (fixed.equals(url)) {
                             needToFixUrl = false;
                         } else {
                             url = fixed;
@@ -334,7 +334,7 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
         private String fixUrl(String url) {
             String fixedUrl = url;
             int idx = url.indexOf('&');
-            if(idx > 0 && url.regionMatches(idx, AMP_HTML_TAG, 0, AMP_HTML_TAG.length())) {
+            if (idx > 0 && url.regionMatches(idx, AMP_HTML_TAG, 0, AMP_HTML_TAG.length())) {
                 //strip the unwanted extra html escaping
                 fixedUrl = url.replaceAll(AMP_HTML_TAG, "&");
                 fixedImageUrisWithAmpEscaping = true;
@@ -342,6 +342,83 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
             return fixedUrl;
         }
     }
+
+    public static class MultimediaUriMatcherUtil {
+
+        private final Matcher matcher;
+
+        public MultimediaUriMatcherUtil(String basePiwigoUrl, String originalResourceUrl) {
+            String basePiwigoUri = basePiwigoUrl;
+            if (basePiwigoUri.charAt(basePiwigoUri.length() - 1) != '/') {
+                basePiwigoUri += '/';
+            }
+            String pattern = "^(" + basePiwigoUri + ")([\\d]*/.*)?((?<=/)upload/.*\\.([a-zA-Z0-9]{3,5}))$";
+            Pattern multimediaPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+            matcher = multimediaPattern.matcher(originalResourceUrl);
+        }
+
+        public boolean matchesUri() {
+            return matcher.matches();
+        }
+
+        public void withNewUri(String uri) {
+            matcher.reset(uri);
+        }
+
+        public String getServerBasePath() {
+            return matcher.group(1); // "Https://myserver.com/piwigo/"
+        }
+
+        public String getPathPrefix() {
+            return matcher.group(2);  // "12344/.*/"
+        }
+
+        public String getUploadsPath() {
+            return matcher.group(3); // "upload.*"
+        }
+
+        public String getFileExt() {
+            return matcher.group(4); // "upload.*"
+        }
+
+        private boolean thumbnailUriMatchesPrivacyPlugin(String thumbnailUriStr) {
+            return thumbnailUriStr.matches(".*piwigo_privacy/get\\.php\\?.*");
+        }
+
+        private String getUriBasedOnThumbnailUri(String thumbnailUriStr) {
+            return thumbnailUriStr.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + getUploadsPath() + "$3");
+        }
+
+        /**
+         * Only use this if the privacy plugin is enabled.
+         * @param id the piwigo resource id
+         * @return null if no change was needed (i.e. use the original uri)
+         */
+        public @Nullable String ensurePathContainsResourceId(long id) {
+            if (isPathMissingResourceId()) {
+                return getServerBasePath() + id + '/' + getUploadsPath();
+            }
+            return null;
+        }
+
+        /**
+         *
+         * @param thumbnailUriStr the uri for the media resource thumbnail
+         * @return null if no change was needed (i.e. use the original uri)
+         */
+        public @Nullable String fixUsingThumbnailUri(String thumbnailUriStr) {
+            if(thumbnailUriMatchesPrivacyPlugin(thumbnailUriStr)) {
+                // I think this is piwigo_privacy simple mode.
+                return getUriBasedOnThumbnailUri(thumbnailUriStr);
+            }
+            return null;
+        }
+
+        public boolean isPathMissingResourceId() {
+            return getPathPrefix() == null;
+        }
+    }
+
 
     public static class PiwigoGetResourcesResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
 

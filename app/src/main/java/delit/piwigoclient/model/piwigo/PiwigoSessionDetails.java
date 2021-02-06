@@ -3,6 +3,8 @@ package delit.piwigoclient.model.piwigo;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -417,5 +419,22 @@ public class PiwigoSessionDetails {
 
     public synchronized void setActiveServerPlugins(ArrayList<ServerPlugin> activePlugins) {
         activeServerPlugins = new HashSet<>(activePlugins);
+    }
+
+    /**
+     *
+     * @return true or false if known. null otherwise.
+     */
+    public @Nullable
+    Boolean isUsingPiwigoPrivacyPlugin() {
+        if(activeServerPlugins != null) {
+            for(ServerPlugin plugin : activeServerPlugins) {
+                if("piwigo_privacy".equals(plugin.getId())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return null;
     }
 }

@@ -163,6 +163,13 @@
             <androidx.preference.SwitchPreference
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:defaultValue="@bool/preference_fix_privacy_plugin_media_uris_default"
+                android:key="@string/preference_fix_privacy_plugin_media_uris_key"
+                android:summary="@string/preference_fix_privacy_plugin_media_uris_summary"
+                android:title="@string/preference_fix_privacy_plugin_media_uris_title" />
+            <androidx.preference.SwitchPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:defaultValue="@bool/preference_server_connection_uri_path_segment_encoding_default"
                 android:key="@string/preference_server_connection_uri_path_segment_encoding_key"
                 android:summary="@string/preference_server_connection_uri_path_segment_encoding_summary"

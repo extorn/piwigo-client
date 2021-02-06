@@ -246,6 +246,12 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     <string name="preference_gallery_unique_id_default" translatable="false">md5sum</string>
 
+    <string name="preference_fix_privacy_plugin_media_uris_key" translatable="false">preference_fix_privacy_plugin_media_uris</string>
+    <string name="preference_fix_privacy_plugin_media_uris_title">Fix Media Uris broken when using the privacy plugin</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Enable only if you get 4xx error for multimedia resources.</string>
+    <bool name="preference_fix_privacy_plugin_media_uris_default">false</bool>
+
+
     <string name="preference_gallery_clearMemoryCache_title">Clear In-Memory Cache</string>
     <string name="preference_gallery_clearMemoryCache_key" translatable="false">preference_gallery_clearMemoryCache</string>
     <string name="preference_gallery_clearMemoryCache_summary">Deletes all images cached in memory</string>

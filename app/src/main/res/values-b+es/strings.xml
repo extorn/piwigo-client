@@ -694,4 +694,5 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="piwigo_server_updates_available_pattern">Actualización de Piwigo disponible:\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">Esta plantilla de correo electrónico es para su conveniencia.\nSi cree que no es relevante proporcionar alguno de los siguientes detalles, elimínelos.\n\nEl UUID me permite filtrar todos los datos registrados para mostrar solo aquellos que son relevantes para usted. Esto solo será necesario si estoy luchando por solucionar un error que está experimentando.</string>
+    <string name="try_enabling_privacy_plugin_media_uris">No se pudo encontrar el recurso en el servidor. ¿Le gustaría habilitar la corrección uri multimedia del complemento de privacidad?</string>
 </resources>

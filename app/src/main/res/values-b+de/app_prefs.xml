@@ -246,6 +246,12 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
+    
+    <string name="preference_fix_privacy_plugin_media_uris_title">Fix Media Uris defekt bei Verwendung des Datenschutz-Plugins</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Nur aktivieren, wenn für Multimedia-Ressourcen ein 4xx-Fehler angezeigt wird.</string>
+    
+
+
     <string name="preference_gallery_clearMemoryCache_title">In-Memory-Cache löschen</string>
     
     <string name="preference_gallery_clearMemoryCache_summary">Löscht alle im Speicher zwischengespeicherten Bilder</string>

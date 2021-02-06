@@ -18,10 +18,10 @@
 
 package delit.piwigoclient.business.video;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.exoplayer2.C;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 
@@ -101,8 +101,8 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
         loadSucceeded = true;
     }
 
-    public boolean isLoadSucceeded() {
-        return loadSucceeded;
+    public boolean isLoadFailed() {
+        return !loadSucceeded;
     }
 
     @Override
@@ -150,7 +150,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
         synchronized (cacheMetaData) {
             existingRange = cacheMetaData.getRangeContaining(firstContentByte - 1);
         }
-        FileChannel destinationChannel = null;
+        FileChannel destinationChannel;
         double onePercent = (double) contentLength / 100; // send progress update every 1%
         try {
             byte[] tmp = new byte[BUFFER_SIZE];
@@ -208,9 +208,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
         } catch (SocketException e) {
             Logging.recordException(e);
             Log.d(TAG, "Sinking Socket exception");
-        } catch (ClosedChannelException e) {
-            Logging.log(Log.DEBUG, TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
-        } catch (ConnectionClosedException e) {
+        } catch (ClosedChannelException | ConnectionClosedException e) {
             Logging.log(Log.DEBUG, TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
         } catch (IOException e) {
             Logging.recordException(e);
@@ -221,7 +219,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
         } catch (Throwable e) {
             Logging.recordException(e);
             if (logEnabled && BuildConfig.DEBUG) {
-                Log.e(TAG, "Unrecoverable error reading data from http response", e);
+                Log.e(TAG, "Totally unexpected unrecoverable error reading data from http response", e);
             }
             throw e;
         }
@@ -229,8 +227,6 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
 
     /**
      * Attempts to extract the length of the content from the response headers of an open connection.
-     *
-     * @return The extracted length, or {@link C#LENGTH_UNSET}.
      */
     private void parseContentLengthDetails(HttpResponse httpResponse) {
         long contentLength = -1;
@@ -275,6 +271,12 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                         // Some proxy servers strip the Content-Length header. Fall back to the length
                         // calculated here in this case.
                         contentLength = contentLengthFromRange;
+                        Bundle b = new Bundle();
+                        b.putString("message", "Content length didn't match range header. Ignored");
+                        b.putString("uri", getRequestURI().toString());
+                        b.putLong("contentLength", contentLength);
+                        b.putLong("rangeContentLength", contentLengthFromRange);
+                        Logging.logAnalyticEventIfPossible("MultiMediaResponseMismatch", b);
                     } else if (contentLength != contentLengthFromRange) {
                         // If there is a discrepancy between the Content-Length and Content-Range headers,
                         // assume the one with the larger value is correct. We have seen cases where carrier
@@ -285,6 +287,12 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                                     + "]");
                         }
                         contentLength = Math.max(contentLength, contentLengthFromRange);
+                        Bundle b = new Bundle();
+                        b.putString("message", "Content length didn't match range header. Ignored");
+                        b.putString("uri", getRequestURI().toString());
+                        b.putLong("contentLength", contentLength);
+                        b.putLong("rangeContentLength", contentLengthFromRange);
+                        Logging.logAnalyticEventIfPossible("MultiMediaResponseMismatch", b);
                     }
                     Log.d(TAG, "total file bytes " + totalFileContentBytes);
                     cacheMetaData.setTotalBytes(totalFileContentBytes);

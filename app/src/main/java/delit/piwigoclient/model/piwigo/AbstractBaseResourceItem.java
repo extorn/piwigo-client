@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -292,6 +293,15 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         return null;
     }
 
+    public void updateFileUri(ResourceFile file, String newUri) {
+        ResourceFile replacement = new ResourceFile(file.getName(), newUri, file.getWidth(), file.getHeight());
+        int replaceIdx = availableFiles.indexOf(file);
+        if(replaceIdx < 0) {
+            throw new IllegalStateException("Uri can only be updated for a resource file already contained");
+        }
+        availableFiles.set(replaceIdx, replacement);
+    }
+
     public static class ResourceFile implements Comparable<ResourceFile>, Parcelable {
 
         private static final String TAG = "ResourceFile";
@@ -430,6 +440,22 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             } else {
                 return getName(id);
             }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ResourceFile that = (ResourceFile) o;
+            return id == that.id &&
+                    width == that.width &&
+                    height == that.height &&
+                    Objects.equals(url, that.url);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, url, width, height);
         }
 
         @Override

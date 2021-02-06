@@ -694,4 +694,5 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="piwigo_server_updates_available_pattern">Piwigo更新可用：\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">此电子邮件模板是为了您的方便。\n如果您认为提供以下任何详细信息无关紧要，请删除它们。\n\nUUID使我可以过滤所有记录的数据，以仅显示与您相关的数据。 仅当我正在努力修复您遇到的错误时才需要这样做。</string>
+    <string name="try_enabling_privacy_plugin_media_uris">在服务器上找不到资源。 您想启用隐私插件多媒体uri修复程序吗？</string>
 </resources>

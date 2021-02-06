@@ -63,6 +63,9 @@ import delit.piwigoclient.business.video.RemoteFileCachingDataSourceFactory;
 import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
+import delit.piwigoclient.ui.BaseActivityDrawerNavigationView;
+import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
@@ -342,17 +345,29 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
     @Override
     protected void doOnceOnPageSelectedAndAdded() {
         super.doOnceOnPageSelectedAndAdded();
-        if (getParentFragment() != null) {
+        if (getParentFragment() != null || showingOutsideSlideshow) {
             configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
         }
     }
 
-    protected void clearCacheAndRestartVideo() {
+
+    protected void clearCacheAndRestartVideoUpdatingWithNewUri(String newUri) {
+        clearVideoCacheAndResetUi();
+
+        if(newUri != null) {
+            ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(null, getUiHelper().getPrefs(), getUiHelper().getAppContext());
+            connPrefs.setFixPiwigoPrivacyPluginMediaUris(getUiHelper().getPrefs(), getUiHelper().getAppContext(), true);
+            getModel().updateFileUri(getModel().getFullSizeFile(), newUri);
+        }
+
+        configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
+    }
+
+    private void clearVideoCacheAndResetUi() {
         stopVideoDownloadAndPlay();
         player.stop(); // this is terminal.
         videoPlaybackPosition = 0; // ensure it starts at the beginning again
         cachedVideoFile = null;
-
         try {
             CacheUtils.deleteCachedContent(getContext(), getModel().getFileUrl(getModel().getFullSizeFile().getName()));
             // now update stored state and UI display
@@ -363,6 +378,10 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_clear_cached_content));
         }
         logStatus("Cache cleared - configure a new datasource and player - start playback? : " + videoIsPlayingWhenVisible);
+    }
+
+    protected void clearCacheAndRestartVideo() {
+        clearVideoCacheAndResetUi();
         configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
     }
 
@@ -723,7 +742,28 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
                 } catch (RuntimeException e1) {
                     // do nothing.
                 }
-                getUiHelper().showOrQueueDialogMessage(new UIHelper.QueuedDialogMessage<>(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.getStatusCode(), err.getUri()), response, R.string.button_ok));
+
+                boolean handledError = false;
+                if(err.getStatusCode() == 404) {
+                    ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(null, getPrefs(), requireContext());
+                    String basePiwigoUri = connPrefs.getPiwigoServerAddress(getPrefs(), requireContext());
+                    String resourceUri = err.getUri();
+                    AlbumGetImagesBasicResponseHandler.MultimediaUriMatcherUtil multimediaUriMatcherUtil = new AlbumGetImagesBasicResponseHandler.MultimediaUriMatcherUtil(basePiwigoUri, resourceUri);
+                    if (multimediaUriMatcherUtil.matchesUri()) {
+                        // should always match, but we should check.
+                        if (multimediaUriMatcherUtil.isPathMissingResourceId()
+                                && !connPrefs.isFixPiwigoPrivacyPluginMediaUris(getPrefs(), getContext())) {
+                            String customMessage = getString(R.string.try_enabling_privacy_plugin_media_uris);
+                            handledError = true;
+                            String fixedUri = multimediaUriMatcherUtil.ensurePathContainsResourceId(getModel().getId());
+                            getUiHelper().showOrQueueDialogQuestion(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.getStatusCode(), customMessage),
+                                                                   R.string.button_no, R.string.button_ok, new Fixable404ErrorActionListener<>(getUiHelper(), fixedUri));
+                        }
+                    }
+                }
+                if(!handledError) {
+                    getUiHelper().showOrQueueDialogMessage(new UIHelper.QueuedDialogMessage<>(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.getStatusCode(), err.getUri()), response, R.string.button_ok));
+                }
             } else if (e instanceof HttpDataSource.InvalidResponseCodeException) {
                 HttpDataSource.InvalidResponseCodeException err = (HttpDataSource.InvalidResponseCodeException) e;
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.responseCode, getModel().getDownloadFileName(getModel().getFullSizeFile())));
@@ -753,5 +793,50 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
         }
     }
 
+
+    private static class Fixable404ErrorActionListener<F extends AbstractAlbumVideoItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends VideoResourceItem> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
+        private final String fixedUri;
+
+        public Fixable404ErrorActionListener(FUIH uiHelper, String fixedUri) {
+            super(uiHelper);
+            this.fixedUri = fixedUri;
+        }
+
+        protected Fixable404ErrorActionListener(Parcel in) {
+            super(in);
+            fixedUri = in.readString();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(fixedUri);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<Fixable404ErrorActionListener<?,?,?>> CREATOR = new Creator<Fixable404ErrorActionListener<?,?,?>>() {
+            @Override
+            public Fixable404ErrorActionListener<?,?,?> createFromParcel(Parcel in) {
+                return new Fixable404ErrorActionListener<>(in);
+            }
+
+            @Override
+            public Fixable404ErrorActionListener<?,?,?>[] newArray(int size) {
+                return new Fixable404ErrorActionListener[size];
+            }
+        };
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if(Boolean.TRUE.equals(positiveAnswer)) {
+                getParent().clearCacheAndRestartVideoUpdatingWithNewUri(fixedUri);
+            }
+        }
+
+    }
 
 }

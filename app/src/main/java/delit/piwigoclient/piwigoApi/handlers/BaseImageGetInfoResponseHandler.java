@@ -64,8 +64,8 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
 
         private final boolean usingPiwigoClientOveride;
 
-        public BaseImageGetInfoResourceParser(String basePiwigoUrl, boolean usingPiwigoClientOveride) {
-            super(basePiwigoUrl);
+        public BaseImageGetInfoResourceParser(String basePiwigoUrl, boolean usePrivacyPluginFix, boolean usingPiwigoClientOveride) {
+            super(basePiwigoUrl, usePrivacyPluginFix);
             this.usingPiwigoClientOveride = usingPiwigoClientOveride;
         }
 

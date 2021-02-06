@@ -246,6 +246,12 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
+    
+    <string name="preference_fix_privacy_plugin_media_uris_title">Risolto il problema con Media Uris durante l\'utilizzo del plug-in per la privacy</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Abilita solo se ricevi un errore 4xx per le risorse multimediali.</string>
+    
+
+
     <string name="preference_gallery_clearMemoryCache_title">Cancella cache in memoria</string>
     
     <string name="preference_gallery_clearMemoryCache_summary">Elimina tutte le immagini memorizzate nella cache</string>

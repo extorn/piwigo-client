@@ -246,6 +246,12 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
+    
+    <string name="preference_fix_privacy_plugin_media_uris_title">Arregle Media Uris roto al usar el complemento de privacidad</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Habilítelo solo si obtiene un error 4xx para los recursos multimedia.</string>
+    
+
+
     <string name="preference_gallery_clearMemoryCache_title">Borrar caché en memoria</string>
     
     <string name="preference_gallery_clearMemoryCache_summary">Elimina todas las imágenes almacenadas en la memoria caché</string>

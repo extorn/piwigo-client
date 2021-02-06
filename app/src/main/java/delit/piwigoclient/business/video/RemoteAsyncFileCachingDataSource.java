@@ -52,15 +52,15 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     private final Map<String, String> defaultRequestProperties;
     private final boolean logEnabled = false;
     private final SharedPreferences sharedPrefs;
-    private Context context;
+    private final Context context;
     private DataSpec dataSpec;
     private CachedContent cacheMetaData;
     private RandomAccessFile localCachedDataFile;
     private long bytesAvailableToRead;
     private RequestHandle activeRequestHandle;
     private RandomAccessFileAsyncHttpResponseHandler httpResponseHandler;
-    private String userAgent;
-    private CacheListener cacheListener;
+    private final String userAgent;
+    private final CacheListener cacheListener;
     private int connectTimeoutMillis;
     private int readTimeoutMillis;
     private boolean enableRedirects;
@@ -133,7 +133,9 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         if (cacheFileMetadataFile.exists()) {
             if (!cacheDataFile.exists()) {
                 // cache is corrupt - delete meta data file
-                cacheFileMetadataFile.delete();
+                if(!cacheFileMetadataFile.delete()) {
+                    Logging.log(Log.WARN, TAG, "Failed when attempting to delete cached multimedia metadata file");
+                }
             } else {
                 if (cacheMetaData == null || !cacheMetaData.getCachedDataFile().equals(cacheDataFile)) {
                     cacheMetaData = CacheUtils.loadCachedContent(cacheFileMetadataFile);
@@ -141,7 +143,9 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                 if (cacheMetaData != null) {
                     return cacheMetaData;
                 } else {
-                    cacheDataFile.delete();
+                    if(!cacheDataFile.delete()) {
+                        Logging.log(Log.WARN, TAG, "Failed when attempting to delete cached multimedia data file");
+                    }
                 }
             }
         }
@@ -250,21 +254,20 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                 }
             }
             if (responseHandler.isFailed()) {
-                HttpIOException exception =  new HttpIOException(responseHandler.getStatusCode(), responseHandler.getResponseData(), responseHandler.getRequestURI().toString());
+                HttpIOException exception = new HttpIOException(responseHandler.getStatusCode(), responseHandler.getResponseData(), responseHandler.getRequestURI().toString());
                 httpResponseHandler = null; // clear the http response handler so we get a new one next time.
                 throw exception;
             }
         }
-        long bytesRemaining = dataSpec.length == LENGTH_UNSET ? cacheMetaData.getTotalBytes() - dataSpec.position
+        return dataSpec.length == LENGTH_UNSET ? cacheMetaData.getTotalBytes() - dataSpec.position
                 : dataSpec.length;
-        return bytesRemaining;
     }
 
     public static class HttpIOException extends IOException {
         private static final long serialVersionUID = -6054733448482594260L;
-        private int statusCode;
-        private byte[] responseData;
-        private String uri;
+        private final int statusCode;
+        private final byte[] responseData;
+        private final String uri;
 
         public HttpIOException(int statusCode, byte[] responseData, String uri) {
             super("Error loading uri : " + uri);
@@ -302,7 +305,6 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         } else if (cacheMetaData.getCachedRanges().isEmpty()) {
             retVal = -1;
         } else {
-            CachedContent.SerializableRange lastRange = null;
             for (CachedContent.SerializableRange range : ranges) {
                 if (range.getLower() > position) {
                     retVal = range.getLower() - position;
@@ -344,6 +346,9 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         } catch (FileNotFoundException e) {
             Logging.recordException(e);
             throw new HttpDataSourceException("cache data file doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
+        } catch (HttpIOException e) {
+            Logging.recordException(e);
+            throw new HttpDataSourceException("error reading from server uri (" + cacheMetaData.getOriginalUri() + ")", e, dataSpec, TYPE_OPEN);
         } catch (IOException e) {
             Logging.recordException(e);
             throw new HttpDataSourceException("error reading from cache data file (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
@@ -351,6 +356,10 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         try {
             // open the file.
             boolean readChannelOpen = localCachedDataFile.getChannel().isOpen();
+            if(!readChannelOpen) {
+                Logging.log(Log.ERROR, TAG, "Unable to open file channel to cached data");
+                throw new IOException("Unable to open file channel into cached data");
+            }
             long bytesRemaining = dataSpec.length == LENGTH_UNSET ? localCachedDataFile.length() - dataSpec.position
                     : dataSpec.length;
             if (bytesRemaining < 0) {
@@ -391,12 +400,11 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             if (rangeEndsBeforeFileEnd) {
                 if (dataSpec.length == C.LENGTH_UNSET) {
                     cancelAnyExistingOpenConnectionToServerAndWaitUntilDone();
+                    long retrieveMaxBytes = getBytesToRetrieveFromServer(position, cachedRangeDetail);
                     if (cacheMetaData.getTotalBytes() > 0) {
-                        long retrieveMaxBytes = getBytesToRetrieveFromServer(position, cachedRangeDetail);
                         openConnectionToServerInBackgroundAndContinueLoading(dataSpec.uri, allowGzip, cachedRangeDetail.getUpper() + 1, retrieveMaxBytes);
                         bytesAvailableToRead = cacheMetaData.getTotalBytes() - position;
                     } else {
-                        long retrieveMaxBytes = getBytesToRetrieveFromServer(position, cachedRangeDetail);
                         bytesAvailableToRead = openConnectionToServerAndBlockUntilContentLengthKnown(dataSpec.uri, allowGzip, cachedRangeDetail.getUpper() + 1, retrieveMaxBytes);
                     }
                 } else {
@@ -405,8 +413,9 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                         long retrieveMaxBytes = getBytesToRetrieveFromServer(position, cachedRangeDetail);
                         openConnectionToServerInBackgroundAndContinueLoading(dataSpec.uri, allowGzip, cachedRangeDetail.getUpper() + 1, retrieveMaxBytes);
                         bytesAvailableToRead = cacheMetaData.getTotalBytes() - position;
+                    } else {
+                        bytesAvailableToRead = dataSpec.length - (dataSpec.position - position);
                     }
-                    bytesAvailableToRead = dataSpec.length - (dataSpec.position - position);
                 }
             } else {
                 bytesAvailableToRead = cachedRangeDetail.getBytesFrom(position);
@@ -425,7 +434,9 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
 
     private void initialiseRandomAccessCacheFile() throws IOException {
         if (!cacheMetaData.getCachedDataFile().exists()) {
-            cacheMetaData.getCachedDataFile().createNewFile();
+            if(!cacheMetaData.getCachedDataFile().createNewFile()) {
+                Logging.log(Log.ERROR, TAG, "Unable to create new multimedia cache data file");
+            }
         }
         localCachedDataFile = new RandomAccessFile(cacheMetaData.getCachedDataFile(), "rw");
     }
@@ -449,7 +460,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                     maxAvailableToReadNow = activeRange.getBytesFrom(currentPosition);
                 } else {
                     if (activeRequestHandle == null || activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) {
-                        if (!this.httpResponseHandler.isLoadSucceeded() || this.httpResponseHandler.isIdle()) {
+                        if (this.httpResponseHandler.isLoadFailed() || this.httpResponseHandler.isIdle()) {
                             try {
                                 if (logEnabled && BuildConfig.DEBUG) {
                                     Log.e(TAG, "Need to invoke a server call - No data Range available covering position " + currentPosition);
@@ -475,7 +486,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                     }
                     if (activeRequestHandle != null && (activeRequestHandle.isFinished() || activeRequestHandle.isCancelled())) {
                         activeRequestHandle = null;
-                        if (!this.httpResponseHandler.isLoadSucceeded()) {
+                        if (this.httpResponseHandler.isLoadFailed()) {
                             try {
                                 invokeNewCallToServer(currentPosition);
                             } catch (IOException e) {

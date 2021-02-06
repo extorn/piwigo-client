@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.Size;
 
 import com.google.firebase.BuildConfig;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -87,10 +88,16 @@ public class Logging {
         return firebaseAnalytics;
     }
 
-    public static void logAnalyticEventIfPossible(String message, Bundle detailBundle) {
+    public static void logAnalyticEventIfPossible(@Size(min = 1,max = 40) String message, Bundle detailBundle) {
         FirebaseAnalytics firebaseAnalytics = getFirebaseAnalytics(null);
         if(firebaseAnalytics != null) {
-            firebaseAnalytics.logEvent(message, detailBundle);
+            if(message.length() > 40) {
+                String safeMsg = message.substring(0, Math.min(message.length(), 39));
+                firebaseAnalytics.logEvent(safeMsg, detailBundle);
+                log(Log.ERROR, TAG, "FirebaseAnalytics message %1$s had to be trimmed to %2$s", message, safeMsg);
+            } else {
+                firebaseAnalytics.logEvent(message, detailBundle);
+            }
         } else {
             log(Log.ERROR, TAG, "Unable to log to FirebaseAnalytics.");
         }

@@ -694,4 +694,5 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="piwigo_server_updates_available_pattern">Aktualizace Piwigo k dispozici:\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">Tato e-mailová šablona slouží pro vaše pohodlí.\nPokud se domníváte, že není relevantní poskytnout některou z následujících podrobností, odstraňte je.\n\nUUID mi umožňuje filtrovat všechna zaznamenaná data, abych zobrazil pouze ta, která jsou pro vás relevantní. To bude nutné pouze v případě, že se snažím opravit chybu, na kterou narazíte.</string>
+    <string name="try_enabling_privacy_plugin_media_uris">Zdroj nebyl na serveru nalezen. Chcete povolit opravu multimediálního uri pluginu pro ochranu soukromí?</string>
 </resources>

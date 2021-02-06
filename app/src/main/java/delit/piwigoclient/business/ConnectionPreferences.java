@@ -259,6 +259,20 @@ public class ConnectionPreferences {
             return getPrefActor().with(R.string.preference_gallery_unique_id_key).readString(prefs, context, defaultVal);
         }
 
+        public void setFixPiwigoPrivacyPluginMediaUris(SharedPreferences prefs, Context context, boolean newValue) {
+            getPrefActor().with(R.string.preference_fix_privacy_plugin_media_uris_key).writeBoolean(prefs, context, newValue);
+        }
+
+        public Boolean isFixPiwigoPrivacyPluginMediaUris(SharedPreferences prefs, Context context, Boolean defaultVal) {
+            return getPrefActor().with(R.string.preference_fix_privacy_plugin_media_uris_key).readBoolean(prefs, context, defaultVal);
+        }
+
+        public boolean isFixPiwigoPrivacyPluginMediaUris(SharedPreferences prefs, Context context) {
+            boolean defaultVal = context.getResources().getBoolean(R.bool.preference_fix_privacy_plugin_media_uris_default);
+            return isFixPiwigoPrivacyPluginMediaUris(prefs, context, defaultVal);
+        }
+
+
         public String getCertificateHostnameVerificationLevel(SharedPreferences prefs, Context context) {
             String defaultVal = context.getResources().getString(R.string.preference_server_ssl_certificate_hostname_verification_default);
             return getPrefActor().with(R.string.preference_server_ssl_certificate_hostname_verification_key).readString(prefs, context, defaultVal);
@@ -348,6 +362,8 @@ public class ConnectionPreferences {
 
             // piwigo server specific details.
             getPrefActor().with(R.string.preference_gallery_unique_id_key).writeString(editor, context, fromPrefs.getPiwigoUniqueResourceKey(prefs, context));
+            // note we pass null as a default to ensure that if there is no preference currently, this is removed from the editor (defaulted to null).
+            getPrefActor().with(R.string.preference_fix_privacy_plugin_media_uris_key).writeBoolean(editor, context, fromPrefs.isFixPiwigoPrivacyPluginMediaUris(prefs, context, null));
 
             // fine grained http connection configuration bits and bobs
             getPrefActor().with(R.string.preference_server_connection_allow_redirects_key).writeBoolean(editor, context, fromPrefs.getFollowHttpRedirects(prefs, context));
@@ -399,6 +415,7 @@ public class ConnectionPreferences {
 
             // piwigo server specific details.
             getPrefActor().with(R.string.preference_gallery_unique_id_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_fix_privacy_plugin_media_uris_key).remove(editor, context);
 
             // fine grained http connection configuration bits and bobs
             getPrefActor().with(R.string.preference_server_connection_allow_redirects_key).remove(editor, context);
@@ -562,8 +579,13 @@ public class ConnectionPreferences {
             return securePrefUtil.readSecureStringPreference(context, prefs, getPrefKeyInProfile(context, prefKey), defaultVal);
         }
 
-        public boolean readBoolean(SharedPreferences prefs, Context context, boolean defaultVal) {
-            return prefs.getBoolean(getPrefKeyInProfile(context, prefKey), defaultVal);
+        public Boolean readBoolean(SharedPreferences prefs, Context context, Boolean defaultVal) {
+            String profilePrefKey = getPrefKeyInProfile(context, prefKey);
+            if(prefs.contains(profilePrefKey)) {
+                return prefs.getBoolean(profilePrefKey, defaultVal != null ? defaultVal : false); // def value is never used here.
+            } else {
+                return defaultVal;
+            }
         }
 
         /**
@@ -580,15 +602,19 @@ public class ConnectionPreferences {
 
         /**
          * If active profile, updates in-use copy as well as actual profile
+         * NB. If send null, then the key will be removed since that is not a valid boolean.
          *
          * @param editor
          * @param context
          * @param newValue
          * @return editor
          */
-        public SharedPreferences.Editor writeBoolean(SharedPreferences.Editor editor, Context context, boolean newValue) {
-
-            editor.putBoolean(getPrefKeyInProfile(context, prefKey), newValue);
+        public SharedPreferences.Editor writeBoolean(SharedPreferences.Editor editor, Context context, Boolean newValue) {
+            if(newValue != null) {
+                editor.putBoolean(getPrefKeyInProfile(context, prefKey), newValue);
+            } else {
+                editor.remove(getPrefKeyInProfile(context, prefKey));
+            }
             return editor;
         }
 

@@ -1,71 +1,70 @@
 <en-GB>
 Bugfix:
-- Crash multiple child albums show next to each other with an odd number of child albums present (landscape mode or large screen devices)
-- Upload Job - Upload to Piwigo server list not selectable (impact for users with more than one server connection profile configured in the app)
-- server albums don't load on first entry to automatic upload job select a category preference
-- server album thumbnails not loading for child folders on upload to folder selection
-- Unable to select uploa..."
+- Multimedia URIs not working for non privacy plugin users.
+- video playback doesn't start if preference set not to include videos in slideshows
+Change:
+- there is a new setting in the connection preferences for privacy plugin uri repair
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Crash více podřízených alb se zobrazí vedle sebe s lichým počtem podřízených alb (režim na šířku nebo zařízení s velkou obrazovkou)
-- Upload Job - Upload to Piwigo server list not selectable (impact for users with more than one server connection profile configured in the app)
-- alba serveru se nenačtou při prvním vstupu do úlohy automatického nahrávání, vyberte předvolbu kategorie
-- náhledy alb serveru se nenačítají pro podřízené složky při nahrávání do výběru složky
-- Nelze ..."
+- Multimediální identifikátory URI nefungují pro uživatele zásuvných modulů bez ochrany osobních údajů.
+- přehrávání videa se nespustí, pokud je nastavena předvolba nezahrnovat videa do prezentací
+Změna:
+- v předvolbách připojení je k dispozici nové nastavení pro opravu URI pluginu ochrany osobních údajů
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Mehrere untergeordnete Alben stürzen nebeneinander ab, wobei eine ungerade Anzahl von untergeordneten Alben vorhanden ist (Querformat oder Großbildgeräte).
-- Upload-Auftrag - Upload auf Piwigo-Serverliste nicht auswählbar (Auswirkung für Benutzer mit mehr als einem in der App konfigurierten Serververbindungsprofil)
-- Serveralben werden beim ersten Eintrag für den automatischen Upload-Auftrag nicht geladen. Wählen Sie eine Kategorieeinstellung aus
-- Miniaturansichten des Serveralbu..."
+- Multimedia-URIs funktionieren nicht für Benutzer von Nicht-Datenschutz-Plugins.
+- Die Videowiedergabe startet nicht, wenn die Einstellung so eingestellt ist, dass keine Videos in Diashows aufgenommen werden
+Veränderung:
+- Es gibt eine neue Einstellung in den Verbindungseinstellungen für die Reparatur des Datenschutz-Plugins uri
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Bloquear varios álbumes secundarios que se muestran uno al lado del otro con un número impar de álbumes secundarios presentes (modo horizontal o dispositivos de pantalla grande)
-- Cargar trabajo: cargar a la lista de servidores Piwigo no se puede seleccionar (impacto para usuarios con más de un perfil de conexión de servidor configurado en la aplicación)
-- los álbumes del servidor no se cargan en la primera entrada al trabajo de carga automática seleccione una preferenci..."
+- Los URI multimedia no funcionan para usuarios de complementos que no son de privacidad.
+- la reproducción de video no comienza si se establece la preferencia para no incluir videos en presentaciones de diapositivas
+Cambio:
+- hay una nueva configuración en las preferencias de conexión para la reparación de uri del complemento de privacidad
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Crash plusieurs albums enfants s\'affichent les uns à côté des autres avec un nombre impair d\'albums enfants présents (mode paysage ou appareils grand écran)
-- Télécharger le travail - Télécharger vers la liste des serveurs Piwigo non sélectionnable (impact pour les utilisateurs avec plus d\'un profil de connexion serveur configuré dans l\'application)
-- les albums du serveur ne se chargent pas lors de la première entrée pour la tâche de téléchargement automatique sé..."
+- Les URI multimédias ne fonctionnent pas pour les utilisateurs de plugins non privés.
+- la lecture vidéo ne démarre pas si la préférence est définie pour ne pas inclure de vidéos dans les diaporamas
+Changement:
+- il y a un nouveau paramètre dans les préférences de connexion pour la réparation d\'URI du plugin de confidentialité
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Crash di più album figlio visualizzati uno accanto all\'altro con un numero dispari di album figli presenti (modalità orizzontale o dispositivi con schermo grande)
-- Carica lavoro - Carica su elenco server Piwigo non selezionabile (impatto per gli utenti con più di un profilo di connessione al server configurato nell\'app)
-- gli album del server non vengono caricati alla prima voce per il caricamento automatico del lavoro selezionare una preferenza di categoria
-- ..."
+- Gli URI multimediali non funzionano per gli utenti di plug-in non per la privacy.
+- La riproduzione video non si avvia se la preferenza è impostata per non includere i video nelle presentazioni
+Modificare:
+- c\'è una nuova impostazione nelle preferenze di connessione per la riparazione uri del plugin per la privacy
 </it-IT>
 <ja-JP>
 バグ修正：
--クラッシュする複数の子アルバムが隣り合って表示され、奇数の子アルバムが存在します（ランドスケープモードまたは大画面デバイス）
--ジョブのアップロード-Piwigoサーバーリストへのアップロードを選択できません（アプリで複数のサーバー接続プロファイルが構成されているユーザーに影響します）
--自動アップロードジョブの最初のエントリでサーバーアルバムが読み込まれないカテゴリ設定を選択する
--フォルダ選択へのアップロード時に子フォルダのサーバーアルバムサムネイルが読み込まれない
--デフォルト以外のサーバーを使用した自動アップロードジョブのサーバーアルバムへのアップロードを選択できません
+-プライバシープラグイン以外のユーザーに対してマルチメディアURIが機能しない。
+-スライドショーにビデオを含めないように設定されている場合、ビデオの再生は開始されません
+変化する：
+-プライバシープラグインのuri修復の接続設定に新しい設定があります
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Crash meerdere kinderalbums naast elkaar met een oneven aantal aanwezige kinderalbums (liggende modus of apparaten met groot scherm)
-- Job uploaden - Uploaden naar Piwigo-serverlijst kan niet worden geselecteerd (gevolgen voor gebruikers met meer dan één serververbindingsprofiel geconfigureerd in de app)
-- serveralbums worden niet geladen bij de eerste invoer voor de automatische uploadtaak, selecteer een categorievoorkeur
-- miniaturen van serveralbums worden niet geladen voor onde..."
+- Multimedia URI\'s werken niet voor gebruikers die geen privacy-plug-in hebben.
+- het afspelen van video\'s start niet als de voorkeur is ingesteld om geen video\'s op te nemen in diavoorstellingen
+Verandering:
+- er is een nieuwe instelling in de verbindingsvoorkeuren voor reparatie van de privacy-plug-in uri
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Ошибка отображения нескольких дочерних альбомов рядом друг с другом с нечетным количеством присутствующих дочерних альбомов (альбомный режим или устройства с большим экраном)
-- Загрузить задание - загрузка в список серверов Piwigo не может быть выбрана (влияние на пользователей с более чем одним профилем подключения к серверу, настроенным в приложении)
-- серверные альбомы не загружаются при первой записи для задания автоматической загрузки выберите предпочтение категории..."
+- Мультимедийные URI не работают для пользователей, не использующих плагин конфиденциальности.
+- воспроизведение видео не запускается, если в настройках установлено не включать видео в слайд-шоу
+Изменить:
+- в настройках подключения появилась новая настройка для восстановления uri плагина конфиденциальности
 </ru-RU>
 <zh-CN>
 错误修正：
--崩溃的多个子相册彼此相邻显示，并且子相册的数量为奇数（横向模式或大屏幕设备）
--上载作业-无法选择上载到Piwigo服务器列表（对在应用程序中配置了多个服务器连接配置文件的用户有影响）
--服务器相册不会在第一个条目上加载以自动上传作业选择类别首选项
--子文件夹在上传到文件夹中时未加载服务器相册缩略图
--无法选择使用非默认服务器上载到服务器相册进行自动上载作业
+-多媒体URI对非隐私插件用户不起作用。
+-如果首选项设置为不将视频包括在幻灯片中，则视频播放不会开始
+更改：
+-隐私插件uri修复的连接首选项中有一个新设置
 </zh-CN>

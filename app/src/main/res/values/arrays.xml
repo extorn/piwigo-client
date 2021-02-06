@@ -250,6 +250,12 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.111</item>
+        <item>"Bugfix:
+                - Multimedia URIs not working for non privacy plugin users.
+                - video playback doesn't start if preference set not to include videos in slideshows
+               Change:
+                - there is a new setting in the connection preferences for privacy plugin uri repair"</item>
         <item>1.4.0.110</item>
         <item>"Bugfix:
                 - Crash multiple child albums show next to each other with an odd number of child albums present (landscape mode or large screen devices)
@@ -312,113 +318,5 @@
                 - Recent changes made it impossible to have both the free and paid versions installed at the same time on a single device
                 - album thumbnails not always showing for admin user
                 - tested against Piwigo 11. Opening an image was not working"</item>
-        <item>1.4.0.101</item>
-        <item>"Not released"</item>
-        <item>1.4.0.100</item>
-        <item>"Bugfix:
-                - More testing of the uploads area has removed a number of bugs including:
-                    - upload job can become stuck where shared files are no longer available
-                    - upload job can stop if the last updated date wasn't available for a video being compressed
-                - Poor performance scrolling through albums
-                - new image icon and media type icon disappear while scrolling through album
-                - compressing a video to be just an audio file results was resulting in a video still
-                - multimedia files will fail to play if the thumbnail is a default rather than file generated
-              Changes:
-                - Added option for server default sort order preference option - used when retrieving album content.
-                  This is now the default setting on app install."</item>
-        <item>1.4.0.99</item>
-        <item>"Bugfix:
-                - wasn't taking Uri permissions for files shared by another app, causing upload failure on job restart
-                - calculation of upload job completion status was too expensive for large jobs causing App to be non responsive"</item>
-        <item>1.4.0.98</item>
-        <item>"Bugfix:
-                - Further improvements to file system permissions requests"</item>
-        <item>1.4.0.97</item>
-        <item>"Bugfix:
-                - Last folder not default in folder select view
-                - Releasing Uri permissions caused crash
-                - Background upload job wasn't requesting the correct folder permissions"</item>
-        <item>1.4.0.96</item>
-        <item>"Bugfix:
-                - UI appears unresponsive (white screen) after sharing a large number of files from external app
-                - No files appear in the upload page after sharing them from another app
-                - progress incorrectly reported while importing files for upload
-                - performance of file import and removal of files from the upload list"</item>
-        <item>1.4.0.95</item>
-        <item>"Bugfix:
-                - Insufficient file permissions used, causing failing uploads
-                - Files downloaded not visible to other apps
-                - download working for both default Downloads folder, and one selected by the user
-                - App requested Read or Write File permissions when they weren't required.
-               Changes:
-                - New preference in app settings listing all Uri permissions held and their purpose
-                - New DocumentProvider exposing files downloaded in the default download location to the system file selector.
-                - No longer add files downloaded to the Android MediaStore - They're available in any File selector.
-                - New menu link to open the downloaded files location
-               Recommendation:
-                - 1. Viewing all file permissions held by the app in the new preference, removing any you don't wish the app to hold.
-                - 2. Check each of your background upload jobs, reselect the folder to upload
-                - 3. Reselect the folder to download files from your server to"</item>
-        <item>1.4.0.94</item>
-        <item>"Bugfix:
-                - Ensure the files selected in app for upload are processed on a background thread on sending to Upload page so the UI remains visible."</item>
-        <item>1.4.0.93</item>
-        <item>"Changes:
-                - Update of the PiwigoClientWsExts plugin (Please update your server). This fixes the category names if you don't have ExtendedDescription plugin installed.
-                - Added Dutch Translations"</item>
-        <item>1.4.0.92</item>
-        <item>"Bugfix:
-                - Fixed code causing issues reloading classes from old versions"</item>
-        <item>1.4.0.91</item>
-        <item>"Bugfix:
-                - Image compression format change caused crash during upload
-                - File selection for upload issue"</item>
-        <item>1.4.0.90</item>
-        <item>"Bugfix:
-                - Caches can become unreadable between versions unnecessarily"</item>
-        <item>1.4.0.89</item>
-        <item>"Bugfix:
-                - Fixed a couple of issues causing crashes for some users
-               Changes:
-                - Added a UUID to logs and the about screen allowing me to track logs to specific user if they give me their UUID (for solving specific bugs they experience)."</item>
-        <item>1.4.0.88</item>
-        <item>"Bugfix:
-            - Image compressor not working on recent versions of Android
-            - Layout issues with bulk action buttons after long press in an album"
-        </item>
-        <item>1.4.0.87</item>
-        <item>"Changes:
-            - Support for Extended Description Plugin when latest PiwigoClientExt plugin version installed.
-            Bugfix:
-            - New code for Html style comments didn't support nulls - Sorry!"
-        </item>
-
-        <item>1.4.0.86</item>
-        <item>"Change:
-            - App Support added for the Extended Description Plugin (note: this plugin doesn't support the WS-API yet)
-            - Much better handling of HTML style comments display
-            - Scrolling for ultra long album descriptions
-            - Max of 10 lines for sub-album descriptions"</item>
-        <item>1.4.0.85</item>
-        <item>"Change:
-                - added translations for an error that can occur during video compression
-                - Use Firebase App Installation GUID for message encryption where available
-               Bugfix:
-                - Corrected string translation for russian causing crash in slideshow"</item>
-        <item>1.4.0.84</item>
-        <item>"Change:
-                - Removed the warning on screen rotate when mid way through a slideshow.
-               Bugfix:
-                - File download or share of resources can fail and then lock the feature until restart on Android 10+
-                - Corrected preferences appearing invisible in Android Dark mode (now usable)
-                - fixed contrast issue on dialog popup in main app (Dark mode)"</item>
-        <item>1.4.0.83</item>
-        <item>"Bugfix:
-                - Corrected button position in item actions bar when editing a resource item"</item>
-        <item>1.4.0.82</item>
-        <item>"Changes:
-                - Switching an android file permissions grant to a subfolder is not permitted by android 30. (removing this feature).
-               Bugfix:
-                - Editing and saving automatic upload jobs not working"</item>
     </string-array>
 </resources>

@@ -246,6 +246,12 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
+    
+    <string name="preference_fix_privacy_plugin_media_uris_title">Opravte Media Uris rozbitý při použití pluginu ochrany osobních údajů</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Povolte pouze v případě, že se u multimediálních zdrojů zobrazí chyba 4xx.</string>
+    
+
+
     <string name="preference_gallery_clearMemoryCache_title">Vymažte mezipaměť v paměti</string>
     
     <string name="preference_gallery_clearMemoryCache_summary">Odstraní všechny obrázky uložené v paměti</string>

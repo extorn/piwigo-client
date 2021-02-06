@@ -7,6 +7,7 @@ import org.json.JSONException;
 import java.util.Set;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 public class AlbumGetImagesResponseHandler extends AlbumGetImagesBasicResponseHandler {
@@ -17,13 +18,15 @@ public class AlbumGetImagesResponseHandler extends AlbumGetImagesBasicResponseHa
 
     @Override
     protected ResourceParser buildResourceParser(String basePiwigoUrl) {
-        return new ResourceParser(basePiwigoUrl);
+        boolean defaultVal = Boolean.TRUE.equals(PiwigoSessionDetails.getInstance(getConnectionPrefs()).isUsingPiwigoPrivacyPlugin());
+        boolean isApplyPrivacyPluginUriFix = getConnectionPrefs().isFixPiwigoPrivacyPluginMediaUris(getSharedPrefs(), getContext(), defaultVal);
+        return new ResourceParser(basePiwigoUrl, isApplyPrivacyPluginUriFix);
     }
 
     public static class ResourceParser extends BasicCategoryImageResourceParser {
 
-        public ResourceParser(String basePiwigoUrl) {
-            super(basePiwigoUrl);
+        public ResourceParser(String basePiwigoUrl, boolean usePrivacyPluginFix) {
+            super(basePiwigoUrl, usePrivacyPluginFix);
         }
 
         @Override

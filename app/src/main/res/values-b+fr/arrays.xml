@@ -146,6 +146,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.111</item>
+        <item>"Correction d\'un bug:
+                 - Les URI multimédias ne fonctionnent pas pour les utilisateurs de plugins non privés.
+                 - la lecture vidéo ne démarre pas si la préférence est définie pour ne pas inclure de vidéos dans les diaporamas
+                Changement:
+                 - il y a un nouveau paramètre dans les préférences de connexion pour la réparation d\'URI du plugin de confidentialité"</item>
         <item>1.4.0.110</item>
         <item>"Correction d\'un bug:
                  - Crash plusieurs albums enfants s\'affichent les uns à côté des autres avec un nombre impair d\'albums enfants présents (mode paysage ou appareils grand écran)
@@ -208,113 +214,5 @@
                  - Des changements récents ont rendu impossible l\'installation des versions gratuite et payante en même temps sur un seul appareil
                  - les miniatures d\'album ne s\'affichent pas toujours pour l\'utilisateur administrateur
                  - testé avec Piwigo 11. L\'ouverture d\'une image ne fonctionnait pas"</item>
-        <item>1.4.0.101</item>
-        <item>Non sorti</item>
-        <item>1.4.0.100</item>
-        <item>"Correction d\'un bug:
-                 - Des tests supplémentaires de la zone de téléchargement ont supprimé un certain nombre de bogues, notamment:
-                     - la tâche de téléchargement peut rester bloquée là où les fichiers partagés ne sont plus disponibles
-                     - la tâche de téléchargement peut s\'arrêter si la dernière date de mise à jour n\'était pas disponible pour une vidéo en cours de compression
-                 - Mauvaises performances de défilement des albums
-                 - la nouvelle icône d\'image et l\'icône de type de média disparaissent lors du défilement dans l\'album
-                 - la compression d\'une vidéo pour qu\'elle ne soit qu\'un fichier audio entraîne une image fixe de la vidéo
-                 - La lecture des fichiers multimédias échouera si la vignette est une valeur par défaut plutôt qu\'un fichier généré
-               Changements:
-                 - Ajout d\'une option pour l\'option de préférence d\'ordre de tri par défaut du serveur - utilisée lors de la récupération du contenu de l\'album.
-                   Il s\'agit désormais du paramètre par défaut lors de l\'installation de l\'application."</item>
-        <item>1.4.0.99</item>
-        <item>"Correction d\'un bug:
-                 - ne prenait pas les autorisations Uri pour les fichiers partagés par une autre application, provoquant un échec de téléchargement au redémarrage du travail
-                 - le calcul de l\'état d\'achèvement de la tâche de téléchargement était trop coûteux pour les tâches volumineuses, ce qui empêchait l\'application de répondre"</item>
-        <item>1.4.0.98</item>
-        <item>"Correction d\'un bug:
-                 - Améliorations supplémentaires des demandes d\'autorisations du système de fichiers"</item>
-        <item>1.4.0.97</item>
-        <item>"Correction d\'un bug:
-                 - Le dernier dossier n\'est pas par défaut dans la vue de sélection de dossier
-                 - La libération des autorisations Uri a causé un crash
-                 - La tâche de téléchargement en arrière-plan ne demandait pas les autorisations de dossier correctes"</item>
-        <item>1.4.0.96</item>
-        <item>"Correction d\'un bug:
-                 - L\'interface utilisateur semble ne pas répondre (écran blanc) après avoir partagé un grand nombre de fichiers depuis une application externe
-                 - Aucun fichier n\'apparaît dans la page de téléchargement après les avoir partagés à partir d\'une autre application
-                 - progression incorrectement signalée lors de l\'importation de fichiers à télécharger
-                 - performances de l\'importation de fichiers et suppression des fichiers de la liste de téléchargement"</item>
-        <item>1.4.0.95</item>
-        <item>"Correction d\'un bug:
-                - Les autorisations de fichier utilisées sont insuffisantes, entraînant des échecs de téléchargement
-                - Les fichiers téléchargés ne sont pas visibles par d\'autres applications
-                - le téléchargement fonctionne à la fois pour le dossier Téléchargements par défaut et pour celui sélectionné par l\'utilisateur
-                - L\'application a demandé des autorisations de lecture ou d\'écriture de fichier lorsqu\'elles n\'étaient pas nécessaires.
-               Changements:
-                - Nouvelle préférence dans les paramètres de l\'application répertoriant toutes les autorisations Uri détenues et leur objectif
-                - Nouveau DocumentProvider exposant les fichiers téléchargés dans l\'emplacement de téléchargement par défaut au sélecteur de fichiers système.
-                - N\'ajoutez plus de fichiers téléchargés sur Android MediaStore - Ils sont disponibles dans n\'importe quel sélecteur de fichiers.
-                - Nouveau lien de menu pour ouvrir l\'emplacement des fichiers téléchargés
-               Recommandation:
-                - 1. Affichage de toutes les autorisations de fichiers détenues par l\'application dans la nouvelle préférence, en supprimant celles que vous ne souhaitez pas que l\'application conserve.
-                - 2. Vérifiez chacun de vos travaux de téléchargement en arrière-plan, resélectionnez le dossier à télécharger
-                - 3. Resélectionnez le dossier pour télécharger les fichiers de votre serveur vers"</item>
-        <item>1.4.0.94</item>
-        <item>"Correction d\'un bug:
-                 - Assurez-vous que les fichiers sélectionnés dans l\'application pour le téléchargement sont traités sur un fil d\'arrière-plan lors de l\'envoi vers la page de téléchargement afin que l\'interface utilisateur reste visible."</item>
-        <item>1.4.0.93</item>
-        <item>"Changements:
-                 - Mise à jour du plugin PiwigoClientWsExts (Veuillez mettre à jour votre serveur). Cela corrige les noms de catégories si vous n\'avez pas installé le plugin ExtendedDescription.
-                 - Ajout de traductions en néerlandais"</item>
-        <item>1.4.0.92</item>
-        <item>"Correction d\'un bug:
-                 - Correction du code causant des problèmes de rechargement des classes d\'anciennes versions"</item>
-        <item>1.4.0.91</item>
-        <item>"Correction d\'un bug:
-                 - Le changement de format de compression d\'image a provoqué un crash pendant le téléchargement
-                 - Sélection de fichiers pour problème de téléchargement"</item>
-        <item>1.4.0.90</item>
-        <item>"Correction d\'un bug:
-                 - Les caches peuvent devenir illisibles entre les versions inutilement"</item>
-        <item>1.4.0.89</item>
-        <item>"Correction d\'un bug:
-                 - Correction de quelques problèmes provoquant des plantages pour certains utilisateurs
-                Changements:
-                 - Ajout d\'un UUID aux journaux et à l\'écran à propos me permettant de suivre les journaux d\'un utilisateur spécifique s\'ils me donnent leur UUID (pour résoudre des bogues spécifiques qu\'ils rencontrent)."</item>
-        <item>1.4.0.88</item>
-        <item>"Correction d\'un bug:
-             - Le compresseur d\'image ne fonctionne pas sur les versions récentes d\'Android
-             - Problèmes de mise en page avec les boutons d\'action en masse après un appui long sur un album"
-        </item>
-        <item>1.4.0.87</item>
-        <item>"Changements:
-             - Prise en charge du plugin de description étendue lorsque la dernière version du plugin PiwigoClientExt est installée.
-             Correction d\'un bug:
-             - Le nouveau code pour les commentaires de style Html ne supportait pas les nulls - Désolé!"
-        </item>
-
-        <item>1.4.0.86</item>
-        <item>"Changement:
-             - Prise en charge de l\'application ajoutée pour le plugin de description étendue (note: ce plugin ne prend pas encore en charge le WS-API)
-             - Meilleure gestion de l\'affichage des commentaires de style HTML
-             - Faire défiler les descriptions d\'albums ultra longues
-             - Maximum de 10 lignes pour les descriptions de sous-albums"</item>
-        <item>1.4.0.85</item>
-        <item>"Changement:
-                 - ajout de traductions pour une erreur pouvant survenir lors de la compression vidéo
-                 - Utilisez le GUID d\'installation de l\'application Firebase pour le chiffrement des messages, le cas échéant
-                Correction d\'un bug:
-                 - Correction de la traduction de la chaîne pour le russe provoquant un crash dans le diaporama"</item>
-        <item>1.4.0.84</item>
-        <item>"Changement:
-                 - Suppression de l\'avertissement sur la rotation de l\'écran au milieu d\'un diaporama.
-                Correction d\'un bug:
-                 - Le téléchargement de fichiers ou le partage de ressources peut échouer, puis verrouiller la fonctionnalité jusqu\'au redémarrage sur Android 10
-                 - Correction des préférences apparaissant invisibles en mode Android Dark (maintenant utilisable)
-                 - Correction du problème de contraste sur la fenêtre de dialogue dans l\'application principale (mode sombre)"</item>
-        <item>1.4.0.83</item>
-        <item>"Correction d\'un bug:
-                 - Correction de la position du bouton dans la barre d\'actions de l\'élément lors de la modification d\'un élément de ressource"</item>
-        <item>1.4.0.82</item>
-        <item>"Changements:
-                 - Le basculement d\'une autorisation de fichier Android vers un sous-dossier n\'est pas autorisé par Android 30. (suppression de cette fonctionnalité).
-                Correction d\'un bug:
-                 - La modification et l\'enregistrement des travaux de téléchargement automatique ne fonctionnent pas"</item>
     </string-array>
 </resources>

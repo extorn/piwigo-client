@@ -246,6 +246,12 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
+    
+    <string name="preference_fix_privacy_plugin_media_uris_title">修复使用隐私插件时媒体Uris损坏的问题</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s。 仅当多媒体资源出现4xx错误时才启用。</string>
+    
+
+
     <string name="preference_gallery_clearMemoryCache_title">清除内存中的缓存</string>
     
     <string name="preference_gallery_clearMemoryCache_summary">删除所有缓存在内存中的图像</string>

@@ -246,6 +246,12 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
+    
+    <string name="preference_fix_privacy_plugin_media_uris_title">Correction de Media Uris cassé lors de l\'utilisation du plugin de confidentialité</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Activez uniquement si vous obtenez une erreur 4xx pour les ressources multimédias.</string>
+    
+
+
     <string name="preference_gallery_clearMemoryCache_title">Effacer le cache en mémoire</string>
     
     <string name="preference_gallery_clearMemoryCache_summary">Supprime toutes les images mises en cache en mémoire</string>

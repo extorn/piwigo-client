@@ -694,4 +694,5 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="piwigo_server_updates_available_pattern">利用可能なPiwigoアップデート：\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">このメールテンプレートはあなたの便宜のためのものです。\n以下の詳細のいずれかを提供することが適切でないと思われる場合は、それらを削除してください。\n\nUUIDを使用すると、ログに記録されたすべてのデータをフィルタリングして、関連するデータのみを表示できます。 これは、発生しているバグの修正に苦労している場合にのみ必要になります。</string>
+    <string name="try_enabling_privacy_plugin_media_uris">サーバー上でリソースが見つかりませんでした。 プライバシープラグインのマルチメディアuri修正を有効にしますか？</string>
 </resources>

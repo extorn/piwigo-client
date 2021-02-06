@@ -146,6 +146,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.111</item>
+        <item>"Bug-Fix:
+                 - Multimedia-URIs funktionieren nicht für Benutzer von Nicht-Datenschutz-Plugins.
+                 - Die Videowiedergabe startet nicht, wenn die Einstellung so eingestellt ist, dass keine Videos in Diashows aufgenommen werden
+                Veränderung:
+                 - Es gibt eine neue Einstellung in den Verbindungseinstellungen für die Reparatur des Datenschutz-Plugins uri"</item>
         <item>1.4.0.110</item>
         <item>"Bug-Fix:
                  - Mehrere untergeordnete Alben stürzen nebeneinander ab, wobei eine ungerade Anzahl von untergeordneten Alben vorhanden ist (Querformat oder Großbildgeräte).
@@ -208,113 +214,5 @@
                  - Aufgrund der jüngsten Änderungen war es nicht möglich, sowohl die kostenlose als auch die kostenpflichtige Version gleichzeitig auf einem einzigen Gerät zu installieren
                  - Album-Miniaturansichten werden für Administratoren nicht immer angezeigt
                  - gegen Piwigo 11 getestet. Das Öffnen eines Bildes funktionierte nicht"</item>
-        <item>1.4.0.101</item>
-        <item>Nicht veröffentlicht</item>
-        <item>1.4.0.100</item>
-        <item>"Bug-Fix:
-                 - Weitere Tests des Upload-Bereichs haben eine Reihe von Fehlern behoben, darunter:
-                     - Der Upload-Auftrag kann hängen bleiben, wenn freigegebene Dateien nicht mehr verfügbar sind
-                     - Der Upload-Auftrag kann gestoppt werden, wenn das Datum der letzten Aktualisierung für ein zu komprimierendes Video nicht verfügbar war
-                 - Schlechte Leistung beim Scrollen durch Alben
-                 - Neues Bildsymbol und Medientypsymbol verschwinden beim Scrollen durch das Album
-                 - Das Komprimieren eines Videos als Ergebnis einer Audiodatei führte zu einem Standbild
-                 - Multimediadateien können nicht abgespielt werden, wenn die Miniaturansicht eine Standardeinstellung ist und keine generierte Datei
-               Änderungen:
-                 - Option für die Standardoption der Sortierreihenfolge des Servers hinzugefügt - wird beim Abrufen von Albuminhalten verwendet.
-                   Dies ist jetzt die Standardeinstellung bei der App-Installation."</item>
-        <item>1.4.0.99</item>
-        <item>"Bug-Fix:
-                 - hat keine Uri-Berechtigungen für Dateien erhalten, die von einer anderen App freigegeben wurden, was beim Neustart des Jobs zu einem Upload-Fehler führte
-                 - Die Berechnung des Status des Abschlusses eines Upload-Jobs war für große Jobs zu teuer, sodass die App nicht mehr reagiert"</item>
-        <item>1.4.0.98</item>
-        <item>"Bug-Fix:
-                 - Weitere Verbesserungen bei Dateisystemberechtigungsanforderungen"</item>
-        <item>1.4.0.97</item>
-        <item>"Bug-Fix:
-                 - Letzter Ordner nicht standardmäßig in der Ordnerauswahlansicht
-                 - Das Freigeben von Uri-Berechtigungen verursachte einen Absturz
-                 - Der Job zum Hochladen im Hintergrund hat nicht die richtigen Ordnerberechtigungen angefordert"</item>
-        <item>1.4.0.96</item>
-        <item>"Bug-Fix:
-                 - Die Benutzeroberfläche reagiert nicht mehr (weißer Bildschirm), nachdem eine große Anzahl von Dateien von einer externen App freigegeben wurde
-                 - Auf der Upload-Seite werden keine Dateien angezeigt, nachdem sie von einer anderen App freigegeben wurden
-                 - Fortschritt beim Importieren von Dateien zum Hochladen falsch gemeldet
-                 - Durchführung des Dateiimports und Entfernens von Dateien aus der Upload-Liste"</item>
-        <item>1.4.0.95</item>
-        <item>"Bug-Fix:
-                - Es werden nicht genügend Dateiberechtigungen verwendet, was zu fehlgeschlagenen Uploads führt
-                - Heruntergeladene Dateien sind für andere Apps nicht sichtbar
-                - Download funktioniert sowohl für den Standard-Download-Ordner als auch für einen vom Benutzer ausgewählten
-                - Die App hat Lese- oder Schreibberechtigungen für Dateien angefordert, wenn diese nicht erforderlich waren.
-               Änderungen:
-                - Neue Einstellung in den App-Einstellungen, in der alle gehaltenen Uri-Berechtigungen und ihr Zweck aufgelistet sind
-                - Neuer DocumentProvider macht Dateien, die am Standard-Download-Speicherort heruntergeladen wurden, für die Systemdatei-Auswahl verfügbar.
-                - Fügen Sie keine in den Android MediaStore heruntergeladenen Dateien mehr hinzu. - Sie sind in jeder Dateiauswahl verfügbar.
-                - Neuer Menü-Link zum Öffnen des Speicherorts für heruntergeladene Dateien
-               Empfehlung:
-                - 1. Zeigen Sie alle Dateiberechtigungen an, die von der App in der neuen Einstellung gespeichert wurden, und entfernen Sie alle Berechtigungen, die die App nicht enthalten soll.
-                - 2. Überprüfen Sie jeden Ihrer Hintergrund-Upload-Jobs und wählen Sie den hochzuladenden Ordner erneut aus
-                - 3. Wählen Sie den Ordner erneut aus, in den Dateien von Ihrem Server heruntergeladen werden sollen"</item>
-        <item>1.4.0.94</item>
-        <item>"Bug-Fix:
-                 - Stellen Sie sicher, dass die in der App zum Hochladen ausgewählten Dateien beim Senden an die Upload-Seite in einem Hintergrund-Thread verarbeitet werden, damit die Benutzeroberfläche sichtbar bleibt."</item>
-        <item>1.4.0.93</item>
-        <item>"Änderungen:
-                 - Update des PiwigoClientWsExts-Plugins (Bitte aktualisieren Sie Ihren Server). Dies behebt die Kategorienamen, wenn Sie das ExtendedDescription-Plugin nicht installiert haben.
-                 - Niederländische Übersetzungen hinzugefügt"</item>
-        <item>1.4.0.92</item>
-        <item>"Bug-Fix:
-                 - Code behoben, der Probleme beim erneuten Laden von Klassen aus alten Versionen verursachte"</item>
-        <item>1.4.0.91</item>
-        <item>"Bug-Fix:
-                 - Die Änderung des Bildkomprimierungsformats verursachte einen Absturz beim Hochladen
-                 - Dateiauswahl für Upload-Problem"</item>
-        <item>1.4.0.90</item>
-        <item>"Bug-Fix:
-                 - Caches können zwischen Versionen unnötig unlesbar werden"</item>
-        <item>1.4.0.89</item>
-        <item>"Bug-Fix:
-                 - Einige Probleme wurden behoben, die bei einigen Benutzern zu Abstürzen führten
-                Änderungen:
-                 - Den Protokollen und dem Info-Bildschirm wurde eine UUID hinzugefügt, mit der ich Protokolle für bestimmte Benutzer verfolgen kann, wenn diese mir ihre UUID geben (um bestimmte aufgetretene Fehler zu beheben)."</item>
-        <item>1.4.0.88</item>
-        <item>"Bug-Fix:
-             - Der Bildkomprimierer funktioniert nicht mit neueren Android-Versionen
-             - Layoutprobleme mit Massenaktionsschaltflächen nach langem Drücken in einem Album"
-        </item>
-        <item>1.4.0.87</item>
-        <item>"Änderungen:
-             - Unterstützung für Extended Description Plugin, wenn die neueste Version des PiwigoClientExt-Plugins installiert ist.
-             Bug-Fix:
-             - Neuer Code für Kommentare im HTML-Stil unterstützt keine Nullen - Entschuldigung!"
-        </item>
-
-        <item>1.4.0.86</item>
-        <item>"Veränderung:
-             - App-Unterstützung für das Extended Description Plugin hinzugefügt (Hinweis: Dieses Plugin unterstützt die WS-API noch nicht)
-             - Viel bessere Handhabung der Anzeige von Kommentaren im HTML-Stil
-             - Scrollen für extrem lange Albumbeschreibungen
-             - Maximal 10 Zeilen für Unteralbumbeschreibungen"</item>
-        <item>1.4.0.85</item>
-        <item>"Veränderung:
-                 - Übersetzungen für einen Fehler hinzugefügt, der während der Videokomprimierung auftreten kann
-                 - Verwenden Sie die Firebase App-Installations-GUID für die Nachrichtenverschlüsselung, sofern verfügbar
-                Bug-Fix:
-                 - Die String-Übersetzung für Russisch wurde korrigiert und verursacht einen Absturz in der Diashow"</item>
-        <item>1.4.0.84</item>
-        <item>"Veränderung:
-                 - Die Warnung auf dem Bildschirm wurde entfernt, wenn Sie sich in der Mitte einer Diashow drehen.
-                Bug-Fix:
-                 - Das Herunterladen von Dateien oder das Teilen von Ressourcen kann fehlschlagen und die Funktion bis zum Neustart unter Android 10 sperren
-                 - Korrigierte Einstellungen, die im Android Dark-Modus unsichtbar erscheinen (jetzt verwendbar)
-                 - Kontrastproblem im Dialogfeld-Popup in der Haupt-App behoben (Dunkler Modus)"</item>
-        <item>1.4.0.83</item>
-        <item>"Bug-Fix:
-                 - Die Schaltflächenposition in der Elementaktionsleiste beim Bearbeiten eines Ressourcenelements wurde korrigiert"</item>
-        <item>1.4.0.82</item>
-        <item>"Änderungen:
-                 - Das Wechseln der Berechtigungen für Android-Dateien zu einem Unterordner ist von Android 30 nicht zulässig (Entfernen dieser Funktion).
-                Bug-Fix:
-                 - Das Bearbeiten und Speichern von automatischen Upload-Jobs funktioniert nicht"</item>
     </string-array>
 </resources>
