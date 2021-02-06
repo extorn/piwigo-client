@@ -41,7 +41,7 @@ public class EmailSender implements OnCompleteListener<String> {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
             serverVersion = sessionDetails.getPiwigoVersion();
-            activePluginSummary = sessionDetails.getActivePluginSummary().replaceAll("},", "},\n");
+            activePluginSummary = sessionDetails.getActivePluginSummary().replace("},", "},\n");
         }
         String emailContent = context.getString(R.string.support_email_pattern, context.getString(R.string.localizedEmailHelp),  serverVersion, appVersion, Build.VERSION.CODENAME + "(" + Build.VERSION.SDK_INT + ")", uuid, activePluginSummary);
         intent.putExtra(Intent.EXTRA_TEXT, emailContent);
