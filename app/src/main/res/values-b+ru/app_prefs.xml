@@ -358,11 +358,14 @@
     
 
     <string name="preference_page_upload">Загрузить</string>
-    <string name="preference_upload_category_data_upload_display">Визуальные настройки</string>
+    <string name="preference_upload_category_data_upload_display">Показать варианты</string>
     <string name="preference_upload_category_data_upload">Загрузка данных</string>
+    
     <string name="preference_upload_category_pre_data_upload_image_compression_title">Сжатие изображений перед загрузкой</string>
+    
     <string name="preference_upload_category_pre_data_upload_video_compression_title">Сжатие видео перед загрузкой</string>
-    <string name="preference_upload_category_piwigo_server_calls_title">Продвинутый</string>
+    
+    <string name="preference_upload_category_piwigo_server_calls_title">Детали звонка на сервер Piwigo</string>
 
     
 

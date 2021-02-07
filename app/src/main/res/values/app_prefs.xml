@@ -358,7 +358,7 @@
     <!-- Data Upload page -->
 
     <string name="preference_page_upload">Upload</string>
-    <string name="preference_upload_category_data_upload_display">Visual settings</string>
+    <string name="preference_upload_category_data_upload_display">Display Options</string>
     <string name="preference_upload_category_data_upload">Data Upload</string>
     <string name="preference_upload_category_pre_data_upload_image_compression_key" translatable="false">preference_upload_category_pre_data_upload_image_compression</string>
     <string name="preference_upload_category_pre_data_upload_image_compression_title">Pre-Upload Image Compression</string>

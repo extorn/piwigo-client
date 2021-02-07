@@ -358,11 +358,14 @@
     
 
     <string name="preference_page_upload">上载</string>
-    <string name="preference_upload_category_data_upload_display">视觉设定</string>
+    <string name="preference_upload_category_data_upload_display">显示选项</string>
     <string name="preference_upload_category_data_upload">资料上传</string>
+    
     <string name="preference_upload_category_pre_data_upload_image_compression_title">上载前图像压缩</string>
+    
     <string name="preference_upload_category_pre_data_upload_video_compression_title">上载前视频压缩</string>
-    <string name="preference_upload_category_piwigo_server_calls_title">高级</string>
+    
+    <string name="preference_upload_category_piwigo_server_calls_title">Piwigo Server通话详细信息</string>
 
     
 
