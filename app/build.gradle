@@ -31,8 +31,8 @@ android {
 
     defaultConfig {
         //NB: non standard fields must be defined (def)
-        versionCode 355
-        versionName "1.4.0.111"
+        versionCode 356
+        versionName "1.4.0.112"
         applicationId "delit.piwigoclient"
 
         def latestPiwigoClientWsPluginVersion = "1.0.13"

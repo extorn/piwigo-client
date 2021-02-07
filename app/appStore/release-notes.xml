@@ -1,70 +1,40 @@
 <en-GB>
-Bugfix:
-- Multimedia URIs not working for non privacy plugin users.
-- video playback doesn't start if preference set not to include videos in slideshows
 Change:
-- there is a new setting in the connection preferences for privacy plugin uri repair
+- Tidy up the app preferences pages
 </en-GB>
 <cs-CZ>
-Oprava chyby:
-- Multimediální identifikátory URI nefungují pro uživatele zásuvných modulů bez ochrany osobních údajů.
-- přehrávání videa se nespustí, pokud je nastavena předvolba nezahrnovat videa do prezentací
 Změna:
-- v předvolbách připojení je k dispozici nové nastavení pro opravu URI pluginu ochrany osobních údajů
+- Uklidněte stránky předvoleb aplikace
 </cs-CZ>
 <de-DE>
-Bug-Fix:
-- Multimedia-URIs funktionieren nicht für Benutzer von Nicht-Datenschutz-Plugins.
-- Die Videowiedergabe startet nicht, wenn die Einstellung so eingestellt ist, dass keine Videos in Diashows aufgenommen werden
 Veränderung:
-- Es gibt eine neue Einstellung in den Verbindungseinstellungen für die Reparatur des Datenschutz-Plugins uri
+- Räumen Sie die Seiten mit den App-Einstellungen auf
 </de-DE>
 <es-ES>
-Arreglo del fallo:
-- Los URI multimedia no funcionan para usuarios de complementos que no son de privacidad.
-- la reproducción de video no comienza si se establece la preferencia para no incluir videos en presentaciones de diapositivas
 Cambio:
-- hay una nueva configuración en las preferencias de conexión para la reparación de uri del complemento de privacidad
+- Ordena las páginas de preferencias de la aplicación
 </es-ES>
 <fr-FR>
-Correction d\'un bug:
-- Les URI multimédias ne fonctionnent pas pour les utilisateurs de plugins non privés.
-- la lecture vidéo ne démarre pas si la préférence est définie pour ne pas inclure de vidéos dans les diaporamas
 Changement:
-- il y a un nouveau paramètre dans les préférences de connexion pour la réparation d\'URI du plugin de confidentialité
+- Ranger les pages de préférences de l\'application
 </fr-FR>
 <it-IT>
-Risoluzione del problema:
-- Gli URI multimediali non funzionano per gli utenti di plug-in non per la privacy.
-- La riproduzione video non si avvia se la preferenza è impostata per non includere i video nelle presentazioni
 Modificare:
-- c\'è una nuova impostazione nelle preferenze di connessione per la riparazione uri del plugin per la privacy
+- Riordina le pagine delle preferenze dell\'app
 </it-IT>
 <ja-JP>
-バグ修正：
--プライバシープラグイン以外のユーザーに対してマルチメディアURIが機能しない。
--スライドショーにビデオを含めないように設定されている場合、ビデオの再生は開始されません
 変化する：
--プライバシープラグインのuri修復の接続設定に新しい設定があります
+-アプリの設定ページを整理します
 </ja-JP>
 <nl-NL>
-Bugfix:
-- Multimedia URI\'s werken niet voor gebruikers die geen privacy-plug-in hebben.
-- het afspelen van video\'s start niet als de voorkeur is ingesteld om geen video\'s op te nemen in diavoorstellingen
 Verandering:
-- er is een nieuwe instelling in de verbindingsvoorkeuren voor reparatie van de privacy-plug-in uri
+- Ruim de pagina\'s met app-voorkeuren op
 </nl-NL>
 <ru-RU>
-Исправлена ошибка:
-- Мультимедийные URI не работают для пользователей, не использующих плагин конфиденциальности.
-- воспроизведение видео не запускается, если в настройках установлено не включать видео в слайд-шоу
 Изменить:
-- в настройках подключения появилась новая настройка для восстановления uri плагина конфиденциальности
+- Приведите в порядок страницы настроек приложения.
 </ru-RU>
 <zh-CN>
-错误修正：
--多媒体URI对非隐私插件用户不起作用。
--如果首选项设置为不将视频包括在幻灯片中，则视频播放不会开始
 更改：
--隐私插件uri修复的连接首选项中有一个新设置
+-整理应用程序首选项页面
 </zh-CN>

@@ -250,6 +250,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.112</item>
+        <item>"Change:
+                - Tidy up the app preferences pages"</item>
         <item>1.4.0.111</item>
         <item>"Bugfix:
                 - Multimedia URIs not working for non privacy plugin users.

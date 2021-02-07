@@ -146,6 +146,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.112</item>
+        <item>"変化する：
+                 -アプリの設定ページを整理します"</item>
         <item>1.4.0.111</item>
         <item>"バグ修正：
                  -プライバシープラグイン以外のユーザーに対してマルチメディアURIが機能しない。
