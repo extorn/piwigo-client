@@ -360,9 +360,9 @@
     <string name="preference_page_upload">Télécharger</string>
     <string name="preference_upload_category_data_upload_display">Paramètres visuels</string>
     <string name="preference_upload_category_data_upload">Téléchargement de données</string>
-    <string name="preference_upload_category_pre_data_upload_image_compression">Compression d\'image avant téléchargement</string>
-    <string name="preference_upload_category_pre_data_upload_video_compression">Compression vidéo pré-téléversée</string>
-    <string name="preference_upload_category_advanced">Avancée</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression_title">Compression d\'image avant téléchargement</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression_title">Compression vidéo pré-téléversée</string>
+    <string name="preference_upload_category_piwigo_server_calls_title">Avancée</string>
 
     
 

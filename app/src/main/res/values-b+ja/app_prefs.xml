@@ -360,9 +360,9 @@
     <string name="preference_page_upload">アップロード</string>
     <string name="preference_upload_category_data_upload_display">視覚的な設定</string>
     <string name="preference_upload_category_data_upload">データのアップロード</string>
-    <string name="preference_upload_category_pre_data_upload_image_compression">アップロード前の画像圧縮</string>
-    <string name="preference_upload_category_pre_data_upload_video_compression">アップロード前のビデオ圧縮</string>
-    <string name="preference_upload_category_advanced">高度な</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression_title">アップロード前の画像圧縮</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression_title">アップロード前のビデオ圧縮</string>
+    <string name="preference_upload_category_piwigo_server_calls_title">高度な</string>
 
     
 

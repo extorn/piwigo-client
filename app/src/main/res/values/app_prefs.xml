@@ -360,9 +360,12 @@
     <string name="preference_page_upload">Upload</string>
     <string name="preference_upload_category_data_upload_display">Visual settings</string>
     <string name="preference_upload_category_data_upload">Data Upload</string>
-    <string name="preference_upload_category_pre_data_upload_image_compression">Pre-Upload Image Compression</string>
-    <string name="preference_upload_category_pre_data_upload_video_compression">Pre-Upload Video Compression</string>
-    <string name="preference_upload_category_advanced">Advanced</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression_key" translatable="false">preference_upload_category_pre_data_upload_image_compression</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression_title">Pre-Upload Image Compression</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression_key" translatable="false">preference_upload_category_pre_data_upload_video_compression</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression_title">Pre-Upload Video Compression</string>
+    <string name="preference_upload_category_piwigo_server_calls_key" translatable="false">preference_upload_category_piwigo_server_calls</string>
+    <string name="preference_upload_category_piwigo_server_calls_title">Piwigo Server call details</string>
 
     <!-- prefs -->
 

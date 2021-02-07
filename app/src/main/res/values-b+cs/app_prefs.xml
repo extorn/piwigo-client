@@ -360,9 +360,9 @@
     <string name="preference_page_upload">nahrát</string>
     <string name="preference_upload_category_data_upload_display">Vizuální nastavení</string>
     <string name="preference_upload_category_data_upload">Nahrání dat</string>
-    <string name="preference_upload_category_pre_data_upload_image_compression">Komprese obrazu před nahráním</string>
-    <string name="preference_upload_category_pre_data_upload_video_compression">Komprese videa před nahráním</string>
-    <string name="preference_upload_category_advanced">Pokročilý</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression_title">Komprese obrazu před nahráním</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression_title">Komprese videa před nahráním</string>
+    <string name="preference_upload_category_piwigo_server_calls_title">Pokročilý</string>
 
     
 

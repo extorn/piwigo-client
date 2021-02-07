@@ -53,7 +53,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_upload_category_pre_data_upload_image_compression">
+        android:key="@string/preference_upload_category_pre_data_upload_image_compression_key"
+        android:title="@string/preference_upload_category_pre_data_upload_image_compression_title"
+        app:initialExpandedChildrenCount="1">
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,7 +104,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_upload_category_pre_data_upload_video_compression">
+        android:key="@string/preference_upload_category_pre_data_upload_video_compression_key"
+        android:title="@string/preference_upload_category_pre_data_upload_video_compression_title"
+        app:initialExpandedChildrenCount="1">
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -142,7 +146,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_upload_category_advanced">
+        android:key="@string/preference_upload_category_piwigo_server_calls_key"
+        android:title="@string/preference_upload_category_piwigo_server_calls_title"
+        app:initialExpandedChildrenCount="0">
+
         <delit.libs.ui.view.preference.NumberPickerPreference
             android:defaultValue="@integer/preference_data_upload_chunkSizeKb_default"
             app:minValue="256"
