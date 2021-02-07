@@ -19,12 +19,22 @@
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Serveur propre</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Nettoyer les téléchargements PiwigoClient échoués depuis le serveur</string>
+
     <string name="preference_page_connection">Connexion</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    
     <string name="preference_connections_category_server_basic_auth">Authentification de base du serveur</string>
+
+    
     <string name="preference_connections_category_client_certificate_auth">Authentification du certificat client</string>
+
+    
     <string name="preference_connections_category_advanced">Réglages avancés</string>
+
+    
     <string name="preference_connections_category_connections_caching">Mise en cache de la réponse Web</string>
+
     <string name="server_connection_preference_summary_default">Veuillez sélectionner une valeur</string>
     <string name="server_album_preference_summary_default">Veuillez sélectionner une valeur</string>
     <string name="local_folder_preference_summary_default">Veuillez sélectionner une valeur</string>
@@ -141,6 +151,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d Ko</string>
     
 
+    
     <string name="preference_connections_category_trusted_server_ca">Autorités de certification de serveur approuvé</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Utilisez une liste personnalisée de certificats d\'autorité de certification approuvés pour valider les certificats SSL du serveur</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Utiliser des autorités de certification de confiance personnalisées</string>
@@ -155,12 +166,37 @@
 
     
 
-    <string name="preference_page_gallery">Galerie</string>
+    <string name="preference_page_gallery">Les albums</string>
+    <string name="preference_page_slideshow">Diaporama</string>
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">Progression automatique du diaporama</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Après l\'heure définie, l\'image ou la vidéo suivante s\'affiche</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Retard d\'image du lecteur automatique</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecondes</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Retard vidéo du lecteur automatique</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecondes</string>
+    
+
     <string name="preference_gallery_category_general">Général</string>
-    <string name="preference_gallery_category_advanced">Avancée</string>
+    
+    <string name="preference_gallery_category_server_calls">Détails de l\'appel au serveur Piwigo</string>
     <string name="preference_gallery_category_slideshow">Diaporama</string>
-    <string name="preference_gallery_category_resources">Ressources</string>
-    <string name="preference_gallery_category_albums">Les albums</string>
+
+    
+    
+
+    
+    
+
+
+    
+    <string name="preference_gallery_category_resources">Ressources enfants</string>
+    
+    <string name="preference_gallery_category_albums">Albums enfants</string>
 
     
 
@@ -248,7 +284,7 @@
 
     
     <string name="preference_fix_privacy_plugin_media_uris_title">Correction de Media Uris cassé lors de l\'utilisation du plugin de confidentialité</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Activez uniquement si vous obtenez une erreur 4xx pour les ressources multimédias.</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">Activez uniquement si vous obtenez une erreur 4xx pour les ressources multimédias.</string>
     
 
 
@@ -418,6 +454,8 @@
 
     
     <string name="preference_page_app">App</string>
+    
+    <string name="preference_app_resource_caching_title">mise en cache des ressources</string>
 
     
 

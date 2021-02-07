@@ -132,6 +132,7 @@ public class CommonPreferencesFragment<F extends CommonPreferencesFragment<F,FUI
         ArrayList<String> tabTitles = new ArrayList<>();
         tabTitles.add(getString(R.string.preference_page_connection));
         tabTitles.add(getString(R.string.preference_page_gallery));
+        tabTitles.add(getString(R.string.preference_page_slideshow));
         tabTitles.add(getString(R.string.preference_page_app));
         tabTitles.add(getString(R.string.preference_page_other));
         tabTitles.add(getString(R.string.preference_page_upload));
@@ -142,6 +143,7 @@ public class CommonPreferencesFragment<F extends CommonPreferencesFragment<F,FUI
         ArrayList<Class<? extends MyPreferenceFragment>> tabClasses = new ArrayList<>();
         tabClasses.add(ConnectionPreferenceFragment.class);
         tabClasses.add(GalleryPreferenceFragment.class);
+        tabClasses.add(SlideshowPreferenceFragment.class);
         tabClasses.add(AppPreferenceFragment.class);
         tabClasses.add(OtherPreferenceFragment.class);
         tabClasses.add(UploadPreferenceFragment.class);

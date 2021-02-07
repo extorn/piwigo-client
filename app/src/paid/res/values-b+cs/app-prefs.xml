@@ -122,21 +122,15 @@
     
 
     
-    <string name="preference_gallery_slideshow_auto_drive_title">Automatický postup prezentace</string>
-    <string name="preference_gallery_slideshow_auto_drive_summary">Po nastaveném čase se zobrazí další obrázek nebo video</string>
+
+
     
 
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">Automatické zpoždění obrazu jednotky</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s milisekundy</string>
-    
-    
     
     
 
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Automatické zpoždění videa</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s milisekundy</string>
     
-    
+
     
     
 </resources>

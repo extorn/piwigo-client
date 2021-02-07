@@ -19,12 +19,22 @@
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Чистый сервер</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Очистите неудачные загрузки PiwigoClient с сервера</string>
+
     <string name="preference_page_connection">Подключение</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    
     <string name="preference_connections_category_server_basic_auth">Базовая проверка подлинности сервера</string>
+
+    
     <string name="preference_connections_category_client_certificate_auth">Проверка подлинности сертификата клиента</string>
+
+    
     <string name="preference_connections_category_advanced">Расширенные настройки</string>
+
+    
     <string name="preference_connections_category_connections_caching">Кэширование веб-ответов</string>
+
     <string name="server_connection_preference_summary_default">Пожалуйста, выберите значение</string>
     <string name="server_album_preference_summary_default">Пожалуйста, выберите значение</string>
     <string name="local_folder_preference_summary_default">Пожалуйста, выберите значение</string>
@@ -141,6 +151,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d КБ</string>
     
 
+    
     <string name="preference_connections_category_trusted_server_ca">Сертификаты доверенных серверов</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Используйте настраиваемый список доверенных сертификатов ЦС для проверки сертификатов SSL сервера</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Используйте настраиваемые доверенные центры сертификации</string>
@@ -155,12 +166,37 @@
 
     
 
-    <string name="preference_page_gallery">Галерея</string>
+    <string name="preference_page_gallery">Альбомы</string>
+    <string name="preference_page_slideshow">Слайд-шоу</string>
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">Автоматическое продвижение слайд-шоу</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">По истечении установленного времени будет показано следующее изображение или видео.</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Автоматическая задержка изображения привода</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s миллисекунды</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Автоматическая задержка видео</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s миллисекунды</string>
+    
+
     <string name="preference_gallery_category_general">генеральный</string>
-    <string name="preference_gallery_category_advanced">Продвинутый</string>
+    
+    <string name="preference_gallery_category_server_calls">Подробная информация о вызове сервера Piwigo</string>
     <string name="preference_gallery_category_slideshow">Слайд-шоу</string>
-    <string name="preference_gallery_category_resources">Ресурсы</string>
-    <string name="preference_gallery_category_albums">Альбомы</string>
+
+    
+    
+
+    
+    
+
+
+    
+    <string name="preference_gallery_category_resources">Дочерние ресурсы</string>
+    
+    <string name="preference_gallery_category_albums">Детские альбомы</string>
 
     
 
@@ -248,7 +284,7 @@
 
     
     <string name="preference_fix_privacy_plugin_media_uris_title">Исправить Media Uris, сломанный при использовании плагина конфиденциальности</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Включайте, только если вы получаете ошибку 4xx для мультимедийных ресурсов.</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">Включайте, только если вы получаете ошибку 4xx для мультимедийных ресурсов.</string>
     
 
 
@@ -418,6 +454,8 @@
 
     
     <string name="preference_page_app">Приложение</string>
+    
+    <string name="preference_app_resource_caching_title">кеширование ресурсов</string>
 
     
 

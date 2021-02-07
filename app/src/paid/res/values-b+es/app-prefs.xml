@@ -122,21 +122,15 @@
     
 
     
-    <string name="preference_gallery_slideshow_auto_drive_title">Progresión automática de la presentación de diapositivas</string>
-    <string name="preference_gallery_slideshow_auto_drive_summary">Después del tiempo establecido, se mostrará la siguiente imagen o video.</string>
+
+
     
 
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">Retraso de imagen de conducción automática</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s milisegundos</string>
-    
-    
     
     
 
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Retraso de vídeo de conducción automática</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s milisegundos</string>
     
-    
+
     
     
 </resources>

@@ -2,11 +2,11 @@ package delit.piwigoclient.ui.preferences;
 
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 
-public class GalleryPreferenceFragment<F extends BaseGalleryPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BaseGalleryPreferenceFragment<F,FUIH> {
-    public GalleryPreferenceFragment() {
+public class SlideshowPreferenceFragment<F extends BaseSlideshowPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BaseSlideshowPreferenceFragment<F,FUIH> {
+    public SlideshowPreferenceFragment() {
     }
 
-    public GalleryPreferenceFragment(int pagerIndex) {
+    public SlideshowPreferenceFragment(int pagerIndex) {
         super(pagerIndex);
     }
 

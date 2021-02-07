@@ -16,9 +16,9 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
  * Created by gareth on 12/05/17.
  */
 
-public class BaseGalleryPreferenceFragment<F extends BaseGalleryPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyPreferenceFragment<F,FUIH> {
+public class BaseSlideshowPreferenceFragment<F extends BaseSlideshowPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyPreferenceFragment<F,FUIH> {
 
-    private static final String TAG = "Gallery Settings";
+    private static final String TAG = "Slideshow Settings";
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -43,10 +43,10 @@ public class BaseGalleryPreferenceFragment<F extends BaseGalleryPreferenceFragme
         return true;
     };
 
-    public BaseGalleryPreferenceFragment() {
+    public BaseSlideshowPreferenceFragment() {
     }
 
-    public BaseGalleryPreferenceFragment(int pagerIndex) {
+    public BaseSlideshowPreferenceFragment(int pagerIndex) {
         super(pagerIndex);
     }
 
@@ -60,32 +60,10 @@ public class BaseGalleryPreferenceFragment<F extends BaseGalleryPreferenceFragme
     }
 
     protected void buildPreferencesViewAndInitialise(String rootKey) {
-        setPreferencesFromResource(R.xml.pref_page_gallery, rootKey);
+        setPreferencesFromResource(R.xml.pref_page_slideshow, rootKey);
         setHasOptionsMenu(true);
 
-        // Bind the summaries of EditText/List/Dialog/Ringtone activity_preferences
-        // to their values. When their values change, their summaries are
-        // updated to reflect the pkg value, per the Android Design
-        // guidelines.
-
-        NumberPickerPreference pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_albums_preferredColumnsLandscape_key);
-        int defaultVal = AlbumViewPreferences.getDefaultAlbumColumnCount(requireActivity(), Configuration.ORIENTATION_LANDSCAPE);
-        pref.updateDefaultValue(defaultVal);
-
-        pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_images_preferredColumnsLandscape_key);
-        defaultVal = AlbumViewPreferences.getDefaultImagesColumnCount(requireActivity(), Configuration.ORIENTATION_LANDSCAPE);
-        pref.updateDefaultValue(defaultVal);
-
-        pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_albums_preferredColumnsPortrait_key);
-        defaultVal = AlbumViewPreferences.getDefaultAlbumColumnCount(requireActivity(), Configuration.ORIENTATION_PORTRAIT);
-        pref.updateDefaultValue(defaultVal);
-
-        pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_images_preferredColumnsPortrait_key);
-        defaultVal = AlbumViewPreferences.getDefaultImagesColumnCount(requireActivity(), Configuration.ORIENTATION_PORTRAIT);
-        pref.updateDefaultValue(defaultVal);
-
-        findPreference(R.string.preference_gallery_album_thumbnail_size_key).setOnPreferenceChangeListener(selectedImageSizeNativeSupportCheckListener);
-        findPreference(R.string.preference_gallery_item_thumbnail_size_key).setOnPreferenceChangeListener(selectedImageSizeNativeSupportCheckListener);
+        findPreference(R.string.preference_gallery_item_slideshow_image_size_key).setOnPreferenceChangeListener(selectedImageSizeNativeSupportCheckListener);
 
     }
 }

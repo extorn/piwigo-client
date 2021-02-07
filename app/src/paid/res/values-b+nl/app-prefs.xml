@@ -122,21 +122,15 @@
     
 
     
-    <string name="preference_gallery_slideshow_auto_drive_title">Automatische voortgang van de diavoorstelling</string>
-    <string name="preference_gallery_slideshow_auto_drive_summary">Na de ingestelde tijd wordt de volgende afbeelding of video weergegeven</string>
+
+
     
 
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">Automatische beeldvertraging</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecs</string>
-    
-    
     
     
 
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Automatische video-vertraging</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecs</string>
     
-    
+
     
     
 </resources>

@@ -19,12 +19,22 @@
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Server pulito</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Pulisci caricamenti PiwigoClient non riusciti dal server</string>
+
     <string name="preference_page_connection">Connessione</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    
     <string name="preference_connections_category_server_basic_auth">Autenticazione di base del server</string>
+
+    
     <string name="preference_connections_category_client_certificate_auth">Autenticazione del certificato client</string>
+
+    
     <string name="preference_connections_category_advanced">Impostazioni avanzate</string>
+
+    
     <string name="preference_connections_category_connections_caching">Memorizzazione nella cache delle risposte web</string>
+
     <string name="server_connection_preference_summary_default">Seleziona un valore</string>
     <string name="server_album_preference_summary_default">Seleziona un valore</string>
     <string name="local_folder_preference_summary_default">Seleziona un valore</string>
@@ -141,6 +151,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     
 
+    
     <string name="preference_connections_category_trusted_server_ca">CA certificati server attendibili</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Utilizza un elenco personalizzato di certificati CA attendibili per convalidare i certificati SSL del server</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Utilizza autorità di certificazione attendibili personalizzate</string>
@@ -155,12 +166,37 @@
 
     
 
-    <string name="preference_page_gallery">Galleria</string>
+    <string name="preference_page_gallery">Album</string>
+    <string name="preference_page_slideshow">Presentazione</string>
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">Progressione automatica della presentazione</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Dopo il tempo impostato, verrà visualizzata l\'immagine o il video successivo</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Ritardo dell\'immagine di guida automatica</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisec</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Ritardo video drive automatico</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisec</string>
+    
+
     <string name="preference_gallery_category_general">Generale</string>
-    <string name="preference_gallery_category_advanced">Avanzate</string>
+    
+    <string name="preference_gallery_category_server_calls">Dettagli chiamata server Piwigo</string>
     <string name="preference_gallery_category_slideshow">Presentazione</string>
-    <string name="preference_gallery_category_resources">Risorse</string>
-    <string name="preference_gallery_category_albums">Album</string>
+
+    
+    
+
+    
+    
+
+
+    
+    <string name="preference_gallery_category_resources">Risorse per l\'infanzia</string>
+    
+    <string name="preference_gallery_category_albums">Album per bambini</string>
 
     
 
@@ -248,7 +284,7 @@
 
     
     <string name="preference_fix_privacy_plugin_media_uris_title">Risolto il problema con Media Uris durante l\'utilizzo del plug-in per la privacy</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Abilita solo se ricevi un errore 4xx per le risorse multimediali.</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">Abilita solo se ricevi un errore 4xx per le risorse multimediali.</string>
     
 
 
@@ -418,6 +454,8 @@
 
     
     <string name="preference_page_app">App</string>
+    
+    <string name="preference_app_resource_caching_title">memorizzazione nella cache delle risorse</string>
 
     
 

@@ -441,11 +441,13 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
                 } else if (allowVideoPlayback) {
                     newFragment = new AlbumVideoItemFragment<>();
                     newFragment.setArguments(AlbumVideoItemFragment.buildStandaloneArgs(event.getModelType(), albumOpen.getId(), selectedItem.getId(), 1, 1, 1, true));
-                    ((AlbumVideoItemFragment) newFragment).onPageSelected();
+                    ((AlbumVideoItemFragment<?,?,?>) newFragment).onPageSelected();
                 }
             } else if (selectedItem instanceof PictureResourceItem) {
                 newFragment = new SlideshowFragment<>();
                 newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
+            } else {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.multimedia_playback_currently_disabled));
             }
         }
 

@@ -19,12 +19,22 @@
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">清洁服务器</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">从服务器清除失败的PiwigoClient上传</string>
+
     <string name="preference_page_connection">连接</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    
     <string name="preference_connections_category_server_basic_auth">服务器基本身份验证</string>
+
+    
     <string name="preference_connections_category_client_certificate_auth">客户端证书认证</string>
+
+    
     <string name="preference_connections_category_advanced">高级设置</string>
+
+    
     <string name="preference_connections_category_connections_caching">Web响应缓存</string>
+
     <string name="server_connection_preference_summary_default">请选择一个值</string>
     <string name="server_album_preference_summary_default">请选择一个值</string>
     <string name="local_folder_preference_summary_default">请选择一个值</string>
@@ -141,6 +151,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     
 
+    
     <string name="preference_connections_category_trusted_server_ca">可信服务器证书CA</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">使用受信任的CA证书的自定义列表来验证服务器SSL证书</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">使用自定义的受信任证书颁发机构</string>
@@ -155,12 +166,37 @@
 
     
 
-    <string name="preference_page_gallery">画廊</string>
+    <string name="preference_page_gallery">专辑</string>
+    <string name="preference_page_slideshow">幻灯片放映</string>
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">自动幻灯片进度</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">在设定的时间之后，将显示下一个图像或视频</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">自动驱动影像延迟</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s毫米</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">自动驾驶视频延迟</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s毫米</string>
+    
+
     <string name="preference_gallery_category_general">一般</string>
-    <string name="preference_gallery_category_advanced">高级</string>
+    
+    <string name="preference_gallery_category_server_calls">Piwigo服务器呼叫详细信息</string>
     <string name="preference_gallery_category_slideshow">幻灯片放映</string>
-    <string name="preference_gallery_category_resources">资源资源</string>
-    <string name="preference_gallery_category_albums">专辑</string>
+
+    
+    
+
+    
+    
+
+
+    
+    <string name="preference_gallery_category_resources">子资源</string>
+    
+    <string name="preference_gallery_category_albums">儿童专辑</string>
 
     
 
@@ -248,7 +284,7 @@
 
     
     <string name="preference_fix_privacy_plugin_media_uris_title">修复使用隐私插件时媒体Uris损坏的问题</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s。 仅当多媒体资源出现4xx错误时才启用。</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">仅当多媒体资源出现4xx错误时才启用。</string>
     
 
 
@@ -418,6 +454,8 @@
 
     
     <string name="preference_page_app">应用程式</string>
+    
+    <string name="preference_app_resource_caching_title">资源缓存</string>
 
     
 

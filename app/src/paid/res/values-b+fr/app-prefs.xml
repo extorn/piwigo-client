@@ -122,21 +122,15 @@
     
 
     
-    <string name="preference_gallery_slideshow_auto_drive_title">Progression automatique du diaporama</string>
-    <string name="preference_gallery_slideshow_auto_drive_summary">Après l\'heure définie, l\'image ou la vidéo suivante s\'affiche</string>
+
+
     
 
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">Retard d\'image du lecteur automatique</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecondes</string>
-    
-    
     
     
 
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Retard vidéo du lecteur automatique</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecondes</string>
     
-    
+
     
     
 </resources>

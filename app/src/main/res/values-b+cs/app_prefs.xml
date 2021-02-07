@@ -19,12 +19,22 @@
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Vyčistěte server</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Vyčistěte neúspěšná nahrávání PiwigoClient ze serveru</string>
+
     <string name="preference_page_connection">Spojení</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    
     <string name="preference_connections_category_server_basic_auth">Základní ověřování serveru</string>
+
+    
     <string name="preference_connections_category_client_certificate_auth">Ověření klientského certifikátu</string>
+
+    
     <string name="preference_connections_category_advanced">Pokročilé nastavení</string>
+
+    
     <string name="preference_connections_category_connections_caching">Ukládání do mezipaměti webových odpovědí</string>
+
     <string name="server_connection_preference_summary_default">Vyberte prosím hodnotu</string>
     <string name="server_album_preference_summary_default">Vyberte prosím hodnotu</string>
     <string name="local_folder_preference_summary_default">Vyberte prosím hodnotu</string>
@@ -141,6 +151,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d kB</string>
     
 
+    
     <string name="preference_connections_category_trusted_server_ca">Certifikační autority certifikátu důvěryhodného serveru</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">K ověření certifikátů SSL serveru použijte vlastní seznam důvěryhodných certifikátů CA.</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Použijte vlastní důvěryhodné certifikační autority</string>
@@ -155,12 +166,37 @@
 
     
 
-    <string name="preference_page_gallery">Galerie</string>
+    <string name="preference_page_gallery">Alba</string>
+    <string name="preference_page_slideshow">Prezentace</string>
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">Automatický postup prezentace</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Po nastaveném čase se zobrazí další obrázek nebo video</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Automatické zpoždění obrazu jednotky</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s milisekundy</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Automatické zpoždění videa</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s milisekundy</string>
+    
+
     <string name="preference_gallery_category_general">Všeobecné</string>
-    <string name="preference_gallery_category_advanced">Pokročilý</string>
+    
+    <string name="preference_gallery_category_server_calls">Podrobnosti o volání serveru Piwigo</string>
     <string name="preference_gallery_category_slideshow">Prezentace</string>
-    <string name="preference_gallery_category_resources">Zdroje</string>
-    <string name="preference_gallery_category_albums">Alba</string>
+
+    
+    
+
+    
+    
+
+
+    
+    <string name="preference_gallery_category_resources">Dětské zdroje</string>
+    
+    <string name="preference_gallery_category_albums">Dětská alba</string>
 
     
 
@@ -248,7 +284,7 @@
 
     
     <string name="preference_fix_privacy_plugin_media_uris_title">Opravte Media Uris rozbitý při použití pluginu ochrany osobních údajů</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Povolte pouze v případě, že se u multimediálních zdrojů zobrazí chyba 4xx.</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">Povolte pouze v případě, že se u multimediálních zdrojů zobrazí chyba 4xx.</string>
     
 
 
@@ -418,6 +454,8 @@
 
     
     <string name="preference_page_app">Aplikace</string>
+    
+    <string name="preference_app_resource_caching_title">ukládání do mezipaměti zdrojů</string>
 
     
 

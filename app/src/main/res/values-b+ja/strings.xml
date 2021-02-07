@@ -695,4 +695,5 @@ Extended Descriptionプラグインのコピーをインストールしていま
     
     <string name="localizedEmailHelp">このメールテンプレートはあなたの便宜のためのものです。\n以下の詳細のいずれかを提供することが適切でないと思われる場合は、それらを削除してください。\n\nUUIDを使用すると、ログに記録されたすべてのデータをフィルタリングして、関連するデータのみを表示できます。 これは、発生しているバグの修正に苦労している場合にのみ必要になります。</string>
     <string name="try_enabling_privacy_plugin_media_uris">サーバー上でリソースが見つかりませんでした。 プライバシープラグインのマルチメディアuri修正を有効にしますか？</string>
+    <string name="multimedia_playback_currently_disabled">マルチメディア再生が無効になっています。 データを保存するためにこれを選択した可能性があります。 オンデマンドでの再生を有効にするか、アプリの設定でスライドショーモードで再生します。</string>
 </resources>

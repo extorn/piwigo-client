@@ -122,21 +122,15 @@
     
 
     
-    <string name="preference_gallery_slideshow_auto_drive_title">スライドショーの自動進行</string>
-    <string name="preference_gallery_slideshow_auto_drive_summary">設定時間後、次の画像または動画が表示されます</string>
+
+
     
 
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">自動ドライブの画像遅延</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$sミリ秒</string>
-    
-    
     
     
 
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">自動ドライブビデオ遅延</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$sミリ秒</string>
     
-    
+
     
     
 </resources>

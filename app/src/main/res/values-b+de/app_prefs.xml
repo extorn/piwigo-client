@@ -19,12 +19,22 @@
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Server reinigen</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Bereinigen fehlgeschlagene PiwigoClient-Uploads vom Server</string>
+
     <string name="preference_page_connection">Verbindung</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    
     <string name="preference_connections_category_server_basic_auth">Server Basic Authentication</string>
+
+    
     <string name="preference_connections_category_client_certificate_auth">Client-Zertifikat-Authentifizierung</string>
+
+    
     <string name="preference_connections_category_advanced">Erweiterte Einstellungen</string>
+
+    
     <string name="preference_connections_category_connections_caching">Web Response Caching</string>
+
     <string name="server_connection_preference_summary_default">Bitte wählen Sie einen Wert</string>
     <string name="server_album_preference_summary_default">Bitte wählen Sie einen Wert</string>
     <string name="local_folder_preference_summary_default">Bitte wählen Sie einen Wert</string>
@@ -141,6 +151,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     
 
+    
     <string name="preference_connections_category_trusted_server_ca">Vertrauenswürdige Serverzertifikat-Zertifizierungsstellen</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Verwenden Sie eine benutzerdefinierte Liste vertrauenswürdiger CA-Zertifikate, um Server-SSL-Zertifikate zu überprüfen</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Verwenden Sie benutzerdefinierte vertrauenswürdige Zertifizierungsstellen</string>
@@ -155,12 +166,37 @@
 
     
 
-    <string name="preference_page_gallery">Galerie</string>
+    <string name="preference_page_gallery">Alben</string>
+    <string name="preference_page_slideshow">Diashow</string>
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">Automatische Diashow-Progression</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Nach der eingestellten Zeit wird das nächste Bild oder Video angezeigt</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Bildverzögerung des automatischen Laufwerks</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s Millisekunden</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Video-Verzögerung für automatische Fahrt</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s Millisekunden</string>
+    
+
     <string name="preference_gallery_category_general">Allgemeines</string>
-    <string name="preference_gallery_category_advanced">Fortgeschrittene</string>
+    
+    <string name="preference_gallery_category_server_calls">Piwigo Server Anrufdetails</string>
     <string name="preference_gallery_category_slideshow">Diashow</string>
-    <string name="preference_gallery_category_resources">Ressourcen</string>
-    <string name="preference_gallery_category_albums">Alben</string>
+
+    
+    
+
+    
+    
+
+
+    
+    <string name="preference_gallery_category_resources">Untergeordnete Ressourcen</string>
+    
+    <string name="preference_gallery_category_albums">Kinderalben</string>
 
     
 
@@ -248,7 +284,7 @@
 
     
     <string name="preference_fix_privacy_plugin_media_uris_title">Fix Media Uris defekt bei Verwendung des Datenschutz-Plugins</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Nur aktivieren, wenn für Multimedia-Ressourcen ein 4xx-Fehler angezeigt wird.</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">Nur aktivieren, wenn für Multimedia-Ressourcen ein 4xx-Fehler angezeigt wird.</string>
     
 
 
@@ -418,6 +454,8 @@
 
     
     <string name="preference_page_app">App</string>
+    
+    <string name="preference_app_resource_caching_title">Ressourcen-Caching</string>
 
     
 

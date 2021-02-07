@@ -19,12 +19,22 @@
     <string name="preference_data_upload_clear_failed_uploads_from_server_key" translatable="false">preference_data_upload_clear_failed_uploads_from_server</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Clean Server</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Clean Failed PiwigoClient uploads from the server</string>
+
     <string name="preference_page_connection">Connection</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    <string name="preference_connections_category_server_basic_auth_key" translatable="false">preference_connections_category_server_basic_auth</string>
     <string name="preference_connections_category_server_basic_auth">Server Basic Authentication</string>
+
+    <string name="preference_connections_category_client_certificate_auth_key" translatable="false">preference_connections_category_client_certificate_auth</string>
     <string name="preference_connections_category_client_certificate_auth">Client Certificate Authentication</string>
+
+    <string name="preference_connections_category_advanced_key" translatable="false">preference_connections_category_advanced</string>
     <string name="preference_connections_category_advanced">Advanced Settings</string>
+
+    <string name="preference_connections_category_connections_caching_key" translatable="false">preference_connections_category_connections_caching</string>
     <string name="preference_connections_category_connections_caching">Web Response Caching</string>
+
     <string name="server_connection_preference_summary_default">Please select a value</string>
     <string name="server_album_preference_summary_default">Please select a value</string>
     <string name="local_folder_preference_summary_default">Please select a value</string>
@@ -141,6 +151,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     <integer name="preference_caching_max_cache_entry_size_default">1024</integer>
 
+    <string name="preference_connections_category_trusted_server_ca_key" translatable="false">preference_connections_category_trusted_server_ca</string>
     <string name="preference_connections_category_trusted_server_ca">Trusted Server Certificate CAs</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Use a custom list of trusted CA certificates to validate server SSL certificates</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Use custom trusted certificate authorities</string>
@@ -155,12 +166,37 @@
 
     <!-- Gallery Page -->
 
-    <string name="preference_page_gallery">Gallery</string>
+    <string name="preference_page_gallery">Albums</string>
+    <string name="preference_page_slideshow">Slideshow</string>
+
+    <bool name="preference_gallery_slideshow_auto_drive_default">false</bool>
+    <string name="preference_gallery_slideshow_auto_drive_title">Automatic slideshow progression</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">After the set time, the next image or video will show</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Auto drive image delay</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecs</string>
+    <integer name="preference_gallery_slideshow_auto_drive_delay_default">2000</integer>
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Auto drive video delay</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecs</string>
+    <integer name="preference_gallery_slideshow_auto_drive_video_delay_default">1000</integer>
+
     <string name="preference_gallery_category_general">General</string>
-    <string name="preference_gallery_category_advanced">Advanced</string>
+    <string name="preference_gallery_category_server_calls_key" translatable="false">preference_gallery_category_advanced</string>
+    <string name="preference_gallery_category_server_calls">Piwigo Server Call Details</string>
     <string name="preference_gallery_category_slideshow">Slideshow</string>
-    <string name="preference_gallery_category_resources">Resources</string>
-    <string name="preference_gallery_category_albums">Albums</string>
+
+    <string name="preference_gallery_category_slideshow_autodrive_key" translatable="false">preference_gallery_category_slideshow_autodrive</string>
+    <string name="preference_gallery_category_slideshow_autodrive_title" translatable="false">Auto progression</string>
+
+    <string name="preference_gallery_category_slideshow_display_options_key" translatable="false">preference_gallery_category_slideshow_display_options</string>
+    <string name="preference_gallery_category_slideshow_display_options_title" translatable="false">Display Options</string>
+
+
+    <string name="preference_gallery_category_resources_key" translatable="false">preference_gallery_category_resources</string>
+    <string name="preference_gallery_category_resources">Child Resources</string>
+    <string name="preference_gallery_category_albums_key" translatable="false">preference_gallery_category_albums</string>
+    <string name="preference_gallery_category_albums">Child Albums</string>
 
     <!-- prefs -->
 
@@ -248,7 +284,7 @@
 
     <string name="preference_fix_privacy_plugin_media_uris_key" translatable="false">preference_fix_privacy_plugin_media_uris</string>
     <string name="preference_fix_privacy_plugin_media_uris_title">Fix Media Uris broken when using the privacy plugin</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Enable only if you get 4xx error for multimedia resources.</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">Enable only if you get 4xx error for multimedia resources.</string>
     <bool name="preference_fix_privacy_plugin_media_uris_default">false</bool>
 
 
@@ -418,6 +454,8 @@
 
     <!-- App page -->
     <string name="preference_page_app">App</string>
+    <string name="preference_app_resource_caching_key" translatable="false">preference_app_resource_caching</string>
+    <string name="preference_app_resource_caching_title">resource caching</string>
 
     <!-- other page -->
 

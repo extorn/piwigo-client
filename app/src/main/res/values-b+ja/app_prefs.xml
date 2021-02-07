@@ -19,12 +19,22 @@
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">クリーンサーバー</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">サーバーからの失敗したPiwigoClientアップロードのクリーンアップ</string>
+
     <string name="preference_page_connection">接続</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    
     <string name="preference_connections_category_server_basic_auth">サーバーの基本認証</string>
+
+    
     <string name="preference_connections_category_client_certificate_auth">クライアント証明書認証</string>
+
+    
     <string name="preference_connections_category_advanced">高度な設定</string>
+
+    
     <string name="preference_connections_category_connections_caching">Web応答キャッシング</string>
+
     <string name="server_connection_preference_summary_default">値を選択してください</string>
     <string name="server_album_preference_summary_default">値を選択してください</string>
     <string name="local_folder_preference_summary_default">値を選択してください</string>
@@ -141,6 +151,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     
 
+    
     <string name="preference_connections_category_trusted_server_ca">信頼できるサーバー証明書CA</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">信頼できるCA証明書のカスタムリストを使用して、サーバーのSSL証明書を検証します</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">カスタムの信頼できる認証局を使用する</string>
@@ -155,12 +166,37 @@
 
     
 
-    <string name="preference_page_gallery">ギャラリー</string>
+    <string name="preference_page_gallery">アルバム</string>
+    <string name="preference_page_slideshow">スライドショー</string>
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">スライドショーの自動進行</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">設定時間後、次の画像または動画が表示されます</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">自動ドライブの画像遅延</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$sミリ秒</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">自動ドライブビデオ遅延</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$sミリ秒</string>
+    
+
     <string name="preference_gallery_category_general">一般</string>
-    <string name="preference_gallery_category_advanced">高度な</string>
+    
+    <string name="preference_gallery_category_server_calls">Piwigoサーバーの通話の詳細</string>
     <string name="preference_gallery_category_slideshow">スライドショー</string>
-    <string name="preference_gallery_category_resources">リソース</string>
-    <string name="preference_gallery_category_albums">アルバム</string>
+
+    
+    
+
+    
+    
+
+
+    
+    <string name="preference_gallery_category_resources">子リソース</string>
+    
+    <string name="preference_gallery_category_albums">チャイルドアルバム</string>
 
     
 
@@ -248,7 +284,7 @@
 
     
     <string name="preference_fix_privacy_plugin_media_uris_title">プライバシープラグインの使用時に壊れたMediaUrisを修正</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s。 マルチメディアリソースで4xxエラーが発生した場合にのみ有効にします。</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">マルチメディアリソースで4xxエラーが発生した場合にのみ有効にします。</string>
     
 
 
@@ -418,6 +454,8 @@
 
     
     <string name="preference_page_app">アプリ</string>
+    
+    <string name="preference_app_resource_caching_title">リソースキャッシング</string>
 
     
 

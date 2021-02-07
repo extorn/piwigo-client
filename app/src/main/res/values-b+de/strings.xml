@@ -695,4 +695,5 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     
     <string name="localizedEmailHelp">Diese E-Mail-Vorlage dient Ihrer Bequemlichkeit.\nWenn Sie der Meinung sind, dass die Angabe der folgenden Details nicht relevant ist, löschen Sie diese bitte.\n\nMit der UUID kann ich alle protokollierten Daten filtern, um nur die für Sie relevanten anzuzeigen. Dies wird nur benötigt, wenn ich Probleme habe, einen aufgetretenen Fehler zu beheben.</string>
     <string name="try_enabling_privacy_plugin_media_uris">Die Ressource wurde auf dem Server nicht gefunden. Möchten Sie das Datenschutz-Plugin Multimedia Uri Fix aktivieren?</string>
+    <string name="multimedia_playback_currently_disabled">Die Multimedia-Wiedergabe ist deaktiviert. Sie haben dies wahrscheinlich gewählt, um Daten zu speichern. Aktivieren Sie entweder die Wiedergabe bei Bedarf oder die Wiedergabe im Diashow-Modus in den App-Einstellungen.</string>
 </resources>

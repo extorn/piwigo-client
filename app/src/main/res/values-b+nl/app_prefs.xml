@@ -19,12 +19,22 @@
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Schone server</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Opschonen mislukte PiwigoClient-uploads van de server</string>
+
     <string name="preference_page_connection">Verbinding</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    
     <string name="preference_connections_category_server_basic_auth">Server basisverificatie</string>
+
+    
     <string name="preference_connections_category_client_certificate_auth">Verificatie van clientcertificaten</string>
+
+    
     <string name="preference_connections_category_advanced">Geavanceerde instellingen</string>
+
+    
     <string name="preference_connections_category_connections_caching">Caching van webreacties</string>
+
     <string name="server_connection_preference_summary_default">Selecteer een waarde</string>
     <string name="server_album_preference_summary_default">Selecteer een waarde</string>
     <string name="local_folder_preference_summary_default">Selecteer een waarde</string>
@@ -141,6 +151,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     
 
+    
     <string name="preference_connections_category_trusted_server_ca">Trusted Server Certificate CA\'s</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Gebruik een aangepaste lijst met vertrouwde CA-certificaten om SSL-certificaten van de server te valideren</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Gebruik aangepaste vertrouwde certificeringsinstanties</string>
@@ -155,12 +166,37 @@
 
     
 
-    <string name="preference_page_gallery">Galerij</string>
+    <string name="preference_page_gallery">Albums</string>
+    <string name="preference_page_slideshow">Diavoorstelling</string>
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">Automatische voortgang van de diavoorstelling</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Na de ingestelde tijd wordt de volgende afbeelding of video weergegeven</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Automatische beeldvertraging</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecs</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Automatische video-vertraging</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecs</string>
+    
+
     <string name="preference_gallery_category_general">Algemeen</string>
-    <string name="preference_gallery_category_advanced">Geavanceerd</string>
+    
+    <string name="preference_gallery_category_server_calls">Piwigo Server Oproepdetails</string>
     <string name="preference_gallery_category_slideshow">Diavoorstelling</string>
-    <string name="preference_gallery_category_resources">Middelen</string>
-    <string name="preference_gallery_category_albums">Albums</string>
+
+    
+    
+
+    
+    
+
+
+    
+    <string name="preference_gallery_category_resources">Onderliggende bronnen</string>
+    
+    <string name="preference_gallery_category_albums">Kinderalbums</string>
 
     
 
@@ -248,7 +284,7 @@
 
     
     <string name="preference_fix_privacy_plugin_media_uris_title">Fix Media Uris verbroken bij gebruik van de privacy-plug-in</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Alleen inschakelen als u een 4xx-fout krijgt voor multimediabronnen.</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">Alleen inschakelen als u een 4xx-fout krijgt voor multimediabronnen.</string>
     
 
 
@@ -418,6 +454,8 @@
 
     
     <string name="preference_page_app">App</string>
+    
+    <string name="preference_app_resource_caching_title">resource caching</string>
 
     
 

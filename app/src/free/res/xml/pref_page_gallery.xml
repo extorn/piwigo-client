@@ -7,7 +7,8 @@
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_gallery_category_general"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
 
         <delit.libs.ui.view.preference.NumberPickerPreference
             android:defaultValue="@integer/preference_gallery_recentlyAlteredAgeDays_default"
@@ -29,9 +30,11 @@
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
         android:layout="@android:layout/preference_category"
+        android:key="@string/preference_gallery_category_albums_key"
         android:title="@string/preference_gallery_category_albums"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:initialExpandedChildrenCount="1">
         <androidx.preference.ListPreference
             android:entries="@array/preference_gallery_item_thumbnail_size_entry_text"
             android:defaultValue="@string/preference_gallery_album_thumbnail_size_default"
@@ -83,9 +86,11 @@
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
         android:layout="@android:layout/preference_category"
+        android:key="@string/preference_gallery_category_resources_key"
         android:title="@string/preference_gallery_category_resources"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:initialExpandedChildrenCount="1">
         <androidx.preference.ListPreference
             android:entries="@array/preference_gallery_item_thumbnail_size_entry_text"
             android:defaultValue="@string/preference_gallery_item_thumbnail_size_default"
@@ -136,77 +141,12 @@
             android:layout_height="wrap_content"/>
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
+        android:key="@string/preference_gallery_category_server_calls_key"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_gallery_category_slideshow"
+        android:title="@string/preference_gallery_category_server_calls"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <androidx.preference.ListPreference
-            android:entries="@array/preference_gallery_item_slideshow_image_size_entry_text"
-            android:defaultValue="@string/preference_gallery_item_slideshow_image_size_default"
-            android:entryValues="@array/preference_gallery_item_slideshow_image_size_entry_values"
-            android:key="@string/preference_gallery_item_slideshow_image_size_key"
-            android:title="@string/preference_gallery_item_slideshow_image_size_title"
-            android:summary="@string/preference_gallery_item_slideshow_image_size_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <androidx.preference.ListPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@string/preference_gallery_slideshow_image_scaletype_default"
-            android:entries="@array/preference_gallery_slideshow_image_scaletype_entry_text"
-            android:entryValues="@array/preference_gallery_slideshow_image_scaletype_entry_values"
-            android:key="@string/preference_gallery_slideshow_image_scaletype_key"
-            android:summary="@string/preference_gallery_slideshow_image_scaletype_summary"
-            android:title="@string/preference_gallery_slideshow_image_scaletype_title" />
-
-        <androidx.preference.SwitchPreference
-            android:defaultValue="@bool/preference_gallery_slideshow_image_rotate_default"
-            android:key="@string/preference_gallery_slideshow_image_rotate_key"
-            android:summary="@string/preference_gallery_slideshow_image_rotate_summary"
-            android:title="@string/preference_gallery_slideshow_image_rotate_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <delit.piwigoclient.ui.preferences.PaidOnlyPreference
-            android:key="@string/preference_gallery_slideshow_item_detail_auto_hide_delay_key"
-            android:title="@string/preference_gallery_slideshow_item_detail_auto_hide_delay_title"
-            android:summary="@string/preference_gallery_slideshow_item_detail_auto_hide_delay_summary"
-            android:defaultValue="@integer/preference_gallery_slideshow_item_detail_auto_hide_delay_default"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <androidx.preference.SwitchPreference
-            android:defaultValue="@bool/preference_gallery_show_file_size_showing_default"
-            android:key="@string/preference_gallery_show_file_size_showing_key"
-            android:summary="@string/preference_gallery_show_file_size_showing_summary"
-            android:title="@string/preference_gallery_show_file_size_showing_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <androidx.preference.SwitchPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_gallery_include_videos_in_slideshow_default"
-            android:key="@string/preference_gallery_include_videos_in_slideshow_key"
-            android:summary="@string/preference_gallery_include_videos_in_slideshow_summary"
-            android:title="@string/preference_gallery_include_videos_in_slideshow_title" />
-
-        <androidx.preference.SwitchPreference
-            android:defaultValue="@bool/preference_gallery_slideshow_transparent_extra_info_shadow_default"
-            android:key="@string/preference_gallery_slideshow_transparent_extra_info_shadow_key"
-            android:summary="@string/preference_gallery_slideshow_transparent_extra_info_shadow_summary"
-            android:title="@string/preference_gallery_slideshow_transparent_extra_info_shadow_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </androidx.preference.PreferenceCategory>
-    <androidx.preference.PreferenceCategory
-        android:layout="@android:layout/preference_category"
-        android:title="@string/preference_gallery_category_advanced"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:initialExpandedChildrenCount="0">
 
         <!--
         <delit.libs.ui.view.preference.NumberPickerPreference

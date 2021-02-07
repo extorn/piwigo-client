@@ -19,12 +19,22 @@
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Servidor limpio</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Limpiar cargas fallidas de PiwigoClient desde el servidor</string>
+
     <string name="preference_page_connection">Conexión</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    
     <string name="preference_connections_category_server_basic_auth">Autenticación básica del servidor</string>
+
+    
     <string name="preference_connections_category_client_certificate_auth">Autenticación de certificado de cliente</string>
+
+    
     <string name="preference_connections_category_advanced">Ajustes avanzados</string>
+
+    
     <string name="preference_connections_category_connections_caching">Almacenamiento en caché de respuesta web</string>
+
     <string name="server_connection_preference_summary_default">Por favor seleccione un valor</string>
     <string name="server_album_preference_summary_default">Por favor seleccione un valor</string>
     <string name="local_folder_preference_summary_default">Por favor seleccione un valor</string>
@@ -141,6 +151,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     
 
+    
     <string name="preference_connections_category_trusted_server_ca">CA de certificados de servidor de confianza</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Utilice una lista personalizada de certificados CA de confianza para validar los certificados SSL del servidor</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Utilice autoridades de certificación de confianza personalizadas</string>
@@ -155,12 +166,37 @@
 
     
 
-    <string name="preference_page_gallery">Galería</string>
+    <string name="preference_page_gallery">Álbumes</string>
+    <string name="preference_page_slideshow">Diapositivas</string>
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">Progresión automática de la presentación de diapositivas</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Después del tiempo establecido, se mostrará la siguiente imagen o video.</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Retraso de imagen de conducción automática</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s milisegundos</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Retraso de vídeo de conducción automática</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s milisegundos</string>
+    
+
     <string name="preference_gallery_category_general">General</string>
-    <string name="preference_gallery_category_advanced">Avanzado</string>
+    
+    <string name="preference_gallery_category_server_calls">Detalles de la llamada del servidor Piwigo</string>
     <string name="preference_gallery_category_slideshow">Diapositivas</string>
-    <string name="preference_gallery_category_resources">Recursos</string>
-    <string name="preference_gallery_category_albums">Álbumes</string>
+
+    
+    
+
+    
+    
+
+
+    
+    <string name="preference_gallery_category_resources">Recursos para niños</string>
+    
+    <string name="preference_gallery_category_albums">Álbumes infantiles</string>
 
     
 
@@ -248,7 +284,7 @@
 
     
     <string name="preference_fix_privacy_plugin_media_uris_title">Arregle Media Uris roto al usar el complemento de privacidad</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">%1$s. Habilítelo solo si obtiene un error 4xx para los recursos multimedia.</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">Habilítelo solo si obtiene un error 4xx para los recursos multimedia.</string>
     
 
 
@@ -418,6 +454,8 @@
 
     
     <string name="preference_page_app">Aplicación</string>
+    
+    <string name="preference_app_resource_caching_title">almacenamiento en caché de recursos</string>
 
     
 
