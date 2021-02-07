@@ -108,7 +108,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             addNonCategoryItem(item);
         } catch(RuntimeException e) {
             // the purpose of this is to ensure we can debug any issue.
-            Logging.log(Log.ERROR, TAG, "Current State : Albums %1$d, Spacers %2$d, Banners %3$d, TotalItems %4$d, itemToAdd : %5$s", childAlbumCount, spacerAlbums, bannerCount, super.getItemCount(), item);
+            Logging.log(Log.ERROR, TAG, toString()+" - itemToAdd : " + item);
             Logging.recordException(e);
             throw e;
         }
@@ -207,14 +207,19 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
 
     @Override
     public T getItemByIdx(int idx) {
-        if(hideAlbums) {
-            if(idx == 0) {
-                super.getItemByIdx(0);
-            } else {
-                return super.getItemByIdx(idx + spacerAlbums + childAlbumCount);
+        try {
+            if (hideAlbums) {
+                if (idx == 0) {
+                    super.getItemByIdx(0);
+                } else {
+                    return super.getItemByIdx(idx + spacerAlbums + childAlbumCount);
+                }
             }
+            return super.getItemByIdx(idx);
+        } catch(IndexOutOfBoundsException e) {
+            Logging.log(Log.ERROR, TAG, toString()+" - idx requested : "+ idx);
+            throw e;
         }
-        return super.getItemByIdx(idx);
     }
 
     @Override

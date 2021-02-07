@@ -1,13 +1,10 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.preference.Preference;
 
-import delit.libs.ui.view.preference.NumberPickerPreference;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.common.FragmentUIHelper;

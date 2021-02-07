@@ -54,7 +54,7 @@ public class AESObfuscator implements Obfuscator {
 
     private static final SecureRandom random = new SecureRandom();
     private final SecretKeySpec secret;
-    private boolean recordErrors;
+    private final boolean recordErrors;
 
     /**
      * @param salt an array of random bytes to use for each (un)obfuscation
@@ -126,10 +126,7 @@ Logging.recordException(e);
             }
             byte[] finalOutput = mergeArrays(iv, encrypted);
             return Base64.encode(finalOutput);
-        } catch (GeneralSecurityException e) {
-            Logging.recordException(e);
-            throw new RuntimeException("Invalid environment", e);
-        } catch (UnsupportedEncodingException e) {
+        } catch (GeneralSecurityException | UnsupportedEncodingException e) {
             Logging.recordException(e);
             throw new RuntimeException("Invalid environment", e);
         }
@@ -199,52 +196,12 @@ Logging.recordException(e);
             }
 
             return Arrays.copyOfRange(decrypted, totalHeaderLen, decrypted.length);
-        } catch (Base64DecoderException e) {
+        } catch (Base64DecoderException | IllegalBlockSizeException | IllegalArgumentException | BadPaddingException | ArrayIndexOutOfBoundsException e) {
             if (recordErrors) {
                 Logging.recordException(e);
             }
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
-        } catch (IllegalBlockSizeException e) {
-            if (recordErrors) {
-                Logging.recordException(e);
-            }
-            throw new ValidationException(e.getMessage() + ":" + obfuscated);
-        } catch(ArrayIndexOutOfBoundsException e) {
-            if (recordErrors) {
-                Logging.recordException(e);
-            }
-            throw new ValidationException(e.getMessage() + ":" + obfuscated);
-        } catch(IllegalArgumentException e) {
-            if (recordErrors) {
-                Logging.recordException(e);
-            }
-            throw new ValidationException(e.getMessage() + ":" + obfuscated);
-        } catch(BadPaddingException e) {
-            if (recordErrors) {
-                Logging.recordException(e);
-            }
-            throw new ValidationException(e.getMessage() + ":" + obfuscated);
-        } catch (NoSuchPaddingException e) {
-            if (recordErrors) {
-                Logging.recordException(e);
-            }
-            throw new RuntimeException("Invalid environment", e);
-        } catch (InvalidKeyException e) {
-            if (recordErrors) {
-                Logging.recordException(e);
-            }
-            throw new RuntimeException("Invalid environment", e);
-        } catch (NoSuchAlgorithmException e) {
-            if (recordErrors) {
-                Logging.recordException(e);
-            }
-            throw new RuntimeException("Invalid environment", e);
-        } catch (InvalidAlgorithmParameterException e) {
-            if (recordErrors) {
-                Logging.recordException(e);
-            }
-            throw new RuntimeException("Invalid environment", e);
-        } catch (UnsupportedEncodingException e) {
+        } catch (NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | UnsupportedEncodingException e) {
             if (recordErrors) {
                 Logging.recordException(e);
             }

@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,10 +18,7 @@ import com.google.firebase.installations.FirebaseInstallations;
 
 import org.greenrobot.eventbus.EventBus;
 
-import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;

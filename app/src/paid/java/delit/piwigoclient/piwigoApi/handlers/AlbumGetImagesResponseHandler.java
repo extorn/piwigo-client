@@ -4,8 +4,6 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
-import java.util.Set;
-
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;

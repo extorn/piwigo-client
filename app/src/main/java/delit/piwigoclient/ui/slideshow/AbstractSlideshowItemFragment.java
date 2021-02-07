@@ -101,9 +101,9 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     private static final String TAG = "SlideshowItemFragment";
 
     private static final String ARG_GALLERY_TYPE = "containerModelType";
-    private static final String ARG_GALLERY_ID = "containerId";
-    private static final String ARG_GALLERY_ITEM_ID = "itemId";
-    private static final String SLIDESHOW_PAGE_IDX = "slideshowPageIdx";
+    private static final String ARG_AND_STATE_CONTAINER_ID = "containerId";
+    private static final String ARG_AND_STATE_RESOURCE_ID = "itemId";
+    private static final String ARG_AND_STATE_SLIDESHOW_PAGE_IDX = "slideshowPageIdx";
     private static final String ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT = "albumLoadedResourceItemCount";
     private static final String ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT = "albumTotalResourceItemCount";
     private static final String STATE_UPDATED_LINKED_ALBUM_SET = "updatedLinkedAlbumSet";
@@ -153,9 +153,9 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     public static <S extends ResourceItem> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, long albumId, long itemId, int slideshowPageIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
         AbstractSlideshowFragment.storeGalleryModelClassToBundle(b, modelType);
-        b.putLong(ARG_GALLERY_ID, albumId);
-        b.putLong(ARG_GALLERY_ITEM_ID, itemId);
-        b.putInt(SLIDESHOW_PAGE_IDX, slideshowPageIdx);
+        b.putLong(ARG_AND_STATE_CONTAINER_ID, albumId);
+        b.putLong(ARG_AND_STATE_RESOURCE_ID, itemId);
+        b.putInt(ARG_AND_STATE_SLIDESHOW_PAGE_IDX, slideshowPageIdx);
         b.putInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumResourceItemCount);
         b.putLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, totalResourceItemCount);
         return b;
@@ -172,7 +172,9 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         outState.putBoolean(STATE_IS_ALLOW_DOWNLOAD, isAllowDownload());
         BundleUtils.putSet(outState, STATE_UPDATED_LINKED_ALBUM_SET, updatedLinkedAlbumSet);
         BundleUtils.putLongHashSet(outState, STATE_ALBUMS_REQUIRING_UPDATE, albumsRequiringReload);
-        outState.putInt(SLIDESHOW_PAGE_IDX, slideshowPageIdx);
+        outState.putLong(ARG_AND_STATE_CONTAINER_ID, model.getParentId());
+        outState.putLong(ARG_AND_STATE_RESOURCE_ID, model.getId());
+        outState.putInt(ARG_AND_STATE_SLIDESHOW_PAGE_IDX, slideshowPageIdx);
         outState.putInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
         outState.putLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, albumTotalItemCount);
         outState.putBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM, isPrimarySlideshowItem);
@@ -205,7 +207,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Bundle args = getArguments();
         if (args != null) {
-            long galleryItemId = args.getLong(ARG_GALLERY_ITEM_ID);
+            long galleryItemId = args.getLong(ARG_AND_STATE_RESOURCE_ID);
             if (model == null || (model.getId() != galleryItemId)) {
                 intialiseFields(); // if we are opening this page for the first time with new data, wipe any old values.
                 loadArgsFromBundle(args);
@@ -253,7 +255,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             return;
         }
         Class<? extends ViewModelContainer> galleryModelClass = AbstractSlideshowFragment.loadGalleryModelClassFromBundle(b);
-        long galleryModelId = b.getLong(ARG_GALLERY_ID);
+        long galleryModelId = b.getLong(ARG_AND_STATE_CONTAINER_ID);
         ResourceContainer<?, T> modelStore = null;
         if (galleryModelClass != null) {
             ViewModelContainer viewModelContainer = new ViewModelProvider(requireActivity()).get("" + galleryModelId, galleryModelClass);
@@ -268,7 +270,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             Logging.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow model is null - %1$s(%2$d)", modelClassname, galleryModelId));
             throw new ModelUnavailableException();
         }
-        long galleryItemId = b.getLong(ARG_GALLERY_ITEM_ID);
+        long galleryItemId = b.getLong(ARG_AND_STATE_RESOURCE_ID);
         try {
             model = modelStore.getItemById(galleryItemId);
         } catch (ClassCastException e) {
@@ -301,7 +303,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             ModelUnavailableException er = new ModelUnavailableException(errMsg, e);
             Logging.recordException(er);
         }
-        slideshowPageIdx = b.getInt(SLIDESHOW_PAGE_IDX);
+        slideshowPageIdx = b.getInt(ARG_AND_STATE_SLIDESHOW_PAGE_IDX);
         albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
         albumTotalItemCount = b.getLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
         loadExtraArgsFromBundle(b);
@@ -314,16 +316,14 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         if (b == null) {
             return;
         }
+        loadArgsFromBundle(b); // we save the sate args to this bundle.
+
         editingItemDetails = b.getBoolean(STATE_EDITING_ITEM_DETAILS);
         informationShowing = b.getBoolean(STATE_INFORMATION_SHOWING);
         allowDownload = b.getBoolean(STATE_IS_ALLOW_DOWNLOAD);
         updatedLinkedAlbumSet = BundleUtils.getHashSet(b, STATE_UPDATED_LINKED_ALBUM_SET);
         albumsRequiringReload = BundleUtils.getLongHashSet(b, STATE_ALBUMS_REQUIRING_UPDATE);
         isPrimarySlideshowItem = b.getBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM);
-
-        slideshowPageIdx = b.getInt(SLIDESHOW_PAGE_IDX);
-        albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
-        albumTotalItemCount = b.getLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
     }
 
     @Override

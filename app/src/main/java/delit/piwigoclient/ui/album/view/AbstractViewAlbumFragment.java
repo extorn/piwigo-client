@@ -1376,6 +1376,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             }
             galleryModel.clear();
             galleryListViewScrollListener.resetState();
+            cellSpanLookup.replaceGalleryModel(galleryModel);
             galleryListView.swapAdapter(viewAdapter, true);
 //            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
 
@@ -3323,7 +3324,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             int itemType = -1;
             try {
                 itemType = galleryModel.getItemByIdx(position).getType();
-            } catch(ArrayIndexOutOfBoundsException e) {
+            } catch(IndexOutOfBoundsException e) {
                 Logging.log(Log.WARN, TAG, "SpanSizeLookup gallery out of sync with the gallery being shown");
                 Logging.recordException(e);
             }

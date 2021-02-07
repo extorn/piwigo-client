@@ -114,12 +114,10 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
 
     @Override
     public void onResume() {
-        boolean showOutOfDateWarn = false;
         if (resourceContainer == null) {
             loadModelFromArguments();
         } else {
             if(galleryItemAdapter.isOutOfDate()) {
-                showOutOfDateWarn = true;
                 try {
                     galleryItemAdapter.getItemByPagerPosition(viewPager.getCurrentItem());
                 } catch(IndexOutOfBoundsException e) {

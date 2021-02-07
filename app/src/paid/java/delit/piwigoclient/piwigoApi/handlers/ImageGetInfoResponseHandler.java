@@ -8,7 +8,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;

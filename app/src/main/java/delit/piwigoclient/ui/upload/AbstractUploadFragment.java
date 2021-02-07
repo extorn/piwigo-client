@@ -233,7 +233,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     public void withFilesUnacceptableForUploadRejected(Set<String> unacceptableFileExts) {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_error, getString(R.string.alert_upload_job_contains_files_server_will_not_accept_pattern, unacceptableFileExts.size()), R.string.button_cancel, R.string.button_yes, new UnacceptableFilesAction<>(getUiHelper(), unacceptableFileExts));
+        DisplayUtils.runOnUiThread(()-> getUiHelper().showOrQueueDialogQuestion(R.string.alert_error, getString(R.string.alert_upload_job_contains_files_server_will_not_accept_pattern, unacceptableFileExts.size()), R.string.button_cancel, R.string.button_yes, new UnacceptableFilesAction<>(getUiHelper(), unacceptableFileExts)));
     }
 
     private void addUploadingAsFieldsIfAppropriate(View v) {
