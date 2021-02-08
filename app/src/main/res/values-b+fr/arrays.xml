@@ -148,7 +148,10 @@
         
         <item>1.4.0.113</item>
         <item>"Correction d\'un bug:
-                 - Finalement! déterminé pourquoi l\'application plantait sur le diaporama pour certains utilisateurs"</item>
+                 - Finalement! déterminé pourquoi l\'application plantait sur le diaporama pour certains utilisateurs
+                 - modification de la disposition des boîtes de dialogue
+                Changement:
+                 - Boîte de dialogue affichant toutes les notes de publication depuis la dernière mise à jour après une mise à jour"</item>
         <item>1.4.0.112</item>
         <item>"Changement:
                  - Ranger les pages de préférences de l\'application"</item>

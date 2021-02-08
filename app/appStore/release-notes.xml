@@ -1,40 +1,70 @@
 <en-GB>
 Bugfix:
 - Finally! worked out why the app was crashing on the slideshow for some users
+- tweaked some dialog layout
+Change:
+- Dialog showing all release notes since you last updated after an update
 </en-GB>
 <cs-CZ>
 Oprava chyby:
 - Konečně! vyřešeno, proč aplikace pro některé uživatele havarovala v prezentaci
+- vylepšil nějaké rozvržení dialogu
+Změna:
+- Dialog zobrazující všechny poznámky k verzi od poslední aktualizace po aktualizaci
 </cs-CZ>
 <de-DE>
 Bug-Fix:
 - Schließlich! hat herausgefunden, warum die App in der Diashow für einige Benutzer abstürzte
+- Einige Dialoglayouts wurden optimiert
+Veränderung:
+- Dialogfeld mit allen Versionshinweisen seit Ihrer letzten Aktualisierung nach einem Update
 </de-DE>
 <es-ES>
 Arreglo del fallo:
 - ¡Finalmente! descubrió por qué la aplicación fallaba en la presentación de diapositivas para algunos usuarios
+- modificó un diseño de diálogo
+Cambio:
+- Cuadro de diálogo que muestra todas las notas de la versión desde la última vez que se actualizó después de una actualización
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
 - Finalement! déterminé pourquoi l\'application plantait sur le diaporama pour certains utilisateurs
+- modification de la disposition des boîtes de dialogue
+Changement:
+- Boîte de dialogue affichant toutes les notes de publication depuis la dernière mise à jour après une mise à jour
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Infine! ha scoperto il motivo per cui l\'app si bloccava nella presentazione per alcuni utenti
+- Infine! ha risolto il motivo per cui l\'app si bloccava nella presentazione per alcuni utenti
+- ottimizzato alcuni layout di dialogo
+Modificare:
+- Finestra di dialogo che mostra tutte le note di rilascio dall\'ultimo aggiornamento dopo un aggiornamento
 </it-IT>
 <ja-JP>
 バグ修正：
 - 最終的に！ 一部のユーザーのスライドショーでアプリがクラッシュする理由を解明しました
+-いくつかのダイアログレイアウトを微調整しました
+変化する：
+-更新後に最後に更新してからのすべてのリリースノートを表示するダイアログ
 </ja-JP>
 <nl-NL>
 Bugfix:
 - Tenslotte! uitgewerkt waarom de app crashte in de diavoorstelling voor sommige gebruikers
+- enkele dialooglay-out aangepast
+Verandering:
+- Dialoog met alle release-opmerkingen sinds de laatste update na een update
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
 - В заключение! выяснили, почему приложение вылетало на слайд-шоу для некоторых пользователей
+- изменен макет диалогового окна
+Изменить:
+- Диалог, показывающий все примечания к выпуску с момента последнего обновления после обновления
 </ru-RU>
 <zh-CN>
 错误修正：
 -最后！ 找出为什么该应用程序在某些用户的幻灯片上崩溃的原因
+-调整了一些对话框的布局
+更改：
+-显示自上次更新后更新以来的所有发行说明的对话框
 </zh-CN>

@@ -148,7 +148,10 @@
         
         <item>1.4.0.113</item>
         <item>"Risoluzione del problema:
-                 - Infine! ha scoperto il motivo per cui l\'app si bloccava nella presentazione per alcuni utenti"</item>
+                 - Infine! ha risolto il motivo per cui l\'app si bloccava nella presentazione per alcuni utenti
+                 - ottimizzato alcuni layout di dialogo
+                Modificare:
+                 - Finestra di dialogo che mostra tutte le note di rilascio dall\'ultimo aggiornamento dopo un aggiornamento"</item>
         <item>1.4.0.112</item>
         <item>"Modificare:
                  - Riordina le pagine delle preferenze dell\'app"</item>

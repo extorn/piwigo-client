@@ -8,7 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 
 /**
@@ -51,7 +51,7 @@ public class MainActivity<A extends MainActivity<A, AUIH>, AUIH extends Activity
     protected void onNavigationItemSelected(NavigationItemSelectEvent event, int itemId) {
         int id = event.navigationitemSelected;
         if (id == R.id.nav_buy_time) {
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.watch_advert_to_buy_advert_free_time), R.string.button_no, R.string.button_yes, new BuyAdvertFreeTimeQuestionListener(getUiHelper()));
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.watch_advert_to_buy_advert_free_time), R.string.button_no, R.string.button_yes, new BuyAdvertFreeTimeQuestionListener<>(getUiHelper()));
         }
     }
 
@@ -64,7 +64,7 @@ public class MainActivity<A extends MainActivity<A, AUIH>, AUIH extends Activity
         }
     }
 
-    private static class BuyAdvertFreeTimeQuestionListener<A extends MainActivity<A, AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends UIHelper.QuestionResultAdapter<AUIH,A> implements Parcelable {
+    private static class BuyAdvertFreeTimeQuestionListener<A extends MainActivity<A, AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends QuestionResultAdapter<AUIH,A> implements Parcelable {
 
         public BuyAdvertFreeTimeQuestionListener(AUIH uiHelper) {
             super(uiHelper);
@@ -84,14 +84,14 @@ public class MainActivity<A extends MainActivity<A, AUIH>, AUIH extends Activity
             return 0;
         }
 
-        public static final Creator<BuyAdvertFreeTimeQuestionListener> CREATOR = new Creator<BuyAdvertFreeTimeQuestionListener>() {
+        public static final Creator<BuyAdvertFreeTimeQuestionListener<?,?>> CREATOR = new Creator<BuyAdvertFreeTimeQuestionListener<?,?>>() {
             @Override
-            public BuyAdvertFreeTimeQuestionListener createFromParcel(Parcel in) {
-                return new BuyAdvertFreeTimeQuestionListener(in);
+            public BuyAdvertFreeTimeQuestionListener<?,?> createFromParcel(Parcel in) {
+                return new BuyAdvertFreeTimeQuestionListener<>(in);
             }
 
             @Override
-            public BuyAdvertFreeTimeQuestionListener[] newArray(int size) {
+            public BuyAdvertFreeTimeQuestionListener<?,?>[] newArray(int size) {
                 return new BuyAdvertFreeTimeQuestionListener[size];
             }
         };

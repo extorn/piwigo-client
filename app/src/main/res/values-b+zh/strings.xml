@@ -696,4 +696,5 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="localizedEmailHelp">此电子邮件模板是为了您的方便。\n如果您认为提供以下任何详细信息无关紧要，请删除它们。\n\nUUID使我可以过滤所有记录的数据，以仅显示与您相关的数据。 仅当我正在努力修复您遇到的错误时才需要这样做。</string>
     <string name="try_enabling_privacy_plugin_media_uris">在服务器上找不到资源。 您想启用隐私插件多媒体uri修复程序吗？</string>
     <string name="multimedia_playback_currently_disabled">多媒体播放已禁用。 您可能选择了此选项来保存数据。 启用按需播放，或在应用程序首选项中以幻灯片模式播放。</string>
+    <string name="release_changes">自上一个版本以来的变化</string>
 </resources>

@@ -243,6 +243,8 @@
     
 
     
+
+    
     <string name="preference_check_for_server_updates_title">Уведомление об обновлениях</string>
     <string name="preference_check_for_server_updates_summary">Получать уведомление, если для вашего сервера доступны обновления</string>
 

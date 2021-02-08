@@ -243,6 +243,8 @@
     
 
     
+
+    
     <string name="preference_check_for_server_updates_title">更新の通知</string>
     <string name="preference_check_for_server_updates_summary">サーバーで利用可能な更新がある場合は通知を受け取ります</string>
 

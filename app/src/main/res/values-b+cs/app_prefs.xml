@@ -243,6 +243,8 @@
     
 
     
+
+    
     <string name="preference_check_for_server_updates_title">Oznámení o aktualizacích</string>
     <string name="preference_check_for_server_updates_summary">Pokud jsou pro váš server k dispozici aktualizace, obdržíte oznámení</string>
 

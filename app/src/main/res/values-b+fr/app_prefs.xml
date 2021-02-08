@@ -243,6 +243,8 @@
     
 
     
+
+    
     <string name="preference_check_for_server_updates_title">Notification des mises à jour</string>
     <string name="preference_check_for_server_updates_summary">Recevez une notification si des mises à jour sont disponibles pour votre serveur</string>
 

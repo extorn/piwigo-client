@@ -148,7 +148,10 @@
         
         <item>1.4.0.113</item>
         <item>"Oprava chyby:
-                 - Konečně! vyřešeno, proč aplikace pro některé uživatele havarovala v prezentaci"</item>
+                 - Konečně! vyřešeno, proč aplikace pro některé uživatele havarovala v prezentaci
+                 - vylepšil nějaké rozvržení dialogu
+                Změna:
+                 - Dialog zobrazující všechny poznámky k verzi od poslední aktualizace po aktualizaci"</item>
         <item>1.4.0.112</item>
         <item>"Změna:
                  - Uklidněte stránky předvoleb aplikace"</item>

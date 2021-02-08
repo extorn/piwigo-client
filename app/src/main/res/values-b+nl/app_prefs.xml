@@ -243,6 +243,8 @@
     
 
     
+
+    
     <string name="preference_check_for_server_updates_title">Kennisgeving van updates</string>
     <string name="preference_check_for_server_updates_summary">Ontvang een melding als er updates beschikbaar zijn voor uw server</string>
 

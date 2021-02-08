@@ -696,4 +696,5 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="localizedEmailHelp">Esta plantilla de correo electrónico es para su conveniencia.\nSi cree que no es relevante proporcionar alguno de los siguientes detalles, elimínelos.\n\nEl UUID me permite filtrar todos los datos registrados para mostrar solo aquellos que son relevantes para usted. Esto solo será necesario si estoy luchando por solucionar un error que está experimentando.</string>
     <string name="try_enabling_privacy_plugin_media_uris">No se pudo encontrar el recurso en el servidor. ¿Le gustaría habilitar la corrección uri multimedia del complemento de privacidad?</string>
     <string name="multimedia_playback_currently_disabled">La reproducción multimedia está desactivada. Probablemente eligió esto para guardar datos. Habilite la reproducción a pedido o la reproducción en modo de presentación de diapositivas en las preferencias de la aplicación.</string>
+    <string name="release_changes">Cambios desde su última versión</string>
 </resources>

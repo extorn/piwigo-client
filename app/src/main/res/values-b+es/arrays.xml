@@ -148,7 +148,10 @@
         
         <item>1.4.0.113</item>
         <item>"Arreglo del fallo:
-                 - ¡Finalmente! descubrió por qué la aplicación fallaba en la presentación de diapositivas para algunos usuarios"</item>
+                 - ¡Finalmente! descubrió por qué la aplicación fallaba en la presentación de diapositivas para algunos usuarios
+                 - modificó un diseño de diálogo
+                Cambio:
+                 - Cuadro de diálogo que muestra todas las notas de la versión desde la última vez que se actualizó después de una actualización"</item>
         <item>1.4.0.112</item>
         <item>"Cambio:
                  - Ordena las páginas de preferencias de la aplicación"</item>
