@@ -149,6 +149,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     private ViewVisibleControl overlaysVisibilityControl;
     private TextView resourceTitleView;
     private TextView resourceDescTitleView;
+    private Class<? extends ViewModelContainer> modelStoreType;
 
     public static <S extends ResourceItem> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, long albumId, long itemId, int slideshowPageIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
@@ -172,6 +173,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         outState.putBoolean(STATE_IS_ALLOW_DOWNLOAD, isAllowDownload());
         BundleUtils.putSet(outState, STATE_UPDATED_LINKED_ALBUM_SET, updatedLinkedAlbumSet);
         BundleUtils.putLongHashSet(outState, STATE_ALBUMS_REQUIRING_UPDATE, albumsRequiringReload);
+        AbstractSlideshowFragment.storeGalleryModelClassToBundle(outState, modelStoreType);
         outState.putLong(ARG_AND_STATE_CONTAINER_ID, model.getParentId());
         outState.putLong(ARG_AND_STATE_RESOURCE_ID, model.getId());
         outState.putInt(ARG_AND_STATE_SLIDESHOW_PAGE_IDX, slideshowPageIdx);
@@ -258,6 +260,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         long galleryModelId = b.getLong(ARG_AND_STATE_CONTAINER_ID);
         ResourceContainer<?, T> modelStore = null;
         if (galleryModelClass != null) {
+            modelStoreType = galleryModelClass;
             ViewModelContainer viewModelContainer = new ViewModelProvider(requireActivity()).get("" + galleryModelId, galleryModelClass);
             modelStore = ((ResourceContainer<?, T>) viewModelContainer.getModel());
         }

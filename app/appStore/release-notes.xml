@@ -1,40 +1,40 @@
 <en-GB>
-Change:
-- Tidy up the app preferences pages
+Bugfix:
+- Finally! worked out why the app was crashing on the slideshow for some users
 </en-GB>
 <cs-CZ>
-Změna:
-- Uklidněte stránky předvoleb aplikace
+Oprava chyby:
+- Konečně! vyřešeno, proč aplikace pro některé uživatele havarovala v prezentaci
 </cs-CZ>
 <de-DE>
-Veränderung:
-- Räumen Sie die Seiten mit den App-Einstellungen auf
+Bug-Fix:
+- Schließlich! hat herausgefunden, warum die App in der Diashow für einige Benutzer abstürzte
 </de-DE>
 <es-ES>
-Cambio:
-- Ordena las páginas de preferencias de la aplicación
+Arreglo del fallo:
+- ¡Finalmente! descubrió por qué la aplicación fallaba en la presentación de diapositivas para algunos usuarios
 </es-ES>
 <fr-FR>
-Changement:
-- Ranger les pages de préférences de l\'application
+Correction d\'un bug:
+- Finalement! déterminé pourquoi l\'application plantait sur le diaporama pour certains utilisateurs
 </fr-FR>
 <it-IT>
-Modificare:
-- Riordina le pagine delle preferenze dell\'app
+Risoluzione del problema:
+- Infine! ha scoperto il motivo per cui l\'app si bloccava nella presentazione per alcuni utenti
 </it-IT>
 <ja-JP>
-変化する：
--アプリの設定ページを整理します
+バグ修正：
+- 最終的に！ 一部のユーザーのスライドショーでアプリがクラッシュする理由を解明しました
 </ja-JP>
 <nl-NL>
-Verandering:
-- Ruim de pagina\'s met app-voorkeuren op
+Bugfix:
+- Tenslotte! uitgewerkt waarom de app crashte in de diavoorstelling voor sommige gebruikers
 </nl-NL>
 <ru-RU>
-Изменить:
-- Приведите в порядок страницы настроек приложения.
+Исправлена ошибка:
+- В заключение! выяснили, почему приложение вылетало на слайд-шоу для некоторых пользователей
 </ru-RU>
 <zh-CN>
-更改：
--整理应用程序首选项页面
+错误修正：
+-最后！ 找出为什么该应用程序在某些用户的幻灯片上崩溃的原因
 </zh-CN>

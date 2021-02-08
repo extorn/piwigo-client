@@ -146,6 +146,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.113</item>
+        <item>"Arreglo del fallo:
+                 - ¡Finalmente! descubrió por qué la aplicación fallaba en la presentación de diapositivas para algunos usuarios"</item>
         <item>1.4.0.112</item>
         <item>"Cambio:
                  - Ordena las páginas de preferencias de la aplicación"</item>

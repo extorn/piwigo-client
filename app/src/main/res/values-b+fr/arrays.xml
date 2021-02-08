@@ -146,6 +146,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.113</item>
+        <item>"Correction d\'un bug:
+                 - Finalement! déterminé pourquoi l\'application plantait sur le diaporama pour certains utilisateurs"</item>
         <item>1.4.0.112</item>
         <item>"Changement:
                  - Ranger les pages de préférences de l\'application"</item>

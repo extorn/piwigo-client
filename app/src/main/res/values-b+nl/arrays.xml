@@ -146,6 +146,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.113</item>
+        <item>"Bugfix:
+                 - Tenslotte! uitgewerkt waarom de app crashte in de diavoorstelling voor sommige gebruikers"</item>
         <item>1.4.0.112</item>
         <item>"Verandering:
                  - Ruim de pagina\'s met app-voorkeuren op"</item>

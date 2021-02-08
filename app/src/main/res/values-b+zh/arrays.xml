@@ -146,6 +146,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.113</item>
+        <item>"错误修正：
+                 -最后！ 找出为什么该应用程序在某些用户的幻灯片上崩溃的原因"</item>
         <item>1.4.0.112</item>
         <item>"更改：
                  -整理应用程序首选项页面"</item>

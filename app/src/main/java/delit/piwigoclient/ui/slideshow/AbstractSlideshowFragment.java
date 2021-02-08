@@ -66,12 +66,13 @@ import static android.view.View.VISIBLE;
 public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> extends MyFragment<F,FUIH> {
 
     private static final String TAG = "AbsSlideshowFragment";
-    private static final String ARG_GALLERY_TYPE = "containerModelType";
+    private static final String STATE_ARG_GALLERY_TYPE = "containerModelType";
     private static final String ARG_GALLERY_ID = "containerId";
     private static final String ARG_GALLERY_ITEM_DISPLAYED = "indexOfItemInContainerToDisplay";
     private CustomViewPager viewPager;
     private ResourceContainer<T, GalleryItem> resourceContainer;
     private View progressIndicator;
+    private Class<? extends ViewModelContainer> modelType;
     private GalleryItemAdapter<T, CustomViewPager, ?,?> galleryItemAdapter;
     private AdView adView;
 
@@ -90,6 +91,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         if (BuildConfig.DEBUG) {
             BundleUtils.logSize("SlideshowFragment", outState);
         }
+        storeGalleryModelClassToBundle(outState, modelType);
     }
 
 //    @Override
@@ -156,13 +158,12 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     }
 
     protected static void storeGalleryModelClassToBundle(Bundle b, Class<? extends ViewModelContainer> modelClassname) {
-        //b.putSerializable(ARG_GALLERY_TYPE, modelType);
-        b.putString(ARG_GALLERY_TYPE, modelClassname.getName());
+        b.putString(STATE_ARG_GALLERY_TYPE, modelClassname.getName());
         Logging.log(Log.DEBUG, TAG, "Stored MVC type "+ modelClassname);
     }
 
     protected static Class<? extends ViewModelContainer> loadGalleryModelClassFromBundle(Bundle b) {
-        String modelClassname =  b.getString(ARG_GALLERY_TYPE);
+        String modelClassname =  b.getString(STATE_ARG_GALLERY_TYPE);
         if(modelClassname == null) {
             Logging.log(Log.ERROR, TAG, "Failed to load MVC type. Bundle does not contain required key");
             return null;
@@ -188,7 +189,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         if(galleryModelClass == null) {
             throw new IllegalStateException("gallery model type not available");
         }
-
+        modelType = galleryModelClass;
         ViewModelContainer viewModelContainer = new ViewModelProvider(requireActivity()).get("" + galleryModelId, galleryModelClass);
         resourceContainer = viewModelContainer.getModel();
     }
@@ -241,6 +242,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         int rawCurrentGalleryItemPosition = arguments.getInt(ARG_GALLERY_ITEM_DISPLAYED);
 
         if (galleryItemAdapter == null) {
+            modelType = galleryModelClass;
             galleryItemAdapter = new GalleryItemAdapter<>(galleryModelClass, resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
             galleryItemAdapter.setMaxFragmentsToSaveInState(5); //TODO increase to 15 again once keep PiwigoAlbum model separate to the fragments.
         } else {
