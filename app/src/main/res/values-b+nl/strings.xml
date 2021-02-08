@@ -696,5 +696,5 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="localizedEmailHelp">Dit e-mailsjabloon is bedoeld voor uw gemak.\nAls u denkt dat het niet relevant is om een van de volgende gegevens te verstrekken, verwijder deze dan.\n\nMet de UUID kan ik alle gelogde gegevens filteren om alleen die gegevens te tonen die voor jou relevant zijn. Dit is alleen nodig als ik moeite heb om een bug op te lossen die u ondervindt.</string>
     <string name="try_enabling_privacy_plugin_media_uris">De bron is niet gevonden op de server. Wilt u de privacy-plug-in multimedia uri fix inschakelen?</string>
     <string name="multimedia_playback_currently_disabled">Multimedia afspelen is uitgeschakeld. U heeft dit waarschijnlijk gekozen om gegevens op te slaan. Schakel afspelen op aanvraag in of afspelen in diavoorstellingsmodus in de app-voorkeuren.</string>
-    <string name="release_changes">Veranderingen sinds uw laatste versie</string>
+    <string name="release_changes">Recente veranderingen</string>
 </resources>

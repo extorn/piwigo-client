@@ -696,5 +696,5 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="localizedEmailHelp">Questo modello di email è per tua comodità.\nSe ritieni che non sia rilevante fornire uno dei seguenti dettagli, eliminali.\n\nL\'UUID mi consente di filtrare tutti i dati registrati per mostrare solo quelli rilevanti per te. Questo sarà necessario solo se sto lottando per correggere un bug che stai riscontrando.</string>
     <string name="try_enabling_privacy_plugin_media_uris">La risorsa non è stata trovata sul server. Vorresti abilitare il plug-in per la privacy multimedia uri fix?</string>
     <string name="multimedia_playback_currently_disabled">La riproduzione multimediale è disabilitata. Probabilmente hai scelto questo per salvare i dati. Abilita la riproduzione su richiesta o la riproduzione in modalità presentazione nelle preferenze dell\'app.</string>
-    <string name="release_changes">Modifiche dall\'ultima versione</string>
+    <string name="release_changes">Cambiamenti recenti</string>
 </resources>

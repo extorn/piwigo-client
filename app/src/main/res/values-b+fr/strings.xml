@@ -696,5 +696,5 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="localizedEmailHelp">Ce modèle d\'e-mail est pour votre commodité.\nSi vous pensez qu\'il n\'est pas pertinent de fournir l\'un des détails suivants, veuillez les supprimer.\n\nL\'UUID me permet de filtrer toutes les données enregistrées pour n\'afficher que celles qui vous concernent. Cela ne sera nécessaire que si j\'ai du mal à résoudre un bogue que vous rencontrez.</string>
     <string name="try_enabling_privacy_plugin_media_uris">La ressource est introuvable sur le serveur. Souhaitez-vous activer le correctif de l\'URI multimédia du plugin de confidentialité?</string>
     <string name="multimedia_playback_currently_disabled">La lecture multimédia est désactivée. Vous avez probablement choisi cette option pour enregistrer les données. Activez la lecture à la demande ou la lecture en mode diaporama dans les préférences de l\'application.</string>
-    <string name="release_changes">Changements depuis votre dernière version</string>
+    <string name="release_changes">Changements récents</string>
 </resources>

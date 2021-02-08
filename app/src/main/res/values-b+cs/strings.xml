@@ -696,5 +696,5 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="localizedEmailHelp">Tato e-mailová šablona slouží pro vaše pohodlí.\nPokud se domníváte, že není relevantní poskytnout některou z následujících podrobností, odstraňte je.\n\nUUID mi umožňuje filtrovat všechna zaznamenaná data, abych zobrazil pouze ta, která jsou pro vás relevantní. To bude nutné pouze v případě, že se snažím opravit chybu, na kterou narazíte.</string>
     <string name="try_enabling_privacy_plugin_media_uris">Zdroj nebyl na serveru nalezen. Chcete povolit opravu multimediálního uri pluginu pro ochranu soukromí?</string>
     <string name="multimedia_playback_currently_disabled">Přehrávání multimédií je zakázáno. Pravděpodobně jste zvolili toto pro uložení dat. V předvolbách aplikace povolte přehrávání na vyžádání nebo přehrávání v režimu prezentace.</string>
-    <string name="release_changes">Změny od poslední verze</string>
+    <string name="release_changes">Nedávné změny</string>
 </resources>
