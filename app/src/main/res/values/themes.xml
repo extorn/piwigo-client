@@ -201,4 +201,37 @@
         <item name="appScrimColor">?attr/colorOnPrimary</item> <!-- goes under text -->
     </style>
 
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <!--<item name="materialAlertDialogTitlePanelStyle">@style/App.MaterialAlertDialog.MaterialComponents.Title.Panel</item>-->
+        <!-- TODO why isn't the parent ThemeOverlay.MaterialComponents.MaterialAlertDialog ???-->
+        <!-- Use the edit colors scheme (to force it on other themed pages) -->
+        <!--<item name="alertDialogStyle">@style/App.MaterialAlertDialog.MaterialComponents</item>-->
+        <!--<item name="android:theme">@style/Theme.App.EditPages</item>-->
+        <!--<item name="android:buttonBarStyle">@style/App.Widget.AppCompat.ButtonBar.AlertDialog</item>-->
+        <!--<item name="materialThemeOverlay">@style/ThemeOverlay.App.EditPages</item>-->
+    </style>
+    <style name="ThemeOverlay.App.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <!-- TODO why isn't the parentThemeOverlay.MaterialComponents.Dialog.Alert ??? -->
+        <!-- ThemeOverlay.MaterialComponents.Dialog.Alert -->
+        <!-- Use the edit colors scheme (to force it on other themed pages) -->
+        <!--<item name="android:theme">@style/ThemeOverlay.App.EditPages</item>-->
+        <!--<item name="android:theme">@style/Theme.App.EditPages</item>-->
+        <!--<item name="materialThemeOverlay">@style/ThemeOverlay.App.EditPages</item>-->
+    </style>
+    <style name="ThemeOverlay.MyTheme.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--<item name="android:windowAnimationStyle">@style/Animation.MyTheme.BottomSheet.Modal</item>-->
+        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
+        <!--<item name="bottomSheetStyle">@style/Widget.MyTheme.BottomSheet.Modal</item>-->
+        <item name="android:navigationBarColor" tools:ignore="NewApi">?attr/colorSurface</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">@android:color/transparent</item>
+    </style>
+    <style name="ThemeOverlay.MaterialComponents.Toolbar.Primary" parent="">
+        <item name="colorControlNormal">?attr/colorOnPrimary</item>
+        <item name="actionMenuTextColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="App.Theme.PreferenceThemeOverlay.v14.Material" parent="PreferenceThemeOverlay.v14.Material">
+    </style>
 </resources>
