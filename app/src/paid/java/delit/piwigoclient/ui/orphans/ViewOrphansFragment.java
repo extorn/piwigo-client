@@ -40,6 +40,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImagesListOrphansResponseHandler;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 
 /**
  * A fragment representing a list of Items.
@@ -235,7 +236,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_confirm_okay_to_create_orphans_album), View.NO_ID, R.string.button_cancel, R.string.button_ok, new CreateOrphansAlbumQuestionListener<>(getUiHelper(), orphanCount));
     }
 
-    private static class CreateOrphansAlbumQuestionListener<F extends ViewOrphansFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+    private static class CreateOrphansAlbumQuestionListener<F extends ViewOrphansFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         public static final Creator<CreateOrphansAlbumQuestionListener<?,?>> CREATOR = new Creator<CreateOrphansAlbumQuestionListener<?,?>>() {
             @Override

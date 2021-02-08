@@ -42,7 +42,7 @@ import delit.piwigoclient.piwigoApi.handlers.UserDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsersGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.UserDeletedEvent;
@@ -230,7 +230,7 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
         }
     }
 
-    private static class OnDeleteUserAction<F extends UsersListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+    private static class OnDeleteUserAction<F extends UsersListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         private final User user;
 

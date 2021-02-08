@@ -14,10 +14,10 @@ import java.util.Set;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class UnacceptableFilesAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
+public class UnacceptableFilesAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends QuestionResultAdapter<FUIH, F> implements Parcelable {
     private final Set<String> unacceptableFileExts;
 
     public UnacceptableFilesAction(FUIH uiHelper, Set<String> unacceptableFileExts) {

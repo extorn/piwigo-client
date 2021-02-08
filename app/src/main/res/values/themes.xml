@@ -85,8 +85,6 @@
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
         <item name="android:alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
         <item name="android:dialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
-        <!--
-        <item name="android:dialogTheme">@style/ThemeOverlay.App.AlertDialog</item>-->
         <item name="alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
         <item name="radioButtonStyle">@style/App.Widget.CompoundButton.RadioButton</item>
         <!-- prob do not need these ones -->
@@ -202,22 +200,11 @@
     </style>
 
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <!--<item name="materialAlertDialogTitlePanelStyle">@style/App.MaterialAlertDialog.MaterialComponents.Title.Panel</item>-->
-        <!-- TODO why isn't the parent ThemeOverlay.MaterialComponents.MaterialAlertDialog ???-->
-        <!-- Use the edit colors scheme (to force it on other themed pages) -->
-        <!--<item name="alertDialogStyle">@style/App.MaterialAlertDialog.MaterialComponents</item>-->
-        <!--<item name="android:theme">@style/Theme.App.EditPages</item>-->
-        <!--<item name="android:buttonBarStyle">@style/App.Widget.AppCompat.ButtonBar.AlertDialog</item>-->
-        <!--<item name="materialThemeOverlay">@style/ThemeOverlay.App.EditPages</item>-->
     </style>
+
     <style name="ThemeOverlay.App.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <!-- TODO why isn't the parentThemeOverlay.MaterialComponents.Dialog.Alert ??? -->
-        <!-- ThemeOverlay.MaterialComponents.Dialog.Alert -->
-        <!-- Use the edit colors scheme (to force it on other themed pages) -->
-        <!--<item name="android:theme">@style/ThemeOverlay.App.EditPages</item>-->
-        <!--<item name="android:theme">@style/Theme.App.EditPages</item>-->
-        <!--<item name="materialThemeOverlay">@style/ThemeOverlay.App.EditPages</item>-->
     </style>
+
     <style name="ThemeOverlay.MyTheme.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>

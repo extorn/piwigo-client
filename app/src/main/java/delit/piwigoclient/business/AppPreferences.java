@@ -6,12 +6,17 @@ import android.net.Uri;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.os.ConfigurationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.Map;
 
+import delit.libs.util.ArrayUtils;
 import delit.libs.util.IOUtils;
+import delit.libs.util.VersionUtils;
 import delit.piwigoclient.R;
 
 public class AppPreferences {
@@ -97,24 +102,33 @@ public class AppPreferences {
         return prefs.getBoolean(context.getString(R.string.preference_check_for_server_updates_key), context.getResources().getBoolean(R.bool.preference_check_for_server_updates_default));
     }
 
-    public static class UriPermissionUseCheckResult {
-        Uri uri;
-        String uses;
-
-        public UriPermissionUseCheckResult(@NonNull Uri uri) {
-            this.uri = uri;
-        }
-
-        public void addUse(@NonNull String use) {
-            uses = use;
-        }
-
-        public String getUses() {
-            return uses;
-        }
-
-        public boolean isUsed() {
-            return uses != null;
-        }
+    public static String getLatestReleaseNotesVersionShown(SharedPreferences prefs, Context context) {
+        return prefs.getString(context.getString(R.string.latest_release_notes_shown_key), null);
     }
+
+    public static void setLatestReleaseNotesShown(SharedPreferences prefs, Context context, String newValue) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(context.getString(R.string.latest_release_notes_shown_key), newValue);
+        editor.apply();
+    }
+
+    /**
+     *
+     * @param context
+     * @param fromVersionCodeExclusive
+     * @return Map of VersionStr : ReleaseNotesStr
+     */
+    public static Map<String, String> getAppReleaseHistory(@NonNull Context context, @Nullable String fromVersionCodeExclusive) {
+        Map<String,String> historicalReleasesData = ArrayUtils.toMap(context.getResources().getStringArray(R.array.release_history));
+        int[] fromVersion = VersionUtils.parseVersionString(fromVersionCodeExclusive);
+        for (Iterator<Map.Entry<String, String>> iterator = historicalReleasesData.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<String, String> releaseNote = iterator.next();
+            int[] thisReleaseVersion = VersionUtils.parseVersionString(releaseNote.getKey());
+            if (!VersionUtils.versionExceeds(fromVersion, thisReleaseVersion)) {
+                iterator.remove();
+            }
+        }
+        return historicalReleasesData;
+    }
+
 }

@@ -573,6 +573,16 @@ public class DisplayUtils {
         return true;
     }
 
+    public static int getIndexOfChildContainingView(@NonNull ViewGroup distantParent, @NonNull View v) {
+        View av = v;
+        int idxMyView;
+        do {
+            idxMyView = distantParent.indexOfChild((View) av);
+            av = (View)av.getParent();
+        } while(idxMyView < 0 && av != distantParent && av != null);
+        return idxMyView;
+    }
+
     private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {
 
         private View decorView;

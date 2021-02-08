@@ -50,6 +50,7 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
@@ -406,7 +407,7 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
 
     }
 
-    private static class UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter<F extends AbstractAlbumPictureItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends PictureResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+    private static class UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter<F extends AbstractAlbumPictureItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends PictureResourceItem> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         private final Set<ResourceItem> items;
         private final String selectedPiwigoFilesizeName;
@@ -453,7 +454,7 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
         }
     }
 
-    private static class MyFilesUnavailableQuestionResultAdapter<F extends AbstractAlbumPictureItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends PictureResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+    private static class MyFilesUnavailableQuestionResultAdapter<F extends AbstractAlbumPictureItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends PictureResourceItem> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
         private final Set<ResourceItem> items;
         private final String selectedPiwigoFilesizeName;
 

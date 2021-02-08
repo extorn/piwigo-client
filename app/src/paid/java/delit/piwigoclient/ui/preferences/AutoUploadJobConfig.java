@@ -108,7 +108,7 @@ public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable
         return sb.toString();
     }
 
-    public void deletePreferences(Context c) {
+    public void deletePreferences(@NonNull Context c) {
         SharedPreferences.Editor editor = getJobPreferences(c).edit();
         editor.clear();
         editor.commit();

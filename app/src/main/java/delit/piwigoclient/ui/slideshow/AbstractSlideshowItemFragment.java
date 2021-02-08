@@ -72,7 +72,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImageAlterRatingResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.dialogs.SelectAlbumDialog;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
@@ -735,7 +735,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         return tagsField;
     }
 
-    private static class UseAsAlbumThumbnailForParentAction<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>,T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+    private static class UseAsAlbumThumbnailForParentAction<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>,T extends ResourceItem> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         public UseAsAlbumThumbnailForParentAction(FUIH uiHelper) {
             super(uiHelper);
@@ -924,7 +924,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         }
     }
 
-    private static class OnDeleteItemAction<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+    private static class OnDeleteItemAction<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         public OnDeleteItemAction(FUIH uiHelper) {
             super(uiHelper);
@@ -1161,7 +1161,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         }
     }
 
-    public static class BaseDownloadQuestionResult<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+    public static class BaseDownloadQuestionResult<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         public BaseDownloadQuestionResult(FUIH uiHelper) {
             super(uiHelper);

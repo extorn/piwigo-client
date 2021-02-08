@@ -33,6 +33,7 @@ import delit.libs.ui.util.PreferenceUtils;
 import delit.libs.util.SafeRunnable;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 
 /**
  * Created by gareth on 28/10/17.
@@ -123,7 +124,7 @@ public class LicenceCheckingHelper<T extends BaseMyActivity<T,UIH>,UIH extends A
         doCheck();
     }
 
-    private static class LicenceCheckAction<T extends ActivityUIHelper<T,R>,R extends BaseMyActivity<R,T>> extends UIHelper.QuestionResultAdapter<T,R> implements Parcelable {
+    private static class LicenceCheckAction<T extends ActivityUIHelper<T,R>,R extends BaseMyActivity<R,T>> extends QuestionResultAdapter<T,R> implements Parcelable {
 
         private final boolean allowRetry;
 

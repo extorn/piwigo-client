@@ -26,6 +26,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 
 /**
  * Created by gareth on 15/10/17.
@@ -96,7 +97,7 @@ public class BasicPiwigoResponseListener<P extends UIHelper<P,T>, T> implements 
         }
     }
 
-    private static class ErrorRetryQuestionResultHandler<P extends UIHelper<P,T>, T> extends UIHelper.QuestionResultAdapter<P,T> implements Parcelable {
+    private static class ErrorRetryQuestionResultHandler<P extends UIHelper<P,T>, T> extends QuestionResultAdapter<P,T> implements Parcelable {
         //TODO These items are not really sensible to cache if the app is serialized as such. Instead we check if they're null and don't try to use them.
         // Find some way of dealing with this situation in a more pleasant way.
         private final AbstractPiwigoDirectResponseHandler handler;

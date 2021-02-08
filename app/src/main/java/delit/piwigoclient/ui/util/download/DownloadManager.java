@@ -30,6 +30,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
 import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.file.DocumentFileFilter;
@@ -347,7 +348,7 @@ public class DownloadManager<UIH extends UIHelper<UIH,T>, T> implements Parcelab
                     processNextQueuedDownloadEvent();
                 } catch(Exception e) {
                     Logging.recordException(e);
-                    getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_error, getString(R.string.alert_error_starting_download), e.getMessage(), View.NO_ID, R.string.button_ok, new UIHelper.QuestionResultAdapter<>(getUiHelper()));
+                    getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_error, getString(R.string.alert_error_starting_download), e.getMessage(), View.NO_ID, R.string.button_ok, new QuestionResultAdapter<>(getUiHelper()));
                     activeDownloads.remove(0);
                 }
             } else {

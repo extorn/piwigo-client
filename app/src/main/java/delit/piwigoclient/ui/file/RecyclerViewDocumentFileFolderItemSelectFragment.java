@@ -73,6 +73,7 @@ import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.LongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
@@ -1054,7 +1055,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         }
     }
 
-    private static class TakeCopyOfFilesActionListener<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
+    private static class TakeCopyOfFilesActionListener<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
         private final List<FolderItem> itemsShared;
 
         public TakeCopyOfFilesActionListener(FUIH uiHelper, List<FolderItem> itemsShared) {

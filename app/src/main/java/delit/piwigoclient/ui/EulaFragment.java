@@ -19,6 +19,7 @@ import com.google.firebase.installations.FirebaseInstallations;
 import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;
@@ -86,9 +87,8 @@ public class EulaFragment<F extends EulaFragment<F,FUIH>,FUIH extends FragmentUI
 
     private void onDontAgreeToEula() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.remove(getString(R.string.preference_agreed_eula_version_key));
-        editor.commit();
+        ConnectionPreferences.PreferenceActor actor = new ConnectionPreferences.PreferenceActor().with(R.string.preference_agreed_eula_version_key);
+        actor.remove(prefs, getContext());
         EventBus.getDefault().post(new EulaNotAgreedEvent());
     }
 

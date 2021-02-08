@@ -47,7 +47,7 @@ import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
@@ -294,7 +294,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction<>(getUiHelper(), thisItem));
     }
 
-    private static class OnDeleteTagAction<F extends TagsListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>, T extends Tag> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
+    private static class OnDeleteTagAction<F extends TagsListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>, T extends Tag> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
 
         private final T tag;
 

@@ -35,7 +35,7 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.events.ToolbarEvent;
 
 /**
@@ -255,7 +255,7 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
         this.theme = theme;
     }
 
-    private static class AdLoadErrorDialogListener<T extends MyFragment<T,FUIH>, FUIH extends FragmentUIHelper<FUIH,T>> extends UIHelper.QuestionResultAdapter<FUIH,T> implements Parcelable {
+    private static class AdLoadErrorDialogListener<T extends MyFragment<T,FUIH>, FUIH extends FragmentUIHelper<FUIH,T>> extends QuestionResultAdapter<FUIH,T> implements Parcelable {
 
         private long shownAt;
         private LifecycleObserver observer;

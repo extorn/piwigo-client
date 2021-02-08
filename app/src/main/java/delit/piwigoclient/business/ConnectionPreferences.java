@@ -515,9 +515,13 @@ public class ConnectionPreferences {
 
     public static class PreferenceActor {
         private int prefKey;
-        private String profileId;
+        private final String profileId;
         private SecurePrefsUtil securePrefUtil;
         private static final String TAG  = "PrefActor";
+
+        public PreferenceActor() {
+            profileId = null;
+        }
 
         public PreferenceActor(String profileId) {
             this.profileId = profileId;
@@ -531,6 +535,12 @@ public class ConnectionPreferences {
         public PreferenceActor with(@StringRes int prefKey) {
             this.prefKey = prefKey;
             return this;
+        }
+
+        public void writeInt(SharedPreferences prefs, Context context, int newValue) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeInt(editor, context, newValue);
+            editor.commit();
         }
 
         public void writeString(SharedPreferences prefs, Context context, String newValue) {
@@ -640,6 +650,11 @@ public class ConnectionPreferences {
             return prefs.getInt(getPrefKeyInProfile(context, prefKey), defaultVal);
         }
 
+        public void writeStringSet(SharedPreferences prefs, Context context, Set<String> newValue) {
+                SharedPreferences.Editor editor = prefs.edit();
+                writeStringSet(editor, context, newValue).commit();
+        }
+
         public SharedPreferences.Editor writeStringSet(SharedPreferences.Editor editor, Context context, Set<String> newValue) {
             if(newValue != null) {
                 editor.putStringSet(getPrefKeyInProfile(context, prefKey), new HashSet<>(newValue));
@@ -649,12 +664,30 @@ public class ConnectionPreferences {
             return editor;
         }
 
-        public void remove(SharedPreferences.Editor editor, Context context) {
+        public void remove(SharedPreferences prefs, Context context) {
+            SharedPreferences.Editor editor = prefs.edit();
+            remove(editor, context);
+            editor.commit();
+        }
+
+        public SharedPreferences.Editor remove(SharedPreferences.Editor editor, Context context) {
             editor.remove(getPrefKeyInProfile(context, prefKey));
+            return editor;
         }
 
         public boolean isForActiveProfile() {
             return profileId == null;
+        }
+
+        public void writeLong(SharedPreferences prefs, Context context, long newValue) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeLong(editor, context, newValue);
+            editor.commit();
+        }
+
+        public SharedPreferences.Editor writeLong(SharedPreferences.Editor editor, @NonNull Context context, long newValue) {
+            editor.putLong(getPrefKeyInProfile(context, prefKey), newValue);
+            return editor;
         }
     }
 }

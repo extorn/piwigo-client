@@ -845,7 +845,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         Logging.addContext(this, sessionDetails.getSessionDebugInfoMap());
-        Logging.addContext(this,"app.language", AppPreferences.getDesiredLanguage(getSharedPrefs(), this));
+        Logging.addContext(this,"app_language", AppPreferences.getDesiredLanguage(getSharedPrefs(), this));
 
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.

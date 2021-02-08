@@ -1075,4 +1075,5 @@ App Install UUID: %5$s
     <string name="localizedEmailHelp">This email template is for your convenience.\nIf you feel it is not relevant to provide any of the following details, please delete them.\n\nThe UUID allows me to filter all logged data to show just those relevant to you. This will only be needed if I\'m struggling to fix a bug you\'re experiencing.</string>
     <string name="try_enabling_privacy_plugin_media_uris">The resource could not be found on the server. Would you like to enable the privacy plugin multimedia uri fix?</string>
     <string name="multimedia_playback_currently_disabled">Multimedia playback is disabled. You likely chose this to save data. Either enable playback on demand, or playback in slideshow mode in the app preferences.</string>
+    <string name="release_changes">Changes since your last version</string>
 </resources>

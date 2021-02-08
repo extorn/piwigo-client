@@ -7,10 +7,10 @@ import androidx.appcompat.app.AlertDialog;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class DeleteAllFilesSelectedAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+public class DeleteAllFilesSelectedAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
     public DeleteAllFilesSelectedAction(FUIH uiHelper) {
         super(uiHelper);

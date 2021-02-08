@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.common;
 
 import androidx.annotation.LayoutRes;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.piwigoApi.upload.BackgroundUploadServiceEventHandler;
 
 /**
@@ -10,6 +11,7 @@ import delit.piwigoclient.piwigoApi.upload.BackgroundUploadServiceEventHandler;
 
 public abstract class MyActivity<A extends MyActivity<A,AUIH>, AUIH extends ActivityUIHelper<AUIH,A>> extends BaseMyActivity<A,AUIH> {
 
+    private static final String TAG = "MyActivity";
     private BackgroundUploadServiceEventHandler backgroundUploadServiceEventHandler = new BackgroundUploadServiceEventHandler();
 
     public MyActivity(@LayoutRes int contentView) {
@@ -20,6 +22,7 @@ public abstract class MyActivity<A extends MyActivity<A,AUIH>, AUIH extends Acti
     protected void onStart() {
         super.onStart();
         backgroundUploadServiceEventHandler.register(getUiHelper());
+        getUiHelper().showReleaseNotes(BuildConfig.VERSION_NAME);
     }
 
     @Override

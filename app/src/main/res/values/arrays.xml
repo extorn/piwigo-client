@@ -252,7 +252,10 @@
         -->
         <item>1.4.0.113</item>
         <item>"Bugfix:
-                - Finally! worked out why the app was crashing on the slideshow for some users"</item>
+                - Finally! worked out why the app was crashing on the slideshow for some users
+                - tweaked some dialog layout
+               Change:
+                - Dialog showing all release notes since you last updated after an update"</item>
         <item>1.4.0.112</item>
         <item>"Change:
                 - Tidy up the app preferences pages"</item>

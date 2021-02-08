@@ -369,12 +369,12 @@ public class PiwigoSessionDetails {
      */
     public synchronized Map<String,String> getSessionDebugInfoMap() {
         Map<String,String> sessionInfoMap = new HashMap<>();
-        sessionInfoMap.put("piwigo.version", piwigoVersion);
-        sessionInfoMap.put("piwigo.plugins.community", ""+useCommunityPlugin);
-        sessionInfoMap.put("piwigo.plugins.active", getActivePluginSummary());
-        sessionInfoMap.put("piwigo.user.isAdmin", ""+isAdminUser());
-        sessionInfoMap.put("piwigo.user.type", ""+getUserType());
-        sessionInfoMap.put("piwigo.login.status", ""+loginStatus);
+        sessionInfoMap.put("piwigo_version", piwigoVersion);
+        sessionInfoMap.put("piwigo_plugins_community", ""+useCommunityPlugin);
+        sessionInfoMap.put("piwigo_plugins_active", getActivePluginSummary());
+        sessionInfoMap.put("piwigo_user_isAdmin", ""+isAdminUser());
+        sessionInfoMap.put("piwigo_user_type", ""+getUserType());
+        sessionInfoMap.put("piwigo_login_status", ""+loginStatus);
         return sessionInfoMap;
     }
 

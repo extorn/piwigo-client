@@ -21,12 +21,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -46,8 +42,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -66,25 +60,30 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.CustomSnackbar;
 import delit.libs.util.ObjectUtils;
 import delit.libs.util.SafeRunnable;
-import delit.libs.util.X509Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
+import delit.piwigoclient.ui.common.dialogmessage.NewUnTrustedCaCertificateReceivedAction;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultListener;
+import delit.piwigoclient.ui.common.dialogmessage.QueuedDialogMessage;
+import delit.piwigoclient.ui.common.dialogmessage.QueuedQuestionMessage;
+import delit.piwigoclient.ui.common.dialogmessage.QueuedSimpleMessage;
+import delit.piwigoclient.ui.common.dialogmessage.ReleaseNotesMessage;
+import delit.piwigoclient.ui.common.dialogmessage.UnexpectedUriQuestionResult;
 import delit.piwigoclient.ui.events.BadRequestExposesInternalServerEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
@@ -254,7 +253,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
             // do this here in case the queue is already full (will only occur if there is a bug in the display logic really).
             showQueuedMsg();
         }
-        if (newItem.id >= 0) {
+        if (newItem.getId() >= 0) {
             if (!simpleMessageQueue.isEmpty()) {
                 simpleMessageQueue.remove(newItem);
             }
@@ -266,15 +265,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
                 StringBuilder sb = new StringBuilder();
                 sb.append("SimpleMessageQueue Full : \n");
                 for(QueuedSimpleMessage item : simpleMessageQueue) {
-                    sb.append("title : ");
-                    sb.append(getAppContext().getString(item.titleResId));
-                    sb.append('\n');
-                    sb.append("msg : ");
-                    sb.append(item.message);
-                    sb.append('\n');
-                    sb.append("duration : ");
-                    sb.append(item.duration);
-                    sb.append('\n');
+                    item.toString(getAppContext());
                 }
                 Logging.log(Log.ERROR, TAG, sb.toString());
                 Logging.recordException(e);
@@ -305,12 +296,12 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         toastShowing = true;
         QueuedSimpleMessage toastMsg = simpleMessageQueue.remove();
         final String message;
-        if(toastMsg.message == null) {
-            message = getAppContext().getString(toastMsg.titleResId);
-            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.titleResId, null, toastMsg.getSnackbarDuration());
+        if(toastMsg.getMessage() == null) {
+            message = getAppContext().getString(toastMsg.getTitleResId());
+            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.getTitleResId(), null, toastMsg.getSnackbarDuration());
         } else {
-            message = toastMsg.message;
-            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.titleResId, toastMsg.message, toastMsg.getSnackbarDuration());
+            message = toastMsg.getMessage();
+            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.getTitleResId(), toastMsg.getMessage(), toastMsg.getSnackbarDuration());
         }
         snackbar.addCallback(new CustomSnackbar.BaseCallback() {
             private boolean dismissHandled;
@@ -382,7 +373,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
 
 
 
-    private  boolean isProgressIndicatorVisible() {
+    private boolean isProgressIndicatorVisible() {
         ProgressIndicator progressIndicator = getProgressIndicator();
         return progressIndicator != null && progressIndicator.getVisibility() == View.VISIBLE;
     }
@@ -479,13 +470,16 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         buildAlertDialog(getParentView().getContext());
         alertDialog.setCancelable(nextMessage.isCancellable());
         alertDialog.setTitle(nextMessage.getTitleId());
-        alertDialog.setMessage(nextMessage.getMessage());
 
+        ViewGroup dialogView = null;
         if (nextMessage.getLayoutId() != View.NO_ID) {
             LayoutInflater inflater = LayoutInflater.from(alertDialog.getContext());
-            final ViewGroup dialogView = (ViewGroup) inflater.inflate(nextMessage.getLayoutId(), null, false);
+            dialogView = (ViewGroup) inflater.inflate(nextMessage.getLayoutId(), null, false);
             alertDialog.setView(dialogView);
             nextMessage.populateCustomView(dialogView);
+        } else {
+            // WARNING:  If you set the message and the view, the alert dialog layout silently fails to measure the components!
+            alertDialog.setMessage(nextMessage.getMessage());
         }
 
         alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, appContext.getString(nextMessage.getPositiveButtonTextId()), (dialog, which) -> nextMessage.getListener().onResult(alertDialog, true));
@@ -499,7 +493,16 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         dismissListener.setBuildNewDialogOnDismiss(nextMessage.getLayoutId() != View.NO_ID);
 
         try {
+            nextMessage.getListener().onBeforeShow(alertDialog);
+            WindowManager.LayoutParams layoutParams = null;
+            if (nextMessage.getLayoutId() != View.NO_ID) {
+                layoutParams = nextMessage.showWithDialogLayoutParams(alertDialog, dialogView);
+            }
             alertDialog.show();
+            if(layoutParams != null) {
+                Objects.requireNonNull(alertDialog.getWindow()).setAttributes(layoutParams);
+                //FIXME
+            }
             nextMessage.getListener().onShow(alertDialog);
         } catch(WindowManager.BadTokenException e) {
             Logging.recordException(e);
@@ -511,13 +514,16 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         buildAlertDialog(getParentView().getContext());
         alertDialog.setCancelable(nextMessage.isCancellable());
         alertDialog.setTitle(nextMessage.getTitleId());
-        alertDialog.setMessage(nextMessage.getMessage());
 
+        ViewGroup dialogView = null;
         if (nextMessage.getLayoutId() != View.NO_ID) {
             LayoutInflater inflater = LayoutInflater.from(alertDialog.getContext());
-            final LinearLayout dialogView = (LinearLayout) inflater.inflate(nextMessage.getLayoutId(), null, false);
+            dialogView = (ViewGroup) inflater.inflate(nextMessage.getLayoutId(), null, false);
             alertDialog.setView(dialogView);
             nextMessage.populateCustomView(dialogView);
+        } else {
+            // WARNING: If you set the message and the view, the alert dialog layout silently fails to measure the components!
+            alertDialog.setMessage(nextMessage.getMessage());
         }
 
         Button b = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
@@ -525,14 +531,22 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
             b.setVisibility(View.GONE);
         }
         alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, appContext.getString(nextMessage.getPositiveButtonTextId()), (dialog, which) -> {
-            QuestionResultListener l = nextMessage.getListener();
+            QuestionResultListener<UIH,OWNER> l = nextMessage.getListener();
             if (l != null) {
                 l.onResultInternal(alertDialog, true);
             }
         });
         dismissListener.setListener(nextMessage.getListener());
+        WindowManager.LayoutParams layoutParams = null;
+        if (nextMessage.getLayoutId() != View.NO_ID) {
+            layoutParams = nextMessage.showWithDialogLayoutParams(alertDialog, dialogView);
+        }
         alertDialog.show();
-        QuestionResultListener l = nextMessage.getListener();
+        if(layoutParams != null) {
+            Objects.requireNonNull(alertDialog.getWindow()).setAttributes(layoutParams);
+            dialogView.getParent().requestLayout();
+        }
+        QuestionResultListener<UIH,OWNER> l = nextMessage.getListener();
         if (l != null) {
             l.onShow(alertDialog);
         }
@@ -824,7 +838,12 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
                 showNextQueuedMessage();
             } else {
                 QueuedDialogMessage<UIH, OWNER> msg = dialogMessageQueue.peek();
-                msg.getListener().chainResult(message.getListener());
+                if(msg != null) {
+                    QuestionResultListener<UIH, OWNER> listener = msg.getListener();
+                    if (listener != null) {
+                        listener.chainResult(message.getListener());
+                    }
+                }
             }
             return true;
         }
@@ -1071,22 +1090,17 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         return getAppContext().getString(stringPatternRes, args);
     }
 
-    public interface QuestionResultListener<P extends UIHelper<P,T>, T> extends Parcelable {
-        void onDismiss(AlertDialog dialog);
+    public void showReleaseNotes(String currentAppVersion) {
+        String lastShownReleaseNotes = AppPreferences.getLatestReleaseNotesVersionShown(getPrefs(), getAppContext());
+        Map<String, String> releaseNotes = AppPreferences.getAppReleaseHistory(getAppContext(), lastShownReleaseNotes);
+        showOrQueueDialogMessage(new ReleaseNotesMessage<>(getAppContext(), releaseNotes, new QuestionResultAdapter<UIH, OWNER>((UIH)this) {
+            @Override
+            public void onDismiss(AlertDialog dialog) {
+                super.onDismiss(dialog);
+                AppPreferences.setLatestReleaseNotesShown(getPrefs(), dialog.getContext(), currentAppVersion);
+            }
+        }));
 
-        void onResultInternal(AlertDialog dialog, Boolean positiveAnswer);
-
-        void onResult(AlertDialog dialog, Boolean positiveAnswer);
-
-        void onShow(AlertDialog alertDialog);
-
-        void setUiHelper(P uiHelper);
-
-        T getParent();
-
-        void chainResult(QuestionResultListener<P,T> listener);
-
-        void onPopulateDialogView(ViewGroup dialogView, @LayoutRes int layoutId);
     }
 
     public Action<UIH, OWNER, PiwigoResponseBufferingHandler.Response> getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -1095,459 +1109,6 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
 
     public void addActionOnResponse(long msgId, Action<UIH,OWNER,?> action) {
         actionOnServerCallComplete.put(msgId, action);
-    }
-
-    private static class NewUnTrustedCaCertificateReceivedAction<P extends UIHelper<P,T>, T> extends UIHelper.QuestionResultAdapter<P,T> implements Parcelable {
-
-        private final HashMap<String, X509Certificate> untrustedCerts;
-
-        public NewUnTrustedCaCertificateReceivedAction(P uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
-            super(uiHelper);
-            this.untrustedCerts = untrustedCerts;
-        }
-
-        protected NewUnTrustedCaCertificateReceivedAction(Parcel in) {
-            super(in);
-            untrustedCerts = ParcelUtils.readMap(in, X509Certificate.class.getClassLoader());
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            ParcelUtils.writeMap(dest, untrustedCerts);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<NewUnTrustedCaCertificateReceivedAction<?,?>> CREATOR = new Creator<NewUnTrustedCaCertificateReceivedAction<?,?>>() {
-            @Override
-            public NewUnTrustedCaCertificateReceivedAction<?,?> createFromParcel(Parcel in) {
-                return new NewUnTrustedCaCertificateReceivedAction<>(in);
-            }
-
-            @Override
-            public NewUnTrustedCaCertificateReceivedAction<?,?>[] newArray(int size) {
-                return new NewUnTrustedCaCertificateReceivedAction<?,?>[size];
-            }
-        };
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-
-                final Set<String> preNotifiedCerts = new HashSet<>(Objects.requireNonNull(getUiHelper().getPrefs().getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>())));
-                if (preNotifiedCerts.containsAll(untrustedCerts.keySet())) {
-                    // already dealt with this
-                    return;
-                }
-
-                KeyStore trustStore = X509Utils.loadTrustedCaKeystore(getContext());
-                try {
-                    for (Map.Entry<String, X509Certificate> entry : untrustedCerts.entrySet()) {
-                        trustStore.setCertificateEntry(entry.getKey(), entry.getValue());
-                    }
-                    X509Utils.saveTrustedCaKeystore(getContext(), trustStore);
-                } catch (KeyStoreException e) {
-                    Logging.recordException(e);
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.alert_error_adding_certificate_to_truststore));
-                }
-                preNotifiedCerts.addAll(untrustedCerts.keySet());
-                getUiHelper().getPrefs().edit().putStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
-                long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), getContext(), true).start();
-                PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener<P,T>() {
-                    @Override
-                    public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-                        getUiHelper().showDetailedMsg(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void onShow(AlertDialog alertDialog) {
-
-        }
-    }
-
-    public static class QuestionResultAdapter<P extends UIHelper<P,T>,T> implements QuestionResultListener<P,T>, Parcelable {
-
-        private QuestionResultListener<P,T> chainedListener;
-
-        private P uiHelper;
-
-        public QuestionResultAdapter(P uiHelper) {
-            this.uiHelper = uiHelper;
-        }
-
-        protected QuestionResultAdapter(Parcel in) {
-            chainedListener = in.readParcelable(QuestionResultListener.class.getClassLoader());
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeParcelable(chainedListener, flags);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<QuestionResultAdapter<?,?>> CREATOR = new Creator<QuestionResultAdapter<?,?>>() {
-            @Override
-            public QuestionResultAdapter<?,?> createFromParcel(Parcel in) {
-                return new QuestionResultAdapter<>(in);
-            }
-
-            @Override
-            public QuestionResultAdapter<?,?>[] newArray(int size) {
-                return new QuestionResultAdapter[size];
-            }
-        };
-
-        public T getParent() {
-            return getUiHelper().getParent();
-        }
-
-        public P getUiHelper() {
-            return uiHelper;
-        }
-
-        @Override
-        public void setUiHelper(P uiHelper) {
-            this.uiHelper = uiHelper;
-        }
-
-        public Context getContext() {
-            return uiHelper.getAppContext();
-        }
-
-        @Override
-        public void onShow(AlertDialog alertDialog) {
-        }
-
-        @Override
-        public void onResultInternal(AlertDialog dialog, Boolean positiveAnswer) {
-            onResult(dialog, positiveAnswer);
-            if (chainedListener != null) {
-                chainedListener.onResult(dialog, positiveAnswer);
-            }
-        }
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-
-        }
-
-        @Override
-        public void onDismiss(AlertDialog dialog) {
-
-        }
-
-        @Override
-        public void onPopulateDialogView(ViewGroup dialogView, @LayoutRes int layoutId) {
-            Logging.log(Log.DEBUG, TAG, "Unsupported layout id for dialog message : " + layoutId);
-        }
-
-        @Override
-        public void chainResult(QuestionResultListener<P,T> listener) {
-            chainedListener = listener;
-        }
-
-    }
-
-    private static class QueuedSimpleMessage implements Parcelable {
-        private int id = -1;
-        private final int duration;
-        private final int titleResId;
-        private final String message;
-
-        public QueuedSimpleMessage(@StringRes int titleResId, String message, int duration) {
-            this.duration = duration;
-            this.titleResId = titleResId;
-            this.message = message;
-        }
-
-        public QueuedSimpleMessage(Parcel in) {
-            duration = in.readInt();
-            titleResId = in.readInt();
-            message = in.readString();
-            id = in.readInt();
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public static final Creator<QueuedSimpleMessage> CREATOR = new Creator<QueuedSimpleMessage>() {
-            @Override
-            public QueuedSimpleMessage createFromParcel(Parcel in) {
-                return new QueuedSimpleMessage(in);
-            }
-
-            @Override
-            public QueuedSimpleMessage[] newArray(int size) {
-                return new QueuedSimpleMessage[size];
-            }
-        };
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(duration);
-            dest.writeInt(titleResId);
-            dest.writeString(message);
-            dest.writeInt(id);
-        }
-
-        public int getSnackbarDuration() {
-            return duration == Toast.LENGTH_SHORT ? CustomSnackbar.LENGTH_SHORT : duration == Toast.LENGTH_LONG ? CustomSnackbar.LENGTH_LONG : CustomSnackbar.LENGTH_INDEFINITE;
-        }
-
-        @Override
-        public int hashCode() {
-            return duration + (titleResId * 3) + (5 * message.hashCode());
-        }
-
-        @Override
-        public boolean equals(@Nullable Object obj) {
-            if(!(obj instanceof QueuedSimpleMessage)) {
-                return false;
-            }
-            QueuedSimpleMessage other = (QueuedSimpleMessage) obj;
-            return (id >= 0 && id == other.id) || (duration == other.duration && titleResId == other.titleResId && ObjectUtils.areEqual(message, other.message));
-        }
-    }
-
-    public static class QueuedDialogMessage<P extends UIHelper<P,T>,T> implements Parcelable {
-        private static final AtomicInteger idGen = new AtomicInteger();
-        private final int id;
-        private final int titleId;
-        private final String message;
-        private final int positiveButtonTextId;
-        private final boolean cancellable;
-        private final String detail;
-        private final QuestionResultListener<P,T> listener;
-        private final boolean hasListener;
-
-        public QueuedDialogMessage(Parcel in) {
-            id = in.readInt();
-            titleId = in.readInt();
-            message = in.readString();
-            positiveButtonTextId = in.readInt();
-            cancellable = ParcelUtils.readBool(in);
-            detail = in.readString();
-            listener = ParcelUtils.readValue(in, QuestionResultListener.class.getClassLoader(), QuestionResultListener.class);
-            hasListener = ParcelUtils.readBool(in);
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(id);
-            dest.writeInt(titleId);
-            dest.writeString(message);
-            dest.writeInt(positiveButtonTextId);
-            ParcelUtils.writeBool(dest, cancellable);
-            dest.writeString(detail);
-            try {
-                dest.writeParcelable(listener, 0);
-            } catch(RuntimeException e) {
-                dest.writeParcelable(null, 0); // so we can still read the non parcelable object in (as null)
-            }
-            ParcelUtils.writeBool(dest, listener != null); // has listener
-        }
-
-        public QueuedDialogMessage(int titleId, String message, String detail) {
-            this(titleId, message, detail, R.string.button_ok, true, null);
-        }
-
-        public QueuedDialogMessage(int titleId, String message, String detail, QuestionResultListener<P,T> listener) {
-            this(titleId, message, detail, R.string.button_ok, true, listener);
-        }
-
-        public QueuedDialogMessage(int titleId, String message, String detail, int positiveButtonTextId) {
-            this(titleId, message, detail, positiveButtonTextId, true, null);
-        }
-
-        public QueuedDialogMessage(int titleId, String message, String detail, int positiveButtonTextId, boolean cancellable, QuestionResultListener<P,T> listener) {
-            this.id = idGen.incrementAndGet();
-            this.titleId = titleId;
-            if (message == null) {
-                throw new IllegalArgumentException("Message cannot be null");
-            }
-            this.message = message;
-            this.positiveButtonTextId = positiveButtonTextId;
-            this.listener = listener;
-            this.detail = detail;
-            this.cancellable = cancellable;
-            this.hasListener = listener != null;
-        }
-
-        public static final Creator<QueuedDialogMessage<?,?>> CREATOR = new Creator<QueuedDialogMessage<?,?>>() {
-            @Override
-            public QueuedDialogMessage<?,?> createFromParcel(Parcel in) {
-                return new QueuedDialogMessage<>(in);
-            }
-
-            @Override
-            public QueuedDialogMessage<?,?>[] newArray(int size) {
-                return new QueuedDialogMessage<?,?>[size];
-            }
-        };
-
-        public int getTitleId() {
-            return titleId;
-        }
-
-        public String getDetail() {
-            return detail;
-        }
-
-        public boolean isCancellable() {
-            return cancellable;
-        }
-
-        public int getPositiveButtonTextId() {
-            return positiveButtonTextId;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public QuestionResultListener<P,T> getListener() {
-            return listener;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof UIHelper.QueuedDialogMessage)) {
-                return false;
-            }
-            QueuedDialogMessage<?,?> other = ((QueuedDialogMessage<?,?>) obj);
-            return titleId == other.titleId && message.equals(other.message);
-        }
-
-        public void populateCustomView(ViewGroup dialogView) {
-            int layoutId = getLayoutId();
-
-            if (layoutId == R.layout.layout_dialog_detailed) {
-                final TextView detailView = dialogView.findViewById(R.id.list_item_details);
-                detailView.setText(getDetail());
-
-                ToggleButton detailsVisibleButton = dialogView.findViewById(R.id.details_toggle);
-                detailsVisibleButton.setOnCheckedChangeListener((buttonView, isChecked) -> detailView.setVisibility(isChecked ? View.VISIBLE : View.GONE));
-                detailsVisibleButton.toggle();
-            } else {
-                listener.onPopulateDialogView(dialogView, layoutId);
-            }
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public boolean isHasListener() {
-            return hasListener;
-        }
-
-        protected int getLayoutId() {
-            if (detail != null && !detail.trim().isEmpty()) {
-                return R.layout.layout_dialog_detailed;
-            } else {
-                return View.NO_ID;
-            }
-        }
-    }
-
-    protected static class QueuedQuestionMessage<P extends UIHelper<P,T>,T> extends QueuedDialogMessage<P,T> {
-
-        private final int negativeButtonTextId;
-        private final int layoutId;
-        private final int neutralButtonTextId;
-
-        public QueuedQuestionMessage(Parcel in) {
-            super(in);
-            negativeButtonTextId = in.readInt();
-            layoutId = in.readInt();
-            neutralButtonTextId = in.readInt();
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeInt(negativeButtonTextId);
-            dest.writeInt(layoutId);
-            dest.writeInt(neutralButtonTextId);
-        }
-
-        public static final Creator<QueuedQuestionMessage<?,?>> CREATOR = new Creator<QueuedQuestionMessage<?,?>>() {
-            @Override
-            public QueuedQuestionMessage<?,?> createFromParcel(Parcel in) {
-                return new QueuedQuestionMessage<>(in);
-            }
-
-            @Override
-            public QueuedQuestionMessage<?,?>[] newArray(int size) {
-                return new QueuedQuestionMessage[size];
-            }
-        };
-
-        public QueuedQuestionMessage(int titleId, String message, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener<P,T> listener) {
-            this(titleId, message, null, View.NO_ID, positiveButtonTextId, negativeButtonTextId, listener);
-        }
-
-        public QueuedQuestionMessage(int titleId, String message, String detail, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener<P,T> listener) {
-            this(titleId, message, detail, View.NO_ID, positiveButtonTextId, negativeButtonTextId, listener);
-        }
-
-        public QueuedQuestionMessage(int titleId, String message, int layoutId, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener<P,T> listener) {
-            this(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, View.NO_ID, listener);
-        }
-
-        public QueuedQuestionMessage(int titleId, String message, String detail, int layoutId, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener<P,T> listener) {
-            this(titleId, message, detail, layoutId, positiveButtonTextId, negativeButtonTextId, View.NO_ID, listener);
-        }
-
-        public QueuedQuestionMessage(int titleId, String message, String detail, int layoutId, int positiveButtonTextId, int negativeButtonTextId, int neutralButtonTextId, QuestionResultListener<P,T> listener) {
-
-            super(titleId, message, detail, positiveButtonTextId, false, listener);
-            this.negativeButtonTextId = negativeButtonTextId;
-            if(detail != null && !detail.trim().isEmpty() && layoutId == View.NO_ID) {
-                this.layoutId = R.layout.layout_dialog_detailed;
-            } else {
-                this.layoutId = layoutId;
-            }
-            this.neutralButtonTextId = neutralButtonTextId;
-        }
-
-        public boolean isShowNegativeButton() {
-            return negativeButtonTextId != View.NO_ID;
-        }
-
-        public boolean isShowNeutralButton() {
-            return neutralButtonTextId != View.NO_ID;
-        }
-
-        public int getNeutralButtonTextId() {
-            return neutralButtonTextId;
-        }
-
-        public int getNegativeButtonTextId() {
-            return negativeButtonTextId;
-        }
-
-        public int getLayoutId() {
-            return layoutId;
-        }
-
     }
 
     private static class ActivityPermissionRequester implements PermissionRequester {
@@ -1703,44 +1264,4 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         }
     }
 
-    private static class UnexpectedUriQuestionResult<P extends UIHelper<P,T>,T>  extends QuestionResultAdapter<P,T>implements Parcelable {
-
-
-        public UnexpectedUriQuestionResult(P uiHelper) {
-            super(uiHelper);
-        }
-
-        protected UnexpectedUriQuestionResult(Parcel in) {
-            super(in);
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<UnexpectedUriQuestionResult<?,?>> CREATOR = new Creator<UnexpectedUriQuestionResult<?,?>>() {
-            @Override
-            public UnexpectedUriQuestionResult<?,?> createFromParcel(Parcel in) {
-                return new UnexpectedUriQuestionResult<>(in);
-            }
-
-            @Override
-            public UnexpectedUriQuestionResult<?,?>[] newArray(int size) {
-                return new UnexpectedUriQuestionResult<?,?>[size];
-            }
-        };
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.FALSE.equals(positiveAnswer)) {
-                ConnectionPreferences.getActiveProfile().setWarnInternalUriExposed(getUiHelper().getPrefs(), getUiHelper().getAppContext(), false);
-            }
-        }
-    }
 }

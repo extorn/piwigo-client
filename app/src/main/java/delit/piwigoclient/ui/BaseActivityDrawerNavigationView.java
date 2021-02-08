@@ -33,6 +33,7 @@ import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.common.DrawerNavigationView;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.ViewGroupUIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.LockAppEvent;
@@ -211,7 +212,7 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
         EventBus.getDefault().post(new AppUnlockedEvent());
     }
 
-    private static class OnAppLockAction<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends UIHelper.QuestionResultAdapter<VUIH,V> implements Parcelable {
+    private static class OnAppLockAction<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends QuestionResultAdapter<VUIH,V> implements Parcelable {
 
         public OnAppLockAction(VUIH uiHelper) {
             super(uiHelper);
@@ -251,7 +252,7 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
         }
     }
 
-    private static class ConfigureNetworkAccessQuestionResult<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends UIHelper.QuestionResultAdapter<VUIH, V> implements Parcelable {
+    private static class ConfigureNetworkAccessQuestionResult<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends QuestionResultAdapter<VUIH, V> implements Parcelable {
 
         private final boolean networkAccessDesired;
 
@@ -365,7 +366,7 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
         }
     }
 
-    private static class OnUnlockAction<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends UIHelper.QuestionResultAdapter<VUIH,V> implements Parcelable {
+    private static class OnUnlockAction<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends QuestionResultAdapter<VUIH,V> implements Parcelable {
 
         public OnUnlockAction(VUIH uiHelper) {
             super(uiHelper);

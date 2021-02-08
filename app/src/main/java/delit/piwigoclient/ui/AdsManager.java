@@ -61,6 +61,7 @@ import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.RewardUpdateEvent;
 import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
@@ -718,7 +719,7 @@ public class AdsManager {
         }
     }
 
-    private static class AdvertPleadingListener<F extends MyFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends delit.piwigoclient.ui.common.UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+    private static class AdvertPleadingListener<F extends MyFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
         public AdvertPleadingListener(FUIH uiHelper) {
             super(uiHelper);
         }

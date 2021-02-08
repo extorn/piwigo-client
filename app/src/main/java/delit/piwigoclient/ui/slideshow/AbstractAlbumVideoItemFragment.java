@@ -65,7 +65,8 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
+import delit.piwigoclient.ui.common.dialogmessage.QueuedDialogMessage;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
@@ -673,7 +674,7 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
         }
     }
 
-    private static class ClearCachedContentAction<F extends AbstractAlbumVideoItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends VideoResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+    private static class ClearCachedContentAction<F extends AbstractAlbumVideoItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends VideoResourceItem> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         public ClearCachedContentAction(FUIH uiHelper) {
             super(uiHelper);
@@ -760,7 +761,7 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
                     }
                 }
                 if(!handledError) {
-                    getUiHelper().showOrQueueDialogMessage(new UIHelper.QueuedDialogMessage<>(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.getStatusCode(), err.getUri()), response, R.string.button_ok));
+                    getUiHelper().showOrQueueDialogMessage(new QueuedDialogMessage<>(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.getStatusCode(), err.getUri()), response, R.string.button_ok));
                 }
             } else if (e instanceof HttpDataSource.InvalidResponseCodeException) {
                 HttpDataSource.InvalidResponseCodeException err = (HttpDataSource.InvalidResponseCodeException) e;
@@ -792,7 +793,7 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
     }
 
 
-    private static class Fixable404ErrorActionListener<F extends AbstractAlbumVideoItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends VideoResourceItem> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
+    private static class Fixable404ErrorActionListener<F extends AbstractAlbumVideoItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends VideoResourceItem> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
         private final String fixedUri;
 
         public Fixable404ErrorActionListener(FUIH uiHelper, String fixedUri) {

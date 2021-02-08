@@ -7,19 +7,12 @@
     </style>
 
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <!--<item name="buttonBarButtonStyle">@style/My.Widget.MaterialComponents.Button.TextButton.Dialog</item>-->
-        <item name="materialAlertDialogTitlePanelStyle">@style/App.MaterialAlertDialog.MaterialComponents.Title.Panel</item>
-        <!-- Use the edit colors scheme (to force it on other themed pages) -->
+        <!--TODO is this needed? -->
         <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
-        <!--<item name="materialThemeOverlay">@style/ThemeOverlay.App.EditPages</item>-->
-        <!-- used for the dialog background color -->
-        <!--<item name="android:background">@color/colorTest3</item>-->
-        <!-- used for radio button icon for example -->
-        <!--<item name="colorPrimary">@color/colorTest4</item>-->
     </style>
 
     <style name="ThemeOverlay.App.AlertDialog" parent="Theme.MaterialComponents.Dialog.Alert">
-        <!-- Use the edit colors scheme (to force it on other themed pages) -->
+        <!--TODO is this needed? -->
         <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
     </style>
 

@@ -139,6 +139,9 @@ public class Logging {
     public static void addContext(Context context, String key, Object val) {
         FirebaseAnalytics firebaseAnalytics = getFirebaseAnalytics(context);
         FirebaseCrashlytics firebaseCrashlytics = FirebaseCrashlytics.getInstance();
+        if(!key.matches("[a-zA-Z0-9_]*")) {
+            Logging.log(Log.ERROR, TAG, "logging context keys must only contain alphanumeric + _ chars");
+        }
         if(firebaseAnalytics != null) {
             firebaseAnalytics.setUserProperty(key, (String)val);
         }

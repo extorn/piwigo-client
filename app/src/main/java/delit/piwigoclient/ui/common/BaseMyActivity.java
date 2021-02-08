@@ -71,6 +71,7 @@ import delit.piwigoclient.database.AppSettingsViewModel;
 import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.FileSelectActivity;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
@@ -209,6 +210,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         if(!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+        uiHelper.showNextQueuedMessage();
     }
 
     @Override
@@ -442,6 +444,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
             setTaskDescription(taskDesc);
         }
         super.onResume();
+        uiHelper.showNextQueuedMessage();
     }
 
 
@@ -677,7 +680,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         return isAttachedToWindow;
     }
 
-    private static class OnStopActivityAction<UIH extends ActivityUIHelper<UIH,T>, T extends BaseMyActivity<T,UIH>> extends UIHelper.QuestionResultAdapter<UIH,T> implements Parcelable {
+    private static class OnStopActivityAction<UIH extends ActivityUIHelper<UIH,T>, T extends BaseMyActivity<T,UIH>> extends QuestionResultAdapter<UIH,T> implements Parcelable {
         private final int trackingRequestId;
 
         public OnStopActivityAction(UIH uiHelper, int trackingRequestId) {
@@ -728,7 +731,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         return agreedEulaVersion < currentEulaVersion;
     }
 
-    private static class ExitOnCloseAction<UIH extends ActivityUIHelper<UIH,T>, T extends BaseMyActivity<T,UIH>> extends UIHelper.QuestionResultAdapter<UIH,T> implements Parcelable {
+    private static class ExitOnCloseAction<UIH extends ActivityUIHelper<UIH,T>, T extends BaseMyActivity<T,UIH>> extends QuestionResultAdapter<UIH,T> implements Parcelable {
 
         public ExitOnCloseAction(UIH uiHelper) {
             super(uiHelper);

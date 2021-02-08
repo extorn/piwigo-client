@@ -29,6 +29,7 @@ import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator226;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator282;
@@ -99,10 +100,9 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         }
         int latestAppVersion = ProjectUtils.getVersionCode(getApplicationContext());
         if (currentPrefsVersion < latestAppVersion) {
-            SharedPreferences.Editor editor = prefs.edit();
-
-            editor.putInt(getString(R.string.preference_app_prefs_version_key), latestAppVersion);
-            editor.commit(); // ensure this is written to disk now.
+            ConnectionPreferences.PreferenceActor actor = new ConnectionPreferences.PreferenceActor();
+            actor.with(R.string.preference_app_prefs_version_key);
+            actor.writeInt(prefs, this, latestAppVersion);
             Bundle bundle = new Bundle();
             bundle.putInt("from_version", currentPrefsVersion);
             bundle.putInt("to_version", latestAppVersion);
