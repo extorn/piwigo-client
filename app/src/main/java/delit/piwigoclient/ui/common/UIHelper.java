@@ -501,7 +501,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
             alertDialog.show();
             if(layoutParams != null) {
                 Objects.requireNonNull(alertDialog.getWindow()).setAttributes(layoutParams);
-                //FIXME
+                //dialogView.getParent().requestLayout(); // this might be needed, but tweaking the layout params isn't needed at the moment
             }
             nextMessage.getListener().onShow(alertDialog);
         } catch(WindowManager.BadTokenException e) {
@@ -544,7 +544,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         alertDialog.show();
         if(layoutParams != null) {
             Objects.requireNonNull(alertDialog.getWindow()).setAttributes(layoutParams);
-            dialogView.getParent().requestLayout();
+            //dialogView.getParent().requestLayout(); // this might be needed, but tweaking the layout params isn't needed at the moment
         }
         QuestionResultListener<UIH,OWNER> l = nextMessage.getListener();
         if (l != null) {
