@@ -218,8 +218,6 @@
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Las miniaturas de los álbumes están recortadas en el centro</string>
     
 
-    <string name="preference_gallery_show_file_size_showing_title">Mostrar el tamaño del servidor de las fotos vistas</string>
-    <string name="preference_gallery_show_file_size_showing_summary">Mostrar el tamaño de cada foto mostrada</string>
 
     
     <string name="preference_gallery_show_file_size_showing_title">Mostrar el tamaño del servidor de las fotos vistas</string>
