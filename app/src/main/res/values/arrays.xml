@@ -19,7 +19,7 @@
     </integer-array>
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0bps ( —X )</item>
+        <item>0bps ( â€”X )</item>
         <item>very low (0.025 b/pixels*frame)</item>
         <item>lower (0.05 b/pixels*frame)</item>
         <item>low (0.1 b/pixels*frame)</item>
