@@ -146,6 +146,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.114</item>
+        <item>"Risoluzione del problema:
+                 - caricamento della pagina dell\'elemento orfano che causa un crash
+                Modificare:
+                 - nome assegnato ai tracker di avanzamento delle attività per consentire la risoluzione dei bug in cui l\'attività figlio di un tracker di avanzamento è inaspettatamente incompleta"</item>
         <item>1.4.0.113</item>
         <item>"Risoluzione del problema:
                  - Infine! ha risolto il motivo per cui l\'app si bloccava nella presentazione per alcuni utenti

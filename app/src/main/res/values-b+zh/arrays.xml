@@ -146,6 +146,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.114</item>
+        <item>"错误修正：
+                 -孤立项目页面加载导致崩溃
+                更改：
+                 -为任务进度跟踪器指定的名称，以允许在进度跟踪器的子任务意外不完整的情况下解决错误"</item>
         <item>1.4.0.113</item>
         <item>"错误修正：
                  -最后！ 找出为什么该应用程序在某些用户的幻灯片上崩溃的原因

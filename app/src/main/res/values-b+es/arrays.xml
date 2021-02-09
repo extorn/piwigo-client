@@ -146,6 +146,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.114</item>
+        <item>"Arreglo del fallo:
+                 - carga de la página de un elemento huérfano que provoca un bloqueo
+                Cambio:
+                 - nombre dado a los rastreadores de progreso de la tarea para permitir la resolución de errores cuando la tarea secundaria de un rastreador de progreso está inesperadamente incompleta"</item>
         <item>1.4.0.113</item>
         <item>"Arreglo del fallo:
                  - ¡Finalmente! descubrió por qué la aplicación fallaba en la presentación de diapositivas para algunos usuarios
