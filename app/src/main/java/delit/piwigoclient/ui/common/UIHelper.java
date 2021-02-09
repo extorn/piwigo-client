@@ -1090,17 +1090,20 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         return getAppContext().getString(stringPatternRes, args);
     }
 
-    public void showReleaseNotes(String currentAppVersion) {
+    public void showReleaseNotesIfNewlyUpgradedOrInstalled(String currentAppVersion) {
         String lastShownReleaseNotes = AppPreferences.getLatestReleaseNotesVersionShown(getPrefs(), getAppContext());
-        Map<String, String> releaseNotes = AppPreferences.getAppReleaseHistory(getAppContext(), lastShownReleaseNotes);
-        showOrQueueDialogMessage(new ReleaseNotesMessage<>(getAppContext(), releaseNotes, new QuestionResultAdapter<UIH, OWNER>((UIH)this) {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-                super.onDismiss(dialog);
-                AppPreferences.setLatestReleaseNotesShown(getPrefs(), dialog.getContext(), currentAppVersion);
+        if(!ObjectUtils.areEqual(currentAppVersion, lastShownReleaseNotes)) {
+            Map<String, String> releaseNotes = AppPreferences.getAppReleaseHistory(getAppContext(), lastShownReleaseNotes);
+            if (releaseNotes.size() > 0) {
+                showOrQueueDialogMessage(new ReleaseNotesMessage<>(getAppContext(), releaseNotes, new QuestionResultAdapter<UIH, OWNER>((UIH) this) {
+                    @Override
+                    public void onDismiss(AlertDialog dialog) {
+                        super.onDismiss(dialog);
+                        AppPreferences.setLatestReleaseNotesShown(getPrefs(), dialog.getContext(), currentAppVersion);
+                    }
+                }));
             }
-        }));
-
+        }
     }
 
     public Action<UIH, OWNER, PiwigoResponseBufferingHandler.Response> getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {

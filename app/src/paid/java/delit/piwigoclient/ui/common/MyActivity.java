@@ -22,7 +22,7 @@ public abstract class MyActivity<A extends MyActivity<A,AUIH>, AUIH extends Acti
     protected void onStart() {
         super.onStart();
         backgroundUploadServiceEventHandler.register(getUiHelper());
-        getUiHelper().showReleaseNotes(BuildConfig.VERSION_NAME);
+        getUiHelper().showReleaseNotesIfNewlyUpgradedOrInstalled(BuildConfig.VERSION_NAME);
     }
 
     @Override
