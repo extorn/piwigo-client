@@ -2,17 +2,27 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.preference.PreferenceManager;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
-import delit.libs.ui.util.SecurePrefsUtil;
+import delit.libs.core.util.Logging;
+import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.CollectionUtils;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 /**
  * Created by gareth on 22/01/18.
@@ -27,7 +37,8 @@ public class ConnectionPreferences {
     }
 
     public static Set<String> getConnectionProfileList(SharedPreferences prefs, Context context) {
-        return prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), new HashSet<String>(0));
+        Set<String> val = prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), new HashSet<>(0));
+        return new HashSet<>(Objects.requireNonNull(val));
     }
 
     public static void deletePreferences(SharedPreferences prefs, Context context, @NonNull String prefix) {
@@ -49,7 +60,7 @@ public class ConnectionPreferences {
 
     public static ProfilePreferences getActiveProfile() {
         if (activeProfile == null) {
-            activeProfile = new ProfilePreferences(null);
+            activeProfile = new ProfilePreferences((String)null);
         }
         return activeProfile;
     }
@@ -76,11 +87,38 @@ public class ConnectionPreferences {
         return prefs.getString(context.getString(R.string.preference_caching_level_key), context.getResources().getString(R.string.preference_caching_level_default));
     }
 
-    public static class ProfilePreferences implements Serializable, Comparable<ProfilePreferences> {
+    public static PreferenceActor getPreferenceActor(Context context, String profileId, int preferenceKey) {
+        PreferenceActor actor = new PreferenceActor(profileId);
+        actor.with(preferenceKey);
+        actor.with(SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID));
+        return actor;
+    }
 
-        private static final long serialVersionUID = -839430660180276975L;
+    public static class ProfilePreferences implements Parcelable, Comparable<ProfilePreferences> {
+
         private final String prefix;
         private boolean asGuest;
+
+        protected ProfilePreferences(Parcel in) {
+            prefix = in.readString();
+            asGuest = ParcelUtils.readBool(in);
+        }
+
+        public static final Creator<ProfilePreferences> CREATOR = new Creator<ProfilePreferences>() {
+            @Override
+            public ProfilePreferences createFromParcel(Parcel in) {
+                return new ProfilePreferences(in);
+            }
+
+            @Override
+            public ProfilePreferences[] newArray(int size) {
+                return new ProfilePreferences[size];
+            }
+        };
+
+        public PreferenceActor getPrefActor() {
+            return new PreferenceActor(this.prefix);
+        }
 
         private ProfilePreferences(String prefix) {
             this.prefix = prefix;
@@ -91,10 +129,17 @@ public class ConnectionPreferences {
             this.asGuest = asGuest;
         }
 
+
+        public ResumeActionPreferences getResumeActionPreferences(SharedPreferences prefs, Context context) {
+            String connectionProfileId = getProfileId(prefs,context);
+            return new ResumeActionPreferences(connectionProfileId);
+        }
+
         public ProfilePreferences asGuest() {
             return new ProfilePreferences(prefix, true);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return prefix + " " + asGuest;
@@ -106,7 +151,7 @@ public class ConnectionPreferences {
                 return false;
             }
             ProfilePreferences other = (ProfilePreferences) obj;
-            boolean equals = (prefix == other.prefix) || (prefix != null && prefix.equals(other.prefix));
+            boolean equals = Objects.equals(prefix, other.prefix);
             return equals && (asGuest == other.asGuest);
         }
 
@@ -155,58 +200,50 @@ public class ConnectionPreferences {
             }
         }
 
-        public String getKey(Context context, @StringRes int keyId) {
-            if (this.prefix != null && this.prefix.length() > 0) {
-                return prefix + ':' + context.getString(keyId);
-            }
-            return context.getString(keyId);
-        }
-
         public String getPiwigoServerAddress(SharedPreferences prefs, Context context) {
-            return prefs.getString(getKey(context, R.string.preference_piwigo_server_address_key), null);
+            return getPrefActor().with(R.string.preference_piwigo_server_address_key).readString(prefs, context, null);
         }
 
         public String getTrimmedNonNullPiwigoServerAddress(SharedPreferences prefs, Context context) {
-            return prefs.getString(getKey(context, R.string.preference_piwigo_server_address_key), "").trim();
+            return getPrefActor().with(R.string.preference_piwigo_server_address_key).readString(prefs, context, "").trim();
         }
 
         public boolean getUseBasicAuthentication(SharedPreferences prefs, Context context) {
-            return prefs.getBoolean(getKey(context, R.string.preference_server_use_basic_auth_key), false);
+            return getPrefActor().with(R.string.preference_server_use_basic_auth_key).readBoolean(prefs, context, false);
         }
 
         public String getBasicAuthenticationUsername(SharedPreferences prefs, Context context) {
-            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-            return prefUtil.readSecureStringPreference(prefs, getKey(context, R.string.preference_server_basic_auth_username_key), "");
+            return getPrefActor().with(R.string.preference_server_basic_auth_username_key).readStringEncrypted(prefs, context, "");
         }
 
         public String getBasicAuthenticationPassword(SharedPreferences prefs, Context context) {
-            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-            return prefUtil.readSecureStringPreference(prefs, getKey(context, R.string.preference_server_basic_auth_password_key), "");
+            return getPrefActor().with(R.string.preference_server_basic_auth_password_key).readStringEncrypted(prefs, context, "");
         }
 
         public boolean getUseClientCertificates(SharedPreferences prefs, Context context) {
-            return prefs.getBoolean(getKey(context, R.string.preference_server_use_client_certs_key), context.getResources().getBoolean(R.bool.preference_server_use_client_certs_default));
+            boolean defaultValue = context.getResources().getBoolean(R.bool.preference_server_use_client_certs_default);
+            return getPrefActor().with(R.string.preference_server_use_client_certs_key).readBoolean(prefs, context, defaultValue);
         }
 
         public boolean getUsePinnedServerCertificates(SharedPreferences prefs, Context context) {
-            return prefs.getBoolean(getKey(context, R.string.preference_server_use_custom_trusted_ca_certs_key), context.getResources().getBoolean(R.bool.preference_server_use_custom_trusted_ca_certs_default));
+            boolean defaultValue = context.getResources().getBoolean(R.bool.preference_server_use_custom_trusted_ca_certs_default);
+            return getPrefActor().with(R.string.preference_server_use_custom_trusted_ca_certs_key).readBoolean(prefs, context, defaultValue);
         }
 
         public Set<String> getUserPreNotifiedCerts(SharedPreferences prefs, Context context) {
-            return prefs.getStringSet(getKey(context, R.string.preference_pre_user_notified_certificates_key), new HashSet<String>());
+            HashSet<String> defaultValue = new HashSet<>(0);
+            return getPrefActor().with(R.string.preference_pre_user_notified_certificates_key).readStringSet(prefs, context, defaultValue);
         }
 
         public String getPiwigoUsername(SharedPreferences prefs, Context context) {
             if (asGuest) {
                 return null;
             }
-            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-            return prefUtil.readSecureStringPreference(prefs, getKey(context, R.string.preference_piwigo_server_username_key), null);
+            return getPrefActor().with(R.string.preference_piwigo_server_username_key).readStringEncrypted(prefs, context, null);
         }
 
         public String getPiwigoPassword(SharedPreferences prefs, Context context) {
-            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-            return prefUtil.readSecureStringPreference(prefs, getKey(context, R.string.preference_piwigo_server_password_key), null);
+            return getPrefActor().with(R.string.preference_piwigo_server_password_key).readStringEncrypted(prefs, context, null);
         }
 
         public String getPiwigoPasswordNotNull(SharedPreferences prefs, Context context) {
@@ -217,137 +254,151 @@ public class ConnectionPreferences {
             return pass;
         }
 
+        public String getPiwigoUniqueResourceKey(SharedPreferences prefs, Context context) {
+            String defaultVal = context.getResources().getString(R.string.preference_gallery_unique_id_default);
+            return getPrefActor().with(R.string.preference_gallery_unique_id_key).readString(prefs, context, defaultVal);
+        }
+
+        public void setFixPiwigoPrivacyPluginMediaUris(SharedPreferences prefs, Context context, boolean newValue) {
+            getPrefActor().with(R.string.preference_fix_privacy_plugin_media_uris_key).writeBoolean(prefs, context, newValue);
+        }
+
+        public Boolean isFixPiwigoPrivacyPluginMediaUris(SharedPreferences prefs, Context context, Boolean defaultVal) {
+            return getPrefActor().with(R.string.preference_fix_privacy_plugin_media_uris_key).readBoolean(prefs, context, defaultVal);
+        }
+
+        public boolean isFixPiwigoPrivacyPluginMediaUris(SharedPreferences prefs, Context context) {
+            boolean defaultVal = context.getResources().getBoolean(R.bool.preference_fix_privacy_plugin_media_uris_default);
+            return isFixPiwigoPrivacyPluginMediaUris(prefs, context, defaultVal);
+        }
+
+
         public String getCertificateHostnameVerificationLevel(SharedPreferences prefs, Context context) {
-            return prefs.getString(getKey(context, R.string.preference_server_ssl_certificate_hostname_verification_key), context.getResources().getString(R.string.preference_server_ssl_certificate_hostname_verification_default));
+            String defaultVal = context.getResources().getString(R.string.preference_server_ssl_certificate_hostname_verification_default);
+            return getPrefActor().with(R.string.preference_server_ssl_certificate_hostname_verification_key).readString(prefs, context, defaultVal);
         }
 
         public boolean getFollowHttpRedirects(SharedPreferences prefs, Context context) {
             boolean defaultAllowRedirects = context.getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default);
-            return prefs.getBoolean(getKey(context, R.string.preference_server_connection_allow_redirects_key), defaultAllowRedirects);
+            return getPrefActor().with(R.string.preference_server_connection_allow_redirects_key).readBoolean(prefs, context, defaultAllowRedirects);
         }
 
         public boolean isForceHttps(SharedPreferences prefs, Context context) {
             boolean forceHttpsUris = context.getResources().getBoolean(R.bool.preference_server_connection_force_https_default);
-            return prefs.getBoolean(getKey(context, R.string.preference_server_connection_force_https_key), forceHttpsUris);
+            return getPrefActor().with(R.string.preference_server_connection_force_https_key).readBoolean(prefs, context, forceHttpsUris);
         }
 
         public boolean isOfflineMode(SharedPreferences prefs, Context context) {
             boolean defaultOfflineMode = context.getResources().getBoolean(R.bool.preference_server_connection_offline_mode_default);
-            return prefs.getBoolean(getKey(context, R.string.preference_server_connection_offline_mode_key), defaultOfflineMode);
+            return getPrefActor().with(R.string.preference_server_connection_offline_mode_key).readBoolean(prefs, context, defaultOfflineMode);
         }
 
         public void setForceHttps(SharedPreferences prefs, Context context, boolean newValue) {
-            SharedPreferences.Editor editor = prefs.edit();
-            writeBooleanPref(editor, context.getString(R.string.preference_server_connection_force_https_key), newValue);
-            editor.commit();
+            getPrefActor().with(R.string.preference_server_connection_force_https_key).writeBoolean(prefs, context, newValue);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(prefix);
+            ParcelUtils.writeBool(dest, asGuest);
         }
 
         public void setFollowHttpRedirects(SharedPreferences prefs, Context context, boolean newValue) {
-            SharedPreferences.Editor editor = prefs.edit();
-            writeBooleanPref(editor, context.getString(R.string.preference_server_connection_allow_redirects_key), newValue);
-            editor.commit();
+            getPrefActor().with(R.string.preference_server_connection_allow_redirects_key).writeBoolean(prefs, context, newValue);
         }
 
         public void setWarnInternalUriExposed(SharedPreferences prefs, Context context, boolean newValue) {
-            SharedPreferences.Editor editor = prefs.edit();
-            writeBooleanPref(editor, context.getString(R.string.preference_server_connection_warn_internal_uri_exposed_key), newValue);
-            editor.apply();
+            getPrefActor().with(R.string.preference_server_connection_warn_internal_uri_exposed_key).writeBoolean(prefs, context, newValue);
+        }
+        public boolean isWarnInternalUriExposed(SharedPreferences prefs, Context context) {
+            return getPrefActor().with(R.string.preference_server_connection_warn_internal_uri_exposed_key).readBoolean(prefs, context, true);
         }
 
         public int getMaxHttpRedirects(SharedPreferences prefs, Context context) {
-            int defaultMaxRedirects = context.getResources().getInteger(R.integer.preference_server_connection_max_redirects_default);
-            return prefs.getInt(getKey(context, R.string.preference_server_connection_max_redirects_key), defaultMaxRedirects);
+            int defaultVal = context.getResources().getInteger(R.integer.preference_server_connection_max_redirects_default);
+            return getPrefActor().with(R.string.preference_server_connection_max_redirects_key).readInt(prefs, context, defaultVal);
         }
 
         public int getMaxServerConnectRetries(SharedPreferences prefs, Context context) {
-            int defaultConnectRetries = context.getResources().getInteger(R.integer.preference_server_connection_retries_default);
-            return prefs.getInt(getKey(context, R.string.preference_server_connection_retries_key), defaultConnectRetries);
+            int defaultVal = context.getResources().getInteger(R.integer.preference_server_connection_retries_default);
+            return getPrefActor().with(R.string.preference_server_connection_retries_key).readInt(prefs, context, defaultVal);
         }
 
         public int getServerConnectTimeout(SharedPreferences prefs, Context context) {
-            int defaultConnectTimeoutMillis = context.getResources().getInteger(R.integer.preference_server_connection_timeout_secs_default);
-            return prefs.getInt(getKey(context, R.string.preference_server_connection_timeout_secs_key), defaultConnectTimeoutMillis);
+            int defaultVal = context.getResources().getInteger(R.integer.preference_server_connection_timeout_secs_default);
+            return getPrefActor().with(R.string.preference_server_connection_timeout_secs_key).readInt(prefs, context, defaultVal);
         }
 
         public int getServerResponseTimeout(SharedPreferences prefs, Context context) {
-            int defaultConnectTimeoutMillis = context.getResources().getInteger(R.integer.preference_server_response_timeout_secs_default);
-            return prefs.getInt(getKey(context, R.string.preference_server_response_timeout_secs_key), defaultConnectTimeoutMillis);
+            int defaultVal = context.getResources().getInteger(R.integer.preference_server_response_timeout_secs_default);
+            return getPrefActor().with(R.string.preference_server_response_timeout_secs_key).readInt(prefs, context, defaultVal);
         }
 
         public boolean isIgnoreServerCacheDirectives(SharedPreferences prefs, Context context) {
-            boolean defaultIgnoreCacheDirectives = context.getResources().getBoolean(R.bool.preference_server_alter_cache_directives_default);
-            return prefs.getBoolean(getKey(context, R.string.preference_server_alter_cache_directives_key), defaultIgnoreCacheDirectives);
+            boolean defaultVal = context.getResources().getBoolean(R.bool.preference_server_alter_cache_directives_default);
+            return getPrefActor().with(R.string.preference_server_alter_cache_directives_key).readBoolean(prefs, context, defaultVal);
         }
 
         public boolean isPerformUriPathSegmentEncoding(SharedPreferences prefs, Context context) {
-            boolean defaultIgnoreCacheDirectives = context.getResources().getBoolean(R.bool.preference_server_connection_uri_path_segment_encoding_default);
-            return prefs.getBoolean(getKey(context, R.string.preference_server_connection_uri_path_segment_encoding_key), defaultIgnoreCacheDirectives);
-        }
-
-        public boolean isWarnInternalUriExposed(SharedPreferences prefs, Context context) {
-            return prefs.getBoolean(getKey(context, R.string.preference_server_connection_warn_internal_uri_exposed_key), true);
+            boolean defaultVal = context.getResources().getBoolean(R.bool.preference_server_connection_uri_path_segment_encoding_default);
+            return getPrefActor().with(R.string.preference_server_connection_uri_path_segment_encoding_key).readBoolean(prefs, context, defaultVal);
         }
 
         public void copyFrom(SharedPreferences prefs, Context context, ProfilePreferences fromPrefs) {
 
-            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-
             SharedPreferences.Editor editor = prefs.edit();
 
+            getPrefActor().with(SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID));
+            
             // piwigo server connection details
-            writeStringPref(editor, getKey(context, R.string.preference_piwigo_server_address_key), fromPrefs.getPiwigoServerAddress(prefs, context));
-            writeSecurePref(editor, prefUtil, getKey(context, R.string.preference_piwigo_server_username_key), fromPrefs.getPiwigoUsername(prefs, context));
-            writeSecurePref(editor, prefUtil, getKey(context, R.string.preference_piwigo_server_password_key), fromPrefs.getPiwigoPassword(prefs, context));
+            getPrefActor().with(R.string.preference_piwigo_server_address_key).writeString(editor, context, fromPrefs.getPiwigoServerAddress(prefs, context));
+            getPrefActor().with(R.string.preference_piwigo_server_username_key).writeStringEncrypted(editor, context, fromPrefs.getPiwigoUsername(prefs, context));
+            getPrefActor().with(R.string.preference_piwigo_server_password_key).writeStringEncrypted(editor, context, fromPrefs.getPiwigoPassword(prefs, context));
+
+            // piwigo server specific details.
+            getPrefActor().with(R.string.preference_gallery_unique_id_key).writeString(editor, context, fromPrefs.getPiwigoUniqueResourceKey(prefs, context));
+            // note we pass null as a default to ensure that if there is no preference currently, this is removed from the editor (defaulted to null).
+            getPrefActor().with(R.string.preference_fix_privacy_plugin_media_uris_key).writeBoolean(editor, context, fromPrefs.isFixPiwigoPrivacyPluginMediaUris(prefs, context, null));
 
             // fine grained http connection configuration bits and bobs
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_allow_redirects_key), fromPrefs.getFollowHttpRedirects(prefs, context));
-            writeIntPref(editor, getKey(context, R.string.preference_server_connection_max_redirects_key), fromPrefs.getMaxHttpRedirects(prefs, context));
-            writeIntPref(editor, getKey(context, R.string.preference_server_connection_retries_key), fromPrefs.getMaxServerConnectRetries(prefs, context));
-            writeIntPref(editor, getKey(context, R.string.preference_server_connection_timeout_secs_key), fromPrefs.getServerConnectTimeout(prefs, context));
-            writeIntPref(editor, getKey(context, R.string.preference_server_response_timeout_secs_key), fromPrefs.getServerResponseTimeout(prefs, context));
+            getPrefActor().with(R.string.preference_server_connection_allow_redirects_key).writeBoolean(editor, context, fromPrefs.getFollowHttpRedirects(prefs, context));
+            getPrefActor().with(R.string.preference_server_connection_max_redirects_key).writeInt(editor, context, fromPrefs.getMaxHttpRedirects(prefs, context));
+            getPrefActor().with(R.string.preference_server_connection_retries_key).writeInt(editor, context, fromPrefs.getMaxServerConnectRetries(prefs, context));
+            getPrefActor().with(R.string.preference_server_connection_timeout_secs_key).writeInt(editor, context, fromPrefs.getServerConnectTimeout(prefs, context));
+            getPrefActor().with(R.string.preference_server_response_timeout_secs_key).writeInt(editor, context, fromPrefs.getServerResponseTimeout(prefs, context));
 
+            getPrefActor().with(R.string.preference_server_ssl_certificate_hostname_verification_key).writeString(editor, context, fromPrefs.getCertificateHostnameVerificationLevel(prefs, context));
+            getPrefActor().with(R.string.preference_server_alter_cache_directives_key).writeBoolean(editor, context, fromPrefs.isIgnoreServerCacheDirectives(prefs, context));
+            getPrefActor().with(R.string.preference_server_connection_force_https_key).writeBoolean(editor, context, fromPrefs.isForceHttps(prefs, context));
 
-            writeStringPref(editor, getKey(context, R.string.preference_server_ssl_certificate_hostname_verification_key), fromPrefs.getCertificateHostnameVerificationLevel(prefs, context));
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_alter_cache_directives_key), fromPrefs.isIgnoreServerCacheDirectives(prefs, context));
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_force_https_key), fromPrefs.isForceHttps(prefs, context));
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_alter_cache_directives_key), fromPrefs.isIgnoreServerCacheDirectives(prefs, context));
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_offline_mode_key), fromPrefs.isOfflineMode(prefs, context));
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_uri_path_segment_encoding_key), fromPrefs.isPerformUriPathSegmentEncoding(prefs, context));
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_warn_internal_uri_exposed_key), fromPrefs.isWarnInternalUriExposed(prefs, context));
+            getPrefActor().with(R.string.preference_server_connection_offline_mode_key).writeBoolean(editor, context, fromPrefs.isOfflineMode(prefs, context));
+            getPrefActor().with(R.string.preference_server_connection_uri_path_segment_encoding_key).writeBoolean(editor, context, fromPrefs.isPerformUriPathSegmentEncoding(prefs, context));
+
+            getPrefActor().with(R.string.preference_server_connection_warn_internal_uri_exposed_key).writeBoolean(editor, context, fromPrefs.isWarnInternalUriExposed(prefs, context));
 
             // received server certs list
-            writeStringSetPref(editor, getKey(context, R.string.preference_pre_user_notified_certificates_key), fromPrefs.getUserPreNotifiedCerts(prefs, context));
+            getPrefActor().with(R.string.preference_pre_user_notified_certificates_key).writeStringSet(editor, context, fromPrefs.getUserPreNotifiedCerts(prefs, context));
 
             // pinned server certs
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_use_custom_trusted_ca_certs_key), fromPrefs.getUsePinnedServerCertificates(prefs, context));
+            getPrefActor().with(R.string.preference_server_use_custom_trusted_ca_certs_key).writeBoolean(editor, context, fromPrefs.getUsePinnedServerCertificates(prefs, context));
 
             // client certs
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_use_client_certs_key), fromPrefs.getUseClientCertificates(prefs, context));
+            getPrefActor().with(R.string.preference_server_use_client_certs_key).writeBoolean(editor, context, fromPrefs.getUseClientCertificates(prefs, context));
 
             // Basic authentication
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_use_basic_auth_key), fromPrefs.getUseBasicAuthentication(prefs, context));
-            writeSecurePref(editor, prefUtil, getKey(context, R.string.preference_server_basic_auth_username_key), fromPrefs.getBasicAuthenticationUsername(prefs, context));
-            writeSecurePref(editor, prefUtil, getKey(context, R.string.preference_server_basic_auth_password_key), fromPrefs.getBasicAuthenticationPassword(prefs, context));
+            getPrefActor().with(R.string.preference_server_use_basic_auth_key).writeBoolean(editor, context, fromPrefs.getUseBasicAuthentication(prefs, context));
+            getPrefActor().with(R.string.preference_server_basic_auth_username_key).writeStringEncrypted(editor, context, fromPrefs.getBasicAuthenticationUsername(prefs, context));
+            getPrefActor().with(R.string.preference_server_basic_auth_password_key).writeStringEncrypted(editor, context, fromPrefs.getBasicAuthenticationPassword(prefs, context));
 
 //            editor.apply();
             editor.commit();
         }
 
-        private void writeBooleanPref(SharedPreferences.Editor editor, String key, boolean value) {
-            editor.putBoolean(key, value);
-        }
-
-        private void writeIntPref(SharedPreferences.Editor editor, String key, int value) {
-            editor.putInt(key, value);
-        }
-
-        private void writeStringPref(SharedPreferences.Editor editor, String key, String value) {
-            editor.putString(key, value);
-        }
-
-        private void writeStringSetPref(SharedPreferences.Editor editor, String key, Set<String> value) {
-            editor.putStringSet(key, value);
-        }
 
         public void writeSecurePref(SharedPreferences.Editor editor, SecurePrefsUtil prefUtil, String key, String plainTextValue) {
             String encryptedValue = prefUtil.encryptValue(key, plainTextValue);
@@ -356,21 +407,46 @@ public class ConnectionPreferences {
 
         public void delete(SharedPreferences prefs, Context context) {
             SharedPreferences.Editor editor = prefs.edit();
-            editor.remove(getKey(context, R.string.preference_piwigo_server_address_key));
-            editor.remove(getKey(context, R.string.preference_piwigo_server_username_key));
-            editor.remove(getKey(context, R.string.preference_piwigo_server_password_key));
-            editor.remove(getKey(context, R.string.preference_server_connection_timeout_secs_key));
-            editor.remove(getKey(context, R.string.preference_server_connection_retries_key));
-            editor.remove(getKey(context, R.string.preference_server_connection_max_redirects_key));
-            editor.remove(getKey(context, R.string.preference_server_connection_allow_redirects_key));
-            editor.remove(getKey(context, R.string.preference_server_ssl_certificate_hostname_verification_key));
-            editor.remove(getKey(context, R.string.preference_pre_user_notified_certificates_key));
-            editor.remove(getKey(context, R.string.preference_server_use_custom_trusted_ca_certs_key));
-            editor.remove(getKey(context, R.string.preference_server_use_client_certs_key));
-            editor.remove(getKey(context, R.string.preference_server_use_basic_auth_key));
-            editor.remove(getKey(context, R.string.preference_server_basic_auth_username_key));
-            editor.remove(getKey(context, R.string.preference_server_basic_auth_password_key));
-            editor.remove(getKey(context, R.string.preference_server_connection_uri_path_segment_encoding_key));
+
+            // piwigo server connection details
+            getPrefActor().with(R.string.preference_piwigo_server_address_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_piwigo_server_username_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_piwigo_server_password_key).remove(editor, context);
+
+            // piwigo server specific details.
+            getPrefActor().with(R.string.preference_gallery_unique_id_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_fix_privacy_plugin_media_uris_key).remove(editor, context);
+
+            // fine grained http connection configuration bits and bobs
+            getPrefActor().with(R.string.preference_server_connection_allow_redirects_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_server_connection_max_redirects_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_server_connection_retries_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_server_connection_timeout_secs_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_server_response_timeout_secs_key).remove(editor, context);
+
+            getPrefActor().with(R.string.preference_server_ssl_certificate_hostname_verification_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_server_alter_cache_directives_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_server_connection_force_https_key).remove(editor, context);
+
+            getPrefActor().with(R.string.preference_server_connection_offline_mode_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_server_connection_uri_path_segment_encoding_key).remove(editor, context);
+
+            getPrefActor().with(R.string.preference_server_connection_warn_internal_uri_exposed_key).remove(editor, context);
+
+            // received server certs list
+            getPrefActor().with(R.string.preference_pre_user_notified_certificates_key).remove(editor, context);
+
+            // pinned server certs
+            getPrefActor().with(R.string.preference_server_use_custom_trusted_ca_certs_key).remove(editor, context);
+
+            // client certs
+            getPrefActor().with(R.string.preference_server_use_client_certs_key).remove(editor, context);
+
+            // Basic authentication
+            getPrefActor().with(R.string.preference_server_use_basic_auth_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_server_basic_auth_username_key).remove(editor, context);
+            getPrefActor().with(R.string.preference_server_basic_auth_password_key).remove(editor, context);
+
             editor.apply();
             editor.commit();
         }
@@ -383,8 +459,235 @@ public class ConnectionPreferences {
             SharedPreferences overallSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
             return isValid(overallSharedPreferences, context);
         }
-
-
     }
 
+    public static class ResumeActionPreferences {
+
+        private final String profileId;
+
+        public ResumeActionPreferences(String profileId) {
+            this.profileId =profileId;
+        }
+
+        public SharedPreferences getResumeSharedPrefs(@NonNull Context context) {
+            return context.getSharedPreferences(profileId + "resume_actions", Context.MODE_PRIVATE);
+        }
+
+
+        public String getReopenAction(@NonNull Context context) {
+            SharedPreferences prefs = getResumeSharedPrefs(context);
+            return prefs.getString("resume_action", null);
+        }
+
+        public void setReopenAction(@NonNull Context context, @Nullable String action) {
+            getResumeSharedPrefs(context).edit().putString("resume_action", action).apply();
+        }
+
+        public ArrayList<Long> getAlbumPath(@NonNull Context context) {
+            SharedPreferences prefs = getResumeSharedPrefs(context);
+            String albumPathStr =  prefs.getString("current_album.path", null);
+            return CollectionUtils.longsFromCsvList(albumPathStr);
+        }
+
+        public void setAlbumPath(@NonNull Context context, @NonNull List<Long> albumPath) {
+            String albumPathStr = CollectionUtils.toCsvList(albumPath);
+            getResumeSharedPrefs(context).edit().putString("current_album.path", albumPathStr).apply();
+        }
+
+
+        public String getAlbumName(@NonNull Context context) {
+            SharedPreferences prefs = getResumeSharedPrefs(context);
+            return prefs.getString("current_album.name", "");
+        }
+
+        public void setAlbumName(@NonNull Context context, String albumName) {
+            getResumeSharedPrefs(context).edit().putString("current_album.name", albumName).apply();
+        }
+
+        public void setAlbumDetails(@NonNull Context context, List<Long> albumPath, String albumName) {
+            String albumPathStr = CollectionUtils.toCsvList(albumPath);
+            SharedPreferences.Editor editor = getResumeSharedPrefs(context).edit();
+            editor.putString("current_album.path", albumPathStr);
+            editor.putString("current_album.name", albumName);
+            editor.apply();
+        }
+    }
+
+    public static class PreferenceActor {
+        private int prefKey;
+        private final String profileId;
+        private SecurePrefsUtil securePrefUtil;
+        private static final String TAG  = "PrefActor";
+
+        public PreferenceActor() {
+            profileId = null;
+        }
+
+        public PreferenceActor(String profileId) {
+            this.profileId = profileId;
+        }
+
+        public PreferenceActor with(SecurePrefsUtil securePrefUtil) {
+            this.securePrefUtil = securePrefUtil;
+            return this;
+        }
+
+        public PreferenceActor with(@StringRes int prefKey) {
+            this.prefKey = prefKey;
+            return this;
+        }
+
+        public void writeInt(SharedPreferences prefs, Context context, int newValue) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeInt(editor, context, newValue);
+            editor.commit();
+        }
+
+        public void writeString(SharedPreferences prefs, Context context, String newValue) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeString(editor, context, newValue);
+            editor.commit();
+        }
+
+        public SharedPreferences.Editor writeString(SharedPreferences.Editor editor, Context context, String newValue) {
+            editor.putString(getPrefKeyInProfile(context, prefKey), newValue);
+            return editor;
+        }
+
+        public SharedPreferences.Editor writeStringEncrypted(SharedPreferences.Editor editor, Context context, String value) {
+            if(securePrefUtil == null) {
+                securePrefUtil = SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID);
+            }
+            securePrefUtil.writeSecurePreference(editor, getPrefKeyInProfile(context, prefKey), value);
+            return editor;
+        }
+
+        public Set<String> readStringSet(SharedPreferences prefs, Context context, Set<String> defaultVal) {
+            try {
+                Set<String> val = prefs.getStringSet(getPrefKeyInProfile(context, prefKey), defaultVal);
+                if(val == null && defaultVal == null) {
+                    return null;
+                } else if(val != null) {
+                    return new HashSet<>(val);
+                }
+                return new HashSet<>(); // don't ever return null
+            } catch(ClassCastException e) {
+                String value = prefs.getString(getPrefKeyInProfile(context, prefKey), null);
+                Logging.log(Log.ERROR, TAG, "Expected a string set for pref "+prefKey+" but was string : " + value);
+                throw e;
+            }
+        }
+
+        public String readString(SharedPreferences prefs, Context context, String defaultVal) {
+            return prefs.getString(getPrefKeyInProfile(context, prefKey), defaultVal);
+        }
+
+        public String readStringEncrypted(SharedPreferences prefs, Context context, String defaultVal) {
+            if(securePrefUtil == null) {
+                securePrefUtil = SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID);
+            }
+            return securePrefUtil.readSecureStringPreference(context, prefs, getPrefKeyInProfile(context, prefKey), defaultVal);
+        }
+
+        public Boolean readBoolean(SharedPreferences prefs, Context context, Boolean defaultVal) {
+            String profilePrefKey = getPrefKeyInProfile(context, prefKey);
+            if(prefs.contains(profilePrefKey)) {
+                return prefs.getBoolean(profilePrefKey, defaultVal != null ? defaultVal : false); // def value is never used here.
+            } else {
+                return defaultVal;
+            }
+        }
+
+        /**
+         * If active profile, updates in-use copy as well as actual profile
+         * @param prefs
+         * @param context
+         * @param newValue
+         */
+        public void writeBoolean(SharedPreferences prefs, Context context, boolean newValue) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeBoolean(editor, context, newValue);
+            editor.commit();
+        }
+
+        /**
+         * If active profile, updates in-use copy as well as actual profile
+         * NB. If send null, then the key will be removed since that is not a valid boolean.
+         *
+         * @param editor
+         * @param context
+         * @param newValue
+         * @return editor
+         */
+        public SharedPreferences.Editor writeBoolean(SharedPreferences.Editor editor, Context context, Boolean newValue) {
+            if(newValue != null) {
+                editor.putBoolean(getPrefKeyInProfile(context, prefKey), newValue);
+            } else {
+                editor.remove(getPrefKeyInProfile(context, prefKey));
+            }
+            return editor;
+        }
+
+        public SharedPreferences.Editor writeInt(SharedPreferences.Editor editor, Context context, int newValue) {
+
+            editor.putInt(getPrefKeyInProfile(context, prefKey), newValue);
+            return editor;
+        }
+
+        private boolean isActiveProfile() {
+            return this.profileId == null || this.profileId.length() == 0;
+        }
+
+        public String getPrefKeyInProfile(Context context, @StringRes int keyId) {
+            if (!isActiveProfile()) {
+                return profileId + ':' + context.getString(keyId);
+            }
+            return context.getString(keyId);
+        }
+
+
+        public int readInt(SharedPreferences prefs, Context context, int defaultVal) {
+            return prefs.getInt(getPrefKeyInProfile(context, prefKey), defaultVal);
+        }
+
+        public void writeStringSet(SharedPreferences prefs, Context context, Set<String> newValue) {
+                SharedPreferences.Editor editor = prefs.edit();
+                writeStringSet(editor, context, newValue).commit();
+        }
+
+        public SharedPreferences.Editor writeStringSet(SharedPreferences.Editor editor, Context context, Set<String> newValue) {
+            if(newValue != null) {
+                editor.putStringSet(getPrefKeyInProfile(context, prefKey), new HashSet<>(newValue));
+            } else {
+                editor.remove(getPrefKeyInProfile(context, prefKey));
+            }
+            return editor;
+        }
+
+        public void remove(SharedPreferences prefs, Context context) {
+            SharedPreferences.Editor editor = prefs.edit();
+            remove(editor, context);
+            editor.commit();
+        }
+
+        public SharedPreferences.Editor remove(SharedPreferences.Editor editor, Context context) {
+            editor.remove(getPrefKeyInProfile(context, prefKey));
+            return editor;
+        }
+
+        public boolean isForActiveProfile() {
+            return profileId == null;
+        }
+
+        public void writeLong(SharedPreferences prefs, Context context, long newValue) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeLong(editor, context, newValue);
+            editor.commit();
+        }
+
+        public SharedPreferences.Editor writeLong(SharedPreferences.Editor editor, @NonNull Context context, long newValue) {
+            editor.putLong(getPrefKeyInProfile(context, prefKey), newValue);
+            return editor;
+        }
+    }
 }

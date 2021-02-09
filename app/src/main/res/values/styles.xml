@@ -1,113 +1,230 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Material theme (dark version).
-        <p>If you want to ensure that your
-        app consistently uses the Material theme at all times, you must explicitly declare it in your
-        manifest. For example, {@code &lt;application android:theme="@style/Theme.Material"&gt;}.
-        <p>Styles used by the Material theme are named using the convention Type.Material.Etc
-        (for example, {@code Widget.Material.Button} and {@code
-        TextAppearance.Material.Widget.PopupMenu.Large}).
-        Specific resources used by Material are named using the convention @type/foo_bar_baz_material
-        with trailing _dark or _light specifiers if they are not shared between both light and
-        dark versions of the theme. -->
-
-    <style name="Custom.Theme" parent="Theme.AppCompat.NoActionBar">
-
-        <!-- used for the navigation menu for example -->
-        <item name="android:checkboxStyle">@style/Custom.Widget.AppCompat.CompoundButton.CheckBox</item>
-        <item name="checkboxStyle">@style/Custom.Widget.AppCompat.CompoundButton.CheckBox</item>
-        <item name="radioButtonStyle">@style/Custom.Widget.AppCompat.CompoundButton.RadioButton</item>
-        <item name="switchStyle">@style/Custom.Widget.AppCompat.CompoundButton.Switch</item>
-        <item name="android:editTextColor">@color/edit_text_color_selector</item>
-        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat</item>
-        <item name="android:spinnerStyle">@style/Custom.Widget.AppCompat.Spinner.Underlined</item>
-        <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
-        <item name="android:dropDownListViewStyle">@style/Custom.Widget.AppCompat.DropDownItem.Spinner</item>
-        <item name="preferenceTheme">@style/Custom.PreferenceThemeOverlay.v14.Material</item>
-        <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>
+    <style name="App.Widget.EditText.FieldEntry.Clickable" parent="App.Widget.EditText.FieldEntry">
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
+        <item name="android:inputType">none</item>
+        <item name="android:textIsSelectable">false</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
     </style>
 
-    <style name="Custom.PreferenceThemeOverlay.v14.Material" parent="PreferenceThemeOverlay.v14.Material">
+    <style name="App.Widget.EditText.FieldEntry" parent="App.Widget.EditText">
+        <!--<item name="android:textColor">?attr/colorPrimaryVariant</item>-->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginTop">0dp</item>
     </style>
 
-    <style name="Custom.TextAppearance.AppCompat" parent="TextAppearance.AppCompat">
+    <style name="App.Widget.NumberPicker.FieldEntry" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">9dp</item>
+    </style>
+
+    <!-- this ensure the text in edit text boxes is still visible when they are disabled -->
+    <style name="App.Widget.EditText" parent="Widget.AppCompat.EditText">
         <item name="android:textColor">@color/edit_text_color_selector</item>
     </style>
 
-    <!-- used on the album view - headings for listed albums -->
-    <style name="Custom.TextAppearance.AppCompat.Medium" parent="TextAppearance.AppCompat.Medium">
+    <style name="App.Widget.Material.TextView.FieldLabel" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">?textAppearanceCaption</item>
+        <!--<item name="android:textColor">?attr/colorPrimary</item>-->
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginTop">13dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- this has the checkbox pushed to the end of the field -->
+    <!-- NOTE THAT I'm NOT USING THIS AS A TRUE FIELD - Hence the text is small not medium - Don't change without creating new style -->
+    <style name="Widget.MaterialComponents.CompoundButton.CheckBox.EditField" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:textColor">@color/edit_text_color_selector</item>
+        <item name="android:textAppearance">?textAppearanceBody1</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="checkbox_at_end">true</item>
+        <item name="useMaterialThemeColors">false</item>
     </style>
 
-    <style name="Custom.TextAppearance.AppCompat.Body2" parent="TextAppearance.AppCompat.Body2">
-        <item name="android:textColor">@color/edit_text_color_selector</item>
-    </style>
-    <style name="Custom.TextAppearance.AppCompat.Body1" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:textColor">@color/edit_text_color_selector</item>
+    <!-- layout expansion toggle button style -->
+    <style name="App.Widget.CompoundButton.CheckBox.LayoutExpansion" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="buttonCompat">@drawable/layout_expansion_checkbox</item> <!-- needed for pre lollipop -->
+        <item name="android:button">@drawable/layout_expansion_checkbox</item> <!-- just a null drawable - never shown -->
     </style>
 
-    <style name="Custom.TextAppearance.AppCompat.Body1.Clickable" parent="TextAppearance.AppCompat.Body1">
+    <!-- folding toggle button style -->
+    <style name="App.Widget.CompoundButton.CheckBox.Folding" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="buttonCompat">@drawable/folding_checkbox</item> <!-- needed for pre lollipop -->
+        <item name="android:button">@drawable/folding_checkbox</item> <!-- just a null drawable - never shown -->
+    </style>
+
+    <!-- password field visibility toggle button style -->
+    <style name="App.Widget.CompoundButton.CheckBox.Visibility" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="buttonCompat">@drawable/visibility_checkbox</item> <!-- needed for pre lollipop -->
+        <item name="android:button">@drawable/visibility_checkbox</item> <!-- just a null drawable - never shown -->
+    </style>
+
+    <!-- Accented Favorite (heart) icon style button -->
+    <style name="Widget.CompoundButton.CheckBox.Favorite.Accented" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="buttonTint">?attr/colorSecondary</item> <!-- colors the button icon -->
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="buttonCompat">@drawable/favorite_checkbox</item> <!-- needed for pre lollipop -->
+        <item name="android:button">@drawable/favorite_checkbox</item> <!-- heart style icon -->
+    </style>
+
+    <!-- icon only style button tinted in the accent colors -->
+    <style name="App.Widget.Button.OutlinedButton.IconOnly.Accented" parent="App.Widget.Button.OutlinedButton.IconOnly">
+        <item name="iconTint">?attr/colorSecondary</item>
+    </style>
+
+    <!-- icon only style button -->
+    <style name="App.Widget.Button.OutlinedButton.IconOnly" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>f
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:maxWidth">48dp</item>
+        <item name="iconTint">?editTextColor</item> <!-- shows grayed if disabled -->
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+
+    <style name="Custom.TextAppearance.MaterialComponents.Body1.Clickable" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">@color/clickable_text_color_selector</item>
     </style>
 
-    <style name="Custom.TextAppearance.AppCompat.Body2.Clickable" parent="TextAppearance.AppCompat.Body2">
-        <item name="android:textColor">@color/clickable_text_color_selector</item>
-    </style>
-
-    <style name="Custom.TextAppearance.AppCompat.Title.Clickable" parent="TextAppearance.AppCompat.Title">
-        <item name="android:textColor">@color/clickable_text_color_selector</item>
-    </style>
-
-    <style name="Custom.TextAppearance.AppCompat.Headline" parent="TextAppearance.AppCompat.Headline">
-        <!-- this is used for items that are clickable but invisibly so -->
-    </style>
-
-    <style name="Custom.TextAppearance.AppCompat.Headline.Clickable" parent="TextAppearance.AppCompat.Headline">
+    <style name="Custom.TextAppearance.MaterialComponents.Body2.Clickable" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:textColor">@color/clickable_text_color_selector</item>
     </style>
 
 
-    <style name="Custom.Widget.AppCompat.CompoundButton.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+    <!-- TODO think about whether I want to use this to tint all checkboxes in accent colors -->
+    <style name="App.Widget.CompoundButton.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:textColor">@color/edit_text_color_selector</item>
         <item name="buttonTint">@color/checkbox_color_tint</item>
     </style>
-    <style name="Custom.CheckBox.TextAppearance" parent="TextAppearance.AppCompat.Widget.Button">
-    </style>
-    <style name="Custom.Widget.AppCompat.CompoundButton.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+
+    <!-- TODO probably not needed - check download dialog -->
+    <style name="App.Widget.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
         <item name="android:textColor">@color/edit_text_color_selector</item>
-        <item name="buttonTint">@color/checkbox_color_tint</item>
-    </style>
-    <style name="Custom.Widget.AppCompat.CompoundButton.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
-        <item name="android:textColor">@color/edit_text_color_selector</item>
-        <item name="buttonTint">@color/checkbox_color_tint</item>
+        <!--<item name="buttonTint">@colors/checkbox_color_tint</item>-->
     </style>
 
-    <style name="Custom.Widget.AppCompat.Spinner.Underlined" parent="Widget.AppCompat.Spinner.Underlined">
-        <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
+    <!-- TODO this is v specific - maybe just create a specific style for the item -->
+    <style name="App.Widget.MaterialComponents.TextView.Clickable.Body1" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/Custom.TextAppearance.MaterialComponents.Body1.Clickable</item>
+    </style>
+
+    <!-- TODO this is v specific - maybe just create a specific style for the item -->
+    <style name="App.Widget.MaterialComponents.TextView.Clickable.Body2" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/Custom.TextAppearance.MaterialComponents.Body2.Clickable</item>
+    </style>
+
+    <!-- style point for spinners across the app -->
+    <style name="App.Widget.AppCompat.Spinner.Underlined" parent="Widget.AppCompat.Spinner.Underlined">
+        <!--<item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>
         <item name="android:paddingBottom">9dp</item>
-        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingTop">0dp</item>-->
+    </style>
+
+    <!-- spinners used on a page full of a list of input fields -->
+    <style name="App.Widget.AppCompat.Spinner.Underlined.Field" parent="Widget.AppCompat.Spinner.Underlined">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">3dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+
+        <!--
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginTop">7dp</item>-->
     </style>
 
     <!-- spinner / drop down lists - what is displayed when not expanded -->
-    <style name="Custom.Widget.AppCompat.TextView.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    <style name="App.Widget.AppCompat.TextView.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textAppearance">?textAppearanceBody1</item>
         <item name="android:textColor">@color/edit_text_color_selector</item>
         <item name="android:paddingBottom">7dp</item>
     </style>
     <!-- items in the dropdown 'popup' when a spinner is clicked on -->
-    <style name="Custom.Widget.AppCompat.DropDownItem.Spinner" parent="Widget.AppCompat.DropDownItem.Spinner">
-        <item name="android:background">@color/background_floating</item>
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    <!--<style name="App.Widget.AppCompat.DropDownItem.Spinner" parent="Widget.AppCompat.DropDownItem.Spinner">
+        &lt;!&ndash;<item name="android:background">@colors/background_floating</item>
+        <item name="android:textAppearance">?textAppearanceBody1</item>
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingBottom">0dp</item>
-        <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
+        <item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>&ndash;&gt;
+    </style>-->
+
+    <!-- Allow change of the tab colors in the future perhaps -->
+    <style name="App.Widget.MaterialComponents.TabLayout" parent="Widget.MaterialComponents.TabLayout">
+
     </style>
 
-    <style name="Custom.Widget.AppCompat.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+    <style name="App.Widget.MaterialComponents.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">?cardBackgroundColor</item>
+        <item name="cardForegroundColor">@color/card_foreground</item>
+    </style>
+
+    <style name="App.Widget.Snackbar" parent="Widget.MaterialComponents.Snackbar">
+        <!-- need this to be transparent to prevent corners showing with the theme background colors -->
+        <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <style name="App.Widget.MaterialComponents.CompoundButton.Switch.Field" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <!--<item name="android:textColor">?attr/colorPrimaryVariant</item>-->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginTop">0dp</item>
+    </style>
+
+    <style name="App.Widget.MaterialComponents.Toolbar" parent="Widget.MaterialComponents.Toolbar.PrimarySurface" >
+    </style>
+
+
+
+    <style name="App.Widget.MaterialComponents.AppBarLayout" parent="Widget.MaterialComponents.AppBarLayout.PrimarySurface">
+        <item name="android:theme">@style/Theme.App</item>
+    </style>
+
+    <style name="App.Widget.AppCompat.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:minHeight">9dp</item>
         <item name="android:maxHeight">9dp</item>
         <item name="android:progressDrawable">@drawable/progress_horizontal_two_stage</item>
+    </style>
+
+    <style name="App.Widget.MaterialComponents.ExtendedFloatingActionButton.Icon" parent="Widget.MaterialComponents.ExtendedFloatingActionButton.Icon">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="iconTint">?attr/colorOnBackground</item>
+        <item name="rippleColor">?attr/colorControlHighlight</item>
     </style>
 
 </resources>

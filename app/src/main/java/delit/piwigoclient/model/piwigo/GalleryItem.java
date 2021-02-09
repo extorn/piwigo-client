@@ -6,20 +6,18 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 
 /**
  * An item representing a piece of content.
  */
-public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parcelable, Serializable {
+public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parcelable {
 
     private static final String TAG = "GalleryItem";
     public static final int CATEGORY_TYPE = 0;
@@ -28,24 +26,21 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
     public static final int ALBUM_HEADING_TYPE = 3;
     public static final int PICTURE_HEADING_TYPE = 4;
     public static final int ADVERT_TYPE = 5;
-    public static final CategoryItem ADVERT = new CategoryItem(Long.MIN_VALUE + 1, null, null, true, null, 0, 0, 0, null) {
-        @Override
-        public int getType() {
-            return GalleryItem.ADVERT_TYPE;
-        }
-    };
-    public static final GalleryItem PICTURE_HEADING = new GalleryItem(Long.MIN_VALUE + 2, null, null, null, null) {
+
+    public static final GalleryItem PICTURE_HEADING = new GalleryItem(Long.MIN_VALUE + 101, null, null, null, null) {
+
         @Override
         public int getType() {
             return GalleryItem.PICTURE_HEADING_TYPE;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "PicturesHeading";
         }
     };
-    private static final long serialVersionUID = -8486162043348525674L;
+
     private long id; // this is final... except blank category items need to alter it
     private String name;
     private String description;
@@ -135,6 +130,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         return (int) id;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.valueOf(id);
@@ -153,9 +149,9 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         }
         // both are categories
         if (isCategory) {
-            if (CategoryItem.BLANK.equals(this)  || CategoryItem.ALBUM_HEADING.equals(o)) {
+            if (StaticCategoryItem.BLANK.equals(this)  || StaticCategoryItem.ALBUM_HEADING.equals(o)) {
                 return 1;
-            } else if (CategoryItem.BLANK.equals(o) || CategoryItem.ALBUM_HEADING.equals(this)) {
+            } else if (StaticCategoryItem.BLANK.equals(o) || StaticCategoryItem.ALBUM_HEADING.equals(this)) {
                 return -1;
             }
             return -this.name.compareTo(o.name);
@@ -216,7 +212,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
             try {
                 return new GalleryItem(in);
             } catch(RuntimeException e) {
-                Crashlytics.log(Log.ERROR, TAG, "Unable to create gallery item from parcel: " + in.toString());
+                Logging.log(Log.ERROR, TAG, "Unable to create gallery item from parcel: " + in.toString());
                 throw e;
             }
         }
@@ -243,5 +239,9 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         fullPath.addAll(parentageChain);
         fullPath.add(id);
         return fullPath;
+    }
+
+    public boolean isFromServer() {
+        return id > 0;
     }
 }

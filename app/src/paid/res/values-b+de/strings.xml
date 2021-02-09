@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+    <string name="notification_title_background_upload_service">Hintergrund Piwigo Upload Service</string>
+    <string name="notification_text_background_upload_running">Upload-Job ausführen</string>
+    <string name="notification_text_background_upload_sleeping">Schlafen. Nächster Lauf bei%1$tR</string>
+    <string name="notification_text_background_upload_polling">Abfrage nach Dateien zum Hochladen.</string>
+
+
+    <string name="alert_warning_auto_upload_service_stopped">Vergessen Sie nicht, den Hintergrund-Upload-Dienst zu starten, wenn Ihre Jobs ausgeführt werden sollen</string>
+    <string name="alert_auto_upload_service_stopped">Hintergrund-Upload-Dienst gestoppt</string>
+    <string name="alert_auto_upload_service_started">Hintergrund-Upload-Dienst gestartet</string>
+    <string name="alert_auto_upload_service_job_restarted">Das Hochladen eines zuvor unvollständigen Jobs auf den Server%1$s mit%2$d-Dateien wurde gestartet</string>
+    <string name="alert_auto_upload_service_job_started">Starten des Uploads des Jobs auf den Server%1$s mit%2$d-Dateien</string>
+    <string name="alert_auto_upload_service_job_finished_success">Ausführen des Hintergrund-Upload-Jobs auf Server%1$s abgeschlossen.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Ausführen des Hintergrund-Upload-Jobs auf Server%1$s abgeschlossen. Einige Dateien konnten nicht hochgeladen werden und werden später erneut versucht.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Ausführen des Hintergrund-Upload-Jobs auf Server%1$s abgeschlossen. Es konnten keine Dateien hochgeladen werden. Job wird später wiederholt.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Überprüfung des Hintergrund-Upload-Dienstes auf Aufgaben</string>
+    <string name="progress_creating_tag">Tag erstellen</string>
+    <string name="error_updating_favorites_pattern">Fehler beim Entfernen der Ressource (%1$s) aus den Favoriten:%2$s</string>
+    <string name="favorites_content_load_failed_text">Fehler beim Laden der als Favorit markierten Ressourcen</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Sie haben angefordert,%1$d Ressourcen zu löschen. Möchten Sie diese dauerhaft aus allen Alben (und dem Server) löschen oder einfach die Verknüpfung mit diesem Favoriten aufheben?</string>
+    <string name="progress_remove_favorite_resources">Ressourcen aus der Favoritenliste entfernen</string>
+    <string name="favorites_empty_text">Sie haben derzeit keine Favoriten</string>
+    <string name="favorites_heading">Deine Favoriten</string>
+    <string name="button_unfavorite">Nicht Favorit</string>
+    <string name="preference_data_upload_automatic_job_category_server_settings">Server Einstellungen</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Lokale Einstellungen</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Bildkomprimierung vor dem Hochladen</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Videokomprimierung vor dem Hochladen</string>
+    <string name="ignoring_job_local_folder_not_found">Lokaler Ordner existiert nicht mehr. Job ignorieren</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">Keine Dateierweiterungen zum Hochladen ausgewählt. Job ignorieren</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">Verbindungsprofil auf Offline-Modus eingestellt. Job ignorieren</string>
+    <string name="slideshow_auto_drive_paused">Diashow Autodrive pausierte bis zur nächsten Folie</string>
+    <string name="progress_loading_orphan_ids">Waisenkinder laden</string>
+    <string name="orphans_heading">Verwaiste Ressourcen</string>
+    <string name="orphans_album_description">Alle verwaisten Ressourcen, die von der PiwigoClient-App gesammelt wurden</string>
+    <string name="orphans_no_orphans_found_on_server">Keine Waisen gefunden</string>
+    <string name="orphans_found_on_server_pattern">Gefundene Waisen:%1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Es sind Waisenkinder anwesend. Um diese anzuzeigen, müssen wir einen privaten Ordner erstellen, auf den nur Administratoren zugreifen können. Sie können das Album danach jederzeit löschen. Wenn Sie nicht einverstanden sind, müssen Sie diese auf dem Server selbst verarbeiten.</string>
+</resources>

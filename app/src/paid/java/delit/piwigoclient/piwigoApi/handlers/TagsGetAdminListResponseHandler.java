@@ -6,10 +6,10 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
-import delit.piwigoclient.model.piwigo.Tag;
 import delit.libs.http.RequestParams;
+import delit.piwigoclient.model.piwigo.Tag;
 
 public class TagsGetAdminListResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -39,14 +39,17 @@ public class TagsGetAdminListResponseHandler extends AbstractPiwigoWsResponseHan
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray tagsObj = result.get("tags").getAsJsonArray();
-        HashSet<Tag> tags = TagsGetListResponseHandler.parseTagsFromJson(tagsObj);
+        ArrayList<Tag> tags = TagsGetListResponseHandler.parseTagsFromJson(tagsObj);
+        for(Tag t : tags) {
+            t.markAsAdminCopy();
+        }
         PiwigoGetTagsAdminListRetrievedResponse r = new PiwigoGetTagsAdminListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, pageSize, tags.size(), tags, isCached);
         storeResponse(r);
     }
 
     public static class PiwigoGetTagsAdminListRetrievedResponse extends TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse {
 
-        public PiwigoGetTagsAdminListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Tag> tags, boolean isCached) {
+        public PiwigoGetTagsAdminListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<Tag> tags, boolean isCached) {
             super(messageId, piwigoMethod, page, pageSize, itemsOnPage, tags, isCached);
         }
     }

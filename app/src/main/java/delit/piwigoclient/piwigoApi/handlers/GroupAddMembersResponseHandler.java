@@ -49,7 +49,7 @@ public class GroupAddMembersResponseHandler<T extends ResourceItem> extends Abst
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray groupsObj = result.get("groups").getAsJsonArray();
-        HashSet<Group> groups = GroupsGetListResponseHandler.parseGroupsFromJson(groupsObj);
+        ArrayList<Group> groups = GroupsGetListResponseHandler.parseGroupsFromJson(groupsObj);
         if (groups.size() != 1) {
             throw new JSONException("Expected one group to be returned, but there were " + groups.size());
         }

@@ -1,54 +1,38 @@
 <resources>
 
-    <!-- Declare custom theme attributes that allow changing which styles are
-         used for button bars depending on the API privacyLevel.
-         ?android:attr/buttonBarStyle is pkg as of API 11 so this is
-         necessary to support previous API levels. -->
-    <declare-styleable name="ButtonBarContainerTheme">
-        <attr name="metaButtonBarStyle" format="reference" />
-        <attr name="metaButtonBarButtonStyle" format="reference" />
-    </declare-styleable>
-
-    <declare-styleable name="FlowLayout">
-        <attr name="horizontalSpacing" format="dimension"/>
-        <attr name="verticalSpacing" format="dimension"/>
-    </declare-styleable>
-    <declare-styleable name="FlowLayout_LayoutParams">
-        <attr name="layout_breakLine" format="boolean" />
-        <attr name="layout_horizontalSpacing" format="dimension" />
-    </declare-styleable>
-
-    <declare-styleable name="SlidingTabLayout">
-        <attr name="viewPager" format="reference" />
-        <attr name="initialTabIdx" format="integer" />
-    </declare-styleable>
+    <!-- my custom style attribs -->
+    <attr format="reference" name="materialButtonIconStyle"/>
+    <attr format="reference" name="materialButtonIconAccentedStyle"/>
+    <attr format="reference" name="checkboxFavoriteAccentedStyle"/>
+    <attr format="reference" name="visibilityToggleStyle"/>
+    <attr format="reference" name="foldingToggleStyle"/>
+    <attr format="reference" name="layoutExpansionToggleStyle"/>
+    <attr format="reference" name="editableFieldCheckBox"/>
+    <attr format="reference" name="clickableTextViewStyleBody1"/>
+    <attr format="reference" name="clickableTextViewStyleBody2"/>
+    <attr format="reference" name="clickableTextViewStyleTitle"/>
+    <attr format="reference" name="appTabLayout"/>
+    <attr format="reference" name="editableFieldLabel"/>
+    <attr format="reference" name="editableFieldText"/>
+    <attr format="reference" name="editableFieldSpinner"/>
+    <attr format="reference" name="editableFieldSwitch"/>
+    <attr format="reference" name="editableFieldTextClickable"/>
+    <attr format="reference" name="scrimUltraHeavy"/>
+    <attr format="reference" name="scrimHeavy"/>
+    <attr format="reference" name="scrimLight"/>
+    <attr format="reference" name="appNumberPickerStyle"/>
+    <attr format="reference" name="editableFieldNumberPicker"/>
+    <attr format="color" name="appScrimColor"/>
+    <attr format="color" name="colorAlbumItemBackground"/>
 
     <declare-styleable name="CustomExoPlayerTimeBar">
         <attr name="locally_cached_color" format="color"/>
         <attr name="unplayed_color" format="color"/>
     </declare-styleable>
 
-    <declare-styleable name="CustomEditTextPreference">
-        <attr name="android:inputType"/>
-    </declare-styleable>
-
-    <declare-styleable name="SecureEditTextPreference">
-    </declare-styleable>
-
-    <declare-styleable name="NumberPickerPreference">
-        <attr name="maxValue" format="integer"/>
-        <attr name="minValue" format="integer"/>
-        <attr name="multiplier" format="integer"/>
-        <attr name="wrapPickList" format="boolean"/>
-    </declare-styleable>
-
     <declare-styleable name="ClientCertificatePreference">
     </declare-styleable>
 
-    <declare-styleable name="AppCompatCheckboxTriState">
-        <attr name="state_always_checked" format="boolean"/>
-        <attr name="checkbox_at_end" format="boolean"/>
-    </declare-styleable>
 
     <declare-styleable name="EditableListPreference">
         <attr name="entriesPref" format="reference"/>
@@ -56,9 +40,7 @@
         <attr name="allowMultiSelect" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="MappedListPreference">
-        <attr name="entries" format="reference"/>
-        <attr name="entryValues" format="reference"/>
+    <declare-styleable name="SecureEditTextPreference">
     </declare-styleable>
 
     <declare-styleable name="ServerAlbumListPreference">
@@ -71,18 +53,6 @@
 
     <attr name="connectionProfileNameKey" format="string"/>
 
-    <declare-styleable name="CustomSlidingLayer">
-        <attr format="boolean" name="shadowDrawable"/>
-        <attr format="dimension" name="shadowSize"/>
-        <attr format="boolean" name="changeStateOnTap"/>
-        <attr format="dimension" name="offsetDistance"/>
-        <attr format="dimension" name="previewOffsetDistance"/>
-        <attr format="enum" name="csl_stickTo">
-            <enum name="right" value="-1"/>
-            <enum name="left" value="-2"/>
-            <enum name="top" value="-3"/>
-            <enum name="bottom" value="-4"/>
-        </attr>
-    </declare-styleable>
+
 
 </resources>

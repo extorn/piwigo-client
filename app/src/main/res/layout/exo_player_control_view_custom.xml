@@ -16,60 +16,97 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/exo_player_controls_container"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="bottom"
     android:layoutDirection="ltr"
-    android:background="#CC000000"
     android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/custom_exo_info_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:orientation="vertical"
+        android:background="@drawable/drawable_scrim_ultra_heavy">
+
+        <ImageView
+            android:id="@+id/download_progress_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_file_download_black_24px"
+            app:tint="?attr/colorControlNormal"
+            android:layout_alignTop="@id/exo_downloaded"
+            android:layout_alignBottom="@id/exo_downloaded"
+            />
+
+        <TextView
+            android:id="@+id/exo_downloaded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/download_progress_icon"
+            tools:text="2432 Bytes"
+            android:textAppearance="?textAppearanceBody2"/>
+
+        <TextView
+            android:id="@+id/exo_cached_summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/exo_downloaded"
+            tools:text="2.4 MB / 5.6MB"
+            android:textAppearance="?textAppearanceBody2"/>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="4dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="?attr/colorPrimary">
 
         <ImageButton
         	android:id="@id/exo_prev"
-            style="@style/ExoMediaButton.Previous" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Previous"/>
 
         <ImageButton
         	android:id="@id/exo_rew"
-            style="@style/ExoMediaButton.Rewind" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Rewind" />
 
         <ImageButton
         	android:id="@id/exo_shuffle"
-            style="@style/ExoMediaButton.Shuffle" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Shuffle" />
 
         <ImageButton
         	android:id="@id/exo_repeat_toggle"
-            style="@style/ExoMediaButton" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton" />
 
         <ImageButton
         	android:id="@id/exo_play"
-            style="@style/ExoMediaButton.Play" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Play" />
 
         <ImageButton
         	android:id="@id/exo_pause"
-            style="@style/ExoMediaButton.Pause" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Pause" />
 
         <ImageButton
         	android:id="@id/exo_ffwd"
-            style="@style/ExoMediaButton.FastForward" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.FastForward" />
 
         <ImageButton
         	android:id="@id/exo_next"
-            style="@style/ExoMediaButton.Next" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Next" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:paddingTop="4dp"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="?attr/colorPrimary">
 
         <TextView
         	android:id="@id/exo_position"
@@ -79,8 +116,8 @@
             android:textStyle="bold"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:includeFontPadding="false"
-            android:textColor="#FFBEBEBE"/>
+            tools:text="450/00000"
+            android:includeFontPadding="false"/>
 
         <delit.piwigoclient.business.video.CustomExoPlayerTimeBar
             android:id="@id/exo_progress"
@@ -100,7 +137,7 @@
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:includeFontPadding="false"
-            android:textColor="#FFBEBEBE"/>
+            tools:text="1:23"/>
 
     </LinearLayout>
 

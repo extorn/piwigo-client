@@ -1,6 +1,10 @@
 package delit.piwigoclient.ui.album.view;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,6 +13,8 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.documentfile.provider.DocumentFile;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -20,11 +26,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.IOUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -36,11 +45,15 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
+import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
+import delit.piwigoclient.ui.slideshow.AbstractSlideshowItemFragment;
+import delit.piwigoclient.ui.slideshow.DownloadSelectionMultiItemDialog;
 
-public class ViewAlbumFragment extends AbstractViewAlbumFragment {
+public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends AbstractViewAlbumFragment<F,FUIH> {
     private static final String STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING = "tagMembershipChangesAction";
     AddTagsToResourcesAction tagMembershipChangesAction;
 
@@ -60,8 +73,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
     @Override
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
-        AlbumItemRecyclerViewAdapterPreferences prefs = super.updateViewPrefs();
-        return prefs;
+        return super.updateViewPrefs();
     }
 
     @Override
@@ -79,19 +91,48 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         } else {
             bulkActionButtonTag.hide();
         }
-        bulkActionButtonTag.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    onBulkActionTagButtonPressed();
-                }
-                return true; // consume the event
+        bulkActionButtonTag.setOnTouchListener((v, event) -> {
+            if(event.getActionMasked() == MotionEvent.ACTION_UP) {
+                onBulkActionTagButtonPressed();
             }
+            return true; // consume the event
         });
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(PermissionsWantedResponse event) {
+
+        if (getUiHelper().completePermissionsWantedRequest(event)) {
+            if (event.areAllPermissionsGranted()) {
+                //Granted
+                AbstractViewAlbumFragment.BulkResourceActionData bulkActionData = getBulkResourceActionData();
+
+                if (!bulkActionData.getSelectedItems().isEmpty()) {
+                    HashSet<ResourceItem> selectedItems = bulkActionData.getSelectedItems();
+                    DownloadSelectionMultiItemDialog dialogFactory = new DownloadSelectionMultiItemDialog(getContext());
+                    AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, selectedItems, new MyDownloadSelectionMultiItemListener());
+                    dialog.show();
+                }
+
+            } else {
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
+                } else {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions_scoped_storage));
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void showDownloadResourcesDialog(HashSet<ResourceItem> selectedItems) {
+        DocumentFile downloadFolder = AppPreferences.getAppDownloadFolder(getPrefs(), requireContext());
+        String permission = IOUtils.getManifestFilePermissionsNeeded(requireContext(), downloadFolder.getUri(), IOUtils.URI_PERMISSION_READ_WRITE);
+        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, permission, getString(R.string.alert_write_permission_needed_for_download));
+    }
+
     private boolean showBulkTagAction(Basket basket) {
-        return isTagSelectionAllowed() && viewAdapter != null && viewAdapter.isItemSelectionAllowed() && getSelectedItems().size() > 0 && basket.isEmpty();
+        return isTagSelectionAllowed() && viewAdapter != null && viewAdapter.isItemSelectionAllowed() && getSelectedItems(ResourceItem.class).size() > 0 && basket.isEmpty();
     }
 
     protected void updateBasketDisplay(Basket basket) {
@@ -108,7 +149,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     private void onBulkActionTagButtonPressed() {
-        tagMembershipChangesAction = new AddTagsToResourcesAction(viewAdapter.getSelectedItems());
+        tagMembershipChangesAction = new AddTagsToResourcesAction(viewAdapter.getSelectedItemsOfType(ResourceItem.class));
         onShowTagsSelection();
     }
 
@@ -146,7 +187,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     @Override
-    protected void onPiwigoUpdateResourceInfoResponse(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse response) {
+    protected void onPiwigoResponseUpdateResourceInfo(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<?> response) {
         if(tagMembershipChangesAction != null) {
         tagMembershipChangesAction.recordTagListUpdated(response.getPiwigoResource());
             // changes made.
@@ -165,12 +206,12 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                 tagMembershipChangesAction = null;
             }
         } else {
-            super.onPiwigoUpdateResourceInfoResponse(response);
+            super.onPiwigoResponseUpdateResourceInfo(response);
         }
     }
 
     @Override
-    protected void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {
+    protected void onPiwigoResponseResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?> response) {
         if(tagMembershipChangesAction != null) {
             if(tagMembershipChangesAction.addResourceReadyToProcess(response.getResource())) {
                 // action is ready for the next step.
@@ -180,32 +221,36 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
                 for(ResourceItem item : tagMembershipChangesAction.resourcesReadyToProcess) {
                     if (allowTagEdit) {
-                        addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler(item));
+                        addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler<>(item));
                     } else {
-                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(item, true));
+                        if(item.getLinkedAlbums().isEmpty()) {
+                            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_item_must_belong_to_at_least_one_album));
+                        } else {
+                            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler<>(item, true));
+                        }
                     }
                 }
             }
         }
-        super.onResourceInfoRetrieved(response);
+        super.onPiwigoResponseResourceInfoRetrieved(response);
     }
 
     private void getResourceInfo(HashSet<ResourceItem> selectedResources) {
-        Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+
         for(ResourceItem item : selectedResources) {
-            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageGetInfoResponseHandler(item, multimediaExtensionList));
+            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageGetInfoResponseHandler<>(item));
         }
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new ViewAlbumPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new ViewAlbumPiwigoResponseListener<>();
     }
 
-    protected class ViewAlbumPiwigoResponseListener extends CustomPiwigoResponseListener {
+    public static class ViewAlbumPiwigoResponseListener<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends CustomPiwigoResponseListener<F,FUIH> {
         @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            super.onAfterHandlePiwigoResponse(response);
+        protected void processAlbumPiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            super.processAlbumPiwigoResponse(response);
         }
     }
 
@@ -321,5 +366,42 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
             return 0;
         }
 
+    }
+
+    private class MyDownloadSelectionMultiItemListener<T extends ResourceItem> implements DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener {
+
+        @Override
+        public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+            if(filesUnavailableToDownload.size() > 0) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new AbstractSlideshowItemFragment.SelectionContainsUnsuitableFilesQuestionResult<F,FUIH,T>(getUiHelper(), items, selectedPiwigoFilesizeName));
+            } else {
+                new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, false);
+            }
+        }
+
+        @Override
+        public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+            if(filesUnavailableToDownload.size() > 0) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new AbstractSlideshowItemFragment.SelectionContainsUnsuitableFilesQuestionResult<F,FUIH,T>(getUiHelper(), items, selectedPiwigoFilesizeName));
+            } else {
+                new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, true);
+            }
+        }
+
+        @Override
+        public void onCopyLink(Context context, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+            ResourceItem item = items.iterator().next();
+            String resourceName = item.getName();
+            ResourceItem.ResourceFile resourceFile = item.getFile(selectedPiwigoFilesizeName);
+            Uri uri = Uri.parse(item.getFileUrl(resourceFile.getName()));
+            ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            if(mgr != null) {
+                ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
+                mgr.setPrimaryClip(clipData);
+                getUiHelper().showShortMsg(R.string.copied_to_clipboard);
+            } else {
+                Logging.logAnalyticEvent(context,"NoClipMgr", null);
+            }
+        }
     }
 }

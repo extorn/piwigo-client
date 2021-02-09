@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.permissions;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +17,15 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
-import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.ListViewLongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteEvent;
 
@@ -31,20 +33,22 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteE
  * Created by gareth on 26/05/17.
  */
 
-public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment<AlbumSelectionListAdapter, BaseRecyclerViewAdapterPreferences> {
+public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends ListViewLongSelectableSetSelectFragment<AlbumSelectionListAdapter, AlbumSelectionListAdapterPreferences> {
 
     private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
+    private static final String TAG = "AlbumSelect";
     private ArrayList<CategoryItemStub> availableItems;
     private HashSet<Long> indirectSelection;
 
-    public static AlbumSelectFragment newInstance(ArrayList<CategoryItemStub> availableAlbums, BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
-        AlbumSelectFragment fragment = new AlbumSelectFragment();
+    public static <F extends AlbumSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> F newInstance(ArrayList<CategoryItemStub> availableAlbums, AlbumSelectionListAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
+        F fragment = (F) new AlbumSelectFragment<>();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if (indirectSelection != null) {
-            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<Long>(indirectSelection));
+            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
         } else {
-            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<Long>());
+            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<>());
         }
         args.putParcelableArrayList(STATE_AVAILABLE_ITEMS, availableAlbums);
         fragment.setArguments(args);
@@ -62,8 +66,8 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
     }
 
     @Override
-    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
-        return new BaseRecyclerViewAdapterPreferences();
+    protected AlbumSelectionListAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
+        return new AlbumSelectionListAdapterPreferences(bundle);
     }
 
     @Override
@@ -97,6 +101,7 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "Unable to show album select page - removing from activity");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -124,9 +129,9 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
     protected void rerunRetrievalForFailedPages() {
         if (availableItems == null) {
             //TODO FEATURE: Support albums list paging (load page size from settings)
-            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
+            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), !getViewPrefs().isFlattenAlbumHierarchy()));
         } else if (getListAdapter() == null) {
-            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableItems, indirectSelection, getViewPrefs());
+            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableItems, indirectSelection, getViewPrefs());
             ListView listView = getList();
             availableItemsAdapter.linkToListView(listView, getInitialSelection(), getCurrentSelection());
             setListAdapter(availableItemsAdapter);
@@ -156,16 +161,17 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
 
         // now pop this screen off the stack.
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as select action complete");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
-    private void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    protected void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         getUiHelper().hideProgressIndicator();
 //        if (response.getItemsOnPage() == response.getPageSize()) {
 //            //TODO FEATURE: Support groups paging
@@ -175,13 +181,13 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
         rerunRetrievalForFailedPages();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<F extends AlbumSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                onSubGalleriesLoaded((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
+                getParent().onSubGalleriesLoaded((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else {
-                onListItemLoadFailed();
+                getParent().onListItemLoadFailed();
             }
         }
     }

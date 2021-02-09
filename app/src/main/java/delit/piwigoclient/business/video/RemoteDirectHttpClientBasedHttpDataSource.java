@@ -3,11 +3,11 @@ package delit.piwigoclient.business.video;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import androidx.preference.PreferenceManager;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.DataSourceException;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -38,12 +38,13 @@ import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.message.BasicHeaderElement;
 import cz.msebera.android.httpclient.message.BasicHeaderValueFormatter;
-import delit.libs.util.UriUtils;
+import delit.libs.core.util.Logging;
+import delit.libs.http.cache.CachingAsyncHttpClient;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
+import delit.piwigoclient.util.UriUtils;
 
 /**
  * An {@link HttpDataSource} that uses Android's {@link HttpURLConnection}.
@@ -229,7 +230,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         try {
             makeConnection(dataSpec);
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw new HttpDataSourceException("Unable to connect to " + dataSpec.uri.toString(), e,
                     dataSpec, HttpDataSourceException.TYPE_OPEN);
         }
@@ -238,7 +239,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         try {
             responseCode = httpResponse.getStatusLine().getStatusCode();
         } catch (NullPointerException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             closeConnectionQuietly();
             throw new HttpDataSourceException("Unable to connect to " + dataSpec.uri.toString(), new IOException(e),
                     dataSpec, HttpDataSourceException.TYPE_OPEN);
@@ -289,7 +290,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         try {
             inputStream = httpResponse.getEntity().getContent();
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             closeConnectionQuietly();
             throw new HttpDataSourceException(e, dataSpec, HttpDataSourceException.TYPE_OPEN);
         }
@@ -308,7 +309,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             skipInternal();
             return readInternal(buffer, offset, readLength);
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw new HttpDataSourceException(e, dataSpec, HttpDataSourceException.TYPE_READ);
         }
     }
@@ -325,7 +326,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
 //                client = null;
 //            }
 //        } /*catch (IOException e) {
-//        Crashlytics.logException(e);
+//        Logging.recordException(e);
 //            throw new HttpDataSourceException(e, dataSpec, HttpDataSourceException.TYPE_CLOSE);
 //        }*/ finally {
         try {
@@ -333,7 +334,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     throw new HttpDataSourceException(e, dataSpec, HttpDataSourceException.TYPE_CLOSE);
                 }
             }
@@ -441,10 +442,14 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
 
         boolean forceHttps = activeConnectionPreferences.isForceHttps(sharedPrefs, context);
         boolean testForExposingProxiedServer = activeConnectionPreferences.isWarnInternalUriExposed(sharedPrefs, context);
-        String uri = UriUtils.sanityCheckFixAndReportUri(dataSpec.uri.toString(), sessionDetails.getServerUrl(), forceHttps, testForExposingProxiedServer, activeConnectionPreferences);
+        String uri = dataSpec.uri.toString();
+        if(sessionDetails != null) {
+            uri = UriUtils.sanityCheckFixAndReportUri(uri, sessionDetails.getServerUrl(), forceHttps, testForExposingProxiedServer, activeConnectionPreferences);
+        }
         if (performUriPathSegmentEncoding) {
             uri = UriUtils.encodeUriSegments(Uri.parse(uri));
         }
+
         client.get(context, uri, headers.toArray(new Header[0]), null, responseHandler);
     }
 
@@ -461,7 +466,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             try {
                 contentLength = Long.parseLong(contentLengthHeader);
             } catch (NumberFormatException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 if (logEnabled && BuildConfig.DEBUG) {
                     Log.e(TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
                 }
@@ -496,7 +501,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
                         contentLength = Math.max(contentLength, contentLengthFromRange);
                     }
                 } catch (NumberFormatException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     if (logEnabled && BuildConfig.DEBUG) {
                         Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
                     }

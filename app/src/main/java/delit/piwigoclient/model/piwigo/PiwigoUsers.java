@@ -3,6 +3,8 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 /**
  * Created by gareth on 02/01/18.
  */
@@ -22,7 +24,7 @@ public class PiwigoUsers extends IdentifiablePagedList<User> {
     }
 
     @Override
-    protected void sortItems() {
+    protected void sortItems(List<User> items) {
         throw new UnsupportedOperationException("cannot sort the items");
     }
 

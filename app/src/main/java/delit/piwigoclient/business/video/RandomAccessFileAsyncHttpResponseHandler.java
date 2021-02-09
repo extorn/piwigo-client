@@ -18,11 +18,10 @@
 
 package delit.piwigoclient.business.video;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-import com.google.android.exoplayer2.C;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 
@@ -35,6 +34,7 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +42,7 @@ import cz.msebera.android.httpclient.ConnectionClosedException;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
+import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 
@@ -100,8 +101,8 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
         loadSucceeded = true;
     }
 
-    public boolean isLoadSucceeded() {
-        return loadSucceeded;
+    public boolean isLoadFailed() {
+        return !loadSucceeded;
     }
 
     @Override
@@ -149,7 +150,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
         synchronized (cacheMetaData) {
             existingRange = cacheMetaData.getRangeContaining(firstContentByte - 1);
         }
-        FileChannel destinationChannel = null;
+        FileChannel destinationChannel;
         double onePercent = (double) contentLength / 100; // send progress update every 1%
         try {
             byte[] tmp = new byte[BUFFER_SIZE];
@@ -171,7 +172,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 buffer.flip();
                 synchronized (destinationChannel) {
                     if (!destinationChannel.isOpen()) {
-                        Log.d(TAG, "response handler is being run after the local cache file has been closed. Exiting");
+                        Logging.log(Log.DEBUG, TAG, "response handler is being run after the local cache file has been closed. Exiting");
                         //exit while loop
                         break;
                     }
@@ -184,7 +185,6 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     } else {
                         existingRange = cacheMetaData.addRange(newRangeLowerBound, newRangeUpperBound);
                     }
-                    //TODO enable this line when download is working okay.
                     CacheUtils.saveCachedContent(cacheMetaData);
                     long now = System.currentTimeMillis();
                     if (now - lastSentNotification > 1000) {
@@ -206,22 +206,20 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 cacheListener.onRangeAdded(cacheMetaData, existingRange.getLower(), existingRange.getUpper(), downloadedBytesSinceLastReport);
             }
         } catch (SocketException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             Log.d(TAG, "Sinking Socket exception");
-        } catch (ClosedChannelException e) {
-            Crashlytics.log(Log.DEBUG, TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
-        } catch (ConnectionClosedException e) {
-            Crashlytics.log(Log.DEBUG, TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
+        } catch (ClosedChannelException | ConnectionClosedException e) {
+            Logging.log(Log.DEBUG, TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (logEnabled && BuildConfig.DEBUG) {
                 Log.e(TAG, "Unrecoverable error reading data from http response", e);
             }
             throw e;
         } catch (Throwable e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (logEnabled && BuildConfig.DEBUG) {
-                Log.e(TAG, "Unrecoverable error reading data from http response", e);
+                Log.e(TAG, "Totally unexpected unrecoverable error reading data from http response", e);
             }
             throw e;
         }
@@ -229,8 +227,6 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
 
     /**
      * Attempts to extract the length of the content from the response headers of an open connection.
-     *
-     * @return The extracted length, or {@link C#LENGTH_UNSET}.
      */
     private void parseContentLengthDetails(HttpResponse httpResponse) {
         long contentLength = -1;
@@ -246,7 +242,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 firstContentByte = 0;
                 lastContentByte = totalFileContentBytes - 1;
             } catch (NumberFormatException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 if (logEnabled && BuildConfig.DEBUG) {
                     Log.e(TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
                 }
@@ -254,17 +250,19 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
         }
         header = httpResponse.getFirstHeader("Content-Range");
         String contentRangeHeader = header != null ? header.getValue() : null;
-        if (!TextUtils.isEmpty(contentRangeHeader)) {
+        if (contentRangeHeader != null && !contentRangeHeader.isEmpty()) {
             Matcher matcher = CONTENT_RANGE_HEADER.matcher(contentRangeHeader);
             if (matcher.find()) {
                 try {
-                    totalFileContentBytes = Long.parseLong(matcher.group(3));
+                    totalFileContentBytes = Long.parseLong(Objects.requireNonNull(matcher.group(3)));
 
-                    lastContentByte = Long.parseLong(matcher.group(2));
+                    lastContentByte = Long.parseLong(Objects.requireNonNull(matcher.group(2)));
 
-                    firstContentByte = Long.parseLong(matcher.group(1));
+                    firstContentByte = Long.parseLong(Objects.requireNonNull(matcher.group(1)));
 
-                    Log.d(TAG, String.format("RETRIEVED BYTES %1$d-%2$d of %3$d", firstContentByte, lastContentByte, totalFileContentBytes));
+                    if(BuildConfig.DEBUG) {
+                        Log.d(TAG, String.format("RETRIEVED BYTES %1$d-%2$d of %3$d", firstContentByte, lastContentByte, totalFileContentBytes));
+                    }
 
                     long contentLengthFromRange =
                             (lastContentByte - firstContentByte) + 1;
@@ -273,6 +271,12 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                         // Some proxy servers strip the Content-Length header. Fall back to the length
                         // calculated here in this case.
                         contentLength = contentLengthFromRange;
+                        Bundle b = new Bundle();
+                        b.putString("message", "Content length didn't match range header. Ignored");
+                        b.putString("uri", getRequestURI().toString());
+                        b.putLong("contentLength", contentLength);
+                        b.putLong("rangeContentLength", contentLengthFromRange);
+                        Logging.logAnalyticEventIfPossible("MultiMediaResponseMismatch", b);
                     } else if (contentLength != contentLengthFromRange) {
                         // If there is a discrepancy between the Content-Length and Content-Range headers,
                         // assume the one with the larger value is correct. We have seen cases where carrier
@@ -283,11 +287,17 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                                     + "]");
                         }
                         contentLength = Math.max(contentLength, contentLengthFromRange);
+                        Bundle b = new Bundle();
+                        b.putString("message", "Content length didn't match range header. Ignored");
+                        b.putString("uri", getRequestURI().toString());
+                        b.putLong("contentLength", contentLength);
+                        b.putLong("rangeContentLength", contentLengthFromRange);
+                        Logging.logAnalyticEventIfPossible("MultiMediaResponseMismatch", b);
                     }
                     Log.d(TAG, "total file bytes " + totalFileContentBytes);
                     cacheMetaData.setTotalBytes(totalFileContentBytes);
-                } catch (NumberFormatException e) {
-                    Crashlytics.logException(e);
+                } catch (NullPointerException e) {
+                    Logging.recordException(e);
                     if (logEnabled && BuildConfig.DEBUG) {
                         Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
                     }

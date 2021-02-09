@@ -11,60 +11,72 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!--<delit.libs.ui.view.button.CustomImageButton
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/list_action_add_item_button"
             android:visibility="visible"
             android:layout_alignParentEnd="true"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
             android:layout_marginEnd="5dp"
-            app:srcCompat="@drawable/ic_add_circle_black_24px" />-->
+            app:icon="@drawable/ic_add_circle_black_24px"
+            app:fabSize="mini"
+            style="?extendedFloatingActionButtonStyle"/>
 
         <TextView
             android:id="@+id/heading"
             android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/list_action_add_item_button"
+            android:layout_alignWithParentIfMissing="true"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="5dp"
             android:layout_marginStart="5dp"
             tools:text="Some Heading"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+            android:textAppearance="?textAppearanceHeadline5"/>
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/button_action_bar"
-        android:layout_above="@+id/list_adView"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    <Button
-        android:id="@+id/list_action_cancel_button"
-        android:visibility="visible"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:text="@string/button_cancel"/>
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_above="@+id/list_adView"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp">
 
-    <Button
-        android:id="@+id/list_action_toggle_all_button"
-        android:visibility="visible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="@string/button_all" />
+        <Button
+            android:id="@+id/list_action_cancel_button"
+            style="?materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_cancel"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/list_action_save_button"
-        android:visibility="visible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:text="@string/list_ok_button"/>
+        <Button
+            android:id="@+id/list_action_toggle_all_button"
+            style="?materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_select_all"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@id/list_action_cancel_button"
+            app:layout_constraintEnd_toStartOf="@id/list_action_save_button"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </RelativeLayout>
+        <Button
+            android:id="@+id/list_action_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/list_ok_button"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -81,21 +93,23 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/button_action_bar"
+        android:layout_below="@id/heading_bar"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/list_retryAction_actionButton"
-        app:srcCompat="@drawable/ic_refresh_black_24dp"
         android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/list"
         android:layout_margin="10dp"
         android:clickable="true"
         android:visibility="gone"
         tools:visibility="visible"
         app:fabSize="mini"
-        android:focusable="true" />
+        android:focusable="true"
+        app:icon="@drawable/ic_refresh_black_24dp"
+        style="?extendedFloatingActionButtonStyle"/>
 
 </RelativeLayout>

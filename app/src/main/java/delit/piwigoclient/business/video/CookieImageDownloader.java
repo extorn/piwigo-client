@@ -3,10 +3,10 @@ package delit.piwigoclient.business.video;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import androidx.preference.PreferenceManager;
+
 import com.loopj.android.http.PersistentCookieStore;
 import com.squareup.picasso.UrlConnectionDownloader;
 
@@ -20,6 +20,8 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import cz.msebera.android.httpclient.cookie.Cookie;
+import delit.libs.core.util.Logging;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 
@@ -84,7 +86,7 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
             }
             return r;
         } catch (ResponseException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error downloading image", e);
             }
@@ -111,13 +113,11 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
                 "&redirect=" +
                 redirectTo;
         lastConn.setRequestMethod("POST");
-        OutputStream os = lastConn.getOutputStream();
-        BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(os, "UTF-8"));
-        writer.write(postBody);
-        writer.flush();
-        writer.close();
-        os.close();
+        try(OutputStream os = lastConn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, IOUtils.getUtf8Charset()))) {
+            writer.write(postBody);
+            writer.flush();
+        }
 
         int httpStatusCode = lastConn.getResponseCode();
         lastConn.disconnect();

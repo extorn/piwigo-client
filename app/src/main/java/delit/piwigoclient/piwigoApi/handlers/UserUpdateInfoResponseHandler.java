@@ -52,7 +52,7 @@ public class UserUpdateInfoResponseHandler<T extends ResourceItem> extends Abstr
     @Override
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         if (user.getGroups() == null) {
-            user.setGroups(new HashSet<Long>(0));
+            user.setGroups(new HashSet<>(0));
         }
         PiwigoUpdateUserInfoResponse r = new PiwigoUpdateUserInfoResponse(getMessageId(), getPiwigoMethod(), user, isCached);
         storeResponse(r);

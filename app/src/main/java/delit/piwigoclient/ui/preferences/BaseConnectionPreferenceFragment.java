@@ -1,18 +1,27 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
-
-import com.crashlytics.android.Crashlytics;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -21,12 +30,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.net.URI;
 import java.security.KeyStore;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
-import delit.libs.ui.view.preference.ClientCertificatePreference;
-import delit.libs.ui.view.preference.EditableListPreference;
-import delit.libs.ui.view.preference.TrustedCaCertificatesPreference;
+import delit.libs.core.util.Logging;
+import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.util.IOUtils;
 import delit.libs.util.ObjectUtils;
 import delit.libs.util.SetUtils;
@@ -48,12 +56,12 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 
-public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragment<BaseConnectionPreferenceFragment> {
+public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyPreferenceFragment<F,FUIH> {
     private static final String TAG = "Connection Settings";
-    protected transient Preference.OnPreferenceChangeListener httpConnectionEngineInvalidListener = new HttpConnectionEngineInvalidListener();
-    private transient Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
-    protected transient Preference.OnPreferenceChangeListener sessionInvalidationPrefListener = new SessionInvalidatingPrefListener();
-    private transient Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
+    protected Preference.OnPreferenceChangeListener httpConnectionEngineInvalidListener = new HttpConnectionEngineInvalidListener();
+    private final Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
+    protected Preference.OnPreferenceChangeListener sessionInvalidationPrefListener = new SessionInvalidatingPrefListener();
+    private final Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
     private boolean initialising = false;
     private String preferencesKey;
     private ResponseCacheButtonTextRetriever responseCacheButtonTextRetriever;
@@ -89,6 +97,10 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         cacheLevelPrefListener.onPreferenceChange(cacheLevelPref, getPreferenceValue(cacheLevelPref.getKey()));
     }
 
+    /**
+     * WARNING. This is called before the UIHelper is initialised. DONT try and use it.
+     * @param rootKey
+     */
     protected void buildPreferencesViewAndInitialise(String rootKey) {
         setPreferencesFromResource(R.xml.pref_page_connection, rootKey);
         setHasOptionsMenu(true);
@@ -167,23 +179,20 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         useCustomTrustedCertsPref.setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
         TrustedCaCertificatesPreference trustedCertsPref = (TrustedCaCertificatesPreference) findPreference(R.string.preference_select_trusted_certificate_key);
-        trustedCertsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValueObject) {
-                KeyStore currentValue = ((TrustedCaCertificatesPreference) preference).getKeystore();
-                KeyStore newValue = (KeyStore) newValueObject;
-                Set<String> newAliases = X509Utils.listAliasesInStore(newValue);
-                Set<String> removedCertThumbprints = SetUtils.difference(X509Utils.listAliasesInStore(currentValue), newAliases);
-                if (removedCertThumbprints.size() > 0) {
-                    Set<String> preProcessedCerts = getPrefs().getStringSet(getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>(newAliases.size()));
-                    for (String removedThumbprint : removedCertThumbprints) {
-                        preProcessedCerts.remove(removedThumbprint);
-                    }
-                    getPrefs().edit().putStringSet(getString(R.string.preference_pre_user_notified_certificates_key), preProcessedCerts).commit();
-                    forceHttpConnectionCleanupAndRebuild();
+        trustedCertsPref.setOnPreferenceChangeListener((preference, newValueObject) -> {
+            KeyStore currentValue = ((TrustedCaCertificatesPreference) preference).getKeystore();
+            KeyStore newValue = (KeyStore) newValueObject;
+            Set<String> newAliases = X509Utils.listAliasesInStore(newValue);
+            Set<String> removedCertThumbprints = SetUtils.difference(X509Utils.listAliasesInStore(currentValue), newAliases);
+            if (removedCertThumbprints.size() > 0) {
+                Set<String> preProcessedCerts = new HashSet<>(getPrefs().getStringSet(getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>(newAliases.size())));
+                for (String removedThumbprint : removedCertThumbprints) {
+                    preProcessedCerts.remove(removedThumbprint);
                 }
-                return true;
+                getPrefs().edit().putStringSet(getString(R.string.preference_pre_user_notified_certificates_key), preProcessedCerts).commit();
+                forceHttpConnectionCleanupAndRebuild();
             }
+            return true;
         });
         ClientCertificatePreference clientCertificatePreference = (ClientCertificatePreference) findPreference(R.string.preference_select_client_certificate_key);
         clientCertificatePreference.setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
@@ -195,7 +204,6 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
 
         Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
         responseCacheFlushButton.setOnPreferenceClickListener(new ResponseCacheFlushButtonListener(this));
-        setResponseCacheButtonText();
 
         findPreference(R.string.preference_server_connection_timeout_secs_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
         findPreference(R.string.preference_server_connection_retries_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
@@ -206,13 +214,16 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         findPreference(R.string.preference_server_connection_max_redirects_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
         Preference button = findPreference(R.string.preference_test_server_connection_key);
-        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-                refreshSession(null);
-                return true;
-            }
+        Drawable icon = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_sync_black_24dp);
+        if(icon != null) {
+            DrawableCompat.setTint(icon, ContextCompat.getColor(requireContext(), R.color.app_secondary));
+        }
+        button.setIcon(icon);
+
+        button.setOnPreferenceClickListener(preference -> {
+            ConnectionPreferences.getActiveProfile();
+            refreshSession(null);
+            return true;
         });
     }
 
@@ -226,7 +237,10 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                     if (!initialising) {
                         forceHttpConnectionCleanupAndRebuild();
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                            getListView().getAdapter().notifyDataSetChanged();
+                            RecyclerView.Adapter<?> adapter = getListView().getAdapter();
+                            if(adapter != null) {
+                                adapter.notifyDataSetChanged();
+                            }
                         }
                     }
                     getPrefs().unregisterOnSharedPreferenceChangeListener(this);
@@ -236,11 +250,11 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private void setResponseCacheButtonText() {
+    protected void setResponseCacheButtonText() {
         if (responseCacheButtonTextRetriever != null && responseCacheButtonTextRetriever.getStatus() != AsyncTask.Status.FINISHED) {
             responseCacheButtonTextRetriever.cancel(true);
         }
-        responseCacheButtonTextRetriever = UIHelper.submitAsyncTask(new ResponseCacheButtonTextRetriever(), this);
+        responseCacheButtonTextRetriever = UIHelper.<ResponseCacheButtonTextRetriever,Void>submitAsyncTask(new ResponseCacheButtonTextRetriever<>((F) this) );
     }
 
     @Override
@@ -258,46 +272,54 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         initialising = false;
     }
 
-    private static class ResponseCacheButtonTextRetriever extends AsyncTask<BaseConnectionPreferenceFragment, Void, Long> {
+    private static class ResponseCacheButtonTextRetriever<F extends BaseConnectionPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends OwnedSafeAsyncTask<F, Void, Void, Long> {
 
         private Preference responseCacheFlushButton;
-        private BaseConnectionPreferenceFragment fragment;
 
-        @Override
-        protected Long doInBackground(BaseConnectionPreferenceFragment[] params) {
-            this.fragment = params[0];
-            this.responseCacheFlushButton = fragment.findPreference(R.string.preference_caching_clearResponseCache_key);
-            final long cacheBytes = CacheUtils.getResponseCacheSize(responseCacheFlushButton.getContext());
-            return cacheBytes;
+        public ResponseCacheButtonTextRetriever(F owner) {
+            super(owner);
+            withContext(owner.requireContext());
         }
 
         @Override
-        protected void onPostExecute(Long cacheBytes) {
+        protected Long doInBackgroundSafely(Void... nothing) {
             try {
-                if (!isCancelled() && fragment.isVisible()) {
-                    String spaceSuffix = "(" + IOUtils.toNormalizedText(cacheBytes) + ")";
+                this.responseCacheFlushButton = getOwner().findPreference(R.string.preference_caching_clearResponseCache_key);
+                return CacheUtils.getResponseCacheSize(responseCacheFlushButton.getContext());
+            } catch(IllegalStateException e) {
+                Logging.log(Log.WARN, TAG, "unable to retrieve response cache details");
+                Logging.recordException(e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecuteSafely(Long cacheBytes) {
+            if(cacheBytes == null) {
+                return; // no value to process
+            }
+            try {
+                if (!isCancelled() && getOwner().isVisible()) {
+                    String spaceSuffix = "(" + IOUtils.bytesToNormalizedText(cacheBytes) + ")";
 //                String cacheLevel = ConnectionPreferences.getCacheLevel(fragment.getPrefs(), context);
 //                if("memory".equals(cacheLevel)) {
 //                    spaceSuffix += String.format(" + %1$d", CacheUtils.getItemsInResponseCache(context));
 //                }
-                    responseCacheFlushButton.setTitle(fragment.getString(R.string.preference_caching_clearResponseCache_title) + spaceSuffix);
+                    responseCacheFlushButton.setTitle(getOwner().getString(R.string.preference_caching_clearResponseCache_title) + spaceSuffix);
                 }
             } finally {
                 responseCacheFlushButton = null;
-                fragment = null; // allow reference to be cleared
             }
         }
 
         @Override
-        protected void onCancelled() {
-            super.onCancelled();
+        protected void onCancelledSafely() {
             responseCacheFlushButton = null;
-            fragment = null; // allow reference to be cleared
         }
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         EventBus.getDefault().register(this);
     }
@@ -309,10 +331,9 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-//        if (savedInstanceState != null) {
-//        }
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setResponseCacheButtonText();
     }
 
     @Override
@@ -323,15 +344,15 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
-    private boolean forceHttpConnectionCleanupAndRebuild() {
+    protected boolean forceHttpConnectionCleanupAndRebuild() {
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext(), true).start();
-            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction(null));
+            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction<>());
             getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
 
             return true;
@@ -343,22 +364,23 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {
-            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_out_of_piwigo_pattern, sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction(loginAsProfileAfterLogout));
+            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_out_of_piwigo_pattern, sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction<>(loginAsProfileAfterLogout));
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
-            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction(loginAsProfileAfterLogout));
+            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction<>(loginAsProfileAfterLogout));
             getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId, "httpShutdown");
         } else {
-            new OnHttpClientShutdownAction(loginAsProfileAfterLogout).onSuccess(getUiHelper(), null);
+            new OnHttpClientShutdownAction<FUIH,F>(loginAsProfileAfterLogout).onSuccess(getUiHelper(), null);
             reloadConnectionProfilePrefs();
         }
     }
 
-    private void reloadConnectionProfilePrefs() {
+    protected void reloadConnectionProfilePrefs() {
         // Refresh the displayed preferences with the new connection profile contents
         initialising = true;
         setPreferenceScreen(null);
         buildPreferencesViewAndInitialise(preferencesKey);
+        setResponseCacheButtonText();
         initialising = false;
     }
 
@@ -366,11 +388,11 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {
-            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_out_of_piwigo_pattern, sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction(false));
+            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_out_of_piwigo_pattern, sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction<>(false));
             return true;
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
-            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction());
+            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction<>());
             getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
             return true;
         }
@@ -378,11 +400,11 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
-    private static class OnLogoutAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LogoutResponseHandler.PiwigoOnLogoutResponse> {
+    private static class OnLogoutAction<FUIH extends FragmentUIHelper<FUIH,F>, F extends BaseConnectionPreferenceFragment<F,FUIH>> extends UIHelper.Action<FUIH, F, LogoutResponseHandler.PiwigoOnLogoutResponse> implements Parcelable {
         private String loginAsProfileAfterLogout;
         private Boolean loginAgain;
 
@@ -394,37 +416,97 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             this.loginAsProfileAfterLogout = loginAsProfileAfterLogout;
         }
 
+        protected OnLogoutAction(Parcel in) {
+            super(in);
+            loginAsProfileAfterLogout = in.readString();
+            byte tmpLoginAgain = in.readByte();
+            loginAgain = tmpLoginAgain == 0 ? null : tmpLoginAgain == 1;
+        }
+
         @Override
-        public boolean onSuccess(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
-            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            long msgId = new HttpConnectionCleanup(connectionPrefs, uiHelper.getContext()).start();
-            if(loginAgain != null && !loginAgain) {
-                uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction());
-            } else {
-                uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction(loginAsProfileAfterLogout));
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(loginAsProfileAfterLogout);
+            dest.writeByte((byte) (loginAgain == null ? 0 : loginAgain ? 1 : 2));
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnLogoutAction<?,?>> CREATOR = new Creator<OnLogoutAction<?,?>>() {
+            @Override
+            public OnLogoutAction<?,?> createFromParcel(Parcel in) {
+                return new OnLogoutAction<>(in);
             }
-            uiHelper.addActiveServiceCall(uiHelper.getContext().getString(R.string.loading_new_server_configuration), msgId, "httpShutdown");
+
+            @Override
+            public OnLogoutAction<?,?>[] newArray(int size) {
+                return new OnLogoutAction[size];
+            }
+        };
+
+        @Override
+        public boolean onSuccess(FUIH uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+            long msgId = new HttpConnectionCleanup(connectionPrefs, uiHelper.getAppContext()).start();
+            if(loginAgain != null && !loginAgain) {
+                uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction<>());
+            } else {
+                uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction<>(loginAsProfileAfterLogout));
+            }
+            uiHelper.addActiveServiceCall(uiHelper.getAppContext().getString(R.string.loading_new_server_configuration), msgId, "httpShutdown");
             return false;
         }
 
         @Override
-        public boolean onFailure(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getContext());
+            PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getAppContext());
             onSuccess(uiHelper, null);
             return false;
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+    private static class OnLoginAction<FUIH extends FragmentUIHelper<FUIH,F>, F extends BaseConnectionPreferenceFragment> extends UIHelper.Action<FUIH, F, LoginResponseHandler.PiwigoOnLoginResponse>implements Parcelable {
+
+        protected OnLoginAction(){}
+
+        protected OnLoginAction(Parcel in) {
+            super(in);
+        }
+
         @Override
-        public boolean onSuccess(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnLoginAction<?,?>> CREATOR = new Creator<OnLoginAction<?,?>>() {
+            @Override
+            public OnLoginAction<?,?> createFromParcel(Parcel in) {
+                return new OnLoginAction<>(in);
+            }
+
+            @Override
+            public OnLoginAction<?,?>[] newArray(int size) {
+                return new OnLoginAction[size];
+            }
+        };
+
+        @Override
+        public boolean onSuccess(FUIH uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
                 PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                String msg = uiHelper.getContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
+                String msg = uiHelper.getAppContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
                 if (sessionDetails.getAvailableImageSizes().size() == 0) {
-                    msg += '\n' + uiHelper.getContext().getString(R.string.alert_message_no_available_image_sizes);
+                    msg += '\n' + uiHelper.getAppContext().getString(R.string.alert_message_no_available_image_sizes);
                     uiHelper.showDetailedMsg(R.string.alert_title_connectionTest, msg);
                 } else {
                     uiHelper.showDetailedMsg(R.string.alert_title_connectionTest, msg);
@@ -435,7 +517,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private static class OnHttpClientShutdownAction extends UIHelper.Action<FragmentUIHelper<BaseConnectionPreferenceFragment>, BaseConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> {
+    private static class OnHttpClientShutdownAction<FUIH extends FragmentUIHelper<FUIH,F>, F extends BaseConnectionPreferenceFragment<F,FUIH>> extends UIHelper.Action<FUIH, F, HttpConnectionCleanup.HttpClientsShutdownResponse> implements Parcelable {
         private String loginAsProfileAfterLogout;
         private boolean loginAgain = true;
 
@@ -447,25 +529,55 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             this.loginAsProfileAfterLogout = loginAsProfileAfterLogout;
         }
 
+        protected OnHttpClientShutdownAction(Parcel in) {
+            super(in);
+            loginAsProfileAfterLogout = in.readString();
+            loginAgain = in.readByte() != 0;
+        }
+
         @Override
-        public boolean onSuccess(FragmentUIHelper<BaseConnectionPreferenceFragment> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(loginAsProfileAfterLogout);
+            dest.writeByte((byte) (loginAgain ? 1 : 0));
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnHttpClientShutdownAction<?,?>> CREATOR = new Creator<OnHttpClientShutdownAction<?,?>>() {
+            @Override
+            public OnHttpClientShutdownAction<?,?> createFromParcel(Parcel in) {
+                return new OnHttpClientShutdownAction<>(in);
+            }
+
+            @Override
+            public OnHttpClientShutdownAction<?,?>[] newArray(int size) {
+                return new OnHttpClientShutdownAction[size];
+            }
+        };
+
+        @Override
+        public boolean onSuccess(FUIH uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
             boolean retVal = false;
             if(loginAsProfileAfterLogout != null) {
                 // copy those profile values to the working app copy of prefs
-                ConnectionPreferences.clonePreferences(uiHelper.getPrefs(), uiHelper.getContext(), loginAsProfileAfterLogout, null);
+                ConnectionPreferences.clonePreferences(uiHelper.getPrefs(), uiHelper.getAppContext(), loginAsProfileAfterLogout, null);
                 retVal = true;
             }
 
             if(loginAgain) {
                 ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-                String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getContext());
+                String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getAppContext());
                 if ((serverUri == null || serverUri.trim().isEmpty())) {
                     if(loginAsProfileAfterLogout == null) {
                         // if we aren't swapping connection profiles, warn that a login is impossible.
-                        uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getContext().getString(R.string.alert_warning_no_server_url_specified));
+                        uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getAppContext().getString(R.string.alert_warning_no_server_url_specified));
                     }
                 } else {
-                    uiHelper.invokeActiveServiceCall(String.format(uiHelper.getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+                    uiHelper.invokeActiveServiceCall(String.format(uiHelper.getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction<>());
                 }
             }
             return retVal;
@@ -481,7 +593,9 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
 
             if ("disk".equals(newValue) || valueChanged) {
                 if (!initialising) {
-                    getUiHelper().runWithExtraPermissions(BaseConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
+                    Uri videoCacheFolder = Uri.fromFile(CacheUtils.getBasicCacheFolder(requireContext()));
+                    String permission = IOUtils.getManifestFilePermissionsNeeded(requireContext(), videoCacheFolder, IOUtils.URI_PERMISSION_READ_WRITE);
+                    getUiHelper().runWithExtraPermissions(BaseConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, permission, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
                 }
             } else {
                 if (!initialising) {
@@ -508,7 +622,10 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 // clear the existing session - it's not valid any more.
                 logoutSession();
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    getListView().getAdapter().notifyDataSetChanged();
+                    RecyclerView.Adapter<?> adapter = getListView().getAdapter();
+                    if(adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
                 }
             }
             return true;
@@ -526,7 +643,6 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             boolean autoTweakPreference = false;
 
             if (!initialising) {
-
                 SwitchPreference p = (SwitchPreference) findPreference(R.string.preference_server_connection_force_https_key);
                 if (isHttp) {
                     p.setEnabled(false);
@@ -555,9 +671,12 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 if(!autoTweakPreference) {
                     // clear the existing session - it's not valid any more.
                     logoutSession();
-                    AdsManager.getInstance().updateShowAdvertsSetting(getContext().getApplicationContext());
+                    AdsManager.getInstance(getContext()).updateShowAdvertsSetting(getContext());
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                        getListView().getAdapter().notifyDataSetChanged();
+                        RecyclerView.Adapter<?> adapter = getListView().getAdapter();
+                        if(adapter != null) {
+                            adapter.notifyDataSetChanged();
+                        }
                     }
                 }
             }
@@ -572,7 +691,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
 
                         // tweak user entered preference
-                        String prefValue = sharedPreferences.getString(key, "");
+                        String prefValue = Objects.requireNonNull(sharedPreferences.getString(key, ""));
                         prefValue = prefValue.replaceAll(" ", "");
 
                         String lowerPref = prefValue.toLowerCase();
@@ -591,68 +710,57 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<FUIH extends FragmentUIHelper<FUIH,F>, F extends BaseConnectionPreferenceFragment<F,FUIH>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-
-            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-
             if (response instanceof HttpConnectionCleanup.HttpClientsShutdownResponse) {
-                reloadConnectionProfilePrefs();
+                getParent().reloadConnectionProfilePrefs();
             }
         }
     }
 
-    private static class ClearCacheInBackgroundTask extends AsyncTask<BaseConnectionPreferenceFragment, Void, Boolean> {
+    private static class ClearCacheInBackgroundTask<F extends BaseConnectionPreferenceFragment<F,?>> extends OwnedSafeAsyncTask<F, Void, Void, Boolean> {
 
-        private BaseConnectionPreferenceFragment fragment;
+        public ClearCacheInBackgroundTask(F owner) {
+            super(owner);
+            withContext(owner.requireContext());
+        }
 
         @Override
-        protected Boolean doInBackground(BaseConnectionPreferenceFragment... fragments) {
-            fragment = fragments[0];
+        protected Boolean doInBackgroundSafely(Void... nothing) {
             try {
-                CacheUtils.clearResponseCache(fragment.getContext());
-                fragment.forceHttpConnectionCleanupAndRebuild();
+                CacheUtils.clearResponseCache(getContext());
+                getOwner().forceHttpConnectionCleanupAndRebuild();
                 return Boolean.TRUE;
             } catch (SecurityException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 return Boolean.FALSE;
             }
         }
 
         @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            try {
-                super.onPostExecute(aBoolean);
-                if (Boolean.TRUE.equals(aBoolean)) {
-                    fragment.getUiHelper().showDetailedMsg(R.string.cacheCleared_title, fragment.getString(R.string.cacheCleared_message));
-                } else {
-                    fragment.getUiHelper().showDetailedMsg(R.string.cacheCleared_title, fragment.getString(R.string.cacheClearFailed_message));
-                }
-                fragment.setResponseCacheButtonText();
-            } finally {
-                fragment = null;
+        protected void onPostExecuteSafely(Boolean aBoolean) {
+            if (Boolean.TRUE.equals(aBoolean)) {
+                getOwner().getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getOwner().getString(R.string.cacheCleared_message));
+            } else {
+                getOwner().getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getOwner().getString(R.string.cacheClearFailed_message));
             }
+            getOwner().setResponseCacheButtonText();
         }
 
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            fragment = null;
-        }
     }
 
-    private static class ResponseCacheFlushButtonListener implements Preference.OnPreferenceClickListener {
-        private final BaseConnectionPreferenceFragment fragment;
+    private static class ResponseCacheFlushButtonListener<F extends BaseConnectionPreferenceFragment<F,?>> implements Preference.OnPreferenceClickListener {
+        private final F fragment;
 
-        public ResponseCacheFlushButtonListener(BaseConnectionPreferenceFragment fragment) {
+        public ResponseCacheFlushButtonListener(F fragment) {
             this.fragment = fragment;
         }
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
             fragment.getUiHelper().showDetailedMsg(R.string.cacheCleared_title, fragment.getString(R.string.cacheClearingStarted_message));
-            new ClearCacheInBackgroundTask().execute(fragment);
+            new ClearCacheInBackgroundTask<>(fragment).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             return true;
 
         }

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp"
+    tools:layout_width="240dp">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/list_item_icon_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/ic_file_black_24dp" />
+
+    <ImageView
+        android:id="@+id/type_indicator"
+        app:layout_constraintDimensionRatio="1:1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".3"
+        app:layout_constraintHeight_default="percent"
+        android:alpha="0.9"
+        android:padding="2dp"
+        tools:visibility="visible"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/list_item_name"
+        app:layout_constraintEnd_toEndOf="@id/list_item_icon_thumbnail"
+        tools:src="@drawable/ic_file_black_24dp"/>
+
+
+    <delit.libs.ui.view.button.MaterialCheckboxTriState
+        android:id="@+id/list_item_checked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:clickable="false"
+        android:focusable="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/list_item_heading"/>
+
+    <Button
+        android:id="@+id/list_item_delete_button"
+        style="?materialButtonIconStyle"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:focusable="false"
+        app:icon="@drawable/ic_delete_black_24px"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/list_item_heading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/drawable_scrim_heavy_bright"
+        android:maxLines="1"
+        android:paddingLeft="4dp"
+        android:paddingTop="4dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="4dp"
+        android:textAppearance="?textAppearanceBody2"
+        android:visibility="gone"
+        android:textAlignment="gravity"
+        android:gravity="center"
+        app:autoSizeMaxTextSize="20sp"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintStart_toEndOf="@+id/list_item_checked"
+        app:layout_constraintEnd_toStartOf="@+id/list_item_delete_button"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintHorizontal_weight="0"
+        app:layout_constraintTop_toTopOf="@id/list_item_icon_thumbnail"
+        tools:text="140 Kb"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/list_item_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/drawable_scrim_heavy_bright"
+        android:paddingLeft="4dp"
+        android:paddingTop="2dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="2dp"
+        android:textAlignment="gravity"
+        android:gravity="center"
+        android:textAppearance="?textAppearanceBody2"
+        app:autoSizeMaxTextSize="20sp"
+        app:autoSizeMinTextSize="8sp"
+        android:maxLines="1"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="@id/list_item_icon_thumbnail"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="A super exceedingly long file name" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

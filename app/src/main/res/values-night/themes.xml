@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- used at activity level -->
+    <style name="Theme.App.EditPages" parent="Theme.App.Light">
+        <item name="alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+    </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <!--TODO is this needed? -->
+        <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
+    </style>
+
+    <style name="ThemeOverlay.App.AlertDialog" parent="Theme.MaterialComponents.Dialog.Alert">
+        <!--TODO is this needed? -->
+        <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
+    </style>
+
+    <!-- lighter colors theme -->
+    <style name="ThemeOverlay.App.EditPages" parent="ThemeOverlay.MaterialComponents.Dark">
+        <!-- the window background is set in the main app theme, so we need to cover it - hence use of background for these panels -->
+        <item name="android:background">@color/app_primary</item>
+        <item name="android:colorBackground">@color/app_color_background_light</item>
+        <!-- used for text -->
+        <item name="android:colorForeground">@color/app_color_on_primary</item>
+
+        <item name="scrimBackground">@color/color_scrim_light_bright</item>  <!-- what uses this? its material -->
+        <item name="scrimHeavy">@color/color_scrim_heavy_bright</item>
+        <item name="scrimUltraHeavy">@color/color_scrim_ultra_heavy_bright</item>
+        <item name="scrimLight">@color/color_scrim_light_bright</item>
+
+        <!-- These override the standard light colors -->
+
+        <!--   colors for the app bar and other primary UI elements -->
+        <item name="colorPrimary">@color/app_color_on_primary</item>
+        <!--   a darker variant of the primary colors, used for
+           the status bar (on Android 5.0+) and contextual app bars -->
+        <item name="colorPrimaryDark">?attr/colorPrimary</item>
+        <!--   a secondary colors for controls like checkboxes and text fields -->
+        <item name="colorAccent">@color/app_secondary</item>
+
+        <item name="colorPrimarySurface">?attr/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/app_primary_variant</item>
+        <item name="colorOnPrimary">@color/app_color_on_primary</item>
+        <item name="colorSecondary">@color/app_secondary</item>
+        <item name="colorSecondaryVariant">@color/app_secondary_variant</item>
+        <item name="colorOnSecondary">@color/app_color_on_secondary</item>
+        <item name="cardBackgroundColor">?attr/colorOnPrimary</item>
+        <!-- surfaces are the sliding layers (and cards by default) -->
+        <item name="colorSurface">@color/app_color_on_surface</item>
+        <item name="colorOnBackground">?attr/colorPrimary</item>
+        <item name="colorOnSurface">@color/app_color_on_surface</item>
+        <item name="appScrimColor">?attr/colorOnPrimary</item> <!-- goes under text -->
+    </style>
+
+</resources>

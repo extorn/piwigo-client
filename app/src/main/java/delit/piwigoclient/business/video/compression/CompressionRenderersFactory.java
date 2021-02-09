@@ -9,10 +9,8 @@ import androidx.annotation.RequiresApi;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.Renderer;
-import com.google.android.exoplayer2.audio.AudioCapabilities;
 import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-import com.google.android.exoplayer2.audio.DefaultAudioSink;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
@@ -58,6 +56,7 @@ public class CompressionRenderersFactory extends DefaultRenderersFactory {
     @Override
     protected void buildAudioRenderers(Context context, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, AudioProcessor[] audioProcessors, Handler eventHandler, AudioRendererEventListener eventListener, int extensionRendererMode, ArrayList<Renderer> out) {
         if (compressionParameters.isAddAudioTrack()) {
+
             out.add(new AudioTrackMuxerCompressionRenderer(context,
                     MediaCodecSelector.DEFAULT,
                     drmSessionManager,
@@ -65,7 +64,8 @@ public class CompressionRenderersFactory extends DefaultRenderersFactory {
                     eventHandler,
                     eventListener,
                     mediaMuxerControl,
-                    new DefaultAudioSink(AudioCapabilities.getCapabilities(context), audioProcessors),
+                    new CompressionAudioSink(mediaMuxerControl, compressionParameters.getAudioCompressionParameters()),/*
+                    new DefaultAudioSink(AudioCapabilities.getCapabilities(context), audioProcessors),*/
                     compressionParameters.getAudioCompressionParameters()));
         } else {
             // needed to empty the buffered data extracted from the source else the extractor will block as the buffers fill.

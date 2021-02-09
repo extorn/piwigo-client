@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import delit.libs.http.RequestParams;
-import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
 public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -30,6 +30,11 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
     }
 
     @Override
+    public String getPiwigoMethod() {
+        return getPiwigoMethodOverrideIfPossible("piwigo_client.categories.getList");
+    }
+
+    @Override
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
@@ -37,12 +42,12 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
             params.put("cat_id", String.valueOf(parentAlbumId));
         }
         if (recursive) {
-            params.put("recursive", Boolean.toString(recursive));
+            params.put("recursive", Boolean.toString(true));
             params.put("tree_output", Boolean.FALSE.toString());  // true returns broken json
         }
         boolean  communityPluginInstalled = PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs());
         if(communityPluginInstalled) {
-            params.put("faked_by_community", String.valueOf(!communityPluginInstalled));
+            params.put("faked_by_community", String.valueOf(false));
         }
         return params;
     }
@@ -114,7 +119,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
                     List<Long> parentage = toParentageChain(id, parentCatsCsv);
                     album.setParentageChain(parentage);
                 } else {
-                    album.setParentageChain(CategoryItem.ROOT_ALBUM.getParentageChain(), CategoryItem.ROOT_ALBUM.getId());
+                    album.setParentageChain(StaticCategoryItem.ROOT_ALBUM.getParentageChain(), StaticCategoryItem.ROOT_ALBUM.getId());
                 }
             }
             availableGalleries.add(album);
@@ -125,7 +130,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
     private List<Long> toParentageChain(long thisAlbumId, String parentCatsCsv) {
         String[] cats = parentCatsCsv.split(",");
         ArrayList<Long> list = new ArrayList<>();
-        list.add(CategoryItem.ROOT_ALBUM.getId());
+        list.add(StaticCategoryItem.ROOT_ALBUM.getId());
         for (String cat : cats) {
             list.add(Long.valueOf(cat));
         }

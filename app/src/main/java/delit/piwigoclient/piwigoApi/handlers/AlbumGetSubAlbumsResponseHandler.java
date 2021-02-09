@@ -1,8 +1,8 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.util.Log;
 import android.util.LongSparseArray;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,14 +10,14 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
+import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
 public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -26,13 +26,17 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
     private final CategoryItem parentAlbum;
     private final boolean recursive;
     private final String thumbnailSize;
-    private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
 
     public AlbumGetSubAlbumsResponseHandler(CategoryItem parentAlbum, String thumbnailSize, boolean recursive) {
         super("pwg.categories.getList", TAG);
         this.parentAlbum = parentAlbum;
         this.recursive = recursive;
         this.thumbnailSize = thumbnailSize;
+    }
+
+    @Override
+    public String getPiwigoMethod() {
+        return getPiwigoMethodOverrideIfPossible("piwigo_client.categories.getList");
     }
 
     @Override
@@ -46,7 +50,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             params.put("thumbnail_size", thumbnailSize);
         }
         if (recursive) {
-            params.put("recursive", Boolean.toString(recursive));
+            params.put("recursive", Boolean.toString(true));
             params.put("tree_output", Boolean.FALSE.toString()); // true returns broken json
         }
         boolean communityPluginInstalled = PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs());
@@ -74,7 +78,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             }
         }
 
-        PiwigoGetSubAlbumsResponse r = new PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), availableGalleries, isCached);
+        PiwigoGetSubAlbumsResponse r = new PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), parentAlbum, availableGalleries, isCached);
         storeResponse(r);
     }
 
@@ -140,7 +144,12 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
         } else if (category.has("uppercats")) {
             String[] parentage = category.get("uppercats").getAsString().split(",");
             if (parentage.length > 1) {
-                parentId = Long.valueOf(parentage[parentage.length - 2]);
+                try {
+                    parentId = Long.valueOf(parentage[parentage.length - 2]);
+                } catch(NumberFormatException e) {
+                    Logging.log(Log.ERROR, TAG, "Error retrieving parent album id from parentage str : " + category.get("uppercats"));
+                    Logging.recordException(e);
+                }
             } else {
                 parentId = 0L;
             }
@@ -185,13 +194,13 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             if (null == dateLastAlteredStr) {
                 dateLastAltered = new Date(0);
             } else {
-                dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
+                dateLastAltered = parsePiwigoServerDate(dateLastAlteredStr);
             }
         } catch (RuntimeException e) {
-            Crashlytics.logException(e);
-            throw new JSONException("Unable to parse date " + dateLastAlteredStr + " using expected date format string : " + piwigoDateFormat.toPattern());
+            Logging.recordException(e);
+            throw new JSONException("Unable to parse date " + dateLastAlteredStr + " using expected date format string : " + PIWIGO_DATE_FORMAT);
         } catch (ParseException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw new JSONException("Unable to parse date " + dateLastAlteredStr);
         }
 
@@ -203,7 +212,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             item.setParentageChain(directParentAlbum.getParentageChain(), directParentAlbum.getId());
             directParentAlbum.addChildAlbum(item);
         } else {
-            item.setParentageChain(CategoryItem.ROOT_ALBUM.getParentageChain(), CategoryItem.ROOT_ALBUM.getId());
+            item.setParentageChain(StaticCategoryItem.ROOT_ALBUM.getParentageChain(), StaticCategoryItem.ROOT_ALBUM.getId());
         }
 
         // this is superfluous as handled by the above code.
@@ -232,15 +241,21 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
 //    }
 
     public static class PiwigoGetSubAlbumsResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final CategoryItem parentAlbum;
         private final ArrayList<CategoryItem> albums;
 
-        public PiwigoGetSubAlbumsResponse(long messageId, String piwigoMethod, ArrayList<CategoryItem> albums, boolean isCached) {
+        public PiwigoGetSubAlbumsResponse(long messageId, String piwigoMethod, CategoryItem parentAlbum, ArrayList<CategoryItem> albums, boolean isCached) {
             super(messageId, piwigoMethod, true, isCached);
+            this.parentAlbum = parentAlbum;
             this.albums = albums;
         }
 
         public ArrayList<CategoryItem> getAlbums() {
             return albums;
+        }
+
+        public CategoryItem getParentAlbum() {
+            return parentAlbum;
         }
     }
 

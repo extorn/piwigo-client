@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_delete">удалять</string>
+    <string name="button_cancel">Отмена</string>
+    <string name="undefined_error_msg">Неопределенная ошибка</string>
+    <string name="resource_unavailable_error_msg_pattern">Не удалось получить доступ к запрашиваемому ресурсу. \nHTTP-код состояния (%1$d)</string>
+    <string name="server_error_msg_pattern">Что-то пошло не так на сервере или между сервером и вашим устройством. \nHTTP Status Code (%1$d)</string>
+    <string name="redirect_error_msg_pattern">Ошибка перенаправления запроса: \nHTTP-код состояния (%1$d)</string>
+    <string name="http_error_msg_pattern">Сообщение об ошибке HTTP (%1$s)</string>
+    <string name="unexpected_response_error_msg_pattern">Неожиданный ответ: \nHTTP-код состояния (%1$d)</string>
+    <string name="certificate_chain_not_verifiable_error">Цепочка сертификатов не может быть проверена с помощью сертификатов на этом устройстве.</string>
+    <string name="certificate_chain_not_verifiable_error_detail">Цепочка сертификатов не может быть проверена с помощью сертификатов на этом устройстве. Чтобы решить эту проблему, разрешите этому приложению вести список доверенных сертификатов (в рамках настроек подключения этого приложения).</string>
+    <string name="connection_error_msg_pattern">Невозможно подключиться к серверу</string>
+</resources>

@@ -1,5 +1,7 @@
 <resources>
-    <item name="ic_menu_camera" type="drawable">@android:drawable/ic_menu_camera</item>
+    <item name="ic_menu_camera" type="drawable" >@android:drawable/ic_menu_camera</item>
     <item name="ic_menu_gallery" type="drawable">@android:drawable/ic_menu_gallery</item>
     <item name="ic_menu_manage" type="drawable">@android:drawable/ic_menu_manage</item>
+    <item name="ic_menu_upload" type="drawable">@drawable/ic_file_upload_black_24dp</item>
+    <item name="ic_menu_download" type="drawable">@drawable/ic_file_download_black_24px</item>
 </resources>

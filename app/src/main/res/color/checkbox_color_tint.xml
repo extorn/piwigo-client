@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <!--TODO make use of these so that non enabled checkboxes are not using this color unless their parent component is clickable perhaps! -->
-    <item android:state_enabled="true" android:color="@color/accent"/>
-    <item android:state_active="true" android:color="@color/accent"/>
-    <item android:state_activated="true" android:color="@color/accent"/>
-    <item android:color="@color/accent" app:state_always_checked="true" />
-    <item android:color="@color/foreground"/>
+    <item android:state_activated="false" app:state_always_checked="true" android:alpha="0.5" android:color="@color/app_secondary" />
+    <item android:state_checked="false" app:state_always_checked="true" android:alpha="0.5" android:color="@color/app_secondary" />
+    <item android:state_enabled="false" android:color="@color/app_primary"/>
+    <item android:state_enabled="true" android:color="@color/app_secondary"/>
+    <item android:state_active="true" android:color="@color/app_secondary"/>
+    <item android:state_activated="true" android:color="@color/app_secondary"/>
+    <item android:color="?attr/colorControlNormal"/>
 </selector>

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!-- Look at this as a way of auto enable disable prefs - android:dependency="EnablePreferences" -->
-    <delit.libs.ui.view.preference.EditableListPreference
+    <delit.piwigoclient.ui.preferences.EditableListPreference
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:key="@string/preference_piwigo_connection_profile_key"
@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
+        android:key="@string/preference_piwigo_connections_key"
         android:title="@string/preference_connections_category_piwigo">
         <delit.libs.ui.view.preference.CustomEditTextPreference
             android:layout_width="match_parent"
@@ -28,7 +29,7 @@
             android:singleLine="true"
             android:summary="@string/preference_piwigo_server_address_summary"
             android:title="@string/preference_piwigo_server_address_title" />
-        <delit.libs.ui.view.preference.SecureEditTextPreference
+        <delit.piwigoclient.ui.preferences.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textNoSuggestions"
@@ -38,7 +39,7 @@
             android:singleLine="true"
             android:summary="@string/preference_piwigo_server_username_summary"
             android:title="@string/preference_piwigo_server_username_title" />
-        <delit.libs.ui.view.preference.SecureEditTextPreference
+        <delit.piwigoclient.ui.preferences.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
@@ -48,22 +49,30 @@
             android:singleLine="true"
             android:summary="@string/preference_piwigo_server_password_summary"
             android:title="@string/preference_piwigo_server_password_title" />
-
-        <androidx.preference.ListPreference
+        <delit.libs.ui.view.preference.StringListPreference
+            android:defaultValue="@string/preference_gallery_unique_id_default"
+            app:entries="@array/preference_gallery_unique_id_entries"
+            app:entryValues="@array/preference_gallery_unique_id_entryValues"
+            android:key="@string/preference_gallery_unique_id_key"
+            android:title="@string/preference_gallery_unique_id_title"
+            android:summary="@string/preference_gallery_unique_id_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <delit.piwigoclient.ui.preferences.PaidOnlyPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:defaultValue="@string/preference_server_ssl_certificate_hostname_verification_default"
-            android:entries="@array/server_ssl_certificate_hostname_verification_entries"
-            android:entryValues="@array/server_ssl_certificate_hostname_verification_values"
-            android:key="@string/preference_server_ssl_certificate_hostname_verification_key"
-            android:summary="@string/preference_server_ssl_certificate_hostname_verification_summary"
-            android:title="@string/preference_server_ssl_certificate_hostname_verification_title" />
+            android:defaultValue="@bool/preference_check_for_server_updates_default"
+            android:key="@string/preference_check_for_server_updates_key"
+            android:summary="@string/preference_check_for_server_updates_summary"
+            android:title="@string/preference_check_for_server_updates_title" />
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_server_basic_auth">
+        android:title="@string/preference_connections_category_server_basic_auth"
+        android:key="@string/preference_connections_category_server_basic_auth_key"
+        app:initialExpandedChildrenCount="0">
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -71,7 +80,7 @@
             android:key="@string/preference_server_use_basic_auth_key"
             android:summary="@string/preference_server_use_basic_auth_summary"
             android:title="@string/preference_server_use_basic_auth_title" />
-        <delit.libs.ui.view.preference.SecureEditTextPreference
+        <delit.piwigoclient.ui.preferences.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:dependency="@string/preference_server_use_basic_auth_key"
@@ -81,7 +90,7 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/preference_server_basic_auth_username_title" />
-        <delit.libs.ui.view.preference.SecureEditTextPreference
+        <delit.piwigoclient.ui.preferences.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:dependency="@string/preference_server_use_basic_auth_key"
@@ -95,8 +104,10 @@
     <androidx.preference.PreferenceCategory
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_trusted_server_ca"
+        android:key="@string/preference_connections_category_trusted_server_ca_key"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:initialExpandedChildrenCount="0">
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -104,7 +115,7 @@
             android:key="@string/preference_server_use_custom_trusted_ca_certs_key"
             android:summary="@string/preference_server_use_custom_trusted_ca_certs_summary"
             android:title="@string/preference_server_use_custom_trusted_ca_certs_title" />
-        <delit.libs.ui.view.preference.TrustedCaCertificatesPreference
+        <delit.piwigoclient.ui.preferences.TrustedCaCertificatesPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="@string/preference_select_trusted_certificate_key"
@@ -116,7 +127,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_client_certificate_auth">
+        android:title="@string/preference_connections_category_client_certificate_auth"
+        android:key="@string/preference_connections_category_client_certificate_auth_key"
+        app:initialExpandedChildrenCount="0">
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -124,7 +137,7 @@
             android:key="@string/preference_server_use_client_certs_key"
             android:summary="@string/preference_server_use_client_certs_summary"
             android:title="@string/preference_server_use_client_certs_title" />
-        <delit.libs.ui.view.preference.ClientCertificatePreference
+        <delit.piwigoclient.ui.preferences.ClientCertificatePreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:dependency="@string/preference_server_use_client_certs_key"
@@ -136,7 +149,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_advanced">
+        android:key="@string/preference_connections_category_advanced_key"
+        android:title="@string/preference_connections_category_advanced"
+        app:initialExpandedChildrenCount="0">
+        <androidx.preference.ListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@string/preference_server_ssl_certificate_hostname_verification_default"
+            android:entries="@array/server_ssl_certificate_hostname_verification_entries"
+            android:entryValues="@array/server_ssl_certificate_hostname_verification_values"
+            android:key="@string/preference_server_ssl_certificate_hostname_verification_key"
+            android:summary="@string/preference_server_ssl_certificate_hostname_verification_summary"
+            android:title="@string/preference_server_ssl_certificate_hostname_verification_title" />
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -144,6 +168,13 @@
             android:key="@string/preference_server_connection_force_https_key"
             android:summary="@string/preference_server_connection_force_https_summary"
             android:title="@string/preference_server_connection_force_https_title" />
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_fix_privacy_plugin_media_uris_default"
+            android:key="@string/preference_fix_privacy_plugin_media_uris_key"
+            android:summary="@string/preference_fix_privacy_plugin_media_uris_summary"
+            android:title="@string/preference_fix_privacy_plugin_media_uris_title" />
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -209,7 +240,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_connections_caching">
+        android:key="@string/preference_connections_category_connections_caching_key"
+        android:title="@string/preference_connections_category_connections_caching"
+        app:initialExpandedChildrenCount="0">
         <androidx.preference.ListPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -246,12 +279,30 @@
             app:minValue="0"
             app:multiplier="1024"
             app:wrapPickList="false" />
+        <delit.piwigoclient.ui.preferences.PaidOnlyPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_server_alter_cache_directives_default"
+            android:key="@string/preference_server_alter_cache_directives_key"
+            android:summary="@string/preference_server_alter_cache_directives_summary"
+            android:title="@string/preference_server_alter_cache_directives_title" />
+        <delit.piwigoclient.ui.preferences.PaidOnlyPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_server_connection_offline_mode_default"
+            android:key="@string/preference_server_connection_offline_mode_key"
+            android:summary="@string/preference_server_connection_offline_mode_summary"
+            android:title="@string/preference_server_connection_offline_mode_title" />
     </androidx.preference.PreferenceCategory>
+
+
+
     <androidx.preference.Preference
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:enabled="true"
         android:key="@string/preference_test_server_connection_key"
         android:summary="@string/preference_test_server_connection_summary"
-        android:title="@string/preference_test_server_connection_title" />
+        android:title="@string/preference_test_server_connection_title"
+        app:persistent="false"/>
 </androidx.preference.PreferenceScreen>

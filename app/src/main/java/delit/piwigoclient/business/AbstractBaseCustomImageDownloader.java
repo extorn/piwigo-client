@@ -5,15 +5,15 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
+
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.CustomNetworkRequestHandler;
 import com.squareup.picasso.Downloader;
 import com.squareup.picasso.NetworkPolicy;
@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import cz.msebera.android.httpclient.HttpStatus;
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
@@ -43,17 +44,17 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
     private static final String TAG = "CustomImageDwnldr";
     public static final String EXIF_WANTED_URI_PARAM = "pwgCliEW";
     public static final String EXIF_WANTED_URI_FLAG = EXIF_WANTED_URI_PARAM + "=true";
-    private final Context context;
+    private final @NonNull Context context;
 
     private final ConnectionPreferences.ProfilePreferences connectionPrefs;
 
 
-    public AbstractBaseCustomImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    public AbstractBaseCustomImageDownloader(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs) {
         this.context = context;
         this.connectionPrefs = connectionPrefs;
     }
 
-    public AbstractBaseCustomImageDownloader(Context context) {
+    public AbstractBaseCustomImageDownloader(@NonNull Context context) {
         this(context, ConnectionPreferences.getActiveProfile());
     }
 
@@ -65,13 +66,13 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         Looper currentLooper = Looper.myLooper();
         if (currentLooper == null || currentLooper.getThread() != Looper.getMainLooper().getThread()) {
             if (BuildConfig.DEBUG) {
-                Crashlytics.log(Log.DEBUG, TAG, "Image downloader has been called on background thread for URI: " + uri);
+                Logging.log(Log.DEBUG, TAG, "Image downloader has been called on background thread for URI: " + uri);
             }
             handler.runCall(!NetworkPolicy.shouldReadFromDiskCache(networkPolicy));
         } else {
             if (BuildConfig.DEBUG) {
                 // invoke a separate thread if this was called on the main thread (this won't occur when called within Picasso)
-                Crashlytics.log(Log.ERROR, TAG, "Image downloader has been called on and blocked the main thread! - URI: " + uri);
+                Logging.log(Log.ERROR, TAG, "Image downloader has been called on and blocked the main thread! - URI: " + uri);
             }
             handler.invokeAndWait(context, connectionPrefs);
         }
@@ -80,7 +81,8 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
             PiwigoResponseBufferingHandler.UrlErrorResponse errorResponse = (PiwigoResponseBufferingHandler.UrlErrorResponse) handler.getResponse();
 
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-            if ("http".equalsIgnoreCase(uri.getScheme()) && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
+            String serverUri = connectionPrefs.getPiwigoServerAddress(sharedPrefs, context);
+            if (serverUri != null && "http".equalsIgnoreCase(uri.getScheme()) &&serverUri.toLowerCase().startsWith("https://")) {
                 EventBus.getDefault().post(new BadRequestUsingHttpToHttpsServerEvent(connectionPrefs, uri));
             }
             if (errorResponse.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
@@ -117,10 +119,8 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
             // Load EXIF data.
             try {
                 metadata = ImageMetadataReader.readMetadata(imageDataStream);
-            } catch (ImageProcessingException e) {
-                Crashlytics.logException(e);
-            } catch (IOException e) {
-                Crashlytics.logException(e);
+            } catch (ImageProcessingException | IOException e) {
+                Logging.recordException(e);
             }
         }
         return metadata;
@@ -155,46 +155,46 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
 
     protected String getUriStringEncodingPathSegments(Context c, Uri uri) {
 
-        List<String> pathSegments = uri.getPathSegments();
         Uri.Builder builder = uri.buildUpon().encodedPath(null);
         Set<String> queryParamIds = new HashSet<>(uri.getQueryParameterNames());
-        queryParamIds.remove(EXIF_WANTED_URI_PARAM);
-
-        boolean pathSegmentsPossiblyAlreadyEncoded = false;
-        for (int i = 0; i < pathSegments.size(); i++) {
-            builder.appendEncodedPath(Uri.encode(pathSegments.get(i)));
-        }
 
         if (queryParamIds.contains(EXIF_WANTED_URI_PARAM)) {
             builder.clearQuery();
-            boolean piwigoFragmentAdded = false;
-            boolean paramAdded = false;
-            for (String param : queryParamIds) {
-                if (!EXIF_WANTED_URI_PARAM.equalsIgnoreCase(param)) {
-                    List<String> paramVals = uri.getQueryParameters(param);
-                    if (paramVals.size() > 0) {
-                        for (String paramVal : paramVals) {
-                            builder.appendQueryParameter(param, paramVal);
-                            paramAdded = true;
-                        }
-                    } else if (!piwigoFragmentAdded) {
-                        if (paramAdded) {
-                            Bundle b = new Bundle();
-                            b.putString("uri", uri.toString());
-                            FirebaseAnalytics.getInstance(c).logEvent("uri_error", b);
-                            Crashlytics.log(Log.ERROR, TAG, "Corrupting uri : " + uri.toString());
-                        }
-                        builder.encodedQuery(param);
-                        piwigoFragmentAdded = true;
-                    }
-                }
+            queryParamIds.remove(EXIF_WANTED_URI_PARAM);
+
+            if(queryParamIds.size() > 0) {
+                readdAnyQueryParameters(c, uri, builder, queryParamIds);
             }
 
         }
-
-
-
+        List<String> pathSegments = uri.getPathSegments();
+        for (int i = 0; i < pathSegments.size(); i++) {
+            builder.appendEncodedPath(Uri.encode(pathSegments.get(i)));
+        }
         return builder.build().toString();
+    }
+
+    private void readdAnyQueryParameters(Context c, Uri uri, Uri.Builder builder, Set<String> queryParamIds) {
+        boolean piwigoFragmentAdded = false;
+        boolean paramAdded = false;
+        for (String param : queryParamIds) {
+            List<String> paramVals = uri.getQueryParameters(param);
+            if (paramVals.size() > 0) {
+                for (String paramVal : paramVals) {
+                    builder.appendQueryParameter(param, paramVal);
+                    paramAdded = true;
+                }
+            } else if (!piwigoFragmentAdded) {
+                if (paramAdded) {
+                    Bundle b = new Bundle();
+                    b.putString("uri", uri.toString());
+                    Logging.logAnalyticEvent(c,"uri_error", b);
+                    Logging.log(Log.ERROR, TAG, "Corrupting uri : " + uri.toString());
+                }
+                builder.encodedQuery(param);
+                piwigoFragmentAdded = true;
+            }
+        }
     }
 
     @Override

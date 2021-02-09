@@ -18,50 +18,58 @@
 */
 -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/custom_toast_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:layout_height="80dp"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/toast_background">
+    android:id="@+id/custom_toast_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/toast_background"
+    android:padding="10dp"
+    tools:layout_height="120dp">
 
     <ImageView
         android:id="@+id/toast_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="7dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="@string/content_description_icon"
-        app:srcCompat="@drawable/ic_notifications_black_24dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_notifications_black_24dp" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/toast_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="7dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/primary_text_default_light"
-        tools:text="some title"/>
+        android:textAppearance="?textAppearanceHeadline6"
+        app:layout_constraintLeft_toRightOf="@id/toast_icon"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="some toast title" />
 
     <TextView
         android:id="@android:id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toast_title"
-        android:layout_centerHorizontal="true"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="7dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginTop="0dp"
         android:layout_marginBottom="10dp"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
-        android:textColor="@color/primary_text_default_light"
+        android:textAppearance="?textAppearanceBody1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toast_title"
         tools:text="message goes here"/>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -1,22 +1,21 @@
 package delit.piwigoclient.ui.album.view;
 
-import android.content.Context;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.model.piwigo.GalleryItem;
-import delit.piwigoclient.model.piwigo.ResourceContainer;
+import delit.piwigoclient.model.piwigo.PiwigoAlbum;
+import delit.piwigoclient.model.piwigo.PiwigoUtils;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 
 import static android.view.View.INVISIBLE;
 
-public class CategoryItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, M extends ResourceContainer<? extends CategoryItem, GalleryItem>> extends AlbumItemViewHolder<CategoryItem, Q, CategoryItemViewHolder<Q, M>, M> {
+public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, MSL, RC,T>, LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH, RC>, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>, RC extends PiwigoAlbum<CategoryItem,T>, T extends CategoryItem> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
     public TextView mPhotoCountView;
 
-    public CategoryItemViewHolder(View view, AlbumItemRecyclerViewAdapter<CategoryItem, Q, CategoryItemViewHolder<Q, M>, M> parentAdapter, int viewType) {
+    public CategoryItemViewHolder(View view, LVA parentAdapter, int viewType) {
         super(view, parentAdapter, viewType);
     }
 
@@ -30,117 +29,77 @@ public class CategoryItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
     }
 
     @Override
-    public void fillValues(Context context, GalleryItem newItem, boolean allowItemDeletion) {
-        super.fillValues(context, newItem, allowItemDeletion);
-        updateRecentlyViewedMarker(newItem);
+    public void fillValues(T newItem, boolean allowItemDeletion) {
+        try {
+            super.fillValues(newItem, allowItemDeletion);
+            updateRecentlyViewedMarker(newItem);
 
-        if (CategoryItem.BLANK.equals(newItem)) {
-            itemView.setVisibility(View.INVISIBLE);
-            imageLoader.resetAll();
-            return;
-        } else {
-            itemView.setVisibility(View.VISIBLE);
+            if (StaticCategoryItem.BLANK.equals(newItem)) {
+                itemView.setVisibility(View.INVISIBLE);
+                imageLoader.resetAll();
+                return;
+            } else {
+                itemView.setVisibility(View.VISIBLE);
+            }
+
+            if (newItem.getSubCategories() > 0) {
+                long totalPhotos = newItem.getTotalPhotos();
+                mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_subcategory_summary_text_pattern, newItem.getSubCategories(), totalPhotos));
+            } else {
+                mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_photos_summary_text_pattern, newItem.getPhotoCount()));
+                mPhotoCountView.setSingleLine();
+            }
+
+            if (!(newItem.getName() == null || newItem.getName().isEmpty())) {
+                mNameView.setVisibility(View.VISIBLE);
+                mNameView.setText(newItem.getName());
+            } else {
+                mNameView.setVisibility(INVISIBLE);
+            }
+
+            if (!(newItem.getDescription() == null || newItem.getDescription().isEmpty())) {
+                mDescView.setVisibility(View.VISIBLE);
+                // support for the extended description plugin.
+                String desc = PiwigoUtils.getResourceDescriptionOutsideAlbum(newItem.getDescription());
+                mDescView.setText(PiwigoUtils.getSpannedHtmlText(desc));
+            } else {
+                mDescView.setVisibility(INVISIBLE);
+            }
+
+            if (newItem.getThumbnailUrl() != null) {
+                configureLoadingBasicThumbnail(newItem);
+            } else {
+                configurePlaceholderThumbnail(newItem);
+            }
+            imageLoader.load();
+        } catch(RuntimeException e) {
+            Logging.recordException(e);
         }
+    }
 
-        CategoryItem category = (CategoryItem) newItem;
-
-        if (category.getSubCategories() > 0) {
-            long totalPhotos = category.getTotalPhotos();
-            mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_subcategory_summary_text_pattern, category.getSubCategories(), totalPhotos));
-        } else {
-            mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_photos_summary_text_pattern, category.getPhotoCount()));
-            mPhotoCountView.setSingleLine();
-        }
-
-        if (!(newItem.getName() == null || newItem.getName().isEmpty())) {
-            mNameView.setVisibility(View.VISIBLE);
-            mNameView.setText(newItem.getName());
-        } else {
-            mNameView.setVisibility(INVISIBLE);
-        }
-
-        if (!(newItem.getDescription() == null || newItem.getDescription().isEmpty())) {
-            mDescView.setVisibility(View.VISIBLE);
-            mDescView.setText(newItem.getDescription());
-        } else {
-            mDescView.setVisibility(INVISIBLE);
-        }
-
-
-        float albumWidth = parentAdapter.getAdapterPrefs().getAlbumWidth();
-//        if (albumWidth > 3) {
-//            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
-//        } else if (albumWidth > 2.4) {
-//            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
-//        } else if (albumWidth > 1.8) {
-//            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-//        } else {
-//            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-//        }
-
-        //String preferredThubnailSize = getParentAdapter().getAdapterPrefs().getPreferredAlbumThumbnailSize();
-            /*if(!"DEFAULT".equals(preferredThubnailSize) && category.getRepresentativePictureId() != null) {
-                // user requested a specific thumbnail
-                if(((CategoryItem) newItem).getPreferredThumbnailUrl() == null) {
-                    triggerLoadingSpecificThumbnail(category);
-                } else {
-                    configureLoadingPreferredThumbnail(category);
-                }
-            } else */
+    @Override
+    public void redisplayOldValues(T newItem, boolean allowItemDeletion) {
         if (newItem.getThumbnailUrl() != null) {
-            configureLoadingBasicThumbnail(category);
-        } else {
-            configurePlaceholderThumbnail(category);
+            /* this will occur if we were previously showing an admin version of the category
+               and now we're showing a full-fat user version. */
+            configureLoadingBasicThumbnail(newItem);
         }
+        super.redisplayOldValues(newItem, allowItemDeletion);
     }
 
     private void configurePlaceholderThumbnail(CategoryItem newItem) {
         imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
-        if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
-            (imageLoader).setCenterCrop(true);
-        } else {
-            (imageLoader).setCenterCrop(false);
-        }
-    }
-
-    private void triggerLoadingSpecificThumbnail(CategoryItem newItem) {
-        imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
-        if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
-            (imageLoader).setCenterCrop(true);
-        } else {
-            (imageLoader).setCenterCrop(false);
-        }
-        if (parentAdapter.getMultiSelectStatusListener() != null) {
-            //Now trigger a load of the real data.
-            AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter listener = parentAdapter.getMultiSelectStatusListener();
-            listener.notifyAlbumThumbnailInfoLoadNeeded(newItem); //see AbstractViewAlbumFragment for implementation
-        }
+        imageLoader.setCenterCrop(parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed());
     }
 
     private void configureLoadingBasicThumbnail(CategoryItem newItem) {
         imageLoader.setUriToLoad(newItem.getThumbnailUrl());
-
-        if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
-            (imageLoader).setCenterCrop(true);
-        } else {
-            (imageLoader).setCenterCrop(false);
-        }
+        imageLoader.setCenterCrop(parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed());
     }
-
-//    @Override
-//    protected ViewTreeObserver.OnPreDrawListener configureMasonryThumbnailLoader(AppCompatImageView target) {
-//        target = new RoundedImageView(target);
-//        return super.configureMasonryThumbnailLoader(target);
-//    }
 
     @Override
     public void setChecked(boolean checked) {
         throw new UnsupportedOperationException("Shouldn't call this");
     }
 
-    @Override
-    protected ViewTreeObserver.OnPreDrawListener configureNonMasonryThumbnailLoader(ImageView target) {
-        ImageView imageView = target;
-        return super.configureNonMasonryThumbnailLoader(imageView);
-    }
 }

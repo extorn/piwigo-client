@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants">
+
+        <TextView
+            android:id="@+id/list_item_name"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/list_item_delete_button"
+            android:layout_toEndOf="@id/list_item_checked"
+            android:layout_alignWithParentIfMissing="true"
+            tools:text="dummy text"
+            android:textAppearance="?textAppearanceBody1"/>
+        <TextView
+            android:id="@+id/list_item_details"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/list_item_name"
+            android:layout_toStartOf="@+id/list_item_delete_button"
+            android:layout_toEndOf="@id/list_item_checked"
+            android:layout_alignWithParentIfMissing="true"
+            tools:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
+            android:textAppearance="?textAppearanceBody2"/>
+
+        <delit.libs.ui.view.button.MaterialCheckboxTriState
+            android:id="@+id/list_item_checked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:checked="false"
+            android:clickable="false"
+            android:focusable="false" />
+
+        <delit.libs.ui.view.button.MaterialCheckboxTriState
+            android:id="@+id/delete_uploaded"
+            android:layout_below="@id/list_item_details"
+            android:layout_toStartOf="@+id/list_item_delete_button"
+            android:layout_toEndOf="@id/list_item_checked"
+            android:layout_alignWithParentIfMissing="true"
+            android:text="@string/delete_uploaded_files_title"
+            android:enabled="false"
+            android:clickable="false"
+            android:focusable="false"
+            style="?editableFieldCheckBox"/>
+
+        <delit.libs.ui.view.button.MaterialCheckboxTriState
+            android:id="@+id/enabled"
+            android:layout_below="@id/delete_uploaded"
+            android:layout_toStartOf="@+id/list_item_delete_button"
+            android:layout_toEndOf="@id/list_item_checked"
+            android:layout_alignWithParentIfMissing="true"
+            android:text="@string/upload_job_is_enabled_label"
+            android:enabled="false"
+            tools:checked="true"
+            android:clickable="false"
+            android:focusable="false"
+            style="?editableFieldCheckBox"/>
+
+        <Button
+            android:id="@+id/list_item_delete_button"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:focusable="false"
+            app:icon="@drawable/ic_delete_black_24px"
+            style="?materialButtonIconStyle"/>
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

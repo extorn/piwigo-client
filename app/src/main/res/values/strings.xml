@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ad_app_id" translatable="false">ca-app-pub-1408465472557768~4878187139</string>
     <string name="checking_license">Checking license…</string>
     <string name="button_quit">Exit</string>
     <string name="button_buy">Buy App</string>
@@ -36,13 +35,7 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="preference_test_server_connection_key" translatable="false">preference_test_server_connection</string>
-    <string name="preference_test_server_connection_title">Test Connection</string>
-    <string name="preference_test_server_connection_summary">Test connection to the server</string>
 
-    <string name="preference_data_upload_clear_failed_uploads_from_server_key" translatable="false">preference_data_upload_clear_failed_uploads_from_server</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Clean Server</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Clean Failed PiwigoClient uploads from the server</string>
     <string name="progress_clearing_failed_uploads_from_server">Clearing any failed uploads from the server</string>
     <string name="cleared_failed_uploads_from_server_pattern">Cleared %1$d failed uploads from the server</string>
 
@@ -56,15 +49,16 @@
     <string name="alert_success">SUCCESS!</string>
     <string name="alert_partial_success">INCOMPLETE</string>
     <string name="alert_error">Error</string>
+    <string name="alert_error_no_app_available_to_handle_action">No app could be found to handle this action.</string>
     <string name="alert_error_no_app_available_to_rate_app">No app could be found to rate this app. Thanks for trying though.</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">Download cancelled. Required permissions are not granted.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">Download cancelled. Required FileSystem permissions are not available.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">Download cancelled. Required FileSystem permissions are not available. As an alternative to system wide permissions, re-select the folder to use in the app preferences.</string>
     <string name="button_retry">Retry</string>
-    <string name="button_cancel">Cancel</string>
-    <string name="button_delete">Delete</string>
+
+
     <string name="button_unlink">UnLink</string>
     <string name="button_untag">Remove Tag</string>
     <string name="button_close">Close</string>
-    <string name="tools_menu_title">Tools</string>
     <string name="settings_menu_title">App Settings</string>
     <string name="offline_mode_menu_title">Offline Mode</string>
     <string name="online_mode_menu_title">Online Mode</string>
@@ -72,7 +66,6 @@
     <string name="upload_menu_title">Upload</string>
     <string name="upload_page_title">Piwigo Upload</string>
     <string name="gallery_to_alter_title">Upload to</string>
-    <string name="login_button_title">Login</string>
 
     <string name="alert_question_enable_network_access">Allow data retrieval from the server?</string>
     <string name="alert_question_disable_network_access">Only use data already cached on this device?</string>
@@ -85,12 +78,8 @@
     <string name="videoCacheCleared_message">Video Cache cleared. All videos will be downloaded from the remote server when next requested.</string>
     <string name="videoCacheClearFailed_message">Video Cache could not be cleared at this time. If the problem continues, please report the error.</string>
 
-    <string name="title_activity_view_gallery">View Gallery</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="notification_upload_paused">PIWIGO Upload paused</string>
-    <string name="notification_upload_resumed">PIWIGO Upload resumed</string>
 
     <string name="alert_items_for_upload_already_exist_message_pattern">%1$d files already exist on the server. Their permissions will be altered to reflect those selected here, and they will be linked to this album if needed.</string>
     <string name="alert_upload_success">Upload complete.</string>
@@ -99,10 +88,9 @@
     <string name="alert_upload_failed_webserver">Upload failed due to web server error (%1$d : %2$s).</string>
     <string name="alert_upload_failed_webresponse">Upload failed due to error processing PIWIGO response. This is probably due to a PIWIGO API change. Unparseable response : %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Upload of chunk for file %1$s failed. Abandoning upload of file.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">File %1$s is no longer available on the device.Perhaps it has been deleted or moved.</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Error while uploading file %1$s</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">File %1$s is no longer available on the device.Perhaps it has been deleted or moved.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Error while uploading file %1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Uploaded file %1$s is already present on the server, action cancelled.</string>
-    <string name="alert_error_upload_add_file_failed_message_pattern">Error adding uploaded file %1$s to album. Retry?</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Upload file %1$s failed due to error in PIWIGO server (%2$d : %3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Upload file %1$s failed due to web server error (%2$d : %3$s).</string>
     <string name="alert_upload_file_failed_webresponse_message_pattern">Upload file %1$s failed due to error processing PIWIGO response. This is probably due to a PIWIGO API change. Unparsable response : %2$s.</string>
@@ -113,7 +101,7 @@
     <string name="createGallery_parentGalleryTitle">Parent Album</string>
     <string name="createGallery_galleryNameTitle">Album Name</string>
     <string name="createGallery_galleryDescriptionTitle">Description</string>
-    <string name="createGallery_galleryCommentsAllowed">Allow user comments</string>
+    <string name="createGallery_galleryCommentsAllowed">Allow users to add comments</string>
     <string name="createGallery_galleryIsPrivate">Album is private?</string>
     <string name="createGallery_permissions_allowedGroupsTitle">Allowed Groups</string>
     <string name="createGallery_permissions_allowedUsersTitle">Allowed Users</string>
@@ -133,15 +121,12 @@
     <string name="alert_title_error_handling_response">Error parsing piwigo response</string>
     <string name="alert_error_handling_response_pattern">Unparsable response: %1$d (%2$s)</string>
     <string name="none_selected">None</string>
-    <string name="alert_title_error_too_many_users">Error</string>
     <string name="alert_error_too_many_users_message">Too many users to handle. Please submit an enhancement request to enable paging of users.</string>
 
     <string name="slideshow_resource_action_download">Download File</string>
     <string name="slideshow_resource_action_delete">Delete</string>
     <string name="slideshow_resource_action_copy">Copy to album</string>
     <string name="slideshow_resource_action_move">Move to album</string>
-    <string name="slideshow_image_details_actions">Actions</string>
-    <string name="slideshow_image_details_exif">EXIF Data</string>
     <string name="slideshow_image_details_comments">Comments</string>
 
     <string name="gallery_details_updating_progress_title">Updating Album</string>
@@ -149,16 +134,13 @@
     <string name="gallery_details_name_title">Album Name</string>
     <string name="gallery_details_description_title">Album Description</string>
     <string name="gallery_details_save_button">Save</string>
-    <string name="gallery_details_discard_button">Discard</string>
-    <string name="gallery_action_delete_progress_title">Deleting Album</string>
-    <string name="gallery_action_delete_error_subcategories_present">Unable to delete an album that contains sub-albums. Please delete these first.</string>
-    <string name="gallery_action_delete_error_photos_present">Unable to delete an album that contains photos or other files. Please delete these first.</string>
     <string name="notification_upload_event">Piwigo Upload</string>
     <string name="progress_downloading">Downloading File</string>
     <string name="alert_error_unimplemented">Function not yet implemented.</string>
     <string name="button_ok">Okay</string>
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
+    <string name="button_save">Save</string>
     <string name="alert_confirm_title">Confirm</string>
     <string name="alert_question_title">Question</string>
     <string name="alert_confirm_really_delete_from_server">This will delete the item permanently from the server. Continue?</string>
@@ -170,9 +152,14 @@
     <string name="other_licences_button_text">Other Licenced components</string>
     <string name="oss_licences_menu_title">OSS Licences</string>
     <string name="about_heading">About This App</string>
-    <integer name="eula_version">4</integer>
+    <integer name="eula_version">5</integer>
     <string name="eula" formatted="false">"End­User License Agreement (\"Agreement\")
-Last updated: 7 August 2018
+
+
+** Sourcecode:
+        https://github.com/extorn/piwigo-client
+
+** Last updated: 18 September 2020
 
 Please read this End­User License Agreement (\"Agreement\") carefully before clicking the \"I Agree\"
 button, downloading or using Piwigo Client (\"Application\").
@@ -186,12 +173,12 @@ If you are considering using this app to access and or amend a server used for c
 You must test this on a non production server to your satisfaction before accepting any risk and liability yourself based on your decisions. This app has been designed primarily
 for non-commercial purposes.
 
-Definitions
+** Definitions
 
 Licensee: The licensee is the person or company who intend to use the licensed software or already uses it legally or illegally. The term “licensee” does not imply that the software is legally licensed by default.
 
 
-License
+** License
 
 Gareth Deli grants you a revocable, non­exclusive, non­transferable, limited license
 to download, install and use the Application solely for your personal, or commercial purposes
@@ -200,46 +187,44 @@ strictly in accordance with the terms of this Agreement.
 THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
 
 
-Restrictions
+** Restrictions
 
 You agree not to, and you will not permit others to:
 a) license, sell, rent, lease, assign, distribute, transmit, host, outsource, disclose or otherwise
 commercially exploit the Application or make the Application available to any third party.
-b) decompile or otherwise view the source code or byte code of the application either manually or using a tool
-c) run or attempt to run this application in anything other than a physical device of type phone or tablet, and that uses the android operating system as its main operating system.
-d) run or attempt to run this application in an emulator or other sandbox environment for the purposes of examining its behaviour.
-e) create derivative works based on this application.
+b) create derivative works based on this application.
 
-User Data Collection
+
+** User Data Collection
 
 Firebase integration has been added to this application to facilitate tracking use of the application with the main purposes being more efficient bug resolution and ascertaining the way the app is being used. The minimum data required to achieve this purpose will be collected.
 
 
-Limited Warranty and Disclaimer
+** Limited Warranty and Disclaimer
 
 The software is provided \“as is\” and the licensee uses it at his/her own risk. Gareth Deli makes no warranties to its use, to its performance or to its fitness for a particular purpose. It is always possible that software contains errors (bugs) and fails to work. Therefore Gareth Deli doesn't warrant that the software is completely error free, or that it works without interruption with all computers and configurations.
 
 It is solely in the licensee’s responsibility to check if the software fits his particular purpose or meets his functional and performance requirements. The licensee is also obliged to test how the software works on his devices and his configurations; test all use cases and check if data processed without errors and as desired before they use the software in production environments. This is of vital importance if using the software for commercial purposes.
 
 
-Limitations on Liability
+** Limitations on Liability
 
 The licensee is responsible for the consequences of use of the software and the thereby resulting direct and indirect damages as far as it is legally possible. The liability is limited to the purchase price as far as it is legally possible; otherwise it is limited to the legally possible minimum.
 
 
-Maintenance and Support
+** Maintenance and Support
 
 Gareth Deli provides general support for the current version of the software through email only. Older versions are not supported.
 
 
-Modifications to Application
+** Modifications to Application
 
 Gareth Deli reserves the right to modify, suspend or discontinue, temporarily or
 permanently, the Application or any service to which it connects, with or without notice and without
 liability to you.
 
 
-Term and Termination
+** Term and Termination
 
 This Agreement shall remain in effect until terminated by you or Gareth Deli.
 
@@ -251,27 +236,31 @@ Agreement by deleting the Application and all copies thereof from your mobile de
 desktop.
 Upon termination of this Agreement, you shall cease all use of the Application and delete all copies
 of the Application from your mobile device or from your desktop.
-Severability
+
+
+** Severability
+
 If any provision of this Agreement is held to be unenforceable or invalid, such provision will be
 changed and interpreted to accomplish the objectives of such provision to the greatest extent
 possible under applicable law and the remaining provisions will continue in full force and effect.
 
 
-Amendments to this Agreement
+** Amendments to this Agreement
 
 Gareth Deli reserves the right, at its sole discretion, to modify or replace this
-Agreement at any time. If a revision is material we will provide at least 0 days' notice
-prior to any new terms taking effect. What constitutes a material change will be determined at our
-sole discretion.
+Agreement at any time. You will be notified of the change on opening the application, and have the
+option to either accept the changes, or stop using the application.
 
 
-Contact Information
+** Contact Information
 
 If you have any questions about this Agreement, please contact us."
 </string>
     <string name="about_content">"This app was written to allow me easier access to my photo gallery while on the move.
 
-It will be updated regularly to add more features, some that I've thought of, others requested by users.
+Sourcecode: https://github.com/extorn/piwigo-client
+
+No further updates are planned for this app, thank you for you support if you have purchased a copy. Without paid users I would have stopped development on this app a long time ago.
 
 In August 2018, a user, David Klement, came back to me with screen mock-ups for a more professional design. Starting with release 1.3.95, I have been incorporating those ideas, starting with the album view screen.
 These full list of proposed screen designs are available to view on the app website (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html).
@@ -289,7 +278,7 @@ At the moment, it provides a basic level of functionality to allow navigation ar
 
 Please can I ask that if you uninstall the app, you use the link on the app menu to email me telling me why the app did not meet your needs so I can address this.
 
-The version of the PIWIGO server I test against is currently 2.9.4.
+The version of the PIWIGO server I test against is currently 2.10.2.
 
 My test gallery contains .jpg and .mp4 files only. If yours contains others, you may well encounter problems - if so, please tell me and I'll prioritise work on those file types.
 
@@ -673,14 +662,11 @@ SOFTWARE.
     <string name="button_unlock">Unlock</string>
     <string name="alert_app_unlocked_message">The app has now been unlocked</string>
     <string name="gallery_details_status_title">Privacy Status</string>
-    <string name="gallery_details_status_galleryIsPrivate">Yes</string>
-    <string name="gallery_details_status_galleryIsPublic">No</string>
-    <string name="gallery_details_status">Album is Private?</string>
+    <string name="gallery_details_status">Restrict access to this folder</string>
     <string name="gallery_details_allowed_groups_title">Allowed Groups</string>
     <string name="gallery_details_allowed_users_title">Allowed Users</string>
     <string name="click_to_view">Click to view</string>
     <string name="click_to_view_pattern">%1$d - Click to view / edit</string>
-    <string name="alert_warning_lowMemory">Low Memory</string>
     <string name="alert_warning_lowMemory_message">The device is running low on memory (%1$d). The in memory image cache has been cleared.</string>
     <string name="files_for_upload_title">Files for Upload</string>
     <string name="alert_information">Information</string>
@@ -701,7 +687,6 @@ SOFTWARE.
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Warning</string>
     <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">The thumbnail size you have selected is not natively supported by the server you are connected to. The server will return the \"nearest match\" sized image.</string>
-    <string name="rate_dialog_message">If you enjoy using this app, would you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!</string>
     <string name="groups_menu_title">Groups</string>
     <string name="group_members_pattern">(%1$d members)</string>
     <string name="alert_group_delete_success_pattern">Group (%1$s) was successfully deleted</string>
@@ -727,7 +712,7 @@ SOFTWARE.
     <string name="groups_heading">Groups</string>
     <string name="users_heading">Users</string>
     <string name="albums_heading">Albums</string>
-    <string name="user_high_definition_title">High Definition Enabled</string>
+    <string name="user_high_definition_title">High Definition</string>
     <string name="user_email_title">Email Address</string>
     <string name="none_value">None</string>
     <string name="access_rights_heading">Access Rights</string>
@@ -752,14 +737,15 @@ SOFTWARE.
     <string name="progress_loading_user_details">Retrieving user details</string>
     <string name="progress_delete_user">Deleting user</string>
     <string name="alert_read_permissions_needed_for_file_upload">Permission is needed to read the filesystem in order to select and upload files</string>
+    <string name="alert_file_permissions_needed_for_pattern">%1$s permissions are needed for the filesystem. Purpose: %2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">Local caching of Video files is enabled. To allow this, write access to the file system must be granted. If denied, local caching will be disabled.</string>
     <string name="alert_error_tidying_video_cache">Unable to tidy the video cache. If this issue persists, please report it.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">Unable to copy file from cache. %1$s</string>
     <string name="gallery_empty_text">This album is currently empty</string>
     <string name="alert_error_unable_to_clear_cached_content">Unable to delete cached content.</string>
     <string name="alert_clear_cached_content">Clear cached data for this resource and force re-download from the server?</string>
-    <string name="gallery_album_content_load_failed_text">Unable to load album content or permissions details</string>
-    <string name="gallery_permissions_load_failed_text">Unable to load album content or permissions details</string>
+    <string name="gallery_album_content_load_failed_text">Unable to load album content</string>
+    <string name="gallery_permissions_load_failed_text">Unable to load album permissions details</string>
     <string name="gallery_update_failed_text">Unable to update album details</string>
     <string name="progress_saving_changes">Saving changes</string>
     <string name="user_privacy_level_title">Privacy Level</string>
@@ -770,13 +756,12 @@ SOFTWARE.
     <string name="progress_reloading_album_permissions">Recalculating album access rights</string>
     <string name="group_is_default_title">Is Default?</string>
     <string name="progress_adding_group">Adding Group</string>
-    <string name="upload_unacceptable_files_prefix">Unaccepted Files</string>
     <string name="alert_error_unable_to_access_local_filesystem">Without access to the local filesystem, this action cannot proceed. Sorry.</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">Without access to the local filesystem, this action cannot proceed. As an alternative to system wide permissions, re-select the folder to use in the app preferences.</string>
     <string name="alert_error_admin_user_required">Only admin users can upload unless the community plugin is installed. Sorry.</string>
     <string name="upload_username_title">Upload as</string>
     <string name="certificates_heading">Certificates</string>
-    <string name="preference_connections_category_client_certificate_auth">Client Certificate Authentication</string>
-    <string name="alert_slideshow_out_of_sync_with_album">This slideshow no longer accurately reflects the current album contents</string>
+
     <string name="alert_slideshow_out_of_sync_with_tag">This slideshow no longer accurately reflects the current tag contents</string>
     <string name="alert_error_app_not_yet_configured">App not yet configured and connected to a PIWIGO server. Please open the app manually and configure it before attempting to share items with it.</string>
     <string name="error_server_configuration_invalid">Unacceptable piwigo server details, please check app connection configuration</string>
@@ -785,12 +770,13 @@ SOFTWARE.
     <string name="top_tips_menu_title">Top Tips</string>
     <string name="top_tips_heading">Top Tips</string>
     <string name="alert_error_please_select_upload_album">Please select an album to upload to</string>
-    <string name="preference_connections_category_advanced">Advanced Settings</string>
+
     <string name="alert_title_select_album">Select Album</string>
     <string name="alert_title_set_album_thumbnail">Update album thumbnail?</string>
     <string name="alert_message_set_album_thumbnail">Update album thumbnail to this image?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Are you sure you wish to delete the album (%1$s) and all content permanently (unless linked to albums elsewhere)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Are you absolutely certain you want to delete album (%1$s) with %2$d photos, and %3$d child albums containing a further %4$d photos for ever? Note that photos linked to other albums will remain there, but any others are deleted forever. There is no undo feature for this action.</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Are you sure you wish to delete album (%1$s)?\n\nThere is no undo feature</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">You are deleting album (%1$s) with %2$d photos.\n\nWould you like to permanently delete any orphaned content?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">You are deleting album (%1$s) with %2$d photos, and %3$d child albums containing a further %4$d photos.\n\nWould you like to permanently delete any orphaned content?</string>
     <string name="alert_confirm_copy_items_here_pattern">Copy the %1$d item(s) in the basket here (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Move the %1$d item(s) in the basket here (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Linked Albums</string>
@@ -818,7 +804,6 @@ SOFTWARE.
     <string name="error_insufficient_permissions_for_cache_folder">Read write access to the cache folder is needed. Check app settings.</string>
     <string name="alert_title_error_talking_to_server">Error talking to server</string>
     <string name="alert_title_error_connecting_to_server">Error connecting to server</string>
-    <string name="alert_warning_message_self_signed_certificates">Self signed SSL certificates should not be used on a public facing server (on the internet) - investigate at https://letsencrypt.org or similar. This is for testing purposes only.</string>
     <string name="alert_error_adding_certificate_to_truststore">Error adding certificate to trust store</string>
     <string name="alert_add_cert_to_truststore_pattern">Add Certificate chain to list of trusted CAs?\n\n</string>
     <string name="certificate_summary_pattern">Subject: %1$s\nValid: %2$s - %3$s\nSerial: %4$s</string>
@@ -831,7 +816,6 @@ SOFTWARE.
     <string name="album_create_failed">Album could not be created, please retry</string>
     <string name="alert_failure">Failure</string>
     <string name="album_created_but_permissions_set_failed">Album was created, but permissions could not be set. The attempt to delete the partially set up album failed. Please check the server directly.</string>
-    <string name="filelist_item_prefix">File:</string>
     <string name="alert_loading_certificates_from_selected_files">Loading certificates from selected files.</string>
     <string name="x509_key_type_field_pattern">Private %1$s Key</string>
     <string name="x509_key_strength_field_pattern">Strength: %1$d bits</string>
@@ -841,11 +825,8 @@ SOFTWARE.
     <string name="x509_cert_valid_to_field_pattern">Valid to: %1$s</string>
     <string name="alert_warning_multiple_users_found_pattern">There were %1$d other users found to share this username (%2$s). The most recent user of this Piwigo server was selected, but this is not safe if it is possible that they will be using the server at the same or similar time. Please consider changing these usernames so username is a unique identifier for a given class of user.</string>
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">These permissions are needed to start an upload process, and then keep the upload process running once the screen has switched off</string>
-    <string name="alert_no_scheme_specified">You must prefix your server address with either http:// or https://. No other schemes are supported. Port is optional if the default - 80 for http or 443 for https. Example http://piwigo.org/demo or http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">The following %1$d files exceeded the warning threshold: %2$s. Would you like to remove these from the upload?</string>
     <string name="alert_files_larger_than_upload_threshold_compress">Would you like to compress any videos before upload?</string>
-    <string name="alert_trusted_certificates_polling">Untrusted certificates supplied by the server upon connection will be presented to you so as you may choose to add these to the trust store. If you decline, you will not be prompted again for the same certificate. In order to be prompted again, deselect and reselect the option to use a custom trusted certificate store.</string>
-    <string name="button_copy_link">Copy Link</string>
     <string name="download_link_clipboard_data_desc">Download link for %1$s</string>
     <string name="alert_http_scheme_specified">Your server is using http. This is not a good idea because the username and password are transmitted to the server in plain text. I strongly recommend you change your server to use https.</string>
     <string name="gallery_admin_albums_list_load_failed_text">Failed to load the full administrative list of albums</string>
@@ -880,12 +861,7 @@ SOFTWARE.
     <string name="paid_feature_only">paid app only</string>
     <string name="slideshow_image_details_tags_title">Tags</string>
     <string name="button_search">Search</string>
-    <string name="preference_connections_category_connections_caching">Web Response Caching</string>
-    <string name="server_connection_preference_summary_default">Please select a value</string>
-    <string name="server_album_preference_summary_default">Please select a value</string>
-    <string name="local_folder_preference_summary_default">Please select a value</string>
-    <string name="server_connection_preference_user_guest">guest</string>
-    <string name="file_selection_heading">File Selection</string>
+
     <string name="tag_heading_pattern">Tag: %1$s</string>
     <string name="error_updating_tag_pattern">Error removing resource (%1$s) from tag: %2$s</string>
     <string name="alert_message_info_files_already_pending_approval_pattern">%1$d files were not uploaded as they are already uploaded but pending administrator approval.</string>
@@ -896,14 +872,15 @@ SOFTWARE.
     <string name="folder_extstorage">External Storage</string>
     <string name="folder_extstorage_device_pattern">External Storage %1$d</string>
     <string name="folder_default">Default</string>
-    <string name="button_all">Check All</string>
-    <string name="button_none">UnCheck All</string>
+    <string name="button_show_all">Show All</string>
+    <string name="button_select_all">Select All</string>
+    <string name="button_show_none">Hide All</string>
+    <string name="button_select_none">Select None</string>
     <string name="button_reset">Reset</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Network monitoring should be allowed for efficient use of WIFI only uploading</string>
     <string name="inaccessible_remote_folder">** private **</string>
     <string name="error_unable_to_acquire_valid_session">Unable to acquire valid session with server</string>
     <string name="upload_job_is_enabled_label">Is Valid and Enabled?</string>
-    <string name="alert_unable_to_show_image_image_missing">This image is missing. Unable to display.</string>
     <string name="notification_title_foreground_upload_service">Piwigo Upload Service</string>
     <string name="notification_message_upload_service">Running</string>
     <string name="slideshow_image_tab_basic_info">Basic Info</string>
@@ -918,10 +895,8 @@ SOFTWARE.
     <string name="button_hide_details">Hide Detail</string>
     <string name="alert_message_max_upload_file_count_reached">Maximum number of files to be uploaded reached. To upload more at one time, please purchase and use the paid version of this app.</string>
     <string name="alert_message_advert_load_error">Adverts are persistently having problems loading. Please report this to me, as these form an important though very small source of revenue to me. Please consider purchasing the paid version to remove adverts entirely. The app will now freeze for 5 seconds during which this screen must remain visible. The countdown will restart if the message is hidden. After 5 seconds you can close this message and continue using the app as normal.</string>
-    <string name="alert_temporary_upload_album_deleted">Temporary upload album deleted successfully</string>
     <string name="alert_deleting_temporary_upload_album">Deleting temporary upload album</string>
     <string name="alert_invalid_uri_pattern">Invalid URI. %1$s</string>
-    <string name="alert_invalid_uri_pattern_spaces">Invalid URI. There is a space character in the URI at position %1$d</string>
     <string name="album_section_heading_albums">albums</string>
     <string name="album_section_heading_albums_pattern">albums (%1$d)</string>
     <string name="album_section_heading_resources">photos in this album</string>
@@ -931,8 +906,7 @@ SOFTWARE.
     <string name="rating_score_pattern">%1$.2f (%2$d rates)</string>
     <string name="connection_reset_warning_pattern">The server has closed the connection %1$d times in the past %2$d minutes. This could indicate an issue with your server configuration.</string>
     <string name="content_description_icon">icon</string>
-    <string name="files_already_set_for_upload_skipped_pattern">%1$d files were already selected for upload and have been ignored to avoid duplication.</string>
-    <string name="progress_loading_session_details">Loading session details</string>
+    <string name="duplicates_ignored_pattern">%1$d duplicates have been ignored.</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">The Piwigo WS method %1$s is no longer available on this server, and the fallback %2$s has been used. Have you just deactived or deleted a server plugin?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">The Piwigo WS method %1$s no longer available on this server. Disabling affected functionality in the app. Have you just deactived or deleted a server plugin?</string>
     <string name="removing_favorite">Removing favorite</string>
@@ -963,18 +937,17 @@ SOFTWARE.
     <string name="subalbum_detail_txt_pattern">%1$d child albums</string>
     <string name="please_read_and_agree_with_eula_first">Please read and confirm agreement with the terms of the EULA first</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Required Permissions were not granted. Action cancelled.</string>
-    <string name="default_str">default</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Required Permissions were not granted. Action cancelled. As an alternative to system wide permissions, re-select the folder to use in the app preferences.</string>
     <string name="copied_to_clipboard">Copied to Clipboard</string>
     <string name="alert_plugin_required_pattern">%1$s Server Plugin Required - Version %2$s or newer</string>
-    <string name="certificate_chain_not_verifiable_error">Certificate chain could not be verified using the certificates on this device.</string>
-    <string name="certificate_chain_not_verifiable_error_detail">Certificate chain could not be verified using the certificates on this device. To resolve this, allow this app to maintain a list of trusted certificates (within this app connection settings).</string>
-    <string name="undefined_error_msg">Undefined error</string>
-    <string name="resource_unavailable_error_msg_pattern">Requested resource could not be accessed.\nHTTP Status Code (%1$d)</string>
-    <string name="server_error_msg_pattern">Something went wrong in the server or between the server and your device.\nHTTP Status Code (%1$d)</string>
-    <string name="redirect_error_msg_pattern">Request redirection error :\nHTTP Status Code (%1$d)</string>
-    <string name="http_error_msg_pattern">HTTP Error Message (%1$s)</string>
-    <string name="unexpected_response_error_msg_pattern">Unexpected response : \nHTTP Status Code (%1$d)</string>
-    <string name="connection_error_msg_pattern">Unable to connect to server</string>
+
+
+
+
+
+
+
+
     <string name="preference_corrupt_please_re_type_pattern">"Preference %1$s is irretrievable and has been defaulted to %2$s. Please reset this value in the app settings"</string>
     <string name="switch_to_cached_mode">The server is presently not available. Use cached data?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
@@ -982,7 +955,6 @@ SOFTWARE.
     <string name="compress_images">Compress Images</string>
     <string name="upload_tab_title_settings">Settings</string>
     <string name="upload_tab_title_files">Files</string>
-    <string name="unable_to_handle_shared_uri_missing_content_description_information">Unable to handle shared File. Missing detailed information such as filename and exact file type. Please download the file to your device first.</string>
     <string name="alert_internal_server_exposed_pattern">Unexpected authority %1$s found in url and replaced with %2$s. Your server could be misconfigured.</string>
     <string name="buy_time_menu_title">Hide Adverts</string>
     <string name="watch_advert_to_buy_advert_free_time">Would you like to watch an advertisement to buy a short period without any adverts? You can do this multiple times to increase the length of time if wanted.</string>
@@ -995,16 +967,16 @@ SOFTWARE.
     <string name="message_piwigo_server_inconsistent_results">Piwigo API Call %1$s reports file checksum doesn\'t match, but API call %2$s reports that it matches. This could be a bug in the PIWIGO server or a plugin you use, and may be worth reporting.</string>
     <string name="alert_bulk_image_permissions_title">Set Access Permissions</string>
     <string name="alert_bulk_image_permissions_message">Set access permission levels for the %1$d selected resources</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Unable to handle files shared with an %1$s mime type</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Unable to handle files shared with an "%1$s" mime type</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Files with the following extensions cannot be uploaded and have been removed: %1$s</string>
     <string name="please_select_a_parent_album">Please select a parent album</string>
     <string name="unsupported_device">Sorry, this device is not supported. There is an issue with accessing Google Play Services.</string>
     <string name="hint_album_view">Tap at the bottom of the screen to bring up details for this album</string>
     <string name="usage_hint_title">Hint</string>
-    <string name="hint_slideshow_view_1">Tap at the bottom of the screen or on the resource name to bring up details for this resource</string>
-    <string name="hint_slideshow_view_2">Swipe left or right to navigate between resources</string>
+    <string name="hint_slideshow_base_view_1">Tap at the bottom of the screen or on the resource name to bring up details for this resource</string>
+    <string name="hint_slideshow_base_view_2">Swipe left or right to navigate between resources</string>
     <string name="hint_slideshow_item_view_1">Rating can be adjusted by tapping or swiping on the desired star rating. This has immediate effect.</string>
-    <string name="hint_slideshow_view_3">To mark this resource as a favorite, tap the heart icon to right of image resource name</string>
+    <string name="hint_slideshow_paid_view_3">To mark this resource as a favorite, tap the heart icon to right of image resource name</string>
     <string name="hint_navigation_panel_1">Tap on the app icon above to force a server log out and log in</string>
     <string name="user_details_not_found_on_server">Unable to find user details on server</string>
     <string name="resource_queued_for_download">Resource queued for download. It is position %1$d in the queue.</string>
@@ -1012,9 +984,96 @@ SOFTWARE.
     <string name="alert_message_showing_image_thumbnails_of_size">Showing image thumbnails from server of size %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Showing album thumbnails from server of size %1$s</string>
     <string name="subAlbum_text" translatable="false">... / %1$s</string>
-    <string name="alert_error_upload_file_compression_error_message_pattern">Error while compressing file for upload %1$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Error while compressing file for upload %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Uploading</string>
     <string name="compressing_progress_bar_message">Compressing</string>
     <string name="warning_missing_tags_links_removed_from_resource">Not all Tags linked to this item still exist in the database. The links to %1$d have been removed</string>
     <string name="button_stop_warning_me">Don\'t tell me again</string>
+    <string name="create_email_using_app">Create an Email using app</string>
+    <string name="open_files">Open Files in app</string>
+    <string name="files_unavailable_to_download_removed_pattern">Your selection contained files that could not be processed. These %1$d files have been ignored. To share a video file, it must be fully cached locally first.</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"All one-time user hints will be shown again"</string>
+    <string name="alert_server_uri_response_pattern" translatable="false">%1$s\n%2$s</string>
+    <string name="delete_uploaded_files_title">Delete uploaded files</string>
+    <string name="system_file_selector_label">system file selection</string>
+    <string name="preference_uri_consumer_description_pattern">Preference: %1$s</string>
+    <string name="missing_permissions_warning_message_pattern">"Since the last time this app was opened, file permissions required by the following parts of the app have been removed\n\n%1$s\n\nPlease select new permissions for these settings to keep things working as expected."</string>
+    <string name="folder_selection_title">Select Folder</string>
+    <string name="files_selection_title">Select Files</string>
+    <string name="all">All</string>
+    <string name="user_high_definition_field">Allow access to original (full size) files</string>
+    <string name="group_is_default_field">Assign new users to this group</string>
+    <string name="createGallery_galleryCommentsAllowed_title">User Comments</string>
+    <string name="uri_permission_justification_to_upload">For upload to server</string>
+    <string name="progress_loading_folder_content">Loading folder content</string>
+    <string name="calculating_file_checksums">Calculating File Checksums</string>
+    <string name="alert_error_starting_download">Error starting file download</string>
+    <string name="progress_importing_files">Importing Files</string>
+    <string name="content_filter">Content Filter</string>
+    <string name="alert_advert_importance_message">The revenue from adverts is important to me. I\'m sorry they frustrate you (they do me too), but if you watch them, they will keep appearing until you watch one. To avoid this problem, please watch them until they offer the option to close. Alternatively, purchase the paid version of this app. Many thanks for your support.</string>
+    <string name="eula_privacy_title">Privacy</string>
+    <string name="privacy_policy_label">Our privacy policy</string>
+    <string name="title_advert_consent">Your Privacy</string>
+    <string name="personalised_adverts_label">Would you like adverts to be personalised?</string>
+    <string name="personalised_adverts_field">Show personalised adverts</string>
+    <string name="open_link">Open web page</string>
+    <string name="no_adverts_label">Prefer an advert free version of this app?</string>
+    <string name="view_the_paid_version">Take me to the advert free version</string>
+    <string name="advert_providers">Advert Providers in use</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">Sorry, this file was not able to be used because it was shared by an app that did not authorise the requested extended access to this file and that access has expired.</string>
+    <string name="files_shared_without_required_permissions_error">The app you used to select the files has not delegated the necessary file permissions to Piwigo Client. A solution has been added for this issue in the paid version of Piwigo Client, but alternatively, you could use a different method of selecting the files.</string>
+    <string name="files_cached_from_other_apps">Cached Shares</string>
+    <string name="progress_copying_imported_files">Copying imported files</string>
+    <string name="selected_files">Selected Files</string>
+    <string name="uri_permission_justification_file_selection">To select files or folders for use by this app</string>
+    <string name="alert_error_please_select_download_folder_and_retry">Please select a folder to download files to in the app settings, then retry.</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">No valid output file extension (preferred is %2$s) could be found for file (video:%3$b audio:%4$b) acceptable to the server amongst options (%1$s)</string>
+    <string name="uuid_title">Install UUID</string>
+    <string name="alert_error_unable_add_files_previous_job_still_running">Unable to add files for upload. An upload job is in progress.</string>
+    <string name="alert_error_unable_add_files_previous_job_unfinished">Unable to add files for upload. The current  upload job needs to finish first.</string>
+    <string name="removing_files_from_job">Removing files from Upload Job</string>
+    <string name="doc_provider_root_downloads_title">Piwigo Downloads</string>
+    <string name="doc_provider_root_downloads_summary">Files downloaded from the server</string>
+    <string name="downloads_menu_title">Downloads</string>
+    <string name="view_exported_files">View Exported Files</string>
+    <string name="generating_upload_job">Configuring Upload Job with your selection</string>
+    <string name="alert_error_files_without_permissions_pattern">Uri Permissions were not provided for all files. Those without will not upload if the job is paused and later resumed (for example by Android power management). To avoid this issue, select files to upload from using this app if possible. Affected files: %1$d.</string>
+    <string name="button_compress">Compress</string>
+    <string name="unable_to_compress_without_data">Unable to compress without the settings</string>
+    <string name="video_compression_settings_invalid">Video compression settings are invalid. Please check and try again.</string>
+    <string name="alert_password_entry">Password Required</string>
+    <string name="import_x_of_type_y_cancelled_pattern">Import of %2$s %1$s cancelled</string>
+    <string name="import_cancelled">Import cancelled</string>
+    <string name="alert_error_item_must_belong_to_at_least_one_album">The item must belong to at least one album unless being deleted. Please select one and try again.</string>
+    <string name="orphans_menu_title">Orphans</string>
+    <string name="piwigo_server">Piwigo Server</string>
+    <string name="piwigo_server_plugin">Server Plugin</string>
+    <string name="piwigo_server_updates_available_pattern">Piwigo Update Available:\n\n%1$s\n%2$s</string>
+    <string name="support_email_pattern" translatable="false"><![CDATA[
+%1$s
+\n\n
+Comments:
+\n\n
+Feature Request:
+\n\n
+Bug Summary:
+\n\n
+Bug Details:
+\n\n
+Version of Piwigo Server Connected to: %2$s
+\n\n
+Piwigo Plugins Active on Server:
+\n
+%6$s
+\n\n
+Version of PIWIGO Client: %3$s
+\n\n
+Android version of this device: %4$s
+\n\n
+App Install UUID: %5$s
+    ]]></string>
+    <string name="localizedEmailHelp">This email template is for your convenience.\nIf you feel it is not relevant to provide any of the following details, please delete them.\n\nThe UUID allows me to filter all logged data to show just those relevant to you. This will only be needed if I\'m struggling to fix a bug you\'re experiencing.</string>
+    <string name="try_enabling_privacy_plugin_media_uris">The resource could not be found on the server. Would you like to enable the privacy plugin multimedia uri fix?</string>
+    <string name="multimedia_playback_currently_disabled">Multimedia playback is disabled. You likely chose this to save data. Either enable playback on demand, or playback in slideshow mode in the app preferences.</string>
+    <string name="release_changes">Recent Changes</string>
 </resources>

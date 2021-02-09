@@ -55,7 +55,7 @@ public class CustomNetworkRequestHandler extends RequestHandler {
 
         Picasso.LoadedFrom loadedFrom = response.cached ? DISK : NETWORK;
 
-        Bitmap bitmap = response.getBitmap();
+        Bitmap bitmap = response.bitmap;
         if (bitmap != null) {
             return new Result(bitmap, loadedFrom);
         }
@@ -93,6 +93,8 @@ public class CustomNetworkRequestHandler extends RequestHandler {
     }
 
     static class ContentLengthException extends IOException {
+        private static final long serialVersionUID = 2329421139453177127L;
+
         public ContentLengthException(String message) {
             super(message);
         }

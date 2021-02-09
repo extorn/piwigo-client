@@ -5,10 +5,10 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import androidx.preference.PreferenceManager;
+
 import com.loopj.android.http.AsyncHttpClient;
 
 import java.io.File;
@@ -34,15 +34,16 @@ import cz.msebera.android.httpclient.conn.ssl.TrustStrategy;
 import cz.msebera.android.httpclient.conn.ssl.X509HostnameVerifier;
 import cz.msebera.android.httpclient.impl.client.cache.CacheConfig;
 import cz.msebera.android.httpclient.util.TextUtils;
+import delit.libs.core.util.Logging;
 import delit.libs.http.UntrustedCaCertificateInterceptingTrustStrategy;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.CachingSyncHttpClient;
+import delit.libs.http.cache.RestartableManagedHttpCacheStorage;
 import delit.libs.util.X509Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.CachingSyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.PersistentProfileCookieStore;
-import delit.piwigoclient.piwigoApi.http.cache.RestartableManagedHttpCacheStorage;
 
 /**
  * Created by gareth on 07/07/17.
@@ -138,7 +139,7 @@ public class HttpClientFactory {
         try {
             closeClient(asyncClientMap.remove(profile));
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error closing asyncClient");
             }
@@ -146,7 +147,7 @@ public class HttpClientFactory {
         try {
             closeClient(syncClientMap.remove(profile));
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error closing syncClient");
             }
@@ -154,7 +155,7 @@ public class HttpClientFactory {
         try {
             closeClient(videoDownloadClientMap.remove(profile));
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error closing videoDownloadClient");
             }
@@ -162,7 +163,7 @@ public class HttpClientFactory {
         try {
             closeClient(videoDownloadSyncClientMap.remove(profile));
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error closing sync videoDownloadClient");
             }
@@ -302,15 +303,14 @@ public class HttpClientFactory {
         return this.cacheStorage;
     }
 
-    private PersistentProfileCookieStore getCookieStore(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context) {
-        synchronized (connectionPrefs) {
-            PersistentProfileCookieStore cookieStore = cookieStoreMap.get(connectionPrefs);
-            if (cookieStore == null) {
-                cookieStore = new PersistentProfileCookieStore(context.getApplicationContext(), connectionPrefs.getAbsoluteProfileKey(prefs, context));
-                cookieStoreMap.put(connectionPrefs, cookieStore);
-            }
-            return cookieStore;
+    private synchronized PersistentProfileCookieStore getCookieStore(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context) {
+
+        PersistentProfileCookieStore cookieStore = cookieStoreMap.get(connectionPrefs);
+        if (cookieStore == null) {
+            cookieStore = new PersistentProfileCookieStore(context.getApplicationContext(), connectionPrefs.getAbsoluteProfileKey(prefs, context));
+            cookieStoreMap.put(connectionPrefs, cookieStore);
         }
+        return cookieStore;
     }
 
     private int extractPort(String serverAddress) {
@@ -374,7 +374,7 @@ public class HttpClientFactory {
             try {
                 sslContext = SSLContext.getDefault();
             } catch (NoSuchAlgorithmException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 e.printStackTrace();
             }
         }
@@ -403,22 +403,22 @@ public class HttpClientFactory {
             return contextBuilder.build();
 
         } catch (NoSuchAlgorithmException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }
         } catch (UnrecoverableKeyException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }
         } catch (KeyStoreException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }
         } catch (KeyManagementException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }

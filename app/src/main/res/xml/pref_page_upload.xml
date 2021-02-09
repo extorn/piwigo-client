@@ -30,6 +30,15 @@
         android:title="@string/preference_upload_category_data_upload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_data_upload_delete_uploaded_default"
+            android:key="@string/preference_data_upload_delete_uploaded_key"
+            android:summary="@string/preference_data_upload_delete_uploaded_summary"
+            android:title="@string/preference_data_upload_delete_uploaded_title" />
+
         <delit.libs.ui.view.preference.IntListPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,39 +48,14 @@
             android:title="@string/preference_data_upload_default_privacy_level_title"
             app:entries="@array/privacy_levels_groups_array"
             app:entryValues="@array/privacy_levels_values_array" />
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:defaultValue="@integer/preference_data_upload_chunkSizeKb_default"
-            app:minValue="256"
-            app:maxValue="10240"
-            android:key="@string/preference_data_upload_chunkSizeKb_key"
-            android:title="@string/preference_data_upload_chunkSizeKb_title"
-            android:summary="@string/preference_data_upload_chunkSizeKb_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:defaultValue="@integer/preference_data_upload_chunk_auto_retries_default"
-            app:minValue="0"
-            app:maxValue="5"
-            android:key="@string/preference_data_upload_chunk_auto_retries_key"
-            android:title="@string/preference_data_upload_chunk_auto_retries_title"
-            android:summary="@string/preference_data_upload_chunk_auto_retries_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:defaultValue="@integer/preference_data_upload_max_filesize_mb_default"
-            app:minValue="0"
-            app:maxValue="10240"
-            android:key="@string/preference_data_upload_max_filesize_mb_key"
-            android:title="@string/preference_data_upload_max_filesize_mb_title"
-            android:summary="@string/preference_data_upload_max_filesize_mb_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_upload_category_pre_data_upload_compression">
+        android:key="@string/preference_upload_category_pre_data_upload_image_compression_key"
+        android:title="@string/preference_upload_category_pre_data_upload_image_compression_title"
+        app:initialExpandedChildrenCount="1">
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -115,6 +99,14 @@
             android:title="@string/preference_data_upload_compress_images_output_format_title"
             app:entries="@array/preference_data_upload_compress_images_output_format_items"
             app:entryValues="@array/preference_data_upload_compress_images_output_format_items" />
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@android:layout/preference_category"
+        android:key="@string/preference_upload_category_pre_data_upload_video_compression_key"
+        android:title="@string/preference_upload_category_pre_data_upload_video_compression_title"
+        app:initialExpandedChildrenCount="1">
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -154,8 +146,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_upload_category_advanced">
+        android:key="@string/preference_upload_category_piwigo_server_calls_key"
+        android:title="@string/preference_upload_category_piwigo_server_calls_title"
+        app:initialExpandedChildrenCount="0">
 
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:defaultValue="@integer/preference_data_upload_chunkSizeKb_default"
+            app:minValue="256"
+            app:maxValue="10240"
+            android:key="@string/preference_data_upload_chunkSizeKb_key"
+            android:title="@string/preference_data_upload_chunkSizeKb_title"
+            android:summary="@string/preference_data_upload_chunkSizeKb_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:defaultValue="@integer/preference_data_upload_chunk_auto_retries_default"
+            app:minValue="0"
+            app:maxValue="5"
+            android:key="@string/preference_data_upload_chunk_auto_retries_key"
+            android:title="@string/preference_data_upload_chunk_auto_retries_title"
+            android:summary="@string/preference_data_upload_chunk_auto_retries_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:defaultValue="@integer/preference_data_upload_max_filesize_mb_default"
+            app:minValue="0"
+            app:maxValue="10240"
+            android:key="@string/preference_data_upload_max_filesize_mb_key"
+            android:title="@string/preference_data_upload_max_filesize_mb_title"
+            android:summary="@string/preference_data_upload_max_filesize_mb_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <androidx.preference.Preference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

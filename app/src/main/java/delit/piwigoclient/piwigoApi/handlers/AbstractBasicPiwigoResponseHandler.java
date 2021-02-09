@@ -4,16 +4,22 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Looper;
 import android.os.Message;
-import android.preference.PreferenceManager;
+import android.text.format.DateFormat;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
+
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -27,14 +33,15 @@ import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.message.BasicHeaderElement;
 import cz.msebera.android.httpclient.message.BasicHeaderValueFormatter;
+import delit.libs.core.util.Logging;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.RequestHandle;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.Worker;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
 
@@ -43,6 +50,10 @@ import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
  */
 
 public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpResponseHandler {
+    private static final String TAG = "PiwigoRespHndlr";
+    public static final String PIWIGO_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final SimpleDateFormat PIWIGO_SERVER_SIMPLE_DATE_FORMAT = new SimpleDateFormat(PIWIGO_DATE_FORMAT, Locale.UK);
+    private static final boolean VERBOSE_LOGGING = false;
     private final boolean built;
     private final String tag;
     private boolean allowSessionRefreshAttempt;
@@ -69,6 +80,16 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private boolean forceLogin;
     private boolean runInBackground;
 
+
+    public static CharSequence formatDateForPiwigoServer(Date date) {
+        return DateFormat.format(PIWIGO_DATE_FORMAT, date);
+    }
+
+    public static Date parsePiwigoServerDate(String text) throws ParseException {
+        synchronized (PIWIGO_SERVER_SIMPLE_DATE_FORMAT) {
+            return PIWIGO_SERVER_SIMPLE_DATE_FORMAT.parse(text);
+        }
+    }
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
         this.tag = tag;
@@ -108,7 +129,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 try {
                     this.notifyAll();
                 } catch (IllegalMonitorStateException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(getTag(), "unable to notify threads waiting on this object", e);
                     }
@@ -119,11 +140,17 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     @Override
     public void onProgress(long bytesWritten, long totalSize) {
-        if(BuildConfig.DEBUG) {
+        if(VERBOSE_LOGGING && BuildConfig.DEBUG) {
             double currentProgressPercent = Math.floor((totalSize > 0) ? (bytesWritten * 1.0 / totalSize) * 100 : -1);
             if(currentProgressPercent < 0 || currentProgressPercent > lastProgressReportAtPercent) {
-                lastProgressReportAtPercent = currentProgressPercent;
-                super.onProgress(bytesWritten, totalSize);
+                if(totalSize > 1) {
+                    lastProgressReportAtPercent = currentProgressPercent;
+                    super.onProgress(bytesWritten, totalSize);
+                } else {
+                    if(BuildConfig.DEBUG) {
+                        Log.v(TAG, String.format("Progress %d from %s", bytesWritten, getRequestURIAsStr()));
+                    }
+                }
             }
         }
     }
@@ -144,7 +171,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         try {
             onSuccess(statusCode, headers, responseBody, triedLoggingInAgain, isResponseCached(headers));
         } catch(RuntimeException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw e;
         }
     }
@@ -189,19 +216,19 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
     }
 
-    protected boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
+    protected boolean onFailure(String uri, int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
         return false;
     }
 
-    public void setCallDetails(Context parentContext, ConnectionPreferences.ProfilePreferences connectionPrefs, boolean useAsyncMode) {
+    public void setCallDetails(@NonNull Context parentContext, ConnectionPreferences.ProfilePreferences connectionPrefs, boolean useAsyncMode) {
         setCallDetails(parentContext, connectionPrefs, useAsyncMode, true);
     }
 
-    protected Context getContext() {
+    protected @NonNull Context getContext() {
         return context;
     }
 
-    public void setCallDetails(Context parentContext, ConnectionPreferences.ProfilePreferences connectionPrefs, boolean useAsyncMode, boolean allowSessionRefreshAttempt) {
+    public void setCallDetails(@NonNull Context parentContext, ConnectionPreferences.ProfilePreferences connectionPrefs, boolean useAsyncMode, boolean allowSessionRefreshAttempt) {
         clearCallDetails();
 
         this.context = parentContext;
@@ -278,9 +305,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         }
         if (!tryingAgain) {
             try {
-                tryingAgain = onFailure(statusCode, headers, responseBody, error, triedLoggingInAgain, isResponseCached(headers));
+                tryingAgain = onFailure(getRequestURIAsStr(), statusCode, headers, responseBody, error, triedLoggingInAgain, isResponseCached(headers));
             } catch(RuntimeException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 throw e;
             }
             if(!tryingAgain) {
@@ -297,6 +324,11 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 }
             }
         }
+    }
+
+    protected String getRequestURIAsStr() {
+        URI requestUri = getRequestURI();
+        return requestUri != null ? requestUri.toString() : "N/A";
     }
 
     protected boolean acquireNewSessionAndRetryCallIfAcquired() {
@@ -373,7 +405,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     }
 
     protected void reportNestedFailure(AbstractBasicPiwigoResponseHandler nestedHandler) {
-        onFailure(nestedHandler.statusCode, nestedHandler.headers, nestedHandler.responseBody, nestedHandler.error, triedLoggingInAgain, isResponseCached(nestedHandler.headers));
+        onFailure(nestedHandler.getRequestURIAsStr(), nestedHandler.statusCode, nestedHandler.headers, nestedHandler.responseBody, nestedHandler.error, triedLoggingInAgain, isResponseCached(nestedHandler.headers));
     }
 
     protected void onGetNewSessionSuccess() {
@@ -431,7 +463,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                requestHandle = runCall(client, this, forceResponseRevalidation || forceLogin);
             }
         } catch (RuntimeException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (client == null) {
                 String errorMsg = getContext().getString(R.string.error_building_http_engine);
                 if (BuildConfig.DEBUG) {
@@ -498,10 +530,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     newLoginStatus = PiwigoSessionDetails.LOGGED_IN;
                 }
             } else {
-                if(!failureReported) {
-                    failureReported = true;
-                    reportNestedFailure(handler);
-                }
+                reportNestedFailure(handler);
             }
             if (newLoginStatus == loginStatus) {
                 // no progression - fail call.
@@ -516,7 +545,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             loopcount++;
         } while (!exit && loopcount < 15); // loop count should never be hit but is a sanity check to stop hanging
         if (loopcount == 15) {
-            Crashlytics.log(Log.ERROR, "Handler", "Insane looping while trying to get new login!");
+            Logging.log(Log.ERROR, "Handler", "Insane looping while trying to get new login!");
         }
 
         return handler.isSuccess();
@@ -557,7 +586,11 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     }
 
     protected String getPiwigoServerUrl() {
-        return connectionPrefs.getPiwigoServerAddress(sharedPrefs, context);
+        String serverUri = connectionPrefs.getPiwigoServerAddress(sharedPrefs, context);
+        if(serverUri == null) {
+            serverUri = "";
+        }
+        return serverUri;
     }
 
     protected SharedPreferences getSharedPrefs() {

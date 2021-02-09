@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.Base64Utils;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SerializableCookie;
@@ -22,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.cookie.Cookie;
+import delit.libs.core.util.Logging;
 
 public class PersistentProfileCookieStore implements CookieStore {
     private static final String LOG_TAG = "PersistentCookieStore";
@@ -169,7 +169,7 @@ public class PersistentProfileCookieStore implements CookieStore {
             ObjectOutputStream outputStream = new ObjectOutputStream(os);
             outputStream.writeObject(cookie);
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             AsyncHttpClient.log.d(LOG_TAG, "IOException in encodeCookie", e);
             return null;
         }
@@ -191,10 +191,10 @@ public class PersistentProfileCookieStore implements CookieStore {
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
             cookie = ((SerializableCookie) objectInputStream.readObject()).getCookie();
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             AsyncHttpClient.log.d(LOG_TAG, "IOException in decodeCookie", e);
         } catch (ClassNotFoundException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             AsyncHttpClient.log.d(LOG_TAG, "ClassNotFoundException in decodeCookie", e);
         }
 

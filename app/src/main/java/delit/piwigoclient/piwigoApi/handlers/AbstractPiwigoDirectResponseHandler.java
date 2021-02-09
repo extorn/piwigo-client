@@ -2,6 +2,8 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -29,7 +31,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     }
 
     public static synchronized long getNextMessageId() {
-        long id = -1;
+        long id;
         do {
             id = nextMessageId.incrementAndGet();
             if (id < 0) {
@@ -86,7 +88,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
 
     @Override
     public boolean isSuccess() {
-        return super.isSuccess() && !isResponseError();
+        return super.isSuccess() && !isResponseError() && response != null;
     }
 
     public PiwigoResponseBufferingHandler.BaseResponse getResponse() {
@@ -97,11 +99,11 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
         return response instanceof PiwigoResponseBufferingHandler.ErrorResponse;
     }
 
-    protected Worker buildWorker(Context context) {
+    protected Worker buildWorker(@NonNull Context context) {
         return new Worker(this, context);
     }
 
-    public void invokeAndWait(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    public void invokeAndWait(@NonNull Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         setPublishResponses(false);
         runAsync = false;
         Worker w = buildWorker(context);

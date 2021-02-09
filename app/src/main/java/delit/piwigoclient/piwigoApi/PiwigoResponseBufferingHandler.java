@@ -1,15 +1,13 @@
 package delit.piwigoclient.piwigoApi;
 
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.util.LongSparseArray;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonElement;
 
-import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,6 +20,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import delit.libs.core.util.Logging;
+import delit.libs.util.SafeRunnable;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
@@ -168,16 +168,13 @@ public class PiwigoResponseBufferingHandler {
             if (r.isEndResponse()) {
                 handlerResponseMap.remove(messageId);
             }
-            callbackHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (h.canHandlePiwigoResponseNow(r)) {
-                        h.handlePiwigoResponse(r);
-                    } else {
-                        requeueResponseForLaterProcessing(r, h);
-                    }
+            callbackHandler.post(new SafeRunnable(() -> {
+                if (h.canHandlePiwigoResponseNow(r)) {
+                    h.handlePiwigoResponse(r);
+                } else {
+                    requeueResponseForLaterProcessing(r, h);
                 }
-            });
+            }));
         }
         return oldHandler;
     }
@@ -213,9 +210,7 @@ public class PiwigoResponseBufferingHandler {
             handler = null;
         }
         if (handler != null) {
-            callbackHandler.post(new Runnable() {
-                @Override
-                public void run() {
+            callbackHandler.post(new SafeRunnable(() -> {
                     try {
                         if (handler.canHandlePiwigoResponseNow(response)) {
                             handler.handlePiwigoResponse(response);
@@ -223,15 +218,14 @@ public class PiwigoResponseBufferingHandler {
                             requeueResponseForLaterProcessing(response, handler);
                         }
                     } catch (IllegalArgumentException e) {
-                        Crashlytics.logException(e);
+                        Logging.recordException(e);
                         //TODO this keeps happening in the wild - sink it and the response for now to prevent crash.
                         // the handler is attached, but to an unrecognised component type
                         if (BuildConfig.DEBUG) {
                             Log.e("PiwigoResponseHandler", "Handler attached to unrecognised parent component type", e);
                         }
                     }
-                }
-            });
+                }));
         } else {
             // Allow 30 seconds grace after which this response could be expunged at any moment.
             response.setExpiresAt(System.currentTimeMillis() + 30000);
@@ -321,7 +315,7 @@ public class PiwigoResponseBufferingHandler {
     /**
      * Marker interface
      */
-    public interface ErrorResponse extends Response, Serializable {
+    public interface ErrorResponse extends Response {
     }
 
     /**
@@ -361,15 +355,17 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoServerErrorResponse extends BasePiwigoResponse implements RemoteErrorResponse {
-        private final transient AbstractPiwigoWsResponseHandler requestHandler;
+        private final AbstractPiwigoWsResponseHandler requestHandler;
         private final int piwigoErrorCode;
         private final String piwigoErrorMessage;
+        private final String uri;
 
-        public PiwigoServerErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int piwigoErrorCode, String piwigoErrorMessage, boolean isCached) {
+        public PiwigoServerErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, String uri, int piwigoErrorCode, String piwigoErrorMessage, boolean isCached) {
             super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod(), isCached);
             this.requestHandler = requestHandler;
             this.piwigoErrorCode = piwigoErrorCode;
             this.piwigoErrorMessage = piwigoErrorMessage;
+            this.uri = uri;
         }
 
         public int getPiwigoErrorCode() {
@@ -378,6 +374,10 @@ public class PiwigoResponseBufferingHandler {
 
         public String getPiwigoErrorMessage() {
             return piwigoErrorMessage;
+        }
+
+        public String getUri() {
+            return uri;
         }
 
         @Override
@@ -393,7 +393,7 @@ public class PiwigoResponseBufferingHandler {
         public static final short OUTCOME_UNKNOWN = 0;
 
         private final String rawResponse;
-        private final transient AbstractPiwigoWsResponseHandler requestHandler;
+        private final AbstractPiwigoWsResponseHandler requestHandler;
         private short requestOutcome;
 
         public PiwigoUnexpectedReplyErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, short requestOutcome, String rawResponse, boolean isCached) {
@@ -430,20 +430,22 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoHttpErrorResponse extends BasePiwigoResponse implements RemoteErrorResponse {
 
-        private final transient AbstractPiwigoWsResponseHandler requestHandler;
+        private final AbstractPiwigoWsResponseHandler requestHandler;
+        private final String uri;
         private final int statusCode;
         private final String errorMessage;
         private final String errorDetail;
         private final Throwable error;
         private String response;
 
-        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, String errorDetail, Throwable error, boolean isCached) {
+        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, String uri, int statusCode, String errorMessage, String errorDetail, Throwable error, boolean isCached) {
             super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod(), isCached);
             this.error = error;
             this.requestHandler = requestHandler;
             this.statusCode = statusCode;
             this.errorMessage = errorMessage;
             this.errorDetail = errorDetail;
+            this.uri = uri;
         }
 
         public void setResponse(String response) {
@@ -454,8 +456,8 @@ public class PiwigoResponseBufferingHandler {
             return response;
         }
 
-        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, Throwable error, boolean isCached) {
-            this(requestHandler, statusCode, errorMessage, null, error, isCached);
+        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, String uri, int statusCode, String errorMessage, Throwable error, boolean isCached) {
+            this(requestHandler, uri, statusCode, errorMessage, null, error, isCached);
         }
 
         public int getStatusCode() {
@@ -466,8 +468,16 @@ public class PiwigoResponseBufferingHandler {
             return errorMessage;
         }
 
+        public String getUri() {
+            return uri;
+        }
+
         public String getErrorDetail() {
             return errorDetail;
+        }
+
+        public Throwable getError() {
+            return error;
         }
 
         @Override
@@ -485,7 +495,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class UrlErrorResponse extends BaseUrlResponse implements RemoteErrorResponse {
 
-        private final transient AbstractPiwigoDirectResponseHandler requestHandler;
+        private final AbstractPiwigoDirectResponseHandler requestHandler;
         private final int statusCode;
         private final String errorMessage;
         private final String errorDetail;
@@ -520,7 +530,6 @@ public class PiwigoResponseBufferingHandler {
         public AbstractPiwigoDirectResponseHandler getHttpResponseHandler() {
             return requestHandler;
         }
-
     }
 
     public static class UrlProgressResponse extends BaseUrlResponse {
@@ -537,15 +546,15 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class UrlToFileSuccessResponse extends BaseUrlResponse {
-        private final File file;
+        private final Uri localFileUri;
 
-        public UrlToFileSuccessResponse(long messageId, String url, File file) {
+        public UrlToFileSuccessResponse(long messageId, String url, Uri localFileUri) {
             super(messageId, url);
-            this.file = file;
+            this.localFileUri = localFileUri;
         }
 
-        public File getFile() {
-            return file;
+        public Uri getLocalFileUri() {
+            return localFileUri;
         }
     }
 

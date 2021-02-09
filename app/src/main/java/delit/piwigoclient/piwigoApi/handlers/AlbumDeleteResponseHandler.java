@@ -11,10 +11,12 @@ public class AlbumDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
 
     private static final String TAG = "DeleteGalleryRspHdlr";
     private final long galleryId;
+    private final boolean deleteOrphans;
 
-    public AlbumDeleteResponseHandler(long galleryId) {
+    public AlbumDeleteResponseHandler(long galleryId, boolean deleteOrphans) {
         super("pwg.categories.delete", TAG);
         this.galleryId = galleryId;
+        this.deleteOrphans = deleteOrphans;
     }
 
     @Override
@@ -25,7 +27,11 @@ public class AlbumDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("category_id", String.valueOf(galleryId));
-        params.put("photo_deletion_mode", "delete_orphans");
+        if(deleteOrphans) {
+            params.put("photo_deletion_mode", "delete_orphans");
+        } else {
+            params.put("photo_deletion_mode", "no_delete");
+        }
         params.put("pwg_token", getPwgSessionToken());
         return params;
     }

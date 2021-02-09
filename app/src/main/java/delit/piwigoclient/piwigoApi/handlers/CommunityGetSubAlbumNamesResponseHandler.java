@@ -14,8 +14,8 @@ import java.util.List;
 import delit.libs.http.RequestParams;
 import delit.libs.util.ArrayUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 
 public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -48,7 +48,7 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
         ArrayList<CategoryItemStub> availableGalleries = new ArrayList<>();
         for (int i = 0; i < categories.size(); i++) {
             JsonObject category = (JsonObject) categories.get(i);
-            Long id = category.get("id").getAsLong();
+            long id = category.get("id").getAsLong();
 
             JsonElement nameElem = category.get("name");
             String name = null;
@@ -93,7 +93,7 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
                 CategoryItemStub album = new CategoryItemStub(getContext().getString(R.string.inaccessible_remote_folder), parentId);
                 album = album.markNonUserSelectable();
                 if (treeNodes.size() == 0) {
-                    album.setParentageChain(CategoryItem.ROOT_ALBUM.getParentageChain(), CategoryItem.ROOT_ALBUM.getId());
+                    album.setParentageChain(StaticCategoryItem.ROOT_ALBUM.getParentageChain(), StaticCategoryItem.ROOT_ALBUM.getId());
                 } else {
                     album.setParentageChain(new ArrayList<>(treeNodes));
                 }
@@ -107,7 +107,7 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
         for (CategoryItemStub parentAlbum : parentAlbums) {
             albumsParsed.put(parentAlbum.getId(), parentAlbum);
         }
-        return albumsParsed.get(Long.valueOf(parentageArr[parentageArr.length - 2]));
+        return albumsParsed.get(Long.parseLong(parentageArr[parentageArr.length - 2]));
     }
 
     public static class PiwigoCommunityGetSubAlbumNamesResponse extends AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse {

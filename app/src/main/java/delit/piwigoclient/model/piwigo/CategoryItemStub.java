@@ -3,6 +3,8 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,8 +13,8 @@ import delit.libs.ui.util.ParcelUtils;
 
 public class CategoryItemStub implements Parcelable, Identifiable {
 
-    public static final CategoryItemStub ROOT_GALLERY = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId());
-    private static final CategoryItemStub ROOT_GALLERY_NON_SELECTABLE = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId()).markNonUserSelectable();
+    public static final CategoryItemStub ROOT_GALLERY = new CategoryItemStub(StaticCategoryItem.ROOT_ALBUM.getName(), StaticCategoryItem.ROOT_ALBUM.getId());
+    private static final CategoryItemStub ROOT_GALLERY_NON_SELECTABLE = new CategoryItemStub(StaticCategoryItem.ROOT_ALBUM.getName(), StaticCategoryItem.ROOT_ALBUM.getId()).markNonUserSelectable();
 
     private final long id;
     private final String name;
@@ -26,7 +28,7 @@ public class CategoryItemStub implements Parcelable, Identifiable {
     }
 
     public CategoryItemStub(String name, long id) {
-        this(name, id, new ArrayList<Long>());
+        this(name, id, new ArrayList<>());
     }
 
     public CategoryItemStub(Parcel in) {
@@ -64,6 +66,7 @@ public class CategoryItemStub implements Parcelable, Identifiable {
         this.parentageChain = new ArrayList<>(parentageChain);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return name;

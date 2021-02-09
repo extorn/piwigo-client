@@ -14,7 +14,7 @@
         android:scaleType="fitCenter"
         android:paddingTop="10dp"
         android:paddingStart="10dp"
-        android:contentDescription="TODO" android:paddingBottom="10dp"
+        android:paddingBottom="10dp"
         android:paddingEnd="30dp"
         android:background="@drawable/border"
         app:srcCompat="@drawable/ic_shopping_basket_black_24dp"/>
@@ -25,8 +25,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="15"
-        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"/>
+        tools:text="15"
+        android:textColor="?attr/colorPrimary"/>
 
     <ImageView
         android:id="@+id/basket_action_indicator"
@@ -34,7 +34,7 @@
         android:layout_alignBottom="@+id/basket_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="TODO" android:padding="5dp"
+        android:padding="5dp"
         tools:srcCompat="@drawable/ic_content_copy_black_24px"/>
 
     <ImageView
@@ -42,7 +42,7 @@
         android:layout_toEndOf="@+id/basket_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="TODO" android:padding="10dp"
+        android:padding="10dp"
         app:srcCompat="@drawable/ic_delete_black_24px"/>
 
 </RelativeLayout>

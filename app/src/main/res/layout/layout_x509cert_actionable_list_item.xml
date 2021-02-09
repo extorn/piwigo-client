@@ -19,7 +19,7 @@
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
         tools:text="Identity : A certificate name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="?textAppearanceBody2"/>
 
     <TextView
         android:id="@+id/x509_cert_verified_by"
@@ -31,7 +31,7 @@
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
         tools:text="Verified by : A certificate name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="?textAppearanceBody2"/>
 
     <TextView
         android:id="@+id/x509_cert_valid_from"
@@ -43,7 +43,7 @@
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
         tools:text="Valid From : 12/12/2008"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="?textAppearanceBody2"/>
 
     <TextView
         android:id="@+id/x509_cert_valid_to"
@@ -55,14 +55,13 @@
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
         tools:text="Valid To : 12/12/2012"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="?textAppearanceBody2"/>
 
-    <delit.libs.ui.view.button.CustomImageButton
+    <Button
         android:id="@+id/list_item_delete_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:focusable="false"
-        app:srcCompat="@drawable/ic_delete_black_24px" />
+        app:icon="@drawable/ic_delete_black_24px"
+        style="?materialButtonIconStyle"/>
 </RelativeLayout>

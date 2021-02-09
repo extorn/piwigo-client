@@ -5,12 +5,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
+import androidx.annotation.NonNull;
+
 import java.util.Calendar;
 import java.util.Date;
 
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.AbstractMainActivity;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
@@ -58,22 +59,21 @@ public class OtherPreferences {
         return DisplayUtils.getDefaultColumnCount(activity, orientationId, 2);
     }
 
-    public static Date getLastWarnedAboutVersionOrFeatures(SharedPreferences prefs, AbstractMainActivity activity) {
-        long dateTimeMillis = prefs.getLong(activity.getString(R.string.preference_functions_missing_app_version_warned_key), 0);
+    public static Date getLastWarnedAboutVersionOrFeatures(@NonNull SharedPreferences prefs, @NonNull Context context) {
+        long dateTimeMillis = prefs.getLong(context.getString(R.string.preference_functions_missing_app_version_warned_key), 0);
         return new Date(dateTimeMillis);
     }
 
-    public static boolean getAndUpdateLastWarnedAboutVersionOrFeatures(SharedPreferences prefs, AbstractMainActivity activity) {
+    public static boolean getAndUpdateLastWarnedAboutVersionOrFeatures(@NonNull SharedPreferences prefs, @NonNull Context context) {
         Calendar lastWarnedAt = Calendar.getInstance();
-        lastWarnedAt.setTime(getLastWarnedAboutVersionOrFeatures(prefs, activity));
+        lastWarnedAt.setTime(getLastWarnedAboutVersionOrFeatures(prefs, context));
         Calendar warnIfLastWarnedBeforeDateTime = Calendar.getInstance();
         warnIfLastWarnedBeforeDateTime.setTime(new Date());
         warnIfLastWarnedBeforeDateTime.add(Calendar.DATE, -7); // 7 days before now.
         boolean showWarning = lastWarnedAt.before(warnIfLastWarnedBeforeDateTime);
         if(showWarning) {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putLong(activity.getString(R.string.preference_functions_missing_app_version_warned_key), System.currentTimeMillis());
-            editor.commit();
+            ConnectionPreferences.PreferenceActor prefActor = new ConnectionPreferences.PreferenceActor().with(R.string.preference_functions_missing_app_version_warned_key);
+            prefActor.writeLong(prefs, context, System.currentTimeMillis());
         }
         return showWarning;
     }

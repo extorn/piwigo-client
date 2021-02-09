@@ -1,6 +1,9 @@
 package delit.piwigoclient.business;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -9,16 +12,18 @@ import android.util.SparseIntArray;
 import android.widget.ImageView;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
 
-import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Downloader;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
 
 import java.io.File;
@@ -26,16 +31,20 @@ import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
 
 import cz.msebera.android.httpclient.HttpStatus;
+import delit.libs.core.util.Logging;
+import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.picasso.EnhancedPicassoListener;
 import delit.piwigoclient.ui.PicassoFactory;
 import pl.droidsonroids.gif.GifDrawable;
 
 /**
  * Created by gareth on 11/10/17.
  */
-public class PicassoLoader<T extends ImageView> implements Callback, PicassoFactory.EnhancedPicassoListener {
+public class PicassoLoader<T extends ImageView> implements Callback, EnhancedPicassoListener {
 
     public final static int INFINITE_AUTO_RETRIES = -1;
     public static final String PICASSO_REQUEST_TAG = "PIWIGO";
@@ -65,6 +74,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
     private boolean usePlaceholderIfNothingToLoad;
     private final SparseIntArray errorDrawables = new SparseIntArray();
     private CustomResponseException lastResponseException;
+    private PostProcessorTarget postProcessor;
 
 
     public PicassoLoader(T loadInto) {
@@ -100,8 +110,8 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         waitForErrorMessage = false;
         onError();
         if (!(exception instanceof Downloader.ResponseException)) {
-            Crashlytics.log(Log.ERROR, "PicassoLoader", "Unexpected error loading image");
-            Crashlytics.logException(exception);
+            Logging.log(Log.ERROR, "PicassoLoader", "Unexpected error loading image");
+            Logging.recordException(exception);
         } else {
             lastResponseException = (CustomResponseException) exception;
         }
@@ -173,9 +183,6 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
     }
 
     public final void load() {
-        if (listener != null) {
-            listener.onBeforeImageLoad(this);
-        }
         load(false);
     }
 
@@ -187,10 +194,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         return imageLoading;
     }
 
-    public void loadNoCache() {
-        if (listener != null) {
-            listener.onBeforeImageLoad(this);
-        }
+    public void loadFromServer() {
         load(true);
     }
 
@@ -216,13 +220,19 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
                 // attempt to work around suspected issue with loading error drawables on android 4.4.2
                 loadInto.setImageDrawable(ResourcesCompat.getDrawable(getContext().getResources(), errDrawableId, getContext().getTheme()));
             } else {
-                RequestCreator loader = PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(errDrawableId);
-                loader.into(loadInto, null);
+                if(!imageLoaded && !imageLoading) {
+                    imageLoading = true;
+                    RequestCreator loader = PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(errDrawableId);
+                    loader.into(loadInto, null);
+                }
             }
         }
     }
 
-    protected final void load(final boolean forceServerRequest) {
+    protected void load(final boolean forceServerRequest) {
+        if (listener != null) {
+            listener.onBeforeImageLoad(this);
+        }
         synchronized (this) {
             if (imageLoading) {
                 return;
@@ -234,20 +244,18 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
                 onSuccess();
             } else {
                 PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
+                if(postProcessor != null) {
+                    postProcessor.cancel();
+                }
                 if(placeholderUri != null && placeholderLoaded && isLoadingGif()) {
-                    GifLoaderTask task = new GifLoaderTask();
+                    GifLoaderTask task = new GifLoaderTask(this);
                     if (DisplayUtils.isRunningOnUIThread()) {
-                        task.execute(this);
+                        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
-                        task.doInBackground(this);
+                        task.doInBackgroundSafely();
                     }
                 } else {
-                    DisplayUtils.postOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            runLoad(forceServerRequest);
-                        }
-                    }); // this is sensible because if called in a predraw method for example, we don't want to take too long at this point.
+                    DisplayUtils.postOnUiThread(() -> runLoad(forceServerRequest)); // this is sensible because if called in a predraw method for example, we don't want to take too long at this point.
                 }
             }
         }
@@ -272,14 +280,20 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
             //                    Log.d("PicassoLoader", "Loading: " + uriToLoad, new Exception().fillInStackTrace());
             //                }
             registerUriLoadListener();
-            loader.into(loadInto, this);
+            if(postProcessor != null) {
+                loader.into(postProcessor);
+            } else {
+                loader.into(loadInto, this);
+            }
             if (BuildConfig.DEBUG) {
                 Log.d(TAG, "exiting picasso loader - runLoad");
             }
         } catch (RejectedExecutionException e) {
-            Crashlytics.log(Log.WARN, TAG, "All picasso loaders are currently busy, or picasso is not started. Please retry later");
+            Logging.log(Log.WARN, TAG, "All picasso loaders are currently busy, or picasso is not started. Please retry later");
         } catch (IllegalStateException e) {
             if (!placeholderLoaded) {
+                Logging.log(Log.WARN, TAG, "All picasso loaders are currently busy, or picasso is not started. Please retry later");
+                Logging.recordException(e);
                 throw e;
             }
         }
@@ -291,7 +305,9 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
             if (!imageLoading) {
                 return;
             }
-            if (loadInto != null) {
+            if(postProcessor != null) {
+                PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(postProcessor);
+            } else if (loadInto != null) {
                 PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
             }
             imageLoading = false;
@@ -364,9 +380,9 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         if (usePlaceholderIfNothingToLoad) {
             return picassoSingleton.load(placeholderPlaceholderId);
         }
-
-        Crashlytics.log(Log.ERROR, "PicassoLoader", "No valid source specified from which to load image");
-        throw new IllegalStateException("No valid source specified from which to load image");
+        String loadIntoPath = DisplayUtils.getPathToView(loadInto);
+        Logging.log(Log.ERROR, "PicassoLoader", "No valid source specified from which to load image into " + loadIntoPath);
+        throw new IllegalStateException("No valid source specified from which to load image into " + loadIntoPath);
     }
 
     protected RequestCreator customiseLoader(RequestCreator placeholder) {
@@ -426,7 +442,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         return uriToLoad;
     }
 
-    protected T getLoadInto() {
+    public T getLoadInto() {
         return loadInto;
     }
 
@@ -465,6 +481,19 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         }
     }
 
+    public boolean isRotateToFitScreen() {
+        return postProcessor instanceof MatchScreenAspectRatioPostProcessorTarget;
+    }
+
+    public void rotateToFitScreen(boolean fitScreen) {
+        if(fitScreen) {
+            postProcessor = new MatchScreenAspectRatioPostProcessorTarget(this);
+            if(loadInto != null) {
+                postProcessor.setPostProcessTarget(loadInto);
+            }
+        }
+    }
+
     public interface PictureItemImageLoaderListener<T extends ImageView> {
         void onBeforeImageLoad(PicassoLoader<T> loader);
 
@@ -481,19 +510,22 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         return errorResourceId;
     }
 
-    private static class GifLoaderTask extends AsyncTask<PicassoLoader, Void, GifDrawable> {
+    private static class GifLoaderTask extends OwnedSafeAsyncTask<PicassoLoader, Void, Void, GifDrawable> {
 
         private IOException error;
-        private PicassoLoader loader;
+
+        public GifLoaderTask(PicassoLoader owner) {
+            super(owner);
+        }
+
 
         @Override
-        protected GifDrawable doInBackground(PicassoLoader... picassoLoaders) {
-            loader = picassoLoaders[0];
-            loader.setWaitForErrorMessage(false);
+        protected GifDrawable doInBackgroundSafely(Void... nothing) {
+            getOwner().setWaitForErrorMessage(false);
             // load the gif straight into the image manually.
-            CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader(loader.getLoadInto().getContext());
+            CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader();
             try {
-                Downloader.Response rsp = downloader.load(Uri.parse(loader.getUriToLoad()), 0);
+                Downloader.Response rsp = downloader.load(Uri.parse(getOwner().getUriToLoad()), 0);
                 if (rsp != null) {
                     //TODO create a custom video downloader that creates and uses a gif drawable as the basis for the stream decoder perhaps.
                     return new GifDrawable(rsp.getInputStream());
@@ -505,29 +537,168 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         }
 
         @Override
-        protected void onPostExecute(GifDrawable drawable) {
+        protected void onPostExecuteSafely(GifDrawable drawable) {
+            PicassoLoader loader;
             try {
-                if (drawable != null) {
-                    loader.getLoadInto().setImageDrawable(drawable);
-                    loader.onSuccess();
-                } else {
-                    Crashlytics.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
-                    loader.getLoadInto().setImageResource(loader.getErrorResourceId());
-                    loader.onError();
-                    if (error != null) {
-                        Crashlytics.logException(error);
-                    }
+                loader = getOwner(); // NPE if null
+            } catch(NullPointerException e) {
+                // no longer on screen. ignore error.
+                return;
+            }
+            if (drawable != null) {
+                loader.getLoadInto().setImageDrawable(drawable);
+                loader.onSuccess();
+
+            } else {
+                Logging.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
+                loader.getLoadInto().setImageResource(loader.getErrorResourceId());
+                loader.onError();
+                if (error != null) {
+                    Logging.recordException(error);
                 }
-            } finally {
-                loader = null;
             }
         }
 
         @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            loader = null;
+        protected void onCancelledSafely() {
             error = null;
+        }
+    }
+
+    private static class MatchScreenAspectRatioPostProcessorTarget extends PostProcessorTarget {
+        private OwnedSafeAsyncTask<PostProcessorTarget, Bitmap, Void, Bitmap> task;
+
+        public MatchScreenAspectRatioPostProcessorTarget(Callback callback) {
+            super(callback);
+        }
+
+        @Override
+        protected Bitmap postProcess(Bitmap bitmap) {
+
+                int appAspect = DisplayUtils.getAspect(getImageView().getRootView());
+                int imageAspect = DisplayUtils.getAspect(bitmap);
+                if(appAspect != imageAspect) {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(90);
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
+                    Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+                    //NOTE: we can't recycle the original bitmap as it's cached in picasso for later use.*/
+                    return super.postProcess(rotatedBitmap);
+            }
+            return super.postProcess(bitmap);
+
+        }
+
+        @Override
+        public void invokePostProcessing(Bitmap bitmap, Picasso.LoadedFrom from) {
+            task = new PostProcessorTargetBitmapVoidBitmapOwnedSafeAsyncTask(this, from);
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, bitmap);
+        }
+
+        @Override
+        public void cancel() {
+            super.cancel();
+            if(task != null) {
+                task.cancel(true);
+            }
+        }
+
+        private static class PostProcessorTargetBitmapVoidBitmapOwnedSafeAsyncTask extends OwnedSafeAsyncTask<PostProcessorTarget, Bitmap, Void, Bitmap> {
+
+            private final Picasso.LoadedFrom loadedFrom;
+
+            public PostProcessorTargetBitmapVoidBitmapOwnedSafeAsyncTask(@NonNull PostProcessorTarget postProcessorTarget, Picasso.LoadedFrom loadedFrom) {
+                super(postProcessorTarget);
+                this.loadedFrom = loadedFrom;
+            }
+
+
+            @Override
+            protected Bitmap doInBackgroundSafely(Bitmap... params) {
+                return getOwner().postProcess(params[0]);
+            }
+
+            @Override
+            protected void onPostExecuteSafely(Bitmap bitmap) {
+                try {
+                    getOwner().onPostProcessingComplete(bitmap, loadedFrom);
+                } catch (NullPointerException e) {
+                    // do nothing - no longer relevant.
+                }
+            }
+        }
+    }
+
+    private static class PostProcessorTarget implements Target {
+        private ImageView imageView;
+        private Callback callback;
+
+        protected ImageView getImageView() {
+            return imageView;
+        }
+
+        public PostProcessorTarget(Callback callback) {
+            this.callback = callback;
+        }
+
+        public PostProcessorTarget(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        public void setPostProcessTarget(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        @Override
+        public final void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            invokePostProcessing(bitmap, from);
+        }
+
+        protected void invokePostProcessing(Bitmap bitmap, Picasso.LoadedFrom from) {
+            onPostProcessingComplete(postProcess(bitmap), from);
+        }
+
+        protected void onPostProcessingComplete(Bitmap bitmap, Picasso.LoadedFrom from) {
+            imageView.setImageBitmap(bitmap);
+            if(callback != null) {
+                callback.onSuccess();
+            }
+        }
+
+        protected Bitmap postProcess(Bitmap bitmap) {
+            return bitmap;
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            imageView.setImageDrawable(errorDrawable);
+            if(callback != null) {
+                callback.onError();
+            }
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+            if(placeHolderDrawable != null) {
+                imageView.setImageDrawable(placeHolderDrawable);
+            }
+        }
+
+        @Override
+        public boolean equals(@Nullable Object obj) {
+            if(obj instanceof PostProcessorTarget) {
+                PostProcessorTarget other = (PostProcessorTarget) obj;
+                return ObjectUtils.areEqual(imageView, other.imageView);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode() + (imageView == null ? 0 : (3 * imageView.hashCode()));
+        }
+
+        public void cancel() {
         }
     }
 }

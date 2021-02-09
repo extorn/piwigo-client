@@ -1,8 +1,12 @@
 package delit.piwigoclient.ui.dialogs;
 
-import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.ContextThemeWrapper;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 
@@ -10,6 +14,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
 /**
  * Created by gareth on 31/08/17.
@@ -28,36 +33,26 @@ public class SelectAlbumDialog {
     }
 
     public AlertDialog buildDialog(ArrayList<CategoryItemStub> albumNames, CategoryItem parentAlbum, final DialogInterface.OnClickListener positiveActionListener) {
-        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
-        viewPrefs.selectable(false, false);
-        viewPrefs.withShowHierachy();
+        AlbumSelectionListAdapterPreferences viewPrefs = new AlbumSelectionListAdapterPreferences(true, false, false, false);
         availableGalleries = new AvailableAlbumsListAdapter(viewPrefs, parentAlbum, context);
 
         this.availableGalleries.clear();
         this.availableGalleries.addAll(albumNames);
 
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-        builder1.setCancelable(true);
+        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
         builder1.setTitle(R.string.alert_title_select_album);
 //        builder1.setMessage(R.string.alert_message_select_album);
         int selectedPosition = availableGalleries.getPosition(defaultSelectedAlbumId);
         if (selectedPosition >= 0) {
             selectedAlbumId = availableGalleries.getItem(selectedPosition);
         }
-        builder1.setSingleChoiceItems(availableGalleries, selectedPosition, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                selectedAlbumId = availableGalleries.getItem(which);
-            }
-        });
+        builder1.setSingleChoiceItems(availableGalleries, selectedPosition, (dialog, which) -> selectedAlbumId = availableGalleries.getItem(which));
         builder1.setPositiveButton(
                 R.string.button_ok,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        if (selectedAlbumId != null) {
-                            dialog.cancel();
-                            positiveActionListener.onClick(dialog, id);
-                        }
+                (dialog, id) -> {
+                    if (selectedAlbumId != null) {
+                        dialog.cancel();
+                        positiveActionListener.onClick(dialog, id);
                     }
                 });
         return builder1.create();

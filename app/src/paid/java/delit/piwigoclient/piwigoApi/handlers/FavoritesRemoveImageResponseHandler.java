@@ -4,9 +4,9 @@ import com.google.gson.JsonElement;
 
 import org.json.JSONException;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.libs.http.RequestParams;
 
 public class FavoritesRemoveImageResponseHandler extends AbstractPiwigoWsResponseHandler {
 

@@ -3,6 +3,8 @@ package delit.piwigoclient.ui.tags;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,12 +18,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -29,6 +32,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import delit.libs.core.util.Logging;
+import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
+import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -41,13 +47,8 @@ import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
-import delit.libs.ui.view.button.CustomImageButton;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
-import delit.libs.ui.view.recycler.RecyclerViewMargin;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
@@ -58,20 +59,21 @@ import delit.piwigoclient.ui.model.PiwigoTagModel;
 /**
  * Created by gareth on 26/05/17.
  */
-public class TagsListFragment extends MyFragment<TagsListFragment> {
-
+public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends MyFragment<F,FUIH> {
+    private static final String TAG = "TagsListFrag";
     private static final String TAGS_MODEL = "tagsModel";
-    private ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
-    private FloatingActionButton retryActionButton;
-    private PiwigoTags tagsModel;
-    private TagRecyclerViewAdapter viewAdapter;
-    private CustomImageButton addListItemButton;
+    private final ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
+    private ExtendedFloatingActionButton retryActionButton;
+    private PiwigoTags<Tag> tagsModel;
+    private TagRecyclerViewAdapter<?,?,?> viewAdapter;
+    private ExtendedFloatingActionButton addListItemButton;
     private AlertDialog addNewTagDialog;
-    private BaseRecyclerViewAdapterPreferences viewPrefs;
+    private TagRecyclerViewAdapter.TagViewAdapterPreferences viewPrefs;
     private RecyclerView recyclerView;
 
-    public static TagsListFragment newInstance(BaseRecyclerViewAdapterPreferences viewPrefs) {
-        TagsListFragment fragment = new TagsListFragment();
+    public static TagsListFragment<?,?> newInstance(TagRecyclerViewAdapter.TagViewAdapterPreferences viewPrefs) {
+        TagsListFragment<?,?> fragment = new TagsListFragment<>();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(viewPrefs.storeToBundle(new Bundle()));
         return fragment;
     }
@@ -86,12 +88,6 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
     public void onDetach() {
         EventBus.getDefault().unregister(this);
         super.onDetach();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(getArguments());
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -116,17 +112,19 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
             if(!isSessionDetailsChanged()) {
                 tagsModel = savedInstanceState.getParcelable(TAGS_MODEL);
             }
-            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
+            viewPrefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(savedInstanceState);
+        } else {
+            viewPrefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(getArguments());
         }
         if(tagsModel == null) {
-            tagsModel = new PiwigoTags();
+            tagsModel = new PiwigoTags<>();
             setTagsModelPageSourceCount();
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -145,21 +143,12 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
         saveButton.setVisibility(View.GONE);
 
         addListItemButton = view.findViewById(R.id.list_action_add_item_button);
-        addListItemButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewTag();
-            }
-        });
+        addListItemButton.setOnClickListener(v -> addNewTag());
 
         retryActionButton = view.findViewById(R.id.list_retryAction_actionButton);
-        retryActionButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                retryActionButton.hide();
-                loadTagsPage(tagsModel.getNextPageToReload());
-            }
+        retryActionButton.setOnClickListener(v -> {
+            retryActionButton.hide();
+            loadTagsPage(tagsModel.getNextPageToReload());
         });
 
         recyclerView = view.findViewById(R.id.list);
@@ -168,7 +157,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new TagRecyclerViewAdapter(PiwigoTagModel.class, tagsModel, new TagListSelectListener(), viewPrefs);
+        viewAdapter = new TagRecyclerViewAdapter(requireContext(), PiwigoTagModel.class, tagsModel, new TagListSelectListener(), viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
         recyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
@@ -192,7 +181,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
                 loadTagsPage(pageToLoad);
             }
         };
-        scrollListener.configure(tagsModel.getPagesLoaded(), tagsModel.getItemCount());
+        scrollListener.configure(tagsModel.getPagesLoadedIdxToSizeMap(), tagsModel.getItemCount());
         recyclerView.addOnScrollListener(scrollListener);
 
         setViewControlStatusBasedOnSessionState();
@@ -224,7 +213,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
     @Override
     public void onResume() {
         super.onResume();
-        if(tagsModel.getPagesLoaded() == 0 && viewAdapter != null) {
+        if(tagsModel.getPagesLoadedIdxToSizeMap() == 0 && viewAdapter != null) {
             viewAdapter.notifyDataSetChanged();
             loadTagsPage(0);
         }
@@ -248,24 +237,24 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
     }
 
     private void addNewTag() {
-        final View v = LayoutInflater.from(getContext()).inflate(R.layout.create_tag ,null);
+
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(new ContextThemeWrapper(getContext(), R.style.Theme_App_EditPages));
+
+        final View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_layout_create_tag,null);
         EditText tagNameEdit = v.findViewById(R.id.tag_tagname);
 
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(which != AlertDialog.BUTTON_POSITIVE) {
-                    return;
-                }
-                AlertDialog alert = (AlertDialog)dialog;
-                EditText tagNameEdit = alert.findViewById(R.id.tag_tagname);
-                String tagName = tagNameEdit.getText().toString();
-                createNewTag(tagName);
+        DialogInterface.OnClickListener listener = (dialog, which) -> {
+            if(which != AlertDialog.BUTTON_POSITIVE) {
+                return;
             }
+            AlertDialog alert = (AlertDialog)dialog;
+            EditText tagNameEdit1 = alert.findViewById(R.id.tag_tagname);
+            String tagName = tagNameEdit1.getText().toString();
+            createNewTag(tagName);
         };
 
-        addNewTagDialog = new AlertDialog.Builder(getContext()).setView(v)
+        addNewTagDialog = builder.setView(v)
                 .setNegativeButton(R.string.button_cancel, listener)
                 .setPositiveButton(R.string.button_ok, listener)
                 .show();
@@ -284,8 +273,8 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
                     addNewTagDialog.getButton(
                             AlertDialog.BUTTON_POSITIVE).setEnabled(!tagsModel.containsTag(tagName));
                 } catch (RuntimeException e) {
-                    Crashlytics.log(Log.ERROR, getTag(), "Error in on tag name change");
-                    Crashlytics.logException(e);
+                    Logging.log(Log.ERROR, TAG, "Error in on tag name change");
+                    Logging.recordException(e);
                 }
             }
 
@@ -302,24 +291,50 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
 
     public void onDeleteTag(final Tag thisItem) {
         String message = getString(R.string.alert_confirm_really_delete_tag);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction(getUiHelper(), thisItem) {
-
-
-        });
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction<>(getUiHelper(), thisItem));
     }
 
-    private static class OnDeleteTagAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<TagsListFragment>> {
-        private final Tag tag;
+    private static class OnDeleteTagAction<F extends TagsListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>, T extends Tag> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
 
-        public OnDeleteTagAction(FragmentUIHelper<TagsListFragment> uiHelper, Tag tag) {
+        private final T tag;
+
+        public OnDeleteTagAction(FUIH uiHelper, T tag) {
             super(uiHelper);
             this.tag = tag;
         }
 
+        protected OnDeleteTagAction(Parcel in) {
+            super(in);
+            tag = in.readParcelable(Tag.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeParcelable(tag, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteTagAction<?,?,?>> CREATOR = new Creator<OnDeleteTagAction<?,?,?>>() {
+            @Override
+            public OnDeleteTagAction<?,?,?> createFromParcel(Parcel in) {
+                return new OnDeleteTagAction<>(in);
+            }
+
+            @Override
+            public OnDeleteTagAction<?,?,?>[] newArray(int size) {
+                return new OnDeleteTagAction<?,?,?>[size];
+            }
+        };
+
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if(Boolean.TRUE == positiveAnswer) {
-                TagsListFragment fragment = getUiHelper().getParent();
+                F fragment = getUiHelper().getParent();
                 fragment.deleteTagNow(tag);
             }
         }
@@ -329,7 +344,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
         addActiveServiceCall(R.string.progress_creating_tag, new TagAddResponseHandler(tagname));
     }
 
-    private void deleteTagNow(Tag thisItem) {
+    protected void deleteTagNow(Tag thisItem) {
         throw new UnsupportedOperationException("Not supported in Piwigo API");
 //        long deleteActionId = PiwigoAccessService.startActionDeleteTag(thisItem.getId(), this.getContext());
 //        this.deleteActionsPending.put(deleteActionId, thisItem);
@@ -337,16 +352,16 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<F extends TagsListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if(isVisible()) {
-                updateActiveSessionDetails();
+            if(getParent().isVisible()) {
+                getParent().updateActiveSessionDetails();
             }
             super.onBeforeHandlePiwigoResponse(response);
         }
@@ -356,9 +371,9 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
             /*if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteTagResponse) {
                 onTagDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteTagResponse) response);
             } else*/ if(response instanceof TagAddResponseHandler.PiwigoAddTagResponse) {
-                onTagCreated((TagAddResponseHandler.PiwigoAddTagResponse)response);
+                getParent().onTagCreated(((TagAddResponseHandler.PiwigoAddTagResponse)response).getTag());
             } else if (response instanceof TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) {
-                onTagsLoaded((TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) response);
+                getParent().onTagsLoaded((TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) response);
             } else if(response instanceof PiwigoResponseBufferingHandler.ErrorResponse){
 //                if(deleteActionsPending.size() == 0) {
 //                    // assume this to be a list reload that's required.
@@ -367,13 +382,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
             }
         }
 
-        private void onTagCreated(TagAddResponseHandler.PiwigoAddTagResponse response) {
-            Tag newTag = response.getTag();
-            tagsModel.addItem(newTag);
-            tagsModel.sort();
-            int firstIndexChanged = tagsModel.getItemIdx(newTag);
-            viewAdapter.notifyItemRangeInserted(firstIndexChanged, 1);
-        }
+
 
         @Override
         protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
@@ -401,6 +410,12 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
                 super.handlePiwigoUnexpectedReplyErrorResponse(msg);
             }
         }
+    }
+
+    protected void onTagCreated(Tag newTag) {
+        tagsModel.addItem(newTag);
+        int firstIndexChanged = tagsModel.getItemIdx(newTag);
+        viewAdapter.notifyItemRangeInserted(firstIndexChanged, 1);
     }
 
     public void onTagsLoaded(final TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
@@ -460,15 +475,15 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
         setViewControlStatusBasedOnSessionState();
     }
 
-    class TagListSelectListener extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag> {
+    private class TagListSelectListener<MSL extends TagListSelectListener<MSL,LVA,VH>, LVA extends TagRecyclerViewAdapter<LVA,MSL,VH>, VH extends TagRecyclerViewAdapter.TagViewHolder<VH, LVA, MSL>> extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA, TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag,VH> {
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, Tag item) {
+        public void onItemDeleteRequested(LVA adapter, Tag item) {
             onDeleteTag(item);
         }
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, Tag item) {
+        public void onItemClick(LVA adapter, Tag item) {
             onTagSelected(item);
         }
 

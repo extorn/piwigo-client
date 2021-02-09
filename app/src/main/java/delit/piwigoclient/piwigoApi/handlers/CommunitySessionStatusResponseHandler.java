@@ -37,7 +37,7 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
     }
 
     @Override
-    public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
+    public boolean onFailure(String uri, int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
         String response = null;
         try {
             GsonBuilder gsonBuilder = new GsonBuilder();
@@ -46,11 +46,11 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
             PiwigoJsonResponse piwigoResponse = gson.fromJson(new InputStreamReader(new ByteArrayInputStream(responseBody)), PiwigoJsonResponse.class);
             onPiwigoFailure(piwigoResponse, isCached);
         } catch (JsonSyntaxException e) {
-            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
+            super.onFailure(uri, statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         } catch (JsonIOException e) {
-            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
+            super.onFailure(uri, statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         } catch (JSONException e) {
-            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
+            super.onFailure(uri, statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         }
         return triedToGetNewSession;
     }

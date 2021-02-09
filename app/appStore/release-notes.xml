@@ -1,0 +1,60 @@
+<en-GB>
+Bugfix:
+- orphan item page load causing a crash
+Change:
+- name given to task progress trackers to allow bug resolution where child task of a progress tracker is unexpectedly incomplete
+</en-GB>
+<cs-CZ>
+Oprava chyby:
+načtení stránky osiřelé položky způsobující pád
+Změna:
+- název přidělený sledovačům postupu úkolů, aby umožnil řešení chyb, kde je podřízený úkol sledovače průběhu neočekávaně neúplný
+</cs-CZ>
+<de-DE>
+Bug-Fix:
+- Laden der Seite mit verwaisten Elementen, die einen Absturz verursacht
+Veränderung:
+- Name für Task-Fortschritts-Tracker, um die Fehlerbehebung zu ermöglichen, wenn die untergeordnete Aufgabe eines Fortschritts-Trackers unerwartet unvollständig ist
+</de-DE>
+<es-ES>
+Arreglo del fallo:
+- carga de la página de un elemento huérfano que provoca un bloqueo
+Cambio:
+- nombre dado a los rastreadores de progreso de la tarea para permitir la resolución de errores cuando la tarea secundaria de un rastreador de progreso está inesperadamente incompleta
+</es-ES>
+<fr-FR>
+Correction d\'un bug:
+- chargement de la page d\'élément orphelin provoquant un plantage
+Changement:
+- nom donné aux trackers de progression de tâche pour permettre la résolution de bogue où la tâche enfant d\'un tracker de progression est inopinément incomplète
+</fr-FR>
+<it-IT>
+Risoluzione del problema:
+- caricamento della pagina dell\'elemento orfano che causa un crash
+Modificare:
+- nome assegnato ai tracker di avanzamento delle attività per consentire la risoluzione dei bug in cui l\'attività figlio di un tracker di avanzamento è inaspettatamente incompleta
+</it-IT>
+<ja-JP>
+バグ修正：
+-孤立したアイテムページの読み込みがクラッシュの原因
+変化する：
+-進行状況トラッカーの子タスクが予期せず不完全であるバグ解決を可能にするためにタスク進行状況トラッカーに付けられた名前
+</ja-JP>
+<nl-NL>
+Bugfix:
+- het laden van de pagina met verweesde items veroorzaakt een crash
+Verandering:
+- naam gegeven aan voortgangstrackers van taken om het oplossen van fouten mogelijk te maken wanneer de onderliggende taak van een voortgangstracker onverwacht onvolledig is
+</nl-NL>
+<ru-RU>
+Исправлена ошибка:
+- загрузка страницы с бесхозным элементом вызывает сбой
+Изменить:
+- имя, присвоенное трекерам прогресса задачи, чтобы разрешить ошибку, когда дочерняя задача трекера прогресса неожиданно оказывается неполной
+</ru-RU>
+<zh-CN>
+错误修正：
+-孤立项目页面加载导致崩溃
+更改：
+-为任务进度跟踪器指定的名称，以允许在进度跟踪器的子任务意外不完整的情况下解决错误
+</zh-CN>

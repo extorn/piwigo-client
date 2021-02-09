@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashSet;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
@@ -28,6 +29,7 @@ import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 
@@ -35,20 +37,22 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<UsernameRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
+public class UsernameSelectFragment<F extends UsernameSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends RecyclerViewLongSetSelectFragment<UsernameRecyclerViewAdapter<?,Username,?,?>, UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences, Username> {
 
     private static final String USER_NAMES_MODEL = "usernamesModel";
     private static final String STATE_INDIRECT_SELECTION = "indirectlySelectedUsernames";
+    private static final String TAG = "UsrnameSelFrag";
     private PiwigoUsernames usernamesModel;
     private HashSet<Long> indirectSelection;
 
-    public static UsernameSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
-        UsernameSelectFragment fragment = new UsernameSelectFragment();
+    public static UsernameSelectFragment<?,?> newInstance(UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
+        UsernameSelectFragment<?,?> fragment = new UsernameSelectFragment<>();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if (indirectSelection != null) {
             BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
         } else {
-            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<Long>());
+            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<>());
         }
         fragment.setArguments(args);
         return fragment;
@@ -64,8 +68,8 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     }
 
     @Override
-    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
-        return new BaseRecyclerViewAdapterPreferences();
+    protected UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
+        return new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences(bundle);
     }
 
     @Override
@@ -97,7 +101,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
             usernamesModel = new PiwigoUsernames();
         }
 
-        UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(getContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusAdapter<Username>() {
+        UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(requireContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusAdapter() {
         }, getViewPrefs());
 
         // need to load this before the list adapter is added else will load from the list adapter which hasn't been inited yet!
@@ -134,7 +138,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
                 loadUsernamesPage(pageToLoad);
             }
         };
-        scrollListener.configure(usernamesModel.getPagesLoaded(), usernamesModel.getItemCount());
+        scrollListener.configure(usernamesModel.getPagesLoadedIdxToSizeMap(), usernamesModel.getItemCount());
         getList().addOnScrollListener(scrollListener);
 
         return v;
@@ -145,6 +149,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as server connection changed");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -232,13 +237,14 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         EventBus.getDefault().post(new UsernameSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately on select action complete");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
     protected void onUsernamesLoadFailed(PiwigoResponseBufferingHandler.Response response) {
@@ -251,13 +257,12 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         }
     }
 
-    private void onUsernamesLoaded(final UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse response) {
+    protected void onUsernamesLoaded(final UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse response) {
         usernamesModel.acquirePageLoadLock();
         try {
-            usernamesModel.recordPageLoadSucceeded(response.getMessageId());
             if (response.getPage() == PagedList.MISSING_ITEMS_PAGE) {
                 // this is a special page of all missing items from those selected.
-                int firstIdxAdded = usernamesModel.addItemPage(usernamesModel.getPagesLoaded(), response.getPageSize(), response.getUsernames());
+                int firstIdxAdded = usernamesModel.addItemPage(usernamesModel.getPagesLoadedIdxToSizeMap(), response.getPageSize(), response.getUsernames());
                 getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getUsernames().size());
                 if (usernamesModel.hasNoFailedPageLoads()) {
                     onListItemLoadSuccess();
@@ -277,13 +282,13 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<F extends UsernameSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) {
-                onUsernamesLoaded((UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) response);
+                getParent().onUsernamesLoaded((UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) response);
             } else {
-                onUsernamesLoadFailed(response);
+                getParent().onUsernamesLoadFailed(response);
             }
         }
     }

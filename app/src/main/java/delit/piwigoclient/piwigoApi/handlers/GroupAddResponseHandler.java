@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.Group;
@@ -37,7 +37,7 @@ public class GroupAddResponseHandler<T extends ResourceItem> extends AbstractPiw
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray groupsObj = result.get("groups").getAsJsonArray();
-        HashSet<Group> groups = GroupsGetListResponseHandler.parseGroupsFromJson(groupsObj);
+        ArrayList<Group> groups = GroupsGetListResponseHandler.parseGroupsFromJson(groupsObj);
         if (groups.size() != 1) {
             throw new JSONException("Expected one group to be returned, but there were " + groups.size());
         }

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/page_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/files_selection_title"
+        android:textAppearance="?textAppearanceHeadline5"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintTop_toTopOf="@id/guideline_margin_top" />
+
+
+    <TextView
+        android:id="@+id/folder_root_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/folder_root_spinner"
+        android:text="@string/folder_root_label"
+        android:textAppearance="?textAppearanceCaption"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintTop_toBottomOf="@+id/page_title" />
+
+    <Spinner
+        android:id="@+id/folder_root_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:gravity="fill_horizontal"
+        android:spinnerMode="dropdown"
+        app:layout_constraintEnd_toStartOf="@+id/remove_root"
+        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintTop_toBottomOf="@+id/folder_root_label" />
+
+    <Button
+        android:id="@+id/remove_root"
+        style="?materialButtonIconStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="8dp"
+        app:layout_goneMarginEnd="0dp"
+        app:icon="@drawable/ic_delete_black_24px"
+        app:layout_constraintEnd_toStartOf="@+id/add_root"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintTop_toTopOf="@+id/folder_root_spinner" />
+
+    <Button
+        android:id="@+id/add_root"
+        style="?materialButtonIconStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        app:icon="@drawable/ic_add_circle_black_24px"
+        app:layout_constraintEnd_toEndOf="@id/guideline_margin_end"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintTop_toTopOf="@+id/folder_root_spinner" />
+
+    <delit.libs.ui.view.DocumentFileBreadcrumbsView
+        android:id="@+id/folder_path"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        app:breadcrumbDivisionLayout="@layout/layout_breadcrumb_item_separator"
+        app:breadcrumbLayout="@layout/layout_breadcrumb_item"
+        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+        app:layout_constraintTop_toBottomOf="@+id/barrier_root_controls" />
+
+
+    <delit.piwigoclient.ui.file.FilterControl
+        android:id="@+id/file_ext_filters"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+        app:layout_constraintTop_toBottomOf="@id/folder_path" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toTopOf="@+id/barrier_action_buttons"
+        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+        app:layout_constraintTop_toBottomOf="@id/file_ext_filters" />
+
+    <Button
+        android:id="@+id/list_action_cancel_button"
+        style="?materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_cancel"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/list_adView"
+        app:layout_constraintStart_toStartOf="@id/guideline_margin_start" />
+
+    <Button
+        android:id="@+id/list_action_toggle_all_button"
+        style="?materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_select_all"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/list_adView"
+        app:layout_constraintEnd_toStartOf="@+id/list_action_save_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/list_action_cancel_button" />
+
+    <Button
+        android:id="@+id/list_action_save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/list_ok_button"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/list_adView"
+        app:layout_constraintEnd_toEndOf="@id/guideline_margin_end"/>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/list_adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:adSize="SMART_BANNER"
+        app:adUnitId="@string/ad_id_selectlist_banner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+    </com.google.android.gms.ads.AdView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_top"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/fragment_margin_bottom"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_start"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/fragment_margin_end"/>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_root_controls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="add_root,remove_root, folder_root_spinner" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_action_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="list_action_cancel_button, list_action_toggle_all_button, list_action_save_button" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+    <string name="shortDesc">Durchsuchen und ändern Sie Inhalte in der Piwigo-Fotogalerie Ihrer Wahl</string>
+    <string name="longDesc">Verwenden Sie diese Option, um eine PIWIGO-Fotogalerie zu durchsuchen.
+
+HINWEIS: EULA muss beim Download akzeptiert werden.
+
+Diese App hat alle Funktionen in der kostenlosen Version mit ein paar anderen. Keine Werbung.
+
+** App wird derzeit nicht aktiv entwickelt (nur Fehlerbehebungen) **
+** Wenn etwas nicht funktioniert - mailen Sie mir - es wird behoben **
+
+Die vollständige Liste der Funktionen finden Sie unten.
+
+Stellen Sie eine Verbindung zu Servern her, die an nicht standardmäßigen http- oder https-Ports ausgeführt werden
+Akzeptieren Sie bei Bedarf ungültige (falscher Hostname) oder selbstsignierte Serverzertifikate
+Das Anheften von Serverzertifikaten wird unterstützt (überprüfen Sie die Zertifikate anhand einer lokalen Kopie).
+Zeigen Sie Bilder mit einer für Ihren Bildschirm optimierten Auflösung an (oder wählen Sie die gewünschte aus).
+Offline-Nur-Lese-Ansicht Ihres Servers
+Zeigen Sie Bilder jeder Größe auf dem Server an und lassen Sie sie vergrößern
+MP4-Videos anzeigen (andere sollten auch funktionieren, aber ich habe andere Formate nicht getestet)
+Bilder herunterladen.
+Speichern Sie vollständig heruntergeladene Videos
+Optional können Sie Videos von Diashows ausschließen
+Bewerten Sie Bilder und zeigen Sie durchschnittliche Bewertungen an
+Laden Sie neue Bilder oder Videos hoch (kann optional komprimiert werden)
+Automatische Überwachung von Geräteordnern und Hochladen von Dateien in einem Hintergrundjob
+Anzeigen, Hinzufügen, Ändern, Löschen von Tags und getaggten Bildern
+Festlegen und Ändern von Berechtigungen, Beschreibungen und anderen Details von Alben und Dateien
+Hinzufügen oder Ändern von Alben, deren Berechtigungen, Beschreibung usw.
+Hinzufügen, Anzeigen und Bearbeiten von Galeriebenutzern
+Galeriegruppen hinzufügen, anzeigen und bearbeiten
+Kopieren oder verschieben Sie Bilder in der Galerie
+Verwalten verwaister Ressourcen (solche ohne Album)
+Wählen Sie Bilder zum Hochladen mit anderen Apps aus und teilen Sie sie mit PIWIGO
+Spezieller Nur-Lese-Modus für Apps verfügbar, um unerwünschte Änderungen an der Galerie zu verhindern
+Einige Kontrolle über das Layout der Bildschirme in der App (zum Anpassen des Bildschirms auf Ihrem Gerät)
+
+Unterstützte Server-Plugins: Community, piwigo_privacy, Videojs, Benutzer-Tags, erweiterte Beschreibungen.
+
+Möchten Sie etwas anderes nicht aufgeführt? Probieren Sie die App aus. Wenn es nicht genau das tut, was Sie brauchen. Schreiben Sie mir eine E-Mail über den Link in der App und ich werde die fehlenden Funktionen hinzufügen.
+
+Kommende Änderungen:
+
+Die Benutzeroberfläche soll schrittweise verbessert werden, und einer der Benutzer, David Klement, hat freundlicherweise einige Vorschläge für zukünftige Bildschirmlayouts vorgelegt, die ich ab Version 1.3.95 verwendet habe und von denen ich zweifellos weitere Ideen übernehmen werde. Die Vorschläge sind vollständig verfügbar:
+https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
+
+Bekannte Einschränkungen:
+
+1. Kommentare werden derzeit nicht unterstützt - Sie können Kommentare weder anzeigen noch hinzufügen. Wenn Ihnen diese fehlende Funktion wichtig ist, sprechen Sie mich bitte an.</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><!--delit.libs.ui.view.list.Checkable -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp">
+
+    <TextView
+        android:id="@+id/heading_text"
+        tools:text="some heading"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+        android:textAppearance="?textAppearanceHeadline5"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="7dp"
+        android:background="?attr/colorAlbumItemBackground"/>
+</LinearLayout>

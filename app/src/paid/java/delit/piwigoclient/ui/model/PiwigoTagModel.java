@@ -1,9 +1,8 @@
 package delit.piwigoclient.ui.model;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
-import com.drew.lang.annotations.NotNull;
 
 import delit.piwigoclient.model.piwigo.PiwigoTag;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
@@ -19,12 +18,12 @@ public class PiwigoTagModel extends ViewModelContainer {
         return albumLiveData;
     }
 
-    public LiveData<PiwigoTag> updatePiwigoTag(@NotNull Tag tag) {
+    public LiveData<PiwigoTag> updatePiwigoTag(@NonNull Tag tag) {
         albumLiveData.postValue(new PiwigoTag(tag));
         return albumLiveData;
     }
 
-    public LiveData<PiwigoTag> getPiwigoTag(@NotNull Tag tag) {
+    public LiveData<PiwigoTag> getPiwigoTag(@NonNull Tag tag) {
         if (albumLiveData.getValue() == null) {
             albumLiveData.setValue(new PiwigoTag(tag));
         }
@@ -35,4 +34,5 @@ public class PiwigoTagModel extends ViewModelContainer {
     public ResourceContainer getModel() {
         return getPiwigoTag().getValue();
     }
+
 }

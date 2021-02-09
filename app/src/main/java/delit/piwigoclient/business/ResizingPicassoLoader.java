@@ -1,11 +1,12 @@
 package delit.piwigoclient.business;
 
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
-import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.RequestCreator;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 
 public class ResizingPicassoLoader<T extends ImageView> extends PicassoLoader<T> {
@@ -43,7 +44,7 @@ public class ResizingPicassoLoader<T extends ImageView> extends PicassoLoader<T>
             return reqCreator;
         } catch (IllegalArgumentException e) {
             String pathToView = DisplayUtils.getPathToView(getLoadInto());
-            Crashlytics.log(Log.ERROR, TAG, "ERROR: " + e.getMessage() + "\nViewId: " + getLoadInto().getId() + "\nURI: " + getUriToLoad() + "\nPathToView : " + pathToView);
+            Logging.log(Log.ERROR, TAG, "ERROR: " + e.getMessage() + "\nViewId: " + getLoadInto().getId() + "\nURI: " + getUriToLoad() + "\nPathToView : " + pathToView);
             throw e;
         }
     }
@@ -51,5 +52,36 @@ public class ResizingPicassoLoader<T extends ImageView> extends PicassoLoader<T>
     public void setResizeTo(int imgWidth, int imgHeight) {
         this.widthPx = imgWidth;
         this.heightPx = imgHeight;
+    }
+
+    @Override
+    protected void load(boolean forceServerRequest) {
+        if(widthPx > 0 && heightPx > 0) {
+            super.load(forceServerRequest);
+        } else if(getLoadInto().getWidth() > 0 && getLoadInto().getHeight() > 0) {
+            setResizeTo(getLoadInto().getWidth(), getLoadInto().getHeight());
+            super.load(forceServerRequest);
+        } else {
+            getLoadInto().addOnLayoutChangeListener(new LoadIntoLayoutListener(this));
+        }
+    }
+
+    private static class LoadIntoLayoutListener<T extends ImageView> implements View.OnLayoutChangeListener {
+        private final ResizingPicassoLoader<T> imageLoader;
+
+        public LoadIntoLayoutListener(ResizingPicassoLoader<T> imageLoader) {
+            this.imageLoader = imageLoader;
+        }
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            // now have width and height
+            imageLoader.setResizeTo(v.getWidth(), v.getHeight());
+
+            if(!imageLoader.hasResourceToLoad()) {
+                return;
+            }
+            imageLoader.load();
+
+        }
     }
 }

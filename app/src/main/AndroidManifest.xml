@@ -2,22 +2,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="delit.piwigoclient"
-    android:installLocation="internalOnly">
+    android:installLocation="auto">
 
     <!-- Only supports API >= 18 -->
-    <uses-sdk tools:overrideLibrary="net.ypresto.androidtranscoder" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <!-- Required permission to check licensing. -->
-    <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
+    <!--<uses-sdk tools:overrideLibrary="net.ypresto.androidtranscoder" />-->
     <!-- Required permission to stop CPU sleeping while uploading -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <!-- required for monitoring wifi etc -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- needed to create a service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" tools:ignore="ScopedStorage" />
+    <!--<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/> googleplay doesn't yet support this (might not need it too!)-->
+    <!-- Required permission to check licensing. -->
+    <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
+
     <!-- seems to be needed on later versions of android -->
     <uses-permission android:name="com.google.android.providers.gsf.permisson.READ_GSERVICES"/>
     <!-- lets hope this isn't needed
@@ -31,16 +32,19 @@
         android:largeScreens="true"
         android:xlargeScreens="true"/>
 
+    <!-- This attribute is "false" by default on apps targeting
+       Android 10 or higher. -->
     <application
         android:name="delit.piwigoclient.ui.MyApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher_new"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round_new"
         android:supportsRtl="true"
         android:largeHeap="true"
-        android:theme="@style/Custom.Theme"
-        android:fullBackupContent="@xml/backup_descriptor">
+        android:theme="@style/Theme.App"
+        android:fullBackupContent="@xml/backup_descriptor"
+        tools:ignore="UnusedAttribute">
 
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
@@ -50,39 +54,64 @@
                 android:name="firebase_crashlytics_collection_enabled"
                 android:value="false" />
         -->
-
+        <!-- log performance details -->
+        <!--
+        <meta-data
+              android:name="firebase_performance_logcat_enabled"
+              android:value="true" />
+          -->
+        <meta-data
+            android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
+            android:value="true"/>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-1408465472557768~4878187139"/>
 
         <activity
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Custom.Theme"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:theme="@style/Theme.App"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:stateNotNeeded="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="delit.piwigoclient.VIEW_TOP_TIPS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="delit.piwigoclient.VIEW_USERS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="delit.piwigoclient.VIEW_GROUPS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
         </activity>
         <activity
             android:launchMode="singleTop"
             android:name=".ui.PreferencesActivity"
             android:label="@string/app_name"
-            android:theme="@style/Custom.Theme"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:theme="@style/Theme.App.EditPages"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:parentActivityName="delit.piwigoclient.ui.MainActivity" >
             <intent-filter>
-                <action android:name=".Preferences" />
+                <action android:name="delit.piwigoclient.PREFERENCES" />
                 <category android:name="android.intent.category.PREFERENCE" />
             </intent-filter>
         </activity>
         <activity
             android:launchMode="singleTask"
             android:name=".ui.UploadActivity"
+            android:alwaysRetainTaskState="true"
             android:label="@string/app_name"
-            android:theme="@style/Custom.Theme"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:theme="@style/Theme.App.EditPages"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:parentActivityName="delit.piwigoclient.ui.MainActivity" >
             <intent-filter>
                 <action android:name="delit.piwigoclient.MANUAL_UPLOAD" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -106,9 +135,15 @@
             android:launchMode="singleTop"
             android:name=".ui.FileSelectActivity"
             android:label="@string/app_name"
-            android:theme="@style/Custom.Theme"
+            android:theme="@style/Theme.App.EditPages"
             android:configChanges="layoutDirection"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:parentActivityName="delit.piwigoclient.ui.MainActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name="com.google.android.gms.ads.AdActivity"/>
         <service
             android:name=".piwigoApi.upload.ForegroundPiwigoUploadService"
@@ -117,12 +152,23 @@
             android:exported="false"/>
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
+            android:authorities="${filesAuthority}"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
+        </provider>
+        <provider
+            android:name=".util.MyDocumentProvider"
+            android:authorities="${documentsAuthority}"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
         </provider>
     </application>
 

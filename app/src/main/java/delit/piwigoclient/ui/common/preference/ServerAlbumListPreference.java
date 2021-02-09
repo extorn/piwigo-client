@@ -5,10 +5,11 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.preference.DialogPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+
+import androidx.annotation.NonNull;
+import androidx.preference.DialogPreference;
 
 import java.util.Locale;
 
@@ -51,12 +52,9 @@ public class ServerAlbumListPreference extends DialogPreference {
                 R.styleable.ServerAlbumListPreference, 0, 0);
         connectionProfileNamePreferenceKey = a.getString(R.styleable.ServerAlbumListPreference_connectionProfileNameKey);
         a.recycle();
-        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if(key.equals(connectionProfileNamePreferenceKey)) {
-                    setEnabled(null != sharedPreferences.getString(connectionProfileNamePreferenceKey, null));
-                }
+        listener = (sharedPreferences, key) -> {
+            if(key.equals(connectionProfileNamePreferenceKey)) {
+                setEnabled(null != sharedPreferences.getString(connectionProfileNamePreferenceKey, null));
             }
         };
     }
@@ -171,7 +169,7 @@ public class ServerAlbumListPreference extends DialogPreference {
 
         public static long getSelectedAlbumId(String preferenceValue) {
             if (preferenceValue != null) {
-                return Long.valueOf(preferenceValue.split(";", 2)[0]);
+                return Long.parseLong(preferenceValue.split(";", 2)[0]);
             }
             return -1;
         }

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- used at activity level -->
+    <style name="Theme.App" parent="Theme.App.Dark.Base"/>
+
+    <!-- used at activity level -->
+    <style name="Theme.App.Light" parent="Theme.App.Light.Base"/>
+
+    <!-- used at activity level -->
+    <style name="Theme.App.EditPages" parent="Theme.App.EditPages.Base"/>
+
+    <style name="Theme.App.Light.Base" parent="Theme.App.Base">
+        <!-- these colors MUST be applied here else it isn't taken by the top level activity for some reason -->
+        <item name="android:colorBackground">@color/app_color_background</item>
+        <item name="colorPrimary">@color/app_primary</item>
+        <!-- Note: this theme overlay will only work if the style is applied directly to a component it seems (in xml?). -->
+        <item name="android:theme">@style/ThemeOverlay.App.Dark</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Dark</item>
+        <item name="colorControlHighlight">@color/ripple_dark</item>
+    </style>
+
+    <style name="Theme.App.Dark.Base" parent="Theme.App.Base">
+        <!-- these colors MUST be applied here else it isn't taken by the top level activity for some reason -->
+        <item name="android:colorBackground">@color/app_color_background</item>
+        <item name="colorPrimary">@color/app_primary</item>
+        <!-- Note: this theme overlay will only work if the style is applied directly to a component it seems (in xml?). -->
+        <item name="android:theme">@style/ThemeOverlay.App.Dark</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Dark</item>
+        <item name="colorControlHighlight">@color/ripple_dark</item>
+    </style>
+
+    <style name="Theme.App.EditPages.Base" parent="Theme.App.Base">
+        <!-- these colors MUST be applied here else it isn't taken by the top level activity for some reason -->
+        <item name="colorPrimary">@color/app_primary</item>
+        <!-- the window background is set in the main app theme, so we need to cover it - hence use of background for these panels -->
+        <item name="android:colorBackground">@color/app_color_background_light</item>
+        <!-- Note: this theme overlay will only work if the style is applied directly to a component it seems (in xml?). -->
+        <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.EditPages</item>
+        <item name="colorControlHighlight">@color/ripple_light</item>
+    </style>
+
+    <style name="Theme.App.Base" parent="Theme.App.Core">
+        <!-- allow extension in later versions -->
+    </style>
+
+    <!-- this defines how things are laid out -->
+    <style name="Theme.App.Core" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <item name="colorAccent">?colorSecondary</item>
+        <item name="scrimBackground">@color/color_scrim_light</item>  <!-- what uses this? its material -->
+        <item name="scrimHeavy">@color/color_scrim_heavy</item>
+        <item name="scrimUltraHeavy">@color/color_scrim_ultra_heavy</item>
+        <item name="scrimLight">@color/color_scrim_light</item>
+
+        <item name="android:statusBarColor" tools:ignore="NewApi">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarColor" tools:ignore="NewApi">?android:attr/colorBackground</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">?attr/colorControlHighlight</item>
+
+        <item name="materialCardViewStyle">@style/App.Widget.MaterialComponents.CardView</item>
+        <item name="editableFieldSpinner">@style/App.Widget.AppCompat.Spinner.Underlined.Field</item>
+        <item name="editableFieldSwitch">@style/App.Widget.MaterialComponents.CompoundButton.Switch.Field</item>
+        <item name="spinnerStyle">@style/App.Widget.AppCompat.Spinner.Underlined</item>
+        <item name="android:spinnerStyle">@style/App.Widget.AppCompat.Spinner.Underlined</item>
+        <item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>
+
+        <!-- change the app bar at screen top to not use default background colors -->
+        <item name="actionBarStyle">@style/App.Theme.MaterialComponents.DayNight.DarkActionBar</item>
+        <item name="appBarLayoutStyle">@style/App.Widget.MaterialComponents.AppBarLayout</item>
+        <!-- the style isn't applied correctly when set here. Make sure to set it direct on the toolbar! -->
+        <item name="toolbarStyle">@style/App.Widget.MaterialComponents.Toolbar</item>
+        <!--<item name="toolbarNavigationButtonStyle">@style/App.Widget.AppCompat.Toolbar.Button.Navigation</item>-->
+        <item name="extendedFloatingActionButtonStyle">@style/App.Widget.MaterialComponents.ExtendedFloatingActionButton.Icon</item>
+        <item name="android:checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
+        <item name="checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
+
+        <!-- If I want a custom font across the app - use it here -->
+        <!--<item name="fontFamily">@font/roboto_mono</item>
+        <item name="android:fontFamily">@font/roboto_mono</item>-->
+
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.MyTheme.BottomSheetDialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
+        <item name="android:alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <item name="android:dialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <item name="radioButtonStyle">@style/App.Widget.CompoundButton.RadioButton</item>
+        <!-- prob do not need these ones -->
+        <!--Material type attributes-->
+        <item name="textAppearanceHeadline1">@style/TextAppearance.MyTheme.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.MyTheme.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.MyTheme.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.MyTheme.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.MyTheme.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.MyTheme.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.MyTheme.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.MyTheme.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.MyTheme.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.MyTheme.Body2</item>
+        <item name="textAppearanceButton">@style/TextAppearance.MyTheme.Button</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.MyTheme.Caption</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.MyTheme.Overline</item>
+        <!--
+
+        <item name="switchStyle">@style/App.Widget.AppCompat.CompoundButton.Switch</item>
+        <item name="android:editTextColor">@colors/edit_text_color_selector</item>
+        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat</item>
+
+
+        <item name="android:dropDownListViewStyle">@style/App.Widget.AppCompat.DropDownItem.Spinner</item>
+
+        <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>-->
+        <item name="android:progressBarStyleHorizontal">@style/App.Widget.AppCompat.ProgressBar.Horizontal</item>
+        <item name="preferenceTheme">@style/App.Theme.PreferenceThemeOverlay.v14.Material</item>
+        <item name="editableFieldLabel">@style/App.Widget.Material.TextView.FieldLabel</item>
+        <item name="editableFieldText">@style/App.Widget.EditText.FieldEntry</item>
+        <item name="editableFieldNumberPicker">@style/App.Widget.NumberPicker.FieldEntry</item>
+        <item name="editableFieldTextClickable">@style/App.Widget.EditText.FieldEntry.Clickable</item>
+        <item name="clickableTextViewStyleBody1">@style/App.Widget.MaterialComponents.TextView.Clickable.Body1</item>
+        <item name="clickableTextViewStyleBody2">@style/App.Widget.MaterialComponents.TextView.Clickable.Body2</item>
+        <item name="materialButtonIconStyle">@style/App.Widget.Button.OutlinedButton.IconOnly</item>
+        <item name="materialButtonIconAccentedStyle">@style/App.Widget.Button.OutlinedButton.IconOnly.Accented</item>
+        <item name="checkboxFavoriteAccentedStyle">@style/Widget.CompoundButton.CheckBox.Favorite.Accented</item>
+        <item name="visibilityToggleStyle">@style/App.Widget.CompoundButton.CheckBox.Visibility</item>
+        <item name="foldingToggleStyle">@style/App.Widget.CompoundButton.CheckBox.Folding</item>
+        <item name="layoutExpansionToggleStyle">@style/App.Widget.CompoundButton.CheckBox.LayoutExpansion</item>
+        <item name="editableFieldCheckBox">@style/Widget.MaterialComponents.CompoundButton.CheckBox.EditField</item>
+        <!--New material inputs (not used yet) <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Custom</item>-->
+        <!-- edit text fields throughout the app -->
+        <item name="editTextStyle">@style/App.Widget.EditText</item>
+        <!--<item name="android:editTextColor">@colors/edit_text_color_selector</item>-->
+        <item name="appTabLayout">@style/App.Widget.MaterialComponents.TabLayout</item>
+        <item name="snackbarStyle">@style/App.Widget.Snackbar</item>
+    </style>
+
+    <style name="App.Theme.MaterialComponents.DayNight.DarkActionBar" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    </style>
+
+    <!-- dark colors theme -->
+    <style name="ThemeOverlay.App.Dark" parent="ThemeOverlay.MaterialComponents.Dark">
+        <!-- used for text -->
+        <item name="android:colorForeground">@color/app_color_on_primary</item>
+        <item name="android:colorBackground">@color/app_color_background</item>
+
+        <item name="colorPrimary">@color/app_primary</item>
+        <item name="colorPrimaryDark">@color/app_primary</item>
+        <item name="colorPrimarySurface">@color/app_primary</item>
+        <item name="colorPrimaryVariant">@color/app_primary_variant</item>
+        <item name="colorOnPrimary">@color/app_color_on_primary</item>
+        <item name="colorSecondary">@color/app_secondary</item>
+        <item name="colorSecondaryVariant">@color/app_secondary_variant</item>
+        <item name="colorOnSecondary">@color/app_color_on_secondary</item>
+        <item name="colorError">@color/app_color_error</item>
+        <item name="colorOnError">@color/app_color_on_error</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+        <!-- surfaces are the sliding layers (and cards by default)  -->
+        <item name="colorSurface">@color/app_color_surface</item>
+        <item name="colorOnSurface">@color/app_color_on_surface</item>
+        <item name="colorOnBackground">?attr/colorOnSurface</item>
+        <item name="appScrimColor">@color/app_primary</item>
+        <item name="colorAlbumItemBackground">@color/color_album_item_background</item>
+    </style>
+
+    <!-- lighter colors theme -->
+    <style name="ThemeOverlay.App.EditPages" parent="ThemeOverlay.MaterialComponents.Light">
+        <!-- the window background is set in the main app theme, so we need to cover it - hence use of background for these panels -->
+        <item name="android:colorBackground">@color/app_color_background_light</item>
+        <!-- used for text -->
+        <item name="android:colorForeground">@color/app_primary</item>
+
+        <item name="scrimBackground">@color/color_scrim_light_bright</item>  <!-- what uses this? its material -->
+        <item name="scrimHeavy">@color/color_scrim_heavy_bright</item>
+        <item name="scrimUltraHeavy">@color/color_scrim_ultra_heavy_bright</item>
+        <item name="scrimLight">@color/color_scrim_light_bright</item>
+
+        <!-- These override the standard light colors -->
+
+        <!--   colors for the app bar and other primary UI elements -->
+        <item name="colorPrimary">@color/app_primary</item>
+        <!--   a darker variant of the primary colors, used for
+           the status bar (on Android 5.0+) and contextual app bars -->
+        <item name="colorPrimaryDark">?attr/colorPrimary</item>
+        <!--   a secondary colors for controls like checkboxes and text fields -->
+        <item name="colorAccent">@color/app_secondary</item>
+
+        <item name="colorPrimarySurface">?attr/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/app_primary_variant</item>
+        <item name="colorOnPrimary">@color/app_color_on_primary</item>
+        <item name="colorSecondary">@color/app_secondary</item>
+        <item name="colorSecondaryVariant">@color/app_secondary_variant</item>
+        <item name="colorOnSecondary">@color/app_color_on_secondary</item>
+        <item name="cardBackgroundColor">?attr/colorOnPrimary</item>
+        <!-- surfaces are the sliding layers (and cards by default) -->
+        <item name="colorSurface">@color/app_color_on_surface</item>
+        <item name="colorOnBackground">?attr/colorOnSurface</item>
+        <item name="colorOnSurface">@color/app_color_surface</item>
+        <item name="appScrimColor">?attr/colorOnPrimary</item> <!-- goes under text -->
+    </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+    </style>
+
+    <style name="ThemeOverlay.App.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+    </style>
+
+    <style name="ThemeOverlay.MyTheme.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--<item name="android:windowAnimationStyle">@style/Animation.MyTheme.BottomSheet.Modal</item>-->
+        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
+        <!--<item name="bottomSheetStyle">@style/Widget.MyTheme.BottomSheet.Modal</item>-->
+        <item name="android:navigationBarColor" tools:ignore="NewApi">?attr/colorSurface</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">@android:color/transparent</item>
+    </style>
+    <style name="ThemeOverlay.MaterialComponents.Toolbar.Primary" parent="">
+        <item name="colorControlNormal">?attr/colorOnPrimary</item>
+        <item name="actionMenuTextColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="App.Theme.PreferenceThemeOverlay.v14.Material" parent="PreferenceThemeOverlay.v14.Material">
+    </style>
+</resources>

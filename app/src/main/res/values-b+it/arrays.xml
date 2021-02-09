@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+
+    
+
+    
+
+    <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>0 bps (—X)</item>
+        <item>molto basso (0,025 b / pixel * frame)</item>
+        <item>inferiore (0,05 b / pixel * frame)</item>
+        <item>basso (0,1 b / pixel * fotogramma)</item>
+        <item>medio (0,15 b / pixel * frame)</item>
+        <item>alto (0,2 b / pixel * fotogramma)</item>
+        <item>molto alto (0,25 b / pixel * frame)</item>
+        <item>ultra alto (0,3 b / pixel * frame)</item>
+    </string-array>
+
+    
+    
+
+    
+
+    <string-array name="preference_gallery_child_album_sort_order_entry_text">
+        <item>Predefinito</item>
+        <item>Nome album A-Z</item>
+        <item>Ultimo aggiornamento</item>
+    </string-array>
+    
+    <string-array name="preference_caching_level_items">
+        <item>Memorizzazione nella cache disabilitata</item>
+        <item>Cache to Memory</item>
+        <item>Cache su disco</item>
+    </string-array>
+
+
+    <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
+        <item>Predefinito</item>
+        <item>adatta alle dimensioni dello schermo</item>
+        <item>ingrandire e ritagliare per adattare lo schermo</item>
+        <item>centrare sullo schermo</item>
+    </string-array>
+
+    
+
+    <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
+        <item>il più adatto</item>
+        <item>piazza</item>
+        <item>pollice</item>
+        <item>2piccolo</item>
+        <item>xsmall</item>
+        <item>piccolo</item>
+        <item>medio</item>
+        <item>grande</item>
+        <item>xlarge</item>
+        <item>xxlarge</item>
+        
+    </string-array>
+
+    
+
+    <string-array name="preference_gallery_item_thumbnail_size_entry_text">
+        <item>piazza</item>
+        <item>pollice</item>
+        <item>2piccolo</item>
+        <item>xsmall</item>
+        <item>piccolo</item>
+    </string-array>
+
+    
+    <string-array name="preference_gallery_child_resource_sort_order_entry_text">
+        <item>Default del server</item>
+        <item>ID risorsa</item>
+        <item>Nome file risorsa</item>
+        <item>Nome risorsa</item>
+        <item>Numero di visite</item>
+        <item>Punteggio di valutazione medio</item>
+        <item>Data di creazione</item>
+        <item>Data Disponibile</item>
+        <item>casuale</item>
+    </string-array>
+    
+    <string-array name="server_ssl_certificate_hostname_verification_entries">
+        <item>Rigoroso</item>
+        <item>Compatibile con browser</item>
+        <item>Off</item>
+    </string-array>
+    
+    <string-array name="user_types_array">
+        <item>webmaster</item>
+        <item>admin</item>
+        <item>normale</item>
+        <item>generico</item>
+        <item>ospite</item>
+    </string-array>
+
+    
+
+    <string-array name="privacy_levels_groups_array">
+        <item>Amministratori</item>
+        <item>Amministratori, famiglia</item>
+        <item>Amministratori, famiglia, amici</item>
+        <item>Amministratori, famiglia, amici, contatti</item>
+        <item>Tutti</item>
+    </string-array>
+
+    
+
+    
+
+    <string-array name="preference_gallery_unique_id_entries">
+        <item>md5sum</item>
+        <item>nome</item>
+    </string-array>
+
+    
+
+    <string-array name="rotation_array">
+        <item>Sinistra di 90 gradi</item>
+        <item>Nessuna</item>
+        <item>90 gradi a destra</item>
+        <item>180 gradi a destra</item>
+    </string-array>
+
+    
+
+    <string-array name="top_tips" translatable="true">
+        <item>In caso di problemi con l\'app, utilizzare l\'email per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarla, ma per favore invia anche un\'email. C\'è un collegamento per inviarmi un\'e-mail nella parte superiore del menu a scomparsa del cassetto. Posso fornire un supporto molto più completo a un indirizzo email. Grazie molto.</item>
+        <item>Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso</item>
+        <item>Se un caricamento non riesce, prova a utilizzare la preferenza nella pagina di caricamento delle impostazioni dell\'app per cancellare eventuali caricamenti non riusciti residui dal server</item>
+        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - "Non sei autorizzato a eliminare i tag" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plug-in del server)</item>
+        <item>Condividi i file da un\'app diversa con questa app per aggiungerli alla schermata di caricamento pronti per essere trasferiti al tuo server corrente</item>
+        <item>Fare clic a lungo su un\'immagine (miniatura o elemento della presentazione) che non è stato caricato per recuperarla di nuovo</item>
+        <item>Fare clic a lungo su un album per eliminare quell\'album e tutto il contenuto</item>
+        <item>Fare clic a lungo sull\'immagine di un album per abilitare la selezione in blocco di immagini per un\'azione</item>
+        <item>Durante la visualizzazione di qualsiasi immagine nella presentazione, fare clic lungo per ruotare / modificare la dimensione dell\'immagine mostrata / consentire un ulteriore ingrandimento</item>
+        <item>È possibile ingrandire un\'immagine durante la visualizzazione in una presentazione avvicinando o allontanando due dita sullo schermo</item>
+        <item>Dopo aver effettuato l\'accesso come amministratore, prima di consegnare il dispositivo a un amico per visualizzare le foto, attivare la funzione di blocco dell\'applicazione per evitare modifiche involontarie alla tua galleria</item>
+        <item>Dopo aver visualizzato un intero video, se la memorizzazione nella cache dei file locali è abilitata, è possibile salvare quel video nella cartella dei download</item>
+        <item>Fare clic a lungo sul pulsante Elimina su un \'file da caricare \' per eliminare tutti i file da caricare (quando il lavoro non è in corso)</item>
+        <item>Se il caricamento delle immagini è lento, verifica che il tuo server generi automaticamente la dimensione utilizzata da questa app quando vengono caricate</item>
+    </string-array>
+    <string-array name="planned_releases" translatable="true">
+        <item>Il futuro</item>
+        <item>Non sono previsti ulteriori aggiornamenti.</item>
+    </string-array>
+    <string-array name="release_history" translatable="true">
+        
+        <item>1.4.0.114</item>
+        <item>"Risoluzione del problema:
+                 - caricamento della pagina dell\'elemento orfano che causa un crash
+                Modificare:
+                 - nome assegnato ai tracker di avanzamento delle attività per consentire la risoluzione dei bug in cui l\'attività figlio di un tracker di avanzamento è inaspettatamente incompleta"</item>
+        <item>1.4.0.113</item>
+        <item>"Risoluzione del problema:
+                 - Infine! ha risolto il motivo per cui l\'app si bloccava nella presentazione per alcuni utenti
+                 - ottimizzato alcuni layout di dialogo
+                Modificare:
+                 - Finestra di dialogo che mostra tutte le note di rilascio dall\'ultimo aggiornamento dopo un aggiornamento"</item>
+        <item>1.4.0.112</item>
+        <item>"Modificare:
+                 - Riordina le pagine delle preferenze dell\'app"</item>
+        <item>1.4.0.111</item>
+        <item>"Risoluzione del problema:
+                 - Gli URI multimediali non funzionano per gli utenti di plug-in non per la privacy.
+                 - La riproduzione video non si avvia se la preferenza è impostata per non includere i video nelle presentazioni
+                Modificare:
+                 - c\'è una nuova impostazione nelle preferenze di connessione per la riparazione uri del plugin per la privacy"</item>
+        <item>1.4.0.110</item>
+        <item>"Risoluzione del problema:
+                 - Crash di più album figlio visualizzati uno accanto all\'altro con un numero dispari di album figli presenti (modalità orizzontale o dispositivi con schermo grande)
+                 - Carica lavoro - Carica su elenco server Piwigo non selezionabile (impatto per gli utenti con più di un profilo di connessione al server configurato nell\'app)
+                 - gli album del server non vengono caricati alla prima voce per il caricamento automatico del lavoro selezionare una preferenza di categoria
+                 - le miniature degli album del server non vengono caricate per le cartelle secondarie durante il caricamento nella selezione della cartella
+                 - Impossibile selezionare il caricamento sull\'album del server per il caricamento automatico del lavoro utilizzando un server non predefinito"</item>
+        <item>1.4.0.109</item>
+        <item>"Modificare:
+                 - Aggiunta una dichiarazione per la tua chiarezza nella parte superiore del modello di email creato da questa app per le richieste di supporto
+                 - Solo a pagamento: aggiunto il supporto per la notifica degli aggiornamenti disponibili per il server o i plug-in"</item>
+        <item>1.4.0.108</item>
+        <item>"Risoluzione del problema:
+                 - Riordina molti problemi che causano arresti anomali nell\'app dopo l\'ultimo mese di modifiche
+                 - Impostazione predefinita per la compressione video corretta
+                 - Aggiunto nuovamente il supporto per ridurre al minimo gli album
+                 - risolto i video che non vengono rilevati
+               I cambiamenti:
+                 - Opzione rimossa per specificare quali file sono riproducibili video. Questa operazione viene eseguita in base al tipo MIME derivato dall\'estensione del file"</item>
+        <item>1.4.0.107</item>
+        <item>"Risoluzione del problema:
+                 - Possibilità di perdere una risorsa dalla presentazione delle risorse dell\'album (anteprima a schermo intero)
+                 - arresto anomalo durante l\'anteprima del file orfano
+                Modificare:
+                 - l\'anteprima dei file orfani e la visualizzazione all\'interno di una presentazione se lo si desidera è ora supportata
+                 - L\'opzione di menu orfani è disponibile solo per gli utenti amministratori quando l\'app non è di sola lettura"</item>
+        <item>1.4.0.106</item>
+        <item>"Risoluzione del problema:
+                 - Si spera che il bug finale in cui le miniature degli album sembravano non essere caricate correttamente
+                I cambiamenti:
+                 - Quando si elimina un album, le risorse figlio possono essere scollegate o eliminate dal server
+                 - Solo a pagamento: c\'è una nuova pagina di gestione delle risorse orfane"</item>
+        <item>1.4.0.105</item>
+        <item>"Risoluzione del problema:
+                 - Riscrittura dell\'album, tag e codice di ordinamento preferito perché era pieno di bug
+                     : Se qualcosa in quest\'area ora non funziona come previsto, fammelo sapere.
+                     : Questo dovrebbe risolvere i crash che si stavano verificando nella pagina della presentazione
+                 - L\'icona della stella gialla modificata di recente non appariva in alcuni ordinamenti
+                 - Correggere il caricamento delle miniature
+                 - Risolto il bug che impediva il ricaricamento manuale del caricamento della miniatura non riuscito facendo clic - solo una volta, quindi non è troppo irritante se si desidera cambiare album
+                I cambiamenti:
+             - Nuova preferenza per consentire l\'inversione indipendente dell\'ordinamento di album e risorse secondari"</item>
+        <item>1.4.0.104</item>
+        <item>"Risoluzione del problema:
+                 - Problemi causati durante il caricamento dopo aver rielaborato la selezione dei file per keystore e certificati
+                     : Grazie per la pazienza, la gestione delle autorizzazioni dei file Android è complicata
+                 - eliminazione degli album in root ora sempre disponibile al caricamento dell\'app, se appropriato
+                 - Gli elementi ora possono essere selezionati facendo clic in un punto qualsiasi non solo nella casella di controllo"</item>
+        <item>1.4.0.103</item>
+        <item>"Risoluzione del problema:
+                 - La modifica dell\'archivio chiavi e dell\'elemento certificato attendibile ha causato un arresto anomalo.
+                     : Inviami un\'e-mail dall\'app quando funzionalità chiave come questa non funzionano.
+                 - A volte non è possibile uscire dai file recenti con la selezione del file di sistema
+                 - Elenco dei gruppi allineato verticalmente al centro dello schermo
+                I cambiamenti:
+                 - Migliore esperienza utente per keystore e importazione di certificati
+                 - Nuova preferenza per controllare la durata della visualizzazione dei dettagli dell\'immagine nella visualizzazione a schermo intero o nella presentazione"</item>
+        <item>1.4.0.102</item>
+        <item>"Risoluzione del problema:
+                 - Modifiche recenti hanno reso impossibile installare contemporaneamente sia la versione gratuita che quella a pagamento su un singolo dispositivo
+                 - le miniature degli album non vengono sempre visualizzate per l\'utente amministratore
+                 - testato con Piwigo 11. L\'apertura di un\'immagine non funzionava"</item>
+    </string-array>
+</resources>

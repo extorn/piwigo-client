@@ -3,7 +3,10 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,6 +63,14 @@ public class PiwigoGalleryDetails implements Parcelable {
         dest.writeValue(galleryId);
         ParcelUtils.writeLongSet(dest, allowedGroups);
         ParcelUtils.writeLongSet(dest, allowedUsers);
+    }
+
+    public CategoryItemStub asCategoryItemStub() {
+        return new CategoryItemStub(galleryName, galleryId, parentageChain);
+    }
+
+    public CategoryItem asCategoryItem(@Nullable Date lastAltered, int photoCount, int totalPhotoCount, int subCategories, @Nullable String thumbnailUrl) {
+        return new CategoryItem(galleryId, galleryName, galleryDescription, isPrivate, lastAltered, photoCount, totalPhotoCount, subCategories, thumbnailUrl);
     }
 
     public CategoryItemStub getParentGallery() {

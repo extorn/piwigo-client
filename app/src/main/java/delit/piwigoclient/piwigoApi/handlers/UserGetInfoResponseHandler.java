@@ -4,8 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -13,12 +11,11 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Locale;
 
+import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.User;
 
@@ -46,17 +43,15 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
     public static ArrayList<User> parseUsersFromJson(JsonArray usersObj) throws JSONException {
         ArrayList<User> users = new ArrayList<>(usersObj.size());
 
-        SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
-
         for (int i = 0; i < usersObj.size(); i++) {
             JsonObject userObj = usersObj.get(i).getAsJsonObject();
-            User user = parseUserFromJson(userObj, piwigoDateFormat);
+            User user = parseUserFromJson(userObj);
             users.add(user);
         }
         return users;
     }
 
-    public static User parseUserFromJson(JsonObject userObj, SimpleDateFormat piwigoDateFormat) throws JSONException {
+    public static User parseUserFromJson(JsonObject userObj) throws JSONException {
         long id = userObj.get("id").getAsLong();
         String username = userObj.get("username").getAsString();
         String userType = userObj.get("status").getAsString();
@@ -75,9 +70,9 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
             String lastVisitDateStr = userObj.get("last_visit").getAsString();
             if (lastVisitDateStr != null) {
                 try {
-                    lastVisitDate = piwigoDateFormat.parse(lastVisitDateStr);
+                    lastVisitDate = parsePiwigoServerDate(lastVisitDateStr);
                 } catch (ParseException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     throw new JSONException("Unable to parse date " + lastVisitDateStr);
                 }
             }
@@ -134,7 +129,7 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
                 bundle.putString("username", username);
                 bundle.putString("status", userType);
             }
-            FirebaseAnalytics.getInstance(getContext()).logEvent("noUserFound", bundle);
+            Logging.logAnalyticEvent(getContext(),"noUserFound", bundle);
         }
         PiwigoGetUserDetailsResponse r = new PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users, isCached);
         storeResponse(r);

@@ -3,6 +3,8 @@ package delit.piwigoclient.business;
 import android.content.Context;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 import com.drew.metadata.Metadata;
 import com.squareup.picasso.BaseLruExifCache;
 
@@ -21,11 +23,11 @@ public class CustomImageDownloader extends AbstractBaseCustomImageDownloader {
 
     private static final String TAG = "CustomImageDwnldr";
 
-    public CustomImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    public CustomImageDownloader(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs) {
         super(context, connectionPrefs);
     }
 
-    public CustomImageDownloader(Context context) {
+    public CustomImageDownloader(@NonNull Context context) {
         super(context);
     }
 
@@ -33,7 +35,7 @@ public class CustomImageDownloader extends AbstractBaseCustomImageDownloader {
     protected Metadata loadExifMetadata(Uri uri, InputStream imageDataStream) {
         Metadata metadata = super.loadExifMetadata(uri, imageDataStream);
         String exifWantedStr = uri.getQueryParameter(EXIF_WANTED_URI_PARAM);
-        boolean exifEventWanted = Boolean.valueOf(exifWantedStr);
+        boolean exifEventWanted = Boolean.parseBoolean(exifWantedStr);
         if(metadata != null && exifEventWanted) {
             BaseLruExifCache<Metadata> cache = PicassoFactory.getInstance().getPicassoSingleton().getCache();
             String uriStr = uri.toString();

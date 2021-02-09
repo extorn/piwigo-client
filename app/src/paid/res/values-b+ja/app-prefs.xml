@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+
+    <string name="preference_page_auto_upload_jobs">自動アップロード</string>
+    <string name="preference_data_upload_automatic_title">自動アップロード</string>
+    <string name="preference_data_upload_automatic_job_title">自動アップロードジョブ</string>
+
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_enable_summary">バックグラウンドアップロードを有効にする</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">自動アップロード</string>
+    
+
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">ワイヤレスでのみ自動アップロードを使用する</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">無線のみ</string>
+    
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_jobs_title">自動アップロードジョブ</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$dジョブ</string>
+
+    
+    
+
+    
+
+    
+    <string name="preference_data_upload_automatic_job_view_status_title">アップロードステータスの表示</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">最後のジョブ実行からのステータスの表示（利用可能な場合）</string>
+
+    
+    <string name="preference_data_upload_automatic_job_is_valid_title">ジョブは有効です</string>
+
+    
+    <string name="preference_data_upload_automatic_job_enabled_summary">アップロードサービスはこのジョブを使用しますか？</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">ジョブが有効</string>
+    
+
+    <string name="preference_data_upload_automatic_job_server_title">サーバーにアップロード</string>
+    
+    <string name="preference_data_upload_automatic_job_server_summary">プロファイル：%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_server_album_title">アルバムにアップロード</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_local_folder_title">フォルダからアップロード</string>
+    
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">正常にアップロードされたファイルを削除する</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">自動削除</string>
+    
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+    
+    
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">アップロードされた最大ファイルサイズ</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+
+    
+    
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">ファイル拡張子</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">ext%1$sでファイルをアップロードする</string>
+
+    <string name="preference_data_upload_automatic_job_privacy_level_title">プライバシーレベル</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">アップロードされたファイルは%1$sに表示されます</string>
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+
+    
+
+
+    
+
+    
+    
+
+    
+
+    
+    
+</resources>

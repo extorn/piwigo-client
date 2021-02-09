@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+    <string name="shortDesc">Procházejte a upravujte obsah ve fotogalerii Piwigo podle vašeho výběru</string>
+    <string name="longDesc">Slouží k procházení fotogalerie PIWIGO.
+
+POZNÁMKA: Při stahování musí být přijata smlouva EULA.
+
+Pokud se vám aplikace líbí, ale ne reklamy, podívejte se na placenou verzi, která je bez reklam a má postupně více funkcí.
+
+** Aplikace nyní není aktivně vyvíjena (pouze opravy chyb) **
+** Pokud něco nefunguje - pošlete mi e-mail - bude to opraveno **
+
+Úplný seznam funkcí naleznete níže.
+
+Připojte se k serverům běžícím na nestandardních portech http nebo https
+V případě potřeby přijměte neplatné (nesprávné jméno hostitele) nebo certifikáty serveru s vlastním podpisem
+Je podporováno připnutí certifikátu serveru (ověřte certifikáty proti místní kopii)
+Prohlížejte si obrázky v rozlišení optimalizovaném pro vaši obrazovku (nebo vyberte požadované).
+Zobrazit a povolit přiblížení obrázků jakékoli velikosti dostupné na serveru
+Prohlížejte videa MP4 (ostatní by také měli fungovat, ale netestoval jsem jiné formáty)
+Stahujte obrázky.
+Uložte plně stažená videa
+Můžete také vyloučit videa z prezentací
+Ohodnoťte obrázky a zobrazte průměrné hodnocení
+Nahrajte nové obrázky nebo videa (lze volitelně komprimovat)
+Nastavení a změna oprávnění, popisu a dalších podrobností o albech a souborech
+Přidejte nebo upravte alba, jejich oprávnění, popis atd
+Přidat, zobrazit a upravit uživatele galerie
+Přidat, zobrazit a upravit skupiny galerií
+Zkopírujte nebo přesuňte obrázky v galerii
+Vyberte obrázky pro nahrání pomocí jiných aplikací a sdílejte je s PIWIGO
+K dispozici je speciální režim jen pro čtení, který zabraňuje nežádoucím změnám v galerii
+Určitá kontrola nad rozložením obrazovek v aplikaci (slouží k přizpůsobení obrazovky na vašem zařízení)
+
+Podporované doplňky serveru: komunita, piwigo_privacy, videojs, rozšířené popisy.
+
+Chcete něco jiného, ​​co není uvedeno? Vyzkoušejte aplikaci. Pokud to nedělá přesně to, co potřebujete. Napište mi e-mail pomocí odkazu v aplikaci a já se podívám na přidání chybějících funkcí.
+
+Připravované změny:
+
+Záměrem je postupné vylepšování uživatelského rozhraní a jeden z uživatelů, David Klement, laskavě poskytl několik návrhů pro rozvržení obrazovky do budoucna, které jsem začal používat od verze 1.3.95 a bezpochyby bude brát další nápady. Návrhy jsou k dispozici v plném znění:
+https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
+
+Známá omezení:
+
+1. Komentáře nejsou aktuálně podporovány - komentáře nevidíte ani nepřidáváte. Pokud je pro vás tato chybějící funkce důležitá - promluvte si se mnou.
+2. Počet souborů, které lze přidat do úlohy nahrávání, je v této bezplatné verzi omezen na 5 (k odstranění tohoto limitu použijte placenou verzi)</string>
+</resources>

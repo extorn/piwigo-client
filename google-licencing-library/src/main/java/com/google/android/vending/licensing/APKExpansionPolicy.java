@@ -21,8 +21,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -33,6 +31,7 @@ import java.util.Vector;
 
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.utils.URLEncodedUtils;
+import delit.libs.core.util.Logging;
 
 /**
  * Default policy. All policy decisions are based off of response data received
@@ -209,11 +208,11 @@ public class APKExpansionPolicy implements Policy {
      * @param validityTimestamp the VT string received
      */
     private void setValidityTimestamp(String validityTimestamp) {
-        Long lValidityTimestamp;
+        long lValidityTimestamp;
         try {
             lValidityTimestamp = Long.parseLong(validityTimestamp);
         } catch (NumberFormatException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             // No response or not parseable, expire in one minute.
             Log.w(TAG, "License validity timestamp (VT) missing, caching for a minute");
             lValidityTimestamp = System.currentTimeMillis() + MILLIS_PER_MINUTE;
@@ -236,11 +235,11 @@ public class APKExpansionPolicy implements Policy {
      * @param retryUntil the GT string received
      */
     private void setRetryUntil(String retryUntil) {
-        Long lRetryUntil;
+        long lRetryUntil;
         try {
             lRetryUntil = Long.parseLong(retryUntil);
         } catch (NumberFormatException e) {
-Crashlytics.logException(e);
+            Logging.recordException(e);
             // No response or not parseable, expire immediately
             Log.w(TAG, "License retry timestamp (GT) missing, grace period disabled");
             retryUntil = "0";
@@ -263,11 +262,11 @@ Crashlytics.logException(e);
      * @param maxRetries the GR string received
      */
     private void setMaxRetries(String maxRetries) {
-        Long lMaxRetries;
+        long lMaxRetries;
         try {
             lMaxRetries = Long.parseLong(maxRetries);
         } catch (NumberFormatException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             // No response or not parseable, expire immediately
             Log.w(TAG, "Licence retry count (GR) missing, grace period disabled");
             maxRetries = "0";
@@ -390,7 +389,7 @@ Crashlytics.logException(e);
                 results.put(name, item.getValue());
             }
         } catch (URISyntaxException e) {
-Crashlytics.logException(e);
+Logging.recordException(e);
             Log.w(TAG, "Invalid syntax error while decoding extras data from server.");
         }
         return results;

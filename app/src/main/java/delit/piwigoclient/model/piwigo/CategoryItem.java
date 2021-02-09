@@ -4,35 +4,27 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.CollectionUtils;
-import delit.piwigoclient.BuildConfig;
 
 /**
  * An item representing a piece of content.
  */
-public class CategoryItem extends GalleryItem implements Cloneable, PhotoContainer {
+public class CategoryItem extends GalleryItem implements PhotoContainer, Parcelable {
     private static final String TAG = "CategoryItem";
-    private static final String BLANK_TAG = "PIWIGO_CLIENT_INTERNAL_BLANK";
-    public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
-    public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, BLANK_TAG, null, true, null, 0, 0, 0, null);
-    public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 100, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
-        @Override
-        public int getType() {
-            return GalleryItem.ALBUM_HEADING_TYPE;
-        }
-    };
-    private static final long serialVersionUID = 6967613449661498517L;
+
     private List<CategoryItem> childAlbums;
     private int photoCount;
     private long totalPhotoCount;
@@ -43,6 +35,8 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     private long[] groups;
     private long permissionLoadedAt;
     private String thumbnailUrl;
+    private boolean isUserCommentsAllowed;
+    private boolean isAdminCopy;
 
     public CategoryItem(CategoryItemStub stub) {
         super(stub.getId(), stub.getName(), null, null, null);
@@ -73,6 +67,11 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         groups = in.createLongArray();
         permissionLoadedAt = in.readLong();
         thumbnailUrl = in.readString();
+        isAdminCopy = ParcelUtils.readBool(in);
+    }
+
+    public void markAsAdminCopy() {
+        isAdminCopy = true;
     }
 
     public static ArrayList<CategoryItem> newListFromStubs(ArrayList<CategoryItemStub> albumNames) {
@@ -84,7 +83,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     }
 
     public static boolean isRoot(long albumId) {
-        return ROOT_ALBUM.getId() == albumId;
+        return StaticCategoryItem.ROOT_ALBUM.getId() == albumId;
     }
 
     @Override
@@ -100,6 +99,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         out.writeLongArray(groups);
         out.writeLong(permissionLoadedAt);
         out.writeString(thumbnailUrl);
+        ParcelUtils.writeBool(out, isAdminCopy);
     }
 
     @Override
@@ -152,11 +152,15 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         isPrivate = aPrivate;
     }
 
+    public boolean isAdminCopy() {
+        return isAdminCopy;
+    }
+
     @Override
     public boolean equals(Object other) {
-        if(other instanceof GalleryItem) {
-            GalleryItem otherItem = (GalleryItem) other;
-            return otherItem.getId() == this.getId() || BLANK_TAG.equals(getName()) && BLANK_TAG.equals(otherItem.getName());
+        if(other instanceof CategoryItem) {
+            CategoryItem otherItem = (CategoryItem) other;
+            return (otherItem.getId() == this.getId() && otherItem.isAdminCopy() == this.isAdminCopy) || (StaticCategoryItem.BLANK_TAG.equals(getName()) && StaticCategoryItem.BLANK_TAG.equals(otherItem.getName()));
         }
         return false;
     }
@@ -166,6 +170,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         return super.hashCode();
     }
 
+    @NonNull
     @Override
     public String toString() {
         return getName();
@@ -176,7 +181,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     }
 
     public boolean isRoot() {
-        return this.getId() == ROOT_ALBUM.getId() && getParentId() == null;
+        return this.getId() == StaticCategoryItem.ROOT_ALBUM.getId() && getParentId() == null;
     }
 
     public CategoryItemStub toStub() {
@@ -230,9 +235,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
 
     private CategoryItem locateChildAlbum(List<Long> parentageChain, int idx) {
         if (parentageChain.size() <= idx) {
-            if (BuildConfig.DEBUG) {
-                Log.e("catItem", "Idx out of bounds for parentage chain : " + Arrays.toString(parentageChain.toArray()) + " idx : " + idx);
-            }
+            Logging.log(Log.ERROR, "catItem", "Idx out of bounds for parentage chain : " + Arrays.toString(parentageChain.toArray()) + " idx : " + idx);
             return null;
         }
         if (getId() != parentageChain.get(idx)) {
@@ -250,7 +253,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
             }
         }
         String parents = CollectionUtils.toCsvList(parentageChain);
-        Crashlytics.log(Log.WARN, TAG, String.format("Failed to locate child album %1$d with parentage %2$s but it could not be found in any of %3$d children (%5$s) within album %4$d", parentageChain.get(idx + 1), parents, getChildAlbumCount(), parentageChain.get(idx), CollectionUtils.toCsvList(PiwigoUtils.toSetOfIds(getChildAlbums()))));
+        Logging.log(Log.WARN, TAG, "Failed to locate child album %1$d with parentage %2$s but it could not be found in any of %3$d children (%5$s) within album %4$d", parentageChain.get(idx + 1), parents, getChildAlbumCount(), parentageChain.get(idx), CollectionUtils.toCsvList(PiwigoUtils.toSetOfIds(getChildAlbums())));
         return null;
     }
 
@@ -271,7 +274,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         }
     }
 
-    public void removeChildAlbum(CategoryItem item) {
+    public void removeChildAlbum(@NonNull CategoryItem item) {
         childAlbums.remove(item);
         updateTotalPhotoAndSubAlbumCount();
     }
@@ -301,7 +304,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
             try {
                 return new CategoryItem(in);
             } catch(RuntimeException e) {
-                Crashlytics.log(Log.ERROR, TAG, "Unable to create category item from parcel: " + in.toString());
+                Logging.log(Log.ERROR, TAG, "Unable to create category item from parcel: " + in.toString());
                 throw e;
             }
         }
@@ -324,31 +327,6 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
             return 0;
         }
         return childAlbums.size();
-    }
-
-    @Override
-    public CategoryItem clone() {
-        Parcel p = Parcel.obtain();
-        byte[] dataBytes;
-        try {
-            writeToParcel(p, 0);
-            dataBytes = p.marshall();
-        } finally {
-            p.recycle();
-        }
-
-        // get a fresh parcel.
-        p = Parcel.obtain();
-
-        CategoryItem clone = null;
-        try {
-            p.unmarshall(dataBytes, 0, dataBytes.length);
-            p.setDataPosition(0);
-            clone = new CategoryItem(p);
-        } finally {
-            p.recycle();
-        }
-        return clone;
     }
 
     public CategoryItem findChild(long id) {
@@ -392,7 +370,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     public List<CategoryItem> getFullPath(CategoryItem child) {
         List<Long> parentageIds = new ArrayList<>();
         if (child == null) {
-            Crashlytics.log(Log.ERROR, TAG, "GetFullPath called for null CategoryItem");
+            Logging.log(Log.ERROR, TAG, "GetFullPath called for null CategoryItem");
             return new ArrayList<>(0);
         }
         if(child.getParentageChain() != null) {
@@ -410,7 +388,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
                 if (root != null) {
                     parentage.add(root);
                 } else {
-                    Crashlytics.log(Log.ERROR, "CatItem", "Unable to find parent album with id : " + id);
+                    Logging.log(Log.ERROR, "CatItem", "Unable to find parent album with id : " + id);
                 }
             }
         }
@@ -429,38 +407,28 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         if(newAlbums == null) {
             return;
         }
-        for(int i = 0; i < getChildAlbumCount(); i++) {
-            CategoryItem existingMatchingItem = childAlbums.get(i);
-            int matchItemIdx = newAlbums.indexOf(existingMatchingItem);
-            if(matchItemIdx < 0) {
-                continue;
-            }
-            CategoryItem newMatchingItem = newAlbums.get(matchItemIdx);
-            newAlbums.remove(matchItemIdx);
-            if(newMatchingItem != null) {
-                if(!preferExisting) {
-                    // swap to the new copy. Note still need to merge old child albums across.
-//                    childAlbums.remove(i);
-                    childAlbums.set(i, newMatchingItem);
-                    mergeChildrenWith(i, newMatchingItem, existingMatchingItem, !preferExisting);
+        Map<Long,Integer> idMap = new HashMap<>(childAlbums.size());
+        for (int i = 0; i < childAlbums.size(); i++) {
+            CategoryItem existingChildAlbum = childAlbums.get(i);
+            idMap.put(existingChildAlbum.getId(), i);
+        }
+        for(CategoryItem newAlbum : newAlbums) {
+            Integer idxExisting = idMap.get(newAlbum.getId());
+            if (idxExisting == null) {
+                // add to the end (won't affect the index we've just built).
+                childAlbums.add(newAlbum);
+            } else {
+                CategoryItem existingMatchingItem = childAlbums.get(idxExisting);
+                if (preferExisting) {
+                    // merge any missing children from the new one in
+                    existingMatchingItem.mergeChildrenWith(newAlbum.getChildAlbums(), false);
                 } else {
-                    mergeChildrenWith(i, existingMatchingItem, newMatchingItem, preferExisting);
+                    // replace the existing copy
+                    childAlbums.set(idxExisting, newAlbum);
+                    // now merge any missing children from the old one into the replacement
+                    newAlbum.mergeChildrenWith(existingMatchingItem.getChildAlbums(), false);
                 }
             }
-        }
-        if(childAlbums == null) {
-            childAlbums = new ArrayList<>();
-        }
-        childAlbums.addAll(newAlbums);
-    }
-
-    private void mergeChildrenWith(int thisItemIdx, CategoryItem thisItem, CategoryItem otherItem, boolean preferExisting) {
-        if(preferExisting) {
-            thisItem.mergeChildrenWith(otherItem.getChildAlbums(), true);
-        } else {
-            otherItem.mergeChildrenWith(thisItem.getChildAlbums(), false);
-            childAlbums.remove(thisItemIdx);
-            childAlbums.add(thisItemIdx, otherItem);
         }
     }
 
@@ -486,7 +454,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     @Override
     public int getPagesOfPhotos(int pageSize) {
         int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 0 : -1));
-        return pages < 0 ? 0 : pages;
+        return Math.max(pages, 0);
     }
 
     public @Nullable
@@ -503,6 +471,32 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     }
 
     public boolean isParentRoot() {
-        return getParentId() != null && getParentId() == CategoryItem.ROOT_ALBUM.getId();
+        return getParentId() != null && getParentId() == StaticCategoryItem.ROOT_ALBUM.getId();
+    }
+
+    public boolean isUserCommentsAllowed() {
+        return isUserCommentsAllowed;
+    }
+
+    public void setUserCommentsAllowed(boolean isUserCommentsAllowed) {
+        this.isUserCommentsAllowed = isUserCommentsAllowed;
+    }
+
+    public void setPhotoCount(int thisAlbumPhotoCount) {
+        if(thisAlbumPhotoCount != photoCount) {
+            totalPhotoCount += (thisAlbumPhotoCount - photoCount);
+        }
+        photoCount = thisAlbumPhotoCount;
+    }
+
+    public boolean hasNonAdminCopyChildren() {
+        if(childAlbums != null) {
+            for (CategoryItem child : childAlbums) {
+                if(!child.isAdminCopy) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

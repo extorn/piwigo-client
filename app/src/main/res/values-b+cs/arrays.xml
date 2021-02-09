@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+
+    
+
+    
+
+    <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>0 b / s (—X)</item>
+        <item>velmi nízká (0,025 b / pixelů * rámeček)</item>
+        <item>nižší (0,05 b / pixely * rámeček)</item>
+        <item>nízký (0,1 b / pixelů * rámeček)</item>
+        <item>střední (0,15 b / pixely * rámeček)</item>
+        <item>vysoká (0,2 b / pixely * rámeček)</item>
+        <item>velmi vysoká (0,25 b / pixely * rámeček)</item>
+        <item>ultra vysoký (0,3 b / pixel * rámeček)</item>
+    </string-array>
+
+    
+    
+
+    
+
+    <string-array name="preference_gallery_child_album_sort_order_entry_text">
+        <item>Výchozí</item>
+        <item>Název alba A-Z</item>
+        <item>Naposledy aktualizováno</item>
+    </string-array>
+    
+    <string-array name="preference_caching_level_items">
+        <item>Ukládání do mezipaměti zakázáno</item>
+        <item>Mezipaměť do paměti</item>
+        <item>Mezipaměť na disk</item>
+    </string-array>
+
+
+    <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
+        <item>Výchozí</item>
+        <item>přizpůsobit velikosti obrazovky</item>
+        <item>zvětšit a oříznout, aby se vešly na obrazovku</item>
+        <item>uprostřed na obrazovce</item>
+    </string-array>
+
+    
+
+    <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
+        <item>nejvhodnější</item>
+        <item>náměstí</item>
+        <item>palec</item>
+        <item>2 malé</item>
+        <item>xsmall</item>
+        <item>malý</item>
+        <item>střední</item>
+        <item>velký</item>
+        <item>xlarge</item>
+        <item>xxlarge</item>
+        
+    </string-array>
+
+    
+
+    <string-array name="preference_gallery_item_thumbnail_size_entry_text">
+        <item>náměstí</item>
+        <item>palec</item>
+        <item>2 malé</item>
+        <item>xsmall</item>
+        <item>malý</item>
+    </string-array>
+
+    
+    <string-array name="preference_gallery_child_resource_sort_order_entry_text">
+        <item>Výchozí nastavení serveru</item>
+        <item>ID zdroje</item>
+        <item>Název souboru zdroje</item>
+        <item>Název zdroje</item>
+        <item>Počet přístupů</item>
+        <item>Průměrné hodnocení</item>
+        <item>Datum vzniku</item>
+        <item>Datum k dispozici</item>
+        <item>náhodný</item>
+    </string-array>
+    
+    <string-array name="server_ssl_certificate_hostname_verification_entries">
+        <item>Přísný</item>
+        <item>Kompatibilní s prohlížečem</item>
+        <item>Vypnuto</item>
+    </string-array>
+    
+    <string-array name="user_types_array">
+        <item>webmaster</item>
+        <item>admin</item>
+        <item>normální</item>
+        <item>obecný</item>
+        <item>host</item>
+    </string-array>
+
+    
+
+    <string-array name="privacy_levels_groups_array">
+        <item>Správci</item>
+        <item>Správci, rodina</item>
+        <item>Správci, rodina, přátelé</item>
+        <item>Správci, rodina, přátelé, kontakty</item>
+        <item>Všichni</item>
+    </string-array>
+
+    
+
+    
+
+    <string-array name="preference_gallery_unique_id_entries">
+        <item>md5sum</item>
+        <item>název</item>
+    </string-array>
+
+    
+
+    <string-array name="rotation_array">
+        <item>Vlevo o 90 stupňů</item>
+        <item>Žádný</item>
+        <item>Správně o 90 stupňů</item>
+        <item>Vpravo o 180 stupňů</item>
+    </string-array>
+
+    
+
+    <string-array name="top_tips" translatable="true">
+        <item>Pokud máte s aplikací nějaké problémy, informujte mě prosím e-mailem. Pokud chcete, zveřejněte negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím pošlete také e-mail. V horní části nabídky vysouvací zásuvky je odkaz na zaslání e-mailu. Na e-mailovou adresu mohu poskytnout mnohem komplexnější podporu. Mnohokrát děkuji.</item>
+        <item>Můžete vidět pouze soubory, které chcete vybrat k nahrání a které jsou přijatelné pro nahrání na váš server. Pokud chcete nahrávat videa, změňte soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než falešné</item>
+        <item>Pokud nahrávání právě neproběhne úspěšně, zkuste pomocí předvoleb na stránce nahrávání nastavení aplikace vymazat zbytková neúspěšná nahrávání ze serveru</item>
+        <item>Při pokusu o aktualizaci značek vždy dojde k chybě - „Nemáte oprávnění mazat značky“ - Zajistěte, aby uživatelé mohli značky přidávat i mazat (nastavení pluginu serveru)</item>
+        <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání připravené k přechodu na aktuální server</item>
+        <item>Dlouhým kliknutím na obrázek (miniaturu nebo položku prezentace), který se nepodařilo načíst, jej znovu načtete</item>
+        <item>Dlouhým kliknutím na album toto album a veškerý obsah odstraníte</item>
+        <item>Dlouhým kliknutím na obrázek alba povolíte hromadný výběr obrázků pro akci</item>
+        <item>Při prohlížení libovolného obrázku v prezentaci dlouhým kliknutím otočíte / změníte zobrazenou velikost obrázku / povolíte další přiblížení</item>
+        <item>Při prohlížení v prezentaci můžete obraz přiblížit tak, že na obrazovce přitáhnete dva prsty k sobě nebo od sebe</item>
+        <item>Pokud jste přihlášeni jako správce, před podáním zařízení příteli k prohlížení vašich fotografií aktivujte funkci zámku aplikace, abyste zabránili neúmyslným změnám v galerii</item>
+        <item>Jakmile je zobrazeno celé video, je-li povoleno ukládání do mezipaměti místního souboru, je možné toto video uložit do složky ke stažení</item>
+        <item>Dlouhým kliknutím na tlačítko mazání na \'souboru k nahrání \' vymažete všechny soubory, které se mají nahrát (pokud právě neprobíhá úloha)</item>
+        <item>Pokud se obrázky načítají pomalu, zkontrolujte, zda váš server po nahrání automaticky generuje velikost používanou touto aplikací</item>
+    </string-array>
+    <string-array name="planned_releases" translatable="true">
+        <item>Budoucnost</item>
+        <item>Žádné další aktualizace nejsou plánovány.</item>
+    </string-array>
+    <string-array name="release_history" translatable="true">
+        
+        <item>1.4.0.114</item>
+        <item>"Oprava chyby:
+                 načtení stránky osiřelé položky způsobující pád
+                Změna:
+                 - název přidělený sledovačům postupu úkolů, aby umožnil řešení chyb, kde je podřízený úkol sledovače průběhu neočekávaně neúplný"</item>
+        <item>1.4.0.113</item>
+        <item>"Oprava chyby:
+                 - Konečně! vyřešeno, proč aplikace pro některé uživatele havarovala v prezentaci
+                 - vylepšil nějaké rozvržení dialogu
+                Změna:
+                 - Dialog zobrazující všechny poznámky k verzi od poslední aktualizace po aktualizaci"</item>
+        <item>1.4.0.112</item>
+        <item>"Změna:
+                 - Uklidněte stránky předvoleb aplikace"</item>
+        <item>1.4.0.111</item>
+        <item>"Oprava chyby:
+                 - Multimediální identifikátory URI nefungují pro uživatele zásuvných modulů bez ochrany osobních údajů.
+                 - přehrávání videa se nespustí, pokud je nastavena předvolba nezahrnovat videa do prezentací
+                Změna:
+                 - v předvolbách připojení je k dispozici nové nastavení pro opravu URI pluginu ochrany osobních údajů"</item>
+        <item>1.4.0.110</item>
+        <item>"Oprava chyby:
+                 - Crash více podřízených alb se zobrazí vedle sebe s lichým počtem podřízených alb (režim na šířku nebo zařízení s velkou obrazovkou)
+                 - Upload Job - Upload to Piwigo server list not selectable (impact for users with more than one server connection profile configured in the app)
+                 - alba serveru se nenačtou při prvním vstupu do úlohy automatického nahrávání, vyberte předvolbu kategorie
+                 - náhledy alb serveru se nenačítají pro podřízené složky při nahrávání do výběru složky
+                 - Nelze vybrat nahrávání do alba serveru pro úlohu automatického nahrávání pomocí jiného než výchozího serveru"</item>
+        <item>1.4.0.109</item>
+        <item>"Změna:
+                 - Přidané prohlášení pro vaši srozumitelnost v horní části šablony e-mailu vytvořené touto aplikací pro žádosti o podporu
+                 - Paid Only: Přidaná podpora pro upozornění na aktualizace dostupné pro server nebo pluginy"</item>
+        <item>1.4.0.108</item>
+        <item>"Oprava chyby:
+                 - Uspořádejte spoustu problémů způsobujících zhroucení aplikace po posledním měsíci změn
+                 - Výchozí nastavení pro kompresi videa opraveno
+                 - Znovu přidaná podpora pro minimalizaci alb
+                 - opravit videa nebyla detekována
+               Změny:
+                 - Odebraná možnost určit, které soubory lze přehrávat video. To se děje na základě mimetypu odvozeného od přípony souboru"</item>
+        <item>1.4.0.107</item>
+        <item>"Oprava chyby:
+                 - Potenciál pro vynechání jednoho zdroje z prezentace zdroje alba (náhled na celou obrazovku)
+                 - havárie na náhledu osiřelého souboru
+                Změna:
+                 - náhled osamocených souborů a prohlížení v rámci prezentace, pokud si přejete, je nyní podporován
+                 - možnost nabídky pro sirotky je k dispozici pouze správcům, když aplikace není jen pro čtení"</item>
+        <item>1.4.0.106</item>
+        <item>"Oprava chyby:
+                 - Doufejme, že poslední chyba, kde se miniatury alb nezdály správně načítat
+                Změny:
+                 - Při mazání alba lze podřízené prostředky buď odpojit, nebo odstranit ze serveru
+                 - Paid Only: There are a new orphaned resource management page"</item>
+        <item>1.4.0.105</item>
+        <item>"Oprava chyby:
+                 - Přepište album, značku a oblíbený třídicí kód, protože byl plný chyb
+                     : Pokud nyní něco v této oblasti nefunguje tak, jak očekáváte, dejte mi prosím vědět.
+                     : To by mělo vyřešit pády, ke kterým došlo na stránce prezentace
+                 - Nedávno pozměněná ikona žluté hvězdy se neobjevila v nějakém pořadí
+                 - Opravte načítání miniatur
+                 - Opravte chybu, která brání manuálnímu opětovnému načtení neúspěšného načtení miniatur kliknutím - pouze jednou, takže to není příliš iritující, pokud chcete změnit album
+                Změny:
+             - Nová preference umožňující nezávislé obrácení pořadí řazení podřízených alb a zdrojů"</item>
+        <item>1.4.0.104</item>
+        <item>"Oprava chyby:
+                 - Problémy způsobené při nahrávání po přepracování výběru souborů pro úložiště klíčů a certifikáty
+                     : Děkujeme za trpělivost, správa oprávnění souborů Android je složitá
+                 - mazání alb v kořenovém adresáři je nyní v případě potřeby vždy k dispozici při načtení aplikace
+                 - položky lze nyní vybrat kliknutím kdekoli nejen do zaškrtávacího políčka"</item>
+        <item>1.4.0.103</item>
+        <item>"Oprava chyby:
+                 - Úpravy úložiště klíčů a důvěryhodných certifikátů způsobily selhání.
+                     : Pokud mi taková klíčová funkce nefunguje, pošlete mi e-mail z aplikace.
+                 - Někdy nelze vybrat poslední soubory pomocí výběru systémových souborů
+                 - Seznam skupin vertikálně zarovnaný ke středu obrazovky
+                Změny:
+                 - Lepší uživatelský komfort pro úložiště klíčů a import certifikátů
+                 - Nová předvolba pro ovládání doby zobrazení detailu obrázku v zobrazení na celou obrazovku nebo v prezentaci"</item>
+        <item>1.4.0.102</item>
+        <item>"Oprava chyby:
+                 - Nedávné změny znemožnily mít bezplatnou i placenou verzi nainstalovanou současně na jednom zařízení
+                 - miniatury alb, které se uživateli správce nezobrazují vždy
+                 - testováno proti Piwigo 11. Otevření obrázku nefungovalo"</item>
+    </string-array>
+</resources>

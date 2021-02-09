@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_delete">Löschen</string>
+    <string name="button_cancel">Abbrechen</string>
+    <string name="undefined_error_msg">Undefinierter Fehler</string>
+    <string name="resource_unavailable_error_msg_pattern">Auf die angeforderte Ressource konnte nicht zugegriffen werden.\nHTTP Statuscode (%1$d)</string>
+    <string name="server_error_msg_pattern">Etwas ist im Server oder zwischen dem Server und Ihrem Gerät schief gelaufen.\nHTTP Status Code (%1$d)</string>
+    <string name="redirect_error_msg_pattern">Fehler bei der Umleitung von Anfragen : \nHTTP Status Code (%1$d)</string>
+    <string name="http_error_msg_pattern">HTTP-Fehlermeldung (%1$s)</string>
+    <string name="unexpected_response_error_msg_pattern">Unerwartete Antwort : \nHTTP Status Code (%1$d)</string>
+    <string name="certificate_chain_not_verifiable_error">Die Zertifikatskette konnte nicht mit den Zertifikaten auf diesem Gerät verifiziert werden.</string>
+    <string name="certificate_chain_not_verifiable_error_detail">Die Zertifikatskette konnte nicht mit den Zertifikaten auf diesem Gerät verifiziert werden. Um dies zu beheben, erlauben Sie dieser App, eine Liste der vertrauenswürdigen Zertifikate zu führen (innerhalb dieser App-Verbindungseinstellungen).</string>
+    <string name="connection_error_msg_pattern">Verbindung zum Server kann nicht hergestellt werden</string>
+
+</resources>

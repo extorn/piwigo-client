@@ -7,29 +7,27 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 
 public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "TagGetResRspHdlr";
-    private final Set<String> multimediaExtensionList;
     private final Tag tag;
     private final String sortOrder;
     private final int pageSize;
     private final int page;
 
-    public TagGetImagesResponseHandler(Tag tag, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
+    public TagGetImagesResponseHandler(Tag tag, String sortOrder, int page, int pageSize) {
         super("pwg.tags.getImages", TAG);
         this.tag = tag;
         this.sortOrder = sortOrder;
         this.page = page;
         this.pageSize = pageSize;
-        this.multimediaExtensionList = multimediaExtensionList;
     }
 
     @Override
@@ -42,7 +40,9 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("tag_id", String.valueOf(tag.getId()));
-        params.put("order", sortOrder);
+        if(!"server".equals(sortOrder)) {
+            params.put("order", sortOrder);
+        }
         params.put("page", String.valueOf(page));
         params.put("per_page", String.valueOf(pageSize));
         return params;
@@ -62,7 +62,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
 
         JsonArray images = result.get("images").getAsJsonArray();
 
-        ImagesGetResponseHandler.ResourceParser resourceParser = new ImagesGetResponseHandler.ResourceParser(multimediaExtensionList, getPiwigoServerUrl());
+        AlbumGetImagesResponseHandler.ResourceParser resourceParser = buildResourceParser();
 
         if(images != null) {
             for (int i = 0; i < images.size(); i++) {
@@ -73,8 +73,14 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
             }
         }
 
-        BaseImagesGetResponseHandler.PiwigoGetResourcesResponse r = new BaseImagesGetResponseHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalResourceCount, resources, isCached);
+        AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse r = new AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalResourceCount, resources, isCached);
         storeResponse(r);
+    }
+
+    private AlbumGetImagesResponseHandler.ResourceParser buildResourceParser() {
+        boolean defaultVal = Boolean.TRUE.equals(PiwigoSessionDetails.getInstance(getConnectionPrefs()).isUsingPiwigoPrivacyPlugin());
+        boolean isApplyPrivacyPluginUriFix = getConnectionPrefs().isFixPiwigoPrivacyPluginMediaUris(getSharedPrefs(), getContext(), defaultVal);
+        return new AlbumGetImagesResponseHandler.ResourceParser(getPiwigoServerUrl(), isApplyPrivacyPluginUriFix);
     }
 
     public boolean isUseHttpGet() {

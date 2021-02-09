@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,9 +24,9 @@ import java.util.ArrayList;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
@@ -38,15 +36,17 @@ import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHa
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.DialogFragmentUIHelper;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
+import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
-public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
+public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbumListPreferenceDialogFragmentCompat<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
     // state persistent values
     private long activeServiceCall = -1;
     private CustomPiwigoResponseListener serviceCallHandler;
     private ListView itemListView;
     private String STATE_ACTIVE_SERVICE_CALL = "ServerAlbumListPreference.ActiveCallId";
-    private CustomUIHelper uiHelper;
+    private DialogFragmentUIHelper uiHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,10 +69,11 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
     }
 
     private View buildDialogView() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_list, null, false);
+        View view = getLayoutInflater().inflate(R.layout.layout_fullsize_list, null, false);
+
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -97,12 +98,12 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        serviceCallHandler = new CustomPiwigoResponseListener();
+        setupUiHelper(view);
         triggerAlbumsListLoad();
     }
 
     @Override
-    public Preference findPreference(CharSequence key) {
+    public Preference findPreference(@NonNull CharSequence key) {
         return getPreference();
     }
 
@@ -128,7 +129,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
     }
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
+    public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
         if (activeServiceCall >= 0) {
             PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(activeServiceCall);
@@ -144,34 +145,35 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         return fragment;
     }
 
-    private long retrieveAppropriateAlbumList(ConnectionPreferences.ProfilePreferences connectionPrefs, PiwigoSessionDetails sessionDetails) {
+    long retrieveAppropriateAlbumList(ConnectionPreferences.ProfilePreferences connectionPrefs, PiwigoSessionDetails sessionDetails) {
         if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
             return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler(), connectionPrefs);
         } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
             final boolean recursive = true;
-            return addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
+            return addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
         } else {
             final boolean recursive = true;
-            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
+            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
         }
     }
 
-    private void triggerAlbumsListLoad() {
-
-        ServerAlbumListPreference pref = getPreference();
-
-        uiHelper = new CustomUIHelper(this, getSharedPreferences(), getContext());
+    private void setupUiHelper(@NonNull View view) {
+        // need to recreate this because we're binding it to this view.
+        uiHelper = new DialogFragmentUIHelper(this, view, getSharedPreferences(), getContext());
+        serviceCallHandler = new CustomPiwigoResponseListener();
         uiHelper.setPiwigoResponseListener(serviceCallHandler);
         serviceCallHandler.withUiHelper(this, uiHelper);
+    }
 
+    private void triggerAlbumsListLoad() {
         activeServiceCall = invokeRetrieveSubCategoryNamesCall(getConnectionProfile());
     }
 
     private SharedPreferences getSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
+        return PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
     }
 
-    private ConnectionPreferences.ProfilePreferences getConnectionProfile() {
+    ConnectionPreferences.ProfilePreferences getConnectionProfile() {
         SharedPreferences prefs = getSharedPreferences();
         ServerAlbumListPreference pref = getPreference();
         String connectionProfile = prefs.getString(pref.getConnectionProfileNamePreferenceKey(), null);
@@ -189,26 +191,27 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<F extends ServerAlbumListPreferenceDialogFragmentCompat<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
+
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionProfile();
+            ConnectionPreferences.ProfilePreferences connectionPrefs = getParent().getConnectionProfile();
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
             if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
-                retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
+                getParent().retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
             } else if (response instanceof CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
-                addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+                getParent().addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
             } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
                 PiwigoSessionDetails.getInstance(connectionPrefs);
                 // need to try again as this call will have been pointless.
                 if (sessionDetails != null && (sessionDetails.isCommunityApiAvailable() || sessionDetails.isAdminUser())) {
-                    retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
+                    getParent().retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
                 } else {
-                    addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+                    getParent().addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
                 }
             } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                addAlbumsToUI(true, ((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
+                getParent().addAlbumsToUI(true, ((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
             }
             super.onAfterHandlePiwigoResponse(response);
         }
@@ -224,12 +227,10 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         return getSharedPreferences().getBoolean(getContext().getString(R.string.preference_app_read_only_mode_key), false);
     }
 
-    private void addAlbumsToUI(boolean isAdminList, ArrayList<CategoryItemStub> albumNames) {
+    void addAlbumsToUI(boolean isAdminList, ArrayList<CategoryItemStub> albumNames) {
 
-        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
-        viewPrefs.selectable(false, false);
-        viewPrefs.withShowHierachy();
-        AvailableAlbumsListAdapter adapter = new AvailableAlbumsListAdapter(viewPrefs, CategoryItem.ROOT_ALBUM, getContext());
+        AlbumSelectionListAdapterPreferences viewPrefs = new AlbumSelectionListAdapterPreferences(true, false,false, false);
+        AvailableAlbumsListAdapter adapter = new AvailableAlbumsListAdapter(viewPrefs, StaticCategoryItem.ROOT_ALBUM, requireContext());
         adapter.addAll(albumNames);
         if (!viewPrefs.isAllowRootAlbumSelection()) {
             CategoryItemStub catItem = adapter.getItemById(CategoryItemStub.ROOT_GALLERY.getId());
@@ -243,12 +244,9 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         // clear checked items
         itemListView.clearChoices();
         itemListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                itemListView.setItemChecked(itemListView.getSelectedItemPosition(), false);
-                itemListView.setItemChecked(position, true);
-            }
+        itemListView.setOnItemClickListener((parent, view, position, id) -> {
+            itemListView.setItemChecked(itemListView.getSelectedItemPosition(), false);
+            itemListView.setItemChecked(position, true);
         });
 
         ServerAlbumListPreference pref = getPreference();
@@ -269,26 +267,10 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
             String selectedAlbumAsStr = ServerAlbumListPreference.ServerAlbumPreference.toValue(selectedAlbum);
 
             ServerAlbumListPreference pref = getPreference();
-            Long selectedAlbumId = selectedAlbum == null ? null : selectedAlbum.getId();
+            Long selectedAlbumId = selectedAlbum.getId();
             if (pref.callChangeListener(selectedAlbumId)) {
                 pref.persistStringValue(selectedAlbumAsStr);
             }
-        }
-    }
-
-    private class CustomUIHelper extends UIHelper<DialogFragment> {
-        public CustomUIHelper(DialogFragment parent, SharedPreferences prefs, Context context) {
-            super(parent, prefs, context);
-        }
-
-        @Override
-        protected View getParentView() {
-            return getParent().getView();
-        }
-
-        @Override
-        protected boolean canShowDialog() {
-            return true;
         }
     }
 

@@ -6,7 +6,9 @@ import android.view.View;
 
 import java.util.Date;
 
-import static hotchemi.android.rate.MyDialogManager.create;
+import delit.piwigoclient.R;
+
+import static hotchemi.android.rate.MyRatingDialogManager.create;
 import static hotchemi.android.rate.PreferenceHelper.getInstallDate;
 import static hotchemi.android.rate.PreferenceHelper.getIsAgreeShowDialog;
 import static hotchemi.android.rate.PreferenceHelper.getLaunchTimes;
@@ -179,7 +181,7 @@ public final class MyAppRate {
 
     public void showRateDialog(Activity activity) {
         if (!activity.isFinishing()) {
-            create(activity, options).show();
+            create(activity, options, R.string.alert_error_no_app_available_to_rate_app).show();
         }
     }
 

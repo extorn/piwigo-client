@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.album.expandingListSelect;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -27,11 +28,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
@@ -39,6 +42,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandl
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
 
@@ -46,7 +50,7 @@ import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEve
  * UNUSED - Use this once it works!
  * Created by gareth on 26/05/17.
  */
-public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpandableFragment> {
+public class AlbumSelectExpandableFragment<F extends AlbumSelectExpandableFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private static final String STATE_ACTION_ID = "actionId";
@@ -54,6 +58,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
     private static final String STATE_INITIAL_SELECTION = "initialSelection";
     private static final String STATE_SELECT_TOGGLE = "selectToggle";
     private static final String STATE_ROOT_ALBUM = "rootAlbum";
+    private static final String TAG = "ExpAlbFrag";
     private CategoryItem rootAlbum;
     private ArrayList<CategoryItem> availableAlbums;
     private int actionId;
@@ -66,10 +71,10 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
     private Button toggleAllSelectionButton;
     private ExpandableAlbumsListAdapter listAdapter;
     private ExpandableListView expandableListView;
-    private FloatingActionButton reloadListButton;
+    private ExtendedFloatingActionButton reloadListButton;
 
-    public static AlbumSelectExpandableFragment newInstance(ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
-        AlbumSelectExpandableFragment fragment = new AlbumSelectExpandableFragment();
+    public static AlbumSelectExpandableFragment<?,?> newInstance(ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+        AlbumSelectExpandableFragment<?,?> fragment = new AlbumSelectExpandableFragment<>();
         fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
         return fragment;
     }
@@ -101,8 +106,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
             return;
         }
         actionId = in.getInt(STATE_ACTION_ID);
-        viewPrefs = createEmptyPrefs();
-        viewPrefs.loadFromBundle(in);
+        viewPrefs = createPrefs(in);
         in.getInt(STATE_ACTION_ID);
         currentSelection = BundleUtils.getLongHashSet(in, STATE_CURRENT_SELECTION);
         initialSelection = BundleUtils.getLongHashSet(in, STATE_INITIAL_SELECTION);
@@ -114,8 +118,8 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
         selectToggle = in.getBoolean(STATE_SELECT_TOGGLE);
     }
 
-    protected ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences createEmptyPrefs() {
-        return new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences();
+    protected ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences createPrefs(Bundle b) {
+        return new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences(b);
     }
 
     @Override
@@ -155,7 +159,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
         View view = inflater.inflate(getViewId(), container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -171,42 +175,24 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
 
         Button cancelChangesButton = view.findViewById(R.id.list_action_cancel_button);
         cancelChangesButton.setVisibility(View.VISIBLE);
-        cancelChangesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCancelChanges();
-            }
-        });
+        cancelChangesButton.setOnClickListener(v -> onCancelChanges());
 
         toggleAllSelectionButton = view.findViewById(R.id.list_action_toggle_all_button);
         toggleAllSelectionButton.setVisibility(viewPrefs.isMultiSelectionEnabled() ? View.VISIBLE : View.GONE);
-        toggleAllSelectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onToggleAllSelection();
-            }
-        });
+        toggleAllSelectionButton.setOnClickListener(v -> onToggleAllSelection());
         setToggleSelectionButtonText();
 
         saveChangesButton = view.findViewById(R.id.list_action_save_button);
         saveChangesButton.setVisibility(View.VISIBLE);
-        saveChangesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSaveChanges();
-            }
-        });
+        saveChangesButton.setOnClickListener(v -> onSaveChanges());
 
         reloadListButton = view.findViewById(R.id.list_retryAction_actionButton);
-        reloadListButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    reloadListButton.hide();
-                    setupListContentLoadingIfNeeded();
-                }
-                return true;
+        reloadListButton.setOnTouchListener((v, event) -> {
+            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                reloadListButton.hide();
+                setupListContentLoadingIfNeeded();
             }
+            return true;
         });
 
         return view;
@@ -218,6 +204,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
         loadStateFromBundle(savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as server connection changed");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -248,10 +235,10 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
             if (initialSelection != null) {
                 toggleAllSelectionButton.setText(getString(R.string.button_reset));
             } else {
-                toggleAllSelectionButton.setText(getString(R.string.button_none));
+                toggleAllSelectionButton.setText(getString(R.string.button_select_none));
             }
         } else {
-            toggleAllSelectionButton.setText(getString(R.string.button_all));
+            toggleAllSelectionButton.setText(getString(R.string.button_select_all));
         }
     }
 
@@ -335,13 +322,13 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
                 addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler());
             } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
                 final boolean recursive = true;
-                addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
+                addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
             } else {
                 final boolean recursive = true;
-                addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
+                addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
             }
         } else if (getListAdapter() == null) {
-            CategoryItem rootItem = CategoryItem.ROOT_ALBUM.clone();
+            CategoryItem rootItem = StaticCategoryItem.ROOT_ALBUM.toInstance();
             rootItem.setChildAlbums(availableAlbums);
             listAdapter = new ExpandableAlbumsListAdapter(rootItem, getViewPrefs());
             ExpandableListView listView = getListView();
@@ -388,6 +375,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
         EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), selectedAlbumIds, selectedAlbums, albumPaths));
         // now pop this screen off the stack.
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately on select action complete");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
@@ -397,23 +385,25 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
-    private void onAlbumsLoaded(final ArrayList<CategoryItem> albums) {
+    void onAlbumsLoaded(final ArrayList<CategoryItem> albums) {
         getUiHelper().hideProgressIndicator();
         availableAlbums = albums;
         setupListContentLoadingIfNeeded();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<F extends AlbumSelectExpandableFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
+
+
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
-                onAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums());
+                getParent().onAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums());
             } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                onAlbumsLoaded(((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums());
+                getParent().onAlbumsLoaded(((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums());
             }
         }
     }

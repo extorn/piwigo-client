@@ -1,8 +1,9 @@
 package delit.piwigoclient.ui.events;
 
+import delit.libs.ui.events.SingleUseEvent;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
-public class BackgroundUploadStartedEvent {
+public class BackgroundUploadStartedEvent extends SingleUseEvent {
     private UploadJob uploadJob;
     private boolean jobBeingRerun;
 

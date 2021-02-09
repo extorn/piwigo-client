@@ -4,23 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ui.MainActivity">
+    tools:context=".ui.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="delit.piwigoclient.ui.CustomAppBarLayoutBehaviour">
+        app:layout_behavior="delit.piwigoclient.ui.CustomAppBarLayoutBehaviour"
+        style="?appBarLayoutStyle">
 
-        <androidx.appcompat.widget.Toolbar
+        <delit.libs.ui.view.CustomToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways|snap"/>
-        <!--app:layout_scrollFlags="scroll|enterAlways"-->
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            style="?toolbarStyle"/>
 
         <delit.libs.ui.view.ProgressIndicator
-            android:background="@color/primary_dark"
             android:id="@+id/progressIndicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

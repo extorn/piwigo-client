@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+
+    
+
+    
+
+    <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>0 bps (-X)</item>
+        <item>sehr niedrig (0,025 b / Pixel * Frame)</item>
+        <item>niedriger (0,05 b / Pixel * Frame)</item>
+        <item>niedrig (0,1 b / Pixel * Frame)</item>
+        <item>mittel (0,15 b / Pixel * Frame)</item>
+        <item>hoch (0,2 b / Pixel * Frame)</item>
+        <item>sehr hoch (0,25 b / Pixel * Frame)</item>
+        <item>ultrahoch (0,3 b / Pixel * Frame)</item>
+    </string-array>
+
+    
+    
+
+    
+
+    <string-array name="preference_gallery_child_album_sort_order_entry_text">
+        <item>Standard</item>
+        <item>Albumname A-Z</item>
+        <item>Zuletzt aktualisiert</item>
+    </string-array>
+    
+    <string-array name="preference_caching_level_items">
+        <item>Caching deaktiviert</item>
+        <item>Cache to Memory</item>
+        <item>Auf Festplatte zwischenspeichern</item>
+    </string-array>
+
+
+    <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
+        <item>Standard</item>
+        <item>passend zur Bildschirmgröße</item>
+        <item>vergrößern und zuschneiden, um den Bildschirm anzupassen</item>
+        <item>Mitte auf dem Bildschirm</item>
+    </string-array>
+
+    
+
+    <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
+        <item>beste Passform</item>
+        <item>Quadrat</item>
+        <item>Daumen</item>
+        <item>2klein</item>
+        <item>xsmall</item>
+        <item>klein</item>
+        <item>Mittel</item>
+        <item>groß</item>
+        <item>xlarge</item>
+        <item>xxlarge</item>
+        
+    </string-array>
+
+    
+
+    <string-array name="preference_gallery_item_thumbnail_size_entry_text">
+        <item>Quadrat</item>
+        <item>Daumen</item>
+        <item>2klein</item>
+        <item>xsmall</item>
+        <item>klein</item>
+    </string-array>
+
+    
+    <string-array name="preference_gallery_child_resource_sort_order_entry_text">
+        <item>Server Standard</item>
+        <item>Ressourcen-ID</item>
+        <item>Ressourcendateiname</item>
+        <item>Ressourcenname</item>
+        <item>Anzahl der Treffer</item>
+        <item>Durchschnittliche Bewertungspunktzahl</item>
+        <item>Erstellungsdatum</item>
+        <item>Datum verfügbar</item>
+        <item>zufällig</item>
+    </string-array>
+    
+    <string-array name="server_ssl_certificate_hostname_verification_entries">
+        <item>Streng</item>
+        <item>Browserkompatibel</item>
+        <item>aus</item>
+    </string-array>
+    
+    <string-array name="user_types_array">
+        <item>Webmaster</item>
+        <item>Administrator</item>
+        <item>normal</item>
+        <item>generisch</item>
+        <item>Gast</item>
+    </string-array>
+
+    
+
+    <string-array name="privacy_levels_groups_array">
+        <item>Admins</item>
+        <item>Admins, Familie</item>
+        <item>Admins, Familie, Freunde</item>
+        <item>Administratoren, Familie, Freunde, Kontakte</item>
+        <item>Jeder</item>
+    </string-array>
+
+    
+
+    
+
+    <string-array name="preference_gallery_unique_id_entries">
+        <item>md5sum</item>
+        <item>Name</item>
+    </string-array>
+
+    
+
+    <string-array name="rotation_array">
+        <item>Links 90 Grad</item>
+        <item>Keiner</item>
+        <item>Rechts 90 Grad</item>
+        <item>Rechts 180 Grad</item>
+    </string-array>
+
+    
+
+    <string-array name="top_tips" translatable="true">
+        <item>Wenn Sie Probleme mit der App haben, benachrichtigen Sie mich bitte per E-Mail. Wenn Sie möchten, veröffentlichen Sie eine negative Bewertung bei Google Play. Ich versuche nicht, dies zu stoppen, aber bitte senden Sie auch eine E-Mail. Oben im Menü der ausziehbaren Schublade befindet sich ein Link, über den Sie mir eine E-Mail senden können. Ich kann eine E-Mail-Adresse viel umfassender unterstützen. Danke vielmals.</item>
+        <item>Sie können nur Dateien zum Hochladen auswählen, die zum Hochladen auf Ihren Server zulässig sind. Wenn Sie Videos hochladen möchten, müssen Sie die Datei config.inc.php Ihres Servers so ändern, dass sie $ conf [\'upload_form_all_types\'] = true enthält. eher als falsch</item>
+        <item>Wenn ein Upload gerade nicht erfolgreich ist, versuchen Sie, die Einstellungen auf der Upload-Seite für die App-Einstellungen zu verwenden, um alle verbleibenden fehlgeschlagenen Uploads vom Server zu löschen</item>
+        <item>Beim Versuch, Tags zu aktualisieren, tritt immer ein Fehler auf. - "Sie dürfen keine Tags löschen." - Stellen Sie sicher, dass Benutzer Tags hinzufügen und löschen können (Server-Plugin-Einstellung).</item>
+        <item>Teilen Sie Dateien aus einer anderen App mit dieser App, um sie dem Upload-Bildschirm hinzuzufügen und auf Ihren aktuellen Server zu übertragen</item>
+        <item>Klicken Sie lange auf ein Bild (entweder Miniaturbild oder Diashow), das nicht geladen werden konnte, um es erneut abzurufen</item>
+        <item>Klicken Sie lange auf ein Album, um das Album und den gesamten Inhalt zu löschen</item>
+        <item>Klicken Sie lange auf ein Albumbild, um die Massenauswahl von Bildern für eine Aktion zu aktivieren</item>
+        <item>Wenn Sie ein Bild in der Diashow anzeigen, klicken Sie lange, um die angezeigte Bildgröße zu drehen / zu ändern / weiteres Zoomen zu ermöglichen</item>
+        <item>Sie können ein Bild beim Anzeigen in einer Diashow vergrößern, indem Sie zwei Finger zusammen oder auseinander auf dem Bildschirm zeichnen</item>
+        <item>Wenn Sie als Administrator angemeldet sind, aktivieren Sie die Anwendungssperrfunktion, bevor Sie Ihr Gerät einem Freund zum Anzeigen Ihrer Fotos übergeben, um zu verhindern, dass versehentlich Änderungen an Ihrer Galerie vorgenommen werden</item>
+        <item>Wenn Sie ein ganzes Video angesehen haben und das lokale Datei-Caching aktiviert ist, können Sie dieses Video in Ihrem Download-Ordner speichern</item>
+        <item>Klicken Sie lange auf die Schaltfläche "Löschen" in einer "Datei zum Hochladen", um alle hochzuladenden Dateien zu löschen (wenn der Auftrag nicht ausgeführt wird).</item>
+        <item>Wenn Bilder nur langsam geladen werden, überprüfen Sie, ob Ihr Server beim Hochladen automatisch die von dieser App verwendete Größe generiert</item>
+    </string-array>
+    <string-array name="planned_releases" translatable="true">
+        <item>Die Zukunft</item>
+        <item>Weitere Updates sind nicht geplant.</item>
+    </string-array>
+    <string-array name="release_history" translatable="true">
+        
+        <item>1.4.0.114</item>
+        <item>"Bug-Fix:
+                 - Laden der Seite mit verwaisten Elementen, die einen Absturz verursacht
+                Veränderung:
+                 - Name für Task-Fortschritts-Tracker, um die Fehlerbehebung zu ermöglichen, wenn die untergeordnete Aufgabe eines Fortschritts-Trackers unerwartet unvollständig ist"</item>
+        <item>1.4.0.113</item>
+        <item>"Bug-Fix:
+                 - Schließlich! hat herausgefunden, warum die App in der Diashow für einige Benutzer abstürzte
+                 - Einige Dialoglayouts wurden optimiert
+                Veränderung:
+                 - Dialogfeld mit allen Versionshinweisen seit Ihrer letzten Aktualisierung nach einem Update"</item>
+        <item>1.4.0.112</item>
+        <item>"Veränderung:
+                 - Räumen Sie die Seiten mit den App-Einstellungen auf"</item>
+        <item>1.4.0.111</item>
+        <item>"Bug-Fix:
+                 - Multimedia-URIs funktionieren nicht für Benutzer von Nicht-Datenschutz-Plugins.
+                 - Die Videowiedergabe startet nicht, wenn die Einstellung so eingestellt ist, dass keine Videos in Diashows aufgenommen werden
+                Veränderung:
+                 - Es gibt eine neue Einstellung in den Verbindungseinstellungen für die Reparatur des Datenschutz-Plugins uri"</item>
+        <item>1.4.0.110</item>
+        <item>"Bug-Fix:
+                 - Mehrere untergeordnete Alben stürzen nebeneinander ab, wobei eine ungerade Anzahl von untergeordneten Alben vorhanden ist (Querformat oder Großbildgeräte).
+                 - Upload-Auftrag - Upload auf Piwigo-Serverliste nicht auswählbar (Auswirkung für Benutzer mit mehr als einem in der App konfigurierten Serververbindungsprofil)
+                 - Serveralben werden beim ersten Eintrag für den automatischen Upload-Auftrag nicht geladen. Wählen Sie eine Kategorieeinstellung aus
+                 - Miniaturansichten des Serveralbums werden beim Hochladen in die Ordnerauswahl nicht für untergeordnete Ordner geladen
+                 - Upload auf Serveralbum für automatischen Upload-Auftrag mit nicht standardmäßigem Server kann nicht ausgewählt werden"</item>
+        <item>1.4.0.109</item>
+        <item>"Veränderung:
+                 - Erklärung zu Ihrer Klarheit oben in der von dieser App für Supportanfragen erstellten E-Mail-Vorlage hinzugefügt
+                 - Nur bezahlt: Unterstützung für Benachrichtigung über Updates für den Server oder die Plugins hinzugefügt"</item>
+        <item>1.4.0.108</item>
+        <item>"Bug-Fix:
+                 - Beheben Sie viele Probleme, die nach dem letzten Monat der Änderungen zu Abstürzen in der gesamten App führen
+                 - Standardeinstellung für Videokomprimierung korrigiert
+                 - Unterstützung für das Minimieren von Alben wurde hinzugefügt
+                 - Korrigieren Sie nicht erkannte Videos
+               Änderungen:
+                 - Option entfernt, um anzugeben, welche Dateien per Video abgespielt werden können. Dies erfolgt basierend auf dem von der Dateierweiterung abgeleiteten Mimetyp"</item>
+        <item>1.4.0.107</item>
+        <item>"Bug-Fix:
+                 - Möglicherweise wird eine Ressource in der Diashow der Albumressource übersehen (Vollbildvorschau).
+                 - Absturz bei Vorschau der verwaisten Datei
+                Veränderung:
+                 - Die Vorschau verwaister Dateien und die Ansicht innerhalb einer Diashow, falls gewünscht, wird jetzt unterstützt
+                 - Die Menüoption \"Waisen\" steht nur Administratoren zur Verfügung, wenn die App nicht schreibgeschützt ist"</item>
+        <item>1.4.0.106</item>
+        <item>"Bug-Fix:
+                 - Hoffentlich wurde der letzte Fehler, bei dem die Miniaturansichten des Albums nicht richtig geladen wurden
+                Änderungen:
+                 - Beim Löschen eines Albums können untergeordnete Ressourcen entweder nicht verbunden oder vom Server gelöscht werden
+                 - Nur bezahlt: Es gibt eine neue verwaiste Ressourcenverwaltungsseite"</item>
+        <item>1.4.0.105</item>
+        <item>"Bug-Fix:
+                 - Schreiben Sie das Album, das Tag und den bevorzugten Sortiercode neu, da es voller Fehler war
+                     : Wenn etwas in diesem Bereich jetzt nicht wie erwartet funktioniert, lassen Sie es mich bitte wissen.
+                     : Dies sollte Abstürze beheben, die auf der Diashow-Seite aufgetreten sind
+                 - Das kürzlich geänderte gelbe Sternsymbol wurde in einigen Sortierreihenfolgen nicht angezeigt
+                 - Korrigieren Sie das Laden von Thumbnails
+                 - Fehler behoben, der das manuelle Neuladen fehlgeschlagener Miniaturansichten durch Klicken verhindert - nur einmal, damit es nicht zu ärgerlich ist, wenn Sie das Album ändern möchten
+                Änderungen:
+             - Neue Einstellung, um die unabhängige Umkehrung der Sortierreihenfolge von untergeordneten Alben und Ressourcen zu ermöglichen"</item>
+        <item>1.4.0.104</item>
+        <item>"Bug-Fix:
+                 - Probleme beim Hochladen nach Überarbeitung der Dateiauswahl für Keystore und Zertifikate
+                     : Vielen Dank für Ihre Geduld, die Verwaltung von Android-Dateiberechtigungen ist schwierig
+                 - Löschen von Alben im Stammverzeichnis jetzt bei Bedarf immer beim Laden der App verfügbar
+                 - Elemente können jetzt ausgewählt werden, indem Sie auf eine beliebige Stelle klicken, nicht nur in das Kontrollkästchen"</item>
+        <item>1.4.0.103</item>
+        <item>"Bug-Fix:
+                 - Die Bearbeitung von Keystore- und vertrauenswürdigen Zertifikatelementen verursachte einen Absturz.
+                     : Bitte senden Sie mir eine E-Mail von der App, wenn solche Schlüsselfunktionen nicht funktionieren.
+                 - Manchmal kann mit der Auswahl der Systemdateien nicht aus den zuletzt verwendeten Dateien navigiert werden
+                 - Die Gruppenliste ist vertikal zur Bildschirmmitte ausgerichtet
+                Änderungen:
+                 - Bessere Benutzererfahrung für den Import von Schlüsselspeichern und Zertifikaten
+                 - Neue Einstellung zur Steuerung der Zeitdauer, in der die Bilddetails in der Vollbild- oder Diashow-Ansicht angezeigt werden"</item>
+        <item>1.4.0.102</item>
+        <item>"Bug-Fix:
+                 - Aufgrund der jüngsten Änderungen war es nicht möglich, sowohl die kostenlose als auch die kostenpflichtige Version gleichzeitig auf einem einzigen Gerät zu installieren
+                 - Album-Miniaturansichten werden für Administratoren nicht immer angezeigt
+                 - gegen Piwigo 11 getestet. Das Öffnen eines Bildes funktionierte nicht"</item>
+    </string-array>
+</resources>

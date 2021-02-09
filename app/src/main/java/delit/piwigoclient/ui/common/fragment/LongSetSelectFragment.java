@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.common.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,9 +25,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.Enableable;
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.list.SelectableItemsAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.BuildConfig;
@@ -41,27 +42,28 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class LongSetSelectFragment<Y extends View, X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences> extends MyFragment {
+public abstract class LongSetSelectFragment<Y extends View, X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences<Z>> extends MyFragment {
 
     private static final String ARG_ACTION_ID = "actionId";
     private static final String ARG_INITIAL_SELECTION = "initialSelection";
     private static final String STATE_CURRENT_SELECTION = "currentSelection";
     private static final String STATE_SELECT_TOGGLE = "selectToggle";
+    private static final String TAG = "LogSetSelFrag";
 
     private Y list;
     private X listAdapter;
     private Button saveChangesButton;
-    private FloatingActionButton reloadListButton;
+    private ExtendedFloatingActionButton reloadListButton;
     // Maintained state
     private int actionId;
     private HashSet<Long> currentSelection;
     private HashSet<Long> initialSelection;
     private Button toggleAllSelectionButton;
     private boolean selectToggle;
-    private CustomImageButton addListItemButton;
+    private ExtendedFloatingActionButton addListItemButton;
     private Z viewPrefs;
 
-    public static Bundle buildArgsBundle(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+    public static <Z extends BaseRecyclerViewAdapterPreferences<Z>> Bundle buildArgsBundle(Z prefs, int actionId, HashSet<Long> initialSelection) {
 
         Bundle args = new Bundle();
 
@@ -75,8 +77,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         if (bundle == null) {
             return;
         }
-        viewPrefs = createEmptyPrefs();
-        viewPrefs.loadFromBundle(bundle);
+        viewPrefs = loadPreferencesFromBundle(bundle);
         actionId = bundle.getInt(ARG_ACTION_ID);
         initialSelection = BundleUtils.getLongHashSet(bundle, ARG_INITIAL_SELECTION);
     }
@@ -93,7 +94,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         return actionId;
     }
 
-    public CustomImageButton getAddListItemButton() {
+    public ExtendedFloatingActionButton getAddListItemButton() {
         return addListItemButton;
     }
 
@@ -116,7 +117,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     }
 
-    protected abstract Z createEmptyPrefs();
+    protected abstract Z loadPreferencesFromBundle(Bundle bundle);
 
     private void loadStateFromBundle(Bundle bundle) {
 
@@ -159,7 +160,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         View view = inflater.inflate(getViewId(), container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -174,43 +175,27 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
         Button cancelChangesButton = view.findViewById(R.id.list_action_cancel_button);
         cancelChangesButton.setVisibility(View.VISIBLE);
-        cancelChangesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCancelChanges();
-            }
-        });
+        cancelChangesButton.setOnClickListener(v -> onCancelChanges());
 
         toggleAllSelectionButton = view.findViewById(R.id.list_action_toggle_all_button);
         toggleAllSelectionButton.setVisibility(viewPrefs.isMultiSelectionEnabled() ? View.VISIBLE : View.GONE);
-        toggleAllSelectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onToggleAllSelection();
-            }
-        });
+        toggleAllSelectionButton.setOnClickListener(v -> onToggleAllSelection());
         setToggleSelectionButtonText();
 
         saveChangesButton = view.findViewById(R.id.list_action_save_button);
         saveChangesButton.setVisibility(View.VISIBLE);
-        saveChangesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSaveChanges();
-            }
-        });
+        saveChangesButton.setOnClickListener(v -> onSaveChanges());
 
         reloadListButton = view.findViewById(R.id.list_retryAction_actionButton);
-        reloadListButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+        if(reloadListButton != null) {
+            reloadListButton.setOnTouchListener((v, event) -> {
                 if (event.getActionMasked() == MotionEvent.ACTION_UP) {
                     reloadListButton.hide();
                     rerunRetrievalForFailedPages();
                 }
                 return true;
-            }
-        });
+            });
+        }
 
         return view;
     }
@@ -223,10 +208,17 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     protected abstract void setPageHeading(TextView headingField);
 
+    /**
+     * Implement this but don't call it - use {@link #selectAllItems} instead which keeps toggle button in sync
+     */
     protected abstract void selectAllListItems();
-
+    /**
+     * Implement this but don't call it - use {@link #deselectAllItems} instead which keeps toggle button in sync
+     */
     protected abstract void selectNoneListItems();
-
+    /**
+     * Implement this but don't call it - use {@link #deselectAllItems} instead which keeps toggle button in sync
+     */
     protected abstract void selectOnlyListItems(Set<Long> selectionIds);
 
     private void setToggleSelectionButtonText() {
@@ -234,10 +226,31 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             if (initialSelection != null) {
                 toggleAllSelectionButton.setText(getString(R.string.button_reset));
             } else {
-                toggleAllSelectionButton.setText(getString(R.string.button_none));
+                toggleAllSelectionButton.setText(getString(R.string.button_select_none));
             }
         } else {
-            toggleAllSelectionButton.setText(getString(R.string.button_all));
+            toggleAllSelectionButton.setText(getString(R.string.button_select_all));
+        }
+    }
+
+    /**
+     * keeps toggle button in sync
+     */
+    public void deselectAllItems() {
+        onToggleAllSelection();
+        if (!selectToggle) {
+            onToggleAllSelection();
+        }
+    }
+
+    /**
+     * keeps toggle button in sync
+     */
+    public void selectAllItems() {
+        if(!selectToggle) {
+            onToggleAllSelection();
+        } else {
+            selectAllListItems();
         }
     }
 
@@ -297,6 +310,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     protected void onCancelChanges() {
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately on cancel changes action");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
@@ -332,12 +346,9 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         if (listAdapter != null) {
             listAdapter.setEnabled(enabled);
         }
-        addListItemButton.setVisibility(!isNotAuthorisedToAlterState() && viewPrefs.isAllowItemAddition() ? View.VISIBLE : View.GONE);
+        if(addListItemButton != null) {
+            addListItemButton.setVisibility(!isNotAuthorisedToAlterState() && viewPrefs.isAllowItemAddition() ? View.VISIBLE : View.GONE);
+        }
         setToggleSelectionButtonText();
     }
-
-    public boolean isEditingEnabled() {
-        return !viewPrefs.isReadOnly();
-    }
-
 }

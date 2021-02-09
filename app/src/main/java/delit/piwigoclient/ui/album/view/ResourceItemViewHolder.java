@@ -1,43 +1,48 @@
 package delit.piwigoclient.ui.album.view;
 
-import android.content.Context;
 import android.view.View;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.google.android.exoplayer2.util.MimeTypes;
+
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.PicassoLoader;
+import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
-import delit.piwigoclient.model.piwigo.ResourceContainer;
+import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.ui.common.UIHelper;
 
 import static android.view.View.GONE;
 
-public class ResourceItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, M extends ResourceContainer<? extends ResourceItem, GalleryItem>> extends AlbumItemViewHolder<ResourceItem, Q, ResourceItemViewHolder<Q, M>, M> {
+public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL,T, RC>, LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC>, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>, T extends ResourceItem, RC extends PiwigoAlbum<CategoryItem,T>> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
     public AppCompatImageView mTypeIndicatorImg;
     public AppCompatCheckBox checkBox;
 
-    public ResourceItemViewHolder(View view, AlbumItemRecyclerViewAdapter<ResourceItem, Q, ResourceItemViewHolder<Q, M>, M> parentAdapter, int viewType) {
+    public ResourceItemViewHolder(View view, LVA parentAdapter, int viewType) {
         super(view, parentAdapter, viewType);
     }
 
     @Override
-    public void fillValues(Context context, GalleryItem newItem, boolean allowItemDeletion) {
-        super.fillValues(context, newItem, allowItemDeletion);
-        updateCheckableStatus();
-        checkBox.setOnCheckedChangeListener(parentAdapter.buildItemSelectionListener(this));
-        updateRecentlyViewedMarker(newItem);
+    public void fillValues(T newItem, boolean allowItemDeletion) {
+        try {
+            super.fillValues(newItem, allowItemDeletion);
+            updateRecentlyViewedMarker(newItem);
+            updateCheckableStatus();
+            checkBox.setOnCheckedChangeListener(parentAdapter.buildItemSelectionListener((VH) this));
 
-        if (!(newItem.getName() == null || newItem.getName().isEmpty()) && parentAdapter.getAdapterPrefs().isShowResourceNames()) {
-            mNameView.setVisibility(View.VISIBLE);
-            mNameView.setText(newItem.getName());
-        } else {
-            mNameView.setVisibility(GONE);
+            if (!(newItem.getName() == null || newItem.getName().isEmpty()) && parentAdapter.getAdapterPrefs().isShowResourceNames()) {
+                mNameView.setVisibility(View.VISIBLE);
+                mNameView.setText(newItem.getName());
+            } else {
+                mNameView.setVisibility(GONE);
+            }
+            fillResourceItemThumbnailValue(newItem);
+            setTypeIndicatorStatus(newItem);
+        } catch(RuntimeException e) {
+            Logging.recordException(e);
         }
-        fillResourceItemThumbnailValue(newItem);
-        setTypeIndicatorStatus(newItem);
     }
 
     public void updateCheckableStatus() {
@@ -47,12 +52,19 @@ public class ResourceItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
 
     private void setTypeIndicatorStatus(GalleryItem newItem) {
         if (newItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
-            PicassoLoader picasso = new PicassoLoader(mTypeIndicatorImg);
-            picasso.setResourceToLoad(R.drawable.ic_movie_filter_black_24px);
-            picasso.load();
+            String itemMime = ((ResourceItem)newItem).guessMimeTypeFromUri();
+//            PicassoLoader picasso = new PicassoLoader<>(mTypeIndicatorImg);
+            if(itemMime == null || MimeTypes.isVideo(itemMime)) {
+                mTypeIndicatorImg.setImageResource(R.drawable.ic_movie_filter_black_24px);
+//                picasso.setResourceToLoad(R.drawable.ic_movie_filter_black_24px);
+            } else if(MimeTypes.isAudio(itemMime)) {
+                mTypeIndicatorImg.setImageResource(R.drawable.ic_audiotrack_black_24dp);
+//                picasso.setResourceToLoad(R.drawable.ic_audiotrack_black_24dp);
+            }
+//            picasso.load();
             mTypeIndicatorImg.setVisibility(View.VISIBLE);
         } else {
-            mTypeIndicatorImg.setVisibility(View.GONE);
+            mTypeIndicatorImg.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -68,6 +80,7 @@ public class ResourceItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
             imageLoader.setUriToLoad(resItem.getFirstSuitableUrl());
         }
         imageLoader.setCenterCrop(true);
+        imageLoader.load();
     }
 
     @Override
@@ -79,9 +92,9 @@ public class ResourceItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
 
     @Override
     public void onRecycled() {
-        UIHelper.recycleImageViewContent(mImageView);
-        UIHelper.recycleImageViewContent(mRecentlyAlteredMarkerView);
-        UIHelper.recycleImageViewContent(mTypeIndicatorImg);
+        super.onRecycled();
+//        UIHelper.recycleImageViewContent(mRecentlyAlteredMarkerView);
+//        UIHelper.recycleImageViewContent(mTypeIndicatorImg);
     }
 
 

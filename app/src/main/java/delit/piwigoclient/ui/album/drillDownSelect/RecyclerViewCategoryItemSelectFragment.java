@@ -12,10 +12,9 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,12 +25,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.view.FlowLayout;
-import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.AbstractBreadcrumbsView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -39,34 +37,37 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.ui.album.CategoryBreadcrumbsView;
 import delit.piwigoclient.ui.common.BackButtonHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
 
-import static android.view.View.NO_ID;
-
-public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetSelectFragment<CategoryItemRecyclerViewAdapter, CategoryItemViewAdapterPreferences> implements BackButtonHandler {
+public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCategoryItemSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends RecyclerViewLongSetSelectFragment<CategoryItemRecyclerViewAdapter<?,?,?>, CategoryItemViewAdapterPreferences, CategoryItem> implements BackButtonHandler {
+    private static final String TAG = "RecViewCatItemSelFr";
     private static final String ACTIVE_ITEM = "RecyclerViewCategoryItemSelectFragment.activeCategory";
     private static final String STATE_LIST_VIEW_STATE = "RecyclerViewCategoryItemSelectFragment.listViewStates";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewCategoryItemSelectFragment.actionStartTime";
     private CategoryItem rootAlbum;
-    private FlowLayout categoryPathView;
+    private CategoryBreadcrumbsView categoryPathView;
     private long startedActionAtTime;
     private CategoryItemRecyclerViewAdapter.NavigationListener navListener;
     private LinkedHashMap<Long, Parcelable> listViewStates = new LinkedHashMap<>(5); // one state for each level within the list (created and deleted on demand)
+    private boolean adminDataLoaded;
 
 
-    public static RecyclerViewCategoryItemSelectFragment newInstance(CategoryItemViewAdapterPreferences prefs, int actionId) {
-        RecyclerViewCategoryItemSelectFragment fragment = new RecyclerViewCategoryItemSelectFragment();
+    public static RecyclerViewCategoryItemSelectFragment<?,?> newInstance(CategoryItemViewAdapterPreferences prefs, int actionId) {
+        RecyclerViewCategoryItemSelectFragment<?,?> fragment = new RecyclerViewCategoryItemSelectFragment<>();
         fragment.setArguments(RecyclerViewCategoryItemSelectFragment.buildArgsBundle(prefs, actionId));
         return fragment;
     }
@@ -83,14 +84,15 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     }
 
     @Override
-    protected CategoryItemViewAdapterPreferences createEmptyPrefs() {
-        return new CategoryItemViewAdapterPreferences();
+    protected CategoryItemViewAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
+        return new CategoryItemViewAdapterPreferences(bundle);
     }
 
     @Override
     protected boolean isNotAuthorisedToAlterState() {
         return isAppInReadOnlyMode(); // Non admin users can alter this since this may be for another profile entirely.
     }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -114,35 +116,34 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
 
         if (savedInstanceState != null) {
             startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
-            listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap<Long, Parcelable>(), getClass().getClassLoader());
+            listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap<>(), getClass().getClassLoader());
         }
 
         startedActionAtTime = System.currentTimeMillis();
 
         categoryPathView = v.findViewById(R.id.category_path);
+        categoryPathView.setNavigationListener(new CategoryNavigationListener());
 
-        navListener = new CategoryItemRecyclerViewAdapter.NavigationListener() {
+        navListener = (oldCategory, newCategory) -> {
 
-            @Override
-            public void onCategoryOpened(CategoryItem oldCategory, CategoryItem newCategory) {
-
-                if(oldCategory != null) {
-                    listViewStates.put(oldCategory.getId(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
-                }
-                getList().scrollToPosition(0);
-
-                buildBreadcrumbs(newCategory);
-
+            if(!newCategory.hasNonAdminCopyChildren() && oldCategory.getId() != newCategory.getId()) {
+                loadDataForAlbum(newCategory);
             }
+            if(oldCategory != null) {
+                listViewStates.put(oldCategory.getId(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
+            }
+            getList().scrollToPosition(0);
+
+            buildBreadcrumbs(newCategory);
+
         };
 
-        CustomImageButton newItemButton = getAddListItemButton();
-        newItemButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        ExtendedFloatingActionButton newItemButton = getAddListItemButton();
+        if(newItemButton != null) {
+            newItemButton.setOnClickListener(v1 -> {
                 CategoryItemRecyclerViewAdapter listAdapter = getListAdapter();
                 if (listAdapter == null) {
-                    Crashlytics.log(Log.ERROR, getTag(), "List adapter is null - weird");
+                    Logging.log(Log.ERROR, TAG, "List adapter is null - weird");
                 } else {
                     CategoryItem selectedAlbum = listAdapter.getActiveItem();
                     if (selectedAlbum != null) {
@@ -153,8 +154,8 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
                         getUiHelper().showDetailedShortMsg(R.string.alert_error, R.string.please_select_a_parent_album);
                     }
                 }
-            }
-        });
+            });
+        }
 
         if(rootAlbum == null) {
             loadData();
@@ -166,58 +167,13 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     }
 
     private void buildBreadcrumbs(CategoryItem newCategory) {
-        categoryPathView.removeAllViews();
+        categoryPathView.populate(newCategory);
 
-        List<CategoryItem> pathItems = rootAlbum.getFullPath(newCategory);
-        TextView pathItem = null;
-        int idx = 0;
-        for(final CategoryItem pathItemCategory : pathItems) {
-            idx++;
-            int lastId = NO_ID;
-            if(pathItem != null) {
-                lastId = pathItem.getId();
-            }
-            pathItem = new TextView(getContext());
-            pathItem.setId(View.generateViewId());
-            TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_AppCompat_Body2_Clickable);
-            pathItem.setText(pathItemCategory.getName());
-            categoryPathView.addView(pathItem);
-
-            pathItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TextView tv = (TextView) v;
-                    getListAdapter().setActiveItem(pathItemCategory);
-                    if (!listViewStates.isEmpty()) {
-                        Iterator<Map.Entry<Long, Parcelable>> iter = listViewStates.entrySet().iterator();
-                        Map.Entry<Long, Parcelable> item;
-                        while (iter.hasNext()) {
-                            item = iter.next();
-                            if (item.getKey() == pathItemCategory.getId()) {
-                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
-                                iter.remove();
-                                while (iter.hasNext()) {
-                                    iter.next();
-                                    iter.remove();
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            if(idx < pathItems.size()) {
-                TextView pathItemSeperator = new TextView(getContext());
-                TextViewCompat.setTextAppearance(pathItemSeperator, R.style.TextAppearance_AppCompat_Body2);
-                pathItemSeperator.setText("/");
-                pathItemSeperator.setId(View.generateViewId());
-                categoryPathView.addView(pathItemSeperator);
-                pathItem = pathItemSeperator;
-            }
-        }
     }
 
     private void bindDataToView(Bundle savedInstanceState) {
+
+        categoryPathView.setRoot(rootAlbum);
 
         CategoryItem activeCategory = null;
         if (savedInstanceState != null) {
@@ -226,7 +182,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
 
         if(getListAdapter() == null) {
 
-            final CategoryItemRecyclerViewAdapter viewAdapter = new CategoryItemRecyclerViewAdapter(rootAlbum, navListener, new CategoryItemRecyclerViewAdapter.MultiSelectStatusAdapter<CategoryItem>(), getViewPrefs());
+            final CategoryItemRecyclerViewAdapter viewAdapter = new CategoryItemRecyclerViewAdapter(rootAlbum, navListener, new CategoryItemRecyclerViewAdapter.MultiSelectStatusAdapter(), getViewPrefs());
             if (activeCategory != null) {
                 viewAdapter.setActiveItem(activeCategory);
             } else {
@@ -241,37 +197,48 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
 
             // will restore previous selection from state if any
             setListAdapter(viewAdapter);
+        } else {
+            getListAdapter().setActiveItem(getListAdapter().getActiveItem());
         }
 
         // call this here to ensure page reformats if orientation changes for example.
         getViewPrefs().withColumns(AlbumViewPreferences.getAlbumsToDisplayPerRow(getActivity(), getPrefs()));
-        int colsOnScreen = Math.max(getViewPrefs().getColumns(), getViewPrefs().getColumns());
+        int colsOnScreen = getViewPrefs().getColumns();
         GridLayoutManager layoutMan = new GridLayoutManager(getContext(), colsOnScreen);
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(getListAdapter());
+
     }
 
     private void loadData() {
-        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(getViewPrefs().getConnectionProfileKey(), prefs, getContext());
+        loadDataForAlbum(StaticCategoryItem.ROOT_ALBUM);
+    }
+
+    private void loadDataForAlbum(CategoryItem album) {
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(getViewPrefs().getConnectionProfileKey(), prefs, requireContext());
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
 
         if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
-            //NOTE: No thumbnail url is provided with this call... Maybe need to run a standard call too as for the main albums then merge?
-            AbstractPiwigoWsResponseHandler handler = new AlbumGetSubAlbumsAdminResponseHandler();
-            handler.withConnectionPreferences(connectionPrefs);
-            addActiveServiceCall(R.string.progress_loading_albums, handler);
-            String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
+            // invoke a call to admin list to pick up any missed.
 
-            handler = new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true);
+            if (PiwigoSessionDetails.isAdminUser(connectionPrefs) && !adminDataLoaded) {
+                // trigger admin category load
+                AbstractPiwigoWsResponseHandler handler = new AlbumGetSubAlbumsAdminResponseHandler();
+                handler.withConnectionPreferences(connectionPrefs);
+                addActiveServiceCall(R.string.progress_loading_albums, handler);
+            }
+            // trigger non admin category load
+            String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
+            AlbumGetSubAlbumsResponseHandler handler = new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, true);
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);
         } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
-            CommunityGetSubAlbumNamesResponseHandler handler = new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true);
+            CommunityGetSubAlbumNamesResponseHandler handler = new CommunityGetSubAlbumNamesResponseHandler(album.getId(), true);
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);
         } else {
-            String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
-            AlbumGetSubAlbumsResponseHandler handler = new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true);
+            String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
+            AlbumGetSubAlbumsResponseHandler handler = new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, true);
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);
         }
@@ -293,8 +260,6 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     @Override
     protected void setPageHeading(TextView headingField) {
         // heading field not used (missing from layout)
-//        headingField.setText(R.string.file_selection_heading);
-//        headingField.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -318,7 +283,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             boolean selectedIdsAreValid = false;
             if(!selectedItems.isEmpty()) {
                 CategoryItem selectedItem = selectedItems.iterator().next();
-                Long activeId = Long.valueOf(listAdapter.getActiveItem().getId()); // need this to be a long as it is comparing with a Long!
+                Long activeId = listAdapter.getActiveItem().getId(); // need this to be a long as it is comparing with a Long!
                 if((activeId.equals(selectedItem.getParentId())
                     || activeId.equals(selectedItem.getId()))) {
                     // do nothing.
@@ -339,6 +304,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
         EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), PiwigoUtils.toSetOfIds(selectedItems), selectedItems, albumPaths));
         // now pop this screen off the stack.
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as select action complete");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
@@ -351,23 +317,39 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
-    private void onAlbumsLoaded(final ArrayList<CategoryItem> albums, boolean isAdminList) {
+    void onPiwigoResponseAlbumsLoaded(final ArrayList<CategoryItem> albums, boolean isAdminList) {
+
+        adminDataLoaded |= isAdminList;
+
         getUiHelper().hideProgressIndicator();
-        if(rootAlbum == null) {
-            rootAlbum = CategoryItem.ROOT_ALBUM.clone();
-        }
-        if(rootAlbum.getChildAlbumCount() == 0) {
-            rootAlbum.setChildAlbums(albums);
+        CategoryItem currentAlbum = getActiveAlbum();
+        if(currentAlbum.getChildAlbumCount() == 0) {
+            currentAlbum.setChildAlbums(albums);
         } else {
-            rootAlbum.mergeChildrenWith(albums, isAdminList);
-            CategoryItem activeItem = getListAdapter().getActiveItem();
-            getListAdapter().setActiveItem(rootAlbum.findChild(activeItem.getId()));
+            if(albums.size() == 1 && currentAlbum.getId() == albums.get(0).getId()) {
+                // merge the children.
+                currentAlbum.mergeChildrenWith(albums.get(0).getChildAlbums(), isAdminList);
+            } else {
+                // presume this is just a list of the children.
+                currentAlbum.mergeChildrenWith(albums, isAdminList);
+            }
+
         }
         bindDataToView(null);
+    }
+
+    private CategoryItem getActiveAlbum() {
+        if(getListAdapter() != null) {
+            return getListAdapter().getActiveItem();
+        }
+        if(rootAlbum == null) {
+            rootAlbum = StaticCategoryItem.ROOT_ALBUM.toInstance();
+        }
+        return rootAlbum;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -379,18 +361,63 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<F extends RecyclerViewCategoryItemSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
+
+
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
-                onAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums(), false);
+                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums(), false);
             } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                onAlbumsLoaded(((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums(), true);
+                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums(), true);
             } else if(response instanceof CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
 
                 ArrayList<CategoryItemStub> albumNames = ((CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) response).getAlbumNames();
                 ArrayList<CategoryItem> albums = CategoryItem.newListFromStubs(albumNames);
-                onAlbumsLoaded(albums, false);
+                getParent().onPiwigoResponseAlbumsLoaded(albums, false);
+            }
+        }
+    }
+
+    public class CategoryNavigationListener implements AbstractBreadcrumbsView.NavigationListener<CategoryItem> {
+        @Override
+        public void onBreadcrumbClicked(CategoryItem pathItem) {
+            CategoryItem currentItem = getListAdapter().getActiveItem();
+            if(currentItem != null) {
+                listViewStates.put(currentItem.getId(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
+            }
+            getList().scrollToPosition(0);
+
+            if(getListAdapter().getActiveItem().equals(pathItem)) {
+                //getListAdapter().rebuildContentView();
+                // DO nothing
+            } else {
+                boolean folderChanged = getListAdapter().setActiveItem(pathItem);
+                if(folderChanged && listViewStates != null) {
+                    Iterator<Map.Entry<Long, Parcelable>> iter = listViewStates.entrySet().iterator();
+                    Map.Entry<Long, Parcelable> item;
+                    boolean listContentLoaded = false;
+                    while (iter.hasNext()) {
+                        item = iter.next();
+                        if (item.getKey().equals(pathItem.getId())) {
+                            if (getList().getLayoutManager() != null) {
+                                Parcelable state = item.getValue();
+                                getList().getLayoutManager().onRestoreInstanceState(state);
+                                listContentLoaded = state != null;
+                            } else {
+                                Logging.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
+                            }
+                            iter.remove();
+                            while (iter.hasNext()) {
+                                iter.next();
+                                iter.remove();
+                            }
+                        }
+                    }
+                    if(!listContentLoaded) {
+                        loadDataForAlbum(getListAdapter().getActiveItem());
+                    }
+                }
             }
         }
     }

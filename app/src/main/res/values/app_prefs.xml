@@ -12,11 +12,33 @@
     <string name="usage_hints_shown_list_key" translatable="false">usage_hints_shown_list</string>
 
     <!-- Server Page -->
+    <string name="preference_test_server_connection_key" translatable="false">preference_test_server_connection</string>
+    <string name="preference_test_server_connection_title">Test Connection</string>
+    <string name="preference_test_server_connection_summary">Test connection to the server</string>
+
+    <string name="preference_data_upload_clear_failed_uploads_from_server_key" translatable="false">preference_data_upload_clear_failed_uploads_from_server</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Clean Server</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Clean Failed PiwigoClient uploads from the server</string>
 
     <string name="preference_page_connection">Connection</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    <string name="preference_connections_category_server_basic_auth_key" translatable="false">preference_connections_category_server_basic_auth</string>
     <string name="preference_connections_category_server_basic_auth">Server Basic Authentication</string>
 
+    <string name="preference_connections_category_client_certificate_auth_key" translatable="false">preference_connections_category_client_certificate_auth</string>
+    <string name="preference_connections_category_client_certificate_auth">Client Certificate Authentication</string>
+
+    <string name="preference_connections_category_advanced_key" translatable="false">preference_connections_category_advanced</string>
+    <string name="preference_connections_category_advanced">Advanced Settings</string>
+
+    <string name="preference_connections_category_connections_caching_key" translatable="false">preference_connections_category_connections_caching</string>
+    <string name="preference_connections_category_connections_caching">Web Response Caching</string>
+
+    <string name="server_connection_preference_summary_default">Please select a value</string>
+    <string name="server_album_preference_summary_default">Please select a value</string>
+    <string name="local_folder_preference_summary_default">Please select a value</string>
+    <string name="server_connection_preference_user_guest">guest</string>
     <!-- prefs -->
 
     <string name="preference_server_connection_max_redirects_key" translatable="false">preference_server_connection_max_redirects</string>
@@ -91,7 +113,7 @@
     <!-- list of connection profiles to select from -->
     <string name="preference_piwigo_connection_profile_list_key" translatable="false">preference_select_piwigo_connection_profile</string>
 
-
+    <string name="preference_piwigo_connections_key" translatable="false">preference_piwigo_connections</string>
     <string name="preference_piwigo_server_address_key" translatable="false">piwigo_server_address</string>
     <string name="preference_piwigo_server_address_title">Server Address</string>
     <string name="preference_piwigo_server_address_summary">%1$s</string>
@@ -129,6 +151,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     <integer name="preference_caching_max_cache_entry_size_default">1024</integer>
 
+    <string name="preference_connections_category_trusted_server_ca_key" translatable="false">preference_connections_category_trusted_server_ca</string>
     <string name="preference_connections_category_trusted_server_ca">Trusted Server Certificate CAs</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Use a custom list of trusted CA certificates to validate server SSL certificates</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Use custom trusted certificate authorities</string>
@@ -143,12 +166,37 @@
 
     <!-- Gallery Page -->
 
-    <string name="preference_page_gallery">Gallery</string>
+    <string name="preference_page_gallery">Albums</string>
+    <string name="preference_page_slideshow">Slideshow</string>
+
+    <bool name="preference_gallery_slideshow_auto_drive_default">false</bool>
+    <string name="preference_gallery_slideshow_auto_drive_title">Automatic slideshow progression</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">After the set time, the next image or video will show</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Auto drive image delay</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecs</string>
+    <integer name="preference_gallery_slideshow_auto_drive_delay_default">2000</integer>
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Auto drive video delay</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecs</string>
+    <integer name="preference_gallery_slideshow_auto_drive_video_delay_default">1000</integer>
+
     <string name="preference_gallery_category_general">General</string>
-    <string name="preference_gallery_category_advanced">Advanced</string>
+    <string name="preference_gallery_category_server_calls_key" translatable="false">preference_gallery_category_advanced</string>
+    <string name="preference_gallery_category_server_calls">Piwigo Server Call Details</string>
     <string name="preference_gallery_category_slideshow">Slideshow</string>
-    <string name="preference_gallery_category_resources">Resources</string>
-    <string name="preference_gallery_category_albums">Albums</string>
+
+    <string name="preference_gallery_category_slideshow_autodrive_key" translatable="false">preference_gallery_category_slideshow_autodrive</string>
+    <string name="preference_gallery_category_slideshow_autodrive_title" translatable="false">Auto progression</string>
+
+    <string name="preference_gallery_category_slideshow_display_options_key" translatable="false">preference_gallery_category_slideshow_display_options</string>
+    <string name="preference_gallery_category_slideshow_display_options_title" translatable="false">Display Options</string>
+
+
+    <string name="preference_gallery_category_resources_key" translatable="false">preference_gallery_category_resources</string>
+    <string name="preference_gallery_category_resources">Child Resources</string>
+    <string name="preference_gallery_category_albums_key" translatable="false">preference_gallery_category_albums</string>
+    <string name="preference_gallery_category_albums">Child Albums</string>
 
     <!-- prefs -->
 
@@ -194,17 +242,11 @@
     <string name="preference_gallery_enable_video_playback_summary">Enable if you want to download and play videos on demand</string>
     <bool name="preference_gallery_enable_video_playback_default">true</bool>
 
-    <string name="preference_piwigo_playable_media_extensions_key" translatable="false">preference_piwigo_playable_media_extensions</string>
-    <string name="preference_piwigo_playable_media_extensions_title">Supported multimedia extensions</string>
-    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
+    <string name="latest_release_notes_shown_key" translatable="false">latest_release_notes_shown</string>
 
-    <string-array name="preference_piwigo_playable_media_extensions_default" translatable="false">
-        <item>mpg</item>
-        <item>avi</item>
-        <item>mp3</item>
-        <item>ogg</item>
-        <item>mp4</item>
-    </string-array>
+    <string name="preference_check_for_server_updates_key" translatable="false">preference_check_for_server_updates</string>
+    <string name="preference_check_for_server_updates_title">Notification of Updates</string>
+    <string name="preference_check_for_server_updates_summary">Receive notification if there are updates available for your server</string>
 
     <string name="preference_video_cache_enabled_key" translatable="false">preference_video_cache_enabled</string>
     <string name="preference_video_cache_enabled_title">Cache videos viewed to file</string>
@@ -216,28 +258,37 @@
     <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
     <integer name="preference_video_cache_maxsize_mb_default">512</integer>
 
-    <string name="preference_gallery_sort_order_key" translatable="false">preference_gallery_sort_order</string>
-    <string name="preference_gallery_sort_order_title">Album sort order</string>
-    <string name="preference_gallery_sort_order_summary">%1$s</string>
-    <string name="preference_gallery_sort_order_default" translatable="false">name</string>
+    <string name="preference_gallery_child_album_sort_order_key" translatable="false">preference_gallery_child_album_sort_order</string>
+    <string name="preference_gallery_child_album_sort_order_title">Child album sort order</string>
+    <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
+    <integer name="preference_gallery_child_album_sort_order_default">2</integer> <!--DATE_ALBUM_SORT_ORDER (DSC) -->
 
+    <string name="preference_gallery_child_album_sort_order_inverted_key" translatable="false">preference_gallery_child_album_sort_order_inverted</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_title">Invert order of Albums</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">When enabled, reverse the selected sort order of albums</string>
+    <bool name="preference_gallery_child_album_sort_order_inverted_default">false</bool>
 
-    <string name="preference_album_subalbum_sort_order_key" translatable="false">preference_album_subalbum_sort_order</string>
-    <string name="preference_album_subalbum_sort_order_title">Child album sort order</string>
-    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
-    <integer name="preference_album_subalbum_sort_order_default">2
-    </integer> <!--DATE_ALBUM_SORT_ORDER (DSC) -->
+    <string name="preference_gallery_child_resource_sort_order_key" translatable="false">preference_gallery_child_resource_sort_order</string>
+    <string name="preference_gallery_child_resource_sort_order_title">Album resource sort order</string>
+    <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_child_resource_sort_order_default" translatable="false">server</string>
 
+    <string name="preference_gallery_child_resource_sort_order_inverted_key" translatable="false">preference_gallery_child_resource_sort_order_inverted</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Invert Album resource sort order</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">When enabled, reverse the selected sort order of album resources</string>
+    <bool name="preference_gallery_child_resource_sort_order_inverted_default">false</bool>
 
-    <string name="preference_gallery_sort_order_inverted_key" translatable="false">preference_gallery_sort_order_inverted</string>
-    <string name="preference_gallery_sort_order_inverted_title">Invert Album sort order</string>
-    <string name="preference_gallery_sort_order_inverted_summary">When enabled, reverse the selected sort order of album resources</string>
-    <bool name="preference_gallery_sort_order_inverted_default">false</bool>
 
     <string name="preference_gallery_unique_id_key" translatable="false">preference_gallery_unique_id</string>
     <string name="preference_gallery_unique_id_title">Unique Identifier for images</string>
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     <string name="preference_gallery_unique_id_default" translatable="false">md5sum</string>
+
+    <string name="preference_fix_privacy_plugin_media_uris_key" translatable="false">preference_fix_privacy_plugin_media_uris</string>
+    <string name="preference_fix_privacy_plugin_media_uris_title">Fix Media Uris broken when using the privacy plugin</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">Enable only if you get 4xx error for multimedia resources.</string>
+    <bool name="preference_fix_privacy_plugin_media_uris_default">false</bool>
+
 
     <string name="preference_gallery_clearMemoryCache_title">Clear In-Memory Cache</string>
     <string name="preference_gallery_clearMemoryCache_key" translatable="false">preference_gallery_clearMemoryCache</string>
@@ -269,6 +320,11 @@
     <string name="preference_gallery_slideshow_image_rotate_title">Rotate image to match aspect ratio of screen</string>
     <string name="preference_gallery_slideshow_image_rotate_summary">Image rotated to fit screen</string>
     <string name="preference_gallery_slideshow_image_rotate_key" translatable="false">preference_gallery_slideshow_image_rotate</string>
+
+    <integer name="preference_gallery_slideshow_item_detail_auto_hide_delay_default">2000</integer>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">Hide item detail after time</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d milliseconds</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_key" translatable="false">preference_gallery_slideshow_item_detail_auto_hide_delay</string>
 
     <string name="preference_groups_request_pagesize_key" translatable="false">preference_groups_request_pagesize</string>
     <string name="preference_groups_request_pagesize_title">Groups server request page-size</string>
@@ -304,12 +360,21 @@
     <!-- Data Upload page -->
 
     <string name="preference_page_upload">Upload</string>
-    <string name="preference_upload_category_data_upload_display">Visual settings</string>
+    <string name="preference_upload_category_data_upload_display">Display Options</string>
     <string name="preference_upload_category_data_upload">Data Upload</string>
-    <string name="preference_upload_category_pre_data_upload_compression">Pre-Upload Compression</string>
-    <string name="preference_upload_category_advanced">Advanced</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression_key" translatable="false">preference_upload_category_pre_data_upload_image_compression</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression_title">Pre-Upload Image Compression</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression_key" translatable="false">preference_upload_category_pre_data_upload_video_compression</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression_title">Pre-Upload Video Compression</string>
+    <string name="preference_upload_category_piwigo_server_calls_key" translatable="false">preference_upload_category_piwigo_server_calls</string>
+    <string name="preference_upload_category_piwigo_server_calls_title">Piwigo Server call details</string>
 
     <!-- prefs -->
+
+    <bool name="preference_data_upload_delete_uploaded_default">false</bool>
+    <string name="preference_data_upload_delete_uploaded_key" translatable="false">preference_data_upload_delete_uploaded</string>
+    <string name="preference_data_upload_delete_uploaded_summary">Delete successfully uploaded files</string>
+    <string name="preference_data_upload_delete_uploaded_title">Default Auto delete</string>
 
     <string name="preference_data_upload_default_local_folder_key" translatable="false">preference_data_upload_default_local_folder</string>
 
@@ -354,7 +419,7 @@
     <string name="preference_data_upload_compress_videos_quality_title">Video Quality</string>
     <string name="preference_data_upload_compress_videos_quality_summary">Video compression quality %1$s</string>
     <string name="preference_data_upload_compress_videos_quality_key" translatable="false">preference_data_upload_compress_videos_quality</string>
-    <integer name="preference_data_upload_compress_videos_quality_default">700</integer>
+    <integer name="preference_data_upload_compress_videos_quality_default">50</integer>
 
     <string name="preference_data_upload_compress_videos_audio_bitrate_title">Audio Bitrate</string>
     <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Audio Bitrate %1$s</string>
@@ -392,6 +457,11 @@
     <string name="preference_data_upload_compress_images_output_format_key" translatable="false">preference_data_upload_compress_images_output_format</string>
     <string name="preference_data_upload_compress_images_output_format_default" translatable="false">jpeg</string>
 
+    <!-- App page -->
+    <string name="preference_page_app">App</string>
+    <string name="preference_app_resource_caching_key" translatable="false">preference_app_resource_caching</string>
+    <string name="preference_app_resource_caching_title">resource caching</string>
+
     <!-- other page -->
 
     <string name="preference_page_other">Other</string>
@@ -423,18 +493,30 @@
     <string name="preference_functions_missing_app_version_warned_key" translatable="false">preference_functions_missing_app_version_warned</string>
 
     <bool name="preference_app_always_show_nav_buttons_default">false</bool>
-    <bool name="preference_app_always_show_status_bar_default">false</bool>
     <string name="preference_app_always_show_nav_buttons_key" translatable="false">preference_app_always_show_nav_buttons</string>
     <string name="preference_app_always_show_nav_buttons_title">Always show navigation buttons</string>
     <string name="preference_app_always_show_nav_buttons_summary">Enable to prevent auto-hide of the navigation buttons</string>
 
+    <string name="preference_app_default_download_folder_key" translatable="false">preference_app_default_download_folder</string>
+    <string name="preference_app_default_download_folder_title">Download to folder</string>
+    <string name="preference_app_default_download_folder_summary">%1$s</string>
+
+    <bool name="preference_app_always_show_status_bar_default">false</bool>
     <string name="preference_app_always_show_status_bar_key" translatable="false">preference_app_always_show_status_bar</string>
     <string name="preference_app_always_show_status_bar_title">Always show the status bar</string>
     <string name="preference_app_always_show_status_bar_summary">Enable to prevent auto-hide of the status bar</string>
 
     <string name="preference_app_desired_language_key" translatable="false">preference_app_desired_language</string>
     <string name="preference_app_desired_language_title">Language</string>
-    <string name="preference_app_desired_language_summary">Preferred Translation</string>
+    <string name="preference_app_desired_language_summary">%1$s</string>
+
+    <string name="preference_app_clear_list_of_user_hints_shown_key" translatable="false">preference_clear_list_of_user_hints_shown</string>
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Show All user hints again</string>
+
+    <string name="preference_app_uri_permissions_held_key" translatable="false">preference_app_uri_permissions_held_key</string>
+    <string name="preference_app_uri_permissions_held_title">URI Permissions Held</string>
+    <string name="preference_app_uri_permissions_held_summary">The purpose for all URI permissions held</string>
+
 
     <!-- TODO implement this concept - Don't forget to make translatable again! -->
 

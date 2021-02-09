@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+    <string name="notification_title_background_upload_service">Achtergrond Piwigo Upload Service</string>
+    <string name="notification_text_background_upload_running">Uploadtaak wordt uitgevoerd</string>
+    <string name="notification_text_background_upload_sleeping">Slapen. Voer vervolgens uit op%1$tR</string>
+    <string name="notification_text_background_upload_polling">Polling om bestanden te uploaden.</string>
+
+
+    <string name="alert_warning_auto_upload_service_stopped">Vergeet niet om de uploadservice op de achtergrond te starten als u wilt dat uw taken worden uitgevoerd</string>
+    <string name="alert_auto_upload_service_stopped">Uploadservice op de achtergrond is gestopt</string>
+    <string name="alert_auto_upload_service_started">Uploadservice op de achtergrond is gestart</string>
+    <string name="alert_auto_upload_service_job_restarted">Begonnen met het uploaden van een voorheen onvolledige taak naar server%1$s met%2$d bestanden</string>
+    <string name="alert_auto_upload_service_job_started">Beginnen met uploaden van taak naar server%1$s met%2$d bestanden</string>
+    <string name="alert_auto_upload_service_job_finished_success">Het uitvoeren van een uploadtaak op de achtergrond naar server%1$s is voltooid.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Het uitvoeren van een uploadtaak op de achtergrond naar server%1$s is voltooid. Sommige bestanden konden niet worden geüpload en zullen later opnieuw worden geprobeerd.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Het uitvoeren van een uploadtaak op de achtergrond naar server%1$s is voltooid. Er konden geen bestanden worden geüpload. Taak wordt later opnieuw geprobeerd.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Achtergronduploadservicecontrole voor taken</string>
+    <string name="progress_creating_tag">Tag maken</string>
+    <string name="error_updating_favorites_pattern">Fout bij het verwijderen van bron (%1$s) uit favorieten:%2$s</string>
+    <string name="favorites_content_load_failed_text">Kan bronnen die als favoriet zijn gemarkeerd, niet laden</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">U heeft verzocht om%1$d bronnen te verwijderen. Wilt u deze permanent van alle albums (en de server) verwijderen, of wilt u ze gewoon loskoppelen van deze favoriet?</string>
+    <string name="progress_remove_favorite_resources">Bronnen verwijderen uit de favorietenlijst</string>
+    <string name="favorites_empty_text">Je hebt momenteel geen favorieten</string>
+    <string name="favorites_heading">Uw favorieten</string>
+    <string name="button_unfavorite">Niet favoriet</string>
+    <string name="preference_data_upload_automatic_job_category_server_settings">Serverinstellingen</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Lokale instellingen</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Pre-upload beeldcompressie</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Videocompressie vooraf uploaden</string>
+    <string name="ignoring_job_local_folder_not_found">Lokale map bestaat niet meer. Baan negeren</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">Geen bestandsextensies geselecteerd om te uploaden. Baan negeren</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">Verbindingsprofiel ingesteld op offlinemodus. Baan negeren</string>
+    <string name="slideshow_auto_drive_paused">Slideshow Autodrive onderbroken tot volgende dia</string>
+    <string name="progress_loading_orphan_ids">Wezen laden</string>
+    <string name="orphans_heading">Verweesde bronnen</string>
+    <string name="orphans_album_description">Alle verweesde bronnen verzameld door de PiwigoClient-app</string>
+    <string name="orphans_no_orphans_found_on_server">Geen wezen gevonden</string>
+    <string name="orphans_found_on_server_pattern">Wezen gevonden:%1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Er zijn wezen aanwezig. Om deze te bekijken, moeten we een privémap maken die alleen toegankelijk is voor beheerders. U kunt het album daarna op elk moment verwijderen. Als u het niet eens bent, moet u deze zelf op de server verwerken.</string>
+</resources>

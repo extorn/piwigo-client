@@ -1,21 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/detailed_dialog_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceBody1"
+        android:textIsSelectable="true"
+        app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+        app:layout_constraintTop_toBottomOf="@id/guideline_margin_top"
+        app:layout_constraintBottom_toTopOf="@id/detailed_dialog_extra_detail_toggle"
+        tools:text="This is some message"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0"/>
 
     <ToggleButton
-        android:id="@+id/details_toggle"
-        android:layout_width="match_parent"
+        android:id="@+id/detailed_dialog_extra_detail_toggle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:checked="true"
         android:textOff="@string/button_show_details"
-        android:textOn="@string/button_hide_details"/>
+        android:textOn="@string/button_hide_details"
+        app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+        app:layout_constraintTop_toBottomOf="@+id/detailed_dialog_message"
+        app:layout_constraintBottom_toTopOf="@+id/detailed_dialog_extra_detail"
+        tools:checked="true" />
 
     <TextView
-        android:id="@+id/list_item_details"
-        android:layout_width="match_parent"
+        android:id="@+id/detailed_dialog_extra_detail"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textAppearance="?textAppearanceBody2"
         android:textIsSelectable="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
-</LinearLayout>
+        app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+        app:layout_constraintTop_toBottomOf="@+id/detailed_dialog_extra_detail_toggle"
+        app:layout_constraintBottom_toTopOf="@id/guideline_margin_bottom"
+        tools:text="Some extra detail about the message" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_top" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/fragment_margin_bottom" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_start" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/fragment_margin_end" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

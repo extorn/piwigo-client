@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+
+    <string name="preference_page_auto_upload_jobs">Автоматическая загрузка</string>
+    <string name="preference_data_upload_automatic_title">Автоматическая загрузка</string>
+    <string name="preference_data_upload_automatic_job_title">Автоматическая загрузка задания</string>
+
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_enable_summary">Включить фоновую загрузку</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Автоматическая загрузка</string>
+    
+
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Используйте автоматическую загрузку только в беспроводной сети</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Только по беспроводной сети</string>
+    
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_jobs_title">Автозагрузка заданий</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d вакансий</string>
+
+    
+    
+
+    
+
+    
+    <string name="preference_data_upload_automatic_job_view_status_title">Просмотр статуса загрузки</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Просмотр статуса последнего выполнения задания (если доступно)</string>
+
+    
+    <string name="preference_data_upload_automatic_job_is_valid_title">Работа действительна</string>
+
+    
+    <string name="preference_data_upload_automatic_job_enabled_summary">Будет ли служба загрузки использовать это задание?</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Работа включена</string>
+    
+
+    <string name="preference_data_upload_automatic_job_server_title">Загрузить на сервер</string>
+    
+    <string name="preference_data_upload_automatic_job_server_summary">Профиль:%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_server_album_title">Загрузить в альбом</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_local_folder_title">Загрузить из папки</string>
+    
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Удалить успешно загруженные файлы</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Автоудаление</string>
+    
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+    
+    
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Максимальный размер загруженного файла</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d МБ</string>
+
+    
+    
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Расширения файлов</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Загрузить файлы с расширением%1$s</string>
+
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Уровень конфиденциальности</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Загруженные файлы видны%1$s</string>
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+
+    
+
+
+    
+
+    
+    
+
+    
+
+    
+    
+</resources>

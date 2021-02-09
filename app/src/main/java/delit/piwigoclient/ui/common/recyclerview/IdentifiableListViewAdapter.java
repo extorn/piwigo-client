@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
+import android.content.Context;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -17,20 +18,21 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link T}
  */
-public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdapterPreferences, T extends Identifiable, V extends IdentifiableItemStore<T>, S extends CustomViewHolder<P, T>, R extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends BaseRecyclerViewAdapter<P, T, S, R> {
+public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListViewAdapter<LVA,P,T, IS, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T extends Identifiable, IS extends IdentifiableItemStore<T>, VH extends CustomViewHolder<VH, LVA, P, T, MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,P,T,VH>> extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL> {
 
-    private final V itemStore;
+    private final IS itemStore;
     private final Class<? extends ViewModelContainer> modelType;
 
 
-    public IdentifiableListViewAdapter(final Class<? extends ViewModelContainer> modelType, final V itemStore, R multiSelectStatusListener, P prefs) {
+    public IdentifiableListViewAdapter(Context context, final Class<? extends ViewModelContainer> modelType, final IS itemStore, MSL multiSelectStatusListener, P prefs) {
         super(multiSelectStatusListener, prefs);
+        this.setHasStableIds(true);
         this.itemStore = itemStore;
         this.modelType = modelType;
     }
 
-    public Class<? extends ViewModelContainer> getModelType() {
-        return modelType;
+    public Class<ViewModelContainer> getModelType() {
+        return (Class<ViewModelContainer>) modelType;
     }
 
     @Override
@@ -40,16 +42,17 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
 
     @NonNull
     @Override
-    public abstract S buildViewHolder(View view, int viewType);
+    public abstract VH buildViewHolder(View view, int viewType);
 
     @Override
-    protected void removeItemFromInternalStore(int idxRemoved) {
+    protected T removeItemFromInternalStore(int idxRemoved) {
         if (idxRemoved >= 0 && idxRemoved < itemStore.getItemCount()) {
             itemStore.getItems().remove(idxRemoved);
         }
+        return null;
     }
 
-    protected V getItemStore() {
+    public IS getItemStore() {
         return itemStore;
     }
 
@@ -63,28 +66,30 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
     }
 
     @Override
-    protected void replaceItemInInternalStore(int idxToReplace, T newItem) {
+    protected void replaceItemInInternalStore(int idxToReplace, @NonNull T newItem) {
         itemStore.getItems().remove(idxToReplace);
         itemStore.getItems().add(idxToReplace, newItem);
     }
 
+    @NonNull
     @Override
-    protected T getItemFromInternalStoreMatching(T item) {
+    protected T getItemFromInternalStoreMatching(@NonNull T item) {
         return itemStore.getItemById(item.getId());
     }
 
     @Override
-    protected void addItemToInternalStore(T item) {
+    protected void addItemToInternalStore(@NonNull T item) {
         itemStore.addItem(item);
     }
 
+    @NonNull
     @Override
     public T getItemByPosition(int position) {
         return itemStore.getItemByIdx(position);
     }
 
     @Override
-    public boolean isHolderOutOfSync(S holder, T newItem) {
+    public boolean isHolderOutOfSync(VH holder, T newItem) {
         return isDirtyItemViewHolder(holder, newItem);
     }
 
@@ -93,7 +98,7 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
      * @return true if this holder has never been used before (or is totally clean)
      */
     @Override
-    protected boolean isDirtyItemViewHolder(S holder, T newItem) {
+    protected boolean isDirtyItemViewHolder(VH holder, T newItem) {
         return holder.getItem() == null || holder.getItem().getId() != newItem.getId();
     }
 
@@ -103,12 +108,12 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
     }
 
     @Override
-    public T getItemById(Long selectedId) {
+    public T getItemById(@NonNull Long selectedId) {
         return itemStore.getItemById(selectedId);
     }
 
     @Override
-    public int getItemPosition(T item) {
+    public int getItemPosition(@NonNull T item) {
         return itemStore.getItemIdx(item);
     }
 

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?textAppearanceHeadline5"
+        android:text="@string/title_advert_consent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/privacy_policy_title"
+        style="?editableFieldLabel"
+        android:labelFor="@+id/privacy_policy"
+        android:text="@string/privacy_policy_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"/>
+
+    <TextView
+        android:id="@+id/privacy_policy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        style="?clickableTextViewStyleBody2"
+        android:text="@string/privacy_policy_uri"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/privacy_policy_title"/>
+
+    <TextView
+        android:id="@+id/personalised_adverts_label"
+        style="?editableFieldLabel"
+        android:labelFor="@+id/personalised_adverts_field"
+        android:text="@string/personalised_adverts_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/privacy_policy"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/personalised_adverts_field"
+        android:text="@string/personalised_adverts_field"
+        style="?editableFieldSwitch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/personalised_adverts_label"/>
+
+    <TextView
+        android:id="@+id/no_adverts_label"
+        style="?editableFieldLabel"
+        android:labelFor="@+id/no_adverts_field"
+        android:text="@string/no_adverts_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/personalised_adverts_field"/>
+
+    <TextView
+        android:id="@+id/no_adverts_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        style="?clickableTextViewStyleBody2"
+        android:text="@string/view_the_paid_version"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/no_adverts_label"/>
+
+    <TextView
+        android:id="@+id/advert_providers_label"
+        style="?editableFieldLabel"
+        android:labelFor="@+id/ad_providers_list"
+        android:text="@string/advert_providers"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/no_adverts_field"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ad_providers_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/advert_providers_label"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

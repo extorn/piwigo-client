@@ -11,14 +11,28 @@ import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 
-public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
+public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<CategoryItemViewAdapterPreferences> {
 
     private String connectionProfileKey;
     private CategoryItemStub initialRoot;
     private HashSet<Long> initialSelection;
     private int columns = 1;
 
-    public CategoryItemViewAdapterPreferences() {
+    public CategoryItemViewAdapterPreferences(Bundle bundle) {
+        loadFromBundle(bundle);
+    }
+
+    public CategoryItemViewAdapterPreferences(Long initialRoot, boolean allowEditing, HashSet<Long> initialSelection, boolean allowMultiSelect, boolean initialSelectionLocked) {
+        if(allowEditing) {
+            selectable(allowMultiSelect, initialSelectionLocked);
+        }
+        if(initialRoot != null) {
+            withInitialRoot(new CategoryItemStub("???", initialRoot));
+        } else {
+            withInitialRoot(CategoryItemStub.ROOT_GALLERY);
+        }
+        setAllowItemAddition(true);
+        withInitialSelection(initialSelection);
     }
 
     public CategoryItemViewAdapterPreferences withConnectionProfile(@Nullable String connectionProfileKey) {
@@ -41,28 +55,29 @@ public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterP
         return this;
     }
 
-    public Bundle storeToBundle(Bundle parent) {
-        Bundle b = new Bundle();
+    @Override
+    protected String getBundleName() {
+        return "CategoryItemViewAdapterPreferences";
+    }
+
+    @Override
+    protected String writeContentToBundle(Bundle b) {
+        super.writeContentToBundle(b);
         b.putInt("columns", columns);
         b.putParcelable("initialRoot", initialRoot);
         BundleUtils.putLongHashSet(b, "initialSelection", initialSelection);
         b.putString("connectionProfileKey", connectionProfileKey);
-        parent.putBundle("FolderItemViewAdapterPreferences", b);
-        super.storeToBundle(b);
-        return parent;
+        return getBundleName();
     }
 
-    public CategoryItemViewAdapterPreferences loadFromBundle(Bundle parent) {
-        Bundle b = parent.getBundle("FolderItemViewAdapterPreferences");
+    @Override
+    protected void readContentFromBundle(Bundle b) {
+        super.readContentFromBundle(b);
         columns = b.getInt("columns");
         initialRoot = b.getParcelable("initialRoot");
         initialSelection = BundleUtils.getLongHashSet(b, "initialSelection");
         connectionProfileKey = b.getString("connectionProfileKey");
-        super.loadFromBundle(b);
-
-        return this;
     }
-
 
     public CategoryItemStub getInitialRoot() {
         return initialRoot;

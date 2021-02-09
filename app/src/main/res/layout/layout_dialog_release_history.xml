@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/release_history_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.App.EditPages">
+
+    <TextView
+        android:id="@+id/release_history_explanation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:text="@string/release_changes"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+        app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+        app:layout_constraintTop_toBottomOf="@id/guideline_margin_top"
+        app:layout_constraintBottom_toTopOf="@+id/release_history_title"
+        android:textAppearance="?textAppearanceBody1"
+        style="?editableFieldLabel"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/release_history_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:text="@string/release_history"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+        app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+        app:layout_constraintTop_toBottomOf="@+id/release_history_explanation"
+        app:layout_constraintBottom_toTopOf="@+id/scrollable_release_history_list"
+        android:textAppearance="?textAppearanceHeadline6"
+        app:layout_constraintVertical_chainStyle="packed"
+        style="?editableFieldLabel"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollable_release_history_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+        app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+        app:layout_constraintTop_toBottomOf="@id/release_history_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true">
+
+        <delit.libs.ui.view.list.CustomExpandableListView
+            android:id="@+id/release_history_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:nestedScrollingEnabled="true"/>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="16dp"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="16dp"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

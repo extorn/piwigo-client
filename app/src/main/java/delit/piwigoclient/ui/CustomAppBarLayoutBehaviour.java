@@ -4,10 +4,10 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.google.android.material.appbar.AppBarLayout;
-
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 public class CustomAppBarLayoutBehaviour extends AppBarLayout.Behavior {
     public CustomAppBarLayoutBehaviour(Context context, AttributeSet attrs) {
@@ -21,7 +21,7 @@ public class CustomAppBarLayoutBehaviour extends AppBarLayout.Behavior {
     }
 
     @Override
-    public boolean onStartNestedScroll(CoordinatorLayout parent, AppBarLayout child, View directTargetChild, View target, int nestedScrollAxes, int type) {
+    public boolean onStartNestedScroll(@NonNull CoordinatorLayout parent, AppBarLayout child, @NonNull View directTargetChild, View target, int nestedScrollAxes, int type) {
         return child.isEnabled() && super.onStartNestedScroll(parent, child, directTargetChild, target, nestedScrollAxes, type);
     }
 }

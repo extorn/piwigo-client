@@ -1,33 +1,45 @@
 package delit.piwigoclient.ui.common;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.Task;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.BuildConfig;
 import com.google.android.vending.licensing.LicenseChecker;
 import com.google.android.vending.licensing.LicenseCheckerCallback;
 import com.google.android.vending.licensing.Policy;
 import com.google.android.vending.licensing.ServerManagedPolicy;
+import com.google.firebase.installations.FirebaseInstallations;
 
 import java.util.Date;
 import java.util.Random;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.PreferenceUtils;
+import delit.libs.util.SafeRunnable;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 
 /**
  * Created by gareth on 28/10/17.
  */
 
-public class LicenceCheckingHelper {
+public class LicenceCheckingHelper<T extends BaseMyActivity<T,UIH>,UIH extends ActivityUIHelper<UIH,T>> {
     // Generated on google play site (specific to piwigoclient.paid) and copied here - this is the public services api key for my app
     private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqg+QahizYwmfOB47vGwGW+0fYjHxpnz/kYGIS/6jJeUwrdclCGEgmQZfbVfLZnQRpLw67sofp3yUwofFLFGYhWISvYyAgtuhyNlcaP5Ki2r7zyhxBcI+1xPFQI3kYb3rRuUMFEpYW+fERtMs2X9gnFlhAyqbw5mZX7I36LWBIPM2X2GUu7g4WXOcPayCocQFmk1u4Chz4Ca1M807Vk7AnI4cFPRsHfsuc3h9V+Zaqu2holNcQrvJhQ6yUMN0A5ip4RTKKGIogBcoVhv3Ye05BWqbzrnGPmIFvUGqRoh0dnrLL6oDHbnE5xpfNDU3hdnjv74vvDJKuJC05bYPxoOe2wIDAQAB";
 
@@ -37,38 +49,63 @@ public class LicenceCheckingHelper {
     private LicenseChecker mChecker;
     // A handler on the UI thread.
     private Handler mHandler;
-    private MyActivity activity;
+    private T activity;
     private Date lastChecked;
 
-    public void onCreate(MyActivity activity) {
+    public void onCreate(T activity) {
 
         this.activity = activity;
 
         mHandler = new Handler();
 
-        // Try to use more data here. ANDROID_ID is a single point of attack.
-        String deviceId = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
+        idTask.addOnSuccessListener(this::withInstallGuid);
+        idTask.addOnFailureListener(e -> {
+            Logging.log(Log.ERROR,TAG, "Unable to retrieve App Install GUID from Firebase");
+            Logging.recordException(e);
+            // Try to use more data here. ANDROID_ID is a single point of attack.
+            @SuppressLint("HardwareIds")
+            String deviceId = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
+            withInstallGuid(deviceId);
+        });
 
+    }
+
+    private void withInstallGuid(String appInstallGuid) {
         // Library calls this when it's done.
         mLicenseCheckerCallback = new MyLicenseCheckerCallback();
 
         //Force the licence response to be invalidated every time a new version is installed.
         byte[] salt = new byte[20];
-        new Random(BuildConfig.VERSION_CODE).nextBytes(salt);
+        new Random(getVersionCode(activity)).nextBytes(salt);
+
 
         mChecker = new LicenseChecker(
                 activity, new ServerManagedPolicy(activity.getApplicationContext(),
-                new AESObfuscator(salt, delit.piwigoclient.BuildConfig.APPLICATION_ID, deviceId, true)),
+                new AESObfuscator(salt, delit.piwigoclient.BuildConfig.APPLICATION_ID, appInstallGuid, true)),
                 BASE64_PUBLIC_KEY);
         doVisualCheck(activity.getApplicationContext());
     }
 
+    private long getVersionCode(@NonNull BaseMyActivity<?,?> activity) {
+        try {
+            PackageInfo pInfo = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0);
+            // fill the salt with new random data (seeded from the current app version number)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                return pInfo.getLongVersionCode();
+            } else {
+                //noinspection deprecation
+                return pInfo.versionCode;
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Logging.log(Log.ERROR,TAG, "Unable to extract app version for activity : " + activity);
+            return -1;
+        }
+    }
+
     private void showDialog(final boolean showRetryButton) {
         String msg = activity.getString(showRetryButton ? R.string.unlicensed_dialog_retry_body : R.string.unlicensed_dialog_body);
-        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new LicenceCheckAction(activity.getUiHelper(), showRetryButton) {
-
-
-        });
+        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new LicenceCheckAction<>(activity.getUiHelper(), showRetryButton));
     }
 
     private synchronized void forceCheck() {
@@ -87,7 +124,8 @@ public class LicenceCheckingHelper {
         doCheck();
     }
 
-    private static class LicenceCheckAction<T extends ActivityUIHelper<MyActivity>> extends UIHelper.QuestionResultAdapter<T> {
+    private static class LicenceCheckAction<T extends ActivityUIHelper<T,R>,R extends BaseMyActivity<R,T>> extends QuestionResultAdapter<T,R> implements Parcelable {
+
         private final boolean allowRetry;
 
         public LicenceCheckAction(T uiHelper, boolean allowRetry) {
@@ -95,14 +133,42 @@ public class LicenceCheckingHelper {
             this.allowRetry = allowRetry;
         }
 
+        protected LicenceCheckAction(Parcel in) {
+            super(in);
+            allowRetry = in.readByte() != 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeByte((byte) (allowRetry ? 1 : 0));
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<LicenceCheckAction<?,?>> CREATOR = new Creator<LicenceCheckAction<?,?>>() {
+            @Override
+            public LicenceCheckAction<?,?> createFromParcel(Parcel in) {
+                return new LicenceCheckAction<>(in);
+            }
+
+            @Override
+            public LicenceCheckAction<?,?>[] newArray(int size) {
+                return new LicenceCheckAction[size];
+            }
+        };
+
         @Override
         public void onResult(androidx.appcompat.app.AlertDialog dialog, Boolean positiveAnswer) {
-            MyActivity activity = getUiHelper().getParent();
+            R activity = getUiHelper().getParent();
             if (Boolean.TRUE == positiveAnswer) {
                 if (allowRetry) {
                     activity.getLicencingHelper().forceCheck();
                 } else {
-                    Crashlytics.log(Log.DEBUG, TAG, "Starting Market Intent");
+                    Logging.log(Log.DEBUG, TAG, "Starting Market Intent");
                     Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
                             "http://market.android.com/details?id=" + activity.getPackageName()));
                     activity.startActivity(Intent.createChooser(marketIntent, ""));
@@ -114,7 +180,10 @@ public class LicenceCheckingHelper {
     }
 
     private synchronized void doCheck() {
-
+        if(mLicenseCheckerCallback == null || mChecker == null) {
+            Logging.log(Log.DEBUG, TAG, "Skipping licence check");
+            return;
+        }
         long maxInterval = 1000 * 60 * 60 * 6;
         // check again a maximum of every 6 hours apart.
         if (lastChecked == null || lastChecked.getTime() > System.currentTimeMillis() || lastChecked.getTime() + maxInterval < System.currentTimeMillis()) {
@@ -122,10 +191,14 @@ public class LicenceCheckingHelper {
             if (mLicenseCheckerCallback.isOfflineAccessAllowed()) {
                 final ConnectivityManager connMgr = (ConnectivityManager) activity.getApplicationContext()
                         .getSystemService(Context.CONNECTIVITY_SERVICE);
-                android.net.NetworkInfo activeNetworkInfo = connMgr.getActiveNetworkInfo();
+                android.net.NetworkInfo activeNetworkInfo = null;
+                if(connMgr != null) {
+                    activeNetworkInfo = connMgr.getActiveNetworkInfo();
+                }
                 if (activeNetworkInfo == null || !activeNetworkInfo.isAvailable()) {
                     // allow access for the next 6 hours.
                     mLicenseCheckerCallback.allow(-1);
+                    Logging.log(Log.DEBUG, TAG, "Licence checked within allowable period");
                     return;
                 }
             }
@@ -135,23 +208,17 @@ public class LicenceCheckingHelper {
     }
 
     private void displayResult(final String result) {
-        mHandler.post(new Runnable() {
-            public void run() {
-                activity.getUiHelper().showDetailedMsg(R.string.alert_information, result);
-            }
-        });
+        mHandler.post(new SafeRunnable(() -> activity.getUiHelper().showDetailedMsg(R.string.alert_information, result)));
     }
 
     private void displayDialog(final boolean showRetry) {
-        mHandler.post(new Runnable() {
-            public void run() {
-                showDialog(showRetry);
-            }
-        });
+        mHandler.post(new SafeRunnable(() -> showDialog(showRetry)));
     }
 
     protected void onDestroy() {
-        mChecker.onDestroy();
+        if(mChecker != null) {
+            mChecker.onDestroy();
+        }
     }
 
     private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
@@ -168,7 +235,8 @@ public class LicenceCheckingHelper {
                 // Don't update UI if Activity is finishing.
                 return;
             }
-            AdsManager.getInstance().setAppLicensed(true);
+            AdsManager.getInstance(activity).setAppLicensed(true);
+            Logging.log(Log.DEBUG, TAG, "App confirmed as licensed");
             // Should allow user access.
 //            displayResult(activity.getString(R.string.allow));
         }
@@ -178,8 +246,9 @@ public class LicenceCheckingHelper {
                 // Don't update UI if Activity is finishing.
                 return;
             }
-            AdsManager.getInstance().setAppLicensed(false);
+            AdsManager.getInstance(activity).setAppLicensed(false);
             if (policyReason == Policy.NOT_LICENSED) {
+                Logging.log(Log.DEBUG, TAG, "App unlicensed - preferences wiped");
                 PreferenceUtils.wipeAppPreferences(activity);
             }
 
@@ -206,6 +275,7 @@ public class LicenceCheckingHelper {
             // Please examine the error code and fix the error.
             String result = String.format(activity.getString(R.string.application_error), errorCode);
             displayResult(result);
+            Logging.log(Log.ERROR, TAG, "Licence check encountered error");
         }
     }
 }

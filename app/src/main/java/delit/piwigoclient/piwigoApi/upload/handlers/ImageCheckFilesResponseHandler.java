@@ -19,6 +19,9 @@ public class ImageCheckFilesResponseHandler<T extends ResourceItem> extends Abst
     public ImageCheckFilesResponseHandler(T piwigoResource) {
         super("pwg.images.checkFiles", TAG);
         this.resourceItem = piwigoResource;
+        if(resourceItem.getFileChecksum() == null) {
+            throw new IllegalArgumentException("Unable to check image on server without a local file checksum");
+        }
     }
 
     @Override

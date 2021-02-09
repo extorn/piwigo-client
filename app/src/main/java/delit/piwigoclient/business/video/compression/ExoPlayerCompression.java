@@ -7,10 +7,13 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.documentfile.provider.DocumentFile;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -26,17 +29,21 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.MimeTypes;
 
-import net.ypresto.qtfaststart.QtFastStart;
-
-import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Set;
 
+import delit.libs.core.util.Logging;
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.R;
 
 import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR;
 
@@ -45,14 +52,21 @@ import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR;
 public class ExoPlayerCompression {
 
     private static final String TAG = "ExoPlayerCompression";
-    private static final boolean VERBOSE = false;
-    private ArrayList<ExoPlayerCompressionThread> activeCompressionThreads = new ArrayList<>(1);
+    private static final boolean VERBOSE_LOGGING = true;
+    private final ArrayList<ExoPlayerCompressionThread> activeCompressionThreads = new ArrayList<>(1);
+    private Context context;
 
 
     public ExoPlayerCompression() {
     }
 
-    public void invokeFileCompression(final Context context, final File inputFile, final File outputFile, final CompressionListener listener, final CompressionParameters compressionSettings) {
+    @RequiresApi(api = Build.VERSION_CODES.BASE)
+    public static boolean isSupported() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    }
+
+    public void invokeFileCompression(final Context context, final Uri inputFile, final Uri outputFile, final CompressionListener listener, final CompressionParameters compressionSettings) {
+        this.context = context;
         ExoPlayerCompressionThread thread = new ExoPlayerCompressionThread(context, inputFile, outputFile, listener, compressionSettings);
         synchronized (activeCompressionThreads) {
             activeCompressionThreads.add(thread);
@@ -84,71 +98,90 @@ public class ExoPlayerCompression {
         private final Looper looper;
         private final MediaMuxerControl mediaMuxerControl;
         private SimpleExoPlayer player;
+        private boolean exiting;
 
         public PlayerMonitor(SimpleExoPlayer player, MediaMuxerControl mediaMuxerControl, CompressionListener listenerWrapper, Looper looper) {
             this.mediaMuxerControl = mediaMuxerControl;
             this.listenerWrapper = listenerWrapper;
             this.player = player;
             this.looper = looper;
+            exiting = false;
         }
 
         @Override
         public void onPlayerError(ExoPlaybackException error) {
-            listenerWrapper.onCompressionError(error);
+            if(error.getRendererException() instanceof CompressionSuccessException) {
+                return;// ignore this error.
+                /* It's caused by the renderers ending in such a way that the system clock takes over as the
+                   the playback position and thus the player gets into a very tight loop from which it cannot escape.
+                 */
+            }
+            listenerWrapper.onCompressionError(mediaMuxerControl.getInputFile(), mediaMuxerControl.getOutputFile(), error);
         }
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
-                player.release();
-                player = null;
-                if (mediaMuxerControl.isHasAudio() || mediaMuxerControl.isHasVideo()) {
-                    mediaMuxerControl.safeShutdown();
-                }
-                looper.quitSafely();
+
+            if (!exiting && (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE)) {
+                exiting = true;
+                new Thread() {
+                    @Override
+                    public void run() {
+                        player.release();
+                        player = null;
+                        if (mediaMuxerControl.isHasAudio() || mediaMuxerControl.isHasVideo()) {
+                            mediaMuxerControl.safeShutdown();
+                        }
+                        looper.quitSafely();
+                    }
+                }.start();
             }
             super.onPlayerStateChanged(playWhenReady, playbackState);
         }
     }
 
-    private void makeTranscodedFileStreamable(File input) {
-        if (VERBOSE) {
+    private void makeTranscodedFileStreamable(Uri fileUri) {
+        if (VERBOSE_LOGGING) {
             Log.d(TAG, "Enabling streaming for transcoded MP4");
         }
-        File tmpFile = new File(input.getParentFile(), input.getName() + ".streaming.mp4");
+
         try {
-            boolean wroteFastStartFile = QtFastStart.fastStart(input, tmpFile);
-            if (wroteFastStartFile) {
-                boolean deletedOriginal = input.delete();
-                if (!deletedOriginal) {
-                    Crashlytics.log(Log.ERROR, TAG, "Error deleting streaming input file");
-                }
-                boolean renamed = tmpFile.renameTo(new File(tmpFile.getParentFile(), input.getName()));
-                if (!renamed) {
-                    Crashlytics.log(Log.ERROR, TAG, "Error renaming streaming output file");
-                }
+            String filePath = fileUri.getPath();
+            if(filePath == null) {
+                throw new IOException("Uri to make streamable does not represent a local file : " + fileUri);
+            }
+
+            // TODO use the exoplayer functions to move the MOOV atom to the front.
+//            DefaultDataSourceFactory factory = new DefaultDataSourceFactory();
+//            factory.createDataSource()
+//            new Mp4Extractor();
+//            new DataSpec(fileUri)
+
+            boolean wroteFastStartFile = MyFastStart.fastStart(context, fileUri);
+            if (!wroteFastStartFile) {
+                Logging.log(Log.ERROR, TAG, "Error renaming streaming output file");
             }
         } catch (IOException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
-            Crashlytics.logException(e);
+            Logging.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
+            Logging.recordException(e);
         } catch (QtFastStart.MalformedFileException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
-            Crashlytics.logException(e);
+            Logging.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
+            Logging.recordException(e);
         } catch (QtFastStart.UnsupportedFileException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
-            Crashlytics.logException(e);
+            Logging.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
+            Logging.recordException(e);
         }
     }
 
     public interface CompressionListener {
 
-        void onCompressionStarted();
+        void onCompressionStarted(Uri inputFile, Uri outputFile);
 
-        void onCompressionError(Exception e);
+        void onCompressionError(Uri inputFile, Uri outputFile, Exception e);
 
-        void onCompressionComplete();
+        void onCompressionComplete(Uri inputFile, Uri outputFile);
 
-        void onCompressionProgress(double compressionProgress, long mediaDurationMs);
+        void onCompressionProgress(Uri inputFile, Uri outputFile, @FloatRange(from = 0, to = 100) double compressionProgress, long mediaDurationMs);
     }
 
     private static class CompressionListenerWrapper implements CompressionListener {
@@ -163,23 +196,23 @@ public class ExoPlayerCompression {
         }
 
         @Override
-        public void onCompressionStarted() {
-            wrapped.onCompressionStarted();
+        public void onCompressionStarted(Uri inputFile, Uri outputFile) {
+            wrapped.onCompressionStarted(inputFile, outputFile);
         }
 
         @Override
-        public void onCompressionError(Exception e) {
-            wrapped.onCompressionError(e);
+        public void onCompressionError(Uri inputFile, Uri outputFile, Exception e) {
+            wrapped.onCompressionError(inputFile, outputFile, e);
         }
 
         @Override
-        public void onCompressionComplete() {
-            wrapped.onCompressionComplete();
+        public void onCompressionComplete(Uri inputFile, Uri outputFile) {
+            wrapped.onCompressionComplete(inputFile, outputFile);
         }
 
         @Override
-        public void onCompressionProgress(double compressionProgress, long mediaDurationMs) {
-            wrapped.onCompressionProgress(compressionProgress, mediaDurationMs);
+        public void onCompressionProgress(Uri inputFile, Uri outputFile, @FloatRange(from = 0, to = 100) double compressionProgress, long mediaDurationMs) {
+            wrapped.onCompressionProgress(inputFile, outputFile, compressionProgress, mediaDurationMs);
         }
     }
 
@@ -199,13 +232,17 @@ public class ExoPlayerCompression {
         }
 
         public void setBitRate(int bitRate) {
-            if (bitRate > 0) {
+            if (bitRate > 0 || bitRate == AUDIO_PASSTHROUGH_BITRATE) {
                 this.bitRate = bitRate;
             }
         }
 
         public long getMaxInterleavingIntervalUs() {
             return maxInterleavingIntervalUs;
+        }
+
+        public boolean isTranscodeDesired() {
+            return bitRate != AUDIO_PASSTHROUGH_BITRATE;
         }
     }
     public static class VideoCompressionParameters {
@@ -215,7 +252,7 @@ public class ExoPlayerCompression {
         private int wantedFrameRate = 30; //30
         private int wantedKeyFrameInterval = 3; // 3 in seconds where 0 is every frame and -1 is only a single key frame
         private double wantedBitRatePerPixelPerSecond = 0.1;
-        private int wantedBitRateModeV21 = BITRATE_MODE_CBR;
+        private int wantedBitRateModeV21; // lazy initialised (lint)
         private boolean isAllowSkippingFrames;
         private boolean isHardRotateVideo;
 
@@ -319,6 +356,7 @@ public class ExoPlayerCompression {
         private boolean addAudioTrack;
         private boolean addVideoTrack;
         private VideoCompressionParameters videoCompressionParameters;
+        private boolean isEnableFastStart = true;
 
         public CompressionParameters() {
             setAddVideoTrack(true);
@@ -343,6 +381,10 @@ public class ExoPlayerCompression {
             this.addAudioTrack = addAudioTrack;
         }
 
+        public void disableFastStart() {
+            isEnableFastStart = false;
+        }
+
         public VideoCompressionParameters getVideoCompressionParameters() {
             return videoCompressionParameters;
         }
@@ -351,41 +393,114 @@ public class ExoPlayerCompression {
             return audioCompressionParameters;
         }
 
-        public String getOutputFileMimeType() {
-            return "video/mp4";
+        public String getOutputFileExt(Context context) {
+            return getOutputFileExt(context, null);
+        }
+
+        /**
+         * @throws IllegalStateException if no acceptable file extension could be found.
+         * @param acceptableFileExts
+         * @return
+         */
+        public String getOutputFileExt(Context context, Set<String> acceptableFileExts) {
+            String ext;
+            boolean hasAudio = isAddAudioTrack();
+            boolean hasVideo = isAddVideoTrack();
+            if(hasAudio && hasVideo) {
+                ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.VIDEO_MP4);
+                if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
+                    return ext;
+                }
+            }
+            if(hasAudio) {
+                ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.AUDIO_MP4);
+                if(ext == null) {
+                    ext = "m4a";
+                }
+                if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
+                    return ext;
+                }
+            }
+            if(hasVideo) {
+                ext = "m4v";
+                if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
+                    return ext;
+                }
+            }
+            ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.VIDEO_MP4);
+            if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
+                return ext;
+            }
+            throw new IllegalStateException(String.format(context.getString(R.string.no_acceptable_file_ext_found_for_video_pattern), CollectionUtils.toCsvList(acceptableFileExts), ext, hasVideo, hasAudio));
+        }
+
+        /**
+         * Ensure the Mime type is contained in the list provided.
+         * @param acceptableMimeTypes
+         * @return
+         */
+        public String getOutputFileMimeType(Set<String> acceptableMimeTypes) {
+            if(isAddAudioTrack() && isAddVideoTrack()) {
+                String mime = MimeTypes.VIDEO_MP4;
+                if(acceptableMimeTypes == null || acceptableMimeTypes.contains(mime)) {
+                    return mime;
+                }
+            }
+            if(isAddAudioTrack()) {
+                String mime = MimeTypes.AUDIO_MP4;
+                if(acceptableMimeTypes == null || acceptableMimeTypes.contains(mime)) {
+                    return mime;
+                }
+            }
+            if(isAddVideoTrack()) {
+                String mime = MimeTypes.VIDEO_MP4;
+                if(acceptableMimeTypes == null || acceptableMimeTypes.contains(mime)) {
+                    return mime;
+                }
+            }
+            throw new IllegalStateException("No valid output MIME Type specified");
+        }
+
+        public boolean isEnableFastStart() {
+            return isEnableFastStart;
         }
     }
 
 
     private class InternalCompressionListener extends CompressionListenerWrapper {
 
-        private final File inputFile;
-        private final File outputFile;
         private long mediaDurationMs;
+        private boolean enableFastStart;
 
-        public InternalCompressionListener(CompressionListener wrapped, File inputFile, File outputFile) {
+        public InternalCompressionListener(CompressionListener wrapped, boolean enableFastStart) {
             super(wrapped);
-            this.inputFile = inputFile;
-            this.outputFile = outputFile;
+            this.enableFastStart = enableFastStart;
         }
 
         @Override
-        public void onCompressionProgress(double compressionProgress, long mediaDurationMs) {
-            super.onCompressionProgress(compressionProgress, mediaDurationMs);
+        public void onCompressionProgress(Uri inputFile, Uri outputFile, double compressionProgress, long mediaDurationMs) {
+            super.onCompressionProgress(inputFile, outputFile, compressionProgress, mediaDurationMs);
             this.mediaDurationMs = mediaDurationMs;
         }
 
         @Override
-        public void onCompressionComplete() {
-            outputFile.setLastModified(inputFile.lastModified());
-            makeTranscodedFileStreamable(outputFile);
-            super.onCompressionProgress(100d, mediaDurationMs);
-            super.onCompressionComplete();
+        public void onCompressionComplete(Uri inputFile, Uri outputFile) {
+            if (enableFastStart) {
+                makeTranscodedFileStreamable(outputFile);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                long lastModified = IOUtils.getLastModifiedTime(context, inputFile);
+                if(!IOUtils.setLastModified(context, outputFile, lastModified)) {
+                    Logging.log(Log.WARN, TAG, "Unable to set last modified date on compressed video " + outputFile);
+                }
+            }
+            super.onCompressionProgress(inputFile, outputFile, 100d, mediaDurationMs);
+            super.onCompressionComplete(inputFile, outputFile);
         }
 
         @Override
-        public void onCompressionError(Exception e) {
-            super.onCompressionError(e);
+        public void onCompressionError(Uri inputFile, Uri outputFile, Exception e) {
+            super.onCompressionError(inputFile, outputFile, e);
         }
     }
 
@@ -393,13 +508,13 @@ public class ExoPlayerCompression {
 
         private final CompressionParameters compressionSettings;
         private final CompressionListener listener;
-        private final File outputFile;
-        private final File inputFile;
+        private final Uri outputFile;
+        private final Uri inputFile;
         private final WeakReference<Context> contextRef;
         private SimpleExoPlayer player;
         private boolean cancelled;
 
-        public ExoPlayerCompressionThread(Context context, File inputFile, File outputFile, CompressionListener listener, CompressionParameters compressionSettings) {
+        public ExoPlayerCompressionThread(Context context, Uri inputFile, Uri outputFile, CompressionListener listener, CompressionParameters compressionSettings) {
             super("mainFileCompressorThread");
             this.contextRef = new WeakReference<>(context);
             this.inputFile = inputFile;
@@ -408,25 +523,35 @@ public class ExoPlayerCompression {
             this.compressionSettings = compressionSettings;
         }
 
+        private @NonNull Context getContext() {
+            return Objects.requireNonNull(contextRef.get());
+        }
+
         @Override
         protected void onLooperPrepared() {
             try {
                 invokeCompressor(compressionSettings);
             } catch (RuntimeException e) {
-                Crashlytics.logException(e);
-                listener.onCompressionError(e);
+                Logging.recordException(e);
+                listener.onCompressionError(inputFile, outputFile, e);
             } catch (IOException e) {
-                Crashlytics.logException(e);
-                listener.onCompressionError(e);
+                Logging.recordException(e);
+                listener.onCompressionError(inputFile, outputFile, e);
             }
         }
 
         @Override
         public void run() {
-            super.run();
-            synchronized (activeCompressionThreads) {
-                activeCompressionThreads.remove(this);
-                activeCompressionThreads.notifyAll();
+            try {
+                super.run();
+                synchronized (activeCompressionThreads) {
+                    activeCompressionThreads.remove(this);
+                    activeCompressionThreads.notifyAll();
+                }
+            } catch(Exception e) {
+                Logging.log(Log.ERROR, TAG, "Unexpected error in exo player compression listener thread. Cancelling compression.");
+                Logging.recordException(e);
+                cancel();
             }
         }
 
@@ -435,21 +560,20 @@ public class ExoPlayerCompression {
             LoadControl loadControl = new DefaultLoadControl();
             TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
-            CompressionListener listenerWrapper = new InternalCompressionListener(listener, inputFile, outputFile);
+            CompressionListener listenerWrapper = new InternalCompressionListener(listener, compressionSettings.isEnableFastStart());
 
             MediaMuxerControl mediaMuxerControl;
-            mediaMuxerControl = new MediaMuxerControl(inputFile, outputFile, listenerWrapper);
+            mediaMuxerControl = new MediaMuxerControl(getContext(), inputFile, outputFile, listenerWrapper);
 
-            CompressionRenderersFactory renderersFactory = new CompressionRenderersFactory(contextRef.get(), mediaMuxerControl, compressionSettings);
+            CompressionRenderersFactory renderersFactory = new CompressionRenderersFactory(getContext(), mediaMuxerControl, compressionSettings);
             player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
             PlayerMonitor playerMonitor = new PlayerMonitor(player, mediaMuxerControl, listenerWrapper, Looper.myLooper());
             player.addListener(playerMonitor); // watch for errors and report them
-            ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new FileDataSourceFactory());
+            ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new DefaultDataSourceFactory(getContext(), "PiwigoCompression"));
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             factory.setExtractorsFactory(extractorsFactory);
-            listenerWrapper.onCompressionStarted();
-            Uri videoUri = Uri.fromFile(inputFile);
-            ExtractorMediaSource videoSource = factory.createMediaSource(videoUri);
+            listenerWrapper.onCompressionStarted(inputFile, outputFile);
+            ExtractorMediaSource videoSource = factory.createMediaSource(inputFile);
             player.prepare(videoSource);
             PlaybackParameters playbackParams = new PlaybackParameters(1.0f);
             player.setPlaybackParameters(playbackParams);
@@ -458,15 +582,23 @@ public class ExoPlayerCompression {
             Handler progressHandler = new Handler(getLooper());
             progressHandler.postDelayed(new CompressionProgressListener(progressHandler, player, mediaMuxerControl, listenerWrapper), 1000);
             if (cancelled) {
-                if (outputFile.exists() && !outputFile.delete()) {
-                    Crashlytics.log(Log.ERROR, TAG, "Unable to delete output file after compression cancelled");
+                DocumentFile outputDocFile = IOUtils.getSingleDocFile(getContext(), outputFile);
+                if (outputDocFile.exists() && !outputDocFile.delete()) {
+                    Logging.log(Log.ERROR, TAG, "Unable to delete output file after compression cancelled");
                 }
             }
         }
 
         public void cancel() {
-            cancelled = true;
-            player.stop(); // will cause the thread to shutdown safely once all messages have been processed.
+            try {
+                cancelled = true;
+                player.stop(); // will cause the thread to shutdown safely once all messages have been processed.
+            } catch(Exception e) {
+                Logging.log(Log.ERROR, TAG, "Encountered unexpected error cancelling video compression");
+                Logging.recordException(e);
+            } finally {
+                Logging.log(Log.DEBUG, TAG, "Compression cancelled");
+            }
         }
     }
 }

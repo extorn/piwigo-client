@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.common;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ClipData;
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,34 +17,31 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.math.BigInteger;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -57,6 +52,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,27 +60,34 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import delit.libs.core.util.Logging;
+import delit.libs.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.ParcelUtils;
-import delit.libs.ui.util.TransientMsgUtils;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.CustomSnackbar;
 import delit.libs.util.ObjectUtils;
-import delit.libs.util.X509Utils;
+import delit.libs.util.SafeRunnable;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
+import delit.piwigoclient.ui.common.dialogmessage.NewUnTrustedCaCertificateReceivedAction;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultListener;
+import delit.piwigoclient.ui.common.dialogmessage.QueuedDialogMessage;
+import delit.piwigoclient.ui.common.dialogmessage.QueuedQuestionMessage;
+import delit.piwigoclient.ui.common.dialogmessage.QueuedSimpleMessage;
+import delit.piwigoclient.ui.common.dialogmessage.ReleaseNotesMessage;
+import delit.piwigoclient.ui.common.dialogmessage.UnexpectedUriQuestionResult;
 import delit.piwigoclient.ui.events.BadRequestExposesInternalServerEvent;
-import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import delit.piwigoclient.ui.util.TransientMsgUtils;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
@@ -92,7 +95,7 @@ import static android.content.Context.CLIPBOARD_SERVICE;
  * Created by gareth on 13/10/17.
  */
 
-public abstract class UIHelper<T> {
+public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
 
     private static final String TAG = "UiHelper";
     private static final String STATE_UIHELPER = "uiHelperState";
@@ -104,63 +107,80 @@ public abstract class UIHelper<T> {
     private static final String STATE_SIMPLE_MESSAGE_QUEUE = "UIHelper.simpleMessageQueue";
     private static final String STATE_DIALOG_MESSAGE_QUEUE = "UIHelper.dialogMessageQueue";
     private static ExecutorService executors;
-    private final T parent;
+    private final WeakReference<OWNER> parent;
     private final SharedPreferences prefs;
-    private final Deque<QueuedDialogMessage> dialogMessageQueue = new LinkedBlockingDeque<>(20);
+    private final Deque<QueuedDialogMessage<UIH, OWNER>> dialogMessageQueue = new LinkedBlockingDeque<>(20);
     private final Queue<QueuedSimpleMessage> simpleMessageQueue = new LinkedBlockingQueue<>(50);
     private boolean toastShowing = false;
-    private Context context;
+    private Context appContext;
     private DismissListener dismissListener;
     private AlertDialog alertDialog;
-    private Map<Long, String> activeServiceCalls = Collections.synchronizedMap(new HashMap<Long, String>(3));
+    private final Map<Long, String> activeServiceCalls = Collections.synchronizedMap(new HashMap<>(3));
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
     private int trackedRequest = -1;
-    private BasicPiwigoResponseListener piwigoResponseListener;
+    private BasicPiwigoResponseListener<UIH, OWNER> piwigoResponseListener;
     private int permissionsNeededReason;
-    private NotificationManager notificationManager;
-    ProgressIndicator progressIndicator;
-    private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap();
+    private NotificationManagerCompat notificationManager;
+    private WeakReference<ProgressIndicator> progressIndicator;
+    private ConcurrentHashMap<Long, Action<UIH, OWNER,? extends PiwigoResponseBufferingHandler.Response>> actionOnServerCallComplete = new ConcurrentHashMap<>();
 
-    public UIHelper(T parent, SharedPreferences prefs, Context context) {
-        this.context = context;
+    public UIHelper(OWNER parent, SharedPreferences prefs, Context context) {
+        this(parent, prefs, context, DisplayUtils.getActivity(context).getWindow().getDecorView());
+    }
+
+    public UIHelper(OWNER parent, SharedPreferences prefs, Context context, @Nullable View attachedView) {
+        this.appContext = context.getApplicationContext();
         this.prefs = prefs;
-        this.parent = parent;
-        setupDialogBoxes();
+        this.parent = new WeakReference<>(parent);
+        if(canShowDialog()) {
+            setupDialogBoxes();
+        }
+        loadProgressIndicatorIfPossible(attachedView);
         setupNotificationsManager();
     }
 
     public static void recycleImageViewContent(ImageView imgView) {
         if (imgView != null) {
-            Bitmap img = imgView.getDrawingCache();
-            if (img != null) {
-                img.recycle();
-            }
+            imgView.setImageDrawable(null);
         }
-
     }
 
+    /**
+     * Now I'm using app context here, this is pointless I think.
+     * @param context
+     */
     public void swapToNewContext(Context context) {
+        Context newAppCtx = context.getApplicationContext();
+        if(ObjectUtils.areEqual(appContext, newAppCtx)) {
+            return;
+        }
         try {
             closeAllDialogs();
         } catch (RuntimeException e) {
-            Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "unable to flush old dialogs", e);
-            }
+            Logging.recordException(e);
+            Logging.log(Log.ERROR, TAG, "unable to flush old dialogs");
         }
-        this.context = context;
+        this.appContext = newAppCtx;
         setupDialogBoxes();
+        loadProgressIndicatorIfPossible(getParentView());
         setupNotificationsManager();
     }
 
     private void setupNotificationsManager() {
-        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager = NotificationManagerCompat.from(getAppContext());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String name = context.getString(R.string.app_name);
-            NotificationChannel channel = notificationManager.getNotificationChannel(getDefaultNotificationChannelId());
-            if (channel == null) {
-                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            String name = appContext.getString(R.string.app_name);
+            NotificationChannel channel = notificationManager.getNotificationChannel(getLowImportanceNotificationChannelId());
+            int importance = NotificationManager.IMPORTANCE_LOW; // no noise for low.
+            if (channel == null || channel.getImportance() != importance) {
+                channel = new NotificationChannel(getLowImportanceNotificationChannelId(), name, importance);
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            channel = notificationManager.getNotificationChannel(getDefaultNotificationChannelId());
+            importance = NotificationManager.IMPORTANCE_DEFAULT; // makes a noise
+            if (channel == null || channel.getImportance() != importance) {
                 channel = new NotificationChannel(getDefaultNotificationChannelId(), name, importance);
                 notificationManager.createNotificationChannel(channel);
             }
@@ -176,25 +196,32 @@ public abstract class UIHelper<T> {
         notificationManager.cancel(source, notificationId);
     }
 
-    public void showNotification(String source, int notificationId, Notification notification) {
+    public void showNotification(String source, int notificationId, android.app.Notification notification) {
         // Builds the notification and issues it.
+        if(BuildConfig.DEBUG) {
+            Log.d(TAG, "Posting notification : " + notificationId + " " + notification);
+        }
         notificationManager.notify(source, notificationId, notification);
     }
 
+    public String getLowImportanceNotificationChannelId() {
+        return appContext.getString(R.string.app_name) + "_Misc_Low";
+    }
+
     public String getDefaultNotificationChannelId() {
-        return context.getString(R.string.app_name) + "_Misc";
+        return appContext.getString(R.string.app_name) + "_Misc";
     }
 
     public boolean isContextOutOfSync(Context context) {
-        return this.context != context;
+        return this.appContext != context;
     }
 
     public void showDetailedMsg(@StringRes int titleResId, @StringRes int messageResId) {
-        showDetailedMsg(titleResId, getContext().getString(messageResId), Toast.LENGTH_LONG);
+        showDetailedMsg(titleResId, getAppContext().getString(messageResId), Toast.LENGTH_LONG);
     }
 
     public void showDetailedShortMsg(@StringRes int titleResId, @StringRes int messageResId) {
-        showDetailedMsg(titleResId, getContext().getString(messageResId), Toast.LENGTH_LONG);
+        showDetailedMsg(titleResId, getAppContext().getString(messageResId), Toast.LENGTH_LONG);
     }
 
     public void showDetailedShortMsg(@StringRes int titleResId, String message) {
@@ -217,11 +244,16 @@ public abstract class UIHelper<T> {
     }
 
     private synchronized void showDetailedMsg(QueuedSimpleMessage newItem) {
+        if(!DisplayUtils.isRunningOnUIThread()) {
+            // make certain this isn't called on a background thread.
+            DisplayUtils.postOnUiThread(() -> showDetailedMsg(newItem));
+            return;
+        }
         if(!toastShowing) {
             // do this here in case the queue is already full (will only occur if there is a bug in the display logic really).
             showQueuedMsg();
         }
-        if (newItem.id >= 0) {
+        if (newItem.getId() >= 0) {
             if (!simpleMessageQueue.isEmpty()) {
                 simpleMessageQueue.remove(newItem);
             }
@@ -233,18 +265,10 @@ public abstract class UIHelper<T> {
                 StringBuilder sb = new StringBuilder();
                 sb.append("SimpleMessageQueue Full : \n");
                 for(QueuedSimpleMessage item : simpleMessageQueue) {
-                    sb.append("title : ");
-                    sb.append(getContext().getString(item.titleResId));
-                    sb.append('\n');
-                    sb.append("msg : ");
-                    sb.append(item.message);
-                    sb.append('\n');
-                    sb.append("duration : ");
-                    sb.append(item.duration);
-                    sb.append('\n');
+                    item.toString(getAppContext());
                 }
-                Crashlytics.log(Log.ERROR, TAG, sb.toString());
-                Crashlytics.logException(e);
+                Logging.log(Log.ERROR, TAG, sb.toString());
+                Logging.recordException(e);
             }
         }
         if(!toastShowing) {
@@ -259,21 +283,25 @@ public abstract class UIHelper<T> {
     protected void showQueuedMsg() {
         View parentView = getParentView();
         if(parentView == null || !canShowDialog()) {
+            Logging.log(Log.WARN,TAG,"Unable to show message, parent has no view");
             return;
         }
         if(simpleMessageQueue.isEmpty()) {
             return;
         }
+        if(canShowDialog()) {
+            setupDialogBoxes();
+        }
         final CustomSnackbar snackbar;
         toastShowing = true;
         QueuedSimpleMessage toastMsg = simpleMessageQueue.remove();
         final String message;
-        if(toastMsg.message == null) {
-            message = getContext().getString(toastMsg.titleResId);
-            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.titleResId, null, toastMsg.getSnackbarDuration());
+        if(toastMsg.getMessage() == null) {
+            message = getAppContext().getString(toastMsg.getTitleResId());
+            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.getTitleResId(), null, toastMsg.getSnackbarDuration());
         } else {
-            message = toastMsg.message;
-            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.titleResId, toastMsg.message, toastMsg.getSnackbarDuration());
+            message = toastMsg.getMessage();
+            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.getTitleResId(), toastMsg.getMessage(), toastMsg.getSnackbarDuration());
         }
         snackbar.addCallback(new CustomSnackbar.BaseCallback() {
             private boolean dismissHandled;
@@ -294,44 +322,47 @@ public abstract class UIHelper<T> {
                     return false;
                 }
                 ClipboardManager clipboardService = (ClipboardManager) v.getContext().getSystemService(CLIPBOARD_SERVICE);
-                clipboardService.setPrimaryClip(ClipData.newPlainText("Piwigo Client", message));
-                dismissHandled = true;
-                snackbar.dismiss();
-                CustomSnackbar snackbarNotification = TransientMsgUtils.makeSnackbar(v, R.string.copied_to_clipboard, null, CustomSnackbar.LENGTH_SHORT);
-                snackbarNotification.getView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-                    @Override
-                    public void onViewAttachedToWindow(View v) {
-                        //do nothing.
-                    }
+                if(clipboardService != null) {
+                    clipboardService.setPrimaryClip(ClipData.newPlainText("Piwigo Client", message));
+                    dismissHandled = true;
+                    snackbar.dismiss();
+                    CustomSnackbar snackbarNotification = TransientMsgUtils.makeSnackbar(v, R.string.copied_to_clipboard, null, CustomSnackbar.LENGTH_SHORT);
+                    snackbarNotification.getView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                        @Override
+                        public void onViewAttachedToWindow(View v) {
+                            //do nothing.
+                        }
 
-                    @Override
-                    public void onViewDetachedFromWindow(View v) {
-                        toastShowing = false;
-                        showQueuedMsg();
-                    }
-                });
-                snackbarNotification.show();
+                        @Override
+                        public void onViewDetachedFromWindow(View v) {
+                            toastShowing = false;
+                            showQueuedMsg();
+                        }
+                    });
+                    snackbarNotification.show();
+                }
                 return false;
             }
         });
         snackbar.show();
     }
 
+
     protected abstract View getParentView();
 
-    public T getParent() {
-        return parent;
+    public OWNER getParent() {
+        return parent.get();
     }
 
     public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker) {
         worker.setRunInBackground(true);
         long msgId = worker.getMessageId();
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(msgId, piwigoResponseListener);
-        worker.invokeAsync(context);
+        worker.invokeAsync(appContext);
         return msgId;
     }
 
-    public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+    public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker, Action<UIH, OWNER,? extends PiwigoResponseBufferingHandler.Response> actionOnResponse) {
         addActionOnResponse(worker.getMessageId(), actionOnResponse);
         return invokeSilentServiceCall(worker);
     }
@@ -340,19 +371,25 @@ public abstract class UIHelper<T> {
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
 
-    private  boolean isProgressIndicatorVisible() {
-        if(progressIndicator == null) {
-            loadProgressIndicatorIfPossible();
-        }
+
+
+    private boolean isProgressIndicatorVisible() {
+        ProgressIndicator progressIndicator = getProgressIndicator();
         return progressIndicator != null && progressIndicator.getVisibility() == View.VISIBLE;
     }
 
-    private void loadProgressIndicatorIfPossible() {
-        try {
-            progressIndicator = ActivityCompat.requireViewById((Activity) context, R.id.progressIndicator);
-        } catch (IllegalArgumentException e) {
-            if(BuildConfig.DEBUG) {
-                Crashlytics.log(Log.ERROR, TAG, "Progress indicator not available in " + ((Activity) context).getLocalClassName());
+    private void loadProgressIndicatorIfPossible(View view) {
+        if(view != null) {
+            try {
+                progressIndicator = new WeakReference<>(ViewCompat.requireViewById(view.getRootView(), R.id.progressIndicator));
+            } catch(IllegalArgumentException e) {
+                Logging.recordException(new Exception().fillInStackTrace());
+                Logging.log(Log.ERROR, TAG, "Progress indicator not available in current view graph " + getParent().getClass().getName());
+            }
+        } else {
+            if (BuildConfig.DEBUG) {
+                Logging.recordException(new Exception().fillInStackTrace());
+                Logging.log(Log.ERROR, TAG, "Progress indicator not available in " + getParent().getClass().getName());
             }
         }
     }
@@ -361,7 +398,7 @@ public abstract class UIHelper<T> {
      * Called when retrying a failed call.
      */
     public long addActiveServiceCall(AbstractPiwigoDirectResponseHandler handler) {
-        long messageId = handler.invokeAsync(getContext());
+        long messageId = handler.invokeAsync(getAppContext());
         synchronized (activeServiceCalls) {
             activeServiceCalls.put(messageId, handler.getTag());
         }
@@ -387,7 +424,7 @@ public abstract class UIHelper<T> {
         return addActiveServiceCall(titleString, messageId, serviceDesc);
     }
 
-    public static <T extends AsyncTask<S, ?, ?>, S> T submitAsyncTask(T task, S... params) {
+    public static <AST extends AsyncTask<PRM, ?,?>,PRM> AST submitAsyncTask(AST task, PRM... params) {
         if (executors == null) {
             executors = Executors.newCachedThreadPool();
         }
@@ -396,7 +433,7 @@ public abstract class UIHelper<T> {
     }
 
     public long addActiveServiceCall(String titleString, AbstractPiwigoDirectResponseHandler handler) {
-        long messageId = handler.invokeAsync(getContext());
+        long messageId = handler.invokeAsync(getAppContext());
         synchronized (activeServiceCalls) {
             activeServiceCalls.put(messageId, handler.getTag());
         }
@@ -408,12 +445,17 @@ public abstract class UIHelper<T> {
     }
 
     private void setupDialogBoxes() {
-        buildAlertDialog();
-        loadProgressIndicatorIfPossible();
+        Context context = getAppContext();
+        if(getParentView() != null) {
+            context = getParentView().getContext();
+        } else {
+            Logging.log(Log.WARN, TAG,"Unable to use view context for dialog boxes - view not available");
+        }
+        buildAlertDialog(context);
     }
 
-    protected void buildAlertDialog() {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+    protected void buildAlertDialog(Context c) {
+        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(c, R.style.Theme_App_EditPages));
         builder1.setCancelable(true);
         dismissListener = buildDialogDismissListener();
         builder1.setOnDismissListener(dismissListener);
@@ -424,74 +466,87 @@ public abstract class UIHelper<T> {
         return new DismissListener();
     }
 
-    protected void showDialog(final QueuedQuestionMessage nextMessage) {
-        buildAlertDialog();
+    protected void showDialog(final QueuedQuestionMessage<UIH,OWNER> nextMessage) {
+        buildAlertDialog(getParentView().getContext());
         alertDialog.setCancelable(nextMessage.isCancellable());
         alertDialog.setTitle(nextMessage.getTitleId());
-        alertDialog.setMessage(nextMessage.getMessage());
 
-        if (nextMessage.getLayoutId() != Integer.MIN_VALUE) {
+        ViewGroup dialogView = null;
+        if (nextMessage.getLayoutId() != View.NO_ID) {
             LayoutInflater inflater = LayoutInflater.from(alertDialog.getContext());
-            final LinearLayout dialogView = (LinearLayout) inflater.inflate(nextMessage.getLayoutId(), null, false);
+            dialogView = (ViewGroup) inflater.inflate(nextMessage.getLayoutId(), null, false);
             alertDialog.setView(dialogView);
             nextMessage.populateCustomView(dialogView);
+        } else {
+            // WARNING:  If you set the message and the view, the alert dialog layout silently fails to measure the components!
+            alertDialog.setMessage(nextMessage.getMessage());
         }
 
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getString(nextMessage.getPositiveButtonTextId()), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                nextMessage.getListener().onResult(alertDialog, true);
-            }
-        });
-        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, context.getString(nextMessage.getNegativeButtonTextId()), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                nextMessage.getListener().onResult(alertDialog, false);
-            }
-        });
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, appContext.getString(nextMessage.getPositiveButtonTextId()), (dialog, which) -> nextMessage.getListener().onResult(alertDialog, true));
+        if(nextMessage.isShowNegativeButton()) {
+            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, appContext.getString(nextMessage.getNegativeButtonTextId()), (dialog, which) -> nextMessage.getListener().onResult(alertDialog, false));
+        }
         if (nextMessage.isShowNeutralButton()) {
-            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, context.getString(nextMessage.getNeutralButtonTextId()), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    nextMessage.getListener().onResult(alertDialog, null);
-                }
-            });
+            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, appContext.getString(nextMessage.getNeutralButtonTextId()), (dialog, which) -> nextMessage.getListener().onResult(alertDialog, null));
         }
         dismissListener.setListener(nextMessage.getListener());
-        dismissListener.setBuildNewDialogOnDismiss(nextMessage.getLayoutId() != Integer.MIN_VALUE);
-        alertDialog.show();
-        nextMessage.getListener().onShow(alertDialog);
+        dismissListener.setBuildNewDialogOnDismiss(nextMessage.getLayoutId() != View.NO_ID);
+
+        try {
+            nextMessage.getListener().onBeforeShow(alertDialog);
+            WindowManager.LayoutParams layoutParams = null;
+            if (nextMessage.getLayoutId() != View.NO_ID) {
+                layoutParams = nextMessage.showWithDialogLayoutParams(alertDialog, dialogView);
+            }
+            alertDialog.show();
+            if(layoutParams != null) {
+                Objects.requireNonNull(alertDialog.getWindow()).setAttributes(layoutParams);
+                //dialogView.getParent().requestLayout(); // this might be needed, but tweaking the layout params isn't needed at the moment
+            }
+            nextMessage.getListener().onShow(alertDialog);
+        } catch(WindowManager.BadTokenException e) {
+            Logging.recordException(e);
+            Logging.log(Log.ERROR, TAG, "Unable to show dialog as window is detached from parent : " + getParent());
+        }
     }
 
-    protected void showDialog(final QueuedDialogMessage nextMessage) {
-        buildAlertDialog();
+    protected void showDialog(final QueuedDialogMessage<UIH,OWNER> nextMessage) {
+        buildAlertDialog(getParentView().getContext());
         alertDialog.setCancelable(nextMessage.isCancellable());
         alertDialog.setTitle(nextMessage.getTitleId());
-        alertDialog.setMessage(nextMessage.getMessage());
 
-        if (nextMessage.getLayoutId() != Integer.MIN_VALUE) {
+        ViewGroup dialogView = null;
+        if (nextMessage.getLayoutId() != View.NO_ID) {
             LayoutInflater inflater = LayoutInflater.from(alertDialog.getContext());
-            final LinearLayout dialogView = (LinearLayout) inflater.inflate(nextMessage.getLayoutId(), null, false);
+            dialogView = (ViewGroup) inflater.inflate(nextMessage.getLayoutId(), null, false);
             alertDialog.setView(dialogView);
             nextMessage.populateCustomView(dialogView);
+        } else {
+            // WARNING: If you set the message and the view, the alert dialog layout silently fails to measure the components!
+            alertDialog.setMessage(nextMessage.getMessage());
         }
 
         Button b = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
         if (b != null) {
             b.setVisibility(View.GONE);
         }
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getString(nextMessage.getPositiveButtonTextId()), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                QuestionResultListener l = nextMessage.getListener();
-                if (l != null) {
-                    l.onResultInternal(alertDialog, true);
-                }
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, appContext.getString(nextMessage.getPositiveButtonTextId()), (dialog, which) -> {
+            QuestionResultListener<UIH,OWNER> l = nextMessage.getListener();
+            if (l != null) {
+                l.onResultInternal(alertDialog, true);
             }
         });
         dismissListener.setListener(nextMessage.getListener());
+        WindowManager.LayoutParams layoutParams = null;
+        if (nextMessage.getLayoutId() != View.NO_ID) {
+            layoutParams = nextMessage.showWithDialogLayoutParams(alertDialog, dialogView);
+        }
         alertDialog.show();
-        QuestionResultListener l = nextMessage.getListener();
+        if(layoutParams != null) {
+            Objects.requireNonNull(alertDialog.getWindow()).setAttributes(layoutParams);
+            //dialogView.getParent().requestLayout(); // this might be needed, but tweaking the layout params isn't needed at the moment
+        }
+        QuestionResultListener<UIH,OWNER> l = nextMessage.getListener();
         if (l != null) {
             l.onShow(alertDialog);
         }
@@ -499,34 +554,34 @@ public abstract class UIHelper<T> {
 
     public void invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker) {
         addActiveServiceCall(progressMsg, worker);
-        worker.invokeAsync(context);
+        worker.invokeAsync(appContext);
     }
 
-    public long invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+    public long invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action<UIH,OWNER,?> actionOnResponse) {
         addActionOnResponse(worker.getMessageId(), actionOnResponse);
         addActiveServiceCall(progressMsg, worker);
         return worker.getMessageId();
     }
 
-    public void invokeActiveServiceCall(int progressMsgId, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
-        invokeActiveServiceCall(context.getString(progressMsgId), worker, actionOnResponse);
+    public void invokeActiveServiceCall(int progressMsgId, AbstractPiwigoDirectResponseHandler worker, Action<UIH,OWNER,?> actionOnResponse) {
+        invokeActiveServiceCall(appContext.getString(progressMsgId), worker, actionOnResponse);
     }
 
     public long addActiveServiceCall(int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
-        return addActiveServiceCall(context.getString(titleStringId), worker);
+        return addActiveServiceCall(appContext.getString(titleStringId), worker);
     }
 
-    public BasicPiwigoResponseListener getPiwigoResponseListener() {
+    public BasicPiwigoResponseListener<UIH, OWNER> getPiwigoResponseListener() {
         return piwigoResponseListener;
     }
 
-    public void setPiwigoResponseListener(BasicPiwigoResponseListener piwigoResponseListener) {
+    public void setPiwigoResponseListener(BasicPiwigoResponseListener<UIH, OWNER> piwigoResponseListener) {
         this.piwigoResponseListener = piwigoResponseListener;
     }
 
-    public boolean isServiceCallInProgress() {
+    public boolean isServiceCallInProgress(Long serviceCallId) {
         synchronized (activeServiceCalls) {
-            return activeServiceCalls.size() > 0;
+            return activeServiceCalls.containsKey(serviceCallId);
         }
     }
 
@@ -567,7 +622,7 @@ public abstract class UIHelper<T> {
                     }
                     trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
                     runWithPermissions = BundleUtils.readMap(thisBundle, STATE_RUN_WITH_PERMS_LIST, PermissionsWantedRequestEvent.class.getClassLoader());
-                    actionOnServerCallComplete = BundleUtils.readMap(thisBundle, STATE_ACTIONS_ON_RESPONSES, new ConcurrentHashMap<Long, Action>(), Action.class.getClassLoader());
+                    actionOnServerCallComplete = BundleUtils.readMap(thisBundle, STATE_ACTIONS_ON_RESPONSES, new ConcurrentHashMap<>(), Action.class.getClassLoader());
                     permissionsNeededReason = thisBundle.getInt(STATE_PERMS_FOR_REASON);
 
                     BundleUtils.readQueue(savedInstanceState, STATE_SIMPLE_MESSAGE_QUEUE, simpleMessageQueue);
@@ -576,16 +631,16 @@ public abstract class UIHelper<T> {
 
                     piwigoResponseListener.onRestoreInstanceState(thisBundle);
 
-                    for (QueuedDialogMessage message : dialogMessageQueue) {
+                    for (QueuedDialogMessage<UIH,OWNER> message : dialogMessageQueue) {
                         if (message.getListener() != null) {
-                            message.getListener().setUiHelper(this);
+                            message.getListener().setUiHelper((UIH)this);
                         }
                     }
                 }
             }
         } catch (RuntimeException e) {
-            Crashlytics.log(Log.WARN, TAG, "Ditching all saved instance state due to error loading");
-            Crashlytics.logException(e);
+            Logging.log(Log.WARN, TAG, "Ditching all saved instance state due to error loading");
+            Logging.recordException(e);
         }
     }
 
@@ -605,12 +660,14 @@ public abstract class UIHelper<T> {
         synchronized (dialogMessageQueue) {
             if (dialogMessageQueue.size() > 0 && !isDialogShowing()) {
                 // show the dialog now we're able.
-                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                QueuedDialogMessage<UIH,OWNER> nextMessage = dialogMessageQueue.peek();
                 if (nextMessage instanceof QueuedQuestionMessage) {
-                    showDialog((QueuedQuestionMessage) nextMessage);
+                    showDialog((QueuedQuestionMessage<UIH,OWNER>) nextMessage);
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
                 }
+            } else if(simpleMessageQueue.size() > 0 && !toastShowing) {
+                showQueuedMsg();
             }
         }
     }
@@ -620,31 +677,35 @@ public abstract class UIHelper<T> {
     }
 
     public void closeAllDialogs() {
-        alertDialog.dismiss();
+        if(alertDialog != null) {
+            alertDialog.dismiss();
+        }
         hideProgressIndicator();
     }
 
-    public int runWithExtraPermissions(final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String permissionNeeded, String permissionJustificationString) {
+    public int runWithExtraPermissions(@NonNull final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, @Nullable final String permissionNeeded, @NonNull String permissionJustificationString) {
         return runWithExtraPermissions(fragment, sdkVersionRequiredFrom, sdkVersionRequiredUntil, new String[]{permissionNeeded}, permissionJustificationString);
     }
 
-    public int runWithExtraPermissions(final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String[] permissionsNeeded, String permissionJustificationString) {
+    public int runWithExtraPermissions(@NonNull final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, @NonNull final String[] permissionsNeeded, @NonNull String permissionJustificationString) {
         PermissionsWantedRequestEvent event = new PermissionsWantedRequestEvent();
         for(String permissionNeeded : permissionsNeeded) {
-            event.addPermissionNeeded(permissionNeeded);
+            if(permissionNeeded != null) {
+                event.addPermissionNeeded(permissionNeeded);
+            }
         }
         event.setJustification(permissionJustificationString);
-        return runWithExtraPermissions(fragment.getActivity(), sdkVersionRequiredFrom, sdkVersionRequiredUntil, event);
+        return runWithExtraPermissions(fragment.requireActivity(), sdkVersionRequiredFrom, sdkVersionRequiredUntil, event);
     }
 
-    public int runWithExtraPermissions(final Activity activity, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String permissionNeeded, String permissionJustificationString) {
+    public int runWithExtraPermissions(@NonNull final Activity activity, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String permissionNeeded, String permissionJustificationString) {
         PermissionsWantedRequestEvent event = new PermissionsWantedRequestEvent();
         event.addPermissionNeeded(permissionNeeded);
         event.setJustification(permissionJustificationString);
         return runWithExtraPermissions(activity, sdkVersionRequiredFrom, sdkVersionRequiredUntil, event);
     }
 
-    private int runWithExtraPermissions(final Activity activity, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final PermissionsWantedRequestEvent event) {
+    private int runWithExtraPermissions(@NonNull final Activity activity, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, @NonNull final PermissionsWantedRequestEvent event) {
 
         final PermissionRequester requester = new ActivityPermissionRequester(activity);
         if (activity instanceof FragmentActivity) {
@@ -657,7 +718,7 @@ public abstract class UIHelper<T> {
         final HashSet<String> permissionsNeeded = new HashSet<>(permissionsWanted.size());
         if (Build.VERSION.SDK_INT <= sdkVersionRequiredUntil && Build.VERSION.SDK_INT >= sdkVersionRequiredFrom) {
             for (String permissionWanted : permissionsWanted) {
-                if (ContextCompat.checkSelfPermission(context,
+                if (ContextCompat.checkSelfPermission(appContext,
                         permissionWanted)
                         != PackageManager.PERMISSION_GRANTED) {
                     permissionsNeeded.add(permissionWanted);
@@ -681,24 +742,21 @@ public abstract class UIHelper<T> {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                final AlertDialog.Builder alert = new AlertDialog.Builder(this.context);
-                alert.setTitle(context.getString(R.string.alert_title_permissions_needed));
+                final MaterialAlertDialogBuilder alert = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(activity, R.style.Theme_App_EditPages));
+                alert.setTitle(appContext.getString(R.string.alert_title_permissions_needed));
                 alert.setMessage(event.getJustification());
 
-                alert.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                alert.setPositiveButton(appContext.getString(R.string.button_ok), (dialog, whichButton) -> {
 //                        EventBus.getDefault().post(event);
-                        requester.requestPermission(event.getActionId(), permissionsNeeded);
-                    }
+                    requester.requestPermission(event.getActionId(), permissionsNeeded);
                 });
-                alert.setNegativeButton(context.getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Do nothing, automatically the dialog is going to be closed.
-                        onRequestPermissionsResult(activity, event.getActionId(), permissionsNeeded.toArray(new String[0]), new int[0]);
-                    }
+                alert.setNegativeButton(appContext.getString(R.string.button_cancel), (dialog, whichButton) -> {
+                    // Do nothing, automatically the dialog is going to be closed.
+                    onRequestPermissionsResult(activity, event.getActionId(), permissionsNeeded.toArray(new String[0]), new int[0]);
                 });
-                alert.create().show();
-
+                if(DisplayUtils.canShowDialog(activity)) {
+                    alert.create().show();
+                }
             } else {
 //                EventBus.getDefault().post(event);
                 // No explanation needed, we can request the permission.
@@ -728,63 +786,45 @@ public abstract class UIHelper<T> {
     }
 
     protected boolean canShowDialog() {
-        return true;
+        return getParentView() != null && getParentView().getContext() != null; // if no context, then unable to build the view let alone show it.
     }
 
     public void showProgressIndicator(final String titleString, final int progress) {
+        ProgressIndicator progressIndicator = getProgressIndicator();
         if (progressIndicator == null) {
-            Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
+            Logging.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
         } else {
-            if (DisplayUtils.isRunningOnUIThread()) {
-                progressIndicator.showProgressIndicator(titleString, progress);
-            } else {
-                // publish on the main thread
-                progressIndicator.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressIndicator.showProgressIndicator(titleString, progress);
-                    }
-                });
-            }
+            DisplayUtils.runOnUiThread(()->progressIndicator.showProgressIndicator(titleString, progress));
         }
     }
 
     public void showProgressIndicator() {
-
+        ProgressIndicator progressIndicator = getProgressIndicator();
         if (progressIndicator == null) {
-            Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
+            Logging.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
         } else {
             if (DisplayUtils.isRunningOnUIThread()) {
                 progressIndicator.setVisibility(View.VISIBLE);
             } else {
                 // publish on the main thread
-                progressIndicator.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressIndicator.setVisibility(View.VISIBLE);
-                    }
-                });
+                progressIndicator.post(new SafeRunnable(() -> progressIndicator.setVisibility(View.VISIBLE)));
             }
         }
     }
 
     public void hideProgressIndicator() {
-        if(progressIndicator != null) {
+        ProgressIndicator progressIndicator = getProgressIndicator();
+        if(progressIndicator != null && progressIndicator.isVisible()) {
             if (DisplayUtils.isRunningOnUIThread()) {
                 progressIndicator.setVisibility(View.GONE);
             } else {
                 // publish on the main thread
-                progressIndicator.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressIndicator.setVisibility(View.GONE);
-                    }
-                });
+                progressIndicator.post(new SafeRunnable(() -> progressIndicator.setVisibility(View.GONE)));
             }
         }
     }
 
-    public boolean showMessageImmediatelyIfPossible(QueuedDialogMessage message) {
+    public boolean showMessageImmediatelyIfPossible(QueuedDialogMessage<UIH, OWNER> message) {
         if (!canShowDialog()) {
             return false;
         }
@@ -796,12 +836,16 @@ public abstract class UIHelper<T> {
                 }
                 dialogMessageQueue.addFirst(message);
                 showNextQueuedMessage();
-                return true;
             } else {
-                QueuedDialogMessage msg = dialogMessageQueue.peek();
-                msg.getListener().chainResult(message.getListener());
-                return true;
+                QueuedDialogMessage<UIH, OWNER> msg = dialogMessageQueue.peek();
+                if(msg != null) {
+                    QuestionResultListener<UIH, OWNER> listener = msg.getListener();
+                    if (listener != null) {
+                        listener.chainResult(message.getListener());
+                    }
+                }
             }
+            return true;
         }
     }
 
@@ -810,15 +854,8 @@ public abstract class UIHelper<T> {
         if (event.isHandled()) {
             return;
         }
-        String msg = getContext().getString(R.string.alert_internal_server_exposed_pattern, event.getOldAuthority(), event.getNewAuthority());
-        showOrQueueDialogQuestion(R.string.alert_warning, msg, R.string.button_stop_warning_me, R.string.button_ok, new QuestionResultAdapter<UIHelper<T>>(this) {
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.FALSE.equals(positiveAnswer)) {
-                    ConnectionPreferences.getActiveProfile().setWarnInternalUriExposed(getUiHelper().getPrefs(), getUiHelper().getContext(), false);
-                }
-            }
-        });
+        String msg = getAppContext().getString(R.string.alert_internal_server_exposed_pattern, event.getOldAuthority(), event.getNewAuthority());
+        showOrQueueDialogQuestion(R.string.alert_warning, msg, R.string.button_stop_warning_me, R.string.button_ok, new UnexpectedUriQuestionResult<>((UIH) this));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -827,7 +864,7 @@ public abstract class UIHelper<T> {
         if (event.isHandled()) {
             return;
         }
-        final Set<String> preNotifiedCerts = prefs.getStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>());
+        final Set<String> preNotifiedCerts = new HashSet<>(Objects.requireNonNull(prefs.getStringSet(appContext.getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>())));
         if (preNotifiedCerts.containsAll(event.getUntrustedCerts().keySet())) {
             // already dealt with this
             return;
@@ -835,13 +872,13 @@ public abstract class UIHelper<T> {
 
         DateFormat sdf = SimpleDateFormat.getDateInstance();
         StringBuilder sb = new StringBuilder();
-        sb.append(context.getString(R.string.alert_add_cert_to_truststore_pattern));
+        sb.append(appContext.getString(R.string.alert_add_cert_to_truststore_pattern));
 
         String subjectName = event.getEndCertificate().getSubjectX500Principal().getName();
         Date validFrom = event.getEndCertificate().getNotBefore();
         Date validTo = event.getEndCertificate().getNotAfter();
         BigInteger serialNumber = event.getEndCertificate().getSerialNumber();
-        sb.append(context.getString(R.string.certificate_summary_pattern, subjectName, sdf.format(validFrom), sdf.format(validTo), serialNumber.toString()));
+        sb.append(appContext.getString(R.string.certificate_summary_pattern, subjectName, sdf.format(validFrom), sdf.format(validTo), serialNumber.toString()));
 
         int untrustedCertCount = event.getUntrustedCerts().size();
         for (X509Certificate cert : event.getUntrustedCerts().values()) {
@@ -851,17 +888,17 @@ public abstract class UIHelper<T> {
                 break;
             }
 
-            sb.append(context.getString(R.string.certificate_chain_seperator));
+            sb.append(appContext.getString(R.string.certificate_chain_seperator));
 
             subjectName = cert.getSubjectX500Principal().getName();
             validFrom = cert.getNotBefore();
             validTo = cert.getNotAfter();
             serialNumber = cert.getSerialNumber();
-            sb.append(context.getString(R.string.certificate_summary_pattern, subjectName, sdf.format(validFrom), sdf.format(validTo), serialNumber.toString()));
+            sb.append(appContext.getString(R.string.certificate_summary_pattern, subjectName, sdf.format(validFrom), sdf.format(validTo), serialNumber.toString()));
         }
         String message = sb.toString();
 
-        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new NewUnTrustedCaCertificateReceivedAction(this, event.getUntrustedCerts()));
+        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new NewUnTrustedCaCertificateReceivedAction<>((UIH)this, event.getUntrustedCerts()));
     }
 
     public long addActiveServiceCall(String titleString, long messageId, String serviceDesc) {
@@ -878,12 +915,12 @@ public abstract class UIHelper<T> {
         return messageId;
     }
 
-    public <S extends QueuedDialogMessage> void showOrQueueDialogMessage(S message) {
+    public <S extends QueuedDialogMessage<UIH, OWNER>> void showOrQueueDialogMessage(S message) {
         synchronized (dialogMessageQueue) {
             if (!isDialogShowing() && canShowDialog()) {
-                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                QueuedDialogMessage<UIH,OWNER> nextMessage = dialogMessageQueue.peek();
                 if (nextMessage instanceof QueuedQuestionMessage) {
-                    showDialog((QueuedQuestionMessage) nextMessage);
+                    showDialog((QueuedQuestionMessage<UIH,OWNER>)nextMessage);
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
                 }
@@ -893,9 +930,9 @@ public abstract class UIHelper<T> {
                 dialogMessageQueue.add(message);
             }
             if (!isDialogShowing() && canShowDialog()) {
-                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                QueuedDialogMessage<UIH,OWNER> nextMessage = dialogMessageQueue.peek();
                 if (nextMessage instanceof QueuedQuestionMessage) {
-                    showDialog((QueuedQuestionMessage) nextMessage);
+                    showDialog((QueuedQuestionMessage<UIH,OWNER>)nextMessage);
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
                 }
@@ -903,40 +940,40 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public void showOrQueueEnhancedDialogQuestion(int titleId, String message, String detail, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, detail, positiveButtonTextId, negativeButtonTextId, listener));
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueEnhancedDialogQuestion(int titleId, String message, String detail, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, detail, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
-    public void showOrQueueDialogQuestion(int titleId, String message, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, positiveButtonTextId, negativeButtonTextId, listener));
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogQuestion(int titleId, String message, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
-    public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int neutralButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, neutralButtonTextId, listener));
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int neutralButtonTextId, int positiveButtonTextId, final QRL listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, neutralButtonTextId, listener));
     }
 
-    public void showOrQueueCancellableDialogQuestion(int titleId, String message, int negativeButtonTextId, int cancellableButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, null, Integer.MIN_VALUE, positiveButtonTextId, negativeButtonTextId, cancellableButtonTextId, listener));
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueCancellableDialogQuestion(int titleId, String message, int negativeButtonTextId, int cancellableButtonTextId, int positiveButtonTextId, final QRL listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, null, View.NO_ID, positiveButtonTextId, negativeButtonTextId, cancellableButtonTextId, listener));
     }
 
-    public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, layoutId, positiveButtonTextId, negativeButtonTextId, listener));
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, layoutId, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
     public void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId) {
-        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, positiveButtonTextId));
+        showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, positiveButtonTextId));
     }
 
-    public void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId, boolean cancellable, QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, positiveButtonTextId, cancellable, listener));
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId, boolean cancellable, QRL listener) {
+        showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, positiveButtonTextId, cancellable, listener));
     }
 
-    public void showOrQueueDialogMessage(int titleId, String message, QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, listener));
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogMessage(int titleId, String message, QRL listener) {
+        showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, listener));
     }
 
     public void showOrQueueDialogMessage(int titleId, String message) {
-        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null));
+        showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null));
     }
 
     public void removeActionForResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -985,8 +1022,8 @@ public abstract class UIHelper<T> {
         return false;
     }
 
-    public Context getContext() {
-        return context;
+    public Context getAppContext() {
+        return appContext;
     }
 
     public void handleAnyQueuedPiwigoMessages() {
@@ -1008,30 +1045,34 @@ public abstract class UIHelper<T> {
 
     public ProgressIndicator getProgressIndicator() {
         if(progressIndicator == null) {
-            loadProgressIndicatorIfPossible();
+            loadProgressIndicatorIfPossible(getParentView());
         }
-        return progressIndicator;
+        if(progressIndicator == null) {
+            return null;
+        }
+        return progressIndicator.get();
     }
 
     public void showUserHint(String tag, int hintId, @StringRes int hintStrResId) {
-        Set<String> hintsShown = getPrefs().getStringSet(context.getString(R.string.usage_hints_shown_list_key), new HashSet<String>());
+        String hintsKey = appContext.getString(R.string.usage_hints_shown_list_key);
+        Set<String> hintsShown = new HashSet<>(Objects.requireNonNull(getPrefs().getStringSet(hintsKey, new HashSet<>())));
         if (hintsShown.add(tag + '_' + hintId)) {
             int userHintDuration = Toast.LENGTH_LONG; //TODO use custom toast impl so I can set other duration perhaps. - AppPreferences.getUserHintDuration(getPrefs(), context);
-            TransientMsgUtils.makeDetailedToast(context, R.string.usage_hint_title, context.getString(hintStrResId), userHintDuration);
+            TransientMsgUtils.makeDetailedToast(appContext, R.string.usage_hint_title, appContext.getString(hintStrResId), userHintDuration).show();
             SharedPreferences.Editor editor = getPrefs().edit();
-            editor.putStringSet(context.getString(R.string.usage_hints_shown_list_key), hintsShown);
+            editor.putStringSet(hintsKey, hintsShown);
             editor.apply();
         }
     }
 
-    public SharedPreferences getResumePrefs() {
-        return getContext().getSharedPreferences("resume-actions", Context.MODE_PRIVATE);
+    public ConnectionPreferences.ResumeActionPreferences getResumePrefs() {
+        return ConnectionPreferences.getActiveProfile().getResumeActionPreferences(getPrefs(), getAppContext());
     }
 
     public void doOnce(@NonNull String key, @NonNull String newValue, @NonNull Runnable action) {
 
         synchronized (UIHelper.class) {
-            SharedPreferences globalsPrefs = getContext().getSharedPreferences("globals", Context.MODE_PRIVATE);
+            SharedPreferences globalsPrefs = getAppContext().getSharedPreferences("globals", Context.MODE_PRIVATE);
             String globalVal = globalsPrefs.getString(key, null);
             if (!newValue.equals(globalVal)) {
                 globalsPrefs.edit().putString(key, newValue).apply();
@@ -1041,422 +1082,36 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public interface QuestionResultListener<S extends UIHelper> extends Serializable {
-        void onDismiss(AlertDialog dialog);
-
-        void onResultInternal(AlertDialog dialog, Boolean positiveAnswer);
-
-        void onResult(AlertDialog dialog, Boolean positiveAnswer);
-
-        void onShow(AlertDialog alertDialog);
-
-        void setUiHelper(S uiHelper);
-
-        void chainResult(QuestionResultListener listener);
-
-        void onPopulateDialogView(LinearLayout dialogView, @LayoutRes int layoutId);
+    public String getString(@StringRes int stringRes) {
+        return getAppContext().getString(stringRes);
     }
 
-    public Action getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
-        return actionOnServerCallComplete.get(response.getMessageId());
+    public String getString(@StringRes int stringPatternRes, Object ... args) {
+        return getAppContext().getString(stringPatternRes, args);
     }
 
-    public void addActionOnResponse(long msgId, Action loginAction) {
-        actionOnServerCallComplete.put(msgId, loginAction);
-    }
-
-    private static class NewUnTrustedCaCertificateReceivedAction extends UIHelper.QuestionResultAdapter<UIHelper<?>> {
-        private final HashMap<String, X509Certificate> untrustedCerts;
-
-        public NewUnTrustedCaCertificateReceivedAction(UIHelper<?> uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
-            super(uiHelper);
-            this.untrustedCerts = untrustedCerts;
-        }
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-
-                final Set<String> preNotifiedCerts = getUiHelper().prefs.getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>());
-                if (preNotifiedCerts.containsAll(untrustedCerts.keySet())) {
-                    // already dealt with this
-                    return;
-                }
-
-                KeyStore trustStore = X509Utils.loadTrustedCaKeystore(getContext());
-                try {
-                    for (Map.Entry<String, X509Certificate> entry : untrustedCerts.entrySet()) {
-                        trustStore.setCertificateEntry(entry.getKey(), entry.getValue());
-                    }
-                    X509Utils.saveTrustedCaKeystore(getContext(), trustStore);
-                } catch (KeyStoreException e) {
-                    Crashlytics.logException(e);
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.alert_error_adding_certificate_to_truststore));
-                }
-                preNotifiedCerts.addAll(untrustedCerts.keySet());
-                getUiHelper().prefs.edit().putStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
-                long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), getContext(), true).start();
-                PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
+    public void showReleaseNotesIfNewlyUpgradedOrInstalled(String currentAppVersion) {
+        String lastShownReleaseNotes = AppPreferences.getLatestReleaseNotesVersionShown(getPrefs(), getAppContext());
+        if(!ObjectUtils.areEqual(currentAppVersion, lastShownReleaseNotes)) {
+            Map<String, String> releaseNotes = AppPreferences.getAppReleaseHistory(getAppContext(), lastShownReleaseNotes);
+            if (releaseNotes.size() > 0) {
+                showOrQueueDialogMessage(new ReleaseNotesMessage<>(getAppContext(), releaseNotes, new QuestionResultAdapter<UIH, OWNER>((UIH) this) {
                     @Override
-                    public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-                        getUiHelper().showDetailedMsg(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
+                    public void onDismiss(AlertDialog dialog) {
+                        super.onDismiss(dialog);
+                        AppPreferences.setLatestReleaseNotesShown(getPrefs(), dialog.getContext(), currentAppVersion);
                     }
-                });
-            }
-        }
-
-        @Override
-        public void onShow(AlertDialog alertDialog) {
-
-        }
-    }
-
-    public static abstract class QuestionResultAdapter<Q extends UIHelper<?>> implements QuestionResultListener<Q> {
-
-        private QuestionResultListener chainedListener;
-
-        private Q uiHelper;
-
-        public QuestionResultAdapter(Q uiHelper) {
-            this.uiHelper = uiHelper;
-        }
-
-        public Q getUiHelper() {
-            return uiHelper;
-        }
-
-        @Override
-        public void setUiHelper(Q uiHelper) {
-            this.uiHelper = uiHelper;
-        }
-
-        public Context getContext() {
-            return uiHelper.getContext();
-        }
-
-        @Override
-        public void onShow(AlertDialog alertDialog) {
-        }
-
-        @Override
-        public void onResultInternal(AlertDialog dialog, Boolean positiveAnswer) {
-            onResult(dialog, positiveAnswer);
-            if (chainedListener != null) {
-                chainedListener.onResult(dialog, positiveAnswer);
-            }
-        }
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-
-        }
-
-        @Override
-        public void onDismiss(AlertDialog dialog) {
-
-        }
-
-        @Override
-        public void onPopulateDialogView(LinearLayout dialogView, @LayoutRes int layoutId) {
-            Crashlytics.log(Log.DEBUG, TAG, "Unsupported layout id for dialog message : " + layoutId);
-        }
-
-        @Override
-        public void chainResult(QuestionResultListener listener) {
-            chainedListener = listener;
-        }
-    }
-
-    private static class QueuedSimpleMessage implements Parcelable {
-        private int id = -1;
-        private final int duration;
-        private final int titleResId;
-        private final String message;
-
-        public QueuedSimpleMessage(@StringRes int titleResId, String message, int duration) {
-            this.duration = duration;
-            this.titleResId = titleResId;
-            this.message = message;
-        }
-
-        public QueuedSimpleMessage(Parcel in) {
-            duration = in.readInt();
-            titleResId = in.readInt();
-            message = in.readString();
-            id = in.readInt();
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public static final Creator<QueuedSimpleMessage> CREATOR = new Creator<QueuedSimpleMessage>() {
-            @Override
-            public QueuedSimpleMessage createFromParcel(Parcel in) {
-                return new QueuedSimpleMessage(in);
-            }
-
-            @Override
-            public QueuedSimpleMessage[] newArray(int size) {
-                return new QueuedSimpleMessage[size];
-            }
-        };
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(duration);
-            dest.writeInt(titleResId);
-            dest.writeString(message);
-            dest.writeInt(id);
-        }
-
-        public int getSnackbarDuration() {
-            return duration == Toast.LENGTH_SHORT ? CustomSnackbar.LENGTH_SHORT : duration == Toast.LENGTH_LONG ? CustomSnackbar.LENGTH_LONG : CustomSnackbar.LENGTH_INDEFINITE;
-        }
-
-        @Override
-        public int hashCode() {
-            return duration + (titleResId * 3) + (5 * message.hashCode());
-        }
-
-        @Override
-        public boolean equals(@Nullable Object obj) {
-            if(!(obj instanceof QueuedSimpleMessage)) {
-                return false;
-            }
-            QueuedSimpleMessage other = (QueuedSimpleMessage) obj;
-            return (id >= 0 && id == other.id) || (duration == other.duration && titleResId == other.titleResId && ObjectUtils.areEqual(message, other.message));
-        }
-    }
-
-    public static class QueuedDialogMessage implements Parcelable {
-        private static final AtomicInteger idGen = new AtomicInteger();
-        private final int id;
-        private final int titleId;
-        private final String message;
-        private final int positiveButtonTextId;
-        private final boolean cancellable;
-        private final String detail;
-        private final QuestionResultListener listener;
-        private final boolean hasListener;
-
-        public QueuedDialogMessage(Parcel in) {
-            id = in.readInt();
-            titleId = in.readInt();
-            message = in.readString();
-            positiveButtonTextId = in.readInt();
-            cancellable = ParcelUtils.readBool(in);
-            detail = in.readString();
-            listener = ParcelUtils.readValue(in, QuestionResultListener.class.getClassLoader(), QuestionResultListener.class);
-            hasListener = ParcelUtils.readBool(in);
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(id);
-            dest.writeInt(titleId);
-            dest.writeString(message);
-            dest.writeInt(positiveButtonTextId);
-            ParcelUtils.writeBool(dest, cancellable);
-            dest.writeString(detail);
-            try {
-                dest.writeSerializable(listener);
-            } catch(RuntimeException e) {
-                dest.writeSerializable(null); // so we can still read the non serializable object in (as null)
-            }
-            ParcelUtils.writeBool(dest, listener != null); // has listener
-        }
-
-        public QueuedDialogMessage(int titleId, String message, String detail) {
-            this(titleId, message, detail, R.string.button_ok, true, null);
-        }
-
-        public QueuedDialogMessage(int titleId, String message, String detail, QuestionResultListener listener) {
-            this(titleId, message, detail, R.string.button_ok, true, listener);
-        }
-
-        public QueuedDialogMessage(int titleId, String message, String detail, int positiveButtonTextId) {
-            this(titleId, message, detail, positiveButtonTextId, true, null);
-        }
-
-        public QueuedDialogMessage(int titleId, String message, String detail, int positiveButtonTextId, boolean cancellable, QuestionResultListener listener) {
-            this.id = idGen.incrementAndGet();
-            this.titleId = titleId;
-            if (message == null) {
-                throw new IllegalArgumentException("Message cannot be null");
-            }
-            this.message = message;
-            this.positiveButtonTextId = positiveButtonTextId;
-            this.listener = listener;
-            this.detail = detail;
-            this.cancellable = cancellable;
-            this.hasListener = listener != null;
-        }
-
-        public static final Creator<QueuedDialogMessage> CREATOR = new Creator<QueuedDialogMessage>() {
-            @Override
-            public QueuedDialogMessage createFromParcel(Parcel in) {
-                return new QueuedDialogMessage(in);
-            }
-
-            @Override
-            public QueuedDialogMessage[] newArray(int size) {
-                return new QueuedDialogMessage[size];
-            }
-        };
-
-        public int getTitleId() {
-            return titleId;
-        }
-
-        public String getDetail() {
-            return detail;
-        }
-
-        public boolean isCancellable() {
-            return cancellable;
-        }
-
-        public int getPositiveButtonTextId() {
-            return positiveButtonTextId;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public QuestionResultListener getListener() {
-            return listener;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof UIHelper.QueuedDialogMessage)) {
-                return false;
-            }
-            QueuedDialogMessage other = ((QueuedDialogMessage) obj);
-            return titleId == other.titleId && message.equals(other.message);
-        }
-
-        public void populateCustomView(LinearLayout dialogView) {
-            int layoutId = getLayoutId();
-
-            if (layoutId == R.layout.layout_dialog_detailed) {
-                final TextView detailView = dialogView.findViewById(R.id.list_item_details);
-                detailView.setText(getDetail());
-
-                ToggleButton detailsVisibleButton = dialogView.findViewById(R.id.details_toggle);
-                detailsVisibleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        detailView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-                    }
-                });
-                detailsVisibleButton.toggle();
-            } else {
-                listener.onPopulateDialogView(dialogView, layoutId);
-            }
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public boolean isHasListener() {
-            return hasListener;
-        }
-
-        protected int getLayoutId() {
-            if (detail != null && !detail.trim().isEmpty()) {
-                return R.layout.layout_dialog_detailed;
-            } else {
-                return Integer.MIN_VALUE;
+                }));
             }
         }
     }
 
-    protected static class QueuedQuestionMessage extends QueuedDialogMessage {
+    public Action<UIH, OWNER, PiwigoResponseBufferingHandler.Response> getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
+        return (Action<UIH, OWNER, PiwigoResponseBufferingHandler.Response>) actionOnServerCallComplete.get(response.getMessageId());
+    }
 
-        private final int negativeButtonTextId;
-        private final int layoutId;
-        private final int neutralButtonTextId;
-
-        public QueuedQuestionMessage(Parcel in) {
-            super(in);
-            negativeButtonTextId = in.readInt();
-            layoutId = in.readInt();
-            neutralButtonTextId = in.readInt();
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeInt(negativeButtonTextId);
-            dest.writeInt(layoutId);
-            dest.writeInt(neutralButtonTextId);
-        }
-
-        public static final Creator<QueuedQuestionMessage> CREATOR = new Creator<QueuedQuestionMessage>() {
-            @Override
-            public QueuedQuestionMessage createFromParcel(Parcel in) {
-                return new QueuedQuestionMessage(in);
-            }
-
-            @Override
-            public QueuedQuestionMessage[] newArray(int size) {
-                return new QueuedQuestionMessage[size];
-            }
-        };
-
-        public QueuedQuestionMessage(int titleId, String message, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
-            this(titleId, message, null, Integer.MIN_VALUE, positiveButtonTextId, negativeButtonTextId, listener);
-        }
-
-        public QueuedQuestionMessage(int titleId, String message, String detail, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
-            this(titleId, message, detail, Integer.MIN_VALUE, positiveButtonTextId, negativeButtonTextId, listener);
-        }
-
-        public QueuedQuestionMessage(int titleId, String message, int layoutId, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
-            this(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, Integer.MIN_VALUE, listener);
-        }
-
-        public QueuedQuestionMessage(int titleId, String message, String detail, int layoutId, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
-            this(titleId, message, detail, layoutId, positiveButtonTextId, negativeButtonTextId, Integer.MIN_VALUE, listener);
-        }
-
-        public QueuedQuestionMessage(int titleId, String message, String detail, int layoutId, int positiveButtonTextId, int negativeButtonTextId, int neutralButtonTextId, QuestionResultListener listener) {
-
-            super(titleId, message, detail, positiveButtonTextId, false, listener);
-            this.negativeButtonTextId = negativeButtonTextId;
-            if(detail != null && !detail.trim().isEmpty() && layoutId == Integer.MIN_VALUE) {
-                this.layoutId = R.layout.layout_dialog_detailed;
-            } else {
-                this.layoutId = layoutId;
-            }
-            this.neutralButtonTextId = neutralButtonTextId;
-        }
-
-        public boolean isShowNeutralButton() {
-            return neutralButtonTextId != Integer.MIN_VALUE;
-        }
-
-        public int getNeutralButtonTextId() {
-            return neutralButtonTextId;
-        }
-
-        public int getNegativeButtonTextId() {
-            return negativeButtonTextId;
-        }
-
-        public int getLayoutId() {
-            return layoutId;
-        }
-
+    public void addActionOnResponse(long msgId, Action<UIH,OWNER,?> action) {
+        actionOnServerCallComplete.put(msgId, action);
     }
 
     private static class ActivityPermissionRequester implements PermissionRequester {
@@ -1477,11 +1132,11 @@ public abstract class UIHelper<T> {
 
     protected class DismissListener implements DialogInterface.OnDismissListener {
 
-        private QuestionResultListener listener;
+        private QuestionResultListener<?,?> listener;
         private boolean buildNewDialogOnDismiss;
         private boolean dialogClosingForUrgentMessage;
 
-        public void setListener(QuestionResultListener listener) {
+        public void setListener(QuestionResultListener<?,?> listener) {
             this.listener = listener;
         }
 
@@ -1495,7 +1150,13 @@ public abstract class UIHelper<T> {
                 dialogClosingForUrgentMessage = false;
                 if (buildNewDialogOnDismiss) {
                     // build a new dialog (needed if the view was altered)
-                    buildAlertDialog();
+                    Context c;
+                    if(getParentView() != null) {
+                        c = getParentView().getContext();
+                    } else {
+                        c = ((AlertDialog)dialog).getContext();
+                    }
+                    buildAlertDialog(c);
                 }
                 return;
             }
@@ -1513,24 +1174,29 @@ public abstract class UIHelper<T> {
 
             if (buildNewDialogOnDismiss) {
                 // build a new dialog (needed if the view was altered)
-                buildAlertDialog();
+                Context c;
+                if(getParentView() != null) {
+                    c = getParentView().getContext();
+                } else {
+                    c = ((AlertDialog)dialog).getContext();
+                }
+                buildAlertDialog(c);
             }
 
             if (canShowDialog()) {
 
                 if (dialogMessageQueue.size() > 0 && canShowDialog()) {
-                    QueuedDialogMessage nextMessage;
+                    QueuedDialogMessage<UIH,OWNER> nextMessage;
                     do {
                         nextMessage = dialogMessageQueue.peek();
-                        if (nextMessage.isHasListener() && nextMessage.getListener() == null) {
-                            Crashlytics.log(Log.WARN, TAG, "Discarding corrupt message");
+                        if (nextMessage != null && nextMessage.isHasListener() && nextMessage.getListener() == null) {
+                            Logging.log(Log.WARN, TAG, "Discarding corrupt message");
                             dialogMessageQueue.remove();
                             nextMessage = null;
                         }
-
                     } while (nextMessage == null && dialogMessageQueue.size() > 0);
                     if (nextMessage instanceof QueuedQuestionMessage) {
-                        showDialog((QueuedQuestionMessage) nextMessage);
+                        showDialog((QueuedQuestionMessage<UIH,OWNER>)nextMessage);
                     } else if (nextMessage != null) {
                         showDialog(nextMessage);
                     } else {
@@ -1553,7 +1219,26 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static class Action<P extends UIHelper<T>, T, S extends PiwigoResponseBufferingHandler.Response> implements Serializable {
+    public static class Action<P extends UIHelper<P,T>, T, S extends PiwigoResponseBufferingHandler.Response> implements Parcelable {
+
+
+        protected Action(Parcel in) {
+        }
+
+        public static final Creator<Action<?,?,?>> CREATOR = new Creator<Action<?,?,?>>() {
+            @Override
+            public Action<?,?,?> createFromParcel(Parcel in) {
+                return new Action<>(in);
+            }
+
+            @Override
+            public Action<?,?,?>[] newArray(int size) {
+                return new Action<?,?,?>[size];
+            }
+        };
+
+        public Action() {
+        }
 
         protected T getActionParent(P uiHelper) {
             return uiHelper.getParent();
@@ -1571,5 +1256,15 @@ public abstract class UIHelper<T> {
         public boolean onFailure(P uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             return true;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+        }
     }
+
 }

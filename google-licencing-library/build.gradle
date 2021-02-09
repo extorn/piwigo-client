@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
 
     defaultConfig {
         //<!-- Devices >= 3 have version of Android Market that supports licensing. -->
-        minSdkVersion 17
-        targetSdkVersion 29
+        minSdkVersion 19
+        targetSdkVersion 30
     }
 
     buildTypes {
@@ -22,6 +22,7 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':delit-core-libs')
     implementation 'com.loopj.android:android-async-http:1.4.9'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    implementation "androidx.annotation:annotation:1.1.0"
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+    <string name="shortDesc">Blader door en wijzig inhoud in de Piwigo-fotogalerij van uw keuze</string>
+    <string name="longDesc">Gebruik om door een PIWIGO-fotogalerij te bladeren.
+
+OPMERKING: EULA moet bij het downloaden worden geaccepteerd.
+
+Als je de app leuk vindt, maar niet de advertenties, zoek dan naar de betaalde versie die advertentievrij is en steeds meer functionaliteit heeft.
+
+** App wordt nu niet actief ontwikkeld (alleen bugfixes) **
+** Als iets niet werkt - e-mail mij - het wordt opgelost **
+
+Zie de volledige lijst met functies hieronder.
+
+Maak verbinding met servers die op niet-standaard http- of https-poorten draaien
+Accepteer indien nodig ongeldige (verkeerde hostnaam) of zelfondertekende servercertificaten
+servercertificaat vastzetten wordt ondersteund (verifieer certificaten met een lokale kopie)
+Bekijk afbeeldingen met een resolutie die is geoptimaliseerd voor uw scherm (of selecteer degene die u wilt).
+Toon en laat inzoomen toe op afbeeldingen van elke grootte die beschikbaar zijn op de server
+Bekijk MP4-video\'s (andere zouden ook moeten werken, maar ik heb geen andere formaten getest)
+Download afbeeldingen.
+Sla volledig gedownloade video\'s op
+Sluit eventueel video\'s uit van diavoorstellingen
+Beoordeel afbeeldingen en bekijk gemiddelde beoordelingen
+Upload nieuwe afbeeldingen of video\'s (kan optioneel worden gecomprimeerd)
+Toestemmingen, beschrijving en andere details van albums en bestanden instellen en wijzigen
+Albums toevoegen of wijzigen, hun rechten, beschrijving, enz
+Galerijgebruikers toevoegen, bekijken en bewerken
+Galeriegroepen toevoegen, bekijken en bewerken
+Kopieer of verplaats afbeeldingen binnen de galerij
+Selecteer afbeelding (en) om te uploaden met andere apps en deel ze met PIWIGO
+Speciale app alleen-lezen modus beschikbaar om ongewenste wijzigingen aan de galerij te voorkomen
+Enige controle over de lay-out van schermen op de app (gebruik om aan te passen voor het scherm op uw apparaat)
+
+Ondersteunde serverplug-ins: community, piwigo_privacy, videojs, uitgebreide beschrijvingen.
+
+Wil je iets anders dat er niet tussen staat? Probeer de app. Als het niet precies doet wat u nodig heeft. Stuur me een e-mail via de link in de app en ik zal kijken of ik de ontbrekende functie (s) kan toevoegen.
+
+Aankomende wijzigingen:
+
+Het is de bedoeling om de gebruikersinterface progressief te verbeteren, en een van de gebruikers, David Klement, heeft in de toekomst een aantal suggesties gegeven voor schermlay-outs die ik ben gaan gebruiken vanaf versie 1.3.95 en waar ik ongetwijfeld meer ideeën uit zal halen. De voorstellen zijn volledig beschikbaar:
+https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
+
+Bekende beperkingen:
+
+1. Opmerkingen worden momenteel niet ondersteund. U kunt opmerkingen niet zien of toevoegen. Als deze ontbrekende functie belangrijk voor je is, neem dan contact met me op.
+2. Het aantal bestanden dat kan worden toegevoegd aan een uploadtaak is beperkt tot 5 in deze gratis versie (gebruik de betaalde versie om deze limiet te verwijderen)</string>
+</resources>

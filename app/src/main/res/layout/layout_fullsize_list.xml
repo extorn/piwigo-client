@@ -4,21 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
 
     <RelativeLayout
         android:id="@+id/heading_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <delit.libs.ui.view.button.CustomImageButton
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/list_action_add_item_button"
             android:visibility="visible"
             android:layout_alignParentEnd="true"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_alignEnd="@+id/heading"
             android:layout_marginEnd="5dp"
-            app:srcCompat="@drawable/ic_add_circle_black_24px" />
+            app:fabSize="mini"
+            app:icon="@drawable/ic_add_circle_black_24px"
+            style="?extendedFloatingActionButtonStyle"/>
 
         <TextView
             android:id="@+id/heading"
@@ -29,24 +31,28 @@
             android:layout_marginTop="5dp"
             android:layout_marginStart="5dp"
             tools:text="Some Heading"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+            android:textAppearance="?textAppearanceHeadline5"/>
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/button_action_bar"
         android:layout_above="@+id/list_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
 
     <Button
         android:id="@+id/list_action_cancel_button"
         android:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:text="@string/button_cancel"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="5dp"
+        android:text="@string/button_cancel"
+        style="?materialButtonOutlinedStyle"/>
 
     <Button
         android:id="@+id/list_action_toggle_all_button"
@@ -54,17 +60,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="@string/button_all" />
+        android:layout_margin="5dp"
+        android:text="@string/button_select_all"
+        app:layout_constraintStart_toEndOf="@+id/list_action_cancel_button"
+        app:layout_constraintEnd_toStartOf="@+id/list_action_save_button"
+        app:layout_constraintTop_toTopOf="parent"
+        style="?materialButtonOutlinedStyle"/>
 
-    <Button
-        android:id="@+id/list_action_save_button"
-        android:visibility="visible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:text="@string/list_ok_button"/>
+        <Button
+            android:id="@+id/list_action_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="5dp"
+            android:text="@string/list_ok_button"
+            android:visibility="visible"
+            style="?materialButtonStyle"/>
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -77,39 +91,29 @@
         ads:adUnitId="@string/ad_id_selectlist_banner">
     </com.google.android.gms.ads.AdView>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/pageContent1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/button_action_bar"
-        android:layout_below="@id/heading_bar"
-        android:layout_alignWithParentIfMissing="true"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
     <ListView
         android:id="@+id/list"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_above="@id/button_action_bar"
+        android:layout_below="@id/heading_bar"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:nestedScrollingEnabled="true"
         android:layout_marginBottom="5dp"
         />
 
-    </androidx.core.widget.NestedScrollView>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/list_retryAction_actionButton"
-        app:srcCompat="@drawable/ic_refresh_black_24dp"
         android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/list"
         android:layout_margin="10dp"
         android:clickable="true"
         android:visibility="gone"
         tools:visibility="visible"
         app:fabSize="mini"
-        android:focusable="true" />
+        android:focusable="true"
+        app:icon="@drawable/ic_refresh_black_24dp"
+        style="?extendedFloatingActionButtonStyle"/>
 
 </RelativeLayout>

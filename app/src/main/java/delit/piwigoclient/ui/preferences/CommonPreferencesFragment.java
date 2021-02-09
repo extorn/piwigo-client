@@ -18,13 +18,13 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
@@ -37,25 +37,22 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import delit.libs.ui.view.SlidingTabLayout;
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.libs.ui.view.recycler.SimpleFragmentPagerAdapter;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 
 /**
- * A basic sample which shows how to use {@link  SlidingTabLayout}
- * to display a custom {@link ViewPager} title strip which gives continuous feedback to the user
- * when scrolling.
  */
-public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragment> {
+public class CommonPreferencesFragment<F extends CommonPreferencesFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
-    static final String LOG_TAG = "PreferencesFragment";
+    private static final String TAG = "CmnPrefFrag";
 
     public CommonPreferencesFragment() {
         // Required empty public constructor
@@ -74,17 +71,19 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
     }
 
     /**
-     * Inflates the {@link View} which will be displayed by this {@link Fragment}, from the app's
+     * Inflates the {@link View} which will be displayed by this Fragment, from the app's
      * resources.
      */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.activity_preferences, container, false);
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        View view = inflater.inflate(R.layout.fragment_preferences_view_all, container, false);
 
         AdView adView = view.findViewById(R.id.prefs_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -92,19 +91,17 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         /*
-      A {@link ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
+      A {@link ViewPager} which will be used in conjunction with the {@link CustomMaterialTabLayout} above.
      */
         ViewPager mViewPager = view.findViewById(R.id.viewpager);
         mViewPager.setAdapter(buildPagerAdapter(getChildFragmentManager()));
 
-        // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
+        // Give the CustomMaterialTabLayout the ViewPager, this must be done AFTER the ViewPager has had
         // it's PagerAdapter set.
         /*
       A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
       above, but is designed to give continuous feedback to the user when scrolling.
      */
-        SlidingTabLayout mSlidingTabLayout = view.findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setViewPager(mViewPager);
         return view;
     }
 
@@ -113,6 +110,7 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
         super.onViewCreated(view, savedInstanceState);
         if (PiwigoSessionDetails.isLoggedIn(ConnectionPreferences.getActiveProfile()) && isAppInReadOnlyMode()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as not logged in or app read only mode");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -125,6 +123,7 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as app locked event rxd");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
@@ -133,8 +132,10 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
         ArrayList<String> tabTitles = new ArrayList<>();
         tabTitles.add(getString(R.string.preference_page_connection));
         tabTitles.add(getString(R.string.preference_page_gallery));
-        tabTitles.add(getString(R.string.preference_page_upload));
+        tabTitles.add(getString(R.string.preference_page_slideshow));
+        tabTitles.add(getString(R.string.preference_page_app));
         tabTitles.add(getString(R.string.preference_page_other));
+        tabTitles.add(getString(R.string.preference_page_upload));
         return tabTitles;
     }
 
@@ -142,8 +143,10 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
         ArrayList<Class<? extends MyPreferenceFragment>> tabClasses = new ArrayList<>();
         tabClasses.add(ConnectionPreferenceFragment.class);
         tabClasses.add(GalleryPreferenceFragment.class);
-        tabClasses.add(UploadPreferenceFragment.class);
+        tabClasses.add(SlideshowPreferenceFragment.class);
+        tabClasses.add(AppPreferenceFragment.class);
         tabClasses.add(OtherPreferenceFragment.class);
+        tabClasses.add(UploadPreferenceFragment.class);
         return tabClasses;
     }
 

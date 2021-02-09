@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/gallery_adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="@string/ad_id_album_banner"
+        ads:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/album_header_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:paddingBottom="4dp"
+        android:visibility="visible"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintTop_toBottomOf="@id/gallery_adView"
+        app:layout_constraintBottom_toTopOf="@id/guideline_album_header_bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/gallery_details_name_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="?textAppearanceHeadline5"
+            app:layout_constraintEnd_toStartOf="@+id/show_information_action_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Gallery name" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/show_information_action_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/gallery_details_name_header"
+            app:layout_constrainedHeight="true"
+            android:fillViewport="true"
+            android:scrollbars="vertical"
+            app:layout_constraintVertical_bias="0"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <TextView
+            android:id="@+id/gallery_details_description_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="?textAppearanceBody2"
+            tools:text="Gallery Description\n\n
+adsfasfs
+asfd\n\n
+asfd\n\n
+asfd\n\n
+asfd\n\n
+asfd\n\n
+asfd\n\n
+asdfafsf\n\n
+END"
+            android:nestedScrollingEnabled="true"/>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <Button
+            android:id="@+id/show_information_action_button"
+            style="?materialButtonIconAccentedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="8dp"
+            android:visibility="gone"
+            app:icon="@drawable/ic_info_black_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <TextView
+        android:id="@+id/album_empty_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:textAppearance="?textAppearanceHeadline5"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/album_header_bar"
+        tools:text="A Reason that this gallery is empty or which calls need repeating"
+        tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/gallery_retryAction_actionButton"
+        style="?extendedFloatingActionButtonStyle"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:fabSize="mini"
+        app:icon="@drawable/ic_refresh_black_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/gallery_list" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gallery_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_margin_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/album_empty_content" />
+
+    <include
+        layout="@layout/layout_basket_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/album_header_bar" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gallery_actions_bulk_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/basket"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="30dp">
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/gallery_action_paste_bulk"
+            style="?extendedFloatingActionButtonStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:icon="@drawable/ic_content_paste_black_24dp" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/gallery_action_cut_bulk"
+            style="?extendedFloatingActionButtonStyle"
+            app:layout_constraintStart_toEndOf="@+id/gallery_action_paste_bulk"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="20dp"
+            app:layout_goneMarginStart="0dp"
+            app:icon="@drawable/ic_content_cut_black_24px" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/gallery_action_copy_bulk"
+            style="?extendedFloatingActionButtonStyle"
+            app:layout_constraintStart_toEndOf="@+id/gallery_action_cut_bulk"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="20dp"
+            app:layout_goneMarginStart="0dp"
+            app:icon="@drawable/ic_content_copy_black_24px" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_copy_paste_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:barrierMargin="20dp"
+            app:constraint_referenced_ids="gallery_action_paste_bulk,gallery_action_cut_bulk, gallery_action_copy_bulk" />
+
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/gallery_action_permissions_bulk"
+            style="?extendedFloatingActionButtonStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/barrier_copy_paste_controls"
+            app:icon="@drawable/ic_vpn_key_black_24dp" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/gallery_action_tag_bulk"
+            style="?extendedFloatingActionButtonStyle"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toEndOf="@id/gallery_action_permissions_bulk"
+            app:layout_constraintBottom_toBottomOf="@+id/gallery_action_permissions_bulk"
+            app:icon="@drawable/ic_add_tag_black_24dp" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/gallery_action_download_bulk"
+            style="?extendedFloatingActionButtonStyle"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toEndOf="@id/gallery_action_tag_bulk"
+            app:layout_constraintBottom_toBottomOf="@+id/gallery_action_permissions_bulk"
+            app:icon="@drawable/ic_file_download_black_24px" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/gallery_action_delete_bulk"
+            style="?extendedFloatingActionButtonStyle"
+            android:layout_marginStart="40dp"
+            app:layout_constraintStart_toEndOf="@id/gallery_action_download_bulk"
+            app:layout_constraintBottom_toBottomOf="@+id/gallery_action_permissions_bulk"
+            app:icon="@drawable/ic_delete_black_24px" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <delit.libs.ui.view.slidingsheet.SlidingBottomSheet
+        android:id="@+id/slidingDetailBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:theme="@style/Theme.App.EditPages"
+        app:appBarViewId="@id/appbar"
+        tools:stateExpanded="false">
+
+        <LinearLayout
+            android:id="@+id/gallery_bottom_sheet_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="14dp">
+
+                <Button
+                    android:id="@+id/gallery_details_edit_button"
+                    style="?materialButtonIconStyle"
+                    android:layout_alignParentStart="true"
+                    app:icon="@drawable/ic_mode_edit_black_24dp" />
+
+                <Button
+                    android:id="@+id/gallery_details_save_button"
+                    style="?materialButtonIconStyle"
+                    android:layout_toEndOf="@+id/gallery_details_edit_button"
+                    app:icon="@drawable/ic_save_black_24dp" />
+
+                <Button
+                    android:id="@+id/gallery_details_discard_button"
+                    style="?materialButtonIconStyle"
+                    android:layout_toEndOf="@+id/gallery_details_save_button"
+                    app:icon="@drawable/ic_undo_black_24dp" />
+
+                <Button
+                    android:id="@+id/album_add_new_album_button"
+                    style="?materialButtonIconStyle"
+                    android:layout_alignWithParentIfMissing="true"
+                    android:layout_toStartOf="@+id/gallery_action_delete"
+                    app:icon="@drawable/ic_create_new_folder_black_24dp" />
+
+                <Button
+                    android:id="@+id/gallery_action_paste"
+                    style="?materialButtonIconStyle"
+                    android:layout_toStartOf="@+id/album_add_new_album_button"
+                    app:icon="@drawable/ic_content_paste_black_24dp" />
+
+                <Button
+                    android:id="@+id/gallery_action_cut"
+                    style="?materialButtonIconStyle"
+                    android:layout_toStartOf="@+id/gallery_action_paste"
+                    app:icon="@drawable/ic_content_cut_black_24px" />
+
+                <Button
+                    android:id="@+id/gallery_action_delete"
+                    style="?materialButtonIconStyle"
+                    android:layout_alignWithParentIfMissing="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="0dp"
+                    app:icon="@drawable/ic_delete_black_24px" />
+
+
+                <LinearLayout
+                    android:id="@+id/gallery_details_edit_fields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignWithParentIfMissing="true"
+                    android:layout_below="@+id/gallery_action_delete"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/gallery_details_name_label"
+                        style="?editableFieldLabel"
+                        android:labelFor="@id/gallery_details_name"
+                        android:text="@string/gallery_details_name_title" />
+
+                    <EditText
+                        android:id="@+id/gallery_details_name"
+                        style="?editableFieldText"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:importantForAutofill="no"
+                        android:inputType="textMultiLine|textNoSuggestions"
+                        android:maxLines="3"
+                        tools:enabled="false"
+                        tools:targetApi="o"
+                        tools:text="Gallery name" />
+
+                    <TextView
+                        android:id="@+id/gallery_details_description_label"
+                        style="?editableFieldLabel"
+                        android:labelFor="@id/gallery_details_description"
+                        android:text="@string/gallery_details_description_title" />
+
+                    <EditText
+                        android:id="@+id/gallery_details_description"
+                        style="?editableFieldText"
+                        android:importantForAutofill="no"
+                        android:inputType="textMultiLine|textNoSuggestions"
+                        android:maxLines="10"
+                        tools:targetApi="o"
+                        tools:text="Gallery description" />
+
+                    <TextView
+                        android:id="@+id/gallery_details_comments_allowed_label"
+                        style="?editableFieldLabel"
+                        android:labelFor="@id/gallery_details_status"
+                        android:text="@string/createGallery_galleryCommentsAllowed_title"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/gallery_details_comments_allowed"
+                        style="?editableFieldSwitch"
+                        android:text="@string/createGallery_galleryCommentsAllowed"
+                        android:visibility="gone"
+                        tools:checked="true" />
+
+                    <TextView
+                        android:id="@+id/gallery_details_status_label"
+                        style="?editableFieldLabel"
+                        android:labelFor="@id/gallery_details_status"
+                        android:text="@string/gallery_details_status_title" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/gallery_details_status"
+                        style="?editableFieldSwitch"
+                        android:text="@string/gallery_details_status" />
+
+                    <TextView
+                        android:id="@+id/gallery_details_allowed_groups_label"
+                        style="?editableFieldLabel"
+                        android:labelFor="@id/gallery_details_allowed_groups"
+                        android:text="@string/gallery_details_allowed_groups_title" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/gallery_details_allowed_groups"
+                        style="?editableFieldTextClickable"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="@string/click_to_view"
+                        tools:backgroundTint="?attr/scrimLight"
+                        tools:backgroundTintMode="src_in" />
+
+                    <TextView
+                        android:id="@+id/gallery_details_allowed_users_label"
+                        style="?editableFieldLabel"
+                        android:labelFor="@id/gallery_details_allowed_users"
+                        android:text="@string/gallery_details_allowed_users_title" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/gallery_details_allowed_users"
+                        style="?editableFieldTextClickable"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="@string/click_to_view"
+                        tools:backgroundTint="?attr/scrimHeavy"
+                        tools:backgroundTintMode="src_in" />
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </delit.libs.ui.view.slidingsheet.SlidingBottomSheet>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_album_header_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".4"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_top"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/fragment_margin_bottom"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_start"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/fragment_margin_end"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

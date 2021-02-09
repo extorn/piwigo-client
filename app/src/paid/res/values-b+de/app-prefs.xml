@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+
+    <string name="preference_page_auto_upload_jobs">Automatisches Hochladen</string>
+    <string name="preference_data_upload_automatic_title">Automatisches Hochladen</string>
+    <string name="preference_data_upload_automatic_job_title">Job zum automatischen Hochladen</string>
+
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_enable_summary">Aktivieren Sie das Hochladen im Hintergrund</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Automatisches Hochladen</string>
+    
+
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Verwenden Sie Auto Upload nur für drahtlose Netzwerke</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Nur über WLAN</string>
+    
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_jobs_title">Jobs automatisch hochladen</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Jobs</string>
+
+    
+    
+
+    
+
+    
+    <string name="preference_data_upload_automatic_job_view_status_title">Upload-Status anzeigen</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Status vom letzten Joblauf anzeigen (falls verfügbar)</string>
+
+    
+    <string name="preference_data_upload_automatic_job_is_valid_title">Job ist gültig</string>
+
+    
+    <string name="preference_data_upload_automatic_job_enabled_summary">Wird der Upload-Dienst diesen Job verwenden?</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Job aktiviert</string>
+    
+
+    <string name="preference_data_upload_automatic_job_server_title">Auf Server hochladen</string>
+    
+    <string name="preference_data_upload_automatic_job_server_summary">Profil:%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_server_album_title">Zum Album hochladen</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_local_folder_title">Aus Ordner hochladen</string>
+    
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Löschen Sie erfolgreich hochgeladene Dateien</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Automatisches Löschen</string>
+    
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+    
+    
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max. Dateigröße hochgeladen</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+
+    
+    
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Dateierweiterungen</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Laden Sie Dateien mit ext%1$s hoch</string>
+
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Datenschutzstufe</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Hochgeladene Dateien sichtbar für%1$s</string>
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+
+    
+
+
+    
+
+    
+    
+
+    
+
+    
+    
+</resources>

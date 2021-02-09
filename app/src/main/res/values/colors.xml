@@ -1,136 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!--<color name="colorPrimary">#ffffff</color> &lt;!&ndash;@android:color/holo_primary&ndash;&gt;
-    <color name="colorPrimaryDark">#222222</color>
-     &lt;!&ndash;@android:color/holo_primary&ndash;&gt;
-    &lt;!&ndash; used for e.g. edit text underline that is inactive &ndash;&gt;
-    <color name="colorControlNormal">#dfdfdf</color>
-    &lt;!&ndash; used for e.g. edit text underline that is active &ndash;&gt;
-    <color name="colorControlActivated">#ffffff</color>
-    &lt;!&ndash; used for a flash of colour when you click on an e.g. button &ndash;&gt;
-    <color name="colorControlHighlight">#ccffffff</color>
-    &lt;!&ndash; used for raised button backgrounds &ndash;&gt;
-    <color name="colorButtonNormal">@color/button_color_selector</color>
-    &lt;!&ndash; used for enabled checkboxes &ndash;&gt;
-    <color name="colorSecondary">#FF90AAD4</color>
+<resources>
     <color name="colorTest1">#FF0000</color>
     <color name="colorTest2">#00FF00</color>
     <color name="colorTest3">#0000FF</color>
     <color name="colorTest4">#00FFFF</color>
     <color name="colorTest5">#FF00FF</color>
 
-    <color name="colorPrimaryLight">#ffe6e6e6</color> &lt;!&ndash;@android:color/holo_light_primary&ndash;&gt;
-    <color name="textOnPrimary">@android:color/primary_text_dark</color>
-    <color name="textOnPrimaryDull">@android:color/primary_text_dark</color>
-
-    <color name="colorAlbumItemBackground">@color/colorPrimaryDark</color>
-
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>-->
-    <color name="colorTest1">#FF0000</color>
-    <color name="colorTest2">#00FF00</color>
-    <color name="colorTest3">#0000FF</color>
-    <color name="colorTest4">#00FFFF</color>
-    <color name="colorTest5">#FF00FF</color>
-
-    <color name="rating_indicator">#FFFFFF00</color>
-    <color name="toastFrameBackground">@color/primary_material_light</color>
-
+    <!-- raw colors used -->
     <color name="transparent">#00000000</color>
-    <color name="primary_progress">@color/accent_material_dark</color>
-    <color name="secondary_progress">@color/accent_material_light</color>
-
-    <color name="foreground">@color/foreground_material_dark</color>
-    <color name="accent">@color/accent_material_dark</color>
-    <color name="primary">@color/primary_material_dark</color>
-    <color name="primary_dark">@color/primary_dark_material_dark</color>
-    <color name="colorAlbumItemBackground">@color/primary_material_dark</color>
-    <color name="colorAlbumBottomSheet">@color/background_floating_material_dark</color>
-    <color name="colorAlbumBottomSheetShadow">#44000000</color><!--@android:color/transparent-->
-    <color name="colorControlNormal">@color/bright_foreground_material_dark</color>
-    <color name="background_floating">@color/background_floating_material_dark</color>
-    <color name="primary_text_default">@color/primary_text_default_material_dark</color>
-    <color name="primary_text_disabled">@color/primary_text_disabled_material_dark</color>
-    <color name="primary_text_default_light">@color/primary_text_default_material_light</color>
-    <color name="primary_text_disabled_light">@color/primary_text_disabled_material_light</color>
-    <color name="text_color_clickable">@color/accent_material_dark</color>
-
-    <!-- default material colors -->
-    <color tools:override="true" name="abc_input_method_navigation_guard">@android:color/black</color>
-    <color tools:override="true" name="abc_search_url_text_normal">#7fa87f</color>
-    <color tools:override="true" name="abc_search_url_text_pressed">@android:color/black</color>
-    <color tools:override="true" name="abc_search_url_text_selected">@android:color/black</color>
-    <color tools:override="true" name="accent_material_dark">@color/material_deep_teal_200</color>
-    <color tools:override="true" name="accent_material_light">@color/material_deep_teal_500</color>
-    <color tools:override="true" name="background_floating_material_dark">@color/material_grey_800</color>
-    <color tools:override="true" name="background_floating_material_light">@android:color/white</color>
-    <color tools:override="true" name="background_material_dark">@color/material_grey_850</color>
-    <color tools:override="true" name="background_material_light">@color/material_grey_50</color>
-    <color tools:override="true" name="bright_foreground_disabled_material_dark">#80ffffff</color>
-    <color tools:override="true" name="bright_foreground_disabled_material_light">#80000000</color>
-    <color tools:override="true" name="bright_foreground_inverse_material_dark">@color/bright_foreground_material_light</color>
-    <color tools:override="true" name="bright_foreground_inverse_material_light">@color/bright_foreground_material_dark</color>
-    <color tools:override="true" name="bright_foreground_material_dark">@android:color/white</color>
-    <color tools:override="true" name="bright_foreground_material_light">@android:color/black</color>
-    <color tools:override="true" name="button_material_dark">#ff5a595b</color>
-    <color tools:override="true" name="button_material_light">#ffd6d7d7</color>
-    <color tools:override="true" name="dim_foreground_disabled_material_dark">#80bebebe</color>
-    <color tools:override="true" name="dim_foreground_disabled_material_light">#80323232</color>
-    <color tools:override="true" name="dim_foreground_material_dark">#ffbebebe</color>
-    <color tools:override="true" name="dim_foreground_material_light">#ff323232</color>
-    <color tools:override="true" name="error_color_material">#F4511E</color>
-    <color tools:override="true" name="foreground_material_dark">@android:color/white</color>
-    <color tools:override="true" name="foreground_material_light">@android:color/black</color>
-    <color tools:override="true" name="highlighted_text_material_dark">#6680cbc4</color>
-    <color tools:override="true" name="highlighted_text_material_light">#66009688</color>
-    <color tools:override="true" name="material_blue_grey_800">#ff37474f</color>
-    <color tools:override="true" name="material_blue_grey_900">#ff263238</color>
-    <color tools:override="true" name="material_blue_grey_950">#ff21272b</color>
-    <color tools:override="true" name="material_deep_teal_200">#ff80cbc4</color>
-    <color tools:override="true" name="material_deep_teal_500">#ff009688</color>
-    <color tools:override="true" name="material_grey_100">#fff5f5f5</color>
-    <color tools:override="true" name="material_grey_300">#ffe0e0e0</color>
-    <color tools:override="true" name="material_grey_50">#fffafafa</color>
-    <color tools:override="true" name="material_grey_600">#ff757575</color>
-    <color tools:override="true" name="material_grey_800">#ff424242</color>
-    <color tools:override="true" name="material_grey_850">#ff303030</color>
-    <color tools:override="true" name="material_grey_900">#ff212121</color>
-    <color tools:override="true" name="primary_dark_material_dark">@android:color/black</color>
-    <color tools:override="true" name="primary_dark_material_light">@color/material_grey_600</color>
-    <color tools:override="true" name="primary_material_dark">@color/material_grey_900</color>
-    <color tools:override="true" name="primary_material_light">@color/material_grey_100</color>
-    <color tools:override="true" name="primary_text_default_material_dark">#ffffffff</color>
-    <color tools:override="true" name="primary_text_default_material_light">#de000000</color>
-    <color tools:override="true" name="primary_text_disabled_material_dark">#aaffffff</color> <!-- altered to make brighter -->
-    <color tools:override="true" name="primary_text_disabled_material_light">#39000000</color>
-    <color tools:override="true" name="ripple_material_dark">#33ffffff</color>
-    <color tools:override="true" name="ripple_material_light">#1f000000</color>
-    <color tools:override="true" name="secondary_text_default_material_dark">#b3ffffff</color>
-    <color tools:override="true" name="secondary_text_default_material_light">#8a000000</color>
-    <color tools:override="true" name="secondary_text_disabled_material_dark">#36ffffff</color>
-    <color tools:override="true" name="secondary_text_disabled_material_light">#24000000</color>
-    <color tools:override="true" name="switch_thumb_disabled_material_dark">#ff616161</color>
-    <color tools:override="true" name="switch_thumb_disabled_material_light">#ffbdbdbd</color>
-    <color tools:override="true" name="switch_thumb_normal_material_dark">#ffbdbdbd</color>
-    <color tools:override="true" name="switch_thumb_normal_material_light">#fff1f1f1</color>
-    <color tools:override="true" name="tooltip_background_dark">#e6616161</color>
-    <color tools:override="true" name="tooltip_background_light">#e6FFFFFF</color>
 
 
-    <color name="black_overlay">#66000000</color>
-    <color name="video_timebar_locally_cached">@color/accent</color>
+    <!-- my custom colors that tie into the MaterialComponents theme -->
+    <color name="app_primary">#212121</color>
+
+    <color name="app_primary_variant">#000000</color>
+    <color name="app_color_background_light">#fffafafa</color>
+    <color name="app_color_background">#606060</color>
+    <color name="app_color_on_primary">#EEFFFFFF</color>
+    <color name="app_secondary">#ff4db6ac</color>
+    <color name="app_secondary_variant">#ff008577</color>
+    <color name="app_color_on_secondary">#FFFFFF</color>
+    <color name="app_color_error">#F44336</color>
+    <color name="app_color_on_error">#FFFFFF</color>
+    <color name="app_color_surface">#606060</color>
+    <color name="app_color_on_surface">#FFFFFF</color>
+    <color name="app_color_on_background">#212121</color>
+    <color name="app_color_scrim_color_bright">#EEFFFFFF</color>
+    <color name="app_color_scrim_color_dark">#212121</color>
+    <color name="ripple_dark">#33ffffff</color>
+    <color name="ripple_light">#1f000000</color>
+
+    <!--used-->
+    <color name="rating_indicator">#FFFFFF00</color>
+
+    <!-- just make these two transparent for now - let the standard colors filter through -->
+    <color name="color_album_item_background">#66000000</color>
+
+
+    <!-- these are used in the exo-player layout -->
+    <color name="video_timebar_locally_cached">@color/app_secondary</color>
     <color name="video_timebar_unplayed">#FF555555</color>
     <color name="video_timebar_buffered">#FFFFFF</color>
 
+    <!-- end used -->
 
-    <!--<color name="white_overlay">#66ffffff</color>
-    <color name="background_dark">#ff000000</color>
-    <color name="bright_foreground_light">@color/background_dark</color>
-    <color name="bright_foreground_dark_inverse">@color/bright_foreground_light</color>
-    <color name="video_locally_cached">#CC90AAD4</color>
-    <color name="video_unplayed">#FF555555</color>
-    <color tools:override="true" name="primary_material_dark">#303030</color>
-    <color tools:override="true" name="primary_dark_material_dark">#1d1d1d</color>
-    <color tools:override="true" name="foreground_material_light">#ffffff</color>
-    <color tools:override="true" name="background_material_light">#404040</color>-->
 </resources>

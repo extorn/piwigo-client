@@ -3,7 +3,7 @@ package delit.piwigoclient.business;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
+import android.net.Uri;
 
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
@@ -46,21 +46,6 @@ public class UploadPreferences {
     public static int getUploadChunkMaxRetries(Context context, SharedPreferences prefs) {
         return getInt(context, prefs, R.string.preference_data_upload_chunk_auto_retries_key, R.integer.preference_data_upload_chunk_auto_retries_default);
     }
-/*
-
-    public static UploadJob.VideoCompressionParams getVideoCompressionParams(Context context, SharedPreferences prefs) {
-        UploadJob.VideoCompressionParams params = new UploadJob.VideoCompressionParams();
-        params.setQuality(getVideoCompressionQuality(context, prefs));
-        return params;
-    }
-
-    public static UploadJob.ImageCompressionParams getImageCompressionParams(Context context, SharedPreferences prefs) {
-        UploadJob.ImageCompressionParams params = new UploadJob.ImageCompressionParams();
-        params.setQuality(getImageCompressionQuality(context, prefs));
-        params.setOutputFormat(getImageCompressionOutputFormat(context, prefs));
-        return params;
-    }
-*/
 
     public static double getVideoCompressionQuality(Context context, SharedPreferences prefs) {
         return ((double) getInt(context, prefs, R.string.preference_data_upload_compress_videos_quality_key, R.integer.preference_data_upload_compress_videos_quality_default)) / 1000;
@@ -123,7 +108,15 @@ public class UploadPreferences {
         return getInt(context, prefs, R.string.preference_data_upload_default_privacy_level_key, R.integer.preference_data_upload_default_privacy_level_default);
     }
 
-    public static String getDefaultLocalUploadFolder(SharedPreferences prefs, Context context) {
-        return getString(context, prefs, R.string.preference_data_upload_default_local_folder_key, Environment.getExternalStorageDirectory().getAbsolutePath());
+    public static String getDefaultLocalUploadFolder(Context context, SharedPreferences prefs) {
+        return getString(context, prefs, R.string.preference_data_upload_default_local_folder_key, context.getExternalFilesDir(null).getAbsolutePath());
+    }
+
+    public static void setDefaultLocalUploadFolder(Context context, SharedPreferences prefs, Uri newFolder) {
+        prefs.edit().putString(context.getString(R.string.preference_data_upload_default_local_folder_key), newFolder.toString()).apply();
+    }
+
+    public static boolean isDeleteFilesAfterUploadDefault(Context context, SharedPreferences prefs) {
+        return getBoolean(context, prefs, R.string.preference_data_upload_delete_uploaded_key, R.bool.preference_data_upload_delete_uploaded_default);
     }
 }

@@ -36,9 +36,9 @@ public abstract class BaseLruExifCache<T> implements Cache {
             throw new IllegalArgumentException("Max size must be positive.");
         }
         this.maxSize = maxSize;
-        this.map = new LinkedHashMap<String, Bitmap>(0, 0.75f, true);
-        this.linkMap = new LinkedHashMap<Bitmap, String>(0, 0.75f, true);
-        metadataMap = new LinkedHashMap<String, T>(0, 0.75f, true);
+        this.map = new LinkedHashMap<>(0, 0.75f, true);
+        this.linkMap = new LinkedHashMap<>(0, 0.75f, true);
+        metadataMap = new LinkedHashMap<>(0, 0.75f, true);
     }
 
     public T getMetadata(String uri) {
@@ -86,13 +86,12 @@ public abstract class BaseLruExifCache<T> implements Cache {
 
         List<Bitmap> matchingBitmapsForUri = new ArrayList<>();
 
-        for (Iterator<Map.Entry<String, Bitmap>> i = map.entrySet().iterator(); i.hasNext();) {
+        for (Map.Entry<String, Bitmap> entry : map.entrySet()) {
 
-            Map.Entry<String, Bitmap> entry = i.next();
             String key = entry.getKey();
             Bitmap value = entry.getValue();
 
-            if(keyMatchesRawUri(key, uri)) {
+            if (keyMatchesRawUri(key, uri)) {
                 matchingBitmapsForUri.add(value);
             }
         }

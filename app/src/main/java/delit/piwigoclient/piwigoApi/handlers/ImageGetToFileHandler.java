@@ -1,6 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.net.Uri;
 import android.util.Log;
+
+import androidx.core.content.MimeTypeFilter;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -10,8 +14,6 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -22,14 +24,16 @@ import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.StatusLine;
 import cz.msebera.android.httpclient.client.HttpResponseException;
 import cz.msebera.android.httpclient.util.ByteArrayBuffer;
-import delit.libs.util.UriUtils;
+import delit.libs.core.util.Logging;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.RequestHandle;
+import delit.libs.util.IOUtils;
 import delit.libs.util.http.HttpUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
+import delit.piwigoclient.util.UriUtils;
 
 /**
  * Created by gareth on 25/06/17.
@@ -38,13 +42,13 @@ import delit.piwigoclient.ui.events.CancelDownloadEvent;
 public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
 
     private static final String TAG = "GetImgToFileRspHdlr";
-    private final File outputFile;
+    private final Uri outputFileUri;
     private String resourceUrl;
 
-    public ImageGetToFileHandler(String resourceUrl, File outputFile) {
+    public ImageGetToFileHandler(String resourceUrl, Uri outputFileUri) {
         super(TAG);
         this.resourceUrl = resourceUrl;
-        this.outputFile = outputFile;
+        this.outputFileUri = outputFileUri;
         EventBus.getDefault().register(this);
     }
 
@@ -78,40 +82,37 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
         }
     }
 
-    public boolean writeResponseDataToFile(HttpEntity entity) throws IOException {
-
-
-
-        InputStream is = entity.getContent();
-        FileOutputStream fos = new FileOutputStream(outputFile);
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        BufferedInputStream bis = new BufferedInputStream(is);
+    public boolean writeResponseDataToFile(HttpEntity entity) {
         boolean isSuccess = false;
-        try {
+
+        BufferedInputStream bis = null;
+        try(BufferedOutputStream bos = new BufferedOutputStream(getContext().getContentResolver().openOutputStream(outputFileUri))) {
+
+            bis = new BufferedInputStream(entity.getContent());
             Header contentTypeHeader = entity.getContentType();
-            if(contentTypeHeader != null && !contentTypeHeader.getValue().startsWith("image/")) {
+            if (contentTypeHeader != null && !MimeTypeFilter.matches(contentTypeHeader.getValue(), "image/*")) {
                 boolean newLoginAcquired = false;
-                if(!isTriedLoggingInAgain()) {
+                if (!isTriedLoggingInAgain()) {
                     // this was redirected to an http page - login failed most probable - try to force a login and retry!
                     newLoginAcquired = acquireNewSessionAndRetryCallIfAcquired();
                 }
                 if (!newLoginAcquired) {
                     byte[] responseBody = getResponseBodyAsByteArray(entity);
                     resetSuccessAsFailure();
-                    storeResponse(new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, 200, responseBody, "Unsupported content type", "Content-Type http response header returned - ("+contentTypeHeader.getValue()+"). image/* expected"));
+                    storeResponse(new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, 200, responseBody, "Unsupported content type", "Content-Type http response header returned - (" + contentTypeHeader.getValue() + "). image/* expected"));
                 }
                 return false; // this isn't a success yet, but there's another call in progress so we're getting a second chance!
             }
 
             long contentLength = entity.getContentLength();
-            int buffersize = (contentLength > BUFFER_SIZE || contentLength < 1024) ? BUFFER_SIZE : (int) contentLength;
+            int bufferSize = (contentLength > BUFFER_SIZE || contentLength < 1024) ? BUFFER_SIZE : (int) contentLength;
             int progress = -1;
             long totalBytesRead = 0;
             if (contentLength >= 0) {
                 progress = 0;
                 onDownloadProgress(progress);
             }
-            byte[] buffer = new byte[buffersize];
+            byte[] buffer = new byte[bufferSize];
             int bytesRead;
             long lastProgressUpdateAt = System.currentTimeMillis();
             do {
@@ -143,19 +144,21 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
                 }
             }
             isSuccess = true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             setError(new IOException("Error parsing response", e));
         } finally {
             //TODO why would I have written this block?
-//            if (!cancelOperationAsap) {
-//                client.cancelAllRequests(true);
-//                client.getHttpClient().getConnectionManager().shutdown();
-//            }
+            //            if (!cancelOperationAsap) {
+            //                client.cancelAllRequests(true);
+            //                client.getHttpClient().getConnectionManager().shutdown();
+            //            }
             AsyncHttpClient.silentCloseInputStream(bis);
             AsyncHttpClient.endEntityViaReflection(entity);
-            AsyncHttpClient.silentCloseOutputStream(bos);
             if (isCancelCallAsap()) {
-                outputFile.delete();
+                DocumentFile docFile = IOUtils.getSingleDocFile(getContext(), outputFileUri);
+                if (docFile != null && !docFile.delete()) {
+                    Logging.log(Log.ERROR, TAG, "Unable to delete partially downloaded file");
+                }
             }
         }
         return isSuccess;
@@ -208,12 +211,12 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
 
     @Override
     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
-        PiwigoResponseBufferingHandler.UrlToFileSuccessResponse r = new PiwigoResponseBufferingHandler.UrlToFileSuccessResponse(getMessageId(), resourceUrl, outputFile);
+        PiwigoResponseBufferingHandler.UrlToFileSuccessResponse r = new PiwigoResponseBufferingHandler.UrlToFileSuccessResponse(getMessageId(), resourceUrl, outputFileUri);
         storeResponse(r);
     }
 
     @Override
-    public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
+    public boolean onFailure(String uri, int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
         if (statusCode != -1) {
             String[] errorDetails = HttpUtils.getHttpErrorMessage(getContext(), statusCode, error);
             PiwigoResponseBufferingHandler.UrlErrorResponse r = new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, statusCode, responseBody, errorDetails[0], errorDetails[1]);

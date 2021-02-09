@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <style name="Libs.Theme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="visibilityToggleStyle">@style/App.Widget.CompoundButton.CheckBox.Visibility</item>
+        <item name="materialButtonIconStyle">@style/App.Widget.Button.OutlinedButton.IconOnly</item>
+    </style>
+
+    <!-- password field visibility toggle button style -->
+    <style name="App.Widget.CompoundButton.CheckBox.Visibility" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="buttonCompat">@drawable/none</item> <!-- needed for pre lollipop -->
+        <item name="paddingStart">0dp</item>
+        <item name="android:button">@drawable/none</item> <!-- just a null drawable - never shown -->
+        <item name="android:drawableEnd">@drawable/visibility_checkbox</item>
+    </style>
+
+    <!-- icon only style button -->
+    <style name="App.Widget.Button.OutlinedButton.IconOnly" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>f
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:maxWidth">48dp</item>
+        <item name="iconTint">?editTextColor</item> <!-- shows grayed if disabled -->
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+</resources>

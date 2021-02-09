@@ -33,7 +33,7 @@ public class ImageCopyToAlbumResponseHandler<T extends ResourceItem> extends Abs
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
-        PiwigoUpdateAlbumContentResponse r = new PiwigoUpdateAlbumContentResponse<T>(getMessageId(), getPiwigoMethod(), targetAlbum, piwigoResource, isCached);
+        PiwigoUpdateAlbumContentResponse r = new PiwigoUpdateAlbumContentResponse<>(getMessageId(), getPiwigoMethod(), targetAlbum, piwigoResource, isCached);
         storeResponse(r);
     }
 

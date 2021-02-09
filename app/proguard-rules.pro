@@ -61,7 +61,6 @@
 
 -dontwarn com.google.android.gms.**
 
-#-keep class delit.libs.ui.view.SlidingTabLayout* { public *; }
 -keep class delit.libs.ui.view.SlidingTabLayout$TabColorizer { public *; }
 
 -keep class com.google.ads.** { public *; }
@@ -115,8 +114,15 @@
     public static final <fields>;
 }
 
+# attempt to ensure that between versions, classes can still be loaded.
+-keepnames class * extends delit.piwigoclient.ui.model.ViewModelContainer
+
+# Allow re-load of parcelable classes from old versions of the app.
+-keepnames class * implements android.os.Parcelable
+
 # Allow customised serialization to work (all serializable classes must have serialVersionUID for this to be sufficient)
      # <init>(...);
+-keepnames class * implements java.io.Serializable
 -keepclassmembers class * implements java.io.Serializable {
      static final long serialVersionUID;
      private static final java.io.ObjectStreamField[] serialPersistentFields;
@@ -148,8 +154,8 @@
 ###-keep interface android.support.v7.internal.** { public *; }
 ###-keep class android.support.v7.** { public *; }
 
--keep class com.google.firebase.** { public *; }
--keep class com.crashlytics.** { public *; }
+-keep class com.google.firebase.crashlytics.** { *; } # faster builds - don't obfuscate crashlytics
+-dontwarn com.google.firebase.crashlytics.** # faster builds - don't obfuscate crashlytics
 -keep class io.fabric.sdk.android.services.** { public *; }
 -keep class io.fabric.sdk.android.Kit { public *; }
 -keep class io.fabric.sdk.android.Logger { public *; }
@@ -165,6 +171,7 @@
 -keep class **.R$*  { public *; }
 -keep class delit.piwigoclient.database.**  { public *; }
 
+-keepattributes *Annotation* # Keep crashlytics annotations (allow deobfuscated crashlytics stacktraces - unconfirmed as correct
 #-keep public class * implements java.lang.annotation.Annotation { *; }
 ###-keep class delit.piwigoclient.**.*Activity { public *; }
 

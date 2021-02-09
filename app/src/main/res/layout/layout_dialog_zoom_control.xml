@@ -1,31 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp">
+    android:padding="8dp">
 
     <TextView
         android:text="@string/alert_image_show_image_select_rotation"
         android:labelFor="@id/imageRotationField"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="3dp"
-        android:layout_marginTop="15dp"/>
+        style="?editableFieldLabel"/>
 
     <Spinner
         android:id="@+id/imageRotationField"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"/>
+        style="?editableFieldSpinner"/>
 
     <!--<TextView
         android:text="@string/alert_image_show_image_select_max_zoom"
         android:labelFor="@id/allowFreeZoom"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textAppearance="?textAppearanceCaption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -33,7 +25,7 @@
         android:layout_marginBottom="3dp"
         android:layout_marginTop="7dp"/>-->
 
-    <Switch
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/allowFreeZoom"
         android:text="@string/alert_image_show_image_select_max_zoom"
         android:layout_width="match_parent"
@@ -45,13 +37,7 @@
     <TextView
         android:labelFor="@id/fileSelectList"
         android:text="@string/alert_image_show_image_message"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="3dp"
-        android:layout_marginTop="7dp"/>
+        style="?editableFieldLabel"/>
 
     <ListView
         android:id="@+id/fileSelectList"

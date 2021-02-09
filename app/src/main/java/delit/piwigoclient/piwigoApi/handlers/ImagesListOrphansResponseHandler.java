@@ -2,6 +2,8 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,12 +14,12 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 import delit.libs.http.RequestParams;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.RequestHandle;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 
 public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -68,7 +70,7 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
     }
 
     @Override
-    public boolean isMethodAvailable(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    public boolean isMethodAvailable(@NonNull Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         boolean available = super.isMethodAvailable(context, connectionPrefs);
         if(available && "piwigo_client.images.getOrphans".equals(getPiwigoMethod())) {
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
@@ -81,7 +83,7 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
 
     private void runSequenceOfNestedHandlers() {
         int nextPage = 0;
-        resultContainer = new ArrayList<Long>(pageSize);
+        resultContainer = new ArrayList<>(pageSize);
         PiwigoGetOrphansResponse nestedResponse = null;
         while(nextPage >= 0) {
             ImagesListOrphansResponseHandler nestedHandler = new ImagesListOrphansResponseHandler(nextPage, pageSize, resultContainer);
@@ -99,6 +101,7 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
             }
         }
 
+        setRequestURI(getNestedRequestURI());
         setError(getNestedFailure());
 
         if(nestedResponse != null) {

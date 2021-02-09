@@ -2,58 +2,58 @@ package delit.piwigoclient.ui.album.view;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+
 import java.util.Date;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 
-public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
-    public static final int SCALING_QUALITY_PERFECT = Integer.MAX_VALUE;
-    public static final int SCALING_QUALITY_VHIGH = 960;
-    public static final int SCALING_QUALITY_HIGH = 480;
-    public static final int SCALING_QUALITY_MEDIUM = 240;
-    public static final int SCALING_QUALITY_LOW = 120;
-    public static final int SCALING_QUALITY_VLOW = 60;
-    private final int scalingQuality = SCALING_QUALITY_MEDIUM;
+public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<AlbumItemRecyclerViewAdapterPreferences> {
     private Date recentlyAlteredThresholdDate;
     private String preferredThumbnailSize;
     private String preferredAlbumThumbnailSize;
     private boolean showAlbumThumbnailsZoomed;
-    private float albumWidth;
+    private float albumWidthInches;
     private boolean showResourceNames;
 
     public AlbumItemRecyclerViewAdapterPreferences() {
+        selectable(true, false); // set multi select mode enabled (side effect is it enables selection
+        setAllowItemSelection(false); // prevent selection until a long click enables it.
+    }
+
+    public AlbumItemRecyclerViewAdapterPreferences(Bundle bundle) {
+        loadFromBundle(bundle);
     }
 
     @Override
-    public Bundle storeToBundle(Bundle parent) {
-        Bundle b = new Bundle();
+    protected String getBundleName() {
+        return "AlbumItemRecyclerViewAdapterPrefs";
+    }
+
+    @Override
+    protected String writeContentToBundle(Bundle b) {
+        super.writeContentToBundle(b);
         BundleUtils.putDate(b, "recentlyAlteredThresholdDate", recentlyAlteredThresholdDate);
         b.putString("preferredThumbnailSize", preferredThumbnailSize);
         b.putString("preferredAlbumThumbnailSize", preferredAlbumThumbnailSize);
         b.putBoolean("showAlbumThumbnailsZoomed", showAlbumThumbnailsZoomed);
-        b.putFloat("albumWidth", albumWidth);
+        b.putFloat("albumWidth", albumWidthInches);
         b.putBoolean("showResourceNames", showResourceNames);
 //                b.putInt("scalingQuality", scalingQuality);
-        super.storeToBundle(b);
-        parent.putBundle("AlbumItemRecyclerViewAdapterPreferences", b);
-        return parent;
+        return getBundleName();
     }
 
     @Override
-    public AlbumItemRecyclerViewAdapterPreferences loadFromBundle(Bundle parent) {
-        Bundle b = parent.getBundle("AlbumItemRecyclerViewAdapterPreferences");
-        if(b != null) {
-            recentlyAlteredThresholdDate = BundleUtils.getDate(b, "recentlyAlteredThresholdDate");
-            preferredThumbnailSize = b.getString("preferredThumbnailSize");
-            preferredAlbumThumbnailSize = b.getString("preferredAlbumThumbnailSize");
-            showAlbumThumbnailsZoomed = b.getBoolean("showAlbumThumbnailsZoomed");
-            albumWidth = b.getFloat("albumWidth");
-            showResourceNames = b.getBoolean("showResourceNames");
+    protected void readContentFromBundle(@NonNull Bundle b) {
+        super.readContentFromBundle(b);
+        recentlyAlteredThresholdDate = BundleUtils.getDate(b, "recentlyAlteredThresholdDate");
+        preferredThumbnailSize = b.getString("preferredThumbnailSize");
+        preferredAlbumThumbnailSize = b.getString("preferredAlbumThumbnailSize");
+        showAlbumThumbnailsZoomed = b.getBoolean("showAlbumThumbnailsZoomed");
+        albumWidthInches = b.getFloat("albumWidth");
+        showResourceNames = b.getBoolean("showResourceNames");
 //                scalingQuality = b.getInt("scalingQuality");
-            super.loadFromBundle(b);
-        }
-        return this;
     }
 
     public AlbumItemRecyclerViewAdapterPreferences withRecentlyAlteredThresholdDate(Date recentlyAlteredThresholdDate) {
@@ -71,8 +71,8 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         return this;
     }
 
-    public AlbumItemRecyclerViewAdapterPreferences withAlbumWidth(float albumWidth) {
-        this.albumWidth = albumWidth;
+    public AlbumItemRecyclerViewAdapterPreferences withAlbumWidthInches(float albumWidthInches) {
+        this.albumWidthInches = albumWidthInches;
         return this;
     }
 
@@ -81,7 +81,7 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         return this;
     }
 
-    public AlbumItemRecyclerViewAdapterPreferences withShowingAlbumNames(boolean showResourceNames) {
+    public AlbumItemRecyclerViewAdapterPreferences withShowingResourceNames(boolean showResourceNames) {
         this.showResourceNames = showResourceNames;
         return this;
     }
@@ -94,12 +94,8 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         return preferredThumbnailSize;
     }
 
-    public float getAlbumWidth() {
-        return albumWidth;
-    }
-
-    public int getScalingQuality() {
-        return scalingQuality;
+    public float getAlbumWidthInches() {
+        return albumWidthInches;
     }
 
     public boolean isShowAlbumThumbnailsZoomed() {

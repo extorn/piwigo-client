@@ -15,7 +15,7 @@ import androidx.annotation.LayoutRes;
 import java.util.HashSet;
 import java.util.Set;
 
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
@@ -106,7 +106,7 @@ public class ExpandableAlbumsListAdapter extends BaseExpandableListAdapter {
     private void bindDataToGroupView(View v, CategoryItem item, boolean isExpanded) {
 
         if(prefs.isMultiSelectionEnabled()) {
-            AppCompatCheckboxTriState checkbox = v.findViewById(R.id.actionable_list_item_checked);
+            MaterialCheckboxTriState checkbox = v.findViewById(R.id.actionable_list_item_checked);
             checkbox.setChecked(isChecked(item));
             checkbox.setOnClickListener(new ItemClickListener(item));
             checkbox.setCheckboxAtEnd(true);
@@ -203,9 +203,9 @@ public class ExpandableAlbumsListAdapter extends BaseExpandableListAdapter {
             v = convertView;
         }
         v.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        parent.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        bindChildrenDataToChildrenListView(parent.getContext(), (ExpandableListView) v.findViewById(R.id.expandingListView), getGroup(groupPosition), childPosition);
-        parent.invalidate();
+        //parent.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        bindChildrenDataToChildrenListView(parent.getContext(), v.findViewById(R.id.expandingListView), getGroup(groupPosition), childPosition);
+//        parent.invalidate();
         return v;
     }
 
@@ -230,8 +230,13 @@ public class ExpandableAlbumsListAdapter extends BaseExpandableListAdapter {
         childrenAreSelectable = enabled;
     }
 
-    public static class ExpandableAlbumsListAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
+    public static class ExpandableAlbumsListAdapterPreferences extends BaseRecyclerViewAdapterPreferences<ExpandableAlbumsListAdapterPreferences> {
+
         private boolean allowRootAlbumSelection;
+
+        public ExpandableAlbumsListAdapterPreferences(Bundle bundle) {
+            loadFromBundle(bundle);
+        }
 
         public ExpandableAlbumsListAdapterPreferences withRootAlbumSelectionAllowed() {
             allowRootAlbumSelection = true;
@@ -239,18 +244,21 @@ public class ExpandableAlbumsListAdapter extends BaseExpandableListAdapter {
         }
 
         @Override
-        public Bundle storeToBundle(Bundle parent) {
-            Bundle b = new Bundle();
-            parent.putBundle("ExpandableAlbumsListAdapterPreferences", b);
-            super.storeToBundle(b);
-            return parent;
+        protected String getBundleName() {
+            return "ExpandableAlbumsListAdapterPreferences";
         }
 
         @Override
-        public ExpandableAlbumsListAdapterPreferences loadFromBundle(Bundle parent) {
-            Bundle b = parent.getBundle("ExpandableAlbumsListAdapterPreferences");
-            super.loadFromBundle(b);
-            return this;
+        protected String writeContentToBundle(Bundle b) {
+            super.writeContentToBundle(b);
+            b.putBoolean("allowRootAlbumSelection",allowRootAlbumSelection);
+            return getBundleName();
+        }
+
+        @Override
+        protected void readContentFromBundle(Bundle b) {
+            super.readContentFromBundle(b);
+            allowRootAlbumSelection = b.getBoolean("allowRootAlbumSelection", allowRootAlbumSelection);
         }
 
         public boolean isAllowRootAlbumSelection() {

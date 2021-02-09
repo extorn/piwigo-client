@@ -11,9 +11,8 @@ import delit.libs.ui.util.ParcelUtils;
 /**
  * Created by gareth on 12/07/17.
  */
-public class ResourceItem extends AbstractBaseResourceItem {
+public class ResourceItem extends AbstractBaseResourceItem implements Parcelable {
 
-    private static final long serialVersionUID = -7644068603163535826L;
     private HashSet<Tag> tags;
     private Boolean isFavorite;
 

@@ -4,40 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp">
+    android:background="?attr/colorSurface">
 
     <RelativeLayout
         android:id="@+id/user_edit_controls"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp">
 
-        <delit.libs.ui.view.button.CustomImageButton
+        <Button
             android:id="@+id/user_action_edit_button"
             android:layout_alignParentStart="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
+            app:icon="@drawable/ic_mode_edit_black_24dp"
+            style="?materialButtonIconStyle"/>
 
-        <delit.libs.ui.view.button.CustomImageButton
+        <Button
             android:id="@+id/user_action_save_button"
             android:layout_toEndOf="@id/user_action_edit_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_save_black_24dp"/>
+            app:icon="@drawable/ic_save_black_24dp"
+            style="?materialButtonIconStyle"/>
 
-        <delit.libs.ui.view.button.CustomImageButton
+        <Button
             android:id="@+id/user_action_discard_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_undo_black_24dp"
-            android:layout_toEndOf="@id/user_action_save_button"/>
+            app:icon="@drawable/ic_undo_black_24dp"
+            android:layout_toEndOf="@id/user_action_save_button"
+            style="?materialButtonIconStyle"/>
 
-        <delit.libs.ui.view.button.CustomImageButton
+        <Button
             android:id="@+id/user_action_delete_button"
             android:layout_alignParentEnd="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_delete_black_24px" />
+            app:icon="@drawable/ic_delete_black_24px"
+            style="?materialButtonIconStyle"/>
     </RelativeLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -47,6 +44,9 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -57,196 +57,133 @@
 
             <TextView
                 android:id="@+id/user_username_label"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@+id/user_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="7dp"
-                android:text="@string/user_username_title" />
+                android:text="@string/user_username_title"
+                style="?editableFieldLabel"/>
 
             <EditText
                 android:id="@+id/user_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:inputType="text|textNoSuggestions"
                 android:maxLines="1"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 tools:text="some username"
-                android:autofillHints="username"/>
+                android:autofillHints="username"
+                style="?editableFieldText"/>
 
             <TextView
                 android:id="@+id/user_password_label"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@+id/user_password_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="7dp"
-                android:text="@string/user_password_title" />
+                android:text="@string/user_password_title"
+                style="?editableFieldLabel"/>
 
-
-            <EditText
-                android:id="@+id/user_password_field"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:inputType="textPassword"
-                android:maxLines="1"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                tools:text="some password"
-                android:autofillHints="password"/>
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/user_password_field"
+                    android:layout_toStartOf="@id/toggle_visibility"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    tools:text="some password"
+                    android:autofillHints="password"
+                    style="?editableFieldText"/>
+
+                <CheckBox
+                    android:id="@+id/toggle_visibility"
+                    android:layout_alignBaseline="@+id/user_password_field"
+                    android:layout_alignParentEnd="true"
+                    style="?visibilityToggleStyle"/>
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/user_usertype_label"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@+id/user_usertype"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="7dp"
-                android:text="@string/user_usertype_title" />
+                android:text="@string/user_usertype_title"
+                style="?editableFieldLabel"/>
 
             <Spinner
                 android:id="@+id/user_usertype"
-                android:layout_margin="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                style="?editableFieldSpinner"/>
 
             <TextView
                 android:id="@+id/user_privacy_level_label"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@+id/user_privacy_level"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="7dp"
-                android:text="@string/user_privacy_level_title" />
+                android:text="@string/user_privacy_level_title"
+                style="?editableFieldLabel"/>
 
             <Spinner
                 android:id="@+id/user_privacy_level"
-                android:layout_margin="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                style="?editableFieldSpinner"/>
 
             <TextView
                 android:id="@+id/user_email_label"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@+id/user_email_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="7dp"
-                android:text="@string/user_email_title"/>
+                android:text="@string/user_email_title"
+                style="?editableFieldLabel"/>
 
             <EditText
                 android:id="@+id/user_email_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:clickable="true"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:focusable="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:autofillHints="emailAddress"/>
+                android:autofillHints="emailAddress"
+                style="?editableFieldText"/>
 
 
             <TextView
                 android:id="@+id/user_lastvisit_label"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="7dp"
-                android:text="@string/user_lastvisit_title" />
+                android:text="@string/user_lastvisit_title"
+                style="?editableFieldLabel"/>
 
             <TextView
                 android:id="@+id/user_lastvisit"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text|textNoSuggestions"
                 android:background="?attr/editTextBackground"
                 android:gravity="center_vertical"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                tools:text="some text"/>
+                tools:text="some text"
+                style="?editableFieldText"/>
 
-            <delit.libs.ui.view.button.AppCompatCheckboxTriState
+            <TextView
+                android:id="@+id/user_high_definition_label"
+                android:labelFor="@id/user_high_definition_field"
+                android:text="@string/user_high_definition_title"
+                style="?editableFieldLabel"/>
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/user_high_definition_field"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="7dp"
-                app:checkbox_at_end="true"
-                android:text="@string/user_high_definition_title" />
+                android:text="@string/user_high_definition_field"
+                style="?editableFieldSwitch"/>
 
             <TextView
                 android:id="@+id/user_groups_label"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="7dp"
-                android:text="@string/user_groups_title" />
+                android:text="@string/user_groups_title"
+                style="?editableFieldLabel"/>
 
-        <TextView
-            android:id="@+id/user_groups"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine|textNoSuggestions"
-            android:background="?attr/editTextBackground"
-            android:gravity="center_vertical"
-            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
-            android:text="@string/none_selected"
-            android:maxLines="2"
-            android:ellipsize="end"/>
+            <TextView
+                android:id="@+id/user_groups"
+                android:gravity="center_vertical"
+                android:text="@string/none_selected"
+                android:maxLines="2"
+                android:ellipsize="end"
+                style="?editableFieldTextClickable"/>
 
 
             <TextView
                 android:id="@+id/user_access_rights_label"
                 android:text="@string/user_access_rights_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="3dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                style="?editableFieldLabel" />
 
             <delit.libs.ui.view.list.ForcedMinimumHeightListView
                 android:id="@+id/user_access_rights"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="200dp"
+                android:minHeight="400dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
                 android:nestedScrollingEnabled="true"/>

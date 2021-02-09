@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
+
+import androidx.preference.Preference;
 
 import org.greenrobot.eventbus.EventBus;
 
-import androidx.preference.Preference;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.events.trackable.TrackableResponseEvent;
 
@@ -68,24 +68,14 @@ public abstract class EventDrivenPreference<T extends TrackableRequestEvent> ext
         }
     }
 
-    public void persistStringValue(String value)
-    {
-        final boolean changed = !TextUtils.equals(getPersistedString(null), value);
-        if (changed) {
-            currentValue = value;
-            persistString(value);
-            notifyChanged();
-        }
-    }
-
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
         return a.getString(index);
     }
 
     @Override
-    protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        persistStringValue(restoreValue ? getPersistedString(currentValue) : (String) defaultValue);
+    protected void onSetInitialValue(Object defaultValue) {
+        setValue(getPersistedString((String) defaultValue));
     }
 
     protected String getValue() {
@@ -93,9 +83,25 @@ public abstract class EventDrivenPreference<T extends TrackableRequestEvent> ext
         return currentValue;
     }
 
-    protected void setValue(String newValue) {
+    @Override
+    protected boolean persistString(String newValue) {
         this.currentValue = newValue;
-        super.persistString(currentValue);
+        return super.persistString(currentValue);
+    }
+
+    public void setValue(String newValue) {
+        if(callChangeListener(newValue)) {
+            final boolean wasBlocking = shouldDisableDependents();
+
+            persistString(newValue);
+
+            final boolean isBlocking = shouldDisableDependents();
+            if (isBlocking != wasBlocking) {
+                notifyDependencyChange(isBlocking);
+            }
+
+            notifyChanged(); // this will update the summary text.
+        }
     }
 
     @Override
@@ -122,7 +128,7 @@ public abstract class EventDrivenPreference<T extends TrackableRequestEvent> ext
 
         SavedState myState = (SavedState) state;
         super.onRestoreInstanceState(myState.getSuperState());
-        this.currentValue = myState.value;
+        this.currentValue = myState.value; //TODO I think this currentValue field is totally pointless but it is in EditTextPreference!
         this.trackedEventId = myState.trackedEventId;
     }
 
@@ -160,7 +166,7 @@ public abstract class EventDrivenPreference<T extends TrackableRequestEvent> ext
         }
     }
 
-    public String getCurrentValue() {
+    protected String getCurrentValue() {
         return currentValue;
     }
 

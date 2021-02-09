@@ -3,13 +3,15 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import delit.libs.util.CollectionUtils;
 
-import static delit.piwigoclient.model.piwigo.CategoryItem.ROOT_ALBUM;
+import static delit.piwigoclient.model.piwigo.StaticCategoryItem.ROOT_ALBUM;
 
 /**
  * Created by gareth on 10/12/17.
@@ -30,16 +32,20 @@ public class PiwigoAlbumAdminList implements Parcelable {
         dest.writeList(rootAlbums);
     }
 
-    public List<CategoryItem> getDirectChildrenOfAlbum(List<Long> parentageChain, long albumId) {
+    public @NonNull List<CategoryItem> getDirectChildrenOfAlbum(List<Long> parentageChain, long albumId) {
         if (ROOT_ALBUM.getParentageChain().equals(parentageChain)) {
             return rootAlbums;
         }
         List<Long> fullAlbumPath = new ArrayList<>(parentageChain);
         fullAlbumPath.add(albumId);
-        for (CategoryItem c : rootAlbums) {
-            CategoryItem item = c.locateChildAlbum(fullAlbumPath);
+        for (CategoryItem rootAlbum : rootAlbums) {
+            CategoryItem item = rootAlbum.locateChildAlbum(fullAlbumPath);
             if (item != null) {
-                return item.getChildAlbums();
+                List<CategoryItem> list = item.getChildAlbums();
+                if (list == null) {
+                    list = new ArrayList<>();
+                }
+                return list;
             }
         }
         String parents = CollectionUtils.toCsvList(parentageChain);
@@ -101,8 +107,8 @@ public class PiwigoAlbumAdminList implements Parcelable {
     protected CategoryItem findAlbumInSubTree(long albumId, CategoryItem subTree) {
         CategoryItem item;
         if(subTree.getChildAlbums() != null) {
-            for (Iterator<CategoryItem> childrenIter = subTree.getChildAlbums().iterator(); childrenIter.hasNext(); ) {
-                item = childrenIter.next();
+            for (CategoryItem categoryItem : subTree.getChildAlbums()) {
+                item = categoryItem;
                 if (item.getId() == albumId) {
                     return item;
                 } else if (item.getChildAlbumCount() > 0) {
@@ -118,9 +124,9 @@ public class PiwigoAlbumAdminList implements Parcelable {
 
     protected CategoryItem findAlbum(long albumId) {
         CategoryItem item;
-        for (Iterator<CategoryItem> iter = rootAlbums.iterator(); iter.hasNext(); ) {
-            item = iter.next();
-            if(item.getId() != albumId) {
+        for (CategoryItem rootAlbum : rootAlbums) {
+            item = rootAlbum;
+            if (item.getId() != albumId) {
                 item = findAlbumInSubTree(albumId, item);
             }
             if (item != null) {

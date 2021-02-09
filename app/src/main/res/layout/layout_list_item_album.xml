@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="16dp"
+    app:cardBackgroundColor="@color/color_album_item_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/resource_thumbnail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/resource_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.3"
+            tools:src="@drawable/ic_broken_image_black_240dp" />
+
+        <ImageView
+            android:id="@+id/newly_altered_marker_image"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="2dp"
+            app:layout_constraintBottom_toBottomOf="@+id/resource_thumbnail"
+            app:layout_constraintEnd_toEndOf="@+id/resource_thumbnail"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@+id/resource_thumbnail"
+            app:layout_constraintTop_toTopOf="@+id/resource_thumbnail"
+            app:layout_constraintVertical_bias="0"
+            app:srcCompat="@drawable/ic_star_yellow_24dp" />
+
+        <TextView
+            android:id="@+id/resource_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="3dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="3dp"
+            android:paddingBottom="0dp"
+            android:textAppearance="?textAppearanceHeadline5"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toTopOf="@id/resource_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Album Name. This one is really long!" />
+
+        <TextView
+            android:id="@+id/resource_description"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:maxLines="10"
+            android:ellipsize="end"
+            android:paddingStart="3dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="3dp"
+            android:paddingBottom="0dp"
+            android:textAppearance="?textAppearanceBody2"
+            app:layout_constraintBottom_toTopOf="@+id/album_photoCount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
+            app:layout_constraintTop_toBottomOf="@id/resource_name"
+            tools:text="A very interesting gallery with a great deal of nothing in it. Maybe we should add more for an even bigger description. What do you think?
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+END" />
+        <!--</androidx.core.widget.NestedScrollView>-->
+
+        <TextView
+            android:id="@+id/album_photoCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/drawable_scrim_heavy"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:minLines="1"
+            android:paddingStart="11dp"
+            android:paddingEnd="5dp"
+            android:textAppearance="?textAppearanceBody2"
+            app:layout_constraintTop_toBottomOf="@+id/resource_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="215 photos" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

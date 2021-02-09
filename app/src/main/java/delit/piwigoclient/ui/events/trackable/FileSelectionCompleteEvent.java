@@ -1,9 +1,13 @@
 package delit.piwigoclient.ui.events.trackable;
 
-import java.io.File;
-import java.util.ArrayList;
+import android.net.Uri;
 
-import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
+import androidx.documentfile.provider.DocumentFile;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import delit.piwigoclient.ui.file.FolderItem;
 
 /**
  * Created by gareth on 13/06/17.
@@ -11,28 +15,32 @@ import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 
 public class FileSelectionCompleteEvent extends TrackableResponseEvent {
 
-    private long actionTimeMillis;
-    private final ArrayList<FolderItemRecyclerViewAdapter.FolderItem> selectedFolderItems;
-    private boolean contentUrisPresent;
+    private final long actionTimeMillis;
+    private final ArrayList<FolderItem> selectedFolderItems;
+    private boolean necessaryPermissionsGranted = true;
 
     public FileSelectionCompleteEvent(int actionId, long actionTimeMillis) {
         super(actionId);
         this.selectedFolderItems = new ArrayList<>();
         this.actionTimeMillis = actionTimeMillis;
-        this.contentUrisPresent = false;
     }
 
-    public FileSelectionCompleteEvent withFiles(ArrayList<File> selectedFiles) {
-        for (File f : selectedFiles) {
-            selectedFolderItems.add(new FolderItemRecyclerViewAdapter.FolderItem(f));
-        }
-        contentUrisPresent = false;
+    public FileSelectionCompleteEvent withFiles(ArrayList<Uri> uris, boolean permissionsGrantedForAllFilesNeeded) {
+        withFiles(uris);
+        necessaryPermissionsGranted = permissionsGrantedForAllFilesNeeded;
         return this;
     }
 
-    public FileSelectionCompleteEvent withFolderItems(ArrayList<FolderItemRecyclerViewAdapter.FolderItem> selectedFolderItems) {
+    public FileSelectionCompleteEvent withFiles(Collection<Uri> uris) {
+        for (Uri uri : uris) {
+            FolderItem item = new FolderItem(uri);
+            selectedFolderItems.add(item);
+        }
+        return this;
+    }
+
+    public FileSelectionCompleteEvent withFolderItems(ArrayList<FolderItem> selectedFolderItems) {
         this.selectedFolderItems.addAll(selectedFolderItems);
-        this.contentUrisPresent = true;
         return this;
     }
 
@@ -40,19 +48,19 @@ public class FileSelectionCompleteEvent extends TrackableResponseEvent {
         return actionTimeMillis;
     }
 
-    public ArrayList<FolderItemRecyclerViewAdapter.FolderItem> getSelectedFolderItems() {
+    public ArrayList<FolderItem> getSelectedFolderItems() {
         return selectedFolderItems;
     }
 
-    public ArrayList<File> getSelectedFolderItemsAsFiles() {
-        ArrayList<File> selectedFiles = new ArrayList<>(selectedFolderItems.size());
-        for (FolderItemRecyclerViewAdapter.FolderItem item : selectedFolderItems) {
-            selectedFiles.add(item.getFile());
+    public ArrayList<DocumentFile> getSelectedFolderItemsAsFiles() {
+        ArrayList<DocumentFile> selectedFiles = new ArrayList<>(selectedFolderItems.size());
+        for (FolderItem item : selectedFolderItems) {
+            selectedFiles.add(item.getDocumentFile());
         }
         return selectedFiles;
     }
 
-    public boolean isContentUrisPresent() {
-        return contentUrisPresent;
+    public boolean isNecessaryPermissionsGranted() {
+        return necessaryPermissionsGranted;
     }
 }

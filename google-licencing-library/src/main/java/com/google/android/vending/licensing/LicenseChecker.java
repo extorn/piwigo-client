@@ -27,7 +27,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.util.Base64;
 import com.google.android.vending.licensing.util.Base64DecoderException;
 
@@ -45,6 +44,8 @@ import java.util.Queue;
 import java.util.Set;
 
 import javax.crypto.Cipher;
+
+import delit.libs.core.util.Logging;
 
 /**
  * Client library for Android Market license verifications.
@@ -82,7 +83,6 @@ public class LicenseChecker implements ServiceConnection {
      */
     private final Handler mHandler;
     private final String mPackageName;
-    private final String mVersionCode;
     private final Set<LicenseValidator> mChecksInProgress = new HashSet<>();
     private final Queue<LicenseValidator> mPendingChecks = new LinkedList<>();
 
@@ -97,7 +97,6 @@ public class LicenseChecker implements ServiceConnection {
         mPolicy = policy;
         mPublicKey = generatePublicKey(encodedPublicKey);
         mPackageName = mContext.getPackageName();
-        mVersionCode = getVersionCode(context, mPackageName);
         HandlerThread handlerThread = new HandlerThread("background thread");
         handlerThread.start();
         mHandler = new Handler(handlerThread.getLooper());
@@ -119,20 +118,16 @@ public class LicenseChecker implements ServiceConnection {
 
             return keyFactory.generatePublic(new X509EncodedKeySpec(decodedKey));
         } catch (NoSuchAlgorithmException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             // This won't happen in an Android-compatible environment.
             throw new RuntimeException(e);
         } catch (Base64DecoderException e) {
-            Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Could not decode from Base64.");
-            }
+            Logging.recordException(e);
+            Logging.log(Log.ERROR, TAG, "Could not decode from Base64.");
             throw new IllegalArgumentException(e);
         } catch (InvalidKeySpecException e) {
-            Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Invalid key specification.");
-            }
+            Logging.recordException(e);
+            Logging.log(Log.ERROR, TAG, "Invalid key specification.");
             throw new IllegalArgumentException(e);
         }
 
@@ -166,7 +161,7 @@ public class LicenseChecker implements ServiceConnection {
 //    }
 
     /**
-     * Crashlytics.logException(e);
+     * Logging.recordException(e);
      * Checks if the user should have access to the app.  Binds the service if necessary.
      * <p>
      * NOTE: This call uses a trivially obfuscated string (base64-encoded).  For best security,
@@ -189,7 +184,7 @@ public class LicenseChecker implements ServiceConnection {
             callback.allow(Policy.LICENSED);
         } else {
             LicenseValidator validator = new LicenseValidator(mPolicy, new NullDeviceLimiter(),
-                    callback, generateNonce(), mPackageName, mVersionCode);
+                    callback, generateNonce(), mPackageName);
 
             if (mService == null) {
                 if (BuildConfig.DEBUG) {
@@ -206,7 +201,7 @@ public class LicenseChecker implements ServiceConnection {
                         serviceIntent = new Intent(new String(cipherd.doFinal(Base64.decode(ENCRYPTED_DESTINATION_SERVICE))));
                         serviceIntent.setPackage(new String(cipherd.doFinal(Base64.decode(ENCRYPTED_DESTINATION_PACKAGE))));
                     } catch (GeneralSecurityException e) {
-                        Crashlytics.logException(e);
+                        Logging.recordException(e);
                         // will never occur unless someone if hacking the app.
                         throw new IllegalArgumentException("Decryption failed");
                     }
@@ -220,14 +215,14 @@ public class LicenseChecker implements ServiceConnection {
                     if (bindResult) {
                         mPendingChecks.offer(validator);
                     } else {
-                        Crashlytics.log(Log.ERROR, TAG, "Could not bind to service to check licence.");
+                        Logging.log(Log.ERROR, TAG, "Could not bind to service to check licence.");
                         handleServiceConnectionError(validator);
                     }
                 } catch (SecurityException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     callback.applicationError(LicenseCheckerCallback.ERROR_MISSING_PERMISSION);
                 } catch (Base64DecoderException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     e.printStackTrace();
                 }
             } else {
@@ -249,7 +244,7 @@ public class LicenseChecker implements ServiceConnection {
                         new ResultListener(validator));
                 mChecksInProgress.add(validator);
             } catch (RemoteException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 if (BuildConfig.DEBUG) {
                     Log.w(TAG, "RemoteException in checkLicense call.", e);
                 }
@@ -392,7 +387,7 @@ public class LicenseChecker implements ServiceConnection {
             try {
                 mContext.unbindService(this);
             } catch (IllegalArgumentException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 // Somehow we've already been unbound. This is a non-fatal
                 // error.
                 if (BuildConfig.DEBUG) {
@@ -435,7 +430,7 @@ public class LicenseChecker implements ServiceConnection {
             return String.valueOf(context.getPackageManager().getPackageInfo(packageName, 0).
                     versionCode);
         } catch (NameNotFoundException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Package not found. could not get version code.");
             }

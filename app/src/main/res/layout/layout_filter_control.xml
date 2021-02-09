@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relativeLayout2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <CheckBox
+        android:id="@+id/content_filter_label"
+        style="?layoutExpansionToggleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="@string/content_filter"
+        app:layout_constraintEnd_toStartOf="@id/toggle_all_button"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/toggle_all_button"
+        style="?materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_show_all"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <delit.libs.ui.view.FlowLayout
+        android:id="@+id/filters"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/view_inactive_filters_button"
+        app:layout_constraintTop_toBottomOf="@+id/barrier_filter_controls"
+        app:layout_constraintHeight_min="48dp">
+
+    </delit.libs.ui.view.FlowLayout>
+    <CheckBox
+        android:id="@+id/view_inactive_filters_button"
+        app:layout_constraintTop_toTopOf="@+id/barrier_filter_controls"
+        app:layout_constraintStart_toEndOf="@id/filters"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/filters"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintVertical_bias="0"
+        style="?foldingToggleStyle"/>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_filter_controls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="content_filter_label, toggle_all_button" />
+</androidx.constraintlayout.widget.ConstraintLayout>

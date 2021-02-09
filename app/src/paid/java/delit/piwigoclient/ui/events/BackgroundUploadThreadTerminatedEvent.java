@@ -1,4 +1,6 @@
 package delit.piwigoclient.ui.events;
 
-public class BackgroundUploadThreadTerminatedEvent {
+import delit.libs.ui.events.SingleUseEvent;
+
+public class BackgroundUploadThreadTerminatedEvent extends SingleUseEvent {
 }

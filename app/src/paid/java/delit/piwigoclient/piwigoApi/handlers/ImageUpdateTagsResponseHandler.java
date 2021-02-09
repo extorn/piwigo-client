@@ -8,10 +8,10 @@ import org.json.JSONException;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.libs.http.RequestParams;
 
 public class ImageUpdateTagsResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
 
@@ -56,7 +56,7 @@ public class ImageUpdateTagsResponseHandler<T extends ResourceItem> extends Abst
             // actually failed.
             JsonObject errObj = rspObj.getAsJsonObject("error");
             String errorReason = errObj.get("item").getAsString();
-            responseForUser = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, 0, errorReason, isCached);
+            responseForUser = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, getRequestURIAsStr(), 0, errorReason, isCached);
         }
         String resultMsg = null;
         if(rspObj.has("info")) {
@@ -65,7 +65,7 @@ public class ImageUpdateTagsResponseHandler<T extends ResourceItem> extends Abst
         if("Tags updated".equals(resultMsg)) {
             responseForUser = new BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<>(getMessageId(), getPiwigoMethod(), piwigoResource, isCached);
         } else {
-            responseForUser = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, 0, ERROR_IMAGE_NOT_FOUND, isCached);
+            responseForUser = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, getRequestURIAsStr(), 0, ERROR_IMAGE_NOT_FOUND, isCached);
         }
         storeResponse(responseForUser);
     }

@@ -125,7 +125,7 @@ public class CachedContent implements Serializable {
         return cachedRanges;
     }
 
-    public class SerializableRange implements Serializable, Comparable<SerializableRange> {
+    public static class SerializableRange implements Serializable, Comparable<SerializableRange> {
 
         private static final long serialVersionUID = -2497952683249597933L;
         private long upper;

@@ -1,10 +1,9 @@
 package delit.piwigoclient.piwigoApi.upload;
 
 import android.content.Context;
+import android.net.Uri;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.io.File;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
@@ -27,7 +26,7 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
-    protected void onRequestedFileUploadCancelComplete(Context context, File cancelledFile) {
+    protected void onRequestedFileUploadCancelComplete(Context context, Uri cancelledFile) {
 
     }
 
@@ -48,6 +47,11 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
 
     @Override
     protected void onLocalFileError(Context context, BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse response) {
+
+    }
+
+    @Override
+    protected void onLocalUnexpectedError(Context context, BasePiwigoUploadService.PiwigoUploadUnexpectedLocalErrorResponse response) {
 
     }
 

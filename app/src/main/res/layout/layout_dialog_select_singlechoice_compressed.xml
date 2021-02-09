@@ -15,16 +15,17 @@
 -->
 
 <CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceSmall"
-    android:textColor="?android:attr/textColorAlertDialogListItem"
     android:gravity="center_vertical"
     android:paddingStart="6dip"
     android:paddingEnd="3dip"
+    android:layout_margin="3dp"
     android:checkMark="?android:attr/listChoiceIndicatorSingle"
-    android:ellipsize="marquee"/>
+    android:ellipsize="marquee"
+    tools:text="Some test text"/>
 <!--
 android:minHeight="?android:attr/listPreferredItemHeight"
 -->

@@ -8,8 +8,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
@@ -17,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
+import delit.libs.core.util.Logging;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -30,7 +29,8 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
     public static final String TAG = "SrvAlbSelPref";
     private String connectionProfileNamePreferenceKey;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
-    
+    private String connectionProfileName;
+
     public ServerAlbumSelectPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
@@ -54,13 +54,10 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
                 R.styleable.ServerAlbumSelectPreference, 0, 0);
         connectionProfileNamePreferenceKey = a.getString(R.styleable.ServerAlbumSelectPreference_connectionProfileNameKey);
         a.recycle();
-        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if(key.equals(connectionProfileNamePreferenceKey)) {
-                    String connectionProfileName = sharedPreferences.getString(connectionProfileNamePreferenceKey, null);
-                    setEnabled(connectionProfileName != null && ConnectionPreferences.getPreferences(connectionProfileName, sharedPreferences, context).isValid(getContext()));
-                }
+        listener = (sharedPreferences, key) -> {
+            if(key != null && key.equals(connectionProfileNamePreferenceKey)) {
+                connectionProfileName = sharedPreferences.getString(connectionProfileNamePreferenceKey, null);
+                setEnabled(connectionProfileName != null && ConnectionPreferences.getPreferences(connectionProfileName, sharedPreferences, context).isValid(getContext()));
             }
         };
     }
@@ -107,7 +104,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
             defaultRootAlbumId = getSelectedServerAlbumDetails().getParentage().get(getSelectedServerAlbumDetails().getParentage().size() -1);
         }
         ExpandingAlbumSelectionNeededEvent event = new ExpandingAlbumSelectionNeededEvent(false, true, currentSelection, defaultRootAlbumId);
-        event.setConnectionProfileName(connectionProfileNamePreferenceKey);
+        event.setConnectionProfileName(connectionProfileName);
         return event;
     }
 
@@ -116,12 +113,11 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         if(isTrackingEvent(event)) {
             HashSet<CategoryItem> selectedItems = event.getSelectedItems();
             if(selectedItems.size() > 1) {
-                Crashlytics.log(Log.ERROR, TAG, "more than one album selected (using first)");
+                Logging.log(Log.ERROR, TAG, "more than one album selected (using first)");
             }
             if(selectedItems.size() > 0) {
                 CategoryItem selectedVal = selectedItems.iterator().next();
-                persistStringValue(new ServerAlbumDetails(selectedVal, event.getAlbumPath(selectedVal)).escapeSemiColons());
-                notifyChanged();
+                setValue(new ServerAlbumDetails(selectedVal, event.getAlbumPath(selectedVal)).escapeSemiColons());
             }
         }
     }
@@ -137,12 +133,14 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         private String albumName;
         private long albumId = -1;
 
-        public ServerAlbumDetails(long albumId, @NonNull String albumName, List<Long> parentage, String albumPath) {
+        public ServerAlbumDetails(long albumId, String albumName, List<Long> parentage, String albumPath) {
             this.albumId = albumId;
             this.albumName = albumName;
             this.parentage = parentage;
             if (!CategoryItem.isRoot(albumId)) {
-                if (albumPath == null) {
+                if(albumId < 0) {
+                    this.albumPath = "???";
+                } else if (albumPath == null) {
                     this.albumPath = "??? / " + albumName;
                 } else {
                     this.albumPath = albumPath;
@@ -155,7 +153,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         public static ServerAlbumDetails fromEncodedPersistenceString(String value) {
             if(value != null) {
                 String[] pieces = value.split(";(?<!\\\\)");
-                long albumId = Long.valueOf(pieces[0]);
+                long albumId = Long.parseLong(pieces[0]);
                 String albumName = unescapeSemiColons(pieces[1]);
                 String albumPath;
                 List<Long> parentage = null;
@@ -163,7 +161,11 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
                     albumPath = albumName;
                     parentage = new ArrayList<>(0);
                 } else {
-                    albumPath = "??? / " + albumName;
+                    if(albumId < 0) {
+                        albumPath = "???";
+                    } else {
+                        albumPath = "??? / " + albumName;
+                    }
                     if (pieces.length == 4) {
                         if (!"null".equals(pieces[2])) { // ignore this - this is only needed for preferences already corrupted.
                             try {
@@ -186,7 +188,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         }
 
         private static String escapeSemiColons(String val) {
-            return val.replaceAll(";", "\\;");
+            return val.replace(";", "\\;");
         }
 
         @NonNull
@@ -196,7 +198,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         }
 
         private static String unescapeSemiColons(String val) {
-            return val.replaceAll("\\;", ";");
+            return val.replace("\\;", ";");
         }
 
         public String escapeSemiColons() {

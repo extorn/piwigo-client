@@ -4,24 +4,29 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 
 /**
  * Created by gareth on 17/10/17.
  */
 
-public class FragmentUIHelper<T extends Fragment> extends UIHelper<T> {
+public class FragmentUIHelper<FUI extends FragmentUIHelper<FUI,T>, T extends Fragment> extends UIHelper<FUI,T> {
 
     private boolean blockDialogsFromShowing = false;
 
 
-    public FragmentUIHelper(T parent, SharedPreferences prefs, Context context) {
-        super(parent, prefs, context);
+    public FragmentUIHelper(T parent, SharedPreferences prefs, Context context, View attachedView) {
+        super(parent, prefs, context, attachedView);
     }
 
     @Override
     protected View getParentView() {
-        return getParent().getView();
+        T parent = getParent();
+        if(parent == null) {
+            return null;
+        }
+        return parent.getView();
     }
 
     @Override
@@ -30,10 +35,11 @@ public class FragmentUIHelper<T extends Fragment> extends UIHelper<T> {
         if(canShowDialog) {
             Fragment f = getParent();
             if(f != null) {
-                MyActivity activity = (MyActivity) f.getActivity();
+                MyActivity<?,?> activity = (MyActivity<?,?>) f.getActivity();
                 if(activity != null) {
-                    UIHelper activityUiHelper = activity.getUiHelper();
-                    canShowDialog = !activityUiHelper.isDialogShowing();
+                    ActivityUIHelper<?,?> activityUiHelper = activity.getUiHelper();
+                    canShowDialog = getParentView() != null && ViewCompat.isAttachedToWindow(getParentView());
+                    canShowDialog &= !activityUiHelper.isDialogShowing();
                     canShowDialog &= !activity.isFinishing();
                     canShowDialog &= (!blockDialogsFromShowing) && getParent().isResumed();
                 }

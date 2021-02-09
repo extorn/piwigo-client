@@ -3,33 +3,47 @@ package delit.piwigoclient.piwigoApi.handlers;
 import android.content.Context;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import androidx.annotation.NonNull;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.ContentType;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.RequestHandle;
+import delit.libs.util.IOUtils;
 import delit.libs.util.http.HttpUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 
 /**
@@ -37,10 +51,12 @@ import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
  */
 public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDirectResponseHandler {
 
+    private static final String TAG = "AbPwgResHndlr";
     private final String piwigoMethod;
     private RequestParams requestParams;
     private String nestedFailureMethod;
     private Throwable nestedFailure;
+    private URI nestedRequestURI;
     private Gson gson;
     private String failedOriginalMethod;
     private String piwigoMethodToUse;
@@ -82,7 +98,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         return piwigoMethodToUse;
     }
 
-    public boolean isMethodAvailable(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    public boolean isMethodAvailable(@NonNull Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         setCallDetails(context, connectionPrefs, false);
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if(sessionDetails == null) {
@@ -109,18 +125,39 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         return requestParams;
     }
 
+    public StringEntity getJsonFormParameters() {
+
+        List<BasicNameValuePair> formParams = new ArrayList<>(getRequestParameters().getParamsList());
+        // for tidiness remove the pwg method - this must always be a request parameter
+        for (Iterator<BasicNameValuePair> iterator = formParams.iterator(); iterator.hasNext(); ) {
+            BasicNameValuePair nvp = iterator.next();
+            if (nvp.getName().equals("method")) {
+                iterator.remove();
+                break;
+            }
+        }
+
+        Gson gson = new GsonBuilder().registerTypeAdapter(BasicNameValuePair.class, new BasicNameValuePairJsonAdapter()).create();
+        return new StringEntity(gson.toJson(getRequestParameters().getParamsList()), ContentType.APPLICATION_JSON);
+    }
+
     protected abstract RequestParams buildRequestParameters();
 
     @Override
     public void clearCallDetails() {
         nestedFailureMethod = null;
         nestedFailure = null;
+        nestedRequestURI = null;
         gson = null;
         super.clearCallDetails();
     }
 
     public String getNestedFailureMethod() {
         return nestedFailureMethod;
+    }
+
+    public URI getNestedRequestURI() {
+        return nestedRequestURI;
     }
 
     public Throwable getNestedFailure() {
@@ -182,7 +219,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             msgBuilder.append("Response Body:");
             msgBuilder.append('\n');
             msgBuilder.append(responseBodyStr);
-            Crashlytics.log(Log.VERBOSE, getTag(),  msgBuilder.toString());
+            Logging.log(Log.VERBOSE, getTag(),  msgBuilder.toString());
         }
         if(failedOriginalMethod != null) {
             EventBus.getDefault().post(new PiwigoMethodNowUnavailableUsingFallback(failedOriginalMethod, getPiwigoMethod()));
@@ -209,7 +246,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                 int skip = jsonStartsAt - 1;
                 long skipped = jsonBis.skip(skip);
                 if (skipped != skip) {
-                    Crashlytics.log(Log.ERROR, getTag(), "Tried to skip " + skip + " characters, but actually skipped " + skipped);
+                    Logging.log(Log.ERROR, getTag(), "Tried to skip " + skip + " characters, but actually skipped " + skipped);
                 }
             }
             PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(jsonBis), PiwigoJsonResponse.class);
@@ -220,7 +257,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             String responseBodyStr = responseBody != null ? new String(responseBody) : null;
             logJsonSyntaxError(responseBodyStr);
             if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             if (!handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, new JsonSyntaxException(e.getMessage()), hasBrandNewSession)) {
                 recordFailureHandingHttp200Response(statusCode, isCached, e, responseBodyStr);
@@ -229,7 +266,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             String responseBodyStr = responseBody != null ? new String(responseBody) : null;
             logJsonSyntaxError(responseBodyStr);
             if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             if (!handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, e, hasBrandNewSession)) {
                 recordFailureHandingHttp200Response(statusCode, isCached, e, responseBodyStr);
@@ -237,13 +274,13 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         } catch (JsonIOException e) {
             String responseBodyStr = responseBody != null ? new String(responseBody) : null;
             logJsonSyntaxError(responseBodyStr);
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             recordFailureHandingHttp200Response(statusCode, isCached, e, responseBodyStr);
         }
     }
 
     private void recordFailureHandingHttp200Response(int statusCode, boolean isCached, Exception e, String responseBodyStr) {
-        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), e, isCached);
+        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, getRequestURIAsStr(), statusCode, e.getMessage(), e, isCached);
         r.setResponse(responseBodyStr);
         resetSuccessAsFailure();
         storeResponse(r);
@@ -255,11 +292,11 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             reqParams.remove("password");
             reqParams.put("password", "********");
         }
-        Crashlytics.log(String.format("Json Syntax error: %1$s (%2$s) : %3$s", getPiwigoMethod(), reqParams, responseBodyStr));
+        Logging.log(Log.ERROR, TAG, String.format("Json Syntax error: %1$s (%2$s) : %3$s", getPiwigoMethod(), reqParams, responseBodyStr));
     }
 
     private boolean handleCombinedJsonAndHtmlResponse(int statusCode, Header[] headers, byte[] responseBody, JsonSyntaxException e, boolean hasBrandNewSession) {
-        if (e.getMessage().equals("java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $")) {
+        if (Objects.equals(e.getMessage(), "java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $")) {
             int idx = 0;
             for (int i = responseBody.length - 1; i > 0; i--) {
                 if ('{' == responseBody[i]) {
@@ -291,15 +328,15 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                         throw new JSONException("Unexpected piwigo response code");
                 }
             } else {
-                Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
-                String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
+                Logging.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
+                String rawResponseStr = new String(rawData, IOUtils.getUtf8Charset());
                 PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr, isCached);
                 storeResponse(r);
             }
         } catch (JSONException|JsonIOException|NullPointerException|NumberFormatException e) {
-            Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
-            Crashlytics.logException(e);
-            String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
+            Logging.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
+            Logging.recordException(e);
+            String rawResponseStr = new String(rawData, IOUtils.getUtf8Charset());
             PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr, isCached);
             storeResponse(r);
         }
@@ -307,7 +344,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     protected void onPiwigoFailure(PiwigoJsonResponse rsp, boolean isCached) throws JSONException {
         setError(new Throwable(rsp.getMessage()));
-        PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, rsp.getErr(), rsp.getMessage(), isCached);
+        PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, getRequestURIAsStr(), rsp.getErr(), rsp.getMessage(), isCached);
         storeResponse(r);
     }
 
@@ -315,6 +352,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         if (nestedHandler instanceof AbstractPiwigoWsResponseHandler) {
             nestedFailureMethod = ((AbstractPiwigoWsResponseHandler) nestedHandler).getPiwigoMethod();
             nestedFailure = nestedHandler.getError();
+            nestedRequestURI = nestedHandler.getRequestURI();
             setError(nestedHandler.getError());
         }
         super.reportNestedFailure(nestedHandler);
@@ -327,7 +365,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     // When the response returned by REST has Http response code other than '200'
     @Override
-    protected boolean onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession, boolean isCached) {
+    protected boolean onFailure(String uri, final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession, boolean isCached) {
 
         if (BuildConfig.DEBUG) {
             String errorBody = "<NONE PRESENT>";
@@ -367,8 +405,8 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             msgBuilder.append("Response Body:");
             msgBuilder.append('\n');
             msgBuilder.append(errorBody);
-            Crashlytics.log(Log.ERROR, getTag(),  msgBuilder.toString());
-            Crashlytics.logException(error);
+            Logging.log(Log.ERROR, getTag(),  msgBuilder.toString());
+            Logging.recordException(error);
         }
 
         boolean canRetryCall = false;
@@ -398,11 +436,19 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             } else {
                 errorDetail[0] = getPiwigoMethod() + " : " + errorDetail[0];
             }
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorDetail[0], errorDetail[1], error, isCached);
+            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, uri, statusCode, errorDetail[0], errorDetail[1], error, isCached);
             r.setResponse(responseBody != null ? new String(responseBody) : "");
             storeResponse(r);
         }
         return canRetryCall;
+    }
+
+    protected String getRequestURIAsStr() {
+        URI requestUri = getRequestURI();
+        if(requestUri == null) {
+            requestUri = getNestedRequestURI();
+        }
+        return requestUri != null ? requestUri.toString() : "N/A";
     }
 
     @Override
@@ -417,11 +463,51 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
             return client.get(getContext(), getPiwigoWsApiUri(), buildCustomCacheControlHeaders(forceResponseRevalidation, onlyUseCache), getRequestParameters(), handler);
         } else {
+            //TODO get form params entity working.
+//            StringEntity formParamsEntity = getJsonFormParameters();
+//            if(formParamsEntity != null) {
+//                return client.post(getContext(), getPiwigoWsApiUri(), formParamsEntity, ContentType.APPLICATION_JSON.getMimeType(), handler);
+//            } else {
+//                return client.post(getContext(), getPiwigoWsApiUri(), getRequestParameters(), handler);
+//            }
             return client.post(getContext(), getPiwigoWsApiUri(), getRequestParameters(), handler);
         }
     }
 
     public boolean isUseHttpGet() {
         return false;
+    }
+
+    private static class BasicNameValuePairJsonAdapter extends TypeAdapter<BasicNameValuePair> {
+        @Override
+        public BasicNameValuePair read(JsonReader reader) throws IOException {
+            BasicNameValuePair value = null;
+            reader.beginObject();
+            String pairName;
+            String pairValue;
+
+            while (reader.hasNext()) {
+                JsonToken token = reader.peek();
+
+                if (token.equals(JsonToken.NAME)) {
+                    //get the current token
+                    pairName = reader.nextName();
+                    //move to next token
+                    token = reader.peek();
+                    pairValue = reader.nextString();
+                    value = new BasicNameValuePair(pairName, pairValue);
+                }
+            }
+            reader.endObject();
+            return value;
+        }
+
+        @Override
+        public void write(com.google.gson.stream.JsonWriter writer, BasicNameValuePair nameValuePair) throws IOException {
+            writer.beginObject();
+            writer.name(nameValuePair.getName());
+            writer.value(nameValuePair.getValue());
+            writer.endObject();
+        }
     }
 }

@@ -6,35 +6,35 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.util.Log;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
+import androidx.preference.PreferenceManager;
 
+import com.google.android.gms.tasks.Task;
 import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory;
-import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.installations.FirebaseInstallations;
 
-import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.MediaScanner;
-import delit.libs.ui.util.SecurePrefsUtil;
-import delit.libs.util.CollectionUtils;
-import delit.libs.util.IOUtils;
 import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
+import delit.piwigoclient.ui.upgrade.PreferenceMigrator;
+import delit.piwigoclient.ui.upgrade.PreferenceMigrator226;
+import delit.piwigoclient.ui.upgrade.PreferenceMigrator282;
+import delit.piwigoclient.ui.upgrade.PreferenceMigrator348;
+import delit.piwigoclient.ui.upgrade.PreferenceMigrator44;
 
 /**
  * Created by gareth on 14/06/17.
@@ -47,10 +47,12 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     static {
         // required for vector graphics support on older devices
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        Logging.setDebug(BuildConfig.DEBUG);
+
     }
 
-    protected transient static Resources resources;
-    private transient SharedPreferences prefs;
+    protected static Resources resources;
+    private SharedPreferences prefs;
 
     public static Resources getAppResources() {
         return resources;
@@ -59,98 +61,10 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     protected List<PreferenceMigrator> getPreferenceMigrators() {
         List<PreferenceMigrator> migrators = new ArrayList<>();
 
-        migrators.add(new PreferenceMigrator(44) {
-            @Override
-            protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
-                encryptAndSaveValue(prefs, editor, R.string.preference_piwigo_server_username_key, null);
-                encryptAndSaveValue(prefs, editor, R.string.preference_piwigo_server_password_key, null);
-                encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_username_key, null);
-                encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_password_key, null);
-            }
-        });
-        migrators.add(new PreferenceMigrator(226) {
-
-            @Override
-            protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
-                if (prefs.contains(getString(R.string.preference_piwigo_server_address_key))) {
-                    String serverName = prefs.getString(getString(R.string.preference_piwigo_server_address_key), null);
-                    if (serverName != null) {
-                        try {
-                            URI.create(serverName);
-                        } catch (IllegalArgumentException e) {
-                            editor.putString(getString(R.string.preference_piwigo_server_address_key), serverName.replaceAll(" ", ""));
-                        }
-                    }
-                }
-                if (prefs.contains(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key))) {
-                    editor.remove(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key));
-                    editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsLandscape_key));
-                    editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsPortrait_key));
-                    editor.remove(getString(R.string.preference_gallery_images_preferredColumnsLandscape_key));
-                    editor.remove(getString(R.string.preference_gallery_images_preferredColumnsPortrait_key));
-                    editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsLandscape_key));
-                    editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsPortrait_key));
-                    editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsLandscape_key));
-                    editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsPortrait_key));
-                    Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
-                    for (String profile : connectionProfiles) {
-                        ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile, getPrefs(), context);
-                        int currentTimeout = connPrefs.getServerConnectTimeout(prefs, getApplicationContext());
-                        if (currentTimeout >= 1000) {
-                            currentTimeout = (int) Math.round(Math.ceil((double) currentTimeout / 1000));
-                            editor.putInt(connPrefs.getKey(getApplicationContext(), R.string.preference_server_connection_timeout_secs_key), currentTimeout);
-                        }
-                    }
-                }
-
-                String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
-                if (prefs.contains(key)) {
-                    try {
-                        String multimediaCsvList = prefs.getString(key, null);
-                        HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
-                        HashSet<String> cleanedValues = new HashSet<>(values.size());
-                        for (String value : values) {
-                            int dotIdx = value.indexOf('.');
-                            if (dotIdx < 0) {
-                                cleanedValues.add(value.toLowerCase());
-                            } else {
-                                cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
-                            }
-                        }
-                        editor.remove(key);
-                        editor.putStringSet(key, cleanedValues);
-                    } catch (ClassCastException e) {
-                        // will occur if the user has previously migrated preferences at version 222!
-                    }
-                }
-            }
-        });
-        migrators.add(new PreferenceMigrator(240) {
-
-            @Override
-            protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
-                String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
-                if (prefs.contains(key)) {
-                    try {
-                        String multimediaCsvList = prefs.getString(key, null);
-                        HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
-                        HashSet<String> cleanedValues = new HashSet<>(values.size());
-                        for (String value : values) {
-                            int dotIdx = value.indexOf('.');
-                            if (dotIdx < 0) {
-                                cleanedValues.add(value.toLowerCase());
-                            } else {
-                                cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
-                            }
-                        }
-                        editor.remove(key);
-                        editor.putStringSet(key, cleanedValues);
-                    } catch (ClassCastException e) {
-                        // will occur if the user has previously migrated preferences at version 240!
-                    }
-                }
-            }
-        });
+        migrators.add(new PreferenceMigrator44());
+        migrators.add(new PreferenceMigrator226());
+        migrators.add(new PreferenceMigrator282());
+        migrators.add(new PreferenceMigrator348());
         return migrators;
     }
 
@@ -167,7 +81,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     protected abstract String getDesiredLanguage(Context context);
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
 //        Locale.setDefault(newConfig.locale);
@@ -186,64 +100,14 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         }
         int latestAppVersion = ProjectUtils.getVersionCode(getApplicationContext());
         if (currentPrefsVersion < latestAppVersion) {
-            SharedPreferences.Editor editor = prefs.edit();
-
-            editor.putInt(getString(R.string.preference_app_prefs_version_key), latestAppVersion);
-            editor.commit(); // ensure this is written to disk now.
+            ConnectionPreferences.PreferenceActor actor = new ConnectionPreferences.PreferenceActor();
+            actor.with(R.string.preference_app_prefs_version_key);
+            actor.writeInt(prefs, this, latestAppVersion);
             Bundle bundle = new Bundle();
             bundle.putInt("from_version", currentPrefsVersion);
             bundle.putInt("to_version", latestAppVersion);
-            FirebaseAnalytics.getInstance(this).logEvent("app_upgraded", bundle);
-        }
-    }
-
-    protected static abstract class PreferenceMigrator implements Comparable<PreferenceMigrator> {
-
-        private static int idGen = 0;
-        private final int id;
-        private final int prefsVersion;
-
-        public PreferenceMigrator(int prefsVersion) {
-            this.id = idGen++;
-            this.prefsVersion = prefsVersion;
-        }
-
-        @Override
-        public int compareTo(PreferenceMigrator o) {
-            return (prefsVersion < o.prefsVersion) ? -1 : ((prefsVersion == o.prefsVersion) ? 0 : 1);
-        }
-
-        public final void execute(Context context, SharedPreferences prefs, int currentPrefsVersion) {
-            if (currentPrefsVersion < prefsVersion) {
-                SharedPreferences.Editor editor = prefs.edit();
-                upgradePreferences(context, prefs, editor);
-                editor.putInt(context.getString(R.string.preference_app_prefs_version_key), prefsVersion);
-                editor.commit(); // need to wait for it - make sure they're written to disk in order
-            }
-        }
-
-        @Override
-        public boolean equals(@Nullable Object obj) {
-            if (!(obj instanceof PreferenceMigrator)) {
-                return false;
-            }
-            return id == ((PreferenceMigrator) obj).id;
-        }
-
-        @Override
-        public int hashCode() {
-            return id;
-        }
-
-        protected abstract void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor);
-    }
-
-    protected void encryptAndSaveValue(SharedPreferences prefs, SharedPreferences.Editor editor, int keyId, String defaultVal) {
-        String key = getString(keyId);
-        String currentVal = prefs.getString(key, defaultVal);
-        if (currentVal != null && !currentVal.equals(defaultVal)) {
-            String encryptedVal = SecurePrefsUtil.getInstance(getApplicationContext()).encryptValue(key, currentVal);
-            editor.putString(key, encryptedVal);
+            Logging.logAnalyticEvent(this,"app_upgraded", bundle);
+            Logging.log(Log.DEBUG, TAG, "Upgraded app Preferences from " + currentPrefsVersion +" to " + latestAppVersion + " and saved");
         }
     }
 
@@ -264,81 +128,66 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
 
     @Override
     public final void onCreate() {
-        if (MissingSplitsManagerFactory.create(this).disableAppIfMissingRequiredSplits()) {
-            // Skip app initialization.
-            return;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if(MissingSplitsManagerFactory.create(this).disableAppIfMissingRequiredSplits()) {
+                // Skip app initialization.
+                return;
+            }
         }
-
 
         super.onCreate();
         // ensure it's available for any users of it
         resources = getResources();
 
-        //Fabric.with(this, new Crashlytics.Builder().core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build());
-        MediaScanner.instance(getApplicationContext());
         PicassoFactory.initialise();
+//        AdsManager.getInstance(this).updateShowAdvertsSetting(getApplicationContext());
+        registerActivityLifecycleCallbacks(this);
+        Logging.initialise(this, BuildConfig.class);
+        Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
+        idTask.addOnSuccessListener(this::withInstallGuid);
 
         upgradeAnyPreferencesIfRequired();
-        sanityCheckTheTempUploadFolder();
-
-        AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
-        registerActivityLifecycleCallbacks(this);
 
         onAppCreate();
-        FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version", BuildConfig.VERSION_NAME);
-        FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version_code", "" + BuildConfig.VERSION_CODE);
+
 //        TooLargeTool.startLogging(this);
     }
 
-    private void sanityCheckTheTempUploadFolder() {
-        File tmp_upload_folder = new File(getExternalCacheDir(), "piwigo-upload");
-        long folderSizeBytes = IOUtils.getFolderSize(tmp_upload_folder, true);
-        long folderMaxSizeBytes = 25 * 1024 * 1024;
-        if (folderSizeBytes > folderMaxSizeBytes) {
-            Bundle b = new Bundle();
-            int activeUploadJobCount = BasePiwigoUploadService.getUploadJobsCount(this);
-            b.putString("folder_size", IOUtils.toNormalizedText(folderSizeBytes));
-            b.putInt("active_uploads", activeUploadJobCount);
-            FirebaseAnalytics.getInstance(this).logEvent("tmp_upload_folder_size", b);
-        }
-    }
-
-
-    @Override
-    public void onTerminate() {
-        MediaScanner.instance(getApplicationContext()).close();
-        super.onTerminate();
+    private void withInstallGuid(String userGuid) {
+        //This is used so that I can identify the logs that pertain to a given user having issues they want me to look at.
+        // It will be displayed in the app about screen.
+        Logging.addUserGuid(this, userGuid);
     }
 
     protected abstract void onAppCreate();
 
     @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+    public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
     }
 
     @Override
-    public void onActivityStarted(Activity activity) {
+    public void onActivityStarted(@NonNull Activity activity) {
 
     }
 
     @Override
-    public void onActivityResumed(Activity activity) {
+    public void onActivityResumed(@NonNull Activity activity) {
     }
 
     @Override
-    public void onActivityPaused(Activity activity) {
+    public void onActivityPaused(@NonNull Activity activity) {
     }
 
     @Override
-    public void onActivityStopped(Activity activity) {
+    public void onActivityStopped(@NonNull Activity activity) {
     }
 
     @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+    public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
     }
 
     @Override
-    public void onActivityDestroyed(Activity activity) {
+    public void onActivityDestroyed(@NonNull Activity activity) {
     }
 
     @Override

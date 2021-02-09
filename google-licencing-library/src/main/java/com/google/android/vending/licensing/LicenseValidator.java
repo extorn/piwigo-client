@@ -16,18 +16,19 @@
 
 package com.google.android.vending.licensing;
 
-import com.crashlytics.android.Crashlytics;
-import com.google.android.vending.licensing.util.Base64;
-import com.google.android.vending.licensing.util.Base64DecoderException;
-
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.google.android.vending.licensing.util.Base64;
+import com.google.android.vending.licensing.util.Base64DecoderException;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+
+import delit.libs.core.util.Logging;
 
 /**
  * Contains data related to a licensing request and methods to verify
@@ -52,17 +53,15 @@ class LicenseValidator {
     private final LicenseCheckerCallback mCallback;
     private final int mNonce;
     private final String mPackageName;
-    private final String mVersionCode;
     private final DeviceLimiter mDeviceLimiter;
 
     LicenseValidator(Policy policy, DeviceLimiter deviceLimiter, LicenseCheckerCallback callback,
-             int nonce, String packageName, String versionCode) {
+             int nonce, String packageName) {
         mPolicy = policy;
         mDeviceLimiter = deviceLimiter;
         mCallback = callback;
         mNonce = nonce;
         mPackageName = packageName;
-        mVersionCode = versionCode;
     }
 
     public LicenseCheckerCallback getCallback() {
@@ -107,18 +106,18 @@ class LicenseValidator {
                     return;
                 }
             } catch (NoSuchAlgorithmException e) {
-Crashlytics.logException(e);
+Logging.recordException(e);
                 // This can't happen on an Android compatible device.
                 throw new RuntimeException(e);
             } catch (InvalidKeyException e) {
-Crashlytics.logException(e);
+Logging.recordException(e);
                 handleApplicationError(LicenseCheckerCallback.ERROR_INVALID_PUBLIC_KEY);
                 return;
             } catch (SignatureException e) {
-Crashlytics.logException(e);
+Logging.recordException(e);
                 throw new RuntimeException(e);
             } catch (Base64DecoderException e) {
-Crashlytics.logException(e);
+Logging.recordException(e);
                 if(BuildConfig.DEBUG) {
                     Log.e(TAG, "Could not Base64-decode signature.");
                 }
@@ -130,7 +129,7 @@ Crashlytics.logException(e);
             try {
                 data = ResponseData.parse(signedData);
             } catch (IllegalArgumentException e) {
-Crashlytics.logException(e);
+Logging.recordException(e);
                 if(BuildConfig.DEBUG) {
                     Log.e(TAG, "Could not parse response.");
                 }
@@ -157,14 +156,6 @@ Crashlytics.logException(e);
             if (!data.packageName.equals(mPackageName)) {
                 if(BuildConfig.DEBUG) {
                     Log.e(TAG, "Package name doesn't match.");
-                }
-                handleInvalidResponse();
-                return;
-            }
-
-            if (!data.versionCode.equals(mVersionCode)) {
-                if(BuildConfig.DEBUG) {
-                    Log.e(TAG, "Version codes don't match.");
                 }
                 handleInvalidResponse();
                 return;

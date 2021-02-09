@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+    <string name="notification_title_background_upload_service">Servicio de carga de Piwigo en segundo plano</string>
+    <string name="notification_text_background_upload_running">Ejecutando trabajo de carga</string>
+    <string name="notification_text_background_upload_sleeping">Dormido. Siguiente ejecución en%1$tR</string>
+    <string name="notification_text_background_upload_polling">Sondeo de archivos para cargar.</string>
+
+
+    <string name="alert_warning_auto_upload_service_stopped">No olvide iniciar el servicio de carga en segundo plano si desea que se ejecuten sus trabajos</string>
+    <string name="alert_auto_upload_service_stopped">Se detuvo el servicio de carga en segundo plano</string>
+    <string name="alert_auto_upload_service_started">Se inició el servicio de carga en segundo plano</string>
+    <string name="alert_auto_upload_service_job_restarted">Comenzó a cargar un trabajo previamente incompleto al servidor%1$s con%2$d archivos</string>
+    <string name="alert_auto_upload_service_job_started">Comenzando a cargar el trabajo al servidor%1$s con%2$d archivos</string>
+    <string name="alert_auto_upload_service_job_finished_success">Se terminó de ejecutar el trabajo de carga en segundo plano en el servidor%1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Se terminó de ejecutar el trabajo de carga en segundo plano en el servidor%1$s. Algunos archivos no se pudieron cargar y se volverán a intentar más tarde.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Se terminó de ejecutar el trabajo de carga en segundo plano en el servidor%1$s. No se pudieron cargar archivos. El trabajo se reintentará más tarde.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Comprobación del servicio de carga en segundo plano para las tareas</string>
+    <string name="progress_creating_tag">Creando etiqueta</string>
+    <string name="error_updating_favorites_pattern">Error al eliminar el recurso (%1$s) de favoritos:%2$s</string>
+    <string name="favorites_content_load_failed_text">No se pudieron cargar los recursos marcados como favoritos</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Has solicitado eliminar%1$d recursos. ¿Desea eliminarlos de todos los álbumes (y del servidor) de forma permanente o simplemente desvincularlos de este favorito?</string>
+    <string name="progress_remove_favorite_resources">Eliminar recursos de la lista de favoritos</string>
+    <string name="favorites_empty_text">Actualmente no tiene favoritos</string>
+    <string name="favorites_heading">Tus favoritos</string>
+    <string name="button_unfavorite">No favorito</string>
+    <string name="preference_data_upload_automatic_job_category_server_settings">Configuración del servidor</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Configuraciones locales</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Compresión de imagen previa a la carga</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Compresión de video previa a la carga</string>
+    <string name="ignoring_job_local_folder_not_found">La carpeta local ya no existe. Ignorando el trabajo</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">No se seleccionaron extensiones de archivo para cargar. Ignorando el trabajo</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">Perfil de conexión configurado en modo fuera de línea. Ignorando el trabajo</string>
+    <string name="slideshow_auto_drive_paused">Autodrive de presentación de diapositivas en pausa hasta la siguiente diapositiva</string>
+    <string name="progress_loading_orphan_ids">Cargando huérfanos</string>
+    <string name="orphans_heading">Recursos huérfanos</string>
+    <string name="orphans_album_description">Todos los recursos huérfanos recopilados por la aplicación PiwigoClient</string>
+    <string name="orphans_no_orphans_found_on_server">No se encontraron huérfanos</string>
+    <string name="orphans_found_on_server_pattern">Huérfanos encontrados:%1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Hay huérfanos presentes. Para verlos, debemos crear una carpeta privada a la que solo puedan acceder los administradores. Puede eliminar el álbum en cualquier momento después. Si no está de acuerdo, tendrá que procesarlos usted mismo en el servidor.</string>
+</resources>

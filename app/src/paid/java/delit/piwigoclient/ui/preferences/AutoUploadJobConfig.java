@@ -2,32 +2,42 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.documentfile.provider.DocumentFile;
+
+import com.google.android.exoplayer2.util.MimeTypes;
 
 import java.io.File;
-import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import delit.libs.core.util.Logging;
+import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
 
-public class AutoUploadJobConfig implements Parcelable {
+public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable {
     private int jobId;
     private SharedPreferences jobPreferences;
 
@@ -37,6 +47,11 @@ public class AutoUploadJobConfig implements Parcelable {
 
     public AutoUploadJobConfig(Parcel in) {
         jobId = in.readInt();
+    }
+
+    @Override
+    public long getId() {
+        return jobId;
     }
 
     public static final Creator<AutoUploadJobConfig> CREATOR = new Creator<AutoUploadJobConfig>() {
@@ -63,10 +78,16 @@ public class AutoUploadJobConfig implements Parcelable {
         return jobPreferences;
     }
 
+    public String getUploadFromFolderName(Context c) {
+        DocumentFile uploadFromFolder = getLocalFolderToMonitor(c);
+        return uploadFromFolder == null ? "???" : uploadFromFolder.getName();
+    }
+
     public String getSummary(SharedPreferences appPrefs, Context c) {
+
         StringBuilder sb = new StringBuilder();
         sb.append("uploadFrom:\n");
-        sb.append(getLocalFolderToMonitor(c) == null ? "???" : getLocalFolderToMonitor(c).getAbsolutePath());
+        sb.append(getUploadFromFolderName(c));
         sb.append('\n');
         sb.append("uploadTo:\n");
         ConnectionPreferences.ProfilePreferences cp = getConnectionPrefs(c, appPrefs);
@@ -87,8 +108,10 @@ public class AutoUploadJobConfig implements Parcelable {
         return sb.toString();
     }
 
-    public void deletePreferences(Context c) {
-        getJobPreferences(c).edit().clear().commit();
+    public void deletePreferences(@NonNull Context c) {
+        SharedPreferences.Editor editor = getJobPreferences(c).edit();
+        editor.clear();
+        editor.commit();
     }
 
 
@@ -138,7 +161,7 @@ public class AutoUploadJobConfig implements Parcelable {
     public @NonNull
     Set<String> getStringSetValue(Context c, @StringRes int prefKeyId, @StringRes int prefDefaultId) {
         TreeSet<String> defaultVal = new TreeSet<>(CollectionUtils.stringsFromCsvList(c.getString(prefDefaultId)));
-        return getJobPreferences(c).getStringSet(c.getString(prefKeyId), defaultVal);
+        return new TreeSet<>(getJobPreferences(c).getStringSet(c.getString(prefKeyId), defaultVal));
     }
 
     public ConnectionPreferences.ProfilePreferences getConnectionPrefs(Context c, SharedPreferences overallAppPrefs) {
@@ -146,17 +169,29 @@ public class AutoUploadJobConfig implements Parcelable {
         return ConnectionPreferences.getPreferences(connectionProfileName, overallAppPrefs, c);
     }
 
-    public File getLocalFolderToMonitor(Context c) {
-        String localFolderName = getStringValue(c, R.string.preference_data_upload_automatic_job_local_folder_key, null);
-        if(localFolderName == null) {
+    public DocumentFile getLocalFolderToMonitor(Context c) {
+        String uriStr = getStringValue(c, R.string.preference_data_upload_automatic_job_local_folder_key, null);
+        if(uriStr == null) {
             return null;
         }
-        return new File(localFolderName);
+        Uri localFolderUri = Uri.parse(uriStr);
+        if(localFolderUri == null) {
+            return null;
+        }
+        try {
+            return DocumentFile.fromTreeUri(c, localFolderUri);
+        } catch(IllegalArgumentException e) {
+            return LegacyIOUtils.getDocFile(localFolderUri);
+        }
     }
 
     public String getUploadToAlbumName(Context c) {
         String remoteAlbumDetails = getStringValue(c, R.string.preference_data_upload_automatic_job_server_album_key);
-        return ServerAlbumSelectPreference.ServerAlbumDetails.fromEncodedPersistenceString(remoteAlbumDetails).getAlbumName();
+        String uploadFolder = ServerAlbumSelectPreference.ServerAlbumDetails.fromEncodedPersistenceString(remoteAlbumDetails).getAlbumName();
+        if(uploadFolder == null) {
+            uploadFolder = "???";
+        }
+        return uploadFolder;
     }
 
     public long getUploadToAlbumId(Context c) {
@@ -224,7 +259,7 @@ public class AutoUploadJobConfig implements Parcelable {
     }
 
     private String getImageCompressionOutputFormat(Context c) {
-        return getStringValue(c, R.string.preference_data_upload_automatic_job_compress_images_quality_key, R.string.preference_data_upload_automatic_job_compress_images_output_format_default);
+        return getStringValue(c, R.string.preference_data_upload_automatic_job_compress_images_output_format_key, R.string.preference_data_upload_automatic_job_compress_images_output_format_default);
     }
 
     public UploadJob.VideoCompressionParams getVideoCompressionParams(Context c) {
@@ -249,47 +284,99 @@ public class AutoUploadJobConfig implements Parcelable {
         return null;
     }
 
-    public static class PriorUploads implements Serializable {
+    @Override
+    public int compareTo(Object o) {
+        if(o instanceof AutoUploadJobConfig) {
+            return Integer.compare(jobId,((AutoUploadJobConfig) o).jobId);
+        }
+        return -1;
+    }
 
-        private static final long serialVersionUID = 4250545241017682232L;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AutoUploadJobConfig that = (AutoUploadJobConfig) o;
+        return jobId == that.jobId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(jobId);
+    }
+
+    public static class PriorUploads implements Parcelable {
+
+        private static final String TAG = "PriorUploads";
         private int jobId;
-        private final HashMap<File, String> filesToHashMap;
+        private final HashMap<Uri, String> fileUrisAndHashcodes = new HashMap<>();
 
         public PriorUploads(int jobId) {
             this.jobId = jobId;
-            filesToHashMap = new HashMap<>();
         }
 
-        public PriorUploads(int jobId, HashMap<File, String> map) {
-            this.jobId = jobId;
-            filesToHashMap = map;
+        protected PriorUploads(Parcel in) {
+            jobId = in.readInt();
+            ParcelUtils.readMap(in, fileUrisAndHashcodes, Uri.class.getClassLoader());
         }
 
-        public HashMap<File, String> getFilesToHashMap() {
-            return filesToHashMap;
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(jobId);
+            ParcelUtils.writeMap(dest, fileUrisAndHashcodes);
         }
 
-        public static File getFolder(Context c) {
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<PriorUploads> CREATOR = new Creator<PriorUploads>() {
+            @Override
+            public PriorUploads createFromParcel(Parcel in) {
+                return new PriorUploads(in);
+            }
+
+            @Override
+            public PriorUploads[] newArray(int size) {
+                return new PriorUploads[size];
+            }
+        };
+
+        public Map<Uri, String> getFileUrisAndHashcodes() {
+            return Collections.unmodifiableMap(fileUrisAndHashcodes);
+        }
+
+        public static DocumentFile getFolder(Context c) {
             File jobsFolder = new File(c.getExternalCacheDir(), "uploadJobData");
             if(!jobsFolder.exists()) {
                 if(!jobsFolder.mkdir()) {
                     throw new RuntimeException("Unable to create required app data folder");
                 }
             }
-            return jobsFolder;
+            return DocumentFile.fromFile(jobsFolder);
         }
 
         public void saveToFile(Context c) {
-            File f = new File(getFolder(c), ""+jobId);
-            IOUtils.saveObjectToFile(f, this);
+            DocumentFile folder = getFolder(c);
+            DocumentFile child = folder.findFile(""+jobId);
+            if(child == null) {
+                child = folder.createFile(MimeTypes.BASE_TYPE_APPLICATION, ""+jobId);
+            }
+            if(child == null) {
+                Logging.log(Log.ERROR, TAG,"Unable to save to file. File could not be created in folder " + folder.getUri());
+            } else {
+                IOUtils.saveParcelableToDocumentFile(c, child, this);
+            }
         }
 
         public static PriorUploads loadFromFile(Context c, int jobId) {
-            File f = new File(getFolder(c), ""+jobId);
-            if(!f.exists()) {
+            DocumentFile folder = getFolder(c);
+            DocumentFile child = folder.findFile(""+jobId);
+            if(child == null) {
                 return new PriorUploads(jobId);
             } else {
-                PriorUploads uploadedFiles = IOUtils.readObjectFromFile(f);
+                PriorUploads uploadedFiles = IOUtils.readParcelableFromDocumentFile(c.getContentResolver(), child, PriorUploads.class);
                 if(uploadedFiles == null) {
                     return new PriorUploads(jobId);
                 } else if(uploadedFiles.jobId != jobId) {
@@ -304,26 +391,32 @@ public class AutoUploadJobConfig implements Parcelable {
          *
          * @return
          */
-        public boolean isOutOfSyncWithFileSystem() {
+        public boolean isOutOfSyncWithFileSystem(Context context) {
             boolean outOfSync = false;
-            if(filesToHashMap.size() > 0) {
-                Set<File> itemsToRemove = new HashSet<>();
-                for(Map.Entry<File, String> priorUploadEntry : filesToHashMap.entrySet()) {
-                    if(!priorUploadEntry.getKey().exists()) {
+            if(fileUrisAndHashcodes.size() > 0) {
+                Set<Uri> itemsToRemove = new HashSet<>();
+                for(Map.Entry<Uri, String> priorUploadEntry : fileUrisAndHashcodes.entrySet()) {
+                    DocumentFile docFile = IOUtils.getSingleDocFile(context, priorUploadEntry.getKey());
+                    if(docFile == null || !docFile.exists()) {
+                        itemsToRemove.add(priorUploadEntry.getKey());
                         outOfSync = true;
                     }
                 }
-                for(File itemToRemove : itemsToRemove) {
-                    filesToHashMap.remove(itemToRemove);
+                for(Uri itemToRemove : itemsToRemove) {
+                    fileUrisAndHashcodes.remove(itemToRemove);
                 }
             }
             return outOfSync;
+        }
+
+        public void putAll(HashMap<Uri, String> uploadedFileChecksums) {
+            Collections.checkedMap(new HashMap<>(),Uri.class, String.class).putAll(uploadedFileChecksums);
         }
     }
 
     public PriorUploads getFilesPreviouslyUploaded(Context c) {
         PriorUploads uploads = PriorUploads.loadFromFile(c, jobId);
-        if(uploads.isOutOfSyncWithFileSystem()) {
+        if(uploads.isOutOfSyncWithFileSystem(c)) {
             uploads.saveToFile(c);
         }
         return uploads;

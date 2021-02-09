@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashSet;
 
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
@@ -30,6 +30,7 @@ import delit.piwigoclient.model.piwigo.PiwigoGroups;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.GroupUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;
@@ -39,21 +40,26 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
+public class GroupSelectFragment<F extends GroupSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter<?,?,?>, GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group> {
 
     private static final String GROUPS_MODEL = "groupsModel";
+    private static final String TAG = "GrpSelFrag";
     private PiwigoGroups groupsModel;
 
-    public static GroupSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
-        GroupSelectFragment fragment = new GroupSelectFragment();
+    public static GroupSelectFragment<?,?> newInstance(GroupRecyclerViewAdapter.GroupViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+        GroupSelectFragment<?,?> fragment = new GroupSelectFragment<>();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
         return fragment;
     }
 
     @Override
-    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
-        return new BaseRecyclerViewAdapterPreferences();
+    protected GroupRecyclerViewAdapter.GroupViewAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
+        return new GroupRecyclerViewAdapter.GroupViewAdapterPreferences(bundle);
     }
+/*
+    public static class GroupSelectAdapterPreferences extends BaseRecyclerViewAdapterPreferences<GroupSelectAdapterPreferences> {
+    }*/
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -81,21 +87,10 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             getViewPrefs().readonly();
         }
 
-        GroupRecyclerViewAdapter viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter<Group>() {
-            @Override
-            public void onItemLongClick(BaseRecyclerViewAdapter adapter, Group item) {
-                EventBus.getDefault().post(new ViewGroupEvent(item));
-            }
-
-            @Override
-            public <A extends BaseRecyclerViewAdapter> void onDisabledItemClick(A adapter, Group item) {
-                EventBus.getDefault().post(new ViewGroupEvent(item));
-            }
-        }, getViewPrefs());
+        GroupRecyclerViewAdapter<?,?,?> viewAdapter = new GroupRecyclerViewAdapter(requireContext(), groupsModel, new GroupSelectMultiSelectListener<>(), getViewPrefs());
         if (!viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();
         }
-
         // need to load this before the list adapter is added else will load from the list adapter which hasn't been inited yet!
         HashSet<Long> currentSelection = getCurrentSelection();
 
@@ -130,17 +125,33 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
                 loadGroupsPage(pageToLoad);
             }
         };
-        scrollListener.configure(groupsModel.getPagesLoaded(), groupsModel.getItemCount());
+
+        scrollListener.configure(groupsModel.getPagesLoadedIdxToSizeMap(), groupsModel.getItemCount());
         getList().addOnScrollListener(scrollListener);
 
         return v;
     }
+    private static class GroupSelectMultiSelectListener<MSL extends GroupSelectMultiSelectListener<MSL,LVA,P,VH>, LVA extends GroupRecyclerViewAdapter<LVA,VH,MSL>, P extends GroupRecyclerViewAdapter.GroupViewAdapterPreferences, VH extends GroupRecyclerViewAdapter.GroupViewHolder<VH,LVA,MSL>> extends GroupRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA, GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group,VH> {
+
+        @Override
+        public void onItemLongClick(LVA adapter, Group item) {
+            EventBus.getDefault().post(new ViewGroupEvent(item));
+        }
+
+        @Override
+        public void onDisabledItemClick(LVA adapter, Group item) {
+            EventBus.getDefault().post(new ViewGroupEvent(item));
+        }
+    }
+
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as server connection changed");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -227,13 +238,14 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         EventBus.getDefault().post(new GroupSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as select action complete");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
     protected void onGroupsLoadFailed(PiwigoResponseBufferingHandler.Response response) {
@@ -246,13 +258,12 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         }
     }
 
-    private void onGroupsLoaded(final GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
+    protected void onGroupsLoaded(final GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         groupsModel.acquirePageLoadLock();
         try {
-            groupsModel.recordPageLoadSucceeded(response.getMessageId());
             if (response.getPage() == PagedList.MISSING_ITEMS_PAGE) {
                 // this is a special page of all missing items from those selected.
-                int firstIdxAdded = groupsModel.addItemPage(groupsModel.getPagesLoaded(), response.getPageSize(), response.getGroups());
+                int firstIdxAdded = groupsModel.addItemPage(groupsModel.getPagesLoadedIdxToSizeMap(), response.getPageSize(), response.getGroups());
                 getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());
                 if (groupsModel.hasNoFailedPageLoads()) {
                     onListItemLoadSuccess();
@@ -277,13 +288,13 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         getListAdapter().replaceOrAddItem(event.getGroup());
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<F extends GroupSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) {
-                onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
+                getParent().onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
             } else {
-                onGroupsLoadFailed(response);
+                getParent().onGroupsLoadFailed(response);
             }
         }
     }

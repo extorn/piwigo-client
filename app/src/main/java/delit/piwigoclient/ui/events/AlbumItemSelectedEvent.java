@@ -10,7 +10,7 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 
 public class AlbumItemSelectedEvent {
     private final Class<ViewModelContainer> modelType;
-    private final ResourceContainer album;
+    private final ResourceContainer<?, GalleryItem> album;
     private final GalleryItem selectedItem;
 
     public AlbumItemSelectedEvent(Class<ViewModelContainer> modelType, ResourceContainer<?, GalleryItem> album, GalleryItem selectedItem) {

@@ -6,8 +6,7 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.Tag;
@@ -40,7 +39,7 @@ public class PluginUserTagsGetListResponseHandler extends AbstractPiwigoWsRespon
         boolean validResponse = rsp.isJsonArray();
         if(validResponse) {
             JsonArray tagsObj = rsp.getAsJsonArray();
-            HashSet<Tag> tags = parseTagsFromJson(tagsObj);
+            ArrayList<Tag> tags = parseTagsFromJson(tagsObj);
             PiwigoUserTagsPluginGetTagsListRetrievedResponse r = new PiwigoUserTagsPluginGetTagsListRetrievedResponse(getMessageId(), getPiwigoMethod(), 0, tags.size(), tags.size(), tags, isCached);
             storeResponse(r);
         } else {
@@ -48,9 +47,9 @@ public class PluginUserTagsGetListResponseHandler extends AbstractPiwigoWsRespon
         }
     }
 
-    public static HashSet<Tag> parseTagsFromJson(JsonArray tagsObj) {
+    public static ArrayList<Tag> parseTagsFromJson(JsonArray tagsObj) {
 
-        HashSet<Tag> tags = new LinkedHashSet<>(tagsObj.size());
+        ArrayList<Tag> tags = new ArrayList<>(tagsObj.size());
         for (int i = 0; i < tagsObj.size(); i++) {
             JsonObject tagObj = tagsObj.get(i).getAsJsonObject();
             Tag g = parseTagFromJson(tagObj);
@@ -62,14 +61,14 @@ public class PluginUserTagsGetListResponseHandler extends AbstractPiwigoWsRespon
     public static Tag parseTagFromJson(JsonObject tagObj) {
         String idStr = tagObj.get("id").getAsString();
         idStr = idStr.replaceAll("~~","");
-        long id = Long.valueOf(idStr);
+        long id = Long.parseLong(idStr);
         String name = tagObj.get("name").getAsString();
         return new Tag(id, name);
     }
 
     public static class PiwigoUserTagsPluginGetTagsListRetrievedResponse extends TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse {
 
-        public PiwigoUserTagsPluginGetTagsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Tag> tags, boolean isCached) {
+        public PiwigoUserTagsPluginGetTagsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<Tag> tags, boolean isCached) {
             super(messageId, piwigoMethod, page, pageSize, itemsOnPage, tags, isCached);
         }
     }

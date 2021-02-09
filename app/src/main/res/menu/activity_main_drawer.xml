@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <group android:checkableBehavior="none">
-
-
         <item
             android:id="@+id/nav_online_mode"
             android:icon="@drawable/ic_airplanemode_inactive_black_24dp"
@@ -20,9 +17,19 @@
             android:title="@string/gallery_menu_title" />
 
         <item
+            android:id="@+id/nav_orphans"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/orphans_menu_title" />
+
+        <item
             android:id="@+id/nav_upload"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_upload"
             android:title="@string/upload_menu_title" />
+
+        <item
+            android:id="@+id/nav_download"
+            android:icon="@drawable/ic_menu_download"
+            android:title="@string/downloads_menu_title" />
 
         <item
             android:id="@+id/nav_users"
@@ -68,6 +75,11 @@
             android:id="@+id/nav_eula"
             android:icon="@drawable/ic_help_black_24px"
             android:title="@string/eula_menu_title" />
+
+        <item
+            android:id="@+id/nav_privacy"
+            android:icon="@drawable/ic_lock_black_24dp"
+            android:title="@string/eula_privacy_title" />
 
         <item
             android:id="@+id/nav_lock"

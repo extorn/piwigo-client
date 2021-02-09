@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+
+    <string name="preferences_overall_heading">Nastavení</string>
+
+    
+
+    
+
+    
+    
+    
+
+    
+    
+    <string name="preference_test_server_connection_title">Vyzkoušejte připojení</string>
+    <string name="preference_test_server_connection_summary">Vyzkoušejte připojení k serveru</string>
+
+    
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Vyčistěte server</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Vyčistěte neúspěšná nahrávání PiwigoClient ze serveru</string>
+
+    <string name="preference_page_connection">Spojení</string>
+    <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    
+    <string name="preference_connections_category_server_basic_auth">Základní ověřování serveru</string>
+
+    
+    <string name="preference_connections_category_client_certificate_auth">Ověření klientského certifikátu</string>
+
+    
+    <string name="preference_connections_category_advanced">Pokročilé nastavení</string>
+
+    
+    <string name="preference_connections_category_connections_caching">Ukládání do mezipaměti webových odpovědí</string>
+
+    <string name="server_connection_preference_summary_default">Vyberte prosím hodnotu</string>
+    <string name="server_album_preference_summary_default">Vyberte prosím hodnotu</string>
+    <string name="local_folder_preference_summary_default">Vyberte prosím hodnotu</string>
+    <string name="server_connection_preference_user_guest">host</string>
+    
+
+    
+    <string name="preference_server_connection_max_redirects_title">Max. Přesměrování serveru</string>
+    <string name="preference_server_connection_max_redirects_summary">%1$d</string>
+    
+
+    
+    <string name="preference_server_connection_force_https_title">Přepište HTTP adresy na Https</string>
+    <string name="preference_server_connection_force_https_summary">Všechny adresy URL http:// přepsány na https:// pro server https</string>
+    
+
+    
+    <string name="preference_server_connection_offline_mode_title">Povolit procházení offline</string>
+    <string name="preference_server_connection_offline_mode_summary">Pokud jsou k dispozici data v mezipaměti</string>
+    
+
+    
+    <string name="preference_server_connection_allow_redirects_title">Povolit přesměrování serveru</string>
+    <string name="preference_server_connection_allow_redirects_summary">Postupujte podle odpovědí http 3xx</string>
+    
+
+    
+    <string name="preference_server_connection_timeout_secs_title">Časový limit připojení (sekundy)</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d sekund</string>
+    
+
+    
+    <string name="preference_server_response_timeout_secs_title">Časový limit odezvy (sekundy)</string>
+    <string name="preference_server_response_timeout_secs_summary">%1$d sekund</string>
+    
+
+    
+    <string name="preference_server_alter_cache_directives_title">Změnit směrnice HTTP o mezipaměti serveru</string>
+    <string name="preference_server_alter_cache_directives_summary">Povolením povolíte offline přístup do galerie</string>
+    
+
+    
+    <string name="preference_server_connection_uri_path_segment_encoding_title">Zakódujte cestu URI pro žádosti o prostředky</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">Zkuste to povolit, pokud se u existujících souborů zobrazuje chyba 404</string>
+    
+
+    
+    <string name="preference_server_connection_retries_title">Před selháním se připojení pokusí znovu</string>
+    <string name="preference_server_connection_retries_summary">%1$d</string>
+    
+
+    
+    <string name="preference_server_basic_auth_username_title">Uživatelské jméno základního ověření</string>
+
+    
+    <string name="preference_server_basic_auth_password_title">Základní ověřovací heslo</string>
+
+    
+    <string name="preference_server_use_basic_auth_title">Použijte základní ověřování</string>
+    <string name="preference_server_use_basic_auth_summary">Povolit, pokud server vyžaduje základní ověření</string>
+    
+
+    
+    
+    <string name="preference_server_use_client_certs_title">Použijte ověření certifikátu klienta</string>
+    <string name="preference_server_use_client_certs_summary">Povolit, pokud server vyžaduje ověření klienta na základě certifikátu</string>
+
+    
+    <string name="preference_select_client_certificate_title">Certifikáty klienta (a soukromé klíče)</string>
+    <string name="preference_select_client_certificate_summary">Vyberte certifikát klienta pro ověření</string>
+
+    
+    <string name="preference_piwigo_connection_profile_title">Vyberte profil připojení</string>
+    <string name="preference_piwigo_connection_profile_summary">Aktivní profil připojení (%1$s)</string>
+
+    
+    
+
+    
+    
+    <string name="preference_piwigo_server_address_title">Adresa serveru</string>
+    <string name="preference_piwigo_server_address_summary">%1$s</string>
+
+    
+    <string name="preference_piwigo_server_username_title">Uživatelské jméno</string>
+    <string name="preference_piwigo_server_username_summary">%1$s</string>
+
+
+    
+    <string name="preference_piwigo_server_password_title">Heslo</string>
+    <string name="preference_piwigo_server_password_summary">%1$s</string>
+
+    
+    <string name="preference_server_ssl_certificate_hostname_verification_title">Ověření SSL názvu hostitele</string>
+    <string name="preference_server_ssl_certificate_hostname_verification_summary">%1$s</string>
+    
+
+    <string name="preference_caching_clearResponseCache_title">Vymažte mezipaměť odpovědí serveru</string>
+    
+    <string name="preference_caching_clearResponseCache_summary">Odstraní všechny odpovědi serveru uložené na disk</string>
+
+    
+    <string name="preference_caching_level_title">Úroveň mezipaměti odpovědí</string>
+    <string name="preference_caching_level_summary">%1$s</string>
+    <string name="preference_caching_level_default">disk</string>
+
+    
+    <string name="preference_caching_max_cache_entries_title">Maximální počet položek v mezipaměti Seznam</string>
+    <string name="preference_caching_max_cache_entries_summary">%1$d</string>
+    
+
+    
+    <string name="preference_caching_max_cache_entry_size_title">Maximální velikost položky v mezipaměti (KB)</string>
+    <string name="preference_caching_max_cache_entry_size_summary">%1$d kB</string>
+    
+
+    
+    <string name="preference_connections_category_trusted_server_ca">Certifikační autority certifikátu důvěryhodného serveru</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_summary">K ověření certifikátů SSL serveru použijte vlastní seznam důvěryhodných certifikátů CA.</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_title">Použijte vlastní důvěryhodné certifikační autority</string>
+    
+    
+
+    
+    <string name="preference_select_trusted_certificate_title">Vyberte důvěryhodné certifikáty CA.</string>
+    <string name="preference_select_trusted_certificate_summary">Zobrazit a upravit seznam důvěryhodných certifikátů CA.</string>
+
+    
+
+    
+
+    <string name="preference_page_gallery">Alba</string>
+    <string name="preference_page_slideshow">Prezentace</string>
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">Automatický postup prezentace</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Po nastaveném čase se zobrazí další obrázek nebo video</string>
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Automatické zpoždění obrazu jednotky</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s milisekundy</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Automatické zpoždění videa</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s milisekundy</string>
+    
+
+    <string name="preference_gallery_category_general">Všeobecné</string>
+    
+    <string name="preference_gallery_category_server_calls">Podrobnosti o volání serveru Piwigo</string>
+    <string name="preference_gallery_category_slideshow">Prezentace</string>
+
+    
+    
+
+    
+    
+
+
+    
+    <string name="preference_gallery_category_resources">Dětské zdroje</string>
+    
+    <string name="preference_gallery_category_albums">Dětská alba</string>
+
+    
+
+    
+    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Na šířku: Sloupce alb k zobrazení</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
+
+    
+    <string name="preference_gallery_show_image_name_title">Zobrazit názvy obrázků v albu</string>
+    <string name="preference_gallery_show_image_name_summary">Zobrazuje název obrázku pod každým obrázkem</string>
+    
+
+    
+    <string name="preference_gallery_images_preferredColumnsLandscape_title">Na šířku: Sloupce obrázků k zobrazení</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
+
+    
+    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Zobrazit zvětšenou miniaturu alba</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Miniatury alb jsou oříznuty na střed</string>
+    
+
+
+    
+    <string name="preference_gallery_show_file_size_showing_title">Zobrazit velikost prohlížených fotografií na serveru</string>
+    <string name="preference_gallery_show_file_size_showing_summary">Zobrazit velikost každé zobrazené fotografie</string>
+    
+
+    
+    <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portrét: Sloupce alb k zobrazení</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
+
+    
+    <string name="preference_gallery_images_preferredColumnsPortrait_title">Portrét: Sloupce obrázků k zobrazení</string>
+    <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
+
+    
+    <string name="preference_gallery_include_videos_in_slideshow_title">Zobrazit videa v prezentaci</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">Měla by se videa zobrazovat při procházení galerie v režimu prezentace?</string>
+    
+
+    
+    <string name="preference_gallery_enable_video_playback_title">Povolit přehrávání videa</string>
+    <string name="preference_gallery_enable_video_playback_summary">Povolte, pokud chcete stahovat a přehrávat videa na vyžádání</string>
+    
+
+    
+
+    
+    <string name="preference_check_for_server_updates_title">Oznámení o aktualizacích</string>
+    <string name="preference_check_for_server_updates_summary">Pokud jsou pro váš server k dispozici aktualizace, obdržíte oznámení</string>
+
+    
+    <string name="preference_video_cache_enabled_title">Ukládání videí do mezipaměti do souboru</string>
+    <string name="preference_video_cache_enabled_summary">Pokud je povoleno, všechna streamovaná videa se uloží do mezipaměti pro pozdější přehrávání</string>
+    
+
+    
+    <string name="preference_video_cache_maxsize_mb_title">Maximální velikost mezipaměti videa (MB)</string>
+    <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
+    
+
+    
+    <string name="preference_gallery_child_album_sort_order_title">Pořadí řazení dětských alb</string>
+    <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
+     
+
+    
+    <string name="preference_gallery_child_album_sort_order_inverted_title">Obrácené pořadí alb</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">Pokud je tato možnost povolena, obrátit vybrané pořadí řazení alb</string>
+    
+
+    
+    <string name="preference_gallery_child_resource_sort_order_title">Pořadí řazení prostředků alba</string>
+    <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
+    
+
+    
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Invertovat pořadí řazení prostředků alba</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">Pokud je tato možnost povolena, obrátit vybrané pořadí řazení zdrojů alba</string>
+    
+
+
+    
+    <string name="preference_gallery_unique_id_title">Jedinečný identifikátor obrázků</string>
+    <string name="preference_gallery_unique_id_summary">%1$s</string>
+    
+
+    
+    <string name="preference_fix_privacy_plugin_media_uris_title">Opravte Media Uris rozbitý při použití pluginu ochrany osobních údajů</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">Povolte pouze v případě, že se u multimediálních zdrojů zobrazí chyba 4xx.</string>
+    
+
+
+    <string name="preference_gallery_clearMemoryCache_title">Vymažte mezipaměť v paměti</string>
+    
+    <string name="preference_gallery_clearMemoryCache_summary">Odstraní všechny obrázky uložené v paměti</string>
+
+    <string name="preference_gallery_clearVideoCache_title">Vymazat mezipaměť videa</string>
+    
+    <string name="preference_gallery_clearVideoCache_summary">Odstraní všechna videa uložená v mezipaměti na disk</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Odstraní všechna%1$.2fMB videí uložených na disk</string>
+
+    
+    
+    <string name="preference_gallery_recentlyAlteredAgeMillis_title">Maximální věk posledních položek (dny)</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d dní</string>
+     
+    
+
+    
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Zásuvka prezentace je průhledná</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Zásuvka s informacemi o obrázku prezentace je průhledná</string>
+    
+
+    <string name="preference_gallery_slideshow_image_scaletype_title">Typ změny velikosti prezentace</string>
+    
+    <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
+    
+
+    
+    <string name="preference_gallery_slideshow_image_rotate_title">Otočte obrázek tak, aby odpovídal poměru stran obrazovky</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">Obrázek byl otočen tak, aby se vešel na obrazovku</string>
+    
+
+    
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">Skrýt podrobnosti položky po čase</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d milisekundy</string>
+    
+
+    
+    <string name="preference_groups_request_pagesize_title">Skupinový server požaduje velikost stránky</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d položek</string>
+    
+
+    
+    <string name="preference_users_request_pagesize_title">Uživatelský server požaduje velikost stránky</string>
+    <string name="preference_users_request_pagesize_summary">%1$d položek</string>
+    
+
+    
+    <string name="preference_album_request_pagesize_title">Velikost stránky požadavku serveru alba</string>
+    <string name="preference_album_request_pagesize_summary">%1$d položek</string>
+    
+
+    <string name="preference_gallery_item_thumbnail_size_title">Velikost miniatury zdroje</string>
+    
+    <string name="preference_gallery_item_thumbnail_size_summary">%1$s</string>
+    
+
+    <string name="preference_gallery_album_thumbnail_size_title">Velikost miniatury alba</string>
+    
+    <string name="preference_gallery_album_thumbnail_size_summary">%1$s</string>
+    
+
+    <string name="preference_gallery_item_slideshow_image_size_title">Výchozí velikost obrázku pro prezentaci</string>
+    
+    <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
+    
+
+
+    
+
+    <string name="preference_page_upload">nahrát</string>
+    <string name="preference_upload_category_data_upload_display">Volby zobrazení</string>
+    <string name="preference_upload_category_data_upload">Nahrání dat</string>
+    
+    <string name="preference_upload_category_pre_data_upload_image_compression_title">Komprese obrazu před nahráním</string>
+    
+    <string name="preference_upload_category_pre_data_upload_video_compression_title">Komprese videa před nahráním</string>
+    
+    <string name="preference_upload_category_piwigo_server_calls_title">Podrobnosti o volání serveru Piwigo</string>
+
+    
+
+    
+    
+    <string name="preference_data_upload_delete_uploaded_summary">Smažte úspěšně nahrané soubory</string>
+    <string name="preference_data_upload_delete_uploaded_title">Výchozí automatické mazání</string>
+
+    
+
+    
+    <string name="preference_data_upload_default_privacy_level_summary">Nahrané soubory jsou viditelné pro%1$s</string>
+    
+    <string name="preference_data_upload_default_privacy_level_title">Výchozí úroveň soukromí</string>
+
+    
+    <string name="preference_data_upload_chunkSizeKb_title">Max. Velikost nahraného bloku (KB)</string>
+    <string name="preference_data_upload_chunkSizeKb_summary">%1$d kB</string>
+    
+
+    
+    <string name="preference_data_upload_chunk_auto_retries_title">Maximální počet pokusů o automatické nahrání bloku souborů</string>
+    <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
+    
+
+    
+    <string name="preference_data_upload_preferredColumnsPortrait_title">Portrét: Sloupce obrázků k zobrazení</string>
+    <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
+
+    
+    <string name="preference_data_upload_preferredColumnsLandscape_title">Na šířku: Sloupce obrázků k zobrazení</string>
+    <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
+
+    
+    <string name="preference_data_upload_max_filesize_mb_title">Maximální velikost souboru k nahrání bez varování (v MB)</string>
+    <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
+    
+
+    
+    <string name="preference_data_upload_compress_videos_summary">Před nahráním komprimujte videa</string>
+    <string name="preference_data_upload_compress_videos_title">Komprimujte videa</string>
+    
+
+    
+    
+    
+    
+
+    <string name="preference_data_upload_compress_videos_quality_title">Kvalita videa</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">Kvalita komprese videa%1$s</string>
+    
+    
+
+    <string name="preference_data_upload_compress_videos_audio_bitrate_title">Přenosová rychlost zvuku</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Přenosová rychlost zvuku%1$s</string>
+    
+    
+
+    
+    <string name="preference_data_upload_compress_images_summary">Před nahráním komprimujte obrázky</string>
+    <string name="preference_data_upload_compress_images_title">Komprimujte obrázky</string>
+    
+
+    <string name="preference_data_upload_compress_images_quality_title">Kvalita obrazu</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Kvalita komprese obrazu%1$s</string>
+    
+    
+    
+    
+
+    <string name="preference_data_upload_compress_images_max_height_title">Maximální výška</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">Maximální výška (%1$s pixelů)</string>
+    
+    
+    
+    
+
+    <string name="preference_data_upload_compress_images_max_width_title">Max. Šířka</string>
+    <string name="preference_data_upload_compress_images_max_width_summary">Maximální šířka (%1$s pixelů)</string>
+    
+    
+    
+    
+
+    <string name="preference_data_upload_compress_images_output_format_title">Výstupní formát obrazu</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Výstupní formát komprese obrazu%1$s</string>
+    
+    
+
+    
+    <string name="preference_page_app">Aplikace</string>
+    
+    <string name="preference_app_resource_caching_title">ukládání do mezipaměti zdrojů</string>
+
+    
+
+    <string name="preference_page_other">jiný</string>
+    <string name="preference_other_category_file_selector">Výběr souborů</string>
+
+    
+
+    
+    
+    <string name="preference_data_file_selector_showFilenames_title">Zobrazit názvy souborů</string>
+    <string name="preference_data_file_selector_showFilenames_summary">Názvy souborů zobrazené pro každý soubor</string>
+
+    
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Na šířku: Sloupce souborů k zobrazení</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
+
+    
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Portrét: Sloupce souborů k zobrazení</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
+
+    
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Na šířku: Sloupce složek k zobrazení</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
+
+    
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Portrét: Sloupce složek k zobrazení</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
+
+    
+
+    
+    
+    <string name="preference_app_always_show_nav_buttons_title">Vždy zobrazovat navigační tlačítka</string>
+    <string name="preference_app_always_show_nav_buttons_summary">Povolit, aby se zabránilo automatickému skrytí navigačních tlačítek</string>
+
+    
+    <string name="preference_app_default_download_folder_title">Stáhnout do složky</string>
+    <string name="preference_app_default_download_folder_summary">%1$s</string>
+
+    
+    
+    <string name="preference_app_always_show_status_bar_title">Vždy zobrazit stavový řádek</string>
+    <string name="preference_app_always_show_status_bar_summary">Povolit, aby se zabránilo automatickému skrytí stavového řádku</string>
+
+    
+    <string name="preference_app_desired_language_title">Jazyk</string>
+    <string name="preference_app_desired_language_summary">%1$s</string>
+
+    
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Znovu zobrazit všechny tipy uživatelů</string>
+
+    
+    <string name="preference_app_uri_permissions_held_title">Oprávnění URI zadrženo</string>
+    <string name="preference_app_uri_permissions_held_summary">Účel všech zadržených oprávnění URI</string>
+
+
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+
+    
+
+</resources>

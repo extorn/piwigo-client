@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="privacy_policy_uri" translatable="false">https://api-8938561204297001672-604498.firebaseapp.com/paid/data-use/index.html</string>
     <string name="notification_title_background_upload_service">Background Piwigo Upload Service</string>
     <string name="notification_text_background_upload_running">Running upload job</string>
     <string name="notification_text_background_upload_sleeping">Sleeping. Next run at %1$tR</string>
     <string name="notification_text_background_upload_polling">Polling for files to upload.</string>
 
+
+    <string name="alert_warning_auto_upload_service_stopped">Don\'t forget to start the background upload service if you want your jobs to run</string>
     <string name="alert_auto_upload_service_stopped">Background upload service stopped</string>
     <string name="alert_auto_upload_service_started">Background upload service started</string>
     <string name="alert_auto_upload_service_job_restarted">Started uploading a previously incomplete job to server %1$s with %2$d files</string>
@@ -23,8 +26,16 @@
     <string name="button_unfavorite">Not Favorite</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">Server Settings</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Local Settings</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Pre-Upload Compression</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Pre-Upload Image Compression</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Pre-Upload Video Compression</string>
     <string name="ignoring_job_local_folder_not_found">Local folder no longer exists. Ignoring job</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">No file extensions selected for upload. Ignoring job</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Connection profile set to offline mode. Ignoring job</string>
+    <string name="slideshow_auto_drive_paused">Slideshow Autodrive paused until next slide</string>
+    <string name="progress_loading_orphan_ids">Loading Orphans</string>
+    <string name="orphans_heading">Orphaned Resources</string>
+    <string name="orphans_album_description">All orphaned Resources collected by the PiwigoClient App</string>
+    <string name="orphans_no_orphans_found_on_server">No Orphans Found</string>
+    <string name="orphans_found_on_server_pattern">Orphans Found : %1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">There are orphans present. To view these, we must create a private folder accessible only to admins. You can delete the album at any time afterwards. If you disagree, you\'ll have to process these on the server yourself.</string>
 </resources>

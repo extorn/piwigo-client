@@ -3,6 +3,8 @@ package delit.piwigoclient.model.piwigo;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,6 +49,7 @@ public class PiwigoSessionDetails {
     private Boolean useCommunityPlugin;
     private ServerConfig serverConfig;
     private boolean isCached;
+    private Set<ServerPlugin> activeServerPlugins;
 
     public PiwigoSessionDetails(ConnectionPreferences.ProfilePreferences connectionPrefs, String serverUrl, long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, String sessionToken) {
         this.connectionPrefs = connectionPrefs;
@@ -360,6 +363,44 @@ public class PiwigoSessionDetails {
         out.putString("piwigo_client_ws_ext_plugin_version", getPiwigoClientPluginVersion());
     }
 
+    /**
+     * Get a map of key value pairs representing the details of the server
+     * @return
+     */
+    public synchronized Map<String,String> getSessionDebugInfoMap() {
+        Map<String,String> sessionInfoMap = new HashMap<>();
+        sessionInfoMap.put("piwigo_version", piwigoVersion);
+        sessionInfoMap.put("piwigo_plugins_community", ""+useCommunityPlugin);
+        sessionInfoMap.put("piwigo_plugins_active", getActivePluginSummary());
+        sessionInfoMap.put("piwigo_user_isAdmin", ""+isAdminUser());
+        sessionInfoMap.put("piwigo_user_type", ""+getUserType());
+        sessionInfoMap.put("piwigo_login_status", ""+loginStatus);
+        return sessionInfoMap;
+    }
+
+    public synchronized String getActivePluginSummary() {
+        if(activeServerPlugins == null) {
+            return "not known";
+        }
+        if(activeServerPlugins.isEmpty()) {
+            return "none";
+        }
+        StringBuilder sb = new StringBuilder(activeServerPlugins.size() + "[");
+        for (Iterator<ServerPlugin> iterator = activeServerPlugins.iterator(); iterator.hasNext(); ) {
+            ServerPlugin plugin = iterator.next();
+            sb.append('{');
+            sb.append(plugin.getName());
+            sb.append(',');
+            sb.append(plugin.getVersion());
+            sb.append('}');
+            if(iterator.hasNext()) {
+                sb.append(',');
+            }
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+
     public void setServerConfig(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
     }
@@ -370,5 +411,30 @@ public class PiwigoSessionDetails {
 
     public boolean isCommunityApiAvailable() {
         return isMethodAvailable("community.categories.getList");
+    }
+
+    public Username getUser() {
+        return new Username(getUserId(), getUsername(), getUserType());
+    }
+
+    public synchronized void setActiveServerPlugins(ArrayList<ServerPlugin> activePlugins) {
+        activeServerPlugins = new HashSet<>(activePlugins);
+    }
+
+    /**
+     *
+     * @return true or false if known. null otherwise.
+     */
+    public @Nullable
+    Boolean isUsingPiwigoPrivacyPlugin() {
+        if(activeServerPlugins != null) {
+            for(ServerPlugin plugin : activeServerPlugins) {
+                if("piwigo_privacy".equals(plugin.getId())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return null;
     }
 }

@@ -2,6 +2,8 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +14,6 @@ import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -21,6 +21,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.BuildConfig;
@@ -45,7 +46,7 @@ import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
 
 
-public abstract class SlideshowItemFragment<T extends ResourceItem> extends AbstractSlideshowItemFragment<T> {
+public abstract class SlideshowItemFragment<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends AbstractSlideshowItemFragment<F,FUIH,T> {
 
     private static final String STATE_UPDATED_TAGS_SET = "updatedTagSet";
     private static final String STATE_CHANGED_TAGS_SET = "changedTagSet";
@@ -57,12 +58,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     protected void setupImageDetailPopup(View v, Bundle savedInstanceState) {
         super.setupImageDetailPopup(v, savedInstanceState);
 
-        getTagsField().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onShowTagsSelection();
-            }
-        });
+        getTagsField().setOnClickListener(v1 -> onShowTagsSelection());
     }
 
     private void onShowTagsSelection() {
@@ -98,7 +94,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
 
     }
 
-    private void onResourceTagsUpdated(ResourceItem piwigoResource) {
+    protected void onResourceTagsUpdated(ResourceItem piwigoResource) {
         getModel().setTags(piwigoResource.getTags());
         populateResourceExtraFields();
     }
@@ -117,7 +113,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             }
             favoriteButton.setVisibility(View.VISIBLE);
         } else {
-            favoriteButton.setVisibility(View.GONE);
+            favoriteButton.setVisibility(View.INVISIBLE);
         }
 
 
@@ -127,8 +123,8 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        BundleUtils.putHashSet(outState, STATE_UPDATED_TAGS_SET, updatedTagsSet);
-        BundleUtils.putHashSet(outState, STATE_CHANGED_TAGS_SET, changedTagsEvents);
+        BundleUtils.putSet(outState, STATE_UPDATED_TAGS_SET, updatedTagsSet);
+        BundleUtils.putSet(outState, STATE_CHANGED_TAGS_SET, changedTagsEvents);
         if (BuildConfig.DEBUG) {
             BundleUtils.logSize("SlideshowItemFragment", outState);
         }
@@ -141,10 +137,14 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser();
 
         if (allowTagEdit) {
-            addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler(model));
+            addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler<>(model));
         }
         if(allowFullEdit) {
-            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(model, !allowTagEdit));
+            if(model.getLinkedAlbums().isEmpty()) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_item_must_belong_to_at_least_one_album));
+            } else {
+                addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler<>(model, !allowTagEdit));
+            }
         }
     }
 
@@ -166,14 +166,14 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     }
 
     @Override
-    public void onImageDeleted(HashSet<Long> deletedItemIds) {
+    public void onImageDeleted(HashSet<? extends ResourceItem> deletedItems) {
         for (Tag tag : getModel().getTags()) {
             EventBus.getDefault().post(new TagContentAlteredEvent(tag.getId(), -1));
         }
-        super.onImageDeleted(deletedItemIds);
+        super.onImageDeleted(deletedItems);
     }
 
-    @Nullable
+    @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
@@ -181,7 +181,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         return v;
     }
 
-    private void onFavoriteUpdateFailed(boolean oldValue) {
+    protected void onFavoriteUpdateFailed(boolean oldValue) {
         if (getModel().isFavorite() != favoriteButton.isChecked()) {
             // change the button to match the model.
             favoriteButton.setTag("noListener");
@@ -195,7 +195,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         super.onResume();
         boolean favoritesSupported = getModel().hasFavoriteInfo();
         //PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isPiwigoClientPluginInstalled();
-        favoriteButton.setVisibility(favoritesSupported?View.VISIBLE:View.GONE);
+        favoriteButton.setVisibility(favoritesSupported?View.VISIBLE:View.INVISIBLE);
     }
 
     @Override
@@ -206,7 +206,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             changedTagsEvents = BundleUtils.getHashSet(savedInstanceState, STATE_CHANGED_TAGS_SET);
         }
         super.onViewCreated(view, savedInstanceState);
-        favoriteButton.setOnCheckedChangeListener(new SlideshowItemFragment.FavoriteCheckedListener(getUiHelper(), getModel()));
+        favoriteButton.setOnCheckedChangeListener(new SlideshowItemFragment.FavoriteCheckedListener<>(getUiHelper(), getModel()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -261,8 +261,8 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new PaidPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new PaidPiwigoResponseListener<>();
     }
 
     @Override
@@ -274,7 +274,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private class PaidPiwigoResponseListener extends CustomPiwigoResponseListener {
+    private static class PaidPiwigoResponseListener<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends CustomPiwigoResponseListener<F, FUIH,T> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -287,44 +287,73 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
                 if(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).hasError()) {
                     showOrQueueMessage(R.string.alert_error, ((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).getError());
                 } else {
-                    onResourceTagsUpdated(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource());
+                    getParent().onResourceTagsUpdated(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource());
                 }
-                onGalleryItemActionFinished();
+                getParent().onGalleryItemActionFinished();
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }
         }
     }
 
-    private void onFavoriteUpdateSucceeded(boolean newValue) {
+    protected void onFavoriteUpdateSucceeded(boolean newValue) {
         favoriteButton.setEnabled(true);
     }
 
-    private abstract static class FavoriteAction<T extends ResourceItem, S extends PiwigoResponseBufferingHandler.Response> extends UIHelper.Action<FragmentUIHelper<SlideshowItemFragment<T>>, SlideshowItemFragment<T>, S> {
+    private abstract static class FavoriteAction<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem, S extends PiwigoResponseBufferingHandler.Response> extends UIHelper.Action<FUIH, F, S> {
+
+        FavoriteAction(){}
 
         protected abstract boolean getValueOnSucess();
 
         @Override
-        public boolean onFailure(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             getActionParent(uiHelper).onFavoriteUpdateFailed(!getValueOnSucess());
             return super.onFailure(uiHelper, response);
         }
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, S response) {
+        public boolean onSuccess(FUIH uiHelper, S response) {
             getActionParent(uiHelper).onFavoriteUpdateSucceeded(getValueOnSucess());
             return super.onSuccess(uiHelper, response);
         }
     }
 
-    private static class FavoriteRemoveAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse> {
+    private static class FavoriteRemoveAction<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends FavoriteAction<F,FUIH,T, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse> implements Parcelable {
+
+        FavoriteRemoveAction(){}
+
+        protected FavoriteRemoveAction(Parcel in) {
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<FavoriteRemoveAction<?,?,?>> CREATOR = new Creator<FavoriteRemoveAction<?,?,?>>() {
+            @Override
+            public FavoriteRemoveAction<?,?,?> createFromParcel(Parcel in) {
+                return new FavoriteRemoveAction<>(in);
+            }
+
+            @Override
+            public FavoriteRemoveAction<?,?,?>[] newArray(int size) {
+                return new FavoriteRemoveAction[size];
+            }
+        };
+
         @Override
         protected boolean getValueOnSucess() {
             return false;
         }
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse response) {
+        public boolean onSuccess(FUIH uiHelper, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse response) {
             if(EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class) == null) {
                 EventBus.getDefault().postSticky(new FavoritesUpdatedEvent());
             }
@@ -332,14 +361,41 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private static class FavoriteAddAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> {
+    private static class FavoriteAddAction<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends FavoriteAction<F,FUIH,T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> implements Parcelable {
+
+        FavoriteAddAction(){}
+
+        protected FavoriteAddAction(Parcel in) {
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<FavoriteAddAction<?,?,?>> CREATOR = new Creator<FavoriteAddAction<?,?,?>>() {
+            @Override
+            public FavoriteAddAction<?,?,?> createFromParcel(Parcel in) {
+                return new FavoriteAddAction<>(in);
+            }
+
+            @Override
+            public FavoriteAddAction<?,?,?>[] newArray(int size) {
+                return new FavoriteAddAction[size];
+            }
+        };
+
         @Override
         protected boolean getValueOnSucess() {
             return true;
         }
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse response) {
+        public boolean onSuccess(FUIH uiHelper, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse response) {
             if(EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class) == null) {
                 EventBus.getDefault().postSticky(new FavoritesUpdatedEvent());
             }
@@ -347,7 +403,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private static class FavoriteCheckedListener implements CompoundButton.OnCheckedChangeListener {
+    private static class FavoriteCheckedListener<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> implements CompoundButton.OnCheckedChangeListener {
 
         private static final String TAG = "FavoriteCheckedListener";
         private final @NonNull
@@ -355,11 +411,11 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         private final @NonNull
         ResourceItem item;
 
-        public FavoriteCheckedListener(@NonNull UIHelper helper, @NonNull ResourceItem item) {
+        public FavoriteCheckedListener(@NonNull FUIH helper, @NonNull T item) {
             this.helper = helper;
             this.item = item;
             if (item == null) {
-                Crashlytics.log(Log.ERROR, TAG, "Model item is null");
+                Logging.log(Log.ERROR, TAG, "Model item is null");
             }
         }
 
@@ -370,15 +426,15 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
                 return;
             }
             if (!buttonView.isEnabled()) {
-                Crashlytics.log(Log.ERROR, TAG, "tag/untag favorite image called but ignored as in progress");
+                Logging.log(Log.ERROR, TAG, "tag/untag favorite image called but ignored as in progress");
                 return; // should never occur
             }
             buttonView.setEnabled(false);
             if (item.hasFavoriteInfo()) {
                 if (!item.isFavorite()) {
-                    helper.invokeActiveServiceCall(R.string.adding_favorite, new FavoritesAddImageResponseHandler(item), new FavoriteAddAction());
+                    helper.invokeActiveServiceCall(R.string.adding_favorite, new FavoritesAddImageResponseHandler(item), new FavoriteAddAction<>());
                 } else {
-                    helper.invokeActiveServiceCall(R.string.removing_favorite, new FavoritesRemoveImageResponseHandler(item), new FavoriteRemoveAction());
+                    helper.invokeActiveServiceCall(R.string.removing_favorite, new FavoritesRemoveImageResponseHandler(item), new FavoriteRemoveAction<>());
                 }
             }
         }

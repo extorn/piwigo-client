@@ -1,43 +1,41 @@
 package delit.piwigoclient.ui.album.drillDownSelect;
 
-import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
-
-import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
+import delit.libs.ui.view.recycler.SimpleRecyclerViewAdapter;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 
-public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemRecyclerViewAdapter.CategoryItemViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<CategoryItem>> {
+public class CategoryItemRecyclerViewAdapter<LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,CategoryItemViewAdapterPreferences,CategoryItem,VH>, VH extends CategoryItemRecyclerViewAdapter.CategoryItemViewHolder<VH, LVA, MSL>> extends SimpleRecyclerViewAdapter<LVA, CategoryItem, CategoryItemViewAdapterPreferences, VH, MSL> {
 
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
-    private transient List<CategoryItem> currentDisplayContent;
     private CategoryItem overallRoot;
     private CategoryItem activeItem;
     private NavigationListener navigationListener;
 
-    public CategoryItemRecyclerViewAdapter(CategoryItem root, NavigationListener navigationListener, MultiSelectStatusListener<CategoryItem> multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
+    public CategoryItemRecyclerViewAdapter(CategoryItem root, NavigationListener navigationListener, MSL multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
         super(multiSelectStatusListener, viewPrefs);
         this.navigationListener = navigationListener;
         overallRoot = root;
@@ -79,9 +77,9 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 //        getSelectedItemIds().clear();
         if (activeItem != null) {
             List<CategoryItem> folderContent = activeItem.getChildAlbums();
-            currentDisplayContent = folderContent != null ? new ArrayList<>(folderContent) : new ArrayList<CategoryItem>(0);
+            setItems(folderContent != null ? new ArrayList<>(folderContent) : new ArrayList<>(0));
         } else {
-            currentDisplayContent = new ArrayList<>(0);
+            setItems(new ArrayList<>(0));
         }
         notifyDataSetChanged();
     }
@@ -90,13 +88,30 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         return activeItem;
     }
 
-    public void setActiveItem(CategoryItem activeItem) {
+    /**
+     *
+     * @param activeItem
+     * @return true if the active item could be changed at this time
+     */
+    public boolean setActiveItem(CategoryItem activeItem) {
         updateActiveContent(activeItem, true);
+        return true;
     }
 
     @Override
-    protected CustomClickListener<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder> buildCustomClickListener(CategoryItemViewHolder viewHolder) {
-        return new CategoryItemCustomClickListener(viewHolder, this);
+    protected CustomClickListener<MSL, LVA, CategoryItemViewAdapterPreferences, CategoryItem, VH> buildCustomClickListener(VH viewHolder) {
+        return new CategoryItemCustomClickListener(viewHolder, (LVA)this);
+    }
+
+    @Override
+    protected boolean isDirtyItemViewHolder(VH holder, CategoryItem newItem) {
+        if(!super.isDirtyItemViewHolder(holder, newItem)) {
+            boolean catDirty = (holder.getItem() instanceof CategoryItem
+                    && newItem instanceof CategoryItem
+                    && ((CategoryItem) holder.getItem()).isAdminCopy() != ((CategoryItem) newItem).isAdminCopy());
+            return catDirty;
+        }
+        return true;
     }
 
     @Override
@@ -134,84 +149,48 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 
     @NonNull
     @Override
-    public SimpleCategoryItemViewHolder buildViewHolder(View view, int viewType) {
+    public VH buildViewHolder(View view, int viewType) {
 //        if (viewType == VIEW_TYPE_FOLDER) {
 //            return new SimpleCategoryItemViewHolder(view);
 //        } else {
 //            return new CategoryItemFileViewHolder(view);
 //        }
         // always use the same layout for now.
-        return new SimpleCategoryItemViewHolder(view);
+        return (VH) new SimpleCategoryItemViewHolder(view);
     }
 
     @Override
-    protected CategoryItem getItemById(Long selectedId) {
+    public CategoryItem getItemById(@NonNull Long selectedId) {
         return overallRoot.findChild(selectedId);
     }
 
     @Override
-    public int getItemPosition(CategoryItem item) {
-        return currentDisplayContent.indexOf(item);
+    protected CategoryItem removeItemFromInternalStore(int idxRemoved) {
+        CategoryItem removed = super.removeItemFromInternalStore(idxRemoved);
+        activeItem.removeChildAlbum(removed);
+        return removed;
     }
 
     @Override
-    protected void removeItemFromInternalStore(int idxRemoved) {
-        CategoryItem catItem = currentDisplayContent.get(idxRemoved);
-        activeItem.removeChildAlbum(catItem);
-        currentDisplayContent.remove(idxRemoved);
-    }
-
-    @Override
-    protected void replaceItemInInternalStore(int idxToReplace, CategoryItem newItem) {
-        throw new UnsupportedOperationException("This makes no sense for a file structure traversal");
-    }
-
-    @Override
-    protected CategoryItem getItemFromInternalStoreMatching(CategoryItem item) {
-        // they'll always be the same
-        return item;
-    }
-
-    @Override
-    protected void addItemToInternalStore(CategoryItem item) {
+    protected void addItemToInternalStore(@NonNull CategoryItem item) {
         if (null == activeItem.findImmediateChild(item.getId())) {
             throw new IllegalArgumentException("CategoryItem is not a child of the currently displayed CategoryItem");
         }
-        currentDisplayContent.add(item);
-    }
-
-    @Override
-    public CategoryItem getItemByPosition(int position) {
-        return currentDisplayContent.get(position);
-    }
-
-    @Override
-    public boolean isHolderOutOfSync(CategoryItemViewHolder holder, CategoryItem newItem) {
-        return isDirtyItemViewHolder(holder, newItem);
-    }
-
-    @Override
-    public HashSet<Long> getItemsSelectedButNotLoaded() {
-        return new HashSet<>(0);
-    }
-
-    @Override
-    public int getItemCount() {
-        return currentDisplayContent.size();
+        super.addItemToInternalStore(item);
     }
 
     public interface NavigationListener {
         void onCategoryOpened(CategoryItem oldCategory, CategoryItem newCategory);
     }
 
-    class CategoryItemCustomClickListener extends CustomClickListener<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder> {
-        public <Q extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder, MultiSelectStatusListener<CategoryItem>>> CategoryItemCustomClickListener(CategoryItemViewHolder viewHolder, Q parentAdapter) {
+    class CategoryItemCustomClickListener extends CustomClickListener<MSL, LVA, CategoryItemViewAdapterPreferences, CategoryItem, VH> {
+        public CategoryItemCustomClickListener(VH viewHolder, LVA parentAdapter) {
             super(viewHolder, parentAdapter);
         }
 
         @Override
         public void onClick(View v) {
-            if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER) {
+            if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER && getViewHolder().getItem().getChildAlbumCount() > 0) {
                 updateActiveContent(getViewHolder().getItem(), false);
             } else if (getAdapterPrefs().isAllowItemSelection()) {
                 super.onClick(v);
@@ -227,46 +206,20 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
     }
 
-    private static class PredrawListener implements ViewTreeObserver.OnPreDrawListener {
-        private final ResizingPicassoLoader iconViewLoader;
-        private final ImageView iconView;
-
-        public PredrawListener(ImageView iconView, ResizingPicassoLoader iconViewLoader) {
-            this.iconView = iconView;
-            this.iconViewLoader = iconViewLoader;
-        }
-
-        @Override
-        public boolean onPreDraw() {
-            try {
-                if (!iconViewLoader.isImageLoaded() && !iconViewLoader.isImageLoading() && !iconViewLoader.isImageUnavailable()) {
-
-                    int imgSize = iconView.getMeasuredWidth();
-                    iconViewLoader.setResizeTo(imgSize, imgSize);
-                    iconViewLoader.load();
-                }
-            } catch (IllegalStateException e) {
-                Crashlytics.logException(e);
-                // image loader not configured yet...
-            }
-            return true;
-        }
-    }
-
-    protected class SimpleCategoryItemViewHolder extends CategoryItemViewHolder {
+    protected class SimpleCategoryItemViewHolder extends CategoryItemViewHolder<VH,LVA,MSL> {
 
         public SimpleCategoryItemViewHolder(View view) {
             super(view);
         }
 
         @Override
-        public void fillValues(Context context, CategoryItem newItem, boolean allowItemDeletion) {
+        public void fillValues(CategoryItem newItem, boolean allowItemDeletion) {
             setItem(newItem);
 //            getTxtTitle().setVisibility(View.VISIBLE);
             getTxtTitle().setText(newItem.getName());
             getDetailsTitle().setVisibility(View.GONE);
             if(newItem.getChildAlbumCount() > 0) {
-                getDetailsTitle().setText(context.getString(R.string.subalbum_detail_txt_pattern, newItem.getChildAlbumCount()));
+                getDetailsTitle().setText(itemView.getContext().getString(R.string.subalbum_detail_txt_pattern, newItem.getChildAlbumCount()));
                 getDetailsTitle().setVisibility(View.VISIBLE);
             }
 
@@ -278,47 +231,36 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             getCheckBox().setEnabled(isEnabled());
 
             if(newItem.getThumbnailUrl() != null) {
-                ImageViewCompat.setImageTintMode(getIconView(), null);
+                ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.DST); //IGNORE THE TINT - Use the image as is.
                 geticonViewLoader().setUriToLoad(newItem.getThumbnailUrl());
             } else {
-                ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_IN);
+                ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_ATOP); // SRC_ATOP: use colors of the tint to shade the non transparent parts of the image
                 geticonViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             }
+            geticonViewLoader().load();
         }
 
         @Override
         public void cacheViewFieldsAndConfigure(CategoryItemViewAdapterPreferences adapterPrefs) {
             super.cacheViewFieldsAndConfigure(adapterPrefs);
             geticonViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
-            final ViewTreeObserver.OnPreDrawListener predrawListener = new PredrawListener(getIconView(), geticonViewLoader());
 
             // default to setting a tint (we'll apply it if needed depending on image shown)
             ColorStateList colorList;
             if (!getAdapterPrefs().isEnabled()) {
-                colorList = ColorStateList.valueOf(Color.GRAY);
+                @ColorInt int c = DisplayUtils.getColor(getIconView().getContext(), R.attr.scrimHeavy);
+                colorList = ColorStateList.valueOf(c);
             } else {
-                colorList = ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.primary_text_default));
+                colorList = ColorStateList.valueOf(ContextCompat.getColor(itemView.getContext(), R.color.app_secondary));//ColorStateList.valueOf(DisplayUtils.getColor(getContext(), R.attr.colorPrimary));
             }
             ImageViewCompat.setImageTintList(getIconView(), colorList);
+            ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_ATOP); //SRC_ATOP: use colors of the tint to shade the non transparent parts of the image
 
-
-            getIconView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-                @Override
-                public void onViewAttachedToWindow(View v) {
-                    getIconView().getViewTreeObserver().addOnPreDrawListener(predrawListener);
-                }
-
-                @Override
-                public void onViewDetachedFromWindow(View v) {
-                    getIconView().getViewTreeObserver().removeOnPreDrawListener(predrawListener);
-                }
-            });
         }
     }
-
-    ;
-    
-    protected abstract class CategoryItemViewHolder extends BaseViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> implements PicassoLoader.PictureItemImageLoaderListener {
+//private static class UriPermissionsViewHolder<VH extends UriPermissionsViewHolder<VH,T,LVA,MSA>, T extends UriPermissionUse, LVA extends UriPermissionsListAdapter<LVA,MSA,VH,T>, MSA extends UriPermissionsListAdapter.UriPermissionsMultiSelectStatusAdapter<MSA,LVA,VH,T>> extends CustomViewHolder<VH, LVA, UriPermissionsAdapterPrefs, T,MSA> {
+//public static class GroupViewHolder<VH extends GroupViewHolder<VH, LVA,MSL>, LVA extends GroupRecyclerViewAdapter<LVA,VH,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,Group>> extends BaseViewHolder<VH, GroupViewAdapterPreferences, Group, LVA,MSL> {
+    protected abstract static class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH,LVA,MSL>, LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,CategoryItemViewAdapterPreferences,CategoryItem,VH>> extends BaseViewHolder<VH,CategoryItemViewAdapterPreferences, CategoryItem, LVA,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
         private ImageView iconView;
         private ResizingPicassoLoader iconViewLoader;
 
@@ -334,7 +276,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             return iconViewLoader;
         }
 
-        public abstract void fillValues(Context context, CategoryItem newItem, boolean allowItemDeletion);
+        public abstract void fillValues(CategoryItem newItem, boolean allowItemDeletion);
 
         @Override
         public void cacheViewFieldsAndConfigure(CategoryItemViewAdapterPreferences adapterPrefs) {
@@ -358,7 +300,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 
         @Override
         public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
-            getIconView().setBackgroundColor(Color.DKGRAY);
+            getIconView().setBackgroundColor(ContextCompat.getColor(getIconView().getContext(), R.color.color_scrim_heavy));
         }
     }
 

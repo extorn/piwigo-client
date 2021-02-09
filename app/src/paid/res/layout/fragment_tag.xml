@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@color/accent">
+            android:background="@colors/accent">
 
             <TextView
                 android:id="@+id/tag_details_name_header"
@@ -25,26 +25,26 @@
                 tools:text="Tag name"
                 android:layout_alignParentStart="true"
                 android:layout_margin="5dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+                android:textAppearance="?textAppearanceBody2"/>
 
         </RelativeLayout>-->
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/tag_retryAction_actionButton"
             android:layout_alignTop="@+id/tag_list"
-            android:layout_alignParentEnd="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
             android:clickable="true"
             app:fabSize="mini"
-            android:focusable="true" app:srcCompat="@drawable/ic_refresh_black_24dp"/>
+            android:focusable="true"
+            app:icon="@drawable/ic_refresh_black_24dp"
+            style="?extendedFloatingActionButtonStyle"/>
 
 
         <TextView
             android:id="@+id/tag_empty_content"
             android:visibility="visible"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textAppearance="?textAppearanceHeadline5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -70,13 +70,12 @@
             android:layout_margin="10dp"
             android:layout_gravity="end|bottom" >
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/tag_action_delete_bulk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_marginEnd="10dp"
-                app:srcCompat="@drawable/ic_delete_black_24px"/>
+                app:icon="@drawable/ic_delete_black_24px"
+                style="?extendedFloatingActionButtonStyle"/>
 
         </RelativeLayout>
 

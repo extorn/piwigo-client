@@ -2,6 +2,11 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import java.util.List;
+
+import delit.libs.core.util.Logging;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -9,6 +14,8 @@ import android.os.Parcelable;
  * <p>
  */
 public class PiwigoTag extends ResourceContainer<Tag, GalleryItem> {
+
+    private static final String TAG = "PwgTag";
 
     public PiwigoTag(Tag tag) {
         super(tag, "ResourceItem", tag.getUsageCount());
@@ -20,11 +27,14 @@ public class PiwigoTag extends ResourceContainer<Tag, GalleryItem> {
 
     @Override
     public boolean setRetrieveItemsInReverseOrder(boolean retrieveItemsInReverseOrder) {
-        throw new UnsupportedOperationException("cannot reverse the order");
+        Logging.log(Log.WARN, TAG, "Unable to reverse the order of items attached to a tag");
+        return false;
+
+        //throw new UnsupportedOperationException("cannot reverse the order");
     }
 
     @Override
-    protected void sortItems() {
+    protected void sortItems(List<GalleryItem> items) {
         throw new UnsupportedOperationException("cannot sort the items");
     }
 

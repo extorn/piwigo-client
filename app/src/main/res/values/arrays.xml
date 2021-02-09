@@ -8,6 +8,7 @@
     </string-array>
 
     <integer-array name="preference_data_upload_compress_videos_quality_values">
+        <item>0</item>
         <item>25</item>
         <item>50</item>
         <item>100</item>
@@ -18,6 +19,7 @@
     </integer-array>
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>0bps ( —X )</item>
         <item>very low (0.025 b/pixels*frame)</item>
         <item>lower (0.05 b/pixels*frame)</item>
         <item>low (0.1 b/pixels*frame)</item>
@@ -28,8 +30,8 @@
     </string-array>
 
     <string-array name="preference_data_upload_compress_videos_audio_bitrate_items" translatable="false">
-        <item>0kbps</item>
-        <item><![CDATA[-->]]></item>
+        <item>0kbps ( --X )</item>
+        <!--<item><![CDATA[&ndash;&gt;]]></item>-->
         <item>32kbps</item>
         <item>64kbps</item>
         <item>96kbps</item>
@@ -38,7 +40,7 @@
     </string-array>
     <integer-array name="preference_data_upload_compress_videos_audio_bitrate_values">
         <item>0</item>
-        <item>-1</item>
+        <!--<item>-1</item> audio pass-through isn't working :-( -->
         <item>32000</item>
         <item>64000</item>
         <item>96000</item>
@@ -46,13 +48,13 @@
         <item>196000</item>
     </integer-array>
 
-    <integer-array name="preference_album_subalbum_sort_order_values">
+    <integer-array name="preference_gallery_child_album_sort_order_entry_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
     </integer-array>
 
-    <string-array name="preference_album_subalbum_sort_order_items">
+    <string-array name="preference_gallery_child_album_sort_order_entry_text">
         <item>Default</item>
         <item>Album Name A-Z</item>
         <item>Last Updated</item>
@@ -69,21 +71,21 @@
     </string-array>
 
 
-    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+    <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
         <item>Default</item>
         <item>fit to screen size</item>
         <item>enlarge and crop to fit screen</item>
         <item>center on screen</item>
     </string-array>
 
-    <string-array name="preference_gallery_slideshow_image_scaletype_array_values" translatable="false">
+    <string-array name="preference_gallery_slideshow_image_scaletype_entry_values" translatable="false">
         <item>MATRIX</item>
         <item>FIT_XY</item>
         <item>CENTER_CROP</item>
         <item>CENTER</item>
     </string-array>
 
-    <string-array name="preference_gallery_item_slideshow_image_size_array">
+    <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
         <item>best-fit</item>
         <item>square</item>
         <item>thumb</item>
@@ -94,9 +96,10 @@
         <item>large</item>
         <item>xlarge</item>
         <item>xxlarge</item>
+        <!--<item>Optimal</item>-->
     </string-array>
 
-    <string-array name="preference_gallery_item_slideshow_image_size_array_values" translatable="false">
+    <string-array name="preference_gallery_item_slideshow_image_size_entry_values" translatable="false">
         <item>best-fit</item>
         <item>square</item>
         <item>thumb</item>
@@ -107,9 +110,10 @@
         <item>large</item>
         <item>xlarge</item>
         <item>xxlarge</item>
+        <!--<item>Optimal</item>-->
     </string-array>
 
-    <string-array name="preference_gallery_item_thumbnail_size_array">
+    <string-array name="preference_gallery_item_thumbnail_size_entry_text">
         <item>square</item>
         <item>thumb</item>
         <item>2small</item>
@@ -117,14 +121,15 @@
         <item>small</item>
     </string-array>
 
-    <string-array name="preference_gallery_item_thumbnail_size_array_values" translatable="false">
+    <string-array name="preference_gallery_item_thumbnail_size_entry_values" translatable="false">
         <item>square</item>
         <item>thumb</item>
         <item>2small</item>
         <item>xsmall</item>
         <item>small</item>
     </string-array>
-    <string-array name="preference_gallery_sort_order_entries">
+    <string-array name="preference_gallery_child_resource_sort_order_entry_text">
+        <item>Server Default</item>
         <item>Resource ID</item>
         <item>Resource Filename</item>
         <item>Resource Name</item>
@@ -134,7 +139,8 @@
         <item>Date available</item>
         <item>random</item>
     </string-array>
-    <string-array name="preference_gallery_sort_order_entryValues" translatable="false">
+    <string-array name="preference_gallery_child_resource_sort_order_entry_values" translatable="false">
+        <item>server</item>
         <item>id</item>
         <item>file</item>
         <item>name</item>
@@ -219,6 +225,7 @@
     </integer-array>
 
     <string-array name="top_tips" translatable="true">
+        <item>"If you have any issues with the app, please use email to notify me. If you wish, do post a negative review on Google Play, I'm not trying to stop that, but please email too. There is a link to send me an email at the top of the slide-out drawer menu. I can provide much more comprehensive support to an email address. Many thanks."</item>
         <item>"You can only see files to select for upload that are acceptable to upload on your server. If you wish to upload videos, be sure to alter your server config.inc.php file to include $conf['upload_form_all_types'] = true; rather than false"</item>
         <item>If an upload just won\'t succeed, try using the preference in the app settings upload page to clear any residual failed uploads from the server</item>
         <item>Error always occurs when trying to update tags - \"You are not allowed to delete tags\" - Ensure users can both add and delete tags (server plugin setting)</item>
@@ -235,26 +242,7 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>
-        <item>"Bugfix:
-            - fix intermittent but incorrect HTTP 401 errors possibly linked to cached response revalidation
-            Changes:
-         - Possibly:
-            - Removal of all or most adverts in favour of a free trial period followed by a subscription based payment model
-            - Verify the current login status to ensure album and image lists are always correct
-            - Verify support for upload to older servers (e.g. piwigo.com - version 2.8a)
-            - The ability to delete an album, but not its contents (creating orphans)
-            - Orphan file management
-            - Investigate adding support for coloured tag plugin
-            - Improved Animated gif support (large file streaming)
-         - Possibly (Paid App only):
-            - The random photos idea implemented on the piwigo web UI
-            - Support for user comments
-            - Notify user of server updates that are available
-            - Support for editing EXIF and other image metadata formats
-            - Add preference to allow showing/hiding the EXIF etc fields of or not of interest
-            - Screen cast of some kind to allow mirror of device on a larger screen
-         - Anything Else:
-            - Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
+        <item>"No further updates are planned."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <!--
@@ -262,103 +250,87 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
-        <item>1.4.0.53</item>
-        <item>"Changes:
-                - Added preference to control display of message showing image size loaded from server
-               Bugfix:
-                - Refresh album view immediately after changing resource or child album sort order
-                - fix bug with general album sorting
-                - fixed access to slideshow when child albums are squashed (by touching albums header)
-                - Possible bug where some connection settings changes (such as use basic authentication) wouldn't be fully used until next app restart"</item>
-        <item>1.4.0.52</item>
+        <item>1.4.0.114</item>
         <item>"Bugfix:
-            - Cancelling a file upload and leaving upload page before cancellation reported causes crash
-            - paid app: crash using russian on automatic upload job configuration page
-            - paid app: Updating tags list for a resource where at least one tag previously selected no longer exists causes crash (now warn user and remove them)
-            - paid app: App can crash when selecting destination album for auto upload job
-            - paid app: selecting the root album as destination album for auto upload job displays first album name as selected album (incorrectly)
-            - paid app: Note: I'm not clear that selecting the gallery root as an upload destination is ever sensible, but in case it is in some circumstances, it is allowed."</item>
-        <item>1.4.0.51</item>
-        <item>"Changes:
-                - New gallery preference to allow forcing language used within the app
-                - New Advanced Server Connection Preference - Enable URI encoding of resource URIs
-               Bugfix:
-                - number picker preferences accept value on dialog close
-                - PiwigoClientWsExt plugin correctly named in user message
-                - Corrected a few translations"</item>
-        <item>1.4.0.50</item>
-        <item>"Changes:
-                - Allow passthrough of audio as compression option
-                - Enabled compression for non 'audio/raw' mime audio streams
-                - Add option to strip the audio track from video
-               Bugfix:
-                - Stop video compression if it is deleted from upload during compression
-                - Stop video being uploaded if it is deleted from upload during compression
-                - tidy the upload progress display for individual files"</item>
-        <item>1.4.0.49</item>
+                - orphan item page load causing a crash
+               Change:
+                - name given to task progress trackers to allow bug resolution where child task of a progress tracker is unexpectedly incomplete"</item>
+        <item>1.4.0.113</item>
         <item>"Bugfix:
-                - video compression failure
-                - last upload job is re-run (no damage) on running next upload - requiring you to click upload again to get new job to run
-                - slow display of images when scrolling"
-        </item>
-        <item>1.4.0.48</item>
-        <item>"Changes:
-        - New preference in gallery settings to disable navigation button and or status bar auto hide function
-        - Only show which image sizes are being shown once unless it changes"
-        </item>
-        <item>1.4.0.47</item>
+                - Finally! worked out why the app was crashing on the slideshow for some users
+                - tweaked some dialog layout
+               Change:
+                - Dialog showing all release notes since you last updated after an update"</item>
+        <item>1.4.0.112</item>
+        <item>"Change:
+                - Tidy up the app preferences pages"</item>
+        <item>1.4.0.111</item>
         <item>"Bugfix:
-        - Improvements to app stability"
-        </item>
-        <item>1.4.0.46</item>
-        <item>"Changes:
-            - Added reload contents button to file selection page
-            - removed the (paid) suffix from app name
-            - Show path or indication of it for destination upload album
-            Bugfix:
-            - Slideshow was missing last item in album
-            - Delete item in Slideshow - blank page"
-        </item>
-        <item>1.4.0.45</item>
-        <item>"Changes:
-            - Increased arbitrary app supported max upload file size to 10GB
-            - Updated dependent library versions"
-        </item>
-        <item>1.4.0.44</item>
+                - Multimedia URIs not working for non privacy plugin users.
+                - video playback doesn't start if preference set not to include videos in slideshows
+               Change:
+                - there is a new setting in the connection preferences for privacy plugin uri repair"</item>
+        <item>1.4.0.110</item>
         <item>"Bugfix:
-        - Improvements to app stability"
-        </item>
-        <item>1.4.0.43</item>
+                - Crash multiple child albums show next to each other with an odd number of child albums present (landscape mode or large screen devices)
+                - Upload Job - Upload to Piwigo server list not selectable (impact for users with more than one server connection profile configured in the app)
+                - server albums don't load on first entry to automatic upload job select a category preference
+                - server album thumbnails not loading for child folders on upload to folder selection
+                - Unable to select upload to server album for automatic upload job using non default server"</item>
+        <item>1.4.0.109</item>
+        <item>"Change:
+                - Added statement for your clarity at the top of the email template created by this app for support requests
+                - Paid Only: Added support for notification of updates being available for the server or plugins"</item>
+        <item>1.4.0.108</item>
         <item>"Bugfix:
-        - Improvements to app stability"
-        </item>
-        <item>1.4.0.42</item>
+                - Tidy up of a lot of issues causing crashes across the app following the last month of changes
+                - Default setting for video compression corrected
+                - Re-added support for minimise albums
+                - fix videos not being detected
+              Changes:
+                - Removed option to specify which files are video playable. This is done based on file extension derived mimetype"</item>
+        <item>1.4.0.107</item>
         <item>"Bugfix:
-                - Corrections to image load error handling
-                - Correction to fix minor bug in file upload process"</item>
-        <item>1.4.0.41</item>
+                - Potential for one resource to be missed from the album resource slideshow (full screen preview)
+                - crash on preview of orphaned file
+               Change:
+                - preview of orphaned files and view within a slideshow if wished is now supported
+                - orphans menu option is only available to admin users when app not readonly"</item>
+        <item>1.4.0.106</item>
         <item>"Bugfix:
-                - Improvements to app stability
-                - edit mode closed after image details updated
-            Changes:
-                - (pro only) View upload status details including errors for automatic jobs - on each automatic upload job config page"</item>
-        <item>1.4.0.38</item>
+                - Hopefully the final bug where album thumbnails appeared not to be loading correctly
+               Changes:
+                - When deleting an album, child resources can be either unlinked, or deleted from the server
+                - Paid Only: There is a new orphaned resource management page"</item>
+        <item>1.4.0.105</item>
         <item>"Bugfix:
-                - Slideshow (full screen image view) now works again. My Sincere apologies.
-                - Russian translations for preferences added"
-        </item>
-
-
-        <item>1.4.0.37</item>
+                - Rewrite of the album, tag, and favorite sorting code because it was riddled with bugs
+                    : If something in this area now doesn't work as you expect, please let me know.
+                    : This should solve crashes that were occurring on the slideshow page
+                - The recently altered yellow star icon wasn't appearing in some sort orders
+                - Correct the loading of thumbnails
+                - Fix bug preventing manual reload of failed thumbnail load by clicking - just once so it isn't too iritating if you want to change album
+               Changes:
+            - New preference to allow independent sort order reversal of child albums and resources"</item>
+        <item>1.4.0.104</item>
         <item>"Bugfix:
-                - Connection cleanup now works again
-                - Setting resource rating in Russian Locale now works again"</item>
-        <item>1.4.0.36</item>
-        <item>"Changes:
-                - The download for files now occurs in a rudimentary queue and is managed at an app level. However, you must still currently keep the app open for then download to continue.
-               Bugfix:
-                - Download of files now works where server does not report file size
-                - Files added to file upload screen are now shown again (were initially invisible)
-                - Other assorted bugs"</item>
+                - Problems caused in upload after re-working the file selection for keystore and certificates
+                    : Thanks for your patience, android file permissions management is tricky
+                - delete of albums in root now always available on app load if appropriate
+                - items can now be selected by clicking anywhere not just in the checkbox"</item>
+        <item>1.4.0.103</item>
+        <item>"Bugfix:
+                - Keystore and Trusted certificate item editing caused crash.
+                    : Please email me from the app when key functionality like this doesn't work.
+                - Sometimes unable to navigate out of recent files with system file selection
+                - Groups list vertically aligned to the center of the screen
+               Changes:
+                - Better User experience for keystore and certificate import
+                - New preference to control the length of time the image detail is shown in the fullscreen or slideshow view"</item>
+        <item>1.4.0.102</item>
+        <item>"Bugfix:
+                - Recent changes made it impossible to have both the free and paid versions installed at the same time on a single device
+                - album thumbnails not always showing for admin user
+                - tested against Piwigo 11. Opening an image was not working"</item>
     </string-array>
 </resources>

@@ -1,6 +1,8 @@
 package delit.piwigoclient.ui.upload;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,18 +21,22 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.core.util.Logging;
+import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
-public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDetailsFragment> {
+public class UploadJobStatusDetailsFragment<F extends UploadJobStatusDetailsFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
     private static final String STATE_UPLOAD_JOB_ID = "uploadJobId";
+    private static final String TAG = "UpJobStatFrag";
     private UploadJob uploadJob;
 
-    public static UploadJobStatusDetailsFragment newInstance(UploadJob job) {
-        UploadJobStatusDetailsFragment fragment = new UploadJobStatusDetailsFragment();
+    public static UploadJobStatusDetailsFragment<?,?> newInstance(UploadJob job) {
+        UploadJobStatusDetailsFragment<?,?> fragment = new UploadJobStatusDetailsFragment<>();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(buildArgs(job));
         return fragment;
     }
@@ -51,7 +56,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.fragment_upload_job_status,null);
+        View v = inflater.inflate(R.layout.fragment_upload_job_status,container, false);
 
         return v;
     }
@@ -70,16 +75,17 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
         }
 
         if(uploadJob == null) {
+            Logging.log(Log.INFO, TAG, "removing from activity as no upload job to show status for");
             getParentFragmentManager().popBackStack();
             return;
         }
 
-        ArrayList<File> filesAwaitingUpload = uploadJob.getFilesAwaitingUpload();
-        HashSet<File> filesMidTransfer = uploadJob.getFilesWithStatus(UploadJob.UPLOADING);
-        HashSet<File> filesAwaitingVerification = uploadJob.getFilesWithStatus(UploadJob.UPLOADED);
-        HashSet<File> filesAwaitingConfiguration = uploadJob.getFilesWithStatus(UploadJob.VERIFIED);
-        HashSet<File> filesFinishedWith = uploadJob.getFilesWithStatus(UploadJob.CONFIGURED);
-        HashSet<File> filesNeedDeletingFromServer = uploadJob.getFilesWithStatus(UploadJob.REQUIRES_DELETE);
+        ArrayList<Uri> filesAwaitingUpload = uploadJob.getFilesAwaitingUpload();
+        HashSet<Uri> filesMidTransfer = uploadJob.getFilesWithStatus(UploadJob.UPLOADING);
+        HashSet<Uri> filesAwaitingVerification = uploadJob.getFilesWithStatus(UploadJob.UPLOADED);
+        HashSet<Uri> filesAwaitingConfiguration = uploadJob.getFilesWithStatus(UploadJob.VERIFIED);
+        HashSet<Uri> filesFinishedWith = uploadJob.getFilesWithStatus(UploadJob.CONFIGURED);
+        HashSet<Uri> filesNeedDeletingFromServer = uploadJob.getFilesWithStatus(UploadJob.REQUIRES_DELETE);
         boolean tempAlbumNeedsDelete = uploadJob.getTemporaryUploadAlbum() > 0;
 
         TextView textView = view.findViewById(R.id.files_awaiting_transfer);
@@ -102,7 +108,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
 
         filesAwaitingUpload.removeAll(filesMidTransfer);
 
-        AppCompatCheckboxTriState checkBox = view.findViewById(R.id.temporary_album_needs_deleting);
+        MaterialCheckboxTriState checkBox = view.findViewById(R.id.temporary_album_needs_deleting);
         checkBox.setChecked(tempAlbumNeedsDelete);
 
         textView = view.findViewById(R.id.errors_encountered_list_label);
@@ -126,7 +132,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
         private final ArrayList<Map.Entry<Date, String>> dataIndex;
 
         public UploadJobErrorsListAdapter(LinkedHashMap<Date,String> errors) {
-            this.dataIndex = new ArrayList<Map.Entry<Date, String>>();
+            this.dataIndex = new ArrayList<>();
             dataIndex.addAll(errors.entrySet());
         }
 
@@ -157,7 +163,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
 
             View v = convertView;
             if(v == null) {
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_list_item, null);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_item_simple, parent, false);
             }
             TextView view = v.findViewById(R.id.list_item_name);
             view.setText(piwigoDateFormat.format(thisDataItem.getKey()));

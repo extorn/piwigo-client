@@ -7,11 +7,10 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import delit.libs.http.RequestParams;
-import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.ServerConfig;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
-public class GalleryGetConfigResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
+public class GalleryGetConfigResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GalleryGetCfgRspHdlr";
 

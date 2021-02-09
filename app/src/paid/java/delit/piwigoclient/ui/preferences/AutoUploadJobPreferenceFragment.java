@@ -2,14 +2,14 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
@@ -18,14 +18,17 @@ import androidx.preference.PreferenceManager;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
+import delit.libs.core.util.Logging;
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.CollectionUtils;
+import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -40,13 +43,13 @@ import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.preference.LocalFoldersListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
-import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 
-public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
+public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyPreferenceFragment<F,FUIH> {
 
     private static final String JOB_ID_ARG = "jobConfigId";
     private static final String ACTION_ID_ARG = "actionId";
@@ -55,8 +58,8 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     private int jobConfigId = -1;
     private SharedPreferences appPrefs;
 
-    public static AutoUploadJobPreferenceFragment newInstance(int actionId, int jobId) {
-        AutoUploadJobPreferenceFragment fragment = new AutoUploadJobPreferenceFragment();
+    public static AutoUploadJobPreferenceFragment<?,?> newInstance(int actionId, int jobId) {
+        AutoUploadJobPreferenceFragment<?,?> fragment = new AutoUploadJobPreferenceFragment<>();
         Bundle args = new Bundle();
         args.putInt(ACTION_ID_ARG, actionId);
         args.putInt(JOB_ID_ARG, jobId);
@@ -82,15 +85,27 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
         Preference viewUploadStatus = findPreference(R.string.preference_data_upload_automatic_job_view_status_key);
         viewUploadStatus.setEnabled(BackgroundPiwigoUploadService.getActiveBackgroundJobByJobConfigId(requireContext(), jobConfigId) != null);
-        viewUploadStatus.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                onUploadJobStatusButtonClick();
-                return true;
-            }
+        viewUploadStatus.setOnPreferenceClickListener(preference -> {
+            onUploadJobStatusButtonClick();
+            return true;
         });
 
-        ServerConnectionsListPreference serverConnPref = (ServerConnectionsListPreference) findPreference(R.string.preference_data_upload_automatic_job_server_key);
+        boolean deleteFilesAfterUpload = getBooleanPreferenceValue(R.string.preference_data_upload_automatic_job_delete_uploaded_key, R.bool.preference_data_upload_automatic_job_delete_uploaded_default);
+
+        LocalFoldersListPreference uploadFromFolder = (LocalFoldersListPreference) findPreference(R.string.preference_data_upload_automatic_job_local_folder_key);
+        uploadFromFolder.setOnPreferenceChangeListener(new LocalFoldersListPreference.PersistablePermissionsChangeListener(getUiHelper()));
+        uploadFromFolder.setOnPreferenceClickListener(preference -> {
+
+            int permissions = IOUtils.URI_PERMISSION_READ;
+            if(deleteFilesAfterUpload) {
+                permissions = IOUtils.URI_PERMISSION_READ_WRITE;
+            }
+            ((LocalFoldersListPreference)preference).setRequiredPermissions(permissions);
+
+            return false;
+        });
+
+        //ServerConnectionsListPreference serverConnPref = (ServerConnectionsListPreference) findPreference(R.string.preference_data_upload_automatic_job_server_key);
 
         MultiSelectListPreference fileExtPref = (MultiSelectListPreference) findPreference(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key);
         fileExtPref.setOnPreferenceClickListener(new FileExtPreferenceClickListener());
@@ -117,12 +132,12 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(profilePrefs);
         if (sessionDetails != null) {
-            updateAvailableFileTypes(sessionDetails.getAllowedFileTypes());
+            DisplayUtils.postOnUiThread(() -> updateAvailableFileTypes(sessionDetails.getAllowedFileTypes()));
         } else {
             String serverUri = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
             LoginResponseHandler loginHandler = new LoginResponseHandler();
             loginHandler.withConnectionPreferences(profilePrefs);
-            getUiHelper().addActionOnResponse(loginHandler.getMessageId(), new LoginResponseAction(profilePrefs));
+            getUiHelper().addActionOnResponse(loginHandler.getMessageId(), new LoginResponseAction<>(profilePrefs));
             callServer(getString(R.string.logging_in_to_piwigo_pattern, serverUri), loginHandler);
         }
     }
@@ -150,7 +165,33 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         // check local folder
         if(allPreferencesValid) {
             String localFolder = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_local_folder_key);
-            allPreferencesValid = localFolder != null && new File(localFolder).exists();
+            allPreferencesValid = localFolder != null;
+            if(allPreferencesValid) {
+                Uri uri = Uri.parse(localFolder);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    try {
+                        File file = LegacyIOUtils.getFile(uri);
+                        allPreferencesValid = file != null && file.exists();
+                    } catch (IOException e) {
+                        Logging.recordException(e);
+                    }
+                } else {
+                    DocumentFile docFile;
+                    try {
+                        docFile = DocumentFile.fromTreeUri(requireContext(), uri);
+                    } catch(IllegalArgumentException e) {
+                        docFile = null;
+                    }
+                    allPreferencesValid = docFile != null && docFile.exists() && docFile.isDirectory();
+
+                    boolean deleteFilesAfterUpload = getBooleanPreferenceValue(R.string.preference_data_upload_automatic_job_delete_uploaded_key, R.bool.preference_data_upload_automatic_job_delete_uploaded_default);
+                    int perms = IOUtils.URI_PERMISSION_READ;
+                    if(deleteFilesAfterUpload) {
+                        perms = IOUtils.URI_PERMISSION_READ_WRITE;
+                    }
+                    allPreferencesValid &= IOUtils.appHoldsAllUriPermissionsForUri(requireContext(), uri, perms);
+                }
+            }
         }
         // check remote privacy level
         if(allPreferencesValid) {
@@ -184,7 +225,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private static class LoginResponseAction extends UIHelper.Action<FragmentUIHelper<AutoUploadJobPreferenceFragment>, AutoUploadJobPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+    private static class LoginResponseAction<F extends AutoUploadJobPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.Action<FUIH,F, LoginResponseHandler.PiwigoOnLoginResponse> {
 
         private ConnectionPreferences.ProfilePreferences profilePrefs;
 
@@ -193,15 +234,15 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<AutoUploadJobPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public boolean onSuccess(FUIH uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             uiHelper.getParent().updateAvailableFileTypes(PiwigoSessionDetails.getInstance(profilePrefs).getAllowedFileTypes());
             return true;
         }
     }
 
-    private void updateAvailableFileTypes(Set<String> allowedFileTypes) {
+    protected void updateAvailableFileTypes(Set<String> allowedFileTypes) {
         MultiSelectListPreference p = (MultiSelectListPreference) findPreference(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key);
-        String[] availableOptions = allowedFileTypes.toArray(new String[0]);
+        String[] availableOptions = allowedFileTypes == null ? new String[0] : allowedFileTypes.toArray(new String[0]);
 
         AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(jobConfigId);
         Set<String> newValues = jobConfig.getFileExtsToUpload(getContext());
@@ -231,7 +272,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
             if(albumId >= 0) {
                 if (CategoryItem.isRoot(albumId)) {
-                    finishPreferenceValuesValidation(Arrays.asList(CategoryItemStub.ROOT_GALLERY));
+                    finishPreferenceValuesValidation(Collections.singletonList(CategoryItemStub.ROOT_GALLERY));
                 } else {
                     AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
                     albumHandler.withConnectionPreferences(profilePrefs);
@@ -246,7 +287,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private void finishPreferenceValuesValidation(List<CategoryItemStub> albumNames) {
+    void finishPreferenceValuesValidation(List<CategoryItemStub> albumNames) {
         boolean remoteAlbumExists = albumNames != null && albumNames.size() >= 1;
 
         SharedPreferences.Editor editor = getPrefs().edit();
@@ -299,13 +340,8 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        return super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
     @Override
@@ -331,7 +367,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public void onStop() {
-        EventBus.getDefault().postSticky(new AutoUploadJobViewCompleteEvent(actionId, jobConfigId));
+        EventBus.getDefault().post(new AutoUploadJobViewCompleteEvent(actionId, jobConfigId));
         super.onStop();
     }
 
@@ -350,7 +386,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<F extends AutoUploadJobPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
 
         @Override
@@ -358,7 +394,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             // for now, allow the default "retry button" to pop-up.
             super.handleErrorRetryPossible(errorResponse, title, msg, null);
             // ensure the job is marked as invalid (it'll be updated if the user retries and it succeeds)
-            finishPreferenceValuesValidation(null);
+            getParent().finishPreferenceValuesValidation(null);
 
             // different idea for the retries button
 //            getListView().removeHeaderView(retryActionView);
@@ -375,14 +411,14 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             //TODO do something to notify user
             super.showOrQueueMessage(title, message);
             // ensure the job is marked as invalid.
-            finishPreferenceValuesValidation(null);
+            getParent().finishPreferenceValuesValidation(null);
         }
 
         @Override
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
             super.onAfterHandlePiwigoResponse(response);
             if(response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                finishPreferenceValuesValidation(((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+                getParent().finishPreferenceValuesValidation(((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
             }
         }
     }

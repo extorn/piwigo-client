@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.permissions.users;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,38 +21,37 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
-import delit.libs.ui.view.button.CustomImageButton;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -68,6 +68,7 @@ import delit.piwigoclient.piwigoApi.handlers.UserUpdateInfoResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.UserDeletedEvent;
@@ -77,6 +78,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEve
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapter;
+import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -85,7 +87,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 21/06/17.
  */
 
-public class UserFragment extends MyFragment<UserFragment> {
+public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
     private static final String CURRENT_GROUP_MEMBERSHIPS = "groupMemberships";
     private static final String CURRENT_DIRECT_ALBUM_PERMISSIONS = "currentDirectAlbumPermissions";
@@ -99,6 +101,7 @@ public class UserFragment extends MyFragment<UserFragment> {
     private static final String STATE_NEW_GROUP_MEMBERSHIP = "newGroupMembership";
     private static final String IN_FLIGHT_SAVE_ACTION_IDS = "saveActionIds";
     private static final String STATE_SELECT_GROUPS_ACTION_ID = "selectGroupsActionId";
+    private static final String TAG = "UsrFrag";
     // other stuff
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.UK);
     private final HashSet<Long> saveActionIds = new HashSet<>(5);
@@ -106,12 +109,12 @@ public class UserFragment extends MyFragment<UserFragment> {
     private EditText usernameField;
     private Spinner usertypeField;
     private EditText emailField;
-    private CheckBox highDefinitionEnabled;
+    private SwitchMaterial highDefinitionEnabled;
     private TextView lastVisitedField;
-    private CustomImageButton editButton;
-    private CustomImageButton discardButton;
-    private CustomImageButton saveButton;
-    private CustomImageButton deleteButton;
+    private MaterialButton editButton;
+    private MaterialButton discardButton;
+    private MaterialButton saveButton;
+    private MaterialButton deleteButton;
     private Spinner userPrivacyLevelField;
     private TextView userGroupsField;
     private EditText passwordField;
@@ -132,9 +135,11 @@ public class UserFragment extends MyFragment<UserFragment> {
     private HashSet<Group> currentGroupMembership;
     private HashSet<Group> newGroupMembership;
     private int selectGroupsActionId;
+    private long userGetPermissionsCallId;
 
-    public static UserFragment newInstance(User user) {
-        UserFragment fragment = new UserFragment();
+    public static UserFragment<?,?> newInstance(User user) {
+        UserFragment<?,?> fragment = new UserFragment<>();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = new Bundle();
         args.putParcelable(ARG_USER, user);
         fragment.setArguments(args);
@@ -166,7 +171,8 @@ public class UserFragment extends MyFragment<UserFragment> {
         super.onViewStateRestored(savedInstanceState);
 
         // This has to be done here because the albumPermissionsField maintains a checked state internally (ignorant of any other alterations to that field).
-        if (availableGalleries != null && !getUiHelper().isServiceCallInProgress()) {
+        if (availableGalleries != null && !getUiHelper().isServiceCallInProgress(userGetPermissionsCallId)) {
+            userGetPermissionsCallId = 0;
             HashSet<Long> directAlbumPermissions = getLatestDirectAlbumPermissions();
             HashSet<Long> indirectAlbumPermissions = getLatestIndirectAlbumPermissions();
             populateAlbumPermissionsList(directAlbumPermissions, indirectAlbumPermissions);
@@ -176,7 +182,7 @@ public class UserFragment extends MyFragment<UserFragment> {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        BundleUtils.putHashSet(outState, CURRENT_GROUP_MEMBERSHIPS, currentGroupMembership);
+        BundleUtils.putSet(outState, CURRENT_GROUP_MEMBERSHIPS, currentGroupMembership);
         BundleUtils.putLongHashSet(outState, CURRENT_DIRECT_ALBUM_PERMISSIONS, currentDirectAlbumPermissions);
         BundleUtils.putLongHashSet(outState, CURRENT_INDIRECT_ALBUM_PERMISSIONS, currentIndirectAlbumPermissions);
         BundleUtils.putLongHashSet(outState, NEW_DIRECT_ALBUM_PERMISSIONS, newDirectAlbumPermissions);
@@ -185,7 +191,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         outState.putParcelable(ARG_USER, user);
         outState.putParcelable(NEW_USER, newUser);
         outState.putBoolean(STATE_FIELDS_EDITABLE, fieldsEditable);
-        BundleUtils.putHashSet(outState, STATE_NEW_GROUP_MEMBERSHIP, newGroupMembership);
+        BundleUtils.putSet(outState, STATE_NEW_GROUP_MEMBERSHIP, newGroupMembership);
         BundleUtils.putLongHashSet(outState, IN_FLIGHT_SAVE_ACTION_IDS, saveActionIds);
         outState.putInt(STATE_SELECT_GROUPS_ACTION_ID, selectGroupsActionId);
 
@@ -244,11 +250,22 @@ public class UserFragment extends MyFragment<UserFragment> {
         userPrivacyLevelField.setEnabled(editable);
         lastVisitedField.setEnabled(editable);
 
+        //TODO this doesn't work as the adapter prefs are marked readonly and still set as disabled after setenabled on the adapter
+        // the idea was to make the icons green (secondary colors) when in editable mode.
+//        AlbumSelectionListAdapter adapter = ((AlbumSelectionListAdapter) albumPermissionsField.getAdapter());
+//        if(adapter != null) {
+//            adapter.setEnabled(editable);
+//            adapter.notifyDataSetChanged();
+//        }
+
         emailField.setEnabled(editable);
         highDefinitionEnabled.setEnabled(editable);
-        editButton.setEnabled(!editable);
-        discardButton.setEnabled(editable);
-        saveButton.setEnabled(editable);
+//        editButton.setEnabled(!editable);
+        editButton.setVisibility(!editable ? VISIBLE : GONE);
+//        discardButton.setEnabled(editable);
+        discardButton.setVisibility(editable ? VISIBLE : GONE);
+//        saveButton.setEnabled(editable);
+        saveButton.setVisibility(editable ? VISIBLE : GONE);
 
     }
 
@@ -266,7 +283,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         View v = inflater.inflate(R.layout.fragment_user, container, false);
 
         AdView adView = v.findViewById(R.id.user_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -290,52 +307,34 @@ public class UserFragment extends MyFragment<UserFragment> {
         RelativeLayout userEditControls = v.findViewById(R.id.user_edit_controls);
 
         editButton = v.findViewById(R.id.user_action_edit_button);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setFieldsEditable(true);
-            }
-        });
+        editButton.setOnClickListener(v14 -> setFieldsEditable(true));
         discardButton = v.findViewById(R.id.user_action_discard_button);
-        discardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                newGroupMembership = null;
-                newDirectAlbumPermissions = null;
-                newIndirectAlbumPermissions = null;
-                setFieldsFromModel(user);
-                populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
-                setFieldsEditable(user.getId() < 0);
-            }
+        discardButton.setOnClickListener(v13 -> {
+            newGroupMembership = null;
+            newDirectAlbumPermissions = null;
+            newIndirectAlbumPermissions = null;
+            setFieldsFromModel(user);
+            populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
+            setFieldsEditable(user.getId() < 0);
         });
         saveButton = v.findViewById(R.id.user_action_save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveUserChanges();
-            }
-        });
+        saveButton.setOnClickListener(v12 -> saveUserChanges());
         deleteButton = v.findViewById(R.id.user_action_delete_button);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteUser(user);
-            }
-        });
+        deleteButton.setOnClickListener(v1 -> deleteUser(user));
 
         usernameField = v.findViewById(R.id.user_username);
 
         usertypeField = v.findViewById(R.id.user_usertype);
         userTypeValues = Arrays.asList(getResources().getStringArray(R.array.user_types_array));
         List<String> userTypes = Arrays.asList(getResources().getStringArray(R.array.user_types_array));
-        ArrayAdapter<String> userTypesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, userTypes);
+        ArrayAdapter<String> userTypesAdapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_spinner_item, userTypes);
         userTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         usertypeField.setAdapter(userTypesAdapter);
 
         userPrivacyLevelField = v.findViewById(R.id.user_privacy_level);
         userPrivacyLevelValues = getResources().getIntArray(R.array.privacy_levels_values_array);
         List<String> userPrivacyLevels = Arrays.asList(getResources().getStringArray(R.array.privacy_levels_array));
-        ArrayAdapter<String> userPrivacyLevelsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, userPrivacyLevels);
+        ArrayAdapter<String> userPrivacyLevelsAdapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_spinner_item, userPrivacyLevels);
         userPrivacyLevelsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         userPrivacyLevelField.setAdapter(userPrivacyLevelsAdapter);
 
@@ -348,6 +347,11 @@ public class UserFragment extends MyFragment<UserFragment> {
         TextView passwordFieldLabel = v.findViewById(R.id.user_password_label);
         passwordField = v.findViewById(R.id.user_password_field);
 
+        CheckBox viewUnencryptedToggle = v.findViewById(R.id.toggle_visibility);
+        if (viewUnencryptedToggle != null) {
+            viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(passwordField));
+        }
+
         if (user.getId() < 0) {
             // this is a new user creation.
             fieldsEditable = true;
@@ -357,12 +361,9 @@ public class UserFragment extends MyFragment<UserFragment> {
         highDefinitionEnabled = v.findViewById(R.id.user_high_definition_field);
 
         userGroupsField = v.findViewById(R.id.user_groups);
-        userGroupsField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectGroupMembership();
-            }
-        });
+        userGroupsField.setOnClickListener(v15 -> selectGroupMembership());
+        // can't just use a std click listener as it first focuses the field :-(
+        CustomClickTouchListener.callClickOnTouch(userGroupsField);
 
         albumPermissionsField = v.findViewById(R.id.user_access_rights);
         albumPermissionsField.setOnTouchListener(new CustomClickTouchListener(albumPermissionsField) {
@@ -381,7 +382,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         }
 
         if (availableGalleries == null) {
-            addActiveServiceCall(R.string.progress_loading_user_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
+            addActiveServiceCall(R.string.progress_loading_user_details, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), true));
         }
 
         if (user.getId() < 0) {
@@ -398,25 +399,90 @@ public class UserFragment extends MyFragment<UserFragment> {
             }
             fillGroupMembershipField();
             if (currentDirectAlbumPermissions == null) {
-                addActiveServiceCall(R.string.progress_loading_user_details, new UserGetPermissionsResponseHandler(user.getId()));
+                userGetPermissionsCallId = addActiveServiceCall(R.string.progress_loading_user_details, new UserGetPermissionsResponseHandler(user.getId()));
             }
         }
 
-        if(isOnInitialCreate()) {
-            albumPermissionsField.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                    if (top != oldTop) {
-                        NestedScrollView scrollview = v.getRootView().findViewById(R.id.user_edit_scrollview);
-                        scrollview.fullScroll(View.FOCUS_UP);
-                        v.removeOnLayoutChangeListener(this);
-                    }
-                }
-            });
-        }
+        albumPermissionsField.addOnLayoutChangeListener(new LayoutChangeListener());
 
 
         return v;
+    }
+
+    User getUser() {
+        return user;
+    }
+
+    void setUser(User user) {
+        this.user = user;
+    }
+
+    User getNewUser() {
+        return newUser;
+    }
+
+    HashSet<Long> getCurrentDirectAlbumPermissions() {
+        return currentDirectAlbumPermissions;
+    }
+
+    HashSet<Long> getCurrentIndirectAlbumPermissions() {
+        return currentIndirectAlbumPermissions;
+    }
+
+    private static class UserFragmentAction<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.Action<FUIH,F, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse> implements Parcelable {
+
+        private static final String TAG = "UsrFrag";
+
+        protected UserFragmentAction() {}
+
+        protected UserFragmentAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<UserFragmentAction<?,?>> CREATOR = new Creator<UserFragmentAction<?,?>>() {
+            @Override
+            public UserFragmentAction<?,?> createFromParcel(Parcel in) {
+                return new UserFragmentAction<>(in);
+            }
+
+            @Override
+            public UserFragmentAction<?,?>[] newArray(int size) {
+                return new UserFragmentAction[size];
+            }
+        };
+
+        @Override
+        public boolean onSuccess(FUIH uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
+            F userFragment = uiHelper.getParent();
+            userFragment.setUser(response.getSelectedUser());
+
+            if(userFragment.getNewUser() == null) {
+                if (userFragment.getUser() != null) {
+                    userFragment.setFieldsFromModel(userFragment.getUser());
+                    userFragment.populateAlbumPermissionsList(userFragment.getCurrentDirectAlbumPermissions(), userFragment.getCurrentIndirectAlbumPermissions());
+                } else {
+                    uiHelper.showDetailedMsg(R.string.alert_error, userFragment.getString(R.string.user_details_not_found_on_server));
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            Logging.log(Log.INFO, TAG, "removing from activity on piwigo error response rxd");
+            uiHelper.getParent().getParentFragmentManager().popBackStack();
+            return false;
+        }
     }
 
     @Override
@@ -424,31 +490,11 @@ public class UserFragment extends MyFragment<UserFragment> {
         super.onViewCreated(view, savedInstanceState);
         if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
             //trigger total screen refresh. Any errors will result in screen being closed.
-            UIHelper.Action action = new UIHelper.Action<FragmentUIHelper<UserFragment>, UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse>() {
-
-                @Override
-                public boolean onSuccess(FragmentUIHelper<UserFragment> uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
-                    user = response.getSelectedUser();
-                    if(newUser == null) {
-                        if (user != null) {
-                            setFieldsFromModel(user);
-                            populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
-                        } else {
-                            getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.user_details_not_found_on_server));
-                        }
-                    }
-                    return false;
-                }
-
-                @Override
-                public boolean onFailure(FragmentUIHelper<UserFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                    getParentFragmentManager().popBackStack();
-                    return false;
-                }
-            };
+            UIHelper.Action action = new UserFragmentAction<>();
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_user_details, new UserGetInfoResponseHandler(user.getId()), action);
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as not admin user");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -457,9 +503,9 @@ public class UserFragment extends MyFragment<UserFragment> {
         newUser = setModelFromFields(new User());
         setFieldsEditable(false);
         if (newUser.getId() < 0) {
-            saveActionIds.add(addActiveServiceCall(R.string.progress_adding_user, new UserAddResponseHandler(newUser)));
+            saveActionIds.add(addActiveServiceCall(R.string.progress_adding_user, new UserAddResponseHandler<>(newUser)));
         } else {
-            saveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new UserUpdateInfoResponseHandler(newUser)));
+            saveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new UserUpdateInfoResponseHandler<>(newUser)));
             saveUserPermissionsChangesIfRequired();
         }
 
@@ -475,7 +521,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         return currentSelection;
     }
 
-    private void setFieldsFromModel(User user) {
+    protected void setFieldsFromModel(User user) {
         usernameField.setText(user.getUsername());
         int selectedUserType = userTypeValues.indexOf(user.getUserType());
         usertypeField.setSelection(selectedUserType);
@@ -520,11 +566,7 @@ public class UserFragment extends MyFragment<UserFragment> {
 
     private void selectGroupMembership() {
         HashSet<Group> currentSelection = getLatestGroupMembership();
-        HashSet<Long> preselectedGroups = new HashSet<>(currentSelection.size());
-
-        for (Group g : currentSelection) {
-            preselectedGroups.add(g.getId());
-        }
+        HashSet<Long> preselectedGroups = PiwigoUtils.toSetOfIds(currentSelection);
         GroupSelectionNeededEvent groupSelectionNeededEvent = new GroupSelectionNeededEvent(true, fieldsEditable, preselectedGroups);
         selectGroupsActionId = groupSelectionNeededEvent.getActionId();
         EventBus.getDefault().post(groupSelectionNeededEvent);
@@ -537,49 +579,62 @@ public class UserFragment extends MyFragment<UserFragment> {
         } else {
 
             String message = getString(R.string.alert_confirm_really_delete_user);
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteUserAction(getUiHelper(), user));
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteUserAction<>(getUiHelper(), user));
         }
     }
 
-    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UserFragment>> {
+    private static class OnDeleteUserAction<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
 
-        private transient User user; // user is not serializable.
+        private User user;
 
-        public OnDeleteUserAction(FragmentUIHelper<UserFragment> uiHelper, User user) {
+        public OnDeleteUserAction(FUIH uiHelper, User user) {
             super(uiHelper);
             this.user = user;
         }
 
+        protected OnDeleteUserAction(Parcel in) {
+            super(in);
+            user = in.readParcelable(User.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeParcelable(user, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteUserAction<?,?>> CREATOR = new Creator<OnDeleteUserAction<?,?>>() {
+            @Override
+            public OnDeleteUserAction<?,?> createFromParcel(Parcel in) {
+                return new OnDeleteUserAction<>(in);
+            }
+
+            @Override
+            public OnDeleteUserAction<?,?>[] newArray(int size) {
+                return new OnDeleteUserAction[size];
+            }
+        };
+
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                UserFragment fragment = getUiHelper().getParent();
+                F fragment = getUiHelper().getParent();
                 fragment.deleteUserNow(user);
             }
         }
-
-        private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-            out.defaultWriteObject();
-            Parcel p = Parcel.obtain();
-            p.writeValue(user);
-            ParcelUtils.writeParcel(out, p);
-        }
-
-        private void readObject(java.io.ObjectInputStream in)
-                throws IOException, ClassNotFoundException {
-            in.defaultReadObject();
-            Parcel p = ParcelUtils.readParcel(in);
-            user = ParcelUtils.readValue(p, User.class.getClassLoader(), User.class);
-        }
-
     }
 
-    private void deleteUserNow(User thisItem) {
+    protected void deleteUserNow(User thisItem) {
 
         addActiveServiceCall(R.string.progress_delete_user, new UserDeleteResponseHandler(thisItem.getId()));
     }
 
-    private void onUserSaved(UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse response) {
+    protected void onUserSaved(UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse response) {
         // copy across album permissions as they aren't normally retrieved.
         synchronized (saveActionIds) {
             saveActionIds.remove(response.getMessageId());
@@ -684,12 +739,7 @@ public class UserFragment extends MyFragment<UserFragment> {
                 sb.append(getString(R.string.none_value));
             } else {
                 ArrayList<Group> sortedList = new ArrayList<>(groupMembership);
-                Collections.sort(sortedList, new Comparator<Group>() {
-                    @Override
-                    public int compare(Group o1, Group o2) {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                });
+                Collections.sort(sortedList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
                 Iterator<Group> iter = sortedList.iterator();
                 while (iter.hasNext()) {
                     sb.append(iter.next().getName());
@@ -702,7 +752,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         }
     }
 
-    private void onUserPermissionsRemoved(UserPermissionsRemovedResponseHandler.PiwigoUserPermissionsRemovedResponse response) {
+    protected void onUserPermissionsRemoved(UserPermissionsRemovedResponseHandler.PiwigoUserPermissionsRemovedResponse response) {
         synchronized (saveActionIds) {
             saveActionIds.remove(response.getMessageId());
             currentDirectAlbumPermissions.removeAll(response.getAlbumsForWhichPermissionRemoved());
@@ -714,7 +764,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         }
     }
 
-    private void onUserPermissionsAdded(UserPermissionsAddResponseHandler.PiwigoUserPermissionsAddedResponse response) {
+    protected void onUserPermissionsAdded(UserPermissionsAddResponseHandler.PiwigoUserPermissionsAddedResponse response) {
         synchronized (saveActionIds) {
             saveActionIds.remove(response.getMessageId());
             currentDirectAlbumPermissions.addAll(response.getAlbumsForWhichPermissionAdded());
@@ -727,11 +777,11 @@ public class UserFragment extends MyFragment<UserFragment> {
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
-    private void onUserCreated(UserAddResponseHandler.PiwigoAddUserResponse response) {
+    protected void onUserCreated(UserAddResponseHandler.PiwigoAddUserResponse response) {
         saveActionIds.remove(response.getMessageId());
         User savedUser = response.getUser();
         newUser.setId(savedUser.getId());
@@ -741,23 +791,23 @@ public class UserFragment extends MyFragment<UserFragment> {
         saveUserPermissionsChangesIfRequired();
     }
 
-    private void onGroupsLoaded(GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
+    protected void onGroupsLoaded(GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         HashSet<Long> differences = SetUtils.differences(user.getGroups(), PiwigoUtils.toSetOfIds(response.getGroups()));
         if(!differences.isEmpty()) {
-            Crashlytics.log(Log.ERROR, getTag(), String.format("Rxd %1$s groups but asked for %2$s", user.getGroups().size(), response.getGroups().size()));
+            Logging.log(Log.ERROR, getTag(), String.format("Rxd %1$s groups but asked for %2$s", user.getGroups().size(), response.getGroups().size()));
             throw new RuntimeException("error in group retrieval");
         }
-        currentGroupMembership = response.getGroups();
+        currentGroupMembership = new LinkedHashSet<>(response.getGroups());
         fillGroupMembershipField();
     }
 
-    private void onGroupMembershipAlbumPermissionsRetrieved(GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse response) {
+    protected void onGroupMembershipAlbumPermissionsRetrieved(GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse response) {
         // retrieve all those albums indirectly accessibly by this user.
         newIndirectAlbumPermissions = response.getAllowedAlbums();
         populateAlbumPermissionsList(getLatestDirectAlbumPermissions(), getLatestIndirectAlbumPermissions());
     }
 
-    private void onUserPermissionsRetrieved(UserGetPermissionsResponseHandler.PiwigoUserPermissionsResponse response) {
+    protected void onUserPermissionsRetrieved(UserGetPermissionsResponseHandler.PiwigoUserPermissionsResponse response) {
         // We're retrieving the current configuration
         currentDirectAlbumPermissions = response.getDirectlyAccessibleAlbumIds();
         currentIndirectAlbumPermissions = response.getIndirectlyAccessibleAlbumIds();
@@ -766,30 +816,30 @@ public class UserFragment extends MyFragment<UserFragment> {
         }
     }
 
-    private void onGetSubGalleries(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    protected void onGetSubGalleries(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         this.availableGalleries = response.getAlbumNames();
         if (currentIndirectAlbumPermissions != null) {
             populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
         }
     }
 
-    private void onUserDeleted(final UserDeleteResponseHandler.PiwigoDeleteUserResponse response) {
+    protected void onUserDeleted(final UserDeleteResponseHandler.PiwigoDeleteUserResponse response) {
         EventBus.getDefault().post(new UserDeletedEvent(user));
         // return to previous screen
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as user deleted piwigo response rxd");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
 
-    private synchronized void populateAlbumPermissionsList(HashSet<Long> initialSelection, HashSet<Long> indirectAlbumPermissions) {
+    protected synchronized void populateAlbumPermissionsList(HashSet<Long> initialSelection, HashSet<Long> indirectAlbumPermissions) {
         AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter) albumPermissionsField.getAdapter();
         if (adapter == null) {
-            BaseRecyclerViewAdapterPreferences adapterPreferences = new BaseRecyclerViewAdapterPreferences();
-            adapterPreferences.selectable(true, false);
-            adapterPreferences.readonly();
-            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableGalleries, indirectAlbumPermissions, adapterPreferences);
+            AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences(true, false, false, true, false);
+            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableGalleries, indirectAlbumPermissions, adapterPreferences);
             availableItemsAdapter.linkToListView(albumPermissionsField, initialSelection, initialSelection);
-        } else if (!CollectionUtils.equals(adapter.getSelectedItems(), initialSelection)) {
+        } else if (!CollectionUtils.equals(adapter.getSelectedItems(), initialSelection)
+        || !CollectionUtils.equals(adapter.getIndirectlySelectedItems(), indirectAlbumPermissions)) {
             adapter.setSelectedItems(initialSelection);
             adapter.setIndirectlySelectedItems(indirectAlbumPermissions);
         }
@@ -816,37 +866,50 @@ public class UserFragment extends MyFragment<UserFragment> {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as app locked event rxd");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (isVisible()) {
+            if (getParent().isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    getParentFragmentManager().popBackStack();
+                    Logging.log(Log.INFO, TAG, "removing from activity as not admin user");
+                    getParent().getParentFragmentManager().popBackStack();
                     return;
                 }
             }
             if (response instanceof UserPermissionsRemovedResponseHandler.PiwigoUserPermissionsRemovedResponse) {
-                onUserPermissionsRemoved((UserPermissionsRemovedResponseHandler.PiwigoUserPermissionsRemovedResponse) response);
+                getParent().onUserPermissionsRemoved((UserPermissionsRemovedResponseHandler.PiwigoUserPermissionsRemovedResponse) response);
             } else if (response instanceof UserPermissionsAddResponseHandler.PiwigoUserPermissionsAddedResponse) {
-                onUserPermissionsAdded((UserPermissionsAddResponseHandler.PiwigoUserPermissionsAddedResponse) response);
+                getParent().onUserPermissionsAdded((UserPermissionsAddResponseHandler.PiwigoUserPermissionsAddedResponse) response);
             } else if (response instanceof UserAddResponseHandler.PiwigoAddUserResponse) {
-                onUserCreated((UserAddResponseHandler.PiwigoAddUserResponse) response);
+                getParent().onUserCreated((UserAddResponseHandler.PiwigoAddUserResponse) response);
             } else if (response instanceof UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse) {
-                onUserSaved((UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse) response);
+                getParent().onUserSaved((UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse) response);
             } else if (response instanceof GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) {
-                onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
+                getParent().onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
             } else if (response instanceof UserGetPermissionsResponseHandler.PiwigoUserPermissionsResponse) {
-                onUserPermissionsRetrieved((UserGetPermissionsResponseHandler.PiwigoUserPermissionsResponse) response);
+                getParent().onUserPermissionsRetrieved((UserGetPermissionsResponseHandler.PiwigoUserPermissionsResponse) response);
             } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
+                getParent().onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof UserDeleteResponseHandler.PiwigoDeleteUserResponse) {
-                onUserDeleted((UserDeleteResponseHandler.PiwigoDeleteUserResponse) response);
+                getParent().onUserDeleted((UserDeleteResponseHandler.PiwigoDeleteUserResponse) response);
             } else if (response instanceof GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) {
-                onGroupMembershipAlbumPermissionsRetrieved((GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) response);
+                getParent().onGroupMembershipAlbumPermissionsRetrieved((GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) response);
+            }
+        }
+    }
+
+    private static class LayoutChangeListener implements View.OnLayoutChangeListener {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            if (top != oldTop) {
+                NestedScrollView scrollview = v.getRootView().findViewById(R.id.user_edit_scrollview);
+                scrollview.fullScroll(View.FOCUS_UP);
+                v.removeOnLayoutChangeListener(this);
             }
         }
     }

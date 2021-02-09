@@ -4,11 +4,13 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 /**
  * Created by gareth on 02/01/18.
  */
 
-public class PiwigoUsernames extends IdentifiablePagedList<Username> {
+public class PiwigoUsernames<T extends Username> extends IdentifiablePagedList<T> {
     public PiwigoUsernames() {
         super("Username");
     }
@@ -23,7 +25,7 @@ public class PiwigoUsernames extends IdentifiablePagedList<Username> {
     }
 
     @Override
-    protected void sortItems() {
+    protected void sortItems(List<T> items) {
         throw new UnsupportedOperationException("cannot sort the items");
     }
 

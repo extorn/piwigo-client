@@ -6,9 +6,10 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 
@@ -17,18 +18,20 @@ import delit.piwigoclient.model.piwigo.Tag;
  */
 
 public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseImageGetInfoResponseHandler<T> {
-    public ImageGetInfoResponseHandler(T piwigoResource, Set<String> multimediaExtensionList) {
-        super(piwigoResource, multimediaExtensionList);
+    public ImageGetInfoResponseHandler(T piwigoResource) {
+        super(piwigoResource);
     }
 
-    protected BaseImagesGetResponseHandler.BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, boolean usingPiwigoClientOveride) {
-        return new ImageGetInfoResourceParser(multimediaExtensionList, getPiwigoServerUrl(), usingPiwigoClientOveride);
+    protected AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser buildResourceParser(boolean usingPiwigoClientOveride) {
+        boolean defaultVal = Boolean.TRUE.equals(PiwigoSessionDetails.getInstance(getConnectionPrefs()).isUsingPiwigoPrivacyPlugin());
+        boolean isApplyPrivacyPluginUriFix = getConnectionPrefs().isFixPiwigoPrivacyPluginMediaUris(getSharedPrefs(), getContext(), defaultVal);
+        return new ImageGetInfoResourceParser(getPiwigoServerUrl(), isApplyPrivacyPluginUriFix, usingPiwigoClientOveride);
     }
 
     public static class ImageGetInfoResourceParser extends BaseImageGetInfoResourceParser {
 
-        public ImageGetInfoResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl, boolean usingPiwigoClientOveride) {
-            super(multimediaExtensionList, basePiwigoUrl, usingPiwigoClientOveride);
+        public ImageGetInfoResourceParser(String basePiwigoUrl, Boolean usingPiwigoPrivacyPlugin, boolean usingPiwigoClientOveride) {
+            super(basePiwigoUrl, usingPiwigoPrivacyPlugin, usingPiwigoClientOveride);
         }
 
         @Override
@@ -36,8 +39,8 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseIma
             ResourceItem resourceItem = super.parseAndProcessResourceData(image);
 
             JsonArray tagsElem = image.get("tags").getAsJsonArray();
-            HashSet<Tag> tags = TagsGetListResponseHandler.parseTagsFromJson(tagsElem);
-            resourceItem.setTags(tags);
+            ArrayList<Tag> tags = TagsGetListResponseHandler.parseTagsFromJson(tagsElem);
+            resourceItem.setTags(new LinkedHashSet<>(tags));
 
             Boolean isFavorite = null;
             JsonElement favoriteJsonElem = image.get("isFavorite");

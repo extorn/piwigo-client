@@ -1,6 +1,9 @@
 package delit.piwigoclient.ui.common;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
@@ -10,6 +13,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
+import delit.piwigoclient.ui.common.dialogmessage.QueuedQuestionMessage;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.BlockingUserInteractionQuestion;
 
@@ -17,21 +22,34 @@ import delit.piwigoclient.ui.events.BlockingUserInteractionQuestion;
  * Created by gareth on 17/10/17.
  */
 
-public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
-    public ActivityUIHelper(T parent, SharedPreferences prefs) {
-        super(parent, prefs, parent);
+public class ActivityUIHelper<UIH extends ActivityUIHelper<UIH,T>,T extends BaseMyActivity<T,UIH>> extends UIHelper<UIH,T> {
+    public ActivityUIHelper(T parent, SharedPreferences prefs, View attachedView) {
+        super(parent, prefs, parent, attachedView);
+    }
+
+    @Override
+    public Context getAppContext() {
+        return getParent();
     }
 
     @Override
     protected boolean canShowDialog() {
-        return super.canShowDialog() && !getParent().isFinishing();
+        boolean canShow = super.canShowDialog();
+        canShow &= getParent().isAttachedToWindow();
+        canShow &= !getParent().isFinishing();
+        return canShow;
     }
 
     @Override
     protected View getParentView() {
-        View v = getParent().getWindow().getDecorView().findViewById(android.R.id.content);
-        View iv = v.findViewById(R.id.main_view);
-        return iv != null ? iv : v;
+        T parent = getParent();
+        if(parent == null) {
+            return null;
+        }
+        View v = parent.getWindow().getDecorView().findViewById(android.R.id.content);
+//        View iv = v.findViewById(R.id.main_view);
+//        return iv != null ? iv : v;
+        return v;
     }
 
     @Override
@@ -44,7 +62,7 @@ public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
         protected void onNoDialogToShow() {
             Fragment f = getParent().getActiveFragment();
             if(f instanceof MyFragment) {
-                UIHelper helper = ((MyFragment)f).getUiHelper();
+                FragmentUIHelper<?,?> helper = ((MyFragment<?,?>)f).getUiHelper();
                 if(helper != null) {
                     helper.showNextQueuedMessage();
                 }
@@ -54,17 +72,45 @@ public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final BlockingUserInteractionQuestion event) {
-        QueuedQuestionMessage message = new QueuedQuestionMessage(R.string.alert_question_title, getContext().getString(event.questionStringId), R.string.button_yes, R.string.button_no, new BlockingUserInteractionQuestionResultAdapter(this, event));
+        QueuedQuestionMessage<UIH,T> message = new QueuedQuestionMessage<>(R.string.alert_question_title, getAppContext().getString(event.questionStringId), R.string.button_yes, R.string.button_no, new BlockingUserInteractionQuestionResultAdapter<>((UIH) this, event));
         showMessageImmediatelyIfPossible(message);
     }
 
-    private static class BlockingUserInteractionQuestionResultAdapter<T extends ActivityUIHelper<?>> extends QuestionResultAdapter<T> {
+    private static class BlockingUserInteractionQuestionResultAdapter<UIH extends ActivityUIHelper<UIH,T>,T extends BaseMyActivity<T, UIH>> extends QuestionResultAdapter<UIH,T> implements Parcelable {
         private final BlockingUserInteractionQuestion event;
 
-        public BlockingUserInteractionQuestionResultAdapter(T uiHelper, BlockingUserInteractionQuestion event) {
+        public BlockingUserInteractionQuestionResultAdapter(UIH uiHelper, BlockingUserInteractionQuestion event) {
             super(uiHelper);
             this.event = event;
         }
+
+        protected BlockingUserInteractionQuestionResultAdapter(Parcel in) {
+            super(in);
+            event = in.readParcelable(BlockingUserInteractionQuestion.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeParcelable(event, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<BlockingUserInteractionQuestionResultAdapter<?,?>> CREATOR = new Creator<BlockingUserInteractionQuestionResultAdapter<?,?>>() {
+            @Override
+            public BlockingUserInteractionQuestionResultAdapter<?,?> createFromParcel(Parcel in) {
+                return new BlockingUserInteractionQuestionResultAdapter<>(in);
+            }
+
+            @Override
+            public BlockingUserInteractionQuestionResultAdapter<?,?>[] newArray(int size) {
+                return new BlockingUserInteractionQuestionResultAdapter[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

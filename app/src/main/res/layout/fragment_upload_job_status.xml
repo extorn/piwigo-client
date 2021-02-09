@@ -5,24 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="?attr/colorSurface">
 
-    <delit.libs.ui.view.SlidingTabLayout
-        android:id="@+id/sliding_views_tab_headings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        app:viewPager="@+id/sliding_views_tab_content"
-        tools:initialTabIdx="0" />
-
-    <androidx.viewpager.widget.ViewPager
+    <delit.libs.ui.view.CustomViewPager
         android:id="@+id/sliding_views_tab_content"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         android:paddingBottom="5dp">
+
+        <delit.libs.ui.view.CustomMaterialTabLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            app:initialTabIdx="0"
+            style="?appTabLayout"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -44,7 +43,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
+                android:textAppearance="?textAppearanceCaption"/>
 
             <TextView
                 android:id="@+id/files_awaiting_transfer"
@@ -52,7 +51,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="3"/>
 
             <TextView
@@ -65,7 +64,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
+                android:textAppearance="?textAppearanceCaption"/>
 
             <TextView
                 android:id="@+id/files_mid_data_transfer"
@@ -73,7 +72,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="3"/>
 
             <TextView
@@ -86,7 +85,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
+                android:textAppearance="?textAppearanceCaption"/>
 
             <TextView
                 android:id="@+id/files_awaiting_verification"
@@ -94,7 +93,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="5"/>
 
             <TextView
@@ -107,7 +106,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
+                android:textAppearance="?textAppearanceCaption"/>
 
             <TextView
                 android:id="@+id/files_awaiting_configuration"
@@ -115,7 +114,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="0"/>
 
             <TextView
@@ -128,7 +127,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
+                android:textAppearance="?textAppearanceCaption"/>
 
             <TextView
                 android:id="@+id/files_requiring_server_deletion"
@@ -136,7 +135,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="0"/>
 
             <TextView
@@ -149,7 +148,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
+                android:textAppearance="?textAppearanceCaption"/>
 
             <TextView
                 android:id="@+id/files_fully_uploaded"
@@ -157,7 +156,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="10"/>
 
             <TextView
@@ -170,9 +169,9 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
+                android:textAppearance="?textAppearanceCaption"/>
 
-            <delit.libs.ui.view.button.AppCompatCheckboxTriState
+            <delit.libs.ui.view.button.MaterialCheckboxTriState
                 android:id="@+id/temporary_album_needs_deleting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -200,7 +199,7 @@
                 android:layout_marginBottom="7dp"
                 android:labelFor="@id/errors_encountered_list"
                 android:text="@string/errors_encountered_list_title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                android:textAppearance="?textAppearanceCaption" />
 
             <ListView
                 android:id="@+id/errors_encountered_list"
@@ -210,5 +209,5 @@
                 android:layout_marginEnd="5dp" />
 
         </LinearLayout>
-    </androidx.viewpager.widget.ViewPager>
+    </delit.libs.ui.view.CustomViewPager>
 </LinearLayout>

@@ -1,72 +1,45 @@
 package delit.piwigoclient.ui;
 
-import android.app.Dialog;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.MimeTypeMap;
-import android.widget.FrameLayout;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
 
-import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.appbar.AppBarLayout;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.MediaScanner;
-import delit.libs.ui.view.ProgressIndicator;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
-import delit.libs.util.IOUtils;
+import delit.libs.ui.view.CustomToolbar;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -81,20 +54,18 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
+import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
 import delit.piwigoclient.ui.album.listSelect.AlbumSelectFragment;
-import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
 import delit.piwigoclient.ui.events.AlbumSelectedEvent;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
@@ -105,10 +76,10 @@ import delit.piwigoclient.ui.events.GenericLowMemoryEvent;
 import delit.piwigoclient.ui.events.MemoryTrimmedEvent;
 import delit.piwigoclient.ui.events.MemoryTrimmedRunningAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
+import delit.piwigoclient.ui.events.PiwigoActivePluginsReceivedEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
-import delit.piwigoclient.ui.events.ThemeAlteredEvent;
 import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;
 import delit.piwigoclient.ui.events.ViewUserEvent;
@@ -117,80 +88,72 @@ import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
-import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
-import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
-import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
+import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
+import delit.piwigoclient.ui.permissions.groups.GroupRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
 import delit.piwigoclient.ui.permissions.users.UserFragment;
+import delit.piwigoclient.ui.permissions.users.UsernameRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsersListFragment;
-import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
+import delit.piwigoclient.ui.util.download.DownloadManager;
+import delit.piwigoclient.util.MyDocumentProvider;
 import hotchemi.android.rate.MyAppRate;
 
-import static android.view.View.VISIBLE;
+import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
 
-public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> extends MyActivity<T> implements ComponentCallbacks2 {
+public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends MyActivity<A, AUIH> implements ComponentCallbacks2 {
 
     private static final String STATE_CURRENT_ALBUM = "currentAlbum";
-    private static final String STATE_QUEUED_DOWNLOADS = "queuedDownloads";
-    private static final String STATE_ACTIVE_DOWNLOADS = "activeDownloads";
     private static final String STATE_BASKET = "basket";
     private static final String TAG = "mainActivity";
-    private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
-    private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
-    private static final String MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE = "id_downloadedFile";
+    private static final String STATE_DOWNLOAD_MANAGER = "DownloadManager";
+    private static final String STATE_ACTIVE_PIWIGO_USERNAME = "ActiveUsername";
+    private static final String STATE_ACTIVE_PIWIGO_SERVER = "ActiveServerUri";
+    private final CustomBackStackListener backStackListener;
     // these fields are persisted.
-    private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
+    private CategoryItem currentAlbum = StaticCategoryItem.ROOT_ALBUM;
     private String onLoginActionMethodName = null;
-    private ArrayList<Serializable> onLoginActionParams = new ArrayList<>();
+    private final ArrayList<Parcelable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
-    private Toolbar toolbar;
+    private CustomToolbar toolbar;
     private AppBarLayout appBar;
-    //TODO move the download mechanism into a background service so it isn't cancelled if the user leaves the app.
-    private final ArrayList<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
-    private final ArrayList<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
+    private DownloadManager<AUIH, A> downloadManager;
+    private String currentPiwigoServer;
+    private String currentPiwigoUser;
 
-    public static void performNoBackStackTransaction(final FragmentManager fragmentManager, String tag, Fragment fragment) {
-        final int newBackStackLength = fragmentManager.getBackStackEntryCount() + 1;
 
-        fragmentManager.beginTransaction()
-                .replace(R.id.main_view, fragment, tag)
-                .addToBackStack(tag)
-                .commit();
-
-        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                int nowCount = fragmentManager.getBackStackEntryCount();
-                if (newBackStackLength != nowCount) {
-                    // we don't really care if going back or forward. we already performed the logic here.
-                    fragmentManager.removeOnBackStackChangedListener(this);
-
-                    if (newBackStackLength > nowCount) { // user pressed back
-                        fragmentManager.popBackStackImmediate();
-                    }
-                }
-            }
-        });
+    public AbstractMainActivity() {
+        super(R.layout.activity_main);
+        backStackListener = new CustomBackStackListener();
+        getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        LoaderManager.getInstance(this).getLoader(0);
-        outState.putParcelable(STATE_CURRENT_ALBUM, currentAlbum);
-        outState.putParcelable(STATE_BASKET, basket);
-        outState.putParcelableArrayList(STATE_ACTIVE_DOWNLOADS, activeDownloads);
-        outState.putParcelableArrayList(STATE_QUEUED_DOWNLOADS, queuedDownloads);
+    protected void onDestroy() {
+        getSupportFragmentManager().removeOnBackStackChangedListener(backStackListener);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+
 //        if(BuildConfig.DEBUG) {
 //            getSupportFragmentManager().enableDebugLogging(true);
 //        }
         super.onSaveInstanceState(outState);
+        LoaderManager.getInstance(this).getLoader(0); //TODO is this needed?
+        outState.putParcelable(STATE_CURRENT_ALBUM, currentAlbum);
+        outState.putParcelable(STATE_BASKET, basket);
+        outState.putParcelable(STATE_DOWNLOAD_MANAGER, downloadManager);
+        outState.putString(STATE_ACTIVE_PIWIGO_SERVER, ConnectionPreferences.getActiveProfile().getPiwigoServerAddress(getSharedPrefs(),this));
+        outState.putString(STATE_ACTIVE_PIWIGO_USERNAME, ConnectionPreferences.getActiveProfile().getPiwigoUsername(getSharedPrefs(),this));
+
         if(BuildConfig.DEBUG) {
 //            getSupportFragmentManager().enableDebugLogging(false);
             BundleUtils.logSizeVerbose("Current Main Activity", outState);
@@ -208,82 +171,50 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         if (savedInstanceState != null) {
             currentAlbum = savedInstanceState.getParcelable(STATE_CURRENT_ALBUM);
             basket = savedInstanceState.getParcelable(STATE_BASKET);
-            ArrayList<DownloadFileRequestEvent> readVal;
-            readVal = savedInstanceState.getParcelableArrayList(STATE_QUEUED_DOWNLOADS);
-            if (readVal != null) {
-                queuedDownloads.addAll(readVal);
+            downloadManager = savedInstanceState.getParcelable(STATE_DOWNLOAD_MANAGER);
+            currentPiwigoServer = savedInstanceState.getString(STATE_ACTIVE_PIWIGO_SERVER);
+            currentPiwigoUser = savedInstanceState.getString(STATE_ACTIVE_PIWIGO_USERNAME);
+            if(downloadManager == null) {
+                downloadManager = new DownloadManager<>(getUiHelper());
+            } else {
+                downloadManager.withUiHelper(getUiHelper());
             }
-            readVal = savedInstanceState.getParcelableArrayList(STATE_ACTIVE_DOWNLOADS);
-            if (readVal != null) {
-                activeDownloads.addAll(readVal);
-            }
+        } else {
+            downloadManager = new DownloadManager<>(getUiHelper());
         }
-
-        setContentView(R.layout.activity_main);
 
 
         toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
         appBar = findViewById(R.id.appbar);
-        /*
-        Floating action button (all screens!) - if wanted
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(pkg View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.makeSnackbar(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
-
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ViewCompat.setOnApplyWindowInsetsListener(drawer, new OnApplyWindowInsetsListener() {
-                @Override
-                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-                    if (!AppPreferences.isAlwaysShowStatusBar(prefs, v.getContext())) {
-                        insets.replaceSystemWindowInsets(
-                                insets.getStableInsetLeft(),
-                                0,
-                                insets.getStableInsetRight(),
-                                0);
-                        insets.consumeStableInsets();
-                        //TODO forcing the top margin like this is really not a great idea. Find a better way.
-                        ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = 0;
-                    } else {
-                        if (!AppPreferences.isAlwaysShowNavButtons(prefs, v.getContext())) {
-                            int topMargin = ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin;
-                            if (topMargin == 0) {
-                                ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = insets.getSystemWindowInsetTop();
-                            }
-                        }
-                    }
-                    return insets;
-                }
-            });
-        }
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                ((CustomNavigationView) drawerView).onDrawerOpened();
-            }
-        };
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        if (!hasAgreedToEula()) {
+        DrawerLayout drawer = configureDrawer(toolbar);
+        if (hasNotAcceptedEula()) {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         } else {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }
 
-        if (savedInstanceState == null) {
-            if (!hasAgreedToEula()) {
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        boolean actionHandled = false;
+        if(action != null) {
+            if(action.equals("delit.piwigoclient.VIEW_TOP_TIPS")) {
+                showTopTips();
+                actionHandled = true;
+            } else if(action.equals("delit.piwigoclient.VIEW_USERS")) {
+                showUsers();
+                actionHandled = true;
+            } else if(action.equals("delit.piwigoclient.VIEW_GROUPS")) {
+                showGroups();
+                actionHandled = true;
+            }
+            intent.setAction(null);
+        }
+
+        if ((!actionHandled && savedInstanceState == null)) {
+            if (hasNotAcceptedEula()) {
                 showEula();
             } else if (ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
                 showPreferences();
@@ -293,6 +224,34 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
 
         configureAndShowRateAppReminderIfNeeded();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        currentPiwigoServer = ConnectionPreferences.getActiveProfile().getPiwigoServerAddress(getSharedPrefs(),this);
+        currentPiwigoUser = ConnectionPreferences.getActiveProfile().getPiwigoUsername(getSharedPrefs(),this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(serverConnectionHasChanged()) {
+            // we're in the wrong server or
+            currentAlbum = null;
+            // need to remove historic fragments - not valid.
+            clearBackStack();
+            showGallery(StaticCategoryItem.ROOT_ALBUM);
+        }
+    }
+
+    private boolean serverConnectionHasChanged() {
+        if(currentPiwigoServer == null) {
+            return false; // haven't opened any server yet
+        }
+        String connectedServer = ConnectionPreferences.getActiveProfile().getPiwigoServerAddress(getSharedPrefs(), this);
+        String connectedUsername = ConnectionPreferences.getActiveProfile().getPiwigoUsername(getSharedPrefs(), this);
+        return !(Objects.equals(currentPiwigoUser, connectedUsername) && Objects.equals(currentPiwigoServer, connectedServer));
     }
 
     private void configureAndShowRateAppReminderIfNeeded() {
@@ -313,45 +272,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
-        int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
-        if (result != ConnectionResult.SUCCESS) {
-            if (googleApi.isUserResolvableError(result)) {
-                Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
-                d.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        if (!BuildConfig.DEBUG) {
-                            finish();
-                        }
-                    }
-                });
-                d.show();
-            } else {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<T>>(getUiHelper()) {
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
-                        if (!BuildConfig.DEBUG) {
-                            finish();
-                        }
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
     public void onBackPressed() {
 
         int backstackCount = getSupportFragmentManager().getBackStackEntryCount();
 
-        boolean preferencesShowing;
-        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(PreferencesFragment.class.getName());
-        preferencesShowing = myFragment != null && myFragment.isVisible();
-
-        if (!hasAgreedToEula() && !preferencesShowing) {
+        if (hasNotAcceptedEula()) {
             // exit immediately.
             finish();
             return;
@@ -364,13 +289,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             // pop the current fragment off, close app if it is the last one
             boolean blockDefaultBackOperation = false;
             if (backstackCount == 1) {
-                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
+                Fragment currentFragment = getActiveFragment();
                 if (currentFragment instanceof ViewAlbumFragment && currentAlbum != null && !currentAlbum.isRoot()) {
                     // get the next album to show
-                    CategoryItem nextAlbumToShow = ((ViewAlbumFragment) currentFragment).getParentAlbum();
+                    CategoryItem nextAlbumToShow = ((ViewAlbumFragment<?,?>) currentFragment).getParentAlbum();
                     if (nextAlbumToShow != null) {
-                        // remove this fragment (so we don't have an illogical fragment back-stack - child album first)
-                        removeFragmentsFromHistory(ViewAlbumFragment.class, true);
+                        Logging.log(Log.INFO, TAG, "removing from activity to show next (parent) album");
+                        getSupportFragmentManager().popBackStack();
                         // open this fragment again, but with new album
                         showGallery(nextAlbumToShow);
                         blockDefaultBackOperation = true;
@@ -383,21 +308,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
     }
 
-    private void doDefaultBackOperation() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            // pop the current fragment off
-            getSupportFragmentManager().popBackStack();
-            // get the next fragment
-            int i = getSupportFragmentManager().getBackStackEntryCount() - 2;
-            // if there are no fragments left, do default back operation (i.e. close app)
-            if (i < 0) {
-                super.onBackPressed();
-            }
-        } else {
-            super.onBackPressed();
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -406,8 +316,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (!hasAgreedToEula()) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (hasNotAcceptedEula()) {
             getUiHelper().showDetailedMsg(R.string.alert_error, R.string.please_read_and_agree_with_eula_first);
             return true;
         }
@@ -424,11 +334,39 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         return super.onOptionsItemSelected(item);
     }
 
+    public static Intent buildShowGalleryIntent(Context context) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, null, context.getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            intent.putExtra(INTENT_DATA_CURRENT_ALBUM, currentAlbum);
+        return intent;
+    }
+
+    public static Intent buildShowGroupsIntent(Context context) {
+        Intent intent = new Intent("delit.piwigoclient.VIEW_GROUPS", null, context.getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        return intent;
+    }
+
+    public static Intent buildShowUsersIntent(Context context) {
+        Intent intent = new Intent("delit.piwigoclient.VIEW_USERS", null, context.getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        return intent;
+    }
+
+    public static Intent buildShowTopTipsIntent(Context context) {
+        Intent intent = new Intent("delit.piwigoclient.VIEW_TOP_TIPS", null, context.getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return intent;
+    }
+
     private void showPreferences() {
-//        Intent i = new Intent(this, PreferencesActivity.class);
-//        startActivity(i);
-        PreferencesFragment fragment = new PreferencesFragment();
-        showFragmentNow(fragment);
+        try {
+            startActivity(PreferencesActivity.buildIntent(this));
+        } catch(ActivityNotFoundException e) {
+            Logging.recordException(e);
+        }
     }
 
     private void showEula() {
@@ -437,60 +375,30 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     protected abstract void showFavorites();
 
+    protected abstract void showOrphans();
+
     private void showGallery(final CategoryItem gallery) {
         boolean restore = false;
         if (gallery != null && gallery.isRoot()) {
             // check if we've shown any albums before. If so, pop everything off the stack.
-            if (!removeFragmentsFromHistory(ViewAlbumFragment.class, true)) {
+            if (null == getSupportFragmentManager().findFragmentByTag(ViewAlbumFragment.class.getName())) {
                 // we're opening the activity freshly.
 
                 // check for reopen details and use them instead if possible.
                 if (AbstractViewAlbumFragment.canHandleReopenAction(getUiHelper())) {
                     restore = true;
                 }
-
             }
         }
+        AdsManager.getInstance(this).showAlbumBrowsingAdvertIfAppropriate(this);
+
         if (restore) {
-            showFragmentNow(new ViewAlbumFragment(), true);
+            showFragmentNow(new ViewAlbumFragment<>(), !gallery.isRoot());
         } else {
-            showFragmentNow(ViewAlbumFragment.newInstance(gallery), true);
-        }
-        AdsManager.getInstance().showAlbumBrowsingAdvertIfAppropriate();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(DownloadFileRequestEvent event) {
-        synchronized (activeDownloads) {
-            queuedDownloads.add(event);
-            if (activeDownloads.size() == 0) {
-                processNextQueuedDownloadEvent();
-            } else {
-                getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.resource_queued_for_download, queuedDownloads.size()));
-            }
+            showFragmentNow(ViewAlbumFragment.newInstance(gallery), gallery != null && !gallery.isRoot());
         }
     }
 
-    protected void processNextQueuedDownloadEvent() {
-        synchronized (activeDownloads) {
-            DownloadFileRequestEvent nextEvent = queuedDownloads.remove(0);
-            File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            File destinationFile = new File(downloadsFolder, nextEvent.getOutputFilename());
-            activeDownloads.add(nextEvent);
-
-            if (nextEvent.getLocalFileToCopy() != null) {
-                try {
-                    IOUtils.copy(nextEvent.getLocalFileToCopy(), destinationFile);
-                    onFileDownloaded(nextEvent.getRemoteUri(), destinationFile);
-                } catch (IOException e) {
-                    Crashlytics.logException(e);
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern, e.getMessage()));
-                }
-            } else {
-                nextEvent.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(nextEvent.getRemoteUri(), destinationFile), new DownloadAction()));
-            }
-        }
-    }
 
 //TODO add some sort of cancel operation  if the activity is backgrounded perhaps.
 //    @Override
@@ -501,128 +409,15 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 //        super.onDetach();
 //    }
 //
-//    private static class DownloadAction implements Parcelable {
-//        private long activeDownloadActionId;
-//        private boolean shareDownloadedResource;
-//
-//        public DownloadAction(long activeDownloadActionId, boolean shareDownloadedResource) {
-//            this.activeDownloadActionId = activeDownloadActionId;
-//            this.shareDownloadedResource = shareDownloadedResource;
-//        }
-//
-//        public DownloadAction(Parcel in) {
-//            activeDownloadActionId = in.readLong();
-//            shareDownloadedResource = ParcelUtils.readBool(in);
-//        }
-//
-//        public static final Creator<DownloadAction> CREATOR = new Creator<DownloadAction>() {
-//            public DownloadAction createFromParcel(Parcel in) {
-//                return new DownloadAction(in);
-//            }
-//
-//            public DownloadAction[] newArray(int size) {
-//                return new DownloadAction[size];
-//            }
-//        };
-//
-//        @Override
-//        public int describeContents() {
-//            return 0;
-//        }
-//
-//        public long getActiveDownloadActionId() {
-//            return activeDownloadActionId;
-//        }
-//
-//        public boolean isShareDownloadedResource() {
-//            return shareDownloadedResource;
-//        }
-//
-//        @Override
-//        public void writeToParcel(Parcel dest, int flags) {
-//            dest.writeLong(activeDownloadActionId);
-//            ParcelUtils.writeBool(dest, shareDownloadedResource);
-//        }
-//    }
 
-
-    public void onFileDownloaded(String remoteUri, File destinationFile) {
-        // add the file details to the media store :-)
-        MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE, destinationFile));
-        DownloadFileRequestEvent event = removeActionDownloadEvent();
-        if (event != null) {
-            if (event.isShareDownloadedWithAppSelector()) {
-                shareFileDownloaded(this, destinationFile);
-            } else {
-                notifyUserFileDownloadComplete(getUiHelper(), destinationFile);
-            }
-        }
-    }
-
-    private void notifyUserFileDownloadComplete(final UIHelper uiHelper, final File downloadedFile) {
-        uiHelper.showDetailedMsg(R.string.alert_image_download_title, uiHelper.getContext().getString(R.string.alert_image_download_complete_message));
-        PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getContext()).load(R.drawable.ic_notifications_black_24dp).into(new DownloadTarget(uiHelper, downloadedFile));
-    }
-
-    private void shareFileDownloaded(Context context, final File downloadedFile) {
-//        File sharedFolder = new File(getContext().getExternalCacheDir(), "shared");
-//        sharedFolder.mkdir();
-//        File tmpFile = File.createTempFile(resourceFilename, resourceFileExt, sharedFolder);
-//        tmpFile.deleteOnExit();
-
-        //Send multiple seems essential to allow to work with the other apps. Not clear why.
-        Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = FileProvider.getUriForFile(
-                context,
-                BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
-
-        MimeTypeMap map = MimeTypeMap.getSingleton();
-        String ext = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(downloadedFile).toString());
-        String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
-        intent.setType(mimeType);
-        ArrayList<Uri> files = new ArrayList<>(1);
-        files.add(uri);
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-        }
-        context.startActivity(intent);
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(DownloadFileRequestEvent event) {
+        downloadManager.onEvent(event);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(CancelDownloadEvent event) {
-        synchronized (activeDownloads) {
-            Iterator<DownloadFileRequestEvent> iter = activeDownloads.iterator();
-            while (iter.hasNext()) {
-                DownloadFileRequestEvent evt = iter.next();
-                if (evt.getRequestId() == event.messageId) {
-                    iter.remove();
-                    break;
-                }
-            }
-
-        }
-    }
-
-    private void scheduleNextDownloadIfPresent() {
-        synchronized (activeDownloads) {
-            if (!queuedDownloads.isEmpty() && activeDownloads.isEmpty()) {
-                processNextQueuedDownloadEvent();
-            }
-        }
-    }
-
-    private @Nullable
-    DownloadFileRequestEvent removeActionDownloadEvent() {
-        synchronized (activeDownloads) {
-            if (activeDownloads.isEmpty()) {
-                return null;
-            }
-            return activeDownloads.remove(0);
-        }
+        downloadManager.onEvent(event);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -641,16 +436,18 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             boolean allowVideoPlayback = AlbumViewPreferences.isVideoPlaybackEnabled(prefs, this);
             if (selectedItem instanceof VideoResourceItem) {
                 if (showVideosInSlideshow) {
-                    newFragment = new SlideshowFragment();
+                    newFragment = new SlideshowFragment<>();
                     newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
                 } else if (allowVideoPlayback) {
-                    newFragment = new AlbumVideoItemFragment();
+                    newFragment = new AlbumVideoItemFragment<>();
                     newFragment.setArguments(AlbumVideoItemFragment.buildStandaloneArgs(event.getModelType(), albumOpen.getId(), selectedItem.getId(), 1, 1, 1, true));
-                    ((AlbumVideoItemFragment) newFragment).onPageSelected();
+                    ((AlbumVideoItemFragment<?,?,?>) newFragment).onPageSelected();
                 }
             } else if (selectedItem instanceof PictureResourceItem) {
-                newFragment = new SlideshowFragment();
+                newFragment = new SlideshowFragment<>();
                 newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
+            } else {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.multimedia_playback_currently_disabled));
             }
         }
 
@@ -659,155 +456,89 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
     }
 
-    private static class DownloadTarget implements Target {
-
-
-        private final UIHelper uiHelper;
-        private final File downloadedFile;
-
-        public DownloadTarget(UIHelper uiHelper, File downloadedFile) {
-            this.uiHelper = uiHelper;
-            this.downloadedFile = downloadedFile;
-        }
-
-        private Context getContext() {
-            return uiHelper.getContext();
-        }
-
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            Intent notificationIntent;
-            Context context;
-            try {
-                context = getContext();
-            } catch (IllegalStateException e) {
-                Crashlytics.log(Log.ERROR, TAG, "No context to create notification in");
-                return;
-            }
-
-//        if(openImageNotFolder) {
-            notificationIntent = new Intent(Intent.ACTION_VIEW);
-            // Action on click on notification
-            Uri selectedUri = Uri.fromFile(downloadedFile);
-            MimeTypeMap map = MimeTypeMap.getSingleton();
-            String ext = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
-            String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
-            //notificationIntent.setDataAndType(selectedUri, mimeType);
-
-            Uri apkURI = FileProvider.getUriForFile(
-                    context,
-                    BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
-            notificationIntent.setDataAndType(apkURI, mimeType);
-            notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            notificationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                notificationIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-            }
-
-//        } else {
-            // N.B.this only works with a very select few android apps - folder browsing seemingly isn't a standard thing in android.
-//            notificationIntent = pkg Intent(Intent.ACTION_VIEW);
-//            Uri selectedUri = Uri.fromFile(downloadedFile.getParentFile());
-//            notificationIntent.setDataAndType(selectedUri, "resource/folder");
-//        }
-
-            PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
-                    notificationIntent, 0);
-
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), uiHelper.getDefaultNotificationChannelId())
-                    .setLargeIcon(bitmap)
-                    .setContentTitle(getContext().getString(R.string.notification_download_event))
-                    .setContentText(downloadedFile.getAbsolutePath())
-                    .setContentIntent(pendingIntent)
-                    .setAutoCancel(true);
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                // this is not a vector graphic
-                mBuilder.setSmallIcon(R.drawable.ic_notifications_black);
-                mBuilder.setCategory("event");
-            } else {
-                mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
-                mBuilder.setCategory(Notification.CATEGORY_EVENT);
-            }
-
-            uiHelper.clearNotification(TAG, 1);
-            uiHelper.showNotification(TAG, 1, mBuilder.build());
-        }
-
-        @Override
-        public void onBitmapFailed(Drawable errorDrawable) {
-            //Do nothing... Should never ever occur
-        }
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {
-            // Don't need to do anything before loading image
-        }
-
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public final void onNavigationItemSelected(NavigationItemSelectEvent event) {
         // Handle navigation view item clicks here.
         int id = event.navigationitemSelected;
 
-        switch (id) {
-            case R.id.nav_upload:
-                showUpload();
-                break;
-            case R.id.nav_groups:
-                showGroups();
-                break;
-            case R.id.nav_tags:
-                showTags();
-                break;
-            case R.id.nav_users:
-                showUsers();
-                break;
-            case R.id.nav_top_tips:
-                showTopTips();
-                break;
-            case R.id.nav_gallery:
-                showGallery(CategoryItem.ROOT_ALBUM);
-                break;
-            case R.id.nav_favorites:
-                showFavorites();
-                break;
-            case R.id.nav_about:
-                showAboutFragment();
-                break;
-            case R.id.nav_oss_licences:
-                showLicencesFragment();
-                break;
-            case R.id.nav_settings:
-                showPreferences();
-                break;
-            case R.id.nav_eula:
-                showEula();
-                break;
-            default:
-                onNavigationItemSelected(event, id);
+        if (id == R.id.nav_upload) {
+            showUpload();
+        } else if (id == R.id.nav_download) {
+            showDownloads();
+        } else if (id == R.id.nav_groups) {
+            showGroups();
+        } else if (id == R.id.nav_tags) {
+            showTags();
+        } else if (id == R.id.nav_users) {
+            showUsers();
+        } else if (id == R.id.nav_top_tips) {
+            showTopTips();
+        } else if (id == R.id.nav_gallery) {
+            showGallery(StaticCategoryItem.ROOT_ALBUM);
+        } else if(id == R.id.nav_orphans) {
+            showOrphans();
+        } else if (id == R.id.nav_favorites) {
+            showFavorites();
+        } else if (id == R.id.nav_about) {
+            showAboutFragment();
+        } else if (id == R.id.nav_oss_licences) {
+            showLicencesFragment();
+        } else if (id == R.id.nav_settings) {
+            showPreferences();
+        } else if (id == R.id.nav_eula) {
+            showEula();
+        } else if (id == R.id.nav_privacy) {
+            showPrivacy();
+        } else {
+            onNavigationItemSelected(event, id);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
 
+    public void openFolder(Uri uri){
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            intent.putExtra(EXTRA_INITIAL_URI, uri);
+        }
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.view_exported_files)));
+        } catch(ActivityNotFoundException e) {
+            Logging.recordException(e);
+        }
+    }
+
+    private void showDownloads() {
+        Uri downloadFolder = AppPreferences.getAppDownloadFolder(getSharedPrefs(), this).getUri();
+        if(MyDocumentProvider.ownsUri(this, downloadFolder)) {
+            downloadFolder = MyDocumentProvider.getRootDocUri();
+        }
+        openFolder(downloadFolder);
+    }
+
+    protected void showPrivacy() {
+        AdsManager.getInstance(this).showPrivacyForm(this);
+    }
+
     protected void onNavigationItemSelected(NavigationItemSelectEvent event, @IdRes int itemId) {
     }
 
     private void showTopTips() {
-        TopTipsFragment fragment = TopTipsFragment.newInstance();
+        TopTipsFragment<?,?> fragment = TopTipsFragment.newInstance();
         showFragmentNow(fragment);
     }
 
     private void showAboutFragment() {
-        AboutFragment fragment = AboutFragment.newInstance();
+        AboutFragment<?,?> fragment = AboutFragment.newInstance();
         showFragmentNow(fragment);
     }
 
     private void showLicencesFragment() {
-        LicencesFragment fragment = LicencesFragment.newInstance();
+        LicencesFragment<?,?> fragment = LicencesFragment.newInstance();
         showFragmentNow(fragment);
     }
 
@@ -815,12 +546,12 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         try {
             startActivity(UploadActivity.buildIntent(this, currentAlbum.toStub()));
         } catch(ActivityNotFoundException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
         }
     }
 
     private void showGroups() {
-        GroupsListFragment fragment = GroupsListFragment.newInstance();
+        GroupsListFragment<?,?> fragment = GroupsListFragment.newInstance();
         showFragmentNow(fragment);
     }
 
@@ -831,11 +562,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     protected abstract void showTags();
 
     private void showAlbumPermissions(final ArrayList<CategoryItemStub> availableAlbums, final HashSet<Long> directAlbumPermissions, final HashSet<Long> indirectAlbumPermissions, boolean allowEdit, int actionId) {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(true, false);
-        if (!allowEdit) {
-            prefs.readonly();
-        }
-        delit.piwigoclient.ui.permissions.AlbumSelectFragment fragment = delit.piwigoclient.ui.permissions.AlbumSelectFragment.newInstance(availableAlbums, prefs, actionId, indirectAlbumPermissions, directAlbumPermissions);
+        AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences(allowEdit);
+        delit.piwigoclient.ui.permissions.AlbumSelectFragment<?,?> fragment = delit.piwigoclient.ui.permissions.AlbumSelectFragment.newInstance(availableAlbums, adapterPreferences, actionId, indirectAlbumPermissions, directAlbumPermissions);
         showFragmentNow(fragment);
     }
 
@@ -861,9 +589,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
         if (hasFocus) {
             DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
-            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
+            Logging.log(Log.ERROR, TAG, "hiding status bar!");
         } else {
-            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
+            Logging.log(Log.ERROR, TAG, "showing status bar!");
         }
 
 //        v.requestApplyInsets(); // is this needed
@@ -873,92 +601,15 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final AlbumCreateNeededEvent event) {
 
-        CreateAlbumFragment fragment = CreateAlbumFragment.newInstance(event.getActionId(), event.getParentAlbum());
+        CreateAlbumFragment<?,?> fragment = CreateAlbumFragment.newInstance(event.getActionId(), event.getParentAlbum());
         showFragmentNow(fragment);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(FileSelectionNeededEvent event) {
-        Intent intent = new Intent(this, FileSelectActivity.class);
-        intent.putExtra(FileSelectActivity.INTENT_DATA, event);
-        setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
-        startActivityForResult(intent, event.getActionId());
-    }
-
-    private static class DownloadAction extends UIHelper.Action<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity, PiwigoResponseBufferingHandler.Response> {
-        @Override
-        public boolean onSuccess(ActivityUIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.Response response) {
-            //UrlProgressResponse, UrlToFileSuccessResponse,
-            if (response instanceof PiwigoResponseBufferingHandler.UrlProgressResponse) {
-                onProgressUpdate(uiHelper, (PiwigoResponseBufferingHandler.UrlProgressResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) {
-                onGetResource(uiHelper, (PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) response);
-            }
-            return super.onSuccess(uiHelper, response);
-        }
-
-        @Override
-        public boolean onFailure(ActivityUIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            if (response instanceof PiwigoResponseBufferingHandler.UrlCancelledResponse) {
-                onGetResourceCancelled(uiHelper, (PiwigoResponseBufferingHandler.UrlCancelledResponse) response);
-            }
-            if (response.isEndResponse()) {
-                //TODO handle the failure and retry here so we can keep the activeDownloads field in sync properly. Presently two downloads may occur simulataneously.
-                uiHelper.getParent().removeActionDownloadEvent();
-                uiHelper.getParent().scheduleNextDownloadIfPresent();
-            }
-            return super.onFailure(uiHelper, response);
-        }
-
-        private void onProgressUpdate(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
-            ProgressIndicator progressIndicator = uiHelper.getProgressIndicator();
-            if (response.getProgress() < 0) {
-                progressIndicator.showProgressIndicator(R.string.progress_downloading, -1);
-            } else {
-                if (response.getProgress() == 0) {
-                    progressIndicator.showProgressIndicator(R.string.progress_downloading, response.getProgress(), new CancelDownloadListener(response.getMessageId()));
-                } else if (progressIndicator.getVisibility() == VISIBLE) {
-                    progressIndicator.updateProgressIndicator(response.getProgress());
-                }
-            }
-        }
-
-        public void onGetResource(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
-            uiHelper.getParent().onFileDownloaded(response.getUrl(), response.getFile());
-        }
-
-
-        private void onGetResourceCancelled(UIHelper uiHelper, PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
-            uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getContext().getString(R.string.alert_image_download_cancelled_message));
-        }
-
-        private static class CancelDownloadListener implements View.OnClickListener {
-            private final long downloadMessageId;
-
-            public CancelDownloadListener(long messageId) {
-                downloadMessageId = messageId;
-            }
-
-            @Override
-            public void onClick(View v) {
-                EventBus.getDefault().post(new CancelDownloadEvent(downloadMessageId));
-            }
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
-            if (resultCode == RESULT_OK && data.getExtras() != null) {
-//                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
-                long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
-                ArrayList<FolderItemRecyclerViewAdapter.FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
-                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
-                EventBus.getDefault().postSticky(event);
-            }
+    public static Uri toContentUri(@NonNull Context context, @NonNull Uri uri) {
+        if ("file".equals(uri.getScheme())) {
+            return androidx.core.content.FileProvider.getUriForFile(context, BuildConfig.FILE_PROVIDER_AUTHORITY, new File(uri.getPath()));
         } else {
-            super.onActivityResult(requestCode, resultCode, data);
+            return uri;
         }
     }
 
@@ -1069,66 +720,32 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final UsernameSelectionNeededEvent event) {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        if (!event.isAllowEditing()) {
-            prefs.readonly();
-        }
-        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
+        UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs = new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences(event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        UsernameSelectFragment<?,?> fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ViewUserEvent event) {
-        UserFragment fragment = UserFragment.newInstance(event.getUser());
+        UserFragment<?,?> fragment = UserFragment.newInstance(event.getUser());
         showFragmentNow(fragment);
     }
 
-    private void showAlbumSelectionFragment(int actionId, AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs, HashSet<Long> currentSelection) {
-        AlbumSelectFragment fragment = AlbumSelectFragment.newInstance(prefs, actionId, currentSelection);
+    private void showAlbumSelectionFragment(int actionId, AlbumSelectionListAdapterPreferences prefs, HashSet<Long> currentSelection) {
+        AlbumSelectFragment<?,?> fragment = AlbumSelectFragment.newInstance(prefs, actionId, currentSelection);
         showFragmentNow(fragment);
-    }
-
-    protected void showFragmentNow(Fragment f) {
-        showFragmentNow(f, false);
-    }
-
-    private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
-
-        Crashlytics.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
-        checkLicenceIfNeeded();
-
-        DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());
-
-        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
-        String lastFragmentName = "";
-        if (lastFragment != null) {
-            lastFragmentName = lastFragment.getTag();
-        }
-        if (!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
-            getSupportFragmentManager().popBackStackImmediate();
-        }
-        //TODO I've added code that clears stack when showing root album... is this "good enough"?
-        //TODO - trying to prevent adding duplicates here. not sure it works right.
-//        TODO maybe should be using current fragment classname when adding to backstack rather than one being replaced... hmmmm
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.addToBackStack(f.getClass().getName());
-        tx.replace(R.id.main_view, f, f.getClass().getName()).commit();
-        Crashlytics.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + f.getClass().getName());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ViewGroupEvent event) {
-        GroupFragment fragment = GroupFragment.newInstance(event.getGroup());
+        GroupFragment<?,?> fragment = GroupFragment.newInstance(event.getGroup());
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final GroupSelectionNeededEvent event) {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        if (!event.isAllowEditing()) {
-            prefs.readonly();
-        }
-        GroupSelectFragment fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
+        GroupRecyclerViewAdapter.GroupViewAdapterPreferences prefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences(event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        GroupSelectFragment<?,?> fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
@@ -1148,7 +765,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         if (ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
             showPreferences();
         } else {
-            showGallery(CategoryItem.ROOT_ALBUM);
+            showGallery(StaticCategoryItem.ROOT_ALBUM);
         }
     }
 
@@ -1166,7 +783,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         return invoked;
     }
 
-    private boolean invokeStoredActionIfAvailableOnClass(Class c) {
+    private boolean invokeStoredActionIfAvailableOnClass(Class<?> c) {
 
         boolean invoked = false;
         boolean actionAvailable = onLoginActionMethodName != null;
@@ -1182,10 +799,10 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                         m.invoke(this, params);
                         break;
                     } catch (IllegalAccessException e) {
-                        Crashlytics.logException(e);
+                        Logging.recordException(e);
                         throw new RuntimeException("Error running post login action ", e);
                     } catch (InvocationTargetException e) {
-                        Crashlytics.logException(e);
+                        Logging.recordException(e);
                         throw new RuntimeException("Error running post login action ", e);
                     }
                 }
@@ -1196,7 +813,14 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ToolbarEvent event) {
-        toolbar.setTitle(event.getTitle());
+        if(!this.equals(event.getActivity())) {
+            return;
+        }
+        if(event.getSpannableTitle() != null) {
+            toolbar.setSpannableTitle(event.getSpannableTitle());
+        } else {
+            toolbar.setTitle(event.getTitle());
+        }
         if(event.isExpandToolbarView()) {
             appBar.setExpanded(true, event.getTitle()!= null);
         } else if(event.isContractToolbarView()) {
@@ -1204,29 +828,32 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
         appBar.setEnabled(event.getTitle()!= null);
     }
+//
+//    @Override
+//    protected void onNewIntent(Intent intent) {
+//        super.onNewIntent(intent);
+//        this.setIntent(intent);
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(ThemeAlteredEvent event) {
-        CustomNavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.updateTheme();
+    public void onEvent(PiwigoActivePluginsReceivedEvent event) {
+        Logging.addContext(this, event.getCredentials().getSessionDebugInfoMap());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PiwigoLoginSuccessEvent event) {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        Crashlytics.setString("ServerVersion", sessionDetails.getPiwigoVersion() /* string value */);
+        Logging.addContext(this, sessionDetails.getSessionDebugInfoMap());
+        Logging.addContext(this,"app_language", AppPreferences.getDesiredLanguage(getSharedPrefs(), this));
 
-
-        CustomNavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setMenuVisibilityToMatchSessionState();
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.
-            showGallery(CategoryItem.ROOT_ALBUM);
+            showGallery(StaticCategoryItem.ROOT_ALBUM);
         } else {
             //TODO notify all pages that need it that they need to be reloaded - i.e. flush them out of the fragment manager or send an event forcing reload.
         }
-        AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
+        AdsManager.getInstance(this).updateShowAdvertsSetting(this);
         VersionCompatability.INSTANCE.runTests();
 
         boolean showUserWarning = OtherPreferences.getAndUpdateLastWarnedAboutVersionOrFeatures(prefs, this);
@@ -1249,43 +876,40 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SlideshowEmptyEvent event) {
+        Logging.log(Log.INFO, TAG, "removing from activity immediately as slideshow empty event rxd");
         getSupportFragmentManager().popBackStackImmediate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumCreatedEvent event) {
+        Logging.log(Log.INFO, TAG, "removing from activity immediately as album created event rxd");
         getSupportFragmentManager().popBackStackImmediate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumSelectionNeededEvent event) {
-        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
-        prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        prefs.withShowHierachy();
-        if (!event.isAllowEditing()) {
-            prefs.readonly();
-        }
-        showAlbumSelectionFragment(event.getActionId(), prefs, event.getInitialSelection());
+        AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences(false, true, event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        showAlbumSelectionFragment(event.getActionId(), adapterPreferences, event.getInitialSelection());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ExpandingAlbumSelectionNeededEvent event) {
 //        ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs = new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences();
 //        AlbumSelectExpandableFragment f = AlbumSelectExpandableFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
-        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences();
-        if(event.isAllowEditing()) {
-            prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        }
-        if(event.getInitialRoot() != null) {
-            prefs.withInitialRoot(new CategoryItemStub("???", event.getInitialRoot()));
-        } else {
-            prefs.withInitialRoot(CategoryItemStub.ROOT_GALLERY);
-        }
-        prefs.setAllowItemAddition(true);
-        prefs.withInitialSelection(event.getInitialSelection());
-        RecyclerViewCategoryItemSelectFragment f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
+        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences(event.getInitialRoot(), event.isAllowEditing(), event.getInitialSelection(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        prefs.withConnectionProfile(event.getConnectionProfileName());
+        RecyclerViewCategoryItemSelectFragment<?,?> f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
         showFragmentNow(f);
     }
 
 
+    private class CustomBackStackListener implements FragmentManager.OnBackStackChangedListener {
+        @Override
+        public void onBackStackChanged() {
+            List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+            if(!fragmentList.isEmpty()) {
+                ((MyFragment<?,?>)fragmentList.get(fragmentList.size()-1)).updatePageTitle();
+            }
+        }
+    }
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_delete">Delete</string>
+    <string name="undefined_error_msg">Undefined error</string>
+    <string name="resource_unavailable_error_msg_pattern">Requested resource could not be accessed.\nHTTP Status Code (%1$d)</string>
+    <string name="server_error_msg_pattern">Something went wrong in the server or between the server and your device.\nHTTP Status Code (%1$d)</string>
+    <string name="redirect_error_msg_pattern">Request redirection error :\nHTTP Status Code (%1$d)</string>
+    <string name="http_error_msg_pattern">HTTP Error Message (%1$s)</string>
+    <string name="unexpected_response_error_msg_pattern">Unexpected response : \nHTTP Status Code (%1$d)</string>
+    <string name="certificate_chain_not_verifiable_error">Certificate chain could not be verified using the certificates on this device.</string>
+    <string name="certificate_chain_not_verifiable_error_detail">Certificate chain could not be verified using the certificates on this device. To resolve this, allow this app to maintain a list of trusted certificates (within this app connection settings).</string>
+    <string name="connection_error_msg_pattern">Unable to connect to server</string>
+    <string name="permission_write">Write</string>
+    <string name="permission_read">Read</string>
+</resources>
