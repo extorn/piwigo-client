@@ -1,70 +1,60 @@
 <en-GB>
 Bugfix:
-- Finally! worked out why the app was crashing on the slideshow for some users
-- tweaked some dialog layout
+- orphan item page load causing a crash
 Change:
-- Dialog showing all release notes since you last updated after an update
+- name given to task progress trackers to allow bug resolution where child task of a progress tracker is unexpectedly incomplete
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Konečně! vyřešeno, proč aplikace pro některé uživatele havarovala v prezentaci
-- vylepšil nějaké rozvržení dialogu
+načtení stránky osiřelé položky způsobující pád
 Změna:
-- Dialog zobrazující všechny poznámky k verzi od poslední aktualizace po aktualizaci
+- název přidělený sledovačům postupu úkolů, aby umožnil řešení chyb, kde je podřízený úkol sledovače průběhu neočekávaně neúplný
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Schließlich! hat herausgefunden, warum die App in der Diashow für einige Benutzer abstürzte
-- Einige Dialoglayouts wurden optimiert
+- Laden der Seite mit verwaisten Elementen, die einen Absturz verursacht
 Veränderung:
-- Dialogfeld mit allen Versionshinweisen seit Ihrer letzten Aktualisierung nach einem Update
+- Name für Task-Fortschritts-Tracker, um die Fehlerbehebung zu ermöglichen, wenn die untergeordnete Aufgabe eines Fortschritts-Trackers unerwartet unvollständig ist
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- ¡Finalmente! descubrió por qué la aplicación fallaba en la presentación de diapositivas para algunos usuarios
-- modificó un diseño de diálogo
+- carga de la página de un elemento huérfano que provoca un bloqueo
 Cambio:
-- Cuadro de diálogo que muestra todas las notas de la versión desde la última vez que se actualizó después de una actualización
+- nombre dado a los rastreadores de progreso de la tarea para permitir la resolución de errores cuando la tarea secundaria de un rastreador de progreso está inesperadamente incompleta
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Finalement! déterminé pourquoi l\'application plantait sur le diaporama pour certains utilisateurs
-- modification de la disposition des boîtes de dialogue
+- chargement de la page d\'élément orphelin provoquant un plantage
 Changement:
-- Boîte de dialogue affichant toutes les notes de publication depuis la dernière mise à jour après une mise à jour
+- nom donné aux trackers de progression de tâche pour permettre la résolution de bogue où la tâche enfant d\'un tracker de progression est inopinément incomplète
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Infine! ha risolto il motivo per cui l\'app si bloccava nella presentazione per alcuni utenti
-- ottimizzato alcuni layout di dialogo
+- caricamento della pagina dell\'elemento orfano che causa un crash
 Modificare:
-- Finestra di dialogo che mostra tutte le note di rilascio dall\'ultimo aggiornamento dopo un aggiornamento
+- nome assegnato ai tracker di avanzamento delle attività per consentire la risoluzione dei bug in cui l\'attività figlio di un tracker di avanzamento è inaspettatamente incompleta
 </it-IT>
 <ja-JP>
 バグ修正：
-- 最終的に！ 一部のユーザーのスライドショーでアプリがクラッシュする理由を解明しました
--いくつかのダイアログレイアウトを微調整しました
+-孤立したアイテムページの読み込みがクラッシュの原因
 変化する：
--更新後に最後に更新してからのすべてのリリースノートを表示するダイアログ
+-進行状況トラッカーの子タスクが予期せず不完全であるバグ解決を可能にするためにタスク進行状況トラッカーに付けられた名前
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Tenslotte! uitgewerkt waarom de app crashte in de diavoorstelling voor sommige gebruikers
-- enkele dialooglay-out aangepast
+- het laden van de pagina met verweesde items veroorzaakt een crash
 Verandering:
-- Dialoog met alle release-opmerkingen sinds de laatste update na een update
+- naam gegeven aan voortgangstrackers van taken om het oplossen van fouten mogelijk te maken wanneer de onderliggende taak van een voortgangstracker onverwacht onvolledig is
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- В заключение! выяснили, почему приложение вылетало на слайд-шоу для некоторых пользователей
-- изменен макет диалогового окна
+- загрузка страницы с бесхозным элементом вызывает сбой
 Изменить:
-- Диалог, показывающий все примечания к выпуску с момента последнего обновления после обновления
+- имя, присвоенное трекерам прогресса задачи, чтобы разрешить ошибку, когда дочерняя задача трекера прогресса неожиданно оказывается неполной
 </ru-RU>
 <zh-CN>
 错误修正：
--最后！ 找出为什么该应用程序在某些用户的幻灯片上崩溃的原因
--调整了一些对话框的布局
+-孤立项目页面加载导致崩溃
 更改：
--显示自上次更新后更新以来的所有发行说明的对话框
+-为任务进度跟踪器指定的名称，以允许在进度跟踪器的子任务意外不完整的情况下解决错误
 </zh-CN>
