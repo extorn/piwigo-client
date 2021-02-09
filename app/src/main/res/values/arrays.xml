@@ -250,6 +250,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.114</item>
+        <item>"Bugfix:
+                - orphan item page load causing a crash
+               Change:
+                - name given to task progress trackers to allow bug resolution where child task of a progress tracker is unexpectedly incomplete"</item>
         <item>1.4.0.113</item>
         <item>"Bugfix:
                 - Finally! worked out why the app was crashing on the slideshow for some users

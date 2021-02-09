@@ -2028,25 +2028,33 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         synchronized (itemsToLoad) {
             while (itemsToLoad.size() > 0) {
                 String itemToLoad = itemsToLoad.remove(0);
-                switch (itemToLoad) {
-                    case SERVER_CALL_ID_SUB_CATEGORIES:
-                        loadAlbumSubCategories(galleryModel.getContainerDetails());
-                        break;
-                    case SERVER_CALL_ID_ALBUM_PERMISSIONS:
-                        loadAlbumPermissionsIfNeeded();
-                        break;
-                    case SERVER_CALL_ID_ALBUM_INFO_DETAIL:
-                        updateAlbumDetails();
-                        break;
-                    case SERVER_CALL_ID_ADMIN_LIST_ALBUMS:
-                        loadAdminListOfAlbums();
-                        break;
-                    default:
-                        int page = Integer.parseInt(itemToLoad);
-                        loadAlbumResourcesPage(page);
-                        break;
-                }
+                onRerunServerCall(itemToLoad);
             }
+        }
+    }
+
+    protected void onRerunServerCall(String itemToLoad) {
+        switch (itemToLoad) {
+            case SERVER_CALL_ID_SUB_CATEGORIES:
+                loadAlbumSubCategories(galleryModel.getContainerDetails());
+                break;
+            case SERVER_CALL_ID_ALBUM_PERMISSIONS:
+                loadAlbumPermissionsIfNeeded();
+                break;
+            case SERVER_CALL_ID_ALBUM_INFO_DETAIL:
+                updateAlbumDetails();
+                break;
+            case SERVER_CALL_ID_ADMIN_LIST_ALBUMS:
+                loadAdminListOfAlbums();
+                break;
+            default:
+                try {
+                    int page = Integer.parseInt(itemToLoad);
+                    loadAlbumResourcesPage(page);
+                } catch(NumberFormatException e) {
+                    Logging.log(Log.WARN, TAG, "Unable to reload unrecognised page number : %1$s", itemToLoad);
+                }
+                break;
         }
     }
 

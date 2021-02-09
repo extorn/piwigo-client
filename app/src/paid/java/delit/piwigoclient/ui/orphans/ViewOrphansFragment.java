@@ -330,6 +330,22 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
         }
         super.loadAlbumResourcesPage(pageToLoad);
     }
+
+    @Override
+    protected void onRerunServerCall(String itemToLoad) {
+        if(itemToLoad.startsWith(ORPHANS_PAGE_LOAD_PREFIX)) {
+            String orphanPageId = itemToLoad.replace(ORPHANS_PAGE_LOAD_PREFIX, "");
+            try {
+                int pageId = Integer.parseInt(orphanPageId);
+                loadOrphanedResourceIdsPage(pageId);
+            } catch(NumberFormatException e) {
+                Logging.log(Log.WARN, TAG, "Unable to reload unrecognised page number : %1$s", itemToLoad);
+            }
+        } else {
+            super.onRerunServerCall(itemToLoad);
+        }
+    }
+
     protected void loadOrphanedResourceIdsPage(int pageToLoad) {
         synchronized (getLoadingMessageIds()) {
 //            PiwigoAlbum<CategoryItem, GalleryItem> galleryModel = getGalleryModel();
