@@ -155,7 +155,7 @@ public class SharedFilesIntentProcessingTask<A extends MyActivity<A,AUIH>,AUIH e
         SentFilesResult result;// process clip data
         result = new SentFilesResult(clipData.getItemCount());
 //            String mimeType = clipData.getDescription().getMimeTypeCount() == 1 ? clipData.getDescription().getMimeType(0) : null;
-        TaskProgressTracker fileImportTracker = new TaskProgressTracker(clipData.getItemCount(), new ProgressListener());
+        TaskProgressTracker fileImportTracker = new TaskProgressTracker("overall file import", clipData.getItemCount(), new ProgressListener());
         boolean canTakePermission = IOUtils.allUriFlagsAreSet(intent.getFlags(), IOUtils.URI_PERMISSION_READ);
         for(int i = 0; i < clipData.getItemCount(); i++) {
             try {
@@ -190,7 +190,7 @@ public class SharedFilesIntentProcessingTask<A extends MyActivity<A,AUIH>,AUIH e
         }
         if (imageUris != null) {
             result = new SentFilesResult(imageUris.size());
-            TaskProgressTracker fileImportTracker = new TaskProgressTracker(imageUris.size(), new ProgressListener());
+            TaskProgressTracker fileImportTracker = new TaskProgressTracker("single file import", imageUris.size(), new ProgressListener());
             int i = 0;
             for (Uri imageUri : imageUris) {
                 try {
@@ -221,7 +221,7 @@ public class SharedFilesIntentProcessingTask<A extends MyActivity<A,AUIH>,AUIH e
         Uri sharedUri = intent.getData();
         if(sharedUri != null) {
             boolean canTakePermission = IOUtils.allUriFlagsAreSet(intent.getFlags(), IOUtils.URI_PERMISSION_READ);
-            TaskProgressTracker fileImportTracker = new TaskProgressTracker(1, new ProgressListener());
+            TaskProgressTracker fileImportTracker = new TaskProgressTracker("single file import", 1, new ProgressListener());
             result = new SentFilesResult(1);
             handleSentImage(sharedUri, mimeType, result);
             if(canTakePermission) {

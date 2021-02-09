@@ -68,7 +68,7 @@ public class TaskProgressTrackerTest {
     public void testBasicTracker() {
         int totalWork = 20;
         testProgressListener.setUpdateStep(0.05);//5%
-        TaskProgressTracker tracker = new TaskProgressTracker(totalWork, testProgressListener);
+        TaskProgressTracker tracker = new TaskProgressTracker("task", totalWork, testProgressListener);
         assertFalse(tracker.isComplete());
         for(int i = 0; i < totalWork; i++) {
             tracker.setWorkDone(i);
@@ -84,19 +84,25 @@ public class TaskProgressTrackerTest {
     public void testSubDividedTracker() {
         int totalWork = 2000;
         testProgressListener.setUpdateStep(0.05);//5%
-        TaskProgressTracker overallTracker = new TaskProgressTracker(totalWork, testProgressListener);
+        TaskProgressTracker overallTracker = new TaskProgressTracker("overall task", totalWork, testProgressListener);
         assertFalse(overallTracker.isComplete());
         assertEquals(2000, overallTracker.getRemainingWork());
+        assertEquals("TaskProgressTracker{taskName=overall task, complete=0% (0 / 2000), subTasks=[0]}",overallTracker.toString());
         runSubTask(overallTracker,totalWork, 200);// 10% of total
         assertEquals(0, overallTracker.getActiveSubTasks());
+        assertEquals("TaskProgressTracker{taskName=overall task, complete=10% (200 / 2000), subTasks=[0]}",overallTracker.toString());
         overallTracker.incrementWorkDone(200); // now 20% done
         assertEquals(0.2, overallTracker.getTaskProgress(), EPSILON);
+        assertEquals("TaskProgressTracker{taskName=overall task, complete=20% (400 / 2000), subTasks=[0]}",overallTracker.toString());
         runSubTask(overallTracker,totalWork, 200);// 10% of total
         assertEquals(0.3, overallTracker.getTaskProgress(), EPSILON);
+        assertEquals("TaskProgressTracker{taskName=overall task, complete=30% (600 / 2000), subTasks=[0]}",overallTracker.toString());
         runSubTask(overallTracker,totalWork, 1200);// 60% of total
         assertEquals(0.9, overallTracker.getTaskProgress(), EPSILON);
+        assertEquals("TaskProgressTracker{taskName=overall task, complete=90% (1800 / 2000), subTasks=[0]}",overallTracker.toString());
         overallTracker.incrementWorkDone(overallTracker.getRemainingWork());
         assertEquals(1, overallTracker.getTaskProgress(), EPSILON);
+        assertEquals("TaskProgressTracker{taskName=overall task, complete=100% (2000 / 2000), subTasks=[0]}",overallTracker.toString());
         assertTrue(overallTracker.isComplete());
         testProgressListener.assertReportsValid();
     }
@@ -105,7 +111,7 @@ public class TaskProgressTrackerTest {
 
         int subTaskWork = 20;
         double startProgress = overallTracker.getTaskProgress();
-        TaskProgressTracker subTaskTracker = overallTracker.addSubTask(subTaskWork, subTaskMainWorkUnits);
+        TaskProgressTracker subTaskTracker = overallTracker.addSubTask("subtasks", subTaskWork, subTaskMainWorkUnits);
         for(int i = 0; i < subTaskWork; i++) {
             subTaskTracker.setWorkDone(i);
             assertFalse("Tracker should still be in progress", subTaskTracker.isComplete());
@@ -118,6 +124,11 @@ public class TaskProgressTrackerTest {
             double expectedActualOverallProgress = startProgress + expectedOverallProgressPerc;
             assertEquals("loop " + i, expectedActualOverallProgress, overallTracker.getTaskProgress(), overallTracker.getMinimumUpdatePercent());
             assertEquals("loop " + i, expectedReportedOverallProgress, testProgressListener.getReportedProgress(), overallTracker.getMinimumUpdatePercent());
+
+            double subTaskProgress = ((double)i)/subTaskWork;
+            double mainTaskProgress = Math.rint(100 * overallTracker.getTaskProgress());
+            String expectedProgressToStr = String.format("TaskProgressTracker{taskName=overall task, complete=%3$d%% (%4$d / 2000), subTasks=[1]{TaskProgressTracker{taskName=subtasks, complete=%1$d%% (%2$d / 20), subTasks=[0]}}}", (int)Math.rint(subTaskProgress*100), i, (int)Math.rint(mainTaskProgress), overallTracker.getWorkDone());
+            assertEquals("loop " + i, expectedProgressToStr,overallTracker.toString());
         }
         subTaskTracker.incrementWorkDone(1);
         assertTrue(subTaskTracker.isComplete());

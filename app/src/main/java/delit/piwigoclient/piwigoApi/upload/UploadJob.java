@@ -216,7 +216,7 @@ public class UploadJob implements Parcelable {
                 this.totalDataToWorkOn = calculateTotalWork(context);
                 this.dataWorkAlreadyDone = calculateWorkDone(context); // this will assume checksums need to occur still, but will deal with files uploaded or partially so as best it can.
             }
-            overallJobProgressTracker = new TaskProgressTracker(TOTAL_WORK, new ProgressAdapterChain(this, null));
+            overallJobProgressTracker = new TaskProgressTracker("Upload Job", TOTAL_WORK, new ProgressAdapterChain(this, null));
             overallJobProgressTracker.setExactProgress(overallUploadProgress);
         }
         return overallJobProgressTracker;
@@ -224,23 +224,23 @@ public class UploadJob implements Parcelable {
 
     public TaskProgressTracker getTaskProgressTrackerForOverallCompressionAndUploadOfData() {
         if(uploadProgressTracker == null) {
-            uploadProgressTracker = overallJobProgressTracker.addSubTask(totalDataToWorkOn, WORK_DIVISION_COMPRESS_AND_UPLOAD_PERC);
+            uploadProgressTracker = overallJobProgressTracker.addSubTask("Compression and Upload", totalDataToWorkOn, WORK_DIVISION_COMPRESS_AND_UPLOAD_PERC);
             uploadProgressTracker.setWorkDone(dataWorkAlreadyDone);
         }
         return uploadProgressTracker;
     }
 
     public TaskProgressTracker getTaskProgressTrackerForSingleFileChunkParsing(long totalBytes, long bytesUploaded) {
-        return uploadProgressTracker.addSubTask(totalBytes - bytesUploaded, totalBytes - bytesUploaded);
+        return uploadProgressTracker.addSubTask("Files Chunks Upload", totalBytes - bytesUploaded, totalBytes - bytesUploaded);
     }
 
     public TaskProgressTracker getTaskProgressTrackerForAllChecksumCalculation() {
-        return overallJobProgressTracker.addSubTask(filesForUploadAndSize.size(), WORK_DIVISION_CHECKSUM_PERC);
+        return overallJobProgressTracker.addSubTask("Checksums calculation", filesForUploadAndSize.size(), WORK_DIVISION_CHECKSUM_PERC);
     }
 
     public TaskProgressTracker getTaskProgressTrackerForSingleFileCompression(Uri uri) {
         long filesize = getFileSize(uri);
-        return uploadProgressTracker.addSubTask(100, filesize);
+        return uploadProgressTracker.addSubTask("file compression", 100, filesize);
     }
 
     public void setToRunInBackground() {
@@ -491,7 +491,7 @@ public class UploadJob implements Parcelable {
                 newJob = true;
             }
             for (Uri f : filesNotFinished) {
-                TaskProgressTracker fileChecksumProgressTracker = checksumProgressTracker.addSubTask(100, 1); // tick one file off. Each file has 0 - 100% completion
+                TaskProgressTracker fileChecksumProgressTracker = checksumProgressTracker.addSubTask("file checksum", 100, 1); // tick one file off. Each file has 0 - 100% completion
                 if (!IOUtils.exists(context, f)) {
                     // Remove file from upload list
                     cancelFileUpload(f);

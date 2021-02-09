@@ -1122,7 +1122,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         Set<Uri> uris = filesAndSizes.keySet();
 
         UiUpdatingProgressListener progressListener = new UiUpdatingProgressListener(overallUploadProgressBar, R.string.removing_files_from_job);
-        TaskProgressTracker tracker = new TaskProgressTracker(2, progressListener);
+        TaskProgressTracker tracker = new TaskProgressTracker("removing files from upload", 2, progressListener);
         releaseUriPermissionsForUploadItems(uris);
         tracker.incrementWorkDone(1);
         getFilesForUploadViewAdapter().removeAll(uris);

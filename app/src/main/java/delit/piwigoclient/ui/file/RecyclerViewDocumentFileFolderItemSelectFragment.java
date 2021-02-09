@@ -877,8 +877,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         protected List<FolderItem> doInBackgroundSafely(List<FolderItem> ... params) {
             List<FolderItem> itemsShared = params[0];
             List<FolderItem> copiedItemsShared = new ArrayList<>(itemsShared.size());
-            TaskProgressTracker progressTracker = new TaskProgressTracker(100,this);
-            TaskProgressTracker copyProgressTracker = progressTracker.addSubTask(itemsShared.size(), 80);
+            TaskProgressTracker progressTracker = new TaskProgressTracker("files cloning",  100,this);
+            TaskProgressTracker copyProgressTracker = progressTracker.addSubTask("copying files", itemsShared.size(), 80);
             for(FolderItem item : itemsShared) {
                 DocumentFile sharedFilesFolder = IOUtils.getSharedFilesFolder(getContext());
 
@@ -894,7 +894,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
                     copyProgressTracker.incrementWorkDone(1);
                 }
             }
-            TaskProgressTracker cacheProgressTracker = progressTracker.addSubTask(copiedItemsShared.size(), 20);
+            TaskProgressTracker cacheProgressTracker = progressTracker.addSubTask("caching files information", copiedItemsShared.size(), 20);
             itemsShared.clear();
             FolderItem.cacheDocumentInformation(getContext(), copiedItemsShared, cacheProgressTracker);
             return copiedItemsShared;

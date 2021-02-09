@@ -43,7 +43,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
     @Override
     protected List<UploadDataItem> doInBackgroundSafely(FileSelectionCompleteEvent... objects) {
         UiUpdatingProgressListener progressListener = new UiUpdatingProgressListener(getOwner().getOverallUploadProgressIndicator(), R.string.calculating_file_checksums);
-        TaskProgressTracker fileSelectionProgress = new TaskProgressTracker(100, progressListener);
+        TaskProgressTracker fileSelectionProgress = new TaskProgressTracker("Overall file selection", 100, progressListener);
         FileSelectionCompleteEvent event = objects[0];
         int itemCount = event.getSelectedFolderItems().size();
 
@@ -56,7 +56,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
 
 
             // Initialise phase 1 (0% -15% - split between number of files to process)
-            TaskProgressTracker cachingProgressTracker = fileSelectionProgress.addSubTask(itemCount, 15);
+            TaskProgressTracker cachingProgressTracker = fileSelectionProgress.addSubTask("caching files information", itemCount, 15);
             try {
                 FolderItem.cacheDocumentInformation(getContext(), event.getSelectedFolderItems(), cachingProgressTracker);
             } finally {
@@ -95,7 +95,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
         }
 
         // At this point, firstMainTaskProgressListener is initialise phase 2 (15% -100% or 0% - 100% as appropriate - same number of files to process)
-        TaskProgressTracker overallChecksumCalcTask = fileSelectionProgress.addSubTask(totalImportedFileBytes, fileSelectionProgress.getRemainingWork());
+        TaskProgressTracker overallChecksumCalcTask = fileSelectionProgress.addSubTask("overall files checksum calculation", totalImportedFileBytes, fileSelectionProgress.getRemainingWork());
 
         ArrayList<UploadDataItem> uploadDataItems = new ArrayList<>(event.getSelectedFolderItems().size());
 
@@ -105,7 +105,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
                 Log.w(TAG, "Upload Fragment Passed URI: " + f.getContentUri());
             }
             UploadDataItem item = new UploadDataItem(f.getContentUri(), f.getName(), f.getMime(), f.getFileLength());
-            TaskProgressTracker fileChecksumTracker = overallChecksumCalcTask.addSubTask(f.getFileLength(), f.getFileLength());
+            TaskProgressTracker fileChecksumTracker = overallChecksumCalcTask.addSubTask("file checksum calculation", f.getFileLength(), f.getFileLength());
             try {
                 item.calculateDataHashCode(getContext(), fileChecksumTracker);
                 uploadDataItems.add(item);

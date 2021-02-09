@@ -287,7 +287,7 @@ public class FolderItem implements Parcelable {
         }
         ThreadPoolExecutor executor = new ThreadPoolExecutor(4, 32, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(items.size()));
 
-        TaskProgressTracker cachingTracker = new TaskProgressTracker(items.size(), taskListener);
+        TaskProgressTracker cachingTracker = new TaskProgressTracker("overall file field caching", items.size(), taskListener);
         for(FolderItem item : items) {
             executor.execute(() -> {
                 try {

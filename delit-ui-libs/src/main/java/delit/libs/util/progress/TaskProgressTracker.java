@@ -3,12 +3,14 @@ package delit.libs.util.progress;
 import android.util.Log;
 
 import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import delit.libs.core.util.Logging;
 
@@ -23,6 +25,7 @@ public class TaskProgressTracker implements ProgressListener {
     private final ProgressListener progressListener;
     private final long totalWork;
     private final double scalar;
+    private final String taskName;
     private final List<TaskProgressTracker> subTasks = new ArrayList<>();
     private long workDone;
     private @FloatRange(from = 0, to = 1) double currentScaledProgress;
@@ -31,11 +34,12 @@ public class TaskProgressTracker implements ProgressListener {
     private SubTaskListener subTaskListener;
     private long minimumWorkReportingInterval;
 
-    public TaskProgressTracker(long totalWork, ProgressListener listener) {
-        this(totalWork, 1, listener);
+    public TaskProgressTracker(String taskName, long totalWork, ProgressListener listener) {
+        this(taskName, totalWork, 1, listener);
     }
 
-    private TaskProgressTracker(long totalWork, double scalar, ProgressListener listener) {
+    private TaskProgressTracker(String taskName, long totalWork, double scalar, ProgressListener listener) {
+        this.taskName = taskName;
         this.totalWork = totalWork;
         this.scalar = scalar;
         this.progressListener = listener;
@@ -55,8 +59,8 @@ public class TaskProgressTracker implements ProgressListener {
         return Math.max(listenerMinimumNotifiableProgress, taskTrackerMinimumReportingProgress);
     }
 
-    public synchronized TaskProgressTracker addSubTask(long subTaskTotalWork, long mainTaskWorkUnits) {
-        TaskProgressTracker subTaskTracker = new TaskProgressTracker(subTaskTotalWork, calculateScalar(mainTaskWorkUnits), getSubTaskListener());
+    public synchronized TaskProgressTracker addSubTask(String subTaskName, long subTaskTotalWork, long mainTaskWorkUnits) {
+        TaskProgressTracker subTaskTracker = new TaskProgressTracker(subTaskName, subTaskTotalWork, calculateScalar(mainTaskWorkUnits), getSubTaskListener());
         subTasks.add(subTaskTracker);
         return subTaskTracker;
     }
@@ -92,7 +96,7 @@ public class TaskProgressTracker implements ProgressListener {
         if(!subTasks.isEmpty()) {
             calculateProgressValue(); // this will clear any orphaned sub tasks that are complete.
             if(!subTasks.isEmpty()) {
-                throw new IllegalStateException("Unable to update overall work progress when sub divided.");
+                throw new IllegalStateException("Unable to update overall work progress when sub divided.\nProgressTracker state: " + toString());
             }
         }
     }
@@ -135,6 +139,28 @@ public class TaskProgressTracker implements ProgressListener {
                 lastNotifiedProgress = currentScaledProgress;
             }
         }
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("TaskProgressTracker{");
+        sb.append("taskName=").append(taskName);
+        sb.append(String.format(Locale.UK, ", complete=%1.0f%% (%2$d / %3$d)", Math.rint(100 * getTaskProgress()), workDone, totalWork));
+        sb.append(", subTasks=[").append(subTasks.size()).append(']');
+        if(subTasks.size() > 0) {
+            sb.append('{');
+            for (Iterator<TaskProgressTracker> iterator = subTasks.iterator(); iterator.hasNext(); ) {
+                TaskProgressTracker task = iterator.next();
+                sb.append(task);
+                if(iterator.hasNext()) {
+                    sb.append(',');
+                }
+            }
+            sb.append('}');
+        }
+        sb.append('}');
+        return sb.toString();
     }
 
     /**
@@ -204,6 +230,10 @@ public class TaskProgressTracker implements ProgressListener {
     public synchronized void setExactProgress(double progress) {
         long workToMarkDone = BigDecimal.valueOf(progress * totalWork).setScale(0, RoundingMode.HALF_DOWN).longValue();
         setWorkDone(workToMarkDone);
+    }
+
+    public long getWorkDone() {
+        return workDone;
     }
 
     private static class SubTaskListener implements ProgressListener {

@@ -132,7 +132,8 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 
     }
 
-    public void afterCall(boolean success) {
+    public void afterCallInBackgroundThread(boolean success) {
+        Logging.log(Log.DEBUG, tag, "Worker "+getTaskName()+" terminated, handler success : " + success);
     }
 
     @Override
@@ -218,7 +219,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
             handler.sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_unable_to_acquire_valid_session)));
         }
 
-        afterCall(handler.isSuccess());
+        afterCallInBackgroundThread(handler.isSuccess());
 
 
         return handler.isSuccess();
@@ -252,6 +253,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
     @Override
     protected void onPostExecuteSafely(Boolean aBoolean) {
         recordExcutionFinished();
+        Logging.log(Log.DEBUG, tag, "Worker "+getTaskName()+" terminated: " + aBoolean);
     }
 
     public long start(long messageId) {

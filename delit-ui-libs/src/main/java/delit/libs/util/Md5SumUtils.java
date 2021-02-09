@@ -51,8 +51,8 @@ public class Md5SumUtils {
             }
             long totalBytes = pfd.getStatSize();
             int reportEveryBytes = 512 * 1024; // report progress once 512Kb as a maximum frequency
-            TaskProgressTracker taskProgressTracker = new TaskProgressTracker(100, progressListener); // percent
-            TaskProgressTracker fileReaderTask = taskProgressTracker.addSubTask(totalBytes,75);
+            TaskProgressTracker taskProgressTracker = new TaskProgressTracker("overall md5 calculation", 100, progressListener); // percent
+            TaskProgressTracker fileReaderTask = taskProgressTracker.addSubTask("reading data", totalBytes,75);
             fileReaderTask.setMinimumWorkReportingInterval(reportEveryBytes);
 
             try(FileChannel channel = new FileInputStream(pfd.getFileDescriptor()).getChannel()) {
