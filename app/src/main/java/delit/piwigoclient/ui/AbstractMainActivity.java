@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
+import android.content.QuickViewConstants;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
@@ -16,6 +17,7 @@ import android.view.View;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -495,6 +497,28 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void previewAFileNPlus(Uri uri) {
+        Intent intent = new Intent(Intent.ACTION_QUICK_VIEW);
+
+        List<String> features = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            features.add(QuickViewConstants.FEATURE_DELETE);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            intent.putExtra(EXTRA_INITIAL_URI, uri);
+            features.add(QuickViewConstants.FEATURE_VIEW);
+            features.add(QuickViewConstants.FEATURE_EDIT);
+            intent.putExtra(Intent.EXTRA_QUICK_VIEW_FEATURES, features.toArray(new String[0]));
+        }
+
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.view_exported_files)));
+        } catch(ActivityNotFoundException e) {
+            Logging.recordException(e);
+        }
     }
 
     public void openFolder(Uri uri){
