@@ -146,6 +146,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.115</item>
+        <item>"Risoluzione del problema:
+                 - video non identificati se si utilizza plug-in per la privacy e video a cui si accede da / gallerie.
+                Modificare:
+                 - l\'app ora riconosce che alcuni server memorizzano i video in / gallerie anziché in / upload"</item>
         <item>1.4.0.114</item>
         <item>"Risoluzione del problema:
                  - caricamento della pagina dell\'elemento orfano che causa un crash

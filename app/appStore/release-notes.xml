@@ -1,60 +1,60 @@
 <en-GB>
 Bugfix:
-- orphan item page load causing a crash
+- videos not identified if using privacy plugin and videos accessed from /galleries.
 Change:
-- name given to task progress trackers to allow bug resolution where child task of a progress tracker is unexpectedly incomplete
+- app now recognises that some servers store videos under /galleries rather than /upload
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-načtení stránky osiřelé položky způsobující pád
+- videa nebyla identifikována, pokud se používá plugin pro ochranu osobních údajů a videa přístupná z / galerie.
 Změna:
-- název přidělený sledovačům postupu úkolů, aby umožnil řešení chyb, kde je podřízený úkol sledovače průběhu neočekávaně neúplný
+- aplikace nyní rozpoznává, že některé servery ukládají videa spíše pod / galerie než / upload
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Laden der Seite mit verwaisten Elementen, die einen Absturz verursacht
+- Videos, die bei Verwendung des Datenschutz-Plugins nicht identifiziert wurden, und Videos, auf die von / gallery zugegriffen wird.
 Veränderung:
-- Name für Task-Fortschritts-Tracker, um die Fehlerbehebung zu ermöglichen, wenn die untergeordnete Aufgabe eines Fortschritts-Trackers unerwartet unvollständig ist
+- Die App erkennt jetzt, dass einige Server Videos unter / gallery anstatt unter / upload speichern
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- carga de la página de un elemento huérfano que provoca un bloqueo
+- videos no identificados si se usa un complemento de privacidad y videos a los que se accede desde / galerías.
 Cambio:
-- nombre dado a los rastreadores de progreso de la tarea para permitir la resolución de errores cuando la tarea secundaria de un rastreador de progreso está inesperadamente incompleta
+- la aplicación ahora reconoce que algunos servidores almacenan videos en / galleries en lugar de / upload
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- chargement de la page d\'élément orphelin provoquant un plantage
+- les vidéos non identifiées si vous utilisez le plugin de confidentialité et les vidéos accessibles depuis / galeries.
 Changement:
-- nom donné aux trackers de progression de tâche pour permettre la résolution de bogue où la tâche enfant d\'un tracker de progression est inopinément incomplète
+- l\'application reconnaît maintenant que certains serveurs stockent des vidéos sous / galeries plutôt que / upload
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- caricamento della pagina dell\'elemento orfano che causa un crash
+- video non identificati se si utilizza plug-in per la privacy e video a cui si accede da / gallerie.
 Modificare:
-- nome assegnato ai tracker di avanzamento delle attività per consentire la risoluzione dei bug in cui l\'attività figlio di un tracker di avanzamento è inaspettatamente incompleta
+- l\'app ora riconosce che alcuni server memorizzano i video in / gallerie anziché in / upload
 </it-IT>
 <ja-JP>
 バグ修正：
--孤立したアイテムページの読み込みがクラッシュの原因
+-プライバシープラグインを使用している場合に識別されないビデオと/ galleriesからアクセスされるビデオ。
 変化する：
--進行状況トラッカーの子タスクが予期せず不完全であるバグ解決を可能にするためにタスク進行状況トラッカーに付けられた名前
+-アプリは、一部のサーバーが/ uploadではなく/ galleriesの下にビデオを保存することを認識するようになりました
 </ja-JP>
 <nl-NL>
 Bugfix:
-- het laden van de pagina met verweesde items veroorzaakt een crash
+- video\'s die niet zijn geïdentificeerd bij gebruik van de privacy-plug-in en video\'s die toegankelijk zijn via / galleries.
 Verandering:
-- naam gegeven aan voortgangstrackers van taken om het oplossen van fouten mogelijk te maken wanneer de onderliggende taak van een voortgangstracker onverwacht onvolledig is
+- app herkent nu dat sommige servers video\'s opslaan onder / galerijen in plaats van / uploaden
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- загрузка страницы с бесхозным элементом вызывает сбой
+- видео не идентифицируются при использовании плагина конфиденциальности и видео, доступ к которым осуществляется из / galleries.
 Изменить:
-- имя, присвоенное трекерам прогресса задачи, чтобы разрешить ошибку, когда дочерняя задача трекера прогресса неожиданно оказывается неполной
+- приложение теперь распознает, что некоторые серверы хранят видео в / galleries, а не в / upload
 </ru-RU>
 <zh-CN>
 错误修正：
--孤立项目页面加载导致崩溃
+-如果使用隐私插件，则无法识别视频，以及从/ galleries访问的视频。
 更改：
--为任务进度跟踪器指定的名称，以允许在进度跟踪器的子任务意外不完整的情况下解决错误
+-应用现在可以识别某些服务器将视频存储在/ galleries下，而不是/ upload
 </zh-CN>

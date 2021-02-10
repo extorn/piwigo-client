@@ -146,6 +146,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.115</item>
+        <item>"Correction d\'un bug:
+                 - les vidéos non identifiées si vous utilisez le plugin de confidentialité et les vidéos accessibles depuis / galeries.
+                Changement:
+                 - l\'application reconnaît maintenant que certains serveurs stockent des vidéos sous / galeries plutôt que / upload"</item>
         <item>1.4.0.114</item>
         <item>"Correction d\'un bug:
                  - chargement de la page d\'élément orphelin provoquant un plantage
