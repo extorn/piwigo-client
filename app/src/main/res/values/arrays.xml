@@ -250,6 +250,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.115</item>
+        <item>"Bugfix:
+                - videos not identified if using privacy plugin and videos accessed from /galleries.
+               Change:
+                - app now recognises that some servers store videos under /galleries rather than /upload"</item>
         <item>1.4.0.114</item>
         <item>"Bugfix:
                 - orphan item page load causing a crash
