@@ -19,6 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.Utils;
 
 /**
  * Created by gareth on 02/01/18.
@@ -99,7 +100,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
                 } else {
                     page = pagesLoadedIdxToSizeMap.firstKey() - 1;
                     if (page < 0) {
-                        Logging.log(Log.ERROR, TAG, "Model thinks a negative page is missing! - This should be impossible");
+                        Logging.log(Log.ERROR, TAG, "Model of %1$s thinks a negative page is missing! - This should be impossible", Utils.getId(this));
                         return null;
                     }
                 }
@@ -133,7 +134,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
             if(items == null) {
                 items = new ArrayList<>(0);
             }
-            Logging.log(Log.ERROR, TAG, "Unable to load from parcel");
+            Logging.log(Log.ERROR, TAG, "Unable to load %1$s from parcel", Utils.getId(this));
             Logging.recordException(e);
         }
     }
@@ -221,7 +222,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
     public int addItemPage(int page, /*int pages, */ int pageSize, List<T> itemsToAdd) {
         List<T> newItems = itemsToAdd;
         if(pageSize < newItems.size()) {
-            String errorMessage = String.format(Locale.UK, "Expected page size (%1$d) did not match number of items contained in page (%2$d) for page %3$d", pageSize, itemsToAdd.size(), page);
+            String errorMessage = String.format(Locale.UK, "Expected page size (%1$d) did not match number of items contained in page (%2$d) for page %3$d of %4$s", pageSize, itemsToAdd.size(), page, Utils.getId(this));
             Logging.log(Log.ERROR, TAG, errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
@@ -238,7 +239,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
             fullyLoaded = internalIsFullyLoadedCheck(page, pageSize, itemsToAdd);
         } catch(IllegalStateException e) {
             // page already loaded (can occur after resume...)
-            Logging.log(Log.DEBUG, TAG, "ignoring page already loaded");
+            Logging.log(Log.DEBUG, TAG, "ignoring page already loaded in %1$s", Utils.getId(this));
         }
         postPageInsert(sortedItems, newItems);
         return firstInsertPos;
@@ -412,9 +413,9 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
     private void updatePageLoadedCount(int idx, int change) {
         int pageIdx = getPageIndexContaining(idx);
         if(pageIdx < 0) {
-            Logging.log(Log.WARN, TAG, "Unable to alter page loaded count by %1$d. Affected page not found", change);
+            Logging.log(Log.WARN, TAG, "Unable to alter page loaded count by %1$+d in %2$s. Affected page not found", change, Utils.getId(this));
         } else {
-            pagesLoadedIdxToSizeMap.put(pageIdx, pagesLoadedIdxToSizeMap.get(pageIdx) - 1);
+            pagesLoadedIdxToSizeMap.put(pageIdx, pagesLoadedIdxToSizeMap.get(pageIdx) + change);
         }
     }
 
@@ -429,7 +430,9 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
                     return pageIdxToSizeEntry.getKey();
                 }
             }
-            Logging.log(Log.WARN, TAG, "Unable to find a page with the resource index %1$d present. There are %2$d resources loaded across %3$d pages", resourceIdx, resourceIdxs, pagesLoadedIdxToSizeMap.size());
+            Logging.log(Log.WARN, TAG, "Unable to find a page with the resource index %1$d present in %4$s. There are %2$d resources loaded across %3$d pages", resourceIdx, resourceIdxs, pagesLoadedIdxToSizeMap.size(), Utils.getId(this));
+        } else {
+            Logging.log(Log.WARN, TAG, "resource index provided cannot ever be in a page of loaded items in %4$s. Pages : %1$d, itemCount %2$d, resourceIdx : %3$d", pagesLoadedIdxToSizeMap.size(), getItemCount(), resourceIdx, Utils.getId(this));
         }
         return -1;
     }

@@ -18,6 +18,7 @@ import java.util.Locale;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
+import delit.libs.util.Utils;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;

@@ -2363,9 +2363,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumDeletedEvent event) {
         if (event.getItem().getParentId() == galleryModel.getId()) {
-            int fullGalleryIdx = galleryModel.getItemIdx(event.getItem());
             // now removed from the backing gallery too.
-            galleryModel.remove(fullGalleryIdx);
+            galleryModel.remove(event.getItem());
             // update all parent albums in case affected
             notifyAllParentAlbumsOfContentChange();
         }
@@ -2374,9 +2373,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemDeletedEvent<?> event) {
         if (event.item.getParentId() == galleryModel.getId()) {
-            int fullGalleryIdx = galleryModel.getItemIdx(event.item);
             // now removed from the backing gallery too.
-            galleryModel.remove(fullGalleryIdx);
+            galleryModel.remove(event.item);
             // update all parent albums in case affected
             notifyAllParentAlbumsOfContentChange();
         }

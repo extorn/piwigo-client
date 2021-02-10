@@ -34,4 +34,5 @@ public class AlbumSortingResourceComparator implements Comparator<GalleryItem>, 
         }
         return 0; // don't reorder resources
     }
+
 }

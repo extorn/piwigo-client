@@ -211,6 +211,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         if (args != null) {
             long galleryItemId = args.getLong(ARG_AND_STATE_RESOURCE_ID);
             if (model == null || (model.getId() != galleryItemId)) {
+                Logging.log(Log.WARN, TAG, "Item ID didn't match that from the args. Reinitialising fields and model from args");
                 intialiseFields(); // if we are opening this page for the first time with new data, wipe any old values.
                 loadArgsFromBundle(args);
             }

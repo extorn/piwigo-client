@@ -1,5 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.Comparator;
 
@@ -38,5 +40,15 @@ public class AlbumSortingComparator implements Comparator<GalleryItem>, Serializ
 
     public boolean isSortCategoriesInReverseOrder() {
         return categoryComparator.isSortInReverseOrder();
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("AlbumSortingComparator{");
+        sb.append("categoryComparator=").append(categoryComparator);
+        sb.append(", resourceComparator=").append(resourceComparator);
+        sb.append('}');
+        return sb.toString();
     }
 }

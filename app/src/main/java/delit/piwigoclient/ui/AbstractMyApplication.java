@@ -5,7 +5,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +26,7 @@ import java.util.Locale;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.ProjectUtils;
+import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -51,12 +51,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
 
     }
 
-    protected static Resources resources;
     private SharedPreferences prefs;
-
-    public static Resources getAppResources() {
-        return resources;
-    }
 
     protected List<PreferenceMigrator> getPreferenceMigrators() {
         List<PreferenceMigrator> migrators = new ArrayList<>();
@@ -83,6 +78,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        Logging.log(Log.DEBUG, TAG, "App Configuration change %1$s", Utils.getId(this));
 
 //        Locale.setDefault(newConfig.locale);
         getBaseContext().getResources().updateConfiguration(newConfig, getResources().getDisplayMetrics());
@@ -136,8 +132,6 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         }
 
         super.onCreate();
-        // ensure it's available for any users of it
-        resources = getResources();
 
         PicassoFactory.initialise();
 //        AdsManager.getInstance(this).updateShowAdvertsSetting(getApplicationContext());

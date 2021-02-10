@@ -28,6 +28,7 @@ import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomViewPager;
+import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -139,21 +140,22 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     public void onCreate(@Nullable Bundle savedInstanceState) {
         try {
             loadModelFromArguments();
-
-            if (resourceContainer == null || resourceContainer.getItemCount() == 0) {
-                // attempt to get back to a working fragment.
-                try {
-                    Logging.log(Log.INFO, TAG, "removing from activity immediately");
-                    getParentFragmentManager().popBackStackImmediate();
-                } catch (RuntimeException e) {
-                    Logging.log(Log.WARN, TAG, "Unable to popBackStackImmediate - requesting it instead");
-                    getParentFragmentManager().popBackStack(); //TODO - work out why resource container can be null - after app kill and restore?
-                }
-            }
             super.onCreate(savedInstanceState);
-
         } catch (ModelUnavailableException e) {
-            Logging.log(Log.ERROR, TAG, "Unable to create fragment as model isn't available.");
+            Logging.log(Log.ERROR, TAG, "Unable to create slideshow content as model isn't available.");
+        }
+    }
+
+    protected void closeSlideshowAsapIfNoResourceContainerContent() {
+        if (resourceContainer == null || resourceContainer.getItemCount() == 0) {
+            // attempt to get back to a working fragment.
+            try {
+                Logging.log(Log.INFO, TAG, "removing from activity immediately");
+                getParentFragmentManager().popBackStackImmediate();
+            } catch (RuntimeException e) {
+                Logging.log(Log.WARN, TAG, "Unable to popBackStackImmediate - requesting it instead");
+                getParentFragmentManager().popBackStack(); //TODO - work out why resource container can be null - after app kill and restore?
+            }
         }
     }
 
@@ -179,6 +181,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     }
 
     private void loadModelFromArguments() {
+        Logging.log(Log.VERBOSE,TAG, "Loading model from arguments : " + Utils.getId(this));
         Bundle arguments = getArguments();
         if(arguments == null) {
             throw new IllegalStateException("Unable to load model from null arguments");
@@ -192,6 +195,8 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         modelType = galleryModelClass;
         ViewModelContainer viewModelContainer = new ViewModelProvider(requireActivity()).get("" + galleryModelId, galleryModelClass);
         resourceContainer = viewModelContainer.getModel();
+
+        closeSlideshowAsapIfNoResourceContainerContent();
     }
 
     @SuppressLint("ClickableViewAccessibility")

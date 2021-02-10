@@ -18,6 +18,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.TouchObservingRelativeLayout;
+import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -61,6 +62,7 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH exten
 
     @Override
     public void onResume() {
+        Logging.log(Log.VERBOSE,TAG, "Resuming Slideshow : " + Utils.getId(this));
         super.onResume();
         getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_paid_view_3);
     }
