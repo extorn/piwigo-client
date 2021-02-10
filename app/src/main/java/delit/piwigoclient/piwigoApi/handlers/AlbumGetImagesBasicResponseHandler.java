@@ -352,7 +352,7 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
             if (basePiwigoUri.charAt(basePiwigoUri.length() - 1) != '/') {
                 basePiwigoUri += '/';
             }
-            String pattern = "^(" + basePiwigoUri + ")([\\d]*/.*)?((?<=/)(?:upload)|(?:galleries)/.*\\.([a-zA-Z0-9]{3,5}))$";
+            String pattern = "^(" + basePiwigoUri + ")([\\d]*/.*)?((?<=/)(?:upload|galleries)/.*\\.([a-zA-Z0-9]{3,5}))$";
             Pattern multimediaPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
             matcher = multimediaPattern.matcher(originalResourceUrl);
         }
