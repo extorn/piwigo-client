@@ -265,7 +265,7 @@ public class AdsManager {
     }
 
     public <FUIH extends FragmentUIHelper<FUIH,F>,F extends MyFragment<F,FUIH>> void showPleadingMessageIfNeeded(FUIH uiHelper) {
-        if(isLastAdShownAndUnpaid()) {
+        if(!interstitialShowing && isLastAdShownAndUnpaid()) {
             lastAdPaid = null;
             uiHelper.showOrQueueDialogQuestion(R.string.alert_warning, uiHelper.getString(R.string.alert_advert_importance_message), View.NO_ID, R.string.button_ok, new AdvertPleadingListener<>(uiHelper));
         }
@@ -843,7 +843,12 @@ public class AdsManager {
         @Override
         public void onAdImpression() {
             super.onAdImpression();
-            lastAdPaid = false;
+            lastAdPaid = true;
+        }
+
+        @Override
+        public void onAdOpened() {
+            super.onAdOpened();
         }
 
         @Override
