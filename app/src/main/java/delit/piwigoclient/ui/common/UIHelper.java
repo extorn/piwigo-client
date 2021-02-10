@@ -41,6 +41,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
@@ -69,6 +70,7 @@ import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.CustomSnackbar;
 import delit.libs.util.ObjectUtils;
 import delit.libs.util.SafeRunnable;
+import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
@@ -283,7 +285,8 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
     protected void showQueuedMsg() {
         View parentView = getParentView();
         if(parentView == null || !canShowDialog()) {
-            Logging.log(Log.WARN,TAG,"Unable to show message, parent has no view");
+            String parentId = Utils.getId(getParent());
+            Logging.log(Log.WARN,TAG,"Unable to show message, parent has no view. Parent : " + parentId);
             return;
         }
         if(simpleMessageQueue.isEmpty()) {
@@ -384,12 +387,12 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
                 progressIndicator = new WeakReference<>(ViewCompat.requireViewById(view.getRootView(), R.id.progressIndicator));
             } catch(IllegalArgumentException e) {
                 Logging.recordException(new Exception().fillInStackTrace());
-                Logging.log(Log.ERROR, TAG, "Progress indicator not available in current view graph " + getParent().getClass().getName());
+                Logging.log(Log.ERROR, TAG, "Progress indicator not available in current view graph " + Utils.getId(getParent()));
             }
         } else {
             if (BuildConfig.DEBUG) {
                 Logging.recordException(new Exception().fillInStackTrace());
-                Logging.log(Log.ERROR, TAG, "Progress indicator not available in " + getParent().getClass().getName());
+                Logging.log(Log.ERROR, TAG, "Progress indicator not available in " + Utils.getId(getParent()));
             }
         }
     }

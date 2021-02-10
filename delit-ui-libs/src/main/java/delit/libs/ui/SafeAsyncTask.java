@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import delit.libs.core.util.Logging;
+import delit.libs.util.Utils;
 
 public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
@@ -108,7 +109,7 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
     }
 
     public boolean cancelSafely(boolean interrupt) {
-        Logging.log(Log.DEBUG, TAG, "Cancelling Background task - " + getClass().getName());
+        Logging.log(Log.DEBUG, TAG, "Cancelling Background task - " + Utils.getId(this));
         return cancel(interrupt);
     }
 

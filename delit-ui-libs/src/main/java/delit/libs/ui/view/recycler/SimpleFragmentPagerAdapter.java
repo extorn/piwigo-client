@@ -15,6 +15,7 @@ import java.util.List;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.CollectionUtils;
+import delit.libs.util.Utils;
 
 public class SimpleFragmentPagerAdapter<T extends Fragment & MyFragmentRecyclerPagerAdapter.PagerItemFragment> extends MyFragmentRecyclerPagerAdapter<T, ViewPager> {
 
@@ -41,7 +42,7 @@ public class SimpleFragmentPagerAdapter<T extends Fragment & MyFragmentRecyclerP
         T managedFragment = getActiveFragment(position);
         if (managedFragment != null) {
             // if this item still exists (not been deleted by user)
-            Logging.log(Log.DEBUG, TAG, "showing tab: " + getPageTitle(position) + "(" + managedFragment.getClass().getName() + ")");
+            Logging.log(Log.DEBUG, TAG, "showing tab: " + getPageTitle(position) + "(" + Utils.getId(managedFragment) + ")");
         }
         super.onPageSelected(position);
     }

@@ -41,6 +41,7 @@ import delit.libs.BuildConfig;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.util.CollectionUtils;
+import delit.libs.util.Utils;
 
 /**
  * Implementation of {@link PagerAdapter} that
@@ -108,7 +109,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         T managedFragment = getActiveFragment(position);
         if (managedFragment != null) {
             // if this item still exists (not been deleted by user)
-            Logging.log(Log.DEBUG, TAG, String.format(Locale.UK, "Selected fragment pager page %1$d : %2$s", managedFragment.getPagerIndex(), managedFragment.getClass().getName()));
+            Logging.log(Log.DEBUG, TAG, String.format(Locale.UK, "Selected fragment pager page %1$d : %2$s", managedFragment.getPagerIndex(), Utils.getId(managedFragment)));
             managedFragment.onPageSelected();
         }
     }
@@ -117,7 +118,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         T managedFragment = getActiveFragment(position);
         if (managedFragment != null) {
             // if this slideshow item still exists (not been deleted by user)
-            Logging.log(Log.DEBUG, TAG, String.format(Locale.UK, "Deselected fragment pager page %1$d : %2$s", managedFragment.getPagerIndex(), managedFragment.getClass().getName()));
+            Logging.log(Log.DEBUG, TAG, String.format(Locale.UK, "Deselected fragment pager page %1$d : %2$s", managedFragment.getPagerIndex(), Utils.getId(managedFragment)));
             managedFragment.onPageDeselected();
         }
     }

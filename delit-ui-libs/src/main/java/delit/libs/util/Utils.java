@@ -1,5 +1,8 @@
 package delit.libs.util;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 public class Utils {
 
     private Utils() {
@@ -30,5 +33,25 @@ public class Utils {
             throw new IllegalArgumentException(name + " should not be null!");
         }
         return argument;
+    }
+
+    public static String getId(Object object) {
+        if(object != null) {
+            Class<?> objectClass = object.getClass();
+            while (!Object.class.equals(objectClass)){
+                try {
+                    Field f = objectClass.getDeclaredField("TAG");
+                    f.setAccessible(true);
+                    if (f.getType() == String.class && Modifier.isFinal(f.getModifiers())) {
+                        return (String) f.get(object);
+                    }
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    objectClass = objectClass.getSuperclass();
+                }
+            }
+            return object.toString();
+        } else {
+            return "?";
+        }
     }
 }

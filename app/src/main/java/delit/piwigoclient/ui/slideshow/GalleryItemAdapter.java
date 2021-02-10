@@ -129,7 +129,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
                 return (Class<? extends SIF>)(Class) AlbumVideoItemFragment.class;
             }
             //TODO check what causes this - probably deleting all items and trying to show a header!
-            throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + galleryItem.getClass().getName() + ")");
+            throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + Utils.getId(galleryItem) + ")");
         } catch(IndexOutOfBoundsException e) {
             Logging.log(Log.ERROR, TAG, "The gallery has %1$d items. Requested item that isn't present.", gallery.getItemCount());
         }

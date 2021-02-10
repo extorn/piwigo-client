@@ -28,6 +28,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.util.Utils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -120,7 +121,7 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
 
     @Override
     public void onStop() {
-        Logging.log(Log.VERBOSE,TAG, "onDestroyView : " + getClass().getName());
+        Logging.log(Log.VERBOSE,TAG, "onDestroyView : " + Utils.getId(this));
         uiHelper.deregisterFromActiveServiceCalls();
         uiHelper.closeAllDialogs();
         super.onStop();
@@ -129,7 +130,7 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Logging.log(Log.VERBOSE,TAG, "onSaveInstanceState : " + getClass().getName());
+        Logging.log(Log.VERBOSE,TAG, "onSaveInstanceState : " + Utils.getId(this));
         if(uiHelper != null) {
             uiHelper.onSaveInstanceState(outState);
         }
@@ -139,7 +140,7 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
 
     @Override
     public void onAttach(Context context) {
-        Logging.log(Log.VERBOSE,TAG, "onAttach : " + getClass().getName());
+        Logging.log(Log.VERBOSE,TAG, "onAttach : " + Utils.getId(this));
         prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         super.onAttach(context);
     }
@@ -167,7 +168,7 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
 
     @Override
     public void onPause() {
-        Logging.log(Log.VERBOSE,TAG, "onPause : " + getClass().getName());
+        Logging.log(Log.VERBOSE,TAG, "onPause : " + Utils.getId(this));
         super.onPause();
     }
 
@@ -178,7 +179,7 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
 
     @Override
     public void onResume() {
-        Logging.log(Log.VERBOSE,TAG, "onResume : " + getClass().getName());
+        Logging.log(Log.VERBOSE,TAG, "onResume : " + Utils.getId(this));
         super.onResume();
         updatePageTitle();
 
@@ -239,12 +240,12 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
             uiHelper.setPiwigoResponseListener(listener);
         }
         if (savedInstanceState != null) {
-            Logging.log(Log.VERBOSE,TAG, "onCreateView(restore) : " + getClass().getName());
+            Logging.log(Log.VERBOSE,TAG, "onCreateView(restore) : " + Utils.getId(this));
             uiHelper.onRestoreSavedInstanceState(savedInstanceState);
             piwigoSessionToken = savedInstanceState.getString(STATE_ACTIVE_SESSION_TOKEN);
             piwigoServerConnected = savedInstanceState.getString(STATE_ACTIVE_SERVER_CONNECTION);
         } else {
-            Logging.log(Log.VERBOSE,TAG, "onCreateView(fresh) : " + getClass().getName());
+            Logging.log(Log.VERBOSE,TAG, "onCreateView(fresh) : " + Utils.getId(this));
         }
         if (piwigoSessionToken == null) {
             updateActiveSessionDetails();

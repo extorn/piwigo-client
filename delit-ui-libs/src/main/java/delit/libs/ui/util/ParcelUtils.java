@@ -21,6 +21,7 @@ import java.util.Set;
 import delit.libs.BuildConfig;
 import delit.libs.core.util.Logging;
 import delit.libs.util.ClassUtils;
+import delit.libs.util.Utils;
 
 public class ParcelUtils {
 
@@ -238,7 +239,7 @@ public class ParcelUtils {
         try {
             p.writeValue(value);
             int sizeInBytes = p.marshall().length;
-            Logging.log(Log.VERBOSE, TAG, String.format("ParcelItemSize(%1$s:%2$s) %3$.02fKb", id, value == null ? "Null" : value.getClass().getName(), ((double) sizeInBytes) / 1024));
+            Logging.log(Log.VERBOSE, TAG, String.format("ParcelItemSize(%1$s:%2$s) %3$.02fKb", id, value == null ? "Null" : Utils.getId(value), ((double) sizeInBytes) / 1024));
         } finally {
             p.recycle();
         }

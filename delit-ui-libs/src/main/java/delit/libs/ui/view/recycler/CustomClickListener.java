@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.View;
 
 import delit.libs.core.util.Logging;
+import delit.libs.util.Utils;
 
 public class CustomClickListener<MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,P,T,VH>, LVA extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, VH extends CustomViewHolder<VH, LVA, P, T,MSL>> implements View.OnClickListener, View.OnLongClickListener {
 
@@ -25,7 +26,7 @@ public class CustomClickListener<MSL extends BaseRecyclerViewAdapter.MultiSelect
             if(parentAdapter.getMultiSelectStatusListener() != null) {
                 parentAdapter.getMultiSelectStatusListener().onDisabledItemClick(parentAdapter, viewHolder.getItem());
             } else {
-                Logging.log(Log.ERROR, "CustomClickListener", "Adapter of type "+parentAdapter.getClass().getName()+" does not have a mulit select status listener");
+                Logging.log(Log.ERROR, "CustomClickListener", "Adapter of type "+ Utils.getId(parentAdapter)+" does not have a mulit select status listener");
             }
             return;
         }

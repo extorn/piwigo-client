@@ -64,6 +64,7 @@ import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomToolbar;
 import delit.libs.util.IOUtils;
+import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
@@ -572,7 +573,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
 
     protected void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
 
-        Logging.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
+        Logging.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), Utils.getId(f)));
         checkLicenceIfNeeded();
 
         DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());
@@ -593,7 +594,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         tx.add(R.id.main_view, f, f.getClass().getName()); // don't use replace because that causes the view to be recreated each time from scratch
         tx.commit();
 
-        Logging.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + f.getClass().getName());
+        Logging.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + Utils.getId(f));
     }
 
     protected void checkLicenceIfNeeded() {
