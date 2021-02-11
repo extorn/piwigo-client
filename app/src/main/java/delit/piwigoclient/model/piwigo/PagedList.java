@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -226,7 +227,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
             Logging.log(Log.ERROR, TAG, errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
-        recordPageLoadSucceeded(page, newItems.size());
+
         newItems = prePageInsert(newItems);
         int firstInsertPos = 0;
         try {
@@ -235,7 +236,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
                 items.addAll(firstInsertPos, newItems);
                 sortedItems.addAll(firstInsertPos, newItems);
             }
-            pagesLoadedIdxToSizeMap.put(page, pageSize);
+            recordPageLoadSucceeded(page, newItems.size());
             fullyLoaded = internalIsFullyLoadedCheck(page, pageSize, itemsToAdd);
         } catch(IllegalStateException e) {
             // page already loaded (can occur after resume...)
@@ -523,5 +524,25 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    protected boolean hasOnlyEmptyFirstPage() {
+        return pagesLoadedIdxToSizeMap.size() == 1 && Objects.equals(pagesLoadedIdxToSizeMap.get(0),0);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PagedList{");
+        sb.append("itemType='").append(itemType).append('\'');
+        sb.append(", pagesLoadedIdxToSizeMap=").append(pagesLoadedIdxToSizeMap);
+        sb.append(", items=").append(items);
+        sb.append(", sortedItems=").append(sortedItems);
+        sb.append(", pagesLoadingPageIdxToLoadIdMap=").append(pagesLoadingPageIdxToLoadIdMap);
+        sb.append(", pagesFailedToLoad=").append(pagesFailedToLoad);
+        sb.append(", fullyLoaded=").append(fullyLoaded);
+        sb.append(", pageLoadLock=").append(pageLoadLock);
+        sb.append(", retrieveItemsInReverseOrder=").append(retrieveItemsInReverseOrder);
+        sb.append('}');
+        return sb.toString();
     }
 }

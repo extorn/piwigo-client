@@ -184,8 +184,13 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         if(hideAlbums) {
             return spacerAlbums + childAlbumCount + (bannerCount > 0 ? bannerCount - 1 : 0);
         }
+        if(getItemCount() == 0) {
+            return -1;
+        }
         int resourceIdx = spacerAlbums + childAlbumCount + bannerCount;
-        if(resourceIdx > getResourcesCount()) {
+        if(resourceIdx >= getItemCount()) {
+            // this will occur in case of error, but might be just because there are other items in the list such as categories etc.
+            Logging.log(Log.DEBUG, TAG, "First Resource idx %1$d beyond end of list %2$d. Resetting to -1", resourceIdx, getItemCount());
             resourceIdx = -1;
         }
         return resourceIdx;
@@ -249,6 +254,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PiwigoAlbum{");
+        sb.append("albumDetail=").append(getContainerDetails());
         sb.append("comparator=").append(comparator);
         sb.append(", childAlbumCount=").append(childAlbumCount);
         sb.append(", childSpacerAlbums=").append(spacerAlbums);
@@ -274,8 +280,16 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         }
     }
 
-    public void setSpacerAlbumCount(int spacerAlbumsNeeded) {
+    /**
+     *
+     * @param spacerAlbumsNeeded
+     * @return true if the list contents was changed
+     */
+    public boolean setSpacerAlbumCount(int spacerAlbumsNeeded) {
         // remove all spacers
+        if(spacerAlbums == spacerAlbumsNeeded) {
+            return false;
+        }
         boolean removed = removeAllByEquality(Collections.singletonList((T)StaticCategoryItem.BLANK));
         if(removed) {
             Logging.log(Log.DEBUG, TAG, "removing spacer album");
@@ -287,6 +301,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
                 addItem((T)StaticCategoryItem.BLANK.toInstance(blankId++));
             }
         }
+        return true;
     }
 
     @Override

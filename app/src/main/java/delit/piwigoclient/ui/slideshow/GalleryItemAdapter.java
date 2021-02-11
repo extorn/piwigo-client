@@ -54,8 +54,11 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
             // need to reload all items.
 //            galleryResourceItemsFullGalleryIdx.clear();
         }
-        int resourcesAddedToSlideshow = 0;
         for (int rawGalleryIdx = firstGalleryIdxToImport; rawGalleryIdx <= scanToRawIndex; rawGalleryIdx++) {
+            if(galleryResourceItemsFullGalleryIdx.size() == maxSlideshowItemCount) {
+                Logging.log(Log.DEBUG, TAG, "Not adding remaining resources. Slideshow size matches that desired (%1$d)", maxSlideshowItemCount);
+                break;
+            }
             GalleryItem currentItem = gallery.getItemByIdx(rawGalleryIdx);
             if (!(currentItem instanceof ResourceItem)) {
                 // skip any child albums and other non resource items
@@ -82,10 +85,6 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
                 } else {
                     galleryResourceItemsFullGalleryIdx.add(insertAt + 1, rawGalleryIdx);
                 }
-            }
-            resourcesAddedToSlideshow++;
-            if(resourcesAddedToSlideshow == maxSlideshowItemCount) {
-                break;
             }
         }
         if (cachedItemIdToSlideshowPositionMap == null) {

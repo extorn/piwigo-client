@@ -93,9 +93,19 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
             remove(idx);
             idx = getFirstResourceIdx();
         }
-        if(0 != getPagesLoadedIdxToSizeMap()) {
+        if(getPagesLoadedIdxToSizeMap() > 0 && !hasOnlyEmptyFirstPage()) {
+            Logging.log(Log.ERROR, TAG, toString());
             throw new IllegalStateException("If there are no resources, there should be no pages loaded");
         }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ResourceContainer{");
+        sb.append("containerDetails=").append(containerDetails);
+        sb.append(", resourceSortOrder='").append(resourceSortOrder).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 
     /**

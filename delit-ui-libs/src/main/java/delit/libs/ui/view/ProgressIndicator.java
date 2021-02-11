@@ -3,6 +3,7 @@ package delit.libs.ui.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -18,6 +19,8 @@ import androidx.core.view.ViewCompat;
 import java.util.Objects;
 
 import delit.libs.R;
+import delit.libs.core.util.Logging;
+import delit.libs.ui.util.DisplayUtils;
 
 public class ProgressIndicator extends FrameLayout {
     private static final String TAG = "ProgressInd";
@@ -131,7 +134,12 @@ public class ProgressIndicator extends FrameLayout {
 
         progressBar.setIndeterminate(progress < 0);
         progressBar.setProgress(progress);
-        progressBar.requestLayout();
+        if(DisplayUtils.isRunningOnUIThread()) {
+            progressBar.invalidate();
+        } else {
+            Logging.log(Log.WARN, TAG, "setting progress and invalidating progress indicator called from non UI thread");
+            progressBar.postInvalidate();
+        };
     }
 
     public boolean isVisible() {
