@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>De toekomst</item>
-        <item>Er zijn geen verdere updates gepland.</item>
+        <item>1.4.0.116</item>
+        <item>"Bugfix:
+                 - Diavoorstelling verwerkt de wijziging in de sorteervolgorde van bronnen niet correct (blanco pagina\'s worden weergegeven)"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
         <item>1.4.0.115</item>
         <item>"Bugfix:
                  - video\'s die niet zijn geïdentificeerd bij gebruik van de privacy-plug-in en video\'s die toegankelijk zijn via / galleries.
+                 - diavoorstellingen en albumweergavepagina\'s verwerken oriëntatiewijzigingen niet correct
                 Verandering:
                  - app herkent nu dat sommige servers video\'s opslaan onder / galerijen in plaats van / uploaden"</item>
         <item>1.4.0.114</item>

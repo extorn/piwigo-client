@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Il futuro</item>
-        <item>Non sono previsti ulteriori aggiornamenti.</item>
+        <item>1.4.0.116</item>
+        <item>"Risoluzione del problema:
+                 - La presentazione non gestisce correttamente la modifica nell\'ordinamento delle risorse (vengono visualizzate pagine vuote)"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
         <item>1.4.0.115</item>
         <item>"Risoluzione del problema:
                  - video non identificati se si utilizza plug-in per la privacy e video a cui si accede da / gallerie.
+                 - Le pagine di presentazione e di visualizzazione degli album non gestiscono correttamente il cambio di orientamento
                 Modificare:
                  - l\'app ora riconosce che alcuni server memorizzano i video in / gallerie anziché in / upload"</item>
         <item>1.4.0.114</item>

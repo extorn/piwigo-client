@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
-        <item>No se planean más actualizaciones.</item>
+        <item>1.4.0.116</item>
+        <item>"Arreglo del fallo:
+                 - La presentación de diapositivas no maneja los cambios en el orden de clasificación de los recursos correctamente (se muestran páginas en blanco)"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
         <item>1.4.0.115</item>
         <item>"Arreglo del fallo:
                  - videos no identificados si se usa un complemento de privacidad y videos a los que se accede desde / galerías.
+                 - Las páginas de presentación de diapositivas y vista de álbum no manejan el cambio de orientación correctamente
                 Cambio:
                  - la aplicación ahora reconoce que algunos servidores almacenan videos en / galleries en lugar de / upload"</item>
         <item>1.4.0.114</item>

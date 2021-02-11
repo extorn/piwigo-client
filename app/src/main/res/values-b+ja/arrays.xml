@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>未来</item>
-        <item>これ以上の更新は予定されていません。</item>
+        <item>1.4.0.116</item>
+        <item>"バグ修正：
+                 -スライドショーは、リソースの並べ替え順序の変更を正しく処理しません（空白のページが表示されます）"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
         <item>1.4.0.115</item>
         <item>"バグ修正：
                  -プライバシープラグインを使用している場合に識別されないビデオと/ galleriesからアクセスされるビデオ。
+                 -スライドショーとアルバムビューのページが向きの変更を正しく処理しない
                 変化する：
                  -アプリは、一部のサーバーが/ uploadではなく/ galleriesの下にビデオを保存することを認識するようになりました"</item>
         <item>1.4.0.114</item>

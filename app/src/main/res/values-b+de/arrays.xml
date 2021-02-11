@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Die Zukunft</item>
-        <item>Weitere Updates sind nicht geplant.</item>
+        <item>1.4.0.116</item>
+        <item>"Bug-Fix:
+                 - Die Diashow behandelt Änderungen in der Sortierreihenfolge der Ressourcen nicht korrekt (leere Seiten werden angezeigt)."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
         <item>1.4.0.115</item>
         <item>"Bug-Fix:
                  - Videos, die bei Verwendung des Datenschutz-Plugins nicht identifiziert wurden, und Videos, auf die von / gallery zugegriffen wird.
+                 - Diashow- und Albumansichtseiten behandeln Orientierungsänderungen nicht korrekt
                 Veränderung:
                  - Die App erkennt jetzt, dass einige Server Videos unter / gallery anstatt unter / upload speichern"</item>
         <item>1.4.0.114</item>
