@@ -242,9 +242,9 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>
-        <item>1.4.0.116</item>
+        <item>1.4.0.117</item>
         <item>"Bugfix:
-                - Slideshow does not handle change in resource sort order correctly (blank pages shown)"</item>
+                - implement the refresh button on the slideshow 'item not loaded' page"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <!--
@@ -252,7 +252,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
-        <item>1.4.0.115.1</item>
+        <item>1.4.0.116</item>
+        <item>"Bugfix:
+                - slideshow bugs causing crashes"</item>
+        <item>1.4.0.116</item>
         <item>"Bugfix:
                 - videos not identified if using privacy plugin and videos accessed from /galleries.
                 - slideshow and album view pages do not handle orientation change correctly

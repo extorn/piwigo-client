@@ -6,10 +6,15 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.button.MaterialButton;
+
+import org.greenrobot.eventbus.EventBus;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
+import delit.piwigoclient.ui.events.SlideshowItemRefreshRequestEvent;
 
 public class AlbumItemNotLoadedFragment<F extends AlbumItemNotLoadedFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> implements SlideshowItemView<ResourceItem> {
 
@@ -43,6 +48,12 @@ public class AlbumItemNotLoadedFragment<F extends AlbumItemNotLoadedFragment<F,F
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        MaterialButton button = view.findViewById(R.id.slideshow_item_not_loaded_refresh_button);
+        button.setOnClickListener((v)->onClickRefreshContent());
+    }
+
+    private void onClickRefreshContent() {
+        EventBus.getDefault().post(new SlideshowItemRefreshRequestEvent(slideshowPageIdx));
     }
 
     @Override

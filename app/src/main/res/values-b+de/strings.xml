@@ -697,4 +697,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="try_enabling_privacy_plugin_media_uris">Die Ressource wurde auf dem Server nicht gefunden. Möchten Sie das Datenschutz-Plugin Multimedia Uri Fix aktivieren?</string>
     <string name="multimedia_playback_currently_disabled">Die Multimedia-Wiedergabe ist deaktiviert. Sie haben dies wahrscheinlich gewählt, um Daten zu speichern. Aktivieren Sie entweder die Wiedergabe bei Bedarf oder die Wiedergabe im Diashow-Modus in den App-Einstellungen.</string>
     <string name="release_changes">Letzte Änderungen</string>
+    <string name="item_not_yet_loaded">Artikel noch nicht geladen</string>
+    <string name="button_refresh">Seite neu laden</string>
+    <string name="alert_slideshow_feature_refresh_coming_soon">Diese Funktion wird bald verfügbar sein. Bewegen Sie zunächst einige Elemente in der Diashow vorwärts oder rückwärts, bevor Sie zu diesem Element zurückkehren</string>
 </resources>

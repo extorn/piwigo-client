@@ -697,4 +697,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="try_enabling_privacy_plugin_media_uris">在服务器上找不到资源。 您想启用隐私插件多媒体uri修复程序吗？</string>
     <string name="multimedia_playback_currently_disabled">多媒体播放已禁用。 您可能选择了此选项来保存数据。 启用按需播放，或在应用程序首选项中以幻灯片模式播放。</string>
     <string name="release_changes">近期变动</string>
+    <string name="item_not_yet_loaded">物品尚未加载</string>
+    <string name="button_refresh">刷新页面</string>
+    <string name="alert_slideshow_feature_refresh_coming_soon">此功能即将推出。 现在，在幻灯片显示中向前或向后移动几个项目，然后再返回该项目</string>
 </resources>

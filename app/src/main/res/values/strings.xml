@@ -1077,4 +1077,6 @@ App Install UUID: %5$s
     <string name="multimedia_playback_currently_disabled">Multimedia playback is disabled. You likely chose this to save data. Either enable playback on demand, or playback in slideshow mode in the app preferences.</string>
     <string name="release_changes">Recent Changes</string>
     <string name="item_not_yet_loaded">Item not yet loaded</string>
+    <string name="button_refresh">Refresh page</string>
+    <string name="alert_slideshow_feature_refresh_coming_soon">This feature is coming soon. For now, move forward or backwards a couple of items in the slideshow before returning to this item</string>
 </resources>

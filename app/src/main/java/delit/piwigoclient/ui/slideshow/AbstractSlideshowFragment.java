@@ -51,6 +51,7 @@ import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
+import delit.piwigoclient.ui.events.SlideshowItemRefreshRequestEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
 import delit.piwigoclient.ui.model.ViewModelContainer;
@@ -345,6 +346,24 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
             viewPager.setAdapter(null);
         }
         super.onDestroy();
+    }
+
+    @Subscribe
+    public void onEvent(SlideshowItemRefreshRequestEvent event) {
+        if(!event.isHandled()) {
+            try {
+                if (null != galleryItemAdapter.getItemByPagerPosition(event.getSlideshowPageIdx())) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_feature_refresh_coming_soon));
+                    //galleryItemAdapter.refreshItemAtSlideshowIdx(event.getSlideshowPageIdx());
+                } else {
+                    int pageToLoad = calculatePageToLoad(galleryItemAdapter.getFullGalleryItemIdxFromSlideshowIdx(event.getSlideshowPageIdx()));
+                    loadAlbumResourcesPage(pageToLoad);
+                }
+            } catch(IndexOutOfBoundsException e) {
+                int pageToLoad = calculatePageToLoad(galleryItemAdapter.getFullGalleryItemIdxFromSlideshowIdx(event.getSlideshowPageIdx()));
+                loadAlbumResourcesPage(pageToLoad);
+            }
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

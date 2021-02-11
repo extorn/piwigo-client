@@ -1,70 +1,40 @@
 <en-GB>
 Bugfix:
-- videos not identified if using privacy plugin and videos accessed from /galleries.
-- slideshow and album view pages do not handle orientation change correctly
-Change:
-- app now recognises that some servers store videos under /galleries rather than /upload
+- slideshow bugs causing crashes
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- videa nebyla identifikována, pokud se používá plugin pro ochranu osobních údajů a videa přístupná z / galerie.
-- stránky prezentace a zobrazení alba nezpracovávají správně změnu orientace
-Změna:
-- aplikace nyní rozpoznává, že některé servery ukládají videa spíše pod / galerie než / upload
+chyby prezentace způsobující pády -
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Videos, die bei Verwendung des Datenschutz-Plugins nicht identifiziert wurden, und Videos, auf die von / gallery zugegriffen wird.
-- Diashow- und Albumansichtseiten behandeln Orientierungsänderungen nicht korrekt
-Veränderung:
-- Die App erkennt jetzt, dass einige Server Videos unter / gallery anstatt unter / upload speichern
+- Diashow-Fehler, die Abstürze verursachen
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- videos no identificados si se usa un complemento de privacidad y videos a los que se accede desde / galerías.
-- Las páginas de presentación de diapositivas y vista de álbum no manejan el cambio de orientación correctamente
-Cambio:
-- la aplicación ahora reconoce que algunos servidores almacenan videos en / galleries en lugar de / upload
+- errores de presentación de diapositivas que causan bloqueos
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- les vidéos non identifiées si vous utilisez le plugin de confidentialité et les vidéos accessibles depuis / galeries.
-- les pages de diaporama et de vue d\'album ne gèrent pas correctement le changement d\'orientation
-Changement:
-- l\'application reconnaît maintenant que certains serveurs stockent des vidéos sous / galeries plutôt que / upload
+- bugs de diaporama provoquant des plantages
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- video non identificati se si utilizza plug-in per la privacy e video a cui si accede da / gallerie.
-- Le pagine di presentazione e di visualizzazione degli album non gestiscono correttamente il cambio di orientamento
-Modificare:
-- l\'app ora riconosce che alcuni server memorizzano i video in / gallerie anziché in / upload
+- bug della presentazione che causano arresti anomali
 </it-IT>
 <ja-JP>
 バグ修正：
--プライバシープラグインを使用している場合に識別されないビデオと/ galleriesからアクセスされるビデオ。
--スライドショーとアルバムビューのページが向きの変更を正しく処理しない
-変化する：
--アプリは、一部のサーバーが/ uploadではなく/ galleriesの下にビデオを保存することを認識するようになりました
+-クラッシュの原因となるスライドショーのバグ
 </ja-JP>
 <nl-NL>
 Bugfix:
-- video\'s die niet zijn geïdentificeerd bij gebruik van de privacy-plug-in en video\'s die toegankelijk zijn via / galleries.
-- diavoorstellingen en albumweergavepagina\'s verwerken oriëntatiewijzigingen niet correct
-Verandering:
-- app herkent nu dat sommige servers video\'s opslaan onder / galerijen in plaats van / uploaden
+- bugs in diavoorstellingen die crashes veroorzaken
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- видео не идентифицируются при использовании плагина конфиденциальности и видео, доступ к которым осуществляется из / galleries.
-- страницы слайд-шоу и просмотра альбомов неправильно обрабатывают изменение ориентации
-Изменить:
-- приложение теперь распознает, что некоторые серверы хранят видео в / galleries, а не в / upload
+- ошибки слайд-шоу, вызывающие сбои
 </ru-RU>
 <zh-CN>
 错误修正：
--如果使用隐私插件，则无法识别视频，以及从/ galleries访问的视频。
--幻灯片和相册查看页面无法正确处理方向更改
-更改：
--应用现在可以识别某些服务器将视频存储在/ galleries下，而不是/ upload
+-导致崩溃的幻灯片错误
 </zh-CN>

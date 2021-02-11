@@ -697,4 +697,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="try_enabling_privacy_plugin_media_uris">La risorsa non è stata trovata sul server. Vorresti abilitare il plug-in per la privacy multimedia uri fix?</string>
     <string name="multimedia_playback_currently_disabled">La riproduzione multimediale è disabilitata. Probabilmente hai scelto questo per salvare i dati. Abilita la riproduzione su richiesta o la riproduzione in modalità presentazione nelle preferenze dell\'app.</string>
     <string name="release_changes">Cambiamenti recenti</string>
+    <string name="item_not_yet_loaded">Articolo non ancora caricato</string>
+    <string name="button_refresh">Aggiorna pagina</string>
+    <string name="alert_slideshow_feature_refresh_coming_soon">Questa funzionalità arriverà presto. Per ora, sposta avanti o indietro un paio di elementi nella presentazione prima di tornare a questo elemento</string>
 </resources>

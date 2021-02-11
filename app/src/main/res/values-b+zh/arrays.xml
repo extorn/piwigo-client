@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>未来</item>
-        <item>1.4.0.116</item>
+        <item>1.4.0.117</item>
         <item>"错误修正：
-                 -幻灯片无法正确处理资源排序顺序的更改（显示空白页）"</item>
+                 -在幻灯片“项目未加载”页面上实现刷新按钮"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
-        <item>1.4.0.115</item>
+        <item>1.4.0.116</item>
+        <item>"错误修正：
+                 -导致崩溃的幻灯片错误"</item>
+        <item>1.4.0.116</item>
         <item>"错误修正：
                  -如果使用隐私插件，则无法识别视频，以及从/ galleries访问的视频。
                  -幻灯片和相册查看页面无法正确处理方向更改

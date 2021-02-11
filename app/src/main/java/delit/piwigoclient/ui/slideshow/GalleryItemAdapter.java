@@ -101,7 +101,10 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
 
     @Override
     public int getItemPosition(@NonNull Object item) {
-        ResourceItem model = ((SlideshowItemFragment<?,?,?>) item).getModel();
+        ResourceItem model = ((SlideshowItemView<?>) item).getModel();
+        if(model == null) {
+            return POSITION_UNCHANGED;
+        }
         int fullGalleryIdx = gallery.getItemIdx(model);
         if(fullGalleryIdx < 0) {
             Logging.log(Log.DEBUG, TAG, "getItemPos for item %1$s and model %2$s", Utils.getId(item), model, POSITION_NONE);
@@ -120,6 +123,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         cachedItemIdToSlideshowPositionMap.put(model.getId(), itemSlideshowPosition);
         Logging.log(Log.DEBUG, TAG, "getItemPos for item %1$s and model %2$s", Utils.getId(item), model, itemSlideshowPosition);
         return itemSlideshowPosition;
+
     }
 
     @Override
@@ -284,5 +288,9 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         } catch(ArrayIndexOutOfBoundsException e) {
             return true;
         }
+    }
+
+    public void refreshItemAtSlideshowIdx(int slideshowPageIdx) {
+        throw new UnsupportedOperationException("Implement me");
     }
 }

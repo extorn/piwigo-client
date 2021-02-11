@@ -697,4 +697,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="try_enabling_privacy_plugin_media_uris">La ressource est introuvable sur le serveur. Souhaitez-vous activer le correctif de l\'URI multimédia du plugin de confidentialité?</string>
     <string name="multimedia_playback_currently_disabled">La lecture multimédia est désactivée. Vous avez probablement choisi cette option pour enregistrer les données. Activez la lecture à la demande ou la lecture en mode diaporama dans les préférences de l\'application.</string>
     <string name="release_changes">Changements récents</string>
+    <string name="item_not_yet_loaded">Article pas encore chargé</string>
+    <string name="button_refresh">Rafraîchir la page</string>
+    <string name="alert_slideshow_feature_refresh_coming_soon">Cette fonctionnalité sera bientôt disponible. Pour l\'instant, avancez ou reculez de quelques éléments dans le diaporama avant de revenir à cet élément</string>
 </resources>

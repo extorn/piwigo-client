@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>L\'avenir</item>
-        <item>1.4.0.116</item>
+        <item>1.4.0.117</item>
         <item>"Correction d\'un bug:
-                 - Le diaporama ne gère pas correctement les changements dans l\'ordre de tri des ressources (pages vierges affichées)"</item>
+                 - implémenter le bouton d\'actualisation sur la page \'élément non chargé\' du diaporama"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
-        <item>1.4.0.115</item>
+        <item>1.4.0.116</item>
+        <item>"Correction d\'un bug:
+                 - bugs de diaporama provoquant des plantages"</item>
+        <item>1.4.0.116</item>
         <item>"Correction d\'un bug:
                  - les vidéos non identifiées si vous utilisez le plugin de confidentialité et les vidéos accessibles depuis / galeries.
                  - les pages de diaporama et de vue d\'album ne gèrent pas correctement le changement d\'orientation

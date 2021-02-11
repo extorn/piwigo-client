@@ -17,4 +17,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/slideshow_item_not_loaded_refresh_button"
+        android:text="@string/button_refresh"
+        app:icon="@drawable/ic_refresh_black_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        android:layout_marginTop="10dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

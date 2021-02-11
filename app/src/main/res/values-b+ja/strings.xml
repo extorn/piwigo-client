@@ -697,4 +697,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="try_enabling_privacy_plugin_media_uris">サーバー上でリソースが見つかりませんでした。 プライバシープラグインのマルチメディアuri修正を有効にしますか？</string>
     <string name="multimedia_playback_currently_disabled">マルチメディア再生が無効になっています。 データを保存するためにこれを選択した可能性があります。 オンデマンドでの再生を有効にするか、アプリの設定でスライドショーモードで再生します。</string>
     <string name="release_changes">最近の変化</string>
+    <string name="item_not_yet_loaded">アイテムはまだロードされていません</string>
+    <string name="button_refresh">ページの更新</string>
+    <string name="alert_slideshow_feature_refresh_coming_soon">この機能はまもなく登場します。 今のところ、このアイテムに戻る前に、スライドショーのいくつかのアイテムを前後に移動してください</string>
 </resources>

@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Il futuro</item>
-        <item>1.4.0.116</item>
+        <item>1.4.0.117</item>
         <item>"Risoluzione del problema:
-                 - La presentazione non gestisce correttamente la modifica nell\'ordinamento delle risorse (vengono visualizzate pagine vuote)"</item>
+                 - implementare il pulsante di aggiornamento nella pagina \"elemento non caricato\" della presentazione"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
-        <item>1.4.0.115</item>
+        <item>1.4.0.116</item>
+        <item>"Risoluzione del problema:
+                 - bug della presentazione che causano arresti anomali"</item>
+        <item>1.4.0.116</item>
         <item>"Risoluzione del problema:
                  - video non identificati se si utilizza plug-in per la privacy e video a cui si accede da / gallerie.
                  - Le pagine di presentazione e di visualizzazione degli album non gestiscono correttamente il cambio di orientamento
