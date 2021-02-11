@@ -516,14 +516,18 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
         try {
-            if (requestCode < -1) {
+            int checkedRequestCode = requestCode;
+            if (checkedRequestCode < -1) {
                 // don't track this because we can't process a negative code anyway.
 //                setTrackedIntent(Long.valueOf(requestCode), -1);
-                requestCode = -1;
+                checkedRequestCode = -1;
                 // record the event
                 recordInvalidRequestCodeEvent(intent, requestCode);
             }
-            super.startActivityForResult(intent, requestCode & 0xFFFF);
+            if(checkedRequestCode >= 0) {
+                checkedRequestCode = checkedRequestCode & 0xFFFF;
+            }
+            super.startActivityForResult(intent, checkedRequestCode);
         } catch(IllegalArgumentException e) {
             Logging.log(Log.ERROR,TAG, String.format(Locale.getDefault(), "Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode > -2 && requestCode <= Short.MAX_VALUE, requestCode));
             throw e;
