@@ -8,11 +8,11 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
-import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.common.util.Strings;
 
+import delit.libs.ui.view.preference.MyDialogPreference;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 
@@ -20,7 +20,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
  * Created by gareth on 15/07/17.
  */
 
-public class ServerConnectionsListPreference extends DialogPreference {
+public class ServerConnectionsListPreference extends MyDialogPreference {
     private String currentValue;
 
     public ServerConnectionsListPreference(Context context, AttributeSet attrs, int defStyleAttr,  int defStyleRes) {

@@ -37,7 +37,7 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class UsernameSelectFragment<F extends UsernameSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends RecyclerViewLongSetSelectFragment<UsernameRecyclerViewAdapter<?,Username,?,?>, UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences, Username> {
+public class UsernameSelectFragment<F extends UsernameSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends RecyclerViewLongSetSelectFragment<F,FUIH,UsernameRecyclerViewAdapter<?,Username,?,?>, UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences, Username> {
 
     private static final String USER_NAMES_MODEL = "usernamesModel";
     private static final String STATE_INDIRECT_SELECTION = "indirectlySelectedUsernames";

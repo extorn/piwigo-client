@@ -14,8 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceDialogFragmentCompat;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.ads.AdView;
 
@@ -37,16 +35,15 @@ import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.common.DialogFragmentUIHelper;
-import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
+import delit.piwigoclient.ui.preferences.MyDialogPreferenceFragment;
 
-public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbumListPreferenceDialogFragmentCompat<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
+public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbumListPreferenceDialogFragmentCompat<F,FUIH>, FUIH extends DialogFragmentUIHelper<FUIH,F>> extends MyDialogPreferenceFragment<F,FUIH> implements DialogPreference.TargetFragment {
     // state persistent values
     private long activeServiceCall = -1;
-    private CustomPiwigoResponseListener serviceCallHandler;
+    private CustomPiwigoResponseListener<F,FUIH> serviceCallHandler;
     private ListView itemListView;
-    private String STATE_ACTIVE_SERVICE_CALL = "ServerAlbumListPreference.ActiveCallId";
-    private DialogFragmentUIHelper uiHelper;
+    private final String STATE_ACTIVE_SERVICE_CALL = "ServerAlbumListPreference.ActiveCallId";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,13 +95,12 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        setupUiHelper(view);
         triggerAlbumsListLoad();
     }
 
     @Override
-    public Preference findPreference(@NonNull CharSequence key) {
-        return getPreference();
+    public <T extends Preference> T findPreference(@NonNull CharSequence key) {
+        return (T) getPreference();
     }
 
     @Override
@@ -137,8 +133,8 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
     }
 
     public static DialogFragment newInstance(String key) {
-        final ServerAlbumListPreferenceDialogFragmentCompat fragment =
-                new ServerAlbumListPreferenceDialogFragmentCompat();
+        final ServerAlbumListPreferenceDialogFragmentCompat<?,?> fragment =
+                new ServerAlbumListPreferenceDialogFragmentCompat<>();
         final Bundle b = new Bundle(1);
         b.putString(ARG_KEY, key);
         fragment.setArguments(b);
@@ -157,29 +153,24 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
         }
     }
 
-    private void setupUiHelper(@NonNull View view) {
+    @Override
+    protected void setupUiHelper(@NonNull View view) {
+        super.setupUiHelper(view);
         // need to recreate this because we're binding it to this view.
-        uiHelper = new DialogFragmentUIHelper(this, view, getSharedPreferences(), getContext());
-        serviceCallHandler = new CustomPiwigoResponseListener();
-        uiHelper.setPiwigoResponseListener(serviceCallHandler);
-        serviceCallHandler.withUiHelper(this, uiHelper);
+        serviceCallHandler = new CustomPiwigoResponseListener<>();
+        getUIHelper().setPiwigoResponseListener(serviceCallHandler);
+        serviceCallHandler.withUiHelper((F) this, getUIHelper());
     }
 
     private void triggerAlbumsListLoad() {
         activeServiceCall = invokeRetrieveSubCategoryNamesCall(getConnectionProfile());
     }
 
-    private SharedPreferences getSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
-    }
-
     ConnectionPreferences.ProfilePreferences getConnectionProfile() {
         SharedPreferences prefs = getSharedPreferences();
         ServerAlbumListPreference pref = getPreference();
         String connectionProfile = prefs.getString(pref.getConnectionProfileNamePreferenceKey(), null);
-        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(connectionProfile, prefs, getContext());
-
-        return connectionPrefs;
+        return ConnectionPreferences.getPreferences(connectionProfile, prefs, getContext());
     }
 
     private long invokeRetrieveSubCategoryNamesCall(ConnectionPreferences.ProfilePreferences connectionPrefs) {
@@ -191,7 +182,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
         }
     }
 
-    private static class CustomPiwigoResponseListener<F extends ServerAlbumListPreferenceDialogFragmentCompat<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
+    private static class CustomPiwigoResponseListener<F extends ServerAlbumListPreferenceDialogFragmentCompat<F,FUIH>, FUIH extends DialogFragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
 
         @Override
@@ -219,7 +210,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
 
     private long addActiveServiceCall(int loadingMsgId, AbstractPiwigoWsResponseHandler handler, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         long messageId = handler.invokeAsync(getContext(), connectionPrefs);
-        uiHelper.addActiveServiceCall(getString(loadingMsgId), messageId, handler.getTag());
+        getUIHelper().addActiveServiceCall(getString(loadingMsgId), messageId, handler.getTag());
         return messageId;
     }
 

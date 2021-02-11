@@ -4,11 +4,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import androidx.annotation.Nullable;
-import androidx.preference.DialogPreference;
 
+import delit.libs.ui.view.preference.MyDialogPreference;
 import delit.piwigoclient.R;
 
-public class PaidOnlyPreference extends DialogPreference {
+public class PaidOnlyPreference extends MyDialogPreference {
     private String value;
 
     public PaidOnlyPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {

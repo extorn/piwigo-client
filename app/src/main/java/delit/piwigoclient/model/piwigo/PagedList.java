@@ -415,7 +415,12 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         if(pageIdx < 0) {
             Logging.log(Log.WARN, TAG, "Unable to alter page loaded count by %1$+d in %2$s. Affected page not found", change, Utils.getId(this));
         } else {
-            pagesLoadedIdxToSizeMap.put(pageIdx, pagesLoadedIdxToSizeMap.get(pageIdx) + change);
+            int pageLoadedCount = pagesLoadedIdxToSizeMap.get(pageIdx) + change;
+            if(pageLoadedCount > 0) {
+                pagesLoadedIdxToSizeMap.put(pageIdx, pageLoadedCount);
+            } else {
+                pagesLoadedIdxToSizeMap.remove(pageIdx);
+            }
         }
     }
 
@@ -506,6 +511,13 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
 
     public boolean isPageLoaded(int pageNum) {
         return pagesLoadedIdxToSizeMap.containsKey(pageNum);
+    }
+
+    /**
+     * Should be called if all the items are removed. Not otherwise.
+     */
+    protected void clearPagesLoaded() {
+        pagesLoadedIdxToSizeMap.clear();
     }
 
     @Override

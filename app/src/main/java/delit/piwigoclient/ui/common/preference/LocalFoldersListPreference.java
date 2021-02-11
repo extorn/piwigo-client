@@ -9,8 +9,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.Preference;
 
 import org.greenrobot.eventbus.EventBus;
@@ -21,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
-import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.R;
@@ -109,8 +106,7 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
     @Override
     protected void initPreference(Context context, AttributeSet attrs) {
         super.initPreference(context, attrs);
-        ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(getContext());
-        appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
+        appSettingsViewModel = obtainActivityViewModel(context, AppSettingsViewModel.class);
     }
 
     @Override

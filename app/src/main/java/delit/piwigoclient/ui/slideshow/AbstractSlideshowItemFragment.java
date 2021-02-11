@@ -28,7 +28,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -262,7 +261,8 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         ResourceContainer<?, T> modelStore = null;
         if (galleryModelClass != null) {
             modelStoreType = galleryModelClass;
-            ViewModelContainer viewModelContainer = new ViewModelProvider(requireActivity()).get("" + galleryModelId, galleryModelClass);
+
+            ViewModelContainer viewModelContainer = obtainActivityViewModel(requireActivity(), "" + galleryModelId, galleryModelClass);
             modelStore = ((ResourceContainer<?, T>) viewModelContainer.getModel());
         }
         if (modelStore == null) {

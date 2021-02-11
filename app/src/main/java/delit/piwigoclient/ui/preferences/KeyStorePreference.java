@@ -5,20 +5,19 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 
-import androidx.preference.DialogPreference;
-
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ListIterator;
 
+import delit.libs.ui.view.preference.MyDialogPreference;
 import delit.libs.util.X509Utils;
 
 /**
  * Created by gareth on 15/07/17.
  */
 
-public abstract class KeyStorePreference extends DialogPreference {
+public abstract class KeyStorePreference extends MyDialogPreference {
 
     public static final String BKS_FILE_SUFFIX = "bks";
     private boolean justKeysWanted;

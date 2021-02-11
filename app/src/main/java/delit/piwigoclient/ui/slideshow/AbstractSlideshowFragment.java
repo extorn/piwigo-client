@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.ads.AdRequest;
@@ -193,7 +192,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
             throw new IllegalStateException("gallery model type not available");
         }
         modelType = galleryModelClass;
-        ViewModelContainer viewModelContainer = new ViewModelProvider(requireActivity()).get("" + galleryModelId, galleryModelClass);
+        ViewModelContainer viewModelContainer = obtainActivityViewModel(requireActivity(), "" + galleryModelId, galleryModelClass);
         resourceContainer = viewModelContainer.getModel();
 
         closeSlideshowAsapIfNoResourceContainerContent();
@@ -401,8 +400,22 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     }
 
     protected void loadMoreGalleryResources() {
-        int pageToLoad = resourceContainer.getPagesLoadedIdxToSizeMap();
+        int viewPagerPosition = viewPager.getCurrentItem();
+        int currentGalleryIdx = galleryItemAdapter.getFullGalleryItemIdxFromSlideshowIdx(viewPagerPosition);
+        int pageToLoad = calculatePageToLoad(currentGalleryIdx);
         loadAlbumResourcesPage(pageToLoad);
+    }
+
+    private int calculatePageToLoad(int currentGalleryIdxShown) {
+        int pageToLoad = resourceContainer.getPagesLoadedIdxToSizeMap();
+        int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
+        if(pageToLoad == 0 && currentGalleryIdxShown > pageSize) {
+            pageToLoad = currentGalleryIdxShown / pageSize; // integer division
+            if(currentGalleryIdxShown % pageSize > 0) {
+                pageToLoad++;
+            }
+        }
+        return pageToLoad;
     }
 
     private void loadAlbumResourcesPage(int pageToLoad) {

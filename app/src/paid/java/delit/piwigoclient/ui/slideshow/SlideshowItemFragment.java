@@ -193,9 +193,12 @@ public abstract class SlideshowItemFragment<F extends SlideshowItemFragment<F,FU
     @Override
     public void onResume() {
         super.onResume();
-        boolean favoritesSupported = getModel().hasFavoriteInfo();
-        //PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isPiwigoClientPluginInstalled();
-        favoriteButton.setVisibility(favoritesSupported?View.VISIBLE:View.INVISIBLE);
+        T model = getModel();
+        if(model != null) {
+            boolean favoritesSupported = model.hasFavoriteInfo();
+            //PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isPiwigoClientPluginInstalled();
+            favoriteButton.setVisibility(favoritesSupported ? View.VISIBLE : View.INVISIBLE);
+        }
     }
 
     @Override

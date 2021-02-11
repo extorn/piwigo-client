@@ -30,7 +30,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -176,7 +175,6 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     private List<CategoryItem> adminOnlyChildCategories;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
     private boolean isReopening;
-    private String currentResourceSortOrder;
 
     //****** Start fields maintained in saved session state.
     private boolean editingItemDetails;
@@ -281,7 +279,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         updatePiwigoAlbumModelAndOurCopyOfIt(albumDetails);
 
         galleryModel.setContainerDetails(albumDetails);
-        albumIsDirty = true;
+        albumIsDirty = true; // presume dirty (if reloading from saved state, this will be overridden)
         Log.e(TAG, "Loading model from args: finished");
     }
 
@@ -301,7 +299,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                     CategoryItem catItem = rootAlbum.findChild(albumParentId);
                     catItem.removeChildAlbum(thisAlbum);
                     // cache the album in the view model provider
-                    new ViewModelProvider(requireActivity()).get("" + catItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(catItem);
+                    PiwigoAlbumModel albumModel = obtainActivityViewModel(requireActivity(), "" + catItem.getId(), PiwigoAlbumModel.class);
+                    albumModel.getPiwigoAlbum(catItem);
                     thisAlbum = catItem;
                 } else {
                     Logging.log(Log.WARN, TAG, "Attempt to get parent album for album with id " + album.getId());
@@ -322,7 +321,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     protected PiwigoAlbum<CategoryItem,GalleryItem> updatePiwigoAlbumModelAndOurCopyOfIt(CategoryItem newAlbum) {
-        PiwigoAlbum<CategoryItem,GalleryItem> album = new ViewModelProvider(requireActivity()).get("" + newAlbum.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(newAlbum).getValue();
+        PiwigoAlbumModel albumViewModel = obtainActivityViewModel(requireActivity(), "" + newAlbum.getId(), PiwigoAlbumModel.class);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = albumViewModel.getPiwigoAlbum(newAlbum).getValue();
         if (album == null) {
             Logging.log(Log.ERROR, TAG, "Gallery model is unexpectedly null on reopening model with album " + album);
         }
@@ -478,13 +478,6 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
         cacheViewComponentReferences(view);
 
-        String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
-        if (!sortOrder.equals(currentResourceSortOrder)) {
-            // we need to get all the data again (in future, maybe sort locally.
-            albumIsDirty = true;
-            currentResourceSortOrder = sortOrder;
-        }
-
         if (!isReopening) {
             populateViewFromModelEtc(view, savedInstanceState);
         } else {
@@ -503,6 +496,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
     protected void populateViewFromModelEtc(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
+        updateAlbumSortOrder(galleryModel);
+
         if (!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
             // force a reload of the gallery if the session has been destroyed.
             albumIsDirty = true;
@@ -517,7 +512,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             currentGroups = savedInstanceState.getLongArray(STATE_CURRENT_GROUPS);
             // if galleryIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
-            albumIsDirty = albumIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
+            // we are overriding the albumIsDirty here that has been set when loading args because that's when first opening page.
+            albumIsDirty = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
             albumIsDirty = albumIsDirty || savedInstanceState.getBoolean(STATE_IS_ALBUM_DATA_DIRTY);
 
             loadingMessageIds.clear();
@@ -670,7 +666,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     protected boolean updateAlbumSortOrder(PiwigoAlbum<CategoryItem, GalleryItem> galleryModel) {
-        boolean sortOrderChanged = false;
+        boolean sortOrderChanged;
         int newSortOrder = AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, requireContext());
         try {
             sortOrderChanged = galleryModel.setAlbumSortOrder(newSortOrder);
@@ -679,9 +675,13 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             sortOrderChanged = galleryModel.setAlbumSortOrder(newSortOrder);
         }
         boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
-        sortOrderChanged &= galleryModel.setRetrieveItemsInReverseOrder(invertResourceSortOrder);
+        sortOrderChanged |= galleryModel.setRetrieveItemsInReverseOrder(invertResourceSortOrder);
         boolean invertChildAlbumSortOrder = AlbumViewPreferences.getAlbumChildAlbumSortOrderInverted(prefs, requireContext());
-        sortOrderChanged &= galleryModel.setRetrieveChildAlbumsInReverseOrder(invertChildAlbumSortOrder);
+        sortOrderChanged |= galleryModel.setRetrieveChildAlbumsInReverseOrder(invertChildAlbumSortOrder);
+        if(galleryModel.setResourceSortOrder(AlbumViewPreferences.getResourceSortOrder(prefs, requireContext()))) {
+            galleryModel.removeAllResources();
+            sortOrderChanged = true;
+        }
         return sortOrderChanged;
     }
 
@@ -1319,14 +1319,20 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
 
         updateAppResumeDetails();
-        
 
+        boolean resorted = updateAlbumSortOrder(galleryModel);
 
         if (albumIsDirty) {
             reloadAlbumContent();
         } else if (itemsToLoad.size() > 0) {
             onReloadAlbum();
         } else {
+            if(resorted) {
+                if(galleryModel.getResourcesCount() == 0) {
+                    // need to reload the resources.
+                    loadAlbumResourcesPage(0);
+                }
+            }
 
             int spacerAlbumsNeeded = galleryModel.getChildAlbumCount() % albumsPerRow;
             if (spacerAlbumsNeeded > 0) {
@@ -1425,7 +1431,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         CategoryItem movedParent = basket.getContentParent();
         boolean itemRemoved = basket.removeItem(response.getPiwigoResource());
         if (itemRemoved) {
-            PiwigoAlbum<CategoryItem,GalleryItem> movedFromPiwigoAlbum = new ViewModelProvider(requireActivity()).get("" + movedParent.getParentId(), PiwigoAlbumModel.class).getModel();
+            PiwigoAlbum<CategoryItem,GalleryItem> movedFromPiwigoAlbum = ((PiwigoAlbumModel)obtainActivityViewModel(requireActivity(), "" + movedParent.getParentId(), PiwigoAlbumModel.class)).getModel();
             if (movedFromPiwigoAlbum != null) {
                 movedFromPiwigoAlbum.remove(response.getPiwigoResource());
             }
@@ -2281,7 +2287,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             Logging.log(Log.WARN, TAG, "Attempt to reopen parent but is null");
             return null;
         }
-        PiwigoAlbum<CategoryItem,GalleryItem> nextPiwigoAlbum = new ViewModelProvider(requireActivity()).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
+        PiwigoAlbumModel albumViewModel = obtainActivityViewModel(requireActivity(), "" + albumDetails.getParentId(), PiwigoAlbumModel.class);
+        PiwigoAlbum<CategoryItem,GalleryItem> nextPiwigoAlbum = albumViewModel.getModel();
         if (nextPiwigoAlbum == null) {
             Logging.log(Log.WARN, TAG, "Attempt to reopen parent but parent is not available. Returning null");
             return null;
@@ -2465,7 +2472,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                     if (albumId.equals(StaticCategoryItem.ROOT_ALBUM.getId())) {
                         continue;
                     }
-                    new ViewModelProvider(activity).get("" + currentItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(currentItem).getValue();
+                    PiwigoAlbumModel albumViewModel = getActionParent(uiHelper).obtainActivityViewModel(activity, "" + currentItem.getId(), PiwigoAlbumModel.class);
+                    albumViewModel.getPiwigoAlbum(currentItem).getValue();
                     try {
                         currentItem = currentItem.getChild(albumId);
                     } catch (IllegalStateException e) {

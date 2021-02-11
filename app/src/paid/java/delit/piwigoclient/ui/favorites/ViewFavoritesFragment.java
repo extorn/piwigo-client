@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -226,7 +225,8 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             }
         }
 
-        favoritesModel = new ViewModelProvider(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites().getValue();
+        PiwigoFavoritesModel favoritesViewModel = obtainActivityViewModel(requireActivity(), "0", PiwigoFavoritesModel.class);
+        favoritesModel = favoritesViewModel.getPiwigoFavorites().getValue();
 
         FavoritesUpdatedEvent favoritesUpdatedEvent = EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class);
         if(favoritesUpdatedEvent != null) {
@@ -241,7 +241,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(favoritesModel == null) {
             favoritesIsDirty = true;
-            favoritesModel = new ViewModelProvider(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
+            favoritesModel = favoritesViewModel.getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
         }
 
         if (isSessionDetailsChanged()) {
@@ -336,7 +336,8 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
     }
 
     private void reloadFavoritesModel() {
-        favoritesModel = new ViewModelProvider(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
+        PiwigoFavoritesModel favoritesViewModel = obtainActivityViewModel(requireActivity(), "0", PiwigoFavoritesModel.class);
+        favoritesModel = favoritesViewModel.getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
         loadAlbumResourcesPage(0);
     }
 

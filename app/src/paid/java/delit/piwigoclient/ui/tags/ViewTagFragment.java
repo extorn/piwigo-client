@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -245,7 +244,8 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
             //restore saved state
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences(savedInstanceState);
             currentTag = savedInstanceState.getParcelable(ARG_TAG);
-            tagModel = new ViewModelProvider(requireActivity()).get(PiwigoTagModel.class).getPiwigoTag().getValue();
+            PiwigoTagModel tagViewModel = obtainActivityViewModel(requireActivity(), PiwigoTagModel.class);
+            tagModel = tagViewModel.getPiwigoTag().getValue();
             // if tagIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
@@ -272,7 +272,8 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(tagModel == null) {
             tagIsDirty = true;
-            tagModel = new ViewModelProvider(requireActivity()).get("" + currentTag.getId(), PiwigoTagModel.class).getPiwigoTag(currentTag).getValue();
+            PiwigoTagModel tagViewModel = obtainActivityViewModel(requireActivity(), "" + currentTag.getId(), PiwigoTagModel.class);
+            tagModel = tagViewModel.getPiwigoTag(currentTag).getValue();
         }
 
         if (isSessionDetailsChanged()) {
@@ -367,7 +368,8 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
     }
 
     protected void reloadTagModel(Tag tag) {
-        tagModel = new ViewModelProvider(requireActivity()).get("" + tag.getId(), PiwigoTagModel.class).updatePiwigoTag(tag).getValue();
+        PiwigoTagModel tagViewModel = obtainActivityViewModel(requireActivity(), "" + tag.getId(), PiwigoTagModel.class);
+        tagModel = tagViewModel.updatePiwigoTag(tag).getValue();
     }
 
     protected PiwigoTag getTagModel() {

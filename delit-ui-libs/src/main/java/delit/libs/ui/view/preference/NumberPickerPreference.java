@@ -46,7 +46,7 @@ import delit.libs.ui.util.PreferenceUtils;
  * <p>
  * See android.R.styleable#EditText EditText Attributes.
  */
-public class NumberPickerPreference extends DialogPreference {
+public class NumberPickerPreference extends MyDialogPreference {
     private static final String TAG = "NumPickpref";
     private int maxValue;
     private int minValue;

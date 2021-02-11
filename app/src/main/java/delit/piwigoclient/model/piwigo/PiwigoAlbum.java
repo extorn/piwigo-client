@@ -184,7 +184,11 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         if(hideAlbums) {
             return spacerAlbums + childAlbumCount + (bannerCount > 0 ? bannerCount - 1 : 0);
         }
-        return spacerAlbums + childAlbumCount + bannerCount;
+        int resourceIdx = spacerAlbums + childAlbumCount + bannerCount;
+        if(resourceIdx > getResourcesCount()) {
+            resourceIdx = -1;
+        }
+        return resourceIdx;
     }
 
     @Override
@@ -287,6 +291,11 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
 
     @Override
     public void clear() {
+        if(getItemCount() == 0) {
+            Logging.log(Log.WARN, TAG, "Pointlessly clearing album content");
+        } else {
+            Logging.log(Log.DEBUG, TAG, "Clearing album content");
+        }
         super.clear();
         childAlbumCount = 0;
         spacerAlbums = 0;
@@ -403,4 +412,6 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     public int getBannerCount() {
         return bannerCount;
     }
+
+
 }

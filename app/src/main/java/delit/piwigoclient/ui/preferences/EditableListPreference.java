@@ -8,7 +8,6 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import java.util.TreeSet;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.util.PreferenceUtils;
+import delit.libs.ui.view.preference.MyDialogPreference;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
@@ -27,7 +27,7 @@ import delit.piwigoclient.R;
  * Created by gareth on 23/01/18.
  */
 
-public class EditableListPreference extends DialogPreference {
+public class EditableListPreference extends MyDialogPreference {
 
     private static final String TAG = "EditableListPreference";
     // State persistent values

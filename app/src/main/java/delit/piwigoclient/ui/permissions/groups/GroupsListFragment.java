@@ -14,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -105,7 +104,7 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
-        groupsModel = new ViewModelProvider(this).get(PiwigoGroupsModel.class).getPiwigoGroups().getValue();
+        groupsModel = ((PiwigoGroupsModel)obtainFragmentViewModel(this, PiwigoGroupsModel.class)).getPiwigoGroups().getValue();
 
         if (isSessionDetailsChanged()) {
             groupsModel.clear();

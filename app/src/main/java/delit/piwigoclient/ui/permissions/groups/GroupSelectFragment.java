@@ -40,7 +40,7 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class GroupSelectFragment<F extends GroupSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter<?,?,?>, GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group> {
+public class GroupSelectFragment<F extends GroupSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends RecyclerViewLongSetSelectFragment<F,FUIH,GroupRecyclerViewAdapter<?,?,?>, GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group> {
 
     private static final String GROUPS_MODEL = "groupsModel";
     private static final String TAG = "GrpSelFrag";

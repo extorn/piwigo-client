@@ -1,9 +1,7 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,12 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceDialogFragmentCompat;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -87,12 +81,12 @@ import delit.piwigoclient.ui.common.DialogFragmentUIHelper;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 
-public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
+public class KeystorePreferenceDialogFragmentCompat<F extends KeystorePreferenceDialogFragmentCompat<F,FUIH>, FUIH extends DialogFragmentUIHelper<FUIH,F>> extends MyDialogPreferenceFragment<F,FUIH> implements DialogPreference.TargetFragment {
 
-    private String STATE_TRACKED_REQUEST = "KeystorePreference.TrackedRequest";
-    private String STATE_LOAD_OP_RESULT = "KeystorePreference.LoadOperationResult";
-    private String STATE_LOAD_PROGRESS = "KeystorePreference.LoadProgress";
-    private String STATE_KEYSTORE = "KeystorePreference.KeyStore";
+    private final String STATE_TRACKED_REQUEST = "KeystorePreference.TrackedRequest";
+    private final String STATE_LOAD_OP_RESULT = "KeystorePreference.LoadOperationResult";
+    private final String STATE_LOAD_PROGRESS = "KeystorePreference.LoadProgress";
+    private final String STATE_KEYSTORE = "KeystorePreference.KeyStore";
     private static final char[] keystorePass = new char[]{'!', 'P', '1', 'r', '!', '4', 't', '3', '5', '!'};
     // State persistent items
     private int keystoreLoadProgress = -1;
@@ -104,7 +98,6 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     private KeyStore keystore;
     private ProgressIndicator progressIndicator;
     private AppSettingsViewModel appSettingsViewModel;
-    private DialogFragmentUIHelper uiHelper;
 
     @Override
     public <T extends Preference> T findPreference(@NonNull CharSequence key) {
@@ -114,10 +107,6 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     @Override
     public KeyStorePreference getPreference() {
         return (KeyStorePreference) super.getPreference();
-    }
-
-    private SharedPreferences getSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
     }
 
     @Override
@@ -130,6 +119,11 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         view.requestFocus();
     }
 
+    @Override
+    protected void setupUiHelper(@NonNull View view) {
+        //FIXME currently force using the main activity view instead. So popups happen on that view. It isn't great, but the dialog looks messy resizing.
+        super.setupUiHelper(requireActivity().getWindow().getDecorView());
+    }
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
@@ -147,22 +141,8 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
     @Override
     protected View onCreateDialogView(Context context) {
-        ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(getContext());
-        appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
+        appSettingsViewModel = obtainActivityViewModel(requireActivity(), AppSettingsViewModel.class);
         return buildCertificateListView(context, keystore);
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog d = super.onCreateDialog(savedInstanceState);
-        if(uiHelper == null) {
-            // show toast messages at the parent activity level
-            uiHelper = new DialogFragmentUIHelper<>(this, getActivity().getWindow().getDecorView(), getSharedPreferences(), requireContext());
-        } else {
-            uiHelper.swapToNewContext(requireContext());
-        }
-        return d;
     }
 
     @Override
@@ -275,7 +255,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
                 builder.setOnCancelListener(dialog -> {
                     keystoreLoadOperationResult.cancelAllLoadOperations();
-                    uiHelper.showDetailedMsg(R.string.alert_warning, getString(R.string.import_cancelled));
+                    getUIHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.import_cancelled));
                 });
                 builder.setTitle(R.string.alert_password_entry)
                 .setPositiveButton(R.string.button_ok, (dialog, which) -> {
@@ -300,7 +280,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
                         importObjectType = getString(R.string.heading_keystore_alias);
                         object = ((KeyStoreContentException)recoverableError).getAlias();
                     }
-                    uiHelper.showDetailedMsg(R.string.alert_warning, getString(R.string.import_x_of_type_y_cancelled_pattern, object, importObjectType));
+                    getUIHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.import_x_of_type_y_cancelled_pattern, object, importObjectType));
                 });
 
         View v = null;
@@ -332,8 +312,8 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     }
 
     public static DialogFragment newInstance(String key) {
-        final KeystorePreferenceDialogFragmentCompat fragment =
-                new KeystorePreferenceDialogFragmentCompat();
+        final KeystorePreferenceDialogFragmentCompat<?,?> fragment =
+                new KeystorePreferenceDialogFragmentCompat<>();
         final Bundle b = new Bundle(1);
         b.putString(ARG_KEY, key);
         fragment.setArguments(b);
@@ -459,7 +439,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
             X509Certificate cert = (X509Certificate) item.getCertificate();
             fillCertificateFields(cert, viewHolder);
-            viewHolder.deleteButton.setOnClickListener(v -> onDeleteItem(position, v));
+            viewHolder.deleteButton.setOnClickListener(v -> onDeleteItem(position));
         }
 
         private String getIsolatedCnFieldIfPossible(X500Principal principal) {
@@ -485,10 +465,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
             X509Certificate cert = (X509Certificate) item.getTrustedCertificate();
             fillCertificateFields(cert, viewHolder);
-            viewHolder.deleteButton.setOnClickListener(v -> onDeleteItem(position, v));
+            viewHolder.deleteButton.setOnClickListener(v -> onDeleteItem(position));
         }
 
-        private void onDeleteItem(int position, View v) {
+        private void onDeleteItem(int position) {
             try {
                 backingObjectStore.deleteEntry(aliasesList.get(position));
                 aliasesList.remove(position);
@@ -542,9 +522,9 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
     }
 
-    static class AsyncX509LoaderTask extends OwnedSafeAsyncTask<KeystorePreferenceDialogFragmentCompat, X509LoadOperation, Integer, LoadOperationResult> {
+    static class AsyncX509LoaderTask extends OwnedSafeAsyncTask<KeystorePreferenceDialogFragmentCompat<?,?>, X509LoadOperation, Integer, LoadOperationResult> {
 
-        private AsyncX509LoaderTask(KeystorePreferenceDialogFragmentCompat sourcePref) {
+        private AsyncX509LoaderTask(KeystorePreferenceDialogFragmentCompat<?,?> sourcePref) {
             super(sourcePref);
             withContext(sourcePref.requireContext());
         }
@@ -628,7 +608,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             String errorMessage = buildErrorMessage(unrecoverableErrors);
             buildAndShowAlertErrorLoadingFilesDialog(errorMessage);
         } else {
-            processRecoverableErrors(getContext());
+            processRecoverableErrors(requireContext());
         }
     }
 

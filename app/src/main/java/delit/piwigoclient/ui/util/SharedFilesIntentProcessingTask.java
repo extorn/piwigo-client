@@ -10,8 +10,6 @@ import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.MimeTypeFilter;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -20,7 +18,6 @@ import java.util.HashMap;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
-import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.progress.TaskProgressTracker;
 import delit.piwigoclient.R;
@@ -44,8 +41,7 @@ public class SharedFilesIntentProcessingTask<A extends MyActivity<A,AUIH>,AUIH e
         withContext(parent);
         this.intent = intent;
         this.fileSelectionEventId = fileSelectionEventId;
-        ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(parent);
-        appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
+        appSettingsViewModel = parent.obtainViewModel(AppSettingsViewModel.class);
     }
 
     public void setAcceptedMimeTypes(String[] acceptedMimeTypes) {

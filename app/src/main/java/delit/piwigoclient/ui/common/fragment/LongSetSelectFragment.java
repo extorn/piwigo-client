@@ -35,6 +35,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 
@@ -42,7 +43,7 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class LongSetSelectFragment<Y extends View, X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences<Z>> extends MyFragment {
+public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FUIH,Y,X,Z>,FUIH extends FragmentUIHelper<FUIH,F>, Y extends View, X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences<Z>> extends MyFragment<F,FUIH> {
 
     private static final String ARG_ACTION_ID = "actionId";
     private static final String ARG_INITIAL_SELECTION = "initialSelection";

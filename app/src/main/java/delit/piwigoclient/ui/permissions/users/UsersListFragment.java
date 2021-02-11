@@ -14,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -102,7 +101,7 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
-        usersModel = new ViewModelProvider(this).get(PiwigoUsersModel.class).getPiwigoUsers().getValue();
+        usersModel = ((PiwigoUsersModel)obtainFragmentViewModel(this, PiwigoUsersModel.class)).getPiwigoUsers().getValue();
 
         if (isSessionDetailsChanged()) {
             usersModel.clear();

@@ -10,12 +10,13 @@ import delit.libs.ui.view.Enableable;
 import delit.libs.ui.view.list.SelectableItemsAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 
 /**
  * Created by gareth on 03/01/18.
  */
 
-public abstract class RecyclerViewLongSetSelectFragment<X extends Enableable & SelectableItemsAdapter<T>, Z extends BaseRecyclerViewAdapterPreferences<Z>, T> extends LongSelectableSetSelectFragment<RecyclerView, X, Z,T> {
+public abstract class RecyclerViewLongSetSelectFragment<F extends RecyclerViewLongSetSelectFragment<F,FUIH,X,Z,T>,FUIH extends FragmentUIHelper<FUIH,F>, X extends Enableable & SelectableItemsAdapter<T>, Z extends BaseRecyclerViewAdapterPreferences<Z>, T> extends LongSelectableSetSelectFragment<F,FUIH,RecyclerView, X, Z,T> {
 
     @Override
     @LayoutRes

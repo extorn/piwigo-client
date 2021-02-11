@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 
 import androidx.annotation.ArrayRes;
 import androidx.annotation.RequiresApi;
-import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 
 import java.io.Serializable;
@@ -30,7 +29,7 @@ import delit.libs.util.ObjectUtils;
  * @attr ref android.R.styleable#ListPreference_entries
  * @attr ref android.R.styleable#ListPreference_entryValues
  */
-public abstract class MappedListPreference<T extends Serializable> extends DialogPreference {
+public abstract class MappedListPreference<T extends Serializable> extends MyDialogPreference {
     private T[] mEntryValues;
     private CharSequence[] mEntries;
     private T currentValue;

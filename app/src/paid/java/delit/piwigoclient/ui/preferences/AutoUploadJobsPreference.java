@@ -7,7 +7,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 
-import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceDataStore;
 
 import org.greenrobot.eventbus.EventBus;
@@ -21,6 +20,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.view.preference.MyDialogPreference;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.R;
@@ -29,7 +29,7 @@ import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TrackableEventManager;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 
-public class AutoUploadJobsPreference extends DialogPreference {
+public class AutoUploadJobsPreference extends MyDialogPreference {
 
     private boolean mValueSet;
     private String mValue;

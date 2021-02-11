@@ -33,7 +33,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteE
  * Created by gareth on 26/05/17.
  */
 
-public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends ListViewLongSelectableSetSelectFragment<AlbumSelectionListAdapter, AlbumSelectionListAdapterPreferences> {
+public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends ListViewLongSelectableSetSelectFragment<F,FUIH,AlbumSelectionListAdapter, AlbumSelectionListAdapterPreferences> {
 
     private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";

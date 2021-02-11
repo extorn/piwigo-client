@@ -27,8 +27,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -262,9 +260,8 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(getContext());
-        appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
-        filesForUploadViewModel = new ViewModelProvider(viewModelProvider).get(FilesForUploadViewModel.class);
+        appSettingsViewModel = obtainActivityViewModel(requireActivity(), AppSettingsViewModel.class);
+        filesForUploadViewModel = obtainFragmentViewModel(this, FilesForUploadViewModel.class);
     }
 
     @Override

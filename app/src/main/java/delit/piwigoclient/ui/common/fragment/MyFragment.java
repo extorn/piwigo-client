@@ -22,6 +22,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -175,6 +177,21 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
+    }
+
+    protected final <T extends ViewModel> T obtainActivityViewModel(@NonNull FragmentActivity activity, @NonNull Class<T> modelClass) {
+        ViewModelProvider.AndroidViewModelFactory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(activity.getApplication());
+        return new ViewModelProvider(activity, factory).get(modelClass);
+    }
+
+    protected final <T extends ViewModel> T obtainActivityViewModel(@NonNull FragmentActivity activity, String key, @NonNull Class<T> modelClass) {
+        ViewModelProvider.AndroidViewModelFactory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(activity.getApplication());
+        return new ViewModelProvider(activity, factory).get(key, modelClass);
+    }
+
+    protected final <T extends ViewModel> T obtainFragmentViewModel(@NonNull Fragment fragment, @NonNull Class<T> modelClass) {
+        ViewModelProvider.AndroidViewModelFactory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(fragment.requireActivity().getApplication());
+        return new ViewModelProvider(fragment, factory).get(modelClass);
     }
 
     @Override

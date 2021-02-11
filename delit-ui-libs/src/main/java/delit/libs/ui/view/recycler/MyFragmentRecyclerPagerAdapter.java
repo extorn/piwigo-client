@@ -128,25 +128,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
         if (activeFragments.size() == 0) {
-            List<Fragment> fragments = mFragmentManager.getFragments();
-            // if fragments is not empty then the page was very probably rotated
-            for (Fragment f : fragments) {
-                if (f instanceof PagerItemFragment) {
-                    PagerItemFragment pif = (PagerItemFragment) f; // safe since f is already a fragment.
-                    int pagerIndex = pif.getPagerIndex();
-                    if (pagerIndex < 0) {
-                        Logging.log(Log.WARN, TAG, "Warning pager fragment found in fragment manager with index of " + pagerIndex + " while looking for fragment as position " + position);
-                    }
-                    if (pagerIndex >= 0) {
-                        Fragment removed = activeFragments.put(pagerIndex, (T)pif);
-                        if (removed != null) {
-                            throw new RuntimeException("Two fragments share the same pager index: " + pagerIndex);
-                        }
-                    } else {
-                        Logging.log(Log.WARN, TAG, "Warning pager fragment of class type " + pif.getClass().getName() + " found in fragment manager with index of " + pagerIndex + " while looking for fragment as position " + position + ". Ignored.");
-                    }
-                }
-            }
+            restoreActiveFragmentsListFromFragmentManager(position);
         }
 
         // check if fragment is already active. If so, do nothing
@@ -170,6 +152,34 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         }
 
         return f;
+    }
+
+    /**
+     * @param position slideshow position of fragment sought (and not found hence try to reload our cache).
+     */
+    private void restoreActiveFragmentsListFromFragmentManager(int position) {
+        boolean activeFragmentsCacheRestored = false;
+        List<Fragment> fragments = mFragmentManager.getFragments();
+        // if fragments is not empty then the page was very probably rotated
+        for (Fragment f : fragments) {
+            if (f instanceof PagerItemFragment) {
+                PagerItemFragment pif = (PagerItemFragment) f; // safe since f is already a fragment.
+                int pagerIndex = pif.getPagerIndex();
+                if (pagerIndex < 0) {
+                    Logging.log(Log.WARN, TAG, "Warning pager fragment found in fragment manager with index of " + pagerIndex + " while looking for fragment as position " + position);
+                }
+                if (pagerIndex >= 0) {
+                    activeFragmentsCacheRestored = true;
+                    Fragment removed = activeFragments.put(pagerIndex, (T)pif);
+                    if (removed != null) {
+                        throw new RuntimeException("Two fragments share the same pager index: " + pagerIndex);
+                    }
+                } else {
+                    Logging.log(Log.WARN, TAG, "Warning pager fragment of class type " + pif.getClass().getName() + " found in fragment manager with index of " + pagerIndex + " while looking for fragment as position " + position + ". Ignored.");
+                }
+            }
+        }
+        Logging.log(Log.WARN, TAG, "active fragment cache (items: %2$d) restored: %1$b", activeFragmentsCacheRestored, activeFragments.size());
     }
 
     protected void addFragmentToTransaction(ViewGroup container, T f, int position) {
@@ -197,11 +207,9 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
 
     protected T instantiateItem(Class<? extends T> fragmentTypeNeeded) {
         try {
+            Logging.log(Log.DEBUG, TAG, "Instantiating Pager Item type %1$s", fragmentTypeNeeded);
             return fragmentTypeNeeded.newInstance();
-        } catch (IllegalAccessException e) {
-            Logging.recordException(e);
-            throw new RuntimeException(e);
-        } catch (java.lang.InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             Logging.recordException(e);
             throw new RuntimeException(e);
         }
@@ -237,7 +245,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         } while(f != null);
 
         if(getCount() > position && activeFragments.get(position) == null) {
-            // reinstantiate this item (the old item has been deleted now so this gets the fresh one)
+            // re-instantiate this item (the old item has been deleted now so this gets the fresh one)
             instantiateItem(container, position);
         }
 

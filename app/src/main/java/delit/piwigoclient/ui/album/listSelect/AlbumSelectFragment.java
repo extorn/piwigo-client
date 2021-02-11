@@ -34,7 +34,7 @@ import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
  * Created by gareth on 26/05/17.
  */
 //TODO - Migrate to using ASAP - ListViewLongSelectableSetSelectFragment
-public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter, AlbumSelectionListAdapterPreferences> {
+public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends ListViewLongSetSelectFragment<F,FUIH,AvailableAlbumsListAdapter, AlbumSelectionListAdapterPreferences> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private static final String TAG = "AlbumSelFrag";

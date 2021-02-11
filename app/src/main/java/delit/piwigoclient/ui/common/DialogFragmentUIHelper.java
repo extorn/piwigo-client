@@ -6,7 +6,7 @@ import android.view.View;
 
 import androidx.preference.PreferenceDialogFragmentCompat;
 
-public class DialogFragmentUIHelper<FUI extends FragmentUIHelper<FUI,T>, T extends PreferenceDialogFragmentCompat> extends UIHelper<FUI,T> {
+public class DialogFragmentUIHelper<FUI extends DialogFragmentUIHelper<FUI,T>, T extends PreferenceDialogFragmentCompat> extends UIHelper<FUI,T> {
     private final View parentView;
 
     public DialogFragmentUIHelper(T parent, View view, SharedPreferences prefs, Context context) {

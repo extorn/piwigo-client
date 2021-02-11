@@ -7,19 +7,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
-import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceManager;
 
-import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.preference.MyDialogPreference;
 import delit.piwigoclient.database.AppSettingsViewModel;
 
 /**
  * Created by gareth on 15/07/17.
  */
 
-public class UriPermissionsListPreference extends DialogPreference {
+public class UriPermissionsListPreference extends MyDialogPreference {
 
 
     private AppSettingsViewModel appSettingsViewModel;
@@ -45,8 +42,7 @@ public class UriPermissionsListPreference extends DialogPreference {
     }
 
     private void initPreference(Context context, AttributeSet attrs) {
-        ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(context);
-        appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
+        appSettingsViewModel = obtainActivityViewModel(context, AppSettingsViewModel.class);
     }
 
     @Override

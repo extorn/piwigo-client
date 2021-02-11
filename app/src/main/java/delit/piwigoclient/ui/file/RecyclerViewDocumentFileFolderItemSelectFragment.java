@@ -29,8 +29,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
 import androidx.documentfile.provider.DocumentFile;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.google.android.gms.common.util.ArrayUtils;
@@ -83,7 +81,7 @@ import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
 import static android.view.View.GONE;
 
 //@RequiresApi(api = Build.VERSION_CODES.KITKAT)
-public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends RecyclerViewLongSetSelectFragment<LVA, FolderItemViewAdapterPreferences, FolderItem> implements BackButtonHandler {
+public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends RecyclerViewLongSetSelectFragment<F,FUIH,LVA, FolderItemViewAdapterPreferences, FolderItem> implements BackButtonHandler {
     private static final String TAG = "RVFolderSelFrg";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
     private DocumentFileBreadcrumbsView folderPathView;
@@ -143,8 +141,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(getContext());
-        appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
+        appSettingsViewModel = obtainActivityViewModel(requireActivity(), AppSettingsViewModel.class);
         super.onCreate(savedInstanceState);
     }
 

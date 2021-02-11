@@ -9,10 +9,10 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
-import androidx.preference.DialogPreference;
 
 import java.util.Locale;
 
+import delit.libs.ui.view.preference.MyDialogPreference;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 
@@ -20,7 +20,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
  * Created by gareth on 15/07/17.
  */
 
-public class ServerAlbumListPreference extends DialogPreference {
+public class ServerAlbumListPreference extends MyDialogPreference {
 
     private String currentValue;
     // non state persistent values

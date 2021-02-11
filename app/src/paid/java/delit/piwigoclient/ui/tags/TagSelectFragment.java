@@ -50,7 +50,7 @@ import delit.piwigoclient.ui.model.PiwigoTagModel;
  * Created by gareth on 26/05/17.
  */
 
-public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter<?,?,?>, TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag> {
+public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends RecyclerViewLongSetSelectFragment<F,FUIH,TagRecyclerViewAdapter<?,?,?>, TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag> {
 
     private static final String TAGS_MODEL = "tagsModel";
     private static final String ARGS_UNSAVED_TAGS = "unsavedTags";

@@ -36,7 +36,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
     private boolean shouldShowVideos;
     private final ResourceContainer<T, GalleryItem> gallery;
     private final Class<? extends ViewModelContainer> galleryModelClass;
-    private HashMap<Long, Integer> cachedItemPositions; // id of item, against Slideshow item's position in slideshow pager
+    private HashMap<Long, Integer> cachedItemIdToSlideshowPositionMap; // id of item, against Slideshow item's position in slideshow pager
 
     public GalleryItemAdapter(Class<? extends ViewModelContainer> galleryModelClass, ResourceContainer<T, GalleryItem> gallery, boolean shouldShowVideos, int showGalleryItemIdx, FragmentManager fm) {
         super(fm);
@@ -45,14 +45,14 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         galleryResourceItemsFullGalleryIdx = new ArrayList<>(gallery.getResourcesCount());
         this.shouldShowVideos = shouldShowVideos;
         int firstGalleryIdxToImport = gallery.getFirstResourceIdx();
-        addResourcesToIndex(firstGalleryIdxToImport, gallery.getResourcesCount(), showGalleryItemIdx); // use get items.size to ignore issues when hide
+        buildResourcesIndexMap(firstGalleryIdxToImport, gallery.getResourcesCount(), showGalleryItemIdx); // use get items.size to ignore issues when hide
     }
 
-    private void addResourcesToIndex(int firstGalleryIdxToImport, int maxSlideshowItemCount, int selectedItem) {
+    private void buildResourcesIndexMap(int firstGalleryIdxToImport, int maxSlideshowItemCount, int selectedItemGalleryIdx) {
         int scanToRawIndex = gallery.getItemCount() - 1;
         if (firstGalleryIdxToImport == 0) {
             // need to reload all items.
-            galleryResourceItemsFullGalleryIdx.clear();
+//            galleryResourceItemsFullGalleryIdx.clear();
         }
         int resourcesAddedToSlideshow = 0;
         for (int rawGalleryIdx = firstGalleryIdxToImport; rawGalleryIdx <= scanToRawIndex; rawGalleryIdx++) {
@@ -65,17 +65,31 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
                 // skip any blanks, heading, etc
                 continue;
             }
-            if (!shouldShowVideos && currentItem instanceof VideoResourceItem && rawGalleryIdx != selectedItem) {
+            if (!shouldShowVideos && currentItem instanceof VideoResourceItem && rawGalleryIdx != selectedItemGalleryIdx) {
                 continue;
             }
-            galleryResourceItemsFullGalleryIdx.add(rawGalleryIdx);
+            if(!galleryResourceItemsFullGalleryIdx.contains(rawGalleryIdx)) {
+                // don't add items already contained.
+                int insertAt = galleryResourceItemsFullGalleryIdx.indexOf(rawGalleryIdx-1);
+                // use this pos + 1
+                if(insertAt == -1) {
+                    insertAt = galleryResourceItemsFullGalleryIdx.indexOf(rawGalleryIdx+1);
+                    // if >= 0, use this pos
+                    if(insertAt < 0) {
+                        insertAt = 0;
+                    }
+                    galleryResourceItemsFullGalleryIdx.add(insertAt, rawGalleryIdx);
+                } else {
+                    galleryResourceItemsFullGalleryIdx.add(insertAt + 1, rawGalleryIdx);
+                }
+            }
             resourcesAddedToSlideshow++;
             if(resourcesAddedToSlideshow == maxSlideshowItemCount) {
                 break;
             }
         }
-        if (cachedItemPositions == null) {
-            cachedItemPositions = new HashMap<>(galleryResourceItemsFullGalleryIdx.size());
+        if (cachedItemIdToSlideshowPositionMap == null) {
+            cachedItemIdToSlideshowPositionMap = new HashMap<>(galleryResourceItemsFullGalleryIdx.size());
         }
     }
 
@@ -90,18 +104,22 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         ResourceItem model = ((SlideshowItemFragment<?,?,?>) item).getModel();
         int fullGalleryIdx = gallery.getItemIdx(model);
         if(fullGalleryIdx < 0) {
+            Logging.log(Log.DEBUG, TAG, "getItemPos for item %1$s and model %2$s", Utils.getId(item), model, POSITION_NONE);
             return POSITION_NONE;
         }
-        int newIndexPosition = galleryResourceItemsFullGalleryIdx.indexOf(fullGalleryIdx);
-        if (newIndexPosition < 0) {
+        int itemSlideshowPosition = galleryResourceItemsFullGalleryIdx.indexOf(fullGalleryIdx);
+        if (itemSlideshowPosition < 0) {
+            Logging.log(Log.DEBUG, TAG, "getItemPos for item %1$s and model %2$s", Utils.getId(item), model, POSITION_NONE);
             return POSITION_NONE;
         }
-        Integer currentCachedPosition = cachedItemPositions.get(model.getId());
-        if(currentCachedPosition != null && currentCachedPosition == newIndexPosition) {
+        Integer currentCachedPosition = cachedItemIdToSlideshowPositionMap.get(model.getId());
+        if(currentCachedPosition != null && currentCachedPosition == itemSlideshowPosition) {
+            Logging.log(Log.DEBUG, TAG, "getItemPos for item %1$s and model %2$s", Utils.getId(item), model, POSITION_UNCHANGED);
             return POSITION_UNCHANGED;
         }
-        cachedItemPositions.put(model.getId(), newIndexPosition);
-        return newIndexPosition;
+        cachedItemIdToSlideshowPositionMap.put(model.getId(), itemSlideshowPosition);
+        Logging.log(Log.DEBUG, TAG, "getItemPos for item %1$s and model %2$s", Utils.getId(item), model, itemSlideshowPosition);
+        return itemSlideshowPosition;
     }
 
     @Override
@@ -116,25 +134,29 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
 
     @Override
     public Class<? extends SIF> getFragmentType(int position) {
-        int slideshowIdx = galleryResourceItemsFullGalleryIdx.get(position);
+        int itemGalleryIdx = galleryResourceItemsFullGalleryIdx.get(position);
         GalleryItem galleryItem = null;
         try {
-            galleryItem = gallery.getItemByIdx(slideshowIdx);
+            galleryItem = gallery.getItemByIdx(itemGalleryIdx);
+            Logging.log(Log.DEBUG, TAG, "getFragmentType for item %1$s at slideshow position %2$d and gallery idx %3$d", galleryItem, position, itemGalleryIdx);
             if (galleryItem instanceof PictureResourceItem) {
                 if ("gif".equalsIgnoreCase(((PictureResourceItem) galleryItem).getFileExtension())) {
+                    Logging.log(Log.DEBUG, TAG, "Need Animated Gif Fragment for item %3$s (idx %1$d) at slideshowPosition %2$d", itemGalleryIdx, position, galleryItem);
                     return (Class<? extends SIF>)(Class) AlbumGifPictureItemFragment.class;
                 } else {
+                    Logging.log(Log.DEBUG, TAG, "Need Picture Fragment for item %3$s (idx %1$d) at slideshowPosition %2$d", itemGalleryIdx, position, galleryItem);
                     return (Class<? extends SIF>)(Class) AlbumPictureItemFragment.class;
                 }
             } else if (galleryItem instanceof VideoResourceItem) {
+                Logging.log(Log.DEBUG, TAG, "Need Video Fragment for item %3$s (idx %1$d) at slideshowPosition %2$d", itemGalleryIdx, position, galleryItem);
                 return (Class<? extends SIF>)(Class) AlbumVideoItemFragment.class;
             }
-            //TODO check what causes this - probably deleting all items and trying to show a header!
+            Logging.log(Log.ERROR, TAG, "Unable to establish fragment type needed for item %3$s (idx %1$d) at slideshowPosition %2$d", itemGalleryIdx, position, galleryItem);
             throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + Utils.getId(galleryItem) + ")");
         } catch(IndexOutOfBoundsException e) {
             Logging.log(Log.ERROR, TAG, "The gallery has %1$d items. Requested item that isn't present.", gallery.getItemCount());
         }
-        throw new IllegalArgumentException("Unsupported slideshow item type ("+galleryItem+") at slideshow position " + position + " and slideshow idx " + slideshowIdx + " with gallery of size " + gallery.getItemCount());
+        throw new IllegalArgumentException("Unsupported slideshow item type ("+galleryItem+") at slideshow position " + position + " and slideshow idx " + itemGalleryIdx + " with gallery of size " + gallery.getItemCount());
     }
 
     @Override
@@ -224,7 +246,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
     @Override
     protected void onItemDeleted(SIF fragment) {
         super.onItemDeleted(fragment);
-        Integer cachedPosition = cachedItemPositions.remove(fragment.getModel().getId());
+        Integer cachedPosition = cachedItemIdToSlideshowPositionMap.remove(fragment.getModel().getId());
     }
 
     @Override
@@ -239,7 +261,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
 
     @Override
     public void onDataAppended(int firstPositionAddedAt, int itemsAddedCount) {
-        addResourcesToIndex(firstPositionAddedAt, itemsAddedCount, -1);
+        buildResourcesIndexMap(firstPositionAddedAt, gallery.getResourcesCount(), -1);
         notifyDataSetChanged();
     }
 

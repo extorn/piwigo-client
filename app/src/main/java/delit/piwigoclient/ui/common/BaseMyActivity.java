@@ -38,8 +38,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -366,8 +366,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     protected void checkAllUriPermissionsStillPresent() {
         LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(this);
-        ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(this);
-        AppSettingsViewModel appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
+        AppSettingsViewModel appSettingsViewModel = obtainViewModel(this, AppSettingsViewModel.class);
         LiveData<List<UriPermissionUse>> uriPermissionsData = appSettingsViewModel.getAll();
                 uriPermissionsData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
                     @Override
@@ -463,6 +462,15 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         String language = getDesiredLanguage(context); // Helper method to get saved language from SharedPreferences
         Locale newLocale = new Locale(language);
         return DisplayUtils.updateContext(context, newLocale);
+    }
+
+    public final <T extends ViewModel> T obtainViewModel(@NonNull Class<T> modelClass) {
+        return obtainViewModel(this, modelClass);
+    }
+
+    protected final <T extends ViewModel> T obtainViewModel(@NonNull AppCompatActivity activity, @NonNull Class<T> modelClass) {
+        ViewModelProvider.AndroidViewModelFactory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(activity.getApplication());
+        return new ViewModelProvider(activity, factory).get(modelClass);
     }
 
     @Override

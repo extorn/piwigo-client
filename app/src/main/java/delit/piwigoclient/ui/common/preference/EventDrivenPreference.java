@@ -6,10 +6,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 
-import androidx.preference.Preference;
-
 import org.greenrobot.eventbus.EventBus;
 
+import delit.libs.ui.view.preference.MyPreference;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.events.trackable.TrackableResponseEvent;
 
@@ -17,7 +16,7 @@ import delit.piwigoclient.ui.events.trackable.TrackableResponseEvent;
  * Created by gareth on 15/07/17.
  */
 
-public abstract class EventDrivenPreference<T extends TrackableRequestEvent> extends Preference {
+public abstract class EventDrivenPreference<T extends TrackableRequestEvent> extends MyPreference {
 
     private String currentValue;
     private int trackedEventId = -1;
