@@ -402,18 +402,23 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     protected void loadMoreGalleryResources() {
         int viewPagerPosition = viewPager.getCurrentItem();
         int currentGalleryIdx = galleryItemAdapter.getFullGalleryItemIdxFromSlideshowIdx(viewPagerPosition);
-        int pageToLoad = calculatePageToLoad(currentGalleryIdx);
+        int pageToLoad = calculatePageToLoad(currentGalleryIdx-1);
         loadAlbumResourcesPage(pageToLoad);
+        int nextPageToLoad = calculatePageToLoad(currentGalleryIdx+1);
+        if(nextPageToLoad != pageToLoad) {
+            loadAlbumResourcesPage(nextPageToLoad);    // will need this too because the slideshow caches either side.
+        }
     }
 
     private int calculatePageToLoad(int currentGalleryIdxShown) {
         int pageToLoad = resourceContainer.getPagesLoadedIdxToSizeMap();
         int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
-        if(pageToLoad == 0 && currentGalleryIdxShown > pageSize) {
-            pageToLoad = currentGalleryIdxShown / pageSize; // integer division
-            if(currentGalleryIdxShown % pageSize > 0) {
-                pageToLoad++;
-            }
+        int pageNeeded = Math.max(0,Math.min(currentGalleryIdxShown, resourceContainer.getImgResourceCount())) / pageSize; // integer division
+        if(currentGalleryIdxShown % pageSize > 0) {
+            pageNeeded++;
+        }
+        if(!resourceContainer.isPageLoadedOrBeingLoaded(pageNeeded)) {
+            return pageNeeded;
         }
         return pageToLoad;
     }

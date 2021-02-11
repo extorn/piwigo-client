@@ -17,7 +17,7 @@ import delit.libs.core.util.Logging;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.Utils;
 
-public class SimpleFragmentPagerAdapter<T extends Fragment & MyFragmentRecyclerPagerAdapter.PagerItemFragment> extends MyFragmentRecyclerPagerAdapter<T, ViewPager> {
+public class SimpleFragmentPagerAdapter<T extends Fragment & MyFragmentRecyclerPagerAdapter.PagerItemView> extends MyFragmentRecyclerPagerAdapter<T, ViewPager> {
 
     private static final String TAG = "SimpleFragmentPagerAdapter";
     private final ArrayList<String> tabTitles;

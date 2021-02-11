@@ -46,7 +46,7 @@ import delit.piwigoclient.ui.common.preference.UriPermissionsListPreferenceDialo
  * Created by gareth on 26/05/17.
  */
 
-public abstract class MyPreferenceFragment<F extends MyPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends PreferenceFragmentCompat implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
+public abstract class MyPreferenceFragment<F extends MyPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends PreferenceFragmentCompat implements MyFragmentRecyclerPagerAdapter.PagerItemView {
     private static final String STATE_PAGER_INDEX_POS = "pager_index_pos";
     protected static final int NO_PAGER_INDEX = -1;
     private static final String TAG = "MyPrefFrag";

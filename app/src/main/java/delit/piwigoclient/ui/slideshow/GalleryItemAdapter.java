@@ -26,10 +26,11 @@ import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 import delit.piwigoclient.ui.model.ViewModelContainer;
 
-public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends ViewPager, SIF extends SlideshowItemFragment<SIF,FUIH,ResourceItem>,FUIH extends FragmentUIHelper<FUIH,SIF>> extends MyFragmentRecyclerPagerAdapter<SIF, VP> {
+public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends ViewPager, SIF extends MyFragment<SIF,FUIH> & SlideshowItemView<ResourceItem>,FUIH extends FragmentUIHelper<FUIH,SIF>> extends MyFragmentRecyclerPagerAdapter<SIF, VP> {
 
     private static final String TAG = "GalleryItemAdapter";
     private final List<Integer> galleryResourceItemsFullGalleryIdx;
@@ -126,9 +127,13 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         return galleryResourceItemsFullGalleryIdx.size();
     }
 
-    private int getTotalSlideshowItems() {
-        int ignoredResourceCount = gallery.getResourcesCount() - galleryResourceItemsFullGalleryIdx.size();
-        return gallery.isFullyLoaded() ? galleryResourceItemsFullGalleryIdx.size() : gallery.getImgResourceCount() - ignoredResourceCount;
+    private int getTotalSlideshowItems() {//FIXME - make this a static value somehow
+        int presentIgnoredResourceCount = gallery.getResourcesCount() - galleryResourceItemsFullGalleryIdx.size();
+        int guessedSlideshowSize = gallery.getImgResourceCount(); // all possible resources according to the container detail
+        if(galleryResourceItemsFullGalleryIdx.size() > 0 && presentIgnoredResourceCount > 0) {
+            guessedSlideshowSize -= presentIgnoredResourceCount;
+        }
+        return gallery.isFullyLoaded() ? galleryResourceItemsFullGalleryIdx.size() : guessedSlideshowSize;
     }
 
     @Override
@@ -154,8 +159,8 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
             throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + Utils.getId(galleryItem) + ")");
         } catch(IndexOutOfBoundsException e) {
             Logging.log(Log.ERROR, TAG, "The gallery has %1$d items. Requested item that isn't present.", gallery.getItemCount());
+            return (Class<? extends SIF>)(Class)AlbumItemNotLoadedFragment.class;
         }
-        throw new IllegalArgumentException("Unsupported slideshow item type ("+galleryItem+") at slideshow position " + position + " and slideshow idx " + itemGalleryIdx + " with gallery of size " + gallery.getItemCount());
     }
 
     @Override
@@ -164,15 +169,20 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         if (item == null) {
             throw new RuntimeException("unsupported gallery item.");
         }
-
-        GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItemsFullGalleryIdx.get(position));
-        int totalSlideshowItems = getTotalSlideshowItems();
-        if (galleryItem instanceof PictureResourceItem) {
-            Bundle b = AlbumPictureItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItemsFullGalleryIdx.size(), totalSlideshowItems);
+        if(item instanceof AlbumItemNotLoadedFragment) {
+            Bundle b = AlbumItemNotLoadedFragment.buildArgs(position);
             item.setArguments(b);
-        } else if (galleryItem instanceof VideoResourceItem) {
-            Bundle args = AbstractAlbumVideoItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItemsFullGalleryIdx.size(), totalSlideshowItems, false);
-            item.setArguments(args);
+            Logging.log(Log.DEBUG,TAG, "Created resource placeholder slideshow item");
+        } else {
+            GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItemsFullGalleryIdx.get(position));
+            int totalSlideshowItems = getTotalSlideshowItems();
+            if (galleryItem instanceof PictureResourceItem) {
+                Bundle b = AlbumPictureItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItemsFullGalleryIdx.size(), totalSlideshowItems);
+                item.setArguments(b);
+            } else if (galleryItem instanceof VideoResourceItem) {
+                Bundle args = AbstractAlbumVideoItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItemsFullGalleryIdx.size(), totalSlideshowItems, false);
+                item.setArguments(args);
+            }
         }
         return item;
     }

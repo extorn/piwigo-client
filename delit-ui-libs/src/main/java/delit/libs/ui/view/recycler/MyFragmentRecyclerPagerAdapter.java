@@ -57,7 +57,7 @@ import delit.libs.util.Utils;
  * Note that state for all fragments is kept while the page is still visible, it is only when it is not that the
  * state is trimmed.
  */
-public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFragmentRecyclerPagerAdapter.PagerItemFragment, S extends ViewPager> extends PagerAdapter {
+public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFragmentRecyclerPagerAdapter.PagerItemView, S extends ViewPager> extends PagerAdapter {
     private static final String TAG = "FrgmntStatePagerAdapter";
     private static final boolean DEBUG = false;
     private final Map<Integer, T> activeFragments = new HashMap<>(3);
@@ -128,7 +128,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
         if (activeFragments.size() == 0) {
-            restoreActiveFragmentsListFromFragmentManager(position);
+            //FIXME - WHY bother trying to use cached???! - restoreActiveFragmentsListFromFragmentManager(position);
         }
 
         // check if fragment is already active. If so, do nothing
@@ -162,8 +162,8 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         List<Fragment> fragments = mFragmentManager.getFragments();
         // if fragments is not empty then the page was very probably rotated
         for (Fragment f : fragments) {
-            if (f instanceof PagerItemFragment) {
-                PagerItemFragment pif = (PagerItemFragment) f; // safe since f is already a fragment.
+            if (f instanceof MyFragmentRecyclerPagerAdapter.PagerItemView) {
+                PagerItemView pif = (PagerItemView) f; // safe since f is already a fragment.
                 int pagerIndex = pif.getPagerIndex();
                 if (pagerIndex < 0) {
                     Logging.log(Log.WARN, TAG, "Warning pager fragment found in fragment manager with index of " + pagerIndex + " while looking for fragment as position " + position);
@@ -249,7 +249,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
             instantiateItem(container, position);
         }
 
-        blockDestroy = true;
+        blockDestroy = true;//FIXME remove this hackery when understood how to avoid.
         clearPageState();
         notifyDataSetChanged();
         blockDestroy = false;
@@ -279,10 +279,11 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
             Log.v(TAG, "Removing item #" + position + ": f=" + object
                     + " v=" + fragment.getView());
         }
-        recordPageState(fragment, position);
-        tidyPageState();
+//        recordPageState(fragment, position);
+//        tidyPageState();
 
         activeFragments.remove(position);
+        pageState.remove(position);
 
         mCurTransaction.remove(fragment);
     }
@@ -455,7 +456,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         throw new UnsupportedOperationException("please implement this if it is needed");
     }
 
-    public interface PagerItemFragment {
+    public interface PagerItemView {
         void onPageSelected();
 
         void onPageDeselected();

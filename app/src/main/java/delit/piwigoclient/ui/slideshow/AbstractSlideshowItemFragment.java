@@ -95,7 +95,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 14/04/18.
  */
 
-public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>,T extends ResourceItem> extends MyFragment<F,FUIH> implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
+public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>,T extends ResourceItem> extends MyFragment<F,FUIH> implements MyFragmentRecyclerPagerAdapter.PagerItemView {
 
     private static final String TAG = "SlideshowItemFragment";
 

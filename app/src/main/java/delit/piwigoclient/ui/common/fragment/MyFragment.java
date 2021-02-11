@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -57,6 +58,16 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
     private String piwigoServerConnected;
     private @StyleRes int theme = 0; //Resources.ID_NULL; (needs 29+)
     private boolean coreComponentsInitialised;
+
+    public MyFragment() {
+    }
+
+    /**
+     * @param layoutId gets used by the Fragment createView.
+     */
+    public MyFragment(@LayoutRes int layoutId) {
+        super(layoutId);
+    }
 
     protected long addActiveServiceCall(@StringRes int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
         return addActiveServiceCall(getString(titleStringId), worker);
