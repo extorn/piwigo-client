@@ -116,6 +116,11 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
         return uploadDataItemsModel.size();
     }
 
+    void updateUploadStatus(Uri fileBeingUploaded, int processingStatus) {
+        UploadDataItem item = uploadDataItemsModel.updateUploadStatus(fileBeingUploaded, processingStatus);
+        notifyItemChanged(uploadDataItemsModel.getItemPosition(item));
+    }
+
     void updateUploadProgress(Uri fileBeingUploaded, int percentageComplete) {
         UploadDataItem item = uploadDataItemsModel.updateUploadProgress(fileBeingUploaded, percentageComplete);
         notifyItemChanged(uploadDataItemsModel.getItemPosition(item));

@@ -242,7 +242,7 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>
-        <item>1.4.0.117</item>
+        <item>1.4.0.118</item>
         <item>"Bugfix:
                 - implement the refresh button on the slideshow 'item not loaded' page"</item>
     </string-array>
@@ -252,6 +252,12 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.117</item>
+        <item>"Bugfix:
+                - uploading files shared by some apps can fail silently
+                - job status view for jobs that finished with some failures not available after job finishes
+               Change:
+                - A file that has its upload cancelled by the upload job due to error will show a red X"</item>
         <item>1.4.0.116</item>
         <item>"Bugfix:
                 - slideshow bugs causing crashes"</item>

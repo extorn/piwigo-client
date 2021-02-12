@@ -31,6 +31,7 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
     private AppCompatImageView fileForUploadImageView;
     private ResizingPicassoLoader<ImageView> imageLoader;
     private ImageView fileForUploadMimeTypeImageView;
+    private ImageView fileUploadCancelledIndicator;
 
     public UploadDataItemViewHolder(View view) {
         super(view);
@@ -83,6 +84,11 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
 
     private void updateProgressFields(UploadDataItem uploadDataItem) {
         // Configure the item upload progress fields
+        if(uploadDataItem.isCancelled()) {
+            fileUploadCancelledIndicator.setVisibility(View.VISIBLE);
+        } else {
+            fileUploadCancelledIndicator.setVisibility(View.GONE);
+        }
         if (uploadDataItem.uploadProgress != null && uploadDataItem.uploadProgress.inProgress()) {
 
             // Update the progress bar text and values
@@ -112,6 +118,7 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
 
     @Override
     public void cacheViewFieldsAndConfigure(FilesToUploadRecyclerViewAdapter.UploadAdapterPrefs adapterPrefs) {
+        fileUploadCancelledIndicator = itemView.findViewById(R.id.cancelled_indicator);
         progressBar = itemView.findViewById(R.id.file_for_upload_progress);
         fileNameField = itemView.findViewById(R.id.file_for_upload_txt);
         itemHeading = itemView.findViewById(R.id.file_for_upload_heading_txt);

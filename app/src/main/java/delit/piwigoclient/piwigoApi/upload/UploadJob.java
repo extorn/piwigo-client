@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -484,7 +483,8 @@ public class UploadJob implements Parcelable {
         TaskProgressTracker checksumProgressTracker = getTaskProgressTrackerForAllChecksumCalculation();
         try {
             Map<Uri, Md5SumUtils.Md5SumException> failures = new HashMap<>(0);
-            ArrayList<Uri> filesNotFinished = getFilesNotYetUploaded(context);
+            ArrayList<Uri> filesNotFinished = getFilesNotYetUploaded();
+            ArrayList<Uri> filesNoLongerAvailable = getListOfFilesNoLongerUnavailable(context, filesNotFinished);
             boolean newJob = false;
             if (fileChecksums == null) {
                 fileChecksums = new HashMap<>(filesForUploadAndSize.size());
@@ -492,9 +492,9 @@ public class UploadJob implements Parcelable {
             }
             for (Uri f : filesNotFinished) {
                 TaskProgressTracker fileChecksumProgressTracker = checksumProgressTracker.addSubTask("file checksum", 100, 1); // tick one file off. Each file has 0 - 100% completion
-                if (!IOUtils.exists(context, f)) {
+                if (filesNoLongerAvailable.contains(f)) {
                     // Remove file from upload list
-                    cancelFileUpload(f);
+                    failures.put(f, new Md5SumUtils.Md5SumException("File not found"));
                 } else if (needsUpload(f) || needsVerification(f)) {
                     Uri fileForChecksumCalc = null;
                     if (!((isPhoto(context, f) && isCompressPhotosBeforeUpload())
@@ -577,24 +577,28 @@ public class UploadJob implements Parcelable {
     }
 
     public boolean hasJobCompletedAllActionsSuccessfully(@NonNull Context context) {
-        return getFilesNotYetUploaded(context).size() == 0 && getTemporaryUploadAlbum() < 0;
+        ArrayList<Uri> filesToUpload = getFilesNotYetUploaded();
+//        ArrayList<Uri> filesNoLongerAvailable = getListOfFilesNoLongerUnavailable(context, filesToUpload);
+        return (filesToUpload.isEmpty()/*  || filesToUpload.size() == filesNoLongerAvailable.size()*/) && getTemporaryUploadAlbum() < 0;
     }
 
-    public synchronized ArrayList<Uri> getFilesNotYetUploaded(@NonNull Context context) {
+    public synchronized ArrayList<Uri> getFilesNotYetUploaded() {
         ArrayList<Uri> filesToUpload = new ArrayList<>(filesForUploadAndSize.keySet());
         filesToUpload.removeAll(getFilesProcessedToEnd());
         filesToUpload.removeAll(getFilesWhereUploadedDataHasBeenVerified());
-        Iterator<Uri> filesToUploadIterator = filesToUpload.iterator();
-        while(filesToUploadIterator.hasNext()) {
-            Uri f = filesToUploadIterator.next();
+        return filesToUpload;
+    }
+
+    public synchronized ArrayList<Uri> getListOfFilesNoLongerUnavailable(@NonNull Context context, ArrayList<Uri> files) {
+        ArrayList<Uri> unavailableFiles = new ArrayList<>();
+        for (Uri f : files) {
             IOUtils.getSingleDocFile(context, f);
             DocumentFile docFile = IOUtils.getSingleDocFile(context, f);
-            if(docFile != null && (docFile.isDirectory() || !docFile.isFile())) {
-                //filesToUploadIterator.remove();
-                cancelFileUpload(f); // these are no longer valid.
+            if (docFile != null && (docFile.isDirectory() || !docFile.exists())) {
+                unavailableFiles.add(f);
             }
         }
-        return filesToUpload;
+        return unavailableFiles;
     }
 
     public synchronized List<Long> getUploadToCategoryParentage() {

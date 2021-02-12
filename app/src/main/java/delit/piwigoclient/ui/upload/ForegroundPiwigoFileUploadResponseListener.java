@@ -44,7 +44,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     @Override
     protected void onRequestedFileUploadCancelComplete(@NonNull Context context, Uri cancelledFile) {
         if (getParent() != null && getParent().isAdded()) {
-            FilesToUploadRecyclerViewAdapter adapter = getParent().getFilesForUploadViewAdapter();
+            FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
             adapter.remove(cancelledFile);
             getParent().releaseUriPermissionsForUploadItem(cancelledFile);
             UploadJob uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, getParent().getUploadJobId());
@@ -77,7 +77,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
                 getParent().getUiHelper().showOrQueueDialogMessage(R.string.alert_message_upload_cancelled, context.getString(R.string.alert_message_upload_cancelled_message), R.string.button_ok);
             } else {
                 int errMsgResourceId = R.string.alert_message_error_uploading_start;
-                if (job.getFilesNotYetUploaded(context).size() == 0) {
+                if (job.getFilesNotYetUploaded().isEmpty()) {
                     errMsgResourceId = R.string.alert_message_error_uploading_end;
                 }
                 getParent().getUiHelper().showOrQueueDialogMessage(R.string.alert_title_error_upload, context.getString(errMsgResourceId), R.string.button_ok);
@@ -125,6 +125,9 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
 
     @Override
     protected void onLocalFileError(Context context, final BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse response) {
+        if(response.isItemUploadCancelled()) {
+            getParent().getFilesForUploadViewAdapter().updateUploadStatus(response.getFileForUpload(), UploadJob.CANCELLED);
+        }
         String errorMessage;
         Logging.log(Log.ERROR, TAG, "Local file Upload Error");
         Logging.recordException(response.getError());
@@ -146,13 +149,13 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     protected void onPrepareUploadFailed(Context context, final BasePiwigoUploadService.PiwigoPrepareUploadFailedResponse response) {
 
         PiwigoResponseBufferingHandler.Response error = response.getError();
-        getParent().processError(context, error);
+        getParent().processPiwigoError(context, error);
     }
 
     @Override
     protected void onCleanupPostUploadFailed(@NonNull Context context, BasePiwigoUploadService.PiwigoCleanupPostUploadFailedResponse response) {
         PiwigoResponseBufferingHandler.Response error = response.getError();
-        getParent().processError(context, error);
+        getParent().processPiwigoError(context, error);
     }
 
     private void updateOverallUploadProgress(int progress) {
@@ -165,7 +168,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     @Override
     protected void onFileUploadProgressUpdate(@NonNull Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
         if (getParent() != null && getParent().isAdded()) {
-            FilesToUploadRecyclerViewAdapter adapter = getParent().getFilesForUploadViewAdapter();
+            FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
             adapter.updateUploadProgress(response.getFileForUpload(), response.getProgress());
             UploadJob activeJob = getParent().getActiveJob(context);
             if (activeJob != null) {
@@ -180,7 +183,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     @Override
     protected void onFileCompressionProgressUpdate(@NonNull Context context, BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
         if (getParent() != null && getParent().isAdded()) {
-            FilesToUploadRecyclerViewAdapter adapter = getParent().getFilesForUploadViewAdapter();
+            FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
             adapter.updateCompressionProgress(response.getFileForUpload(), response.getCompressedFileUpload(), response.getProgress());
             updateOverallUploadProgress(getParent().getActiveJob(context).getOverallUploadProgressInt());
         }
@@ -190,7 +193,10 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     private void onFileCompressionComplete(@NonNull Context context, final BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
-        // Do nothing for now.
+        FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
+        adapter.updateUploadStatus(response.getFileForUpload(), UploadJob.COMPRESSED);
+        //FIXME is this next line needed or in preference to the one above?
+//        adapter.updateUploadStatus(response.getCompressedFileUpload(), UploadJob.COMPRESSED);
     }
 
     private void onFileUploadComplete(@NonNull Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
@@ -216,7 +222,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
 
         if (getParent() != null && getParent().isAdded()) {
             // somehow upload job can be null... hopefully this copes with that scenario.
-            FilesToUploadRecyclerViewAdapter adapter = getParent().getFilesForUploadViewAdapter();
+            FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
             adapter.remove(response.getFileForUpload());
             getParent().releaseUriPermissionsForUploadItem(response.getFileForUpload());
         }
@@ -228,7 +234,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
             UploadJob uploadJob = getParent().getActiveJob(context);
 
             if (uploadJob != null) {
-                FilesToUploadRecyclerViewAdapter adapter = getParent().getFilesForUploadViewAdapter();
+                FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
                 for (Uri existingFile : response.getExistingFiles()) {
                     int progress = uploadJob.getUploadProgress(existingFile);
                     adapter.updateUploadProgress(existingFile, progress);
@@ -293,6 +299,10 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
         String errorMessage = null;
         String uploadFilename = fileForUpload == null ? "" : fileForUpload.getName();
 
+        if(response.isItemUploadCancelled()) {
+            getParent().getFilesForUploadViewAdapter().updateUploadStatus(response.getFileForUpload(), UploadJob.CANCELLED);
+        }
+
         if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
             PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) error);
             errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webserver_message_pattern), uploadFilename, err.getStatusCode(), err.getErrorMessage());
@@ -303,7 +313,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
             PiwigoResponseBufferingHandler.PiwigoServerErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) error);
             if ("file already exists".equals(err.getPiwigoErrorMessage())) {
                 if (getParent() != null && getParent().isAdded()) {
-                    FilesToUploadRecyclerViewAdapter adapter = getParent().getFilesForUploadViewAdapter();
+                    FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
                     adapter.remove(fileForUploadUri);
                     getParent().releaseUriPermissionsForUploadItem(fileForUploadUri);
                 }

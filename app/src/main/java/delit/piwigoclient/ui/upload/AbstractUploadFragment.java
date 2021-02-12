@@ -290,12 +290,12 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         viewPrefs.setFlattenAlbumHierarchy(true);
 
         selectedGalleryTextView = view.findViewById(R.id.selected_gallery);
-        selectedGalleryTextView.setOnClickListener(v -> onSelectedGalleryTextViewClick());
+        selectedGalleryTextView.setOnClickListener(v -> onClickSelectedGalleryTextView());
         // can't just use a std click listener as it first focuses the field :-(
         CustomClickTouchListener.callClickOnTouch(selectedGalleryTextView);
 
         fileSelectButton = view.findViewById(R.id.select_files_for_upload_button);
-        fileSelectButton.setOnClickListener(v -> onFileSelectionWantedClick());
+        fileSelectButton.setOnClickListener(v -> onClickFileSelectionWanted());
 
         uploadableFilesView = view.findViewById(R.id.files_uploadable_label);
 
@@ -334,11 +334,11 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         deleteUploadJobButton = view.findViewById(R.id.delete_upload_job_button);
         deleteUploadJobButton.setOnClickListener(v -> {
             uploadFilesNowButton.setText(R.string.upload_files_button_title);
-            onDeleteUploadJobButtonClick();
+            onClickDeleteUploadJobButton();
         });
 
         uploadJobStatusButton = view.findViewById(R.id.view_detailed_upload_status_button);
-        uploadJobStatusButton.setOnClickListener(v -> onUploadJobStatusButtonClick());
+        uploadJobStatusButton.setOnClickListener(v -> onClickUploadJobStatusButton());
 
 
         updateActiveJobActionButtonsStatus();
@@ -611,11 +611,11 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         this.uploadJobId = uploadJobId;
     }
 
-    private void onDeleteUploadJobButtonClick() {
+    private void onClickDeleteUploadJobButton() {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, getString(R.string.alert_really_delete_upload_job), R.string.button_no, R.string.button_yes, new OnDeleteJobQuestionAction<>(getUiHelper()));
     }
 
-    private void onUploadJobStatusButtonClick() {
+    private void onClickUploadJobStatusButton() {
         UploadJob uploadJob = getActiveJob(getContext());
         if (uploadJob != null) {
             EventBus.getDefault().post(new ViewJobStatusDetailsEvent(uploadJob));
@@ -625,7 +625,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         }
     }
 
-    private void onSelectedGalleryTextViewClick() {
+    private void onClickSelectedGalleryTextView() {
         HashSet<Long> selection = new HashSet<>();
         selection.add(uploadToAlbum.getId());
         ExpandingAlbumSelectionNeededEvent evt = new ExpandingAlbumSelectionNeededEvent(false, true, selection, uploadToAlbum.getParentId());
@@ -634,7 +634,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         EventBus.getDefault().post(evt);
     }
 
-    private void onFileSelectionWantedClick() {
+    private void onClickFileSelectionWanted() {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if (sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
             String serverUri = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
@@ -1045,7 +1045,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         return new ForegroundPiwigoFileUploadResponseListener<>(context);
     }
 
-    protected void processError(Context context, PiwigoResponseBufferingHandler.Response error) {
+    protected void processPiwigoError(Context context, PiwigoResponseBufferingHandler.Response error) {
         String errorMessage = null;
         Throwable cause;
         if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
@@ -1147,5 +1147,4 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             appSettingsViewModel.releasePersistableUriPermission(requireContext(), fileForUploadUri, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, false);
         }
     }
-
 }

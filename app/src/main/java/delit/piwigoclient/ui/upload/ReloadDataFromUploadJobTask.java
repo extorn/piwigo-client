@@ -36,11 +36,11 @@ class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH 
 
     @Override
     protected List<UploadDataItem> doInBackgroundSafely(Void... nothing) {
-        int itemCount = uploadJob.getFilesNotYetUploaded(getUiHelper().getAppContext()).size();
+        int itemCount = uploadJob.getFilesNotYetUploaded().size();
         List<UploadDataItem> itemsToBeUploaded = new ArrayList<>(itemCount);
         int currentItem = 0;
         TimerThreshold thesholdGate = new TimerThreshold(1000); // max update the ui once per second
-        for(Uri toUpload : uploadJob.getFilesNotYetUploaded(getUiHelper().getAppContext())) {
+        for(Uri toUpload : uploadJob.getFilesNotYetUploaded()) {
             currentItem++;
             long size = uploadJob.getFileSize(toUpload);
             // this recalculates the hash-codes - maybe unnecessary, but the file could have been altered since added to the job

@@ -19,6 +19,7 @@ import java.util.Set;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.IOUtils;
+import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
 public class UploadDataItemModel implements Parcelable {
 
@@ -165,6 +166,23 @@ public class UploadDataItemModel implements Parcelable {
             if(percentageComplete == 100) {
                 // reset the data length - this will be re-calculated on next ui update.
                 uploadDataItem.resetFilenameAndLength();
+
+            }
+        }
+        return uploadDataItem;
+    }
+
+    public UploadDataItem updateUploadStatus(Uri fileBeingUploaded, int processingStatus) {
+        UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileBeingUploaded);
+        if (uploadDataItem == null) {
+            String filename = fileBeingUploaded == null ? null : fileBeingUploaded.toString();
+            Logging.log(Log.ERROR, TAG, "Update Upload Status (no data item) : Unable to locate upload progress object for file : %1$s %2$d%%", filename, processingStatus);
+        } else {
+            UploadDataItem.UploadProgressInfo progress = uploadDataItem.uploadProgress;
+            if (progress != null) {
+                progress.setUploadStatus(processingStatus);
+            } else {
+                Logging.log(Log.ERROR, TAG, "Unable to Update Upload Status : %1$s %2$d%%", fileBeingUploaded, processingStatus);
             }
         }
         return uploadDataItem;
@@ -189,6 +207,9 @@ public class UploadDataItemModel implements Parcelable {
                     String filename = fileBeingUploaded == null ? null : fileBeingUploaded.toString();
                     Logging.log(Log.ERROR, TAG, "Update Upload Progress : Unable to locate upload progress object for file : " + filename);
                 }
+            }
+            if (progress != null) {
+                progress.setUploadStatus(percentageComplete < 100 ? UploadJob.UPLOADING : UploadJob.UPLOADED);
             }
         }
         return uploadDataItem;

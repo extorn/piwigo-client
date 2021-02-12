@@ -14,6 +14,7 @@ import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.libs.util.progress.ProgressListener;
+import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
 public class UploadDataItem implements Parcelable {
 
@@ -156,6 +157,10 @@ public class UploadDataItem implements Parcelable {
         filename = null;
     }
 
+    public boolean isCancelled() {
+        return uploadProgress != null && uploadProgress.isCancelled();
+    }
+
     protected static class UploadProgressInfo implements Parcelable {
 
         public static final Creator<UploadProgressInfo> CREATOR
@@ -168,18 +173,29 @@ public class UploadDataItem implements Parcelable {
                 return new UploadProgressInfo[size];
             }
         };
+
         private Uri fileBeingUploaded;
         private int uploadProgress;
         private int compressionProgress;
+        private int uploadStatus;
 
         public UploadProgressInfo(Parcel p) {
             setFileBeingUploaded(ParcelUtils.readParcelable(p, Uri.class));
             setUploadProgress(p.readInt());
             setCompressionProgress(p.readInt());
+            setUploadStatus(p.readInt());
         }
 
         public UploadProgressInfo(Uri fileToUpload) {
             this.setFileBeingUploaded(fileToUpload); // this value will be replaced if we start getting compression progress updates
+        }
+
+        public boolean isCancelled() {
+            return uploadStatus == UploadJob.CANCELLED;
+        }
+
+        public void setUploadStatus(int uploadStatus) {
+            this.uploadStatus = uploadStatus;
         }
 
         public boolean inProgress() {
@@ -199,6 +215,11 @@ public class UploadDataItem implements Parcelable {
             ParcelUtils.writeParcelable(dest, getFileBeingUploaded());
             dest.writeInt(getUploadProgress());
             dest.writeInt(getCompressionProgress());
+            dest.writeInt(getUploadStatus());
+        }
+
+        private int getUploadStatus() {
+            return uploadStatus;
         }
 
         @Override
