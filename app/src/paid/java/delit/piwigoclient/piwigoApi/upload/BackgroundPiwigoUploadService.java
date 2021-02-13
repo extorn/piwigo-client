@@ -216,6 +216,11 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                     new AutoUploadJobConfig(unfinishedJob.getJobConfigId()).setJobValid(this, false);
                 }
                 if (!unfinishedJob.isFinished() && jobIsValid) {
+                    if(!unfinishedJob.hasFilesForUpload()) {
+                        // ALL Files are in error state. Cancel them all so the server will be cleaned of any partial uploads
+                        unfinishedJob.cancelAllFailedUploads();
+                        saveStateToDisk(unfinishedJob);
+                    }
                     runJob(unfinishedJob, this, true);
                     if (unfinishedJob.hasJobCompletedAllActionsSuccessfully(this)) {
                         removeJob(unfinishedJob);

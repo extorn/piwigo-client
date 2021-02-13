@@ -611,7 +611,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 if (!failures.isEmpty()) {
                     for (Map.Entry<Uri, Md5SumUtils.Md5SumException> entry : failures.entrySet()) {
                         // mark the upload as cancelled
-                        thisUploadJob.cancelFileUpload(entry.getKey());
+                        thisUploadJob.setErrorFlag(entry.getKey());
                         // notify listeners of the error
                         recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), entry.getKey(), true, entry.getValue()));
                     }
@@ -1065,7 +1065,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 String msg = "Unable to find acceptable file extension for compressed video amongst " + serverAcceptedFileExts;
                 Logging.log(Log.ERROR, TAG, msg);
                 // cancel the upload of this file
-                uploadJob.cancelFileUpload(rawVideo);
+                uploadJob.setErrorFlag(rawVideo);
                 // notify listeners that this file encountered an error
                 postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, new Exception(msg)));
                 outputVideo = null;
@@ -1108,7 +1108,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 } else {
                     Logging.recordException(e);
                     // mark the upload for this file as cancelled
-                    uploadJob.cancelFileUpload(rawVideo);
+                    uploadJob.setErrorFlag(rawVideo);
                     // notify the listener of the error
                     postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, e));
                 }
@@ -1244,14 +1244,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 try {
                     if (!IOUtils.exists(this, fileForUploadUri)) {
 
-                        thisUploadJob.cancelFileUpload(fileForUploadUri);
+                        thisUploadJob.setErrorFlag(fileForUploadUri);
                         // notify the listener of the final error we received from the server
                         String filename = IOUtils.getFilename(this, fileForUploadUri);
                         String errorMsg = getString(R.string.alert_error_upload_file_no_longer_available_message_pattern, filename, fileForUploadUri.getPath());
                         notifyListenersOfCustomErrorUploadingFile(thisUploadJob, fileForUploadUri, true, errorMsg);
                     }
                 } catch (SecurityException e) {
-                    thisUploadJob.cancelFileUpload(fileForUploadUri);
+                    thisUploadJob.setErrorFlag(fileForUploadUri);
                     recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), fileForUploadUri, true, e));
                 }
             }
@@ -1291,7 +1291,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         Bundle b = new Bundle();
                         b.putString("error", "error calculating md5sum for compressed file.");
                         Logging.logAnalyticEvent(this,"md5sum", b);
-                        thisUploadJob.cancelFileUpload(fileForUploadUri);
+                        thisUploadJob.setErrorFlag(fileForUploadUri);
                         recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), compressedFile.getUri(), true, e));
                     }
                 }
@@ -1576,7 +1576,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 String ext = IOUtils.getFileExt(this, fileForUploadUri);
 
                 if (ext.length() == 0) {
-                    thisUploadJob.cancelFileUpload(uploadJobKey);
+                    thisUploadJob.setErrorFlag(uploadJobKey);
                     // notify the listener of the final error we received from the server
                     String errorMsg = getString(R.string.error_upload_file_ext_missing_pattern, fileForUploadUri.getPath());
                     notifyListenersOfCustomErrorUploadingFile(thisUploadJob, uploadJobKey, true, errorMsg);
@@ -1616,7 +1616,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 }
             } catch (IOException e) {
                 Logging.recordException(e);
-                thisUploadJob.cancelFileUpload(uploadJobKey);
+                thisUploadJob.setErrorFlag(uploadJobKey);
                 postNewResponse(jobId, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), uploadJobKey, true, e));
             }
         }

@@ -482,9 +482,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="error_heading_unloadable_keystore_aliases">Die folgenden Keystore-Aliase konnten nicht geladen werden:</string>
     <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
-    <string name="alert_title_error_upload">Fehler beim Hochladen</string>
-    <string name="alert_message_error_uploading_end">Nach dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload neu, um dort fortzufahren, wo er angekommen ist, und löschen Sie alle temporären Restdaten vom Server.</string>
-    <string name="alert_message_error_uploading_start">Vor dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload entweder neu, um dort fortzufahren, wo er angekommen ist, oder löschen Sie alle verbleibenden Dateien aus dem Job und klicken Sie dann auf die Schaltfläche "Fertig stellen", um alle verbleibenden temporären Daten vom Server zu löschen.</string>
     <string name="release_history">Release-Verlauf</string>
     <string name="planned_releases">Geplante Veröffentlichungen</string>
     <string name="tags_heading">Stichworte</string>
@@ -700,4 +697,9 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="item_not_yet_loaded">Artikel noch nicht geladen</string>
     <string name="button_refresh">Seite neu laden</string>
     <string name="alert_slideshow_feature_refresh_coming_soon">Diese Funktion wird bald verfügbar sein. Bewegen Sie zunächst einige Elemente in der Diashow vorwärts oder rückwärts, bevor Sie zu diesem Element zurückkehren</string>
+    <string name="cancelled_indicator">Upload für Datei abgebrochen</string>
+    <string name="media_type_indicator">Medientypanzeige</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Beim Hochladen ist ein Fehler aufgetreten. Möchten Sie:\n\nÜberprüfen Sie die Fehler, bevor Sie den Upload manuell neu starten.\n\nEntfernen Sie die problematischen Dateien aus dem Upload und beenden Sie?\n\nAktionen mit Fehlern wiederholen?</string>
+    <string name="button_finish">Fertig</string>
+    <string name="button_review">Rezension</string>
 </resources>

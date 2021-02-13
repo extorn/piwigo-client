@@ -482,9 +482,6 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="error_heading_unloadable_keystore_aliases">Nelze načíst následující aliasy úložiště klíčů:</string>
     <string name="heading_keystore_filename">Úložiště klíčů</string>
     <string name="heading_keystore_alias">Alias</string>
-    <string name="alert_title_error_upload">Chyba při nahrávání</string>
-    <string name="alert_message_error_uploading_end">Po úspěšném nahrání všech souborů došlo k chybě. Restartujte nahrávání a pokračujte od místa, kam se dostalo, a vymažte veškerá zbytková dočasná data ze serveru.</string>
-    <string name="alert_message_error_uploading_start">Před úspěšným nahráním všech souborů došlo k chybě. Restartujte nahrávání a pokračujte od místa, kam se dostalo, nebo odstraňte všechny zbývající soubory z úlohy a poté kliknutím na tlačítko Dokončit vymažte veškerá zbývající dočasná data ze serveru.</string>
     <string name="release_history">Historie vydání</string>
     <string name="planned_releases">Plánovaná vydání</string>
     <string name="tags_heading">Značky</string>
@@ -700,4 +697,9 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="item_not_yet_loaded">Zboží ještě není načteno</string>
     <string name="button_refresh">Obnovit stránku</string>
     <string name="alert_slideshow_feature_refresh_coming_soon">Tato funkce bude brzy k dispozici. Prozatím posuňte dopředu nebo dozadu několik položek v prezentaci, než se vrátíte k této položce</string>
+    <string name="cancelled_indicator">nahrávání pro soubor zrušeno</string>
+    <string name="media_type_indicator">Indikátor typu média</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Při nahrávání došlo k chybě. Přejete si:\n\nZkontrolovat chyby před ručním restartováním nahrávání?\n\nOdebrat problematické soubory z nahrávání a dokončit?\n\nOpakovat akci s chybami?</string>
+    <string name="button_finish">Dokončit</string>
+    <string name="button_review">Posouzení</string>
 </resources>

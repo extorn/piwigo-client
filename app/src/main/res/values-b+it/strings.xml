@@ -482,9 +482,6 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="error_heading_unloadable_keystore_aliases">Non è stato possibile caricare i seguenti alias keystore:</string>
     <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
-    <string name="alert_title_error_upload">Errore durante il caricamento</string>
-    <string name="alert_message_error_uploading_end">Si è verificato un errore dopo il caricamento riuscito di tutti i file. Riavvia il caricamento per continuare da dove è arrivato e cancellare eventuali dati temporanei residui dal server.</string>
-    <string name="alert_message_error_uploading_start">Si è verificato un errore prima del caricamento riuscito di tutti i file. Riavvia il caricamento per continuare da dove era arrivato oppure elimina tutti i file rimanenti dal lavoro, quindi fai clic sul pulsante Fine per cancellare eventuali dati temporanei residui dal server.</string>
     <string name="release_history">Cronologia delle versioni</string>
     <string name="planned_releases">Rilasci pianificati</string>
     <string name="tags_heading">Tag</string>
@@ -700,4 +697,9 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="item_not_yet_loaded">Articolo non ancora caricato</string>
     <string name="button_refresh">Aggiorna pagina</string>
     <string name="alert_slideshow_feature_refresh_coming_soon">Questa funzionalità arriverà presto. Per ora, sposta avanti o indietro un paio di elementi nella presentazione prima di tornare a questo elemento</string>
+    <string name="cancelled_indicator">caricamento annullato per il file</string>
+    <string name="media_type_indicator">Indicatore del tipo di supporto</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Si è verificato un errore durante il caricamento. Desideri:\n\nRivedere gli errori prima di riavviare manualmente il caricamento?\n\nRimuovere i file problematici dal caricamento e finire?\n\nRiprovare le azioni con errori?</string>
+    <string name="button_finish">finire</string>
+    <string name="button_review">Revisione</string>
 </resources>

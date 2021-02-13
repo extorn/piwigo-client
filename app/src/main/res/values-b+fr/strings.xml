@@ -482,9 +482,6 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="error_heading_unloadable_keystore_aliases">Les alias de keystore suivants n\'ont pas pu être chargés:</string>
     <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
-    <string name="alert_title_error_upload">Erreur lors du téléchargement</string>
-    <string name="alert_message_error_uploading_end">Une erreur s\'est produite après le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer d\'où il est arrivé et effacer toutes les données temporaires résiduelles du serveur.</string>
-    <string name="alert_message_error_uploading_start">Une erreur s\'est produite avant le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer là où il est arrivé, ou supprimez tous les fichiers restants du travail, puis cliquez sur le bouton Terminer pour effacer toutes les données temporaires résiduelles du serveur.</string>
     <string name="release_history">Historique des versions</string>
     <string name="planned_releases">Sorties prévues</string>
     <string name="tags_heading">Mots clés</string>
@@ -700,4 +697,9 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="item_not_yet_loaded">Article pas encore chargé</string>
     <string name="button_refresh">Rafraîchir la page</string>
     <string name="alert_slideshow_feature_refresh_coming_soon">Cette fonctionnalité sera bientôt disponible. Pour l\'instant, avancez ou reculez de quelques éléments dans le diaporama avant de revenir à cet élément</string>
+    <string name="cancelled_indicator">téléchargement annulé pour le fichier</string>
+    <string name="media_type_indicator">Indicateur de type de support</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Une erreur s\'est produite lors du téléchargement. Souhaitez-vous:\n\nVérifiez les erreurs avant de redémarrer manuellement le téléchargement?\n\nSupprimer les fichiers problématiques du téléchargement et terminer?\n\nRéessayer les actions avec des erreurs?</string>
+    <string name="button_finish">terminer</string>
+    <string name="button_review">La revue</string>
 </resources>

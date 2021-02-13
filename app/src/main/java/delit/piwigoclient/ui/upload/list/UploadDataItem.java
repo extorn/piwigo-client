@@ -157,44 +157,67 @@ public class UploadDataItem implements Parcelable {
         filename = null;
     }
 
-    public boolean isCancelled() {
-        return uploadProgress != null && uploadProgress.isCancelled();
+    public boolean isUploadFailed() {
+        return uploadProgress != null && uploadProgress.isUploadFailed();
     }
 
     protected static class UploadProgressInfo implements Parcelable {
 
-        public static final Creator<UploadProgressInfo> CREATOR
-                = new Creator<UploadProgressInfo>() {
-            public UploadProgressInfo createFromParcel(Parcel in) {
-                return new UploadProgressInfo(in);
-            }
-
-            public UploadProgressInfo[] newArray(int size) {
-                return new UploadProgressInfo[size];
-            }
-        };
-
         private Uri fileBeingUploaded;
         private int uploadProgress;
         private int compressionProgress;
-        private int uploadStatus;
-
-        public UploadProgressInfo(Parcel p) {
-            setFileBeingUploaded(ParcelUtils.readParcelable(p, Uri.class));
-            setUploadProgress(p.readInt());
-            setCompressionProgress(p.readInt());
-            setUploadStatus(p.readInt());
-        }
+        private Integer uploadStatus;
 
         public UploadProgressInfo(Uri fileToUpload) {
             this.setFileBeingUploaded(fileToUpload); // this value will be replaced if we start getting compression progress updates
         }
 
-        public boolean isCancelled() {
-            return uploadStatus == UploadJob.CANCELLED;
+        protected UploadProgressInfo(Parcel in) {
+            fileBeingUploaded = in.readParcelable(Uri.class.getClassLoader());
+            uploadProgress = in.readInt();
+            compressionProgress = in.readInt();
+            if (in.readByte() == 0) {
+                uploadStatus = null;
+            } else {
+                uploadStatus = in.readInt();
+            }
         }
 
-        public void setUploadStatus(int uploadStatus) {
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeParcelable(fileBeingUploaded, flags);
+            dest.writeInt(uploadProgress);
+            dest.writeInt(compressionProgress);
+            if (uploadStatus == null) {
+                dest.writeByte((byte) 0);
+            } else {
+                dest.writeByte((byte) 1);
+                dest.writeInt(uploadStatus);
+            }
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<UploadProgressInfo> CREATOR = new Creator<UploadProgressInfo>() {
+            @Override
+            public UploadProgressInfo createFromParcel(Parcel in) {
+                return new UploadProgressInfo(in);
+            }
+
+            @Override
+            public UploadProgressInfo[] newArray(int size) {
+                return new UploadProgressInfo[size];
+            }
+        };
+
+        public boolean isUploadFailed() {
+            return Objects.equals(uploadStatus, UploadJob.ERROR);
+        }
+
+        public void setUploadStatus(Integer uploadStatus) {
             this.uploadStatus = uploadStatus;
         }
 
@@ -210,21 +233,8 @@ public class UploadDataItem implements Parcelable {
             this.uploadProgress = uploadProgress;
         }
 
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            ParcelUtils.writeParcelable(dest, getFileBeingUploaded());
-            dest.writeInt(getUploadProgress());
-            dest.writeInt(getCompressionProgress());
-            dest.writeInt(getUploadStatus());
-        }
-
         private int getUploadStatus() {
             return uploadStatus;
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
         }
 
         public int getCompressionProgress() {

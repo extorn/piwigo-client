@@ -482,9 +482,6 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="error_heading_unloadable_keystore_aliases">无法加载以下密钥库别名：</string>
     <string name="heading_keystore_filename">密钥库</string>
     <string name="heading_keystore_alias">别名</string>
-    <string name="alert_title_error_upload">上载错误</string>
-    <string name="alert_message_error_uploading_end">成功上传所有文件后发生错误。重新开始上载以从其到达的地方继续进行，并从服务器清除所有残留的临时数据。</string>
-    <string name="alert_message_error_uploading_start">成功上传所有文件之前发生错误。重新启动上传以继续进行操作，或者从作业中删除所有剩余的文件，然后单击“完成”按钮从服务器清除所有剩余的临时数据。</string>
     <string name="release_history">发行历史</string>
     <string name="planned_releases">计划发行</string>
     <string name="tags_heading">标签</string>
@@ -700,4 +697,9 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="item_not_yet_loaded">物品尚未加载</string>
     <string name="button_refresh">刷新页面</string>
     <string name="alert_slideshow_feature_refresh_coming_soon">此功能即将推出。 现在，在幻灯片显示中向前或向后移动几个项目，然后再返回该项目</string>
+    <string name="cancelled_indicator">上传文件已取消</string>
+    <string name="media_type_indicator">媒体类型指示</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">上载时发生错误。 您是否希望：\n\n在手动重新启动上传之前查看错误？\n\n从上传中删除有问题的文件并完成？\n\n重试错误操作？</string>
+    <string name="button_finish">完</string>
+    <string name="button_review">评论</string>
 </resources>

@@ -75,12 +75,6 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
                 }
             } else if (job.getAndClearWasLastRunCancelled()) {
                 getParent().getUiHelper().showOrQueueDialogMessage(R.string.alert_message_upload_cancelled, context.getString(R.string.alert_message_upload_cancelled_message), R.string.button_ok);
-            } else {
-                int errMsgResourceId = R.string.alert_message_error_uploading_start;
-                if (job.getFilesNotYetUploaded().isEmpty()) {
-                    errMsgResourceId = R.string.alert_message_error_uploading_end;
-                }
-                getParent().getUiHelper().showOrQueueDialogMessage(R.string.alert_title_error_upload, context.getString(errMsgResourceId), R.string.button_ok);
             }
             getParent().allowUserUploadConfiguration(job);
             updateOverallUploadProgress(job.getOverallUploadProgressInt());
@@ -101,15 +95,14 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
 
     private void notifyUserUploadJobComplete(@NonNull Context context, UploadJob job) {
         String message;
-        int titleId = R.string.alert_success;
-
-        if (!job.hasJobCompletedAllActionsSuccessfully(context)) {
-            message = context.getString(R.string.alert_upload_partial_success);
-            titleId = R.string.alert_partial_success;
-        } else {
+        if (job.hasJobCompletedAllActionsSuccessfully(context)) {
             message = context.getString(R.string.alert_upload_success);
+            getParent().notifyUser(context, R.string.alert_success, message);
+        } else {
+            message = context.getString(R.string.alert_upload_partial_success);
+            getParent().notifyUser(context, R.string.alert_partial_success, message);
+            getParent().onUploadJobFailure();
         }
-        getParent().notifyUser(context, titleId, message);
         getParent().hideOverallUploadProgressIndicator();
     }
 
@@ -126,7 +119,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     @Override
     protected void onLocalFileError(Context context, final BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse response) {
         if(response.isItemUploadCancelled()) {
-            getParent().getFilesForUploadViewAdapter().updateUploadStatus(response.getFileForUpload(), UploadJob.CANCELLED);
+            getParent().getFilesForUploadViewAdapter().updateUploadStatus(response.getFileForUpload(), UploadJob.ERROR);
         }
         String errorMessage;
         Logging.log(Log.ERROR, TAG, "Local file Upload Error");
@@ -300,7 +293,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
         String uploadFilename = fileForUpload == null ? "" : fileForUpload.getName();
 
         if(response.isItemUploadCancelled()) {
-            getParent().getFilesForUploadViewAdapter().updateUploadStatus(response.getFileForUpload(), UploadJob.CANCELLED);
+            getParent().getFilesForUploadViewAdapter().updateUploadStatus(response.getFileForUpload(), UploadJob.ERROR);
         }
 
         if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {

@@ -142,12 +142,18 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>未来</item>
-        <item>1.4.0.117</item>
+        <item>1.4.0.118</item>
         <item>"错误修正：
                  -在幻灯片“项目未加载”页面上实现刷新按钮"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.117</item>
+        <item>"错误修正：
+                 -上载某些应用程序共享的文件可能会自动失败
+                 -作业完成后，某些失败的作业的工作状态视图不可用
+                改变：
+                 -由于错误而被上传作业取消上传的文件将显示红色X"</item>
         <item>1.4.0.116</item>
         <item>"错误修正：
                  -导致崩溃的幻灯片错误"</item>

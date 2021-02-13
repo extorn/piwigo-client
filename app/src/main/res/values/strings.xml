@@ -839,9 +839,6 @@ SOFTWARE.
     <string name="error_heading_unloadable_keystore_aliases">The following keystore aliases could not be loaded:</string>
     <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
-    <string name="alert_title_error_upload">Error Uploading</string>
-    <string name="alert_message_error_uploading_end">An error occurred after successful uploading all files. Restart the upload to continue from where it got to and clear any residual temporary data from the server.</string>
-    <string name="alert_message_error_uploading_start">An error occurred before successful uploading all files. Either restart the upload to continue from where it got to, or, delete any remaining files from the job, then click on the finish button to clear any residual temporary data from the server.</string>
     <string name="release_history">Release History</string>
     <string name="planned_releases">Planned Releases</string>
     <string name="tags_heading">Tags</string>
@@ -1081,4 +1078,7 @@ App Install UUID: %5$s
     <string name="alert_slideshow_feature_refresh_coming_soon">This feature is coming soon. For now, move forward or backwards a couple of items in the slideshow before returning to this item</string>
     <string name="cancelled_indicator">upload cancelled for file</string>
     <string name="media_type_indicator">Media type indicator</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">An error was encountered while uploading. Do you wish to:\n\nReview the errors before manually restarting the upload?\n\nRemove the problematic files from the upload and finish?\n\nRetry actions with errors?</string>
+    <string name="button_finish">Finish</string>
+    <string name="button_review">Review</string>
 </resources>

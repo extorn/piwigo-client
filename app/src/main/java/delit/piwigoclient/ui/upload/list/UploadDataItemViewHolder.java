@@ -84,7 +84,7 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
 
     private void updateProgressFields(UploadDataItem uploadDataItem) {
         // Configure the item upload progress fields
-        if(uploadDataItem.isCancelled()) {
+        if(uploadDataItem.isUploadFailed()) {
             fileUploadCancelledIndicator.setVisibility(View.VISIBLE);
         } else {
             fileUploadCancelledIndicator.setVisibility(View.GONE);

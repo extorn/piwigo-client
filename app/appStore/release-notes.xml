@@ -1,40 +1,70 @@
 <en-GB>
 Bugfix:
-- slideshow bugs causing crashes
+- uploading files shared by some apps can fail silently
+- job status view for jobs that finished with some failures not available after job finishes
+Change:
+- A file that has its upload cancelled by the upload job due to error will show a red X
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-chyby prezentace způsobující pády -
+- nahrávání souborů sdílených některými aplikacemi může tiše selhat
+- zobrazení stavu úlohy pro úlohy, které skončily s některými poruchami, které po dokončení úlohy nejsou k dispozici
+Změna:
+- Soubor, jehož nahrávání bylo zrušeno úlohou nahrávání kvůli chybě, zobrazí červené X
 </cs-CZ>
 <de-DE>
-Bug-Fix:
-- Diashow-Fehler, die Abstürze verursachen
+Fehlerbehebung:
+- Das Hochladen von Dateien, die von einigen Apps gemeinsam genutzt werden, kann unbemerkt fehlschlagen
+- Jobstatusansicht für Jobs, die mit einigen Fehlern beendet wurden, die nach Beendigung des Jobs nicht verfügbar sind
+Veränderung:
+- In einer Datei, deren Upload aufgrund eines Fehlers vom Upload-Auftrag abgebrochen wurde, wird ein rotes X angezeigt
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- errores de presentación de diapositivas que causan bloqueos
+- la carga de archivos compartidos por algunas aplicaciones puede fallar silenciosamente
+- Vista del estado del trabajo para trabajos que terminaron con algunas fallas no disponible después de que finaliza el trabajo
+Cambio:
+- Un archivo cuya carga haya sido cancelada por el trabajo de carga debido a un error mostrará una X roja
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- bugs de diaporama provoquant des plantages
+- le téléchargement de fichiers partagés par certaines applications peut échouer silencieusement
+- vue de l\'état des travaux pour les travaux qui se sont terminés avec des échecs non disponibles après la fin du travail
+Changement:
+- Un fichier dont le téléchargement a été annulé par la tâche de téléchargement en raison d\'une erreur affichera un X rouge
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- bug della presentazione che causano arresti anomali
+- il caricamento di file condivisi da alcune app può non riuscire silenziosamente
+- Visualizzazione dello stato del lavoro per i lavori terminati con alcuni errori non disponibile al termine del lavoro
+Modificare:
+- Un file il cui caricamento è stato annullato dal processo di caricamento a causa di un errore mostrerà una X rossa
 </it-IT>
 <ja-JP>
 バグ修正：
--クラッシュの原因となるスライドショーのバグ
+-一部のアプリで共有されているファイルのアップロードがサイレントに失敗する可能性があります
+-一部の失敗で終了したジョブのジョブステータスビューは、ジョブの終了後に使用できません
+変化する：
+-エラーのためにアップロードジョブによってアップロードがキャンセルされたファイルには、赤いXが表示されます
 </ja-JP>
 <nl-NL>
 Bugfix:
-- bugs in diavoorstellingen die crashes veroorzaken
+- het uploaden van bestanden die door sommige apps worden gedeeld, kan stil mislukken
+- taakstatusweergave voor taken die zijn voltooid met enkele fouten die niet beschikbaar zijn nadat de taak is voltooid
+Verandering:
+- Een bestand waarvan het uploaden is geannuleerd door de uploadtaak vanwege een fout, zal een rode X weergeven
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- ошибки слайд-шоу, вызывающие сбои
+- загрузка файлов, совместно используемых некоторыми приложениями, может завершиться сбоем
+- просмотр статуса задания для заданий, которые завершились с некоторыми сбоями, недоступными после завершения задания
+Изменять:
+- Для файла, выгрузка которого была отменена заданием загрузки из-за ошибки, будет отображаться красный крестик.
 </ru-RU>
 <zh-CN>
 错误修正：
--导致崩溃的幻灯片错误
+-上载某些应用程序共享的文件可能会自动失败
+-作业完成后，某些失败的作业的工作状态视图不可用
+改变：
+-由于错误而被上传作业取消上传的文件将显示红色X
 </zh-CN>

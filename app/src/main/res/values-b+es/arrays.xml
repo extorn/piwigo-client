@@ -142,12 +142,18 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
-        <item>1.4.0.117</item>
+        <item>1.4.0.118</item>
         <item>"Arreglo del fallo:
                  - implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.117</item>
+        <item>"Arreglo del fallo:
+                 - la carga de archivos compartidos por algunas aplicaciones puede fallar silenciosamente
+                 - Vista del estado del trabajo para trabajos que terminaron con algunas fallas no disponible después de que finaliza el trabajo
+                Cambio:
+                 - Un archivo cuya carga haya sido cancelada por el trabajo de carga debido a un error mostrará una X roja"</item>
         <item>1.4.0.116</item>
         <item>"Arreglo del fallo:
                  - errores de presentación de diapositivas que causan bloqueos"</item>

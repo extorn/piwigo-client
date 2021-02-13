@@ -142,12 +142,18 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Die Zukunft</item>
-        <item>1.4.0.117</item>
+        <item>1.4.0.118</item>
         <item>"Bug-Fix:
                  - Implementieren Sie die Schaltfläche \"Aktualisieren\" auf der Diashow-Seite \"Element nicht geladen\""</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.117</item>
+        <item>"Fehlerbehebung:
+                 - Das Hochladen von Dateien, die von einigen Apps gemeinsam genutzt werden, kann unbemerkt fehlschlagen
+                 - Jobstatusansicht für Jobs, die mit einigen Fehlern beendet wurden, die nach Beendigung des Jobs nicht verfügbar sind
+                Veränderung:
+                 - In einer Datei, deren Upload aufgrund eines Fehlers vom Upload-Auftrag abgebrochen wurde, wird ein rotes X angezeigt"</item>
         <item>1.4.0.116</item>
         <item>"Bug-Fix:
                  - Diashow-Fehler, die Abstürze verursachen"</item>

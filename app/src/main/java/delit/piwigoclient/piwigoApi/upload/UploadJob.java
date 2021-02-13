@@ -19,7 +19,10 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
@@ -38,6 +41,7 @@ public class UploadJob implements Parcelable {
     private static final String TAG = "UploadJob";
     public static final Integer COMPRESSED = 8; // file has been compressed successfully.
 
+    public static final Integer ERROR = -2; // files that could not be uploaded due to error
     public static final Integer CANCELLED = -1; // file has been removed from the upload job
     public static final Integer UPLOADING = 0; // file bytes transfer in process
     public static final Integer UPLOADED = 1; // all file bytes uploaded but not checksum verified
@@ -71,6 +75,7 @@ public class UploadJob implements Parcelable {
     private HashMap<Uri, String> fileChecksums;
     private boolean finished;
     private long temporaryUploadAlbum = -1;
+    private SortedSet<Uri> filesWithError = new TreeSet<>();
     private LinkedHashMap<Date, String> errors = new LinkedHashMap<>();
     private VideoCompressionParams videoCompressionParams;
     private ImageCompressionParams imageCompressionParams;
@@ -155,11 +160,27 @@ public class UploadJob implements Parcelable {
     }
 
     public boolean hasFilesForUpload() {
-        return !filesForUploadAndSize.isEmpty();
+        boolean hasFilesToUpload = !filesForUploadAndSize.isEmpty();
+        if(hasFilesToUpload) {
+            // at least one file isn't marked with error state
+            return !filesWithError.containsAll(filesForUploadAndSize.keySet());
+        }
+        return hasFilesToUpload;
     }
 
     public long getFileSize(Uri toUpload) {
         return filesForUploadAndSize.get(toUpload);
+    }
+
+    public void cancelAllFailedUploads() {
+        for(Uri file : filesWithError) {
+            cancelFileUpload(file);
+        }
+        filesWithError.clear();
+    }
+
+    public void clearUploadErrors() {
+        filesWithError.clear();
     }
 
 
@@ -188,10 +209,11 @@ public class UploadJob implements Parcelable {
 
     private long calculateWorkDone(@NonNull Context context) {
         long workDone = 0;
+        HashSet<Uri> filesToIgnoreWhenRunningJob = getFilesWithStatus(ERROR, CANCELLED);
         for (Map.Entry<Uri,Long> entry : filesForUploadAndSize.entrySet()) {
             Uri key = entry.getKey();
             long size = entry.getValue();
-            if (CANCELLED.equals(fileUploadStatus.get(key))) {
+            if (filesToIgnoreWhenRunningJob.contains(key)) {
                 workDone += size;
                 continue;
             }
@@ -322,12 +344,10 @@ public class UploadJob implements Parcelable {
 
     public HashSet<Uri> getFilesWithStatus(Integer... statuses) {
         HashSet<Uri> filesWithStatus = new HashSet<>();
-        for (Map.Entry<Uri, Integer> fileStatusEntry : fileUploadStatus.entrySet()) {
-            Integer status = fileStatusEntry.getValue();
-            for (Integer i : statuses) {
-                if (status.equals(i)) {
-                    filesWithStatus.add(fileStatusEntry.getKey());
-                }
+        for (Map.Entry<Uri, Long> filesForUpload : filesForUploadAndSize.entrySet()) {
+            Uri fileForUpload = filesForUpload.getKey();
+            if(isUploadStatusIn(fileForUpload, statuses)) {
+                filesWithStatus.add(fileForUpload);
             }
         }
         return filesWithStatus;
@@ -374,13 +394,21 @@ public class UploadJob implements Parcelable {
     }
 
     public synchronized boolean isFileUploadComplete(Uri fileForUpload) {
-        Integer status = fileUploadStatus.get(fileForUpload);
-        return PENDING_APPROVAL.equals(status) || CONFIGURED.equals(status);
+        return isUploadStatusIn(fileForUpload, PENDING_APPROVAL, CONFIGURED);
     }
 
     public synchronized boolean uploadItemRequiresAction(Uri file) {
-        Integer uploadStatus = fileUploadStatus.get(file);
-        return !(uploadStatus == null || PENDING_APPROVAL.equals(uploadStatus) || CONFIGURED.equals(uploadStatus) || CANCELLED.equals(uploadStatus) || DELETED.equals(uploadStatus));
+        return !isUploadStatusIn(file, null, PENDING_APPROVAL, CONFIGURED, CANCELLED, DELETED);
+    }
+
+    private boolean isUploadStatusIn(Uri fileToUpload, Integer ... statuses) {
+        Integer uploadStatus = fileUploadStatus.get(fileToUpload);
+        for (Integer status : statuses) {
+            if(Objects.equals(uploadStatus, status) || ERROR.equals(status) && filesWithError.contains(fileToUpload)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public long getResponseHandlerId() {
@@ -395,6 +423,10 @@ public class UploadJob implements Parcelable {
         Integer status = fileUploadStatus.get(f);
         fileUploadStatus.put(f, CANCELLED);
         return status == null;
+    }
+
+    public synchronized void setErrorFlag(Uri f) {
+        filesWithError.add(f);
     }
 
     public long getJobId() {
@@ -578,8 +610,7 @@ public class UploadJob implements Parcelable {
 
     public boolean hasJobCompletedAllActionsSuccessfully(@NonNull Context context) {
         ArrayList<Uri> filesToUpload = getFilesNotYetUploaded();
-//        ArrayList<Uri> filesNoLongerAvailable = getListOfFilesNoLongerUnavailable(context, filesToUpload);
-        return (filesToUpload.isEmpty()/*  || filesToUpload.size() == filesNoLongerAvailable.size()*/) && getTemporaryUploadAlbum() < 0;
+        return (filesToUpload.isEmpty() && filesWithError.isEmpty()) && getTemporaryUploadAlbum() < 0;
     }
 
     public synchronized ArrayList<Uri> getFilesNotYetUploaded() {
@@ -753,7 +784,7 @@ public class UploadJob implements Parcelable {
     }
 
     public void clearCancelUploadAsapFlag() {
-        wasLastRunCancelled = true;
+        wasLastRunCancelled = cancelUploadAsap;
         cancelUploadAsap = false;
     }
 

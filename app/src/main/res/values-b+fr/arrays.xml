@@ -142,12 +142,18 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>L\'avenir</item>
-        <item>1.4.0.117</item>
+        <item>1.4.0.118</item>
         <item>"Correction d\'un bug:
                  - implémenter le bouton d\'actualisation sur la page \'élément non chargé\' du diaporama"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.117</item>
+        <item>"Correction d\'un bug:
+                 - le téléchargement de fichiers partagés par certaines applications peut échouer silencieusement
+                 - vue de l\'état des travaux pour les travaux qui se sont terminés avec des échecs non disponibles après la fin du travail
+                Changement:
+                 - Un fichier dont le téléchargement a été annulé par la tâche de téléchargement en raison d\'une erreur affichera un X rouge"</item>
         <item>1.4.0.116</item>
         <item>"Correction d\'un bug:
                  - bugs de diaporama provoquant des plantages"</item>

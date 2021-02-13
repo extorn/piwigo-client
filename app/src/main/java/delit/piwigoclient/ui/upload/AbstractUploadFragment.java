@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.MimeTypeFilter;
@@ -78,6 +81,7 @@ import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
+import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
@@ -219,7 +223,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     public void onFilesForUploadTooLarge(String filenamesCsv, Map<Uri, Double> filesForReview) {
-        getUiHelper().showOrQueueCancellableDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenamesCsv), R.string.button_no, R.string.button_cancel, R.string.button_yes, new FileSizeExceededAction<>(getUiHelper(), filesForReview.keySet()));
+        getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenamesCsv), R.string.button_no, R.string.button_cancel, R.string.button_yes, new FileSizeExceededAction<>(getUiHelper(), filesForReview.keySet()));
     }
 
     public boolean isCompressVideos() {
@@ -1146,5 +1150,77 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             appSettingsViewModel.releasePersistableUriPermission(requireContext(), fileForUploadUri, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, false);
         }
+    }
+
+    public void onUploadJobFailure() {
+        getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_question_title, getString(R.string.some_files_failed_to_upload_what_action_do_you_wish_to_take), R.string.button_finish, R.string.button_review, R.string.button_retry, new OnUploadJobFailureQuestionListener<>(getUiHelper()));
+    }
+
+    private static class OnUploadJobFailureQuestionListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
+
+        public OnUploadJobFailureQuestionListener(FUIH uiHelper) {
+            super(uiHelper);
+        }
+
+        protected OnUploadJobFailureQuestionListener(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            F fragment = getUiHelper().getParent();
+
+            if (Boolean.TRUE == positiveAnswer) {
+                getParent().onUserActionClearUploadErrorsAndRetry();
+            } else if (Boolean.FALSE == positiveAnswer) {
+                getParent().onUserActionRemoveFailedUploadsAndFinish();
+            } else {
+                //Do nothing.
+                getParent().onUserActionReviewUploadErrors();
+            }
+        }
+
+        public static final Creator<OnUploadJobFailureQuestionListener<?,?>> CREATOR = new Creator<OnUploadJobFailureQuestionListener<?,?>>() {
+            @Override
+            public OnUploadJobFailureQuestionListener<?,?> createFromParcel(Parcel in) {
+                return new OnUploadJobFailureQuestionListener<>(in);
+            }
+
+            @Override
+            public OnUploadJobFailureQuestionListener<?,?>[] newArray(int size) {
+                return new OnUploadJobFailureQuestionListener[size];
+            }
+        };
+    }
+
+    protected void onUserActionReviewUploadErrors() {
+        // show the upload status.
+        onClickUploadJobStatusButton();
+    }
+
+    protected void onUserActionRemoveFailedUploadsAndFinish() {
+        UploadJob uploadJob = getActiveJob(requireContext());
+        getFilesForUploadViewAdapter().removeAll(uploadJob.getFilesWithStatus(UploadJob.ERROR));
+        uploadJob.cancelAllFailedUploads();
+        submitUploadJob(uploadJob);
+    }
+
+    protected void onUserActionClearUploadErrorsAndRetry() {
+        UploadJob uploadJob = getActiveJob(requireContext());
+        for(Uri file : uploadJob.getFilesWithStatus(UploadJob.ERROR)) {
+            getFilesForUploadViewAdapter().updateUploadStatus(file, null);
+        }
+        uploadJob.clearUploadErrors();
+        submitUploadJob(uploadJob);
     }
 }

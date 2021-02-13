@@ -482,9 +482,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="error_heading_unloadable_keystore_aliases">No se pudieron cargar los siguientes alias de almacén de claves:</string>
     <string name="heading_keystore_filename">Almacén de claves</string>
     <string name="heading_keystore_alias">Alias</string>
-    <string name="alert_title_error_upload">Error al cargar</string>
-    <string name="alert_message_error_uploading_end">Se produjo un error después de cargar con éxito todos los archivos. Reinicie la carga para continuar desde donde llegó y borrar cualquier dato temporal residual del servidor.</string>
-    <string name="alert_message_error_uploading_start">Se produjo un error antes de cargar correctamente todos los archivos. Reinicie la carga para continuar desde donde llegó, o elimine los archivos restantes del trabajo, luego haga clic en el botón Finalizar para borrar cualquier dato temporal residual del servidor.</string>
     <string name="release_history">Historial de versiones</string>
     <string name="planned_releases">Lanzamientos planificados</string>
     <string name="tags_heading">Etiquetas</string>
@@ -700,4 +697,9 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="item_not_yet_loaded">Elemento aún no cargado</string>
     <string name="button_refresh">Actualizar página</string>
     <string name="alert_slideshow_feature_refresh_coming_soon">Esta característica estará disponible en breve. Por ahora, avance o retroceda un par de elementos en la presentación de diapositivas antes de volver a este elemento.</string>
+    <string name="cancelled_indicator">carga cancelada para archivo</string>
+    <string name="media_type_indicator">Indicador de tipo de medio</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Se encontró un error durante la carga. Deseas:\n\n¿Revisar los errores antes de reiniciar manualmente la carga?\n\n¿Eliminar los archivos problemáticos de la carga y finalizar?\n\n¿Reintentar acciones con errores?</string>
+    <string name="button_finish">Terminar</string>
+    <string name="button_review">revisión</string>
 </resources>

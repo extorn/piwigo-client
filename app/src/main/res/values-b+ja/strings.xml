@@ -482,9 +482,6 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="error_heading_unloadable_keystore_aliases">次のキーストアエイリアスを読み込めませんでした。</string>
     <string name="heading_keystore_filename">キーストア</string>
     <string name="heading_keystore_alias">エイリアス</string>
-    <string name="alert_title_error_upload">アップロードエラー</string>
-    <string name="alert_message_error_uploading_end">すべてのファイルのアップロードに成功した後、エラーが発生しました。アップロードを再開して、アップロードした場所から続行し、サーバーから残りの一時データをクリアします。</string>
-    <string name="alert_message_error_uploading_start">すべてのファイルを正常にアップロードする前にエラーが発生しました。アップロードを再開して、元の場所から続行するか、ジョブから残りのファイルを削除してから、[完了]ボタンをクリックして、サーバーから残りの一時データをクリアします。</string>
     <string name="release_history">リリース履歴</string>
     <string name="planned_releases">計画されたリリース</string>
     <string name="tags_heading">タグ</string>
@@ -700,4 +697,9 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="item_not_yet_loaded">アイテムはまだロードされていません</string>
     <string name="button_refresh">ページの更新</string>
     <string name="alert_slideshow_feature_refresh_coming_soon">この機能はまもなく登場します。 今のところ、このアイテムに戻る前に、スライドショーのいくつかのアイテムを前後に移動してください</string>
+    <string name="cancelled_indicator">ファイルのアップロードがキャンセルされました</string>
+    <string name="media_type_indicator">メディアタイプインジケーター</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">アップロード中にエラーが発生しました。 あなたはしたいですか：\n\nアップロードを手動で再開する前にエラーを確認しますか？\n\n問題のあるファイルをアップロードから削除して終了しますか？\n\nエラーのあるアクションを再試行しますか？</string>
+    <string name="button_finish">終了</string>
+    <string name="button_review">レビュー</string>
 </resources>

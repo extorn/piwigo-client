@@ -482,9 +482,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="error_heading_unloadable_keystore_aliases">De volgende keystore-aliassen kunnen niet worden geladen:</string>
     <string name="heading_keystore_filename">Sleutelarchief</string>
     <string name="heading_keystore_alias">Alias</string>
-    <string name="alert_title_error_upload">Fout bij uploaden</string>
-    <string name="alert_message_error_uploading_end">Er is een fout opgetreden na het succesvol uploaden van alle bestanden. Start de upload opnieuw om verder te gaan waar deze is gekomen en verwijder eventuele resterende tijdelijke gegevens van de server.</string>
-    <string name="alert_message_error_uploading_start">Er is een fout opgetreden voordat alle bestanden zijn geüpload. Herstart de upload om verder te gaan waar deze is gekomen, of verwijder alle resterende bestanden van de taak en klik vervolgens op de knop Voltooien om eventuele resterende tijdelijke gegevens van de server te verwijderen.</string>
     <string name="release_history">Release-geschiedenis</string>
     <string name="planned_releases">Geplande releases</string>
     <string name="tags_heading">Tags</string>
@@ -700,4 +697,9 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="item_not_yet_loaded">Item nog niet geladen</string>
     <string name="button_refresh">Pagina vernieuwen</string>
     <string name="alert_slideshow_feature_refresh_coming_soon">Deze functie is binnenkort beschikbaar. Ga voorlopig een aantal items in de diavoorstelling vooruit of achteruit voordat u terugkeert naar dit item</string>
+    <string name="cancelled_indicator">upload geannuleerd voor bestand</string>
+    <string name="media_type_indicator">Mediatype-indicator</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Er is een fout opgetreden tijdens het uploaden. Wilt u:\n\nBekijk de fouten voordat u de upload handmatig herstart?\n\nVerwijder de problematische bestanden van de upload en voltooi?\n\nActies opnieuw proberen met fouten?</string>
+    <string name="button_finish">Af hebben</string>
+    <string name="button_review">Beoordeling</string>
 </resources>

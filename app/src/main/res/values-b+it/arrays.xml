@@ -142,12 +142,18 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Il futuro</item>
-        <item>1.4.0.117</item>
+        <item>1.4.0.118</item>
         <item>"Risoluzione del problema:
                  - implementare il pulsante di aggiornamento nella pagina \"elemento non caricato\" della presentazione"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.117</item>
+        <item>"Risoluzione del problema:
+                 - il caricamento di file condivisi da alcune app può non riuscire silenziosamente
+                 - Visualizzazione dello stato del lavoro per i lavori terminati con alcuni errori non disponibile al termine del lavoro
+                Modificare:
+                 - Un file il cui caricamento è stato annullato dal processo di caricamento a causa di un errore mostrerà una X rossa"</item>
         <item>1.4.0.116</item>
         <item>"Risoluzione del problema:
                  - bug della presentazione che causano arresti anomali"</item>

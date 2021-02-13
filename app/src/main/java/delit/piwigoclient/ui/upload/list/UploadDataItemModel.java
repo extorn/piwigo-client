@@ -172,7 +172,7 @@ public class UploadDataItemModel implements Parcelable {
         return uploadDataItem;
     }
 
-    public UploadDataItem updateUploadStatus(Uri fileBeingUploaded, int processingStatus) {
+    public UploadDataItem updateUploadStatus(Uri fileBeingUploaded, Integer processingStatus) {
         UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileBeingUploaded);
         if (uploadDataItem == null) {
             String filename = fileBeingUploaded == null ? null : fileBeingUploaded.toString();
