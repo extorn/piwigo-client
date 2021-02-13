@@ -889,7 +889,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             return;
         }
         if (resourcesReadyForAction.size() > 0) {
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_bulk_image_permissions_title, getString(R.string.alert_bulk_image_permissions_message, resourcesReadyForAction.size()), R.layout.layout_bulk_image_permissions, R.string.button_cancel, View.NO_ID, R.string.button_ok, new BulkImagePermissionsListener<>(bulkResourceActionData.getSelectedItemIds(), getUiHelper()));
+            getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_bulk_image_permissions_title, getString(R.string.alert_bulk_image_permissions_message, resourcesReadyForAction.size()), R.layout.layout_bulk_image_permissions, R.string.button_cancel, View.NO_ID, R.string.button_ok, new BulkImagePermissionsListener<>(bulkResourceActionData.getSelectedItemIds(), getUiHelper()));
         }
     }
 
@@ -948,7 +948,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
         if (sharedResources.size() > 0) {
             String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern, sharedResources.size());
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, View.NO_ID, R.string.button_unlink, R.string.button_cancel, R.string.button_delete, new DeleteSharedResourcesAction<>(getUiHelper(), sharedResources));
+            getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_confirm_title, msg, View.NO_ID, R.string.button_unlink, R.string.button_cancel, R.string.button_delete, new DeleteSharedResourcesAction<>(getUiHelper(), sharedResources));
         } else {
             deleteResourcesFromServerForever(getUiHelper(), deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
         }
