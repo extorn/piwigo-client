@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -943,23 +944,23 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         }
     }
 
-    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueEnhancedDialogQuestion(int titleId, String message, String detail, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueEnhancedDialogQuestion(@StringRes int titleId, String message, String detail, @StringRes int negativeButtonTextId, @StringRes int positiveButtonTextId, final QRL listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, detail, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
-    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogQuestion(int titleId, String message, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogQuestion(@StringRes int titleId, String message, @StringRes int negativeButtonTextId, @StringRes int positiveButtonTextId, final QRL listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
-    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int neutralButtonTextId, int positiveButtonTextId, final QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueTriButtonDialogQuestion(@StringRes int titleId, String message, @LayoutRes int layoutId, @StringRes int negativeButtonTextId, @StringRes int neutralButtonTextId, @StringRes int positiveButtonTextId, final QRL listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, neutralButtonTextId, listener));
     }
 
-    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueCancellableDialogQuestion(int titleId, String message, int negativeButtonTextId, int cancellableButtonTextId, int positiveButtonTextId, final QRL listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, null, View.NO_ID, positiveButtonTextId, negativeButtonTextId, cancellableButtonTextId, listener));
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueTriButtonDialogQuestion(@StringRes int titleId, String message, @StringRes int negativeButtonTextId, @StringRes int neutralButtonTextId, @StringRes int positiveButtonTextId, final QRL listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, null, View.NO_ID, positiveButtonTextId, negativeButtonTextId, neutralButtonTextId, listener));
     }
 
-    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogQuestion(@StringRes int titleId, String message, @LayoutRes int layoutId, @StringRes int negativeButtonTextId, @StringRes int positiveButtonTextId, final QRL listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, layoutId, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
@@ -967,15 +968,15 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, positiveButtonTextId));
     }
 
-    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId, boolean cancellable, QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogMessage(@StringRes int titleId, String message, @StringRes int positiveButtonTextId, boolean cancellable, QRL listener) {
         showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, positiveButtonTextId, cancellable, listener));
     }
 
-    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogMessage(int titleId, String message, QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogMessage(@StringRes int titleId, String message, QRL listener) {
         showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, listener));
     }
 
-    public void showOrQueueDialogMessage(int titleId, String message) {
+    public void showOrQueueDialogMessage(@StringRes int titleId, String message) {
         showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null));
     }
 

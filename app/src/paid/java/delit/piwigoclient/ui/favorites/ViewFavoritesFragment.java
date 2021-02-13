@@ -496,7 +496,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
 
         if(isFavoritesAlterationSupported) {
             String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern, deleteActionData.getSelectedItemIds().size());
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, View.NO_ID, R.string.button_unfavorite, R.string.button_cancel, R.string.button_delete, dialogListener);
+            getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_confirm_title, msg, View.NO_ID, R.string.button_unfavorite, R.string.button_cancel, R.string.button_delete, dialogListener);
         }
     }
 
