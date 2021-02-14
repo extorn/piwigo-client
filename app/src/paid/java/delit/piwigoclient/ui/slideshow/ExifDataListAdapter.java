@@ -27,7 +27,7 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
     private final String[] childFrom;
 
     public ExifDataListAdapter(Context context, List<? extends Map<String, ?>> groupData, String[] groupFrom, int[] groupTo, List<? extends List<? extends Map<String, ?>>> childData, String[] childFrom, int[] childTo) {
-        super(context, groupData, R.layout.layout_expandable_list_header_simple, groupFrom, groupTo, childData, R.layout.layout_expandable_list_child_grid, childFrom, childTo);
+        super(context, groupData, R.layout.layout_expandable_list_header_simple, groupFrom, groupTo, childData, R.layout.layout_list_expandable_list_child_grid, childFrom, childTo);
         this.childData = childData;
         this.childFrom = childFrom;
         this.childTo = childTo;

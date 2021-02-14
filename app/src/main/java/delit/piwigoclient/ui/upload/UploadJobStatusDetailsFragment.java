@@ -131,7 +131,7 @@ public class UploadJobStatusDetailsFragment<F extends UploadJobStatusDetailsFrag
     private static class UploadJobErrorsListAdapter extends SimpleExpandableListAdapter {
 
         public UploadJobErrorsListAdapter(Context context, List<? extends Map<String, String>> groupData, String[] groupFrom, int[] groupTo, List<? extends List<? extends Map<String, ChildData>>> childrenDataByGroup, String[] childFrom, int[] childTo) {
-            super(context, groupData, R.layout.layout_expandable_list_header_simple, groupFrom, groupTo, childrenDataByGroup, R.layout.layout_expandable_list_child_grid, childFrom, childTo);
+            super(context, groupData, R.layout.layout_expandable_list_header_simple, groupFrom, groupTo, childrenDataByGroup, R.layout.layout_list_expandable_list_child_grid, childFrom, childTo);
         }
 
         @Override
