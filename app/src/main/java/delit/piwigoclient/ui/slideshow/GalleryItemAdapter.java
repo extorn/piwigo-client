@@ -95,6 +95,9 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
 
 
     public int getFullGalleryItemIdxFromSlideshowIdx(int slideshowPosition) {
+        if(galleryResourceItemsFullGalleryIdx.size() <= slideshowPosition) {
+            return -1;
+        }
         return galleryResourceItemsFullGalleryIdx.get(slideshowPosition);
     }
 
