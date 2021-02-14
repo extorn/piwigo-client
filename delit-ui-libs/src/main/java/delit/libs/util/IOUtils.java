@@ -1286,6 +1286,9 @@ public class IOUtils {
 
     public static Set<String> getMimeTypesFromFileExts(Set<String> mimeTypes, Set<String> fileExts) {
         MimeTypeMap map = MimeTypeMap.getSingleton();
+        if(fileExts == null) {
+            return mimeTypes;
+        }
         for(String fileExt : fileExts) {
             String mimeType = knownExtsToMimes.get(fileExt.toLowerCase());
             if(mimeType == null) {
