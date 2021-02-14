@@ -704,4 +704,5 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="error_file_not_found">文件未找到</string>
     <string name="no_errors_found_text">找不到错误</string>
     <string name="no_errors_found_title">失误</string>
+    <string name="upload">上载</string>
 </resources>

@@ -704,4 +704,5 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="error_file_not_found">Fichier introuvable</string>
     <string name="no_errors_found_text">Aucune erreur trouvée</string>
     <string name="no_errors_found_title">les erreurs</string>
+    <string name="upload">Télécharger</string>
 </resources>

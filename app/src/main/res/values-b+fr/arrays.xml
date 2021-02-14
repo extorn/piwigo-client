@@ -142,6 +142,7 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>L\'avenir</item>
+        <item>"corrections de bogues uniquement"</item>
         <item>1.4.0.118</item>
         <item>"Correction d\'un bug:
                  - implémenter le bouton d\'actualisation sur la page \'élément non chargé\' du diaporama"</item>
@@ -152,6 +153,8 @@
         <item>"Correction d\'un bug:
                  - le téléchargement de fichiers partagés par certaines applications peut échouer silencieusement
                  - vue de l\'état des travaux pour les travaux qui se sont terminés avec des échecs non disponibles après la fin du travail
+                 - à propos de l\'écran ne s\'ouvre pas
+                 - toutes les causes identifiées de plantages d\'applications
                 Changement:
                  - Un fichier dont le téléchargement a été annulé par la tâche de téléchargement en raison d\'une erreur affichera un X rouge
                  - Les erreurs de téléchargement sont désormais regroupées par fichier local sur la page d\'état de la tâche de téléchargement

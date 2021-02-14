@@ -142,6 +142,7 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Die Zukunft</item>
+        <item>"Nur Bugfixes"</item>
         <item>1.4.0.118</item>
         <item>"Bug-Fix:
                  - Implementieren Sie die Schaltfläche \"Aktualisieren\" auf der Diashow-Seite \"Element nicht geladen\""</item>
@@ -150,8 +151,10 @@
         
         <item>1.4.0.117</item>
         <item>"Fehlerbehebung:
-                 - Das Hochladen von Dateien, die von einigen Apps gemeinsam genutzt werden, kann unbemerkt fehlschlagen
+                 - Das Hochladen von Dateien, die von einigen Apps gemeinsam genutzt werden, kann im Hintergrund fehlschlagen
                  - Jobstatusansicht für Jobs, die mit einigen Fehlern beendet wurden, die nach Beendigung des Jobs nicht verfügbar sind
+                 - Der Bildschirm wird nicht geöffnet
+                 - alle identifizierten Ursachen für App-Abstürze
                 Veränderung:
                  - In einer Datei, deren Upload aufgrund eines Fehlers vom Upload-Auftrag abgebrochen wurde, wird ein rotes X angezeigt
                  - Die Upload-Fehler werden jetzt auf der Statusseite des Upload-Jobs nach lokaler Datei gruppiert

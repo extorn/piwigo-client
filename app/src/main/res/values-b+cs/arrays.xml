@@ -142,6 +142,7 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Budoucnost</item>
+        <item>"pouze opravy chyb"</item>
         <item>1.4.0.118</item>
         <item>"Oprava chyby:
                  - implementujte tlačítko pro obnovení na stránce slideshow \'item not loaded\'"</item>
@@ -152,6 +153,8 @@
         <item>"Oprava chyby:
                  - nahrávání souborů sdílených některými aplikacemi může tiše selhat
                  - zobrazení stavu úlohy pro úlohy, které skončily s některými poruchami, které po dokončení úlohy nejsou k dispozici
+                 - obrazovka se neotevře
+                 - jakékoli zjištěné příčiny selhání aplikace
                 Změna:
                  - Soubor, jehož nahrávání bylo zrušeno úlohou nahrávání kvůli chybě, zobrazí červené X
                  - Chyby nahrávání jsou nyní seskupeny podle místního souboru na stránce stavu úlohy nahrávání

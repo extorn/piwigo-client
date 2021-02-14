@@ -142,6 +142,7 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Il futuro</item>
+        <item>"solo correzioni di bug"</item>
         <item>1.4.0.118</item>
         <item>"Risoluzione del problema:
                  - implementare il pulsante di aggiornamento nella pagina \"elemento non caricato\" della presentazione"</item>
@@ -152,6 +153,8 @@
         <item>"Risoluzione del problema:
                  - il caricamento di file condivisi da alcune app può non riuscire silenziosamente
                  - Visualizzazione dello stato del lavoro per i lavori terminati con alcuni errori non disponibile al termine del lavoro
+                 - sullo schermo non si apre
+                 - eventuali cause identificate di arresti anomali dell\'app
                 Modificare:
                  - Un file il cui caricamento è stato annullato dal processo di caricamento a causa di un errore mostrerà una X rossa
                  - Gli errori di caricamento sono ora raggruppati per file locale nella pagina di stato del lavoro di caricamento

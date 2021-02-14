@@ -704,4 +704,5 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="error_file_not_found">Файл не найден</string>
     <string name="no_errors_found_text">Ошибок не найдено</string>
     <string name="no_errors_found_title">Ошибки</string>
+    <string name="upload">Загрузить</string>
 </resources>

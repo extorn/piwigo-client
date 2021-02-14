@@ -704,4 +704,5 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="error_file_not_found">File non trovato</string>
     <string name="no_errors_found_text">Nessun errore trovato</string>
     <string name="no_errors_found_title">Errori</string>
+    <string name="upload">Caricare</string>
 </resources>

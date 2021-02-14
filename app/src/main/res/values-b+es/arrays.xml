@@ -142,6 +142,7 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
+        <item>"solo correcciones de errores"</item>
         <item>1.4.0.118</item>
         <item>"Arreglo del fallo:
                  - implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'"</item>
@@ -152,6 +153,8 @@
         <item>"Arreglo del fallo:
                  - la carga de archivos compartidos por algunas aplicaciones puede fallar silenciosamente
                  - Vista del estado del trabajo para trabajos que terminaron con algunas fallas no disponible después de que finaliza el trabajo
+                 - acerca de la pantalla no se abre
+                 - cualquier causa identificada de fallas de la aplicación
                 Cambio:
                  - Un archivo cuya carga haya sido cancelada por el trabajo de carga debido a un error mostrará una X roja
                  - Los errores de carga ahora están agrupados por archivo local en la página de estado del trabajo de carga

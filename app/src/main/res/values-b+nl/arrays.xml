@@ -142,6 +142,7 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>De toekomst</item>
+        <item>"alleen bugfixes"</item>
         <item>1.4.0.118</item>
         <item>"Bugfix:
                  - implementeer de vernieuwingsknop op de pagina \'item niet geladen\' van de diavoorstelling"</item>
@@ -152,6 +153,8 @@
         <item>"Bugfix:
                  - het uploaden van bestanden die door sommige apps worden gedeeld, kan stil mislukken
                  - taakstatusweergave voor taken die zijn voltooid met enkele fouten die niet beschikbaar zijn nadat de taak is voltooid
+                 - over scherm gaat niet open
+                 - alle geïdentificeerde oorzaken van app-crashes
                 Verandering:
                  - Een bestand waarvan het uploaden is geannuleerd door de uploadtaak vanwege een fout, zal een rode X weergeven
                  - De uploadfouten zijn nu gegroepeerd per lokaal bestand op de statuspagina van de uploadtaak

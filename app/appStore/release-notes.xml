@@ -2,6 +2,8 @@
 Bugfix:
 - uploading files shared by some apps can fail silently
 - job status view for jobs that finished with some failures not available after job finishes
+- about screen won't open
+- any identified causes of app crashes
 Change:
 - A file that has its upload cancelled by the upload job due to error will show a red X
 - The upload errors are now grouped by local file on upload job status page
@@ -11,50 +13,59 @@ Change:
 Oprava chyby:
 - nahrávání souborů sdílených některými aplikacemi může tiše selhat
 - zobrazení stavu úlohy pro úlohy, které skončily s některými poruchami, které po dokončení úlohy nejsou k dispozici
+- obrazovka se neotevře
+- jakékoli zjištěné příčiny selhání aplikace
 Změna:
 - Soubor, jehož nahrávání bylo zrušeno úlohou nahrávání kvůli chybě, zobrazí červené X
 - Chyby nahrávání jsou nyní seskupeny podle místního souboru na stránce stavu úlohy nahrávání
-- Pokud se nahrávání nezdaří, zobrazí se nový dialog s možnostmi řešení problému
+- Pokud se nahrávání nezdaří, zobrazí se..."
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Das Hochladen von Dateien, die von einigen Apps gemeinsam genutzt werden, kann unbemerkt fehlschlagen
+- Das Hochladen von Dateien, die von einigen Apps gemeinsam genutzt werden, kann im Hintergrund fehlschlagen
 - Jobstatusansicht für Jobs, die mit einigen Fehlern beendet wurden, die nach Beendigung des Jobs nicht verfügbar sind
+- Der Bildschirm wird nicht geöffnet
+- alle identifizierten Ursachen für App-Abstürze
 Veränderung:
 - In einer Datei, deren Upload aufgrund eines Fehlers vom Upload-Auftrag abgebrochen wurde, wird ein rotes X angezeigt
-- Die Upload-Fehler werden jetzt auf der Statusseite des Upload-Jobs nach lokaler Datei gruppiert
-- Wenn ein Upload fehlschlä..."
+- Die Upload-Fehler werden jetzt a..."
 </de-DE>
 <es-ES>
 Arreglo del fallo:
 - la carga de archivos compartidos por algunas aplicaciones puede fallar silenciosamente
 - Vista del estado del trabajo para trabajos que terminaron con algunas fallas no disponible después de que finaliza el trabajo
+- acerca de la pantalla no se abre
+- cualquier causa identificada de fallas de la aplicación
 Cambio:
 - Un archivo cuya carga haya sido cancelada por el trabajo de carga debido a un error mostrará una X roja
-- Los errores de carga ahora están agrupados por archivo local en la página de estado del trabajo de carga
-- Si una carga falla, aparece un nuevo ..."
+- Los errores de carga ahora están agrupados por arch..."
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
 - le téléchargement de fichiers partagés par certaines applications peut échouer silencieusement
 - vue de l\'état des travaux pour les travaux qui se sont terminés avec des échecs non disponibles après la fin du travail
+- à propos de l\'écran ne s\'ouvre pas
+- toutes les causes identifiées de plantages d\'applications
 Changement:
 - Un fichier dont le téléchargement a été annulé par la tâche de téléchargement en raison d\'une erreur affichera un X rouge
-- Les erreurs de téléchargement sont désormais regroupées par fichier local sur la page d\'état de la tâche de téléch..."
+- Les erreurs de ..."
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
 - il caricamento di file condivisi da alcune app può non riuscire silenziosamente
 - Visualizzazione dello stato del lavoro per i lavori terminati con alcuni errori non disponibile al termine del lavoro
+- sullo schermo non si apre
+- eventuali cause identificate di arresti anomali dell\'app
 Modificare:
 - Un file il cui caricamento è stato annullato dal processo di caricamento a causa di un errore mostrerà una X rossa
-- Gli errori di caricamento sono ora raggruppati per file locale nella pagina di stato del lavoro di caricamento
-- Se un caricamento non ri..."
+- Gli errori di caricamento sono ora raggruppati pe..."
 </it-IT>
 <ja-JP>
 バグ修正：
--一部のアプリで共有されているファイルのアップロードがサイレントに失敗する可能性があります
+-一部のアプリで共有されているファイルのアップロードは、サイレントに失敗する可能性があります
 -一部の失敗で終了したジョブのジョブステータスビューは、ジョブの終了後に使用できません
+-画面が開かない
+-アプリのクラッシュの特定された原因
 変化する：
 -エラーのためにアップロードジョブによってアップロードがキャンセルされたファイルには、赤いXが表示されます
 -アップロードエラーは、アップロードジョブステータスページでローカルファイルごとにグループ化されるようになりました
@@ -64,24 +75,28 @@ Modificare:
 Bugfix:
 - het uploaden van bestanden die door sommige apps worden gedeeld, kan stil mislukken
 - taakstatusweergave voor taken die zijn voltooid met enkele fouten die niet beschikbaar zijn nadat de taak is voltooid
+- over scherm gaat niet open
+- alle geïdentificeerde oorzaken van app-crashes
 Verandering:
 - Een bestand waarvan het uploaden is geannuleerd door de uploadtaak vanwege een fout, zal een rode X weergeven
-- De uploadfouten zijn nu gegroepeerd per lokaal bestand op de statuspagina van de uploadtaak
-- Als het uploaden mislukt, verschijnt er een nieuw dialoogvens..."
+- De uploadfouten zijn nu gegroepeerd per lokaal bestand op de statuspagina van..."
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
 - загрузка файлов, совместно используемых некоторыми приложениями, может завершиться сбоем
 - просмотр статуса задания для заданий, которые завершились с некоторыми сбоями, недоступными после завершения задания
+- экран не открывается
+- любые выявленные причины сбоев приложения
 Изменять:
-- Для файла, выгрузка которого была отменена заданием загрузки из-за ошибки, будет отображаться красный крестик.
-- Ошибки загрузки теперь группируются по локальному файлу на странице статуса задания загрузки.
-- Если загрузка не удалась, в новом диалоговом о..."
+- Для файла, выгрузка которого была отменена из-за ошибки, будет отображаться красный крестик.
+- Ошибки загрузки теперь группируются по локальному файлу на странице статуса задания загрузки...."
 </ru-RU>
 <zh-CN>
 错误修正：
 -上载某些应用程序共享的文件可能会自动失败
 -作业完成后，某些失败的作业的工作状态视图不可用
+-关于屏幕无法打开
+-任何确定的应用崩溃原因
 改变：
 -由于错误而被上传作业取消上传的文件将显示红色X
 -现在，上传错误已在上传作业状态页面上按本地文件分组

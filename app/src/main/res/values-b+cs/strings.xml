@@ -704,4 +704,5 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="error_file_not_found">Soubor nenalezen</string>
     <string name="no_errors_found_text">Nebyly nalezeny žádné chyby</string>
     <string name="no_errors_found_title">Chyby</string>
+    <string name="upload">nahrát</string>
 </resources>

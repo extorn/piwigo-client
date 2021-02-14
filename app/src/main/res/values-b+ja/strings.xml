@@ -704,4 +704,5 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="error_file_not_found">ファイルが見つかりません</string>
     <string name="no_errors_found_text">エラーは見つかりませんでした</string>
     <string name="no_errors_found_title">エラー</string>
+    <string name="upload">アップロード</string>
 </resources>

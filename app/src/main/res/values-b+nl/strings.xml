@@ -704,4 +704,5 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="error_file_not_found">Bestand niet gevonden</string>
     <string name="no_errors_found_text">Geen fouten gevonden</string>
     <string name="no_errors_found_title">Fouten</string>
+    <string name="upload">Uploaden</string>
 </resources>

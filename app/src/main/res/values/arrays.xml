@@ -257,6 +257,8 @@
         <item>"Bugfix:
                 - uploading files shared by some apps can fail silently
                 - job status view for jobs that finished with some failures not available after job finishes
+                - about screen won't open
+                - any identified causes of app crashes
                Change:
                 - A file that has its upload cancelled by the upload job due to error will show a red X
                 - The upload errors are now grouped by local file on upload job status page

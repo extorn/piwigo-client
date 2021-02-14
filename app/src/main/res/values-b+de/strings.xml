@@ -704,4 +704,5 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="error_file_not_found">Datei nicht gefunden</string>
     <string name="no_errors_found_text">Keine Fehler gefunden</string>
     <string name="no_errors_found_title">Fehler</string>
+    <string name="upload">Hochladen</string>
 </resources>
