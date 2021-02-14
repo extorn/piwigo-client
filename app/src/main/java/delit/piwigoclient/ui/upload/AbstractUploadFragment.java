@@ -966,7 +966,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     private void updateActiveJobActionButtonsStatus(@NonNull Context context, @Nullable UploadJob job) {
-        if (job != null && job.isRunningNow() || !job.hasJobCompletedAllActionsSuccessfully(context)) {
+        if (job != null && (job.isRunningNow() || !job.hasJobCompletedAllActionsSuccessfully(context))) {
             uploadJobStatusButton.setVisibility(VISIBLE);
             boolean canForceDeleteJob = job.hasBeenRunBefore() && !job.isRunningNow() && !job.hasJobCompletedAllActionsSuccessfully(context);
             deleteUploadJobButton.setVisibility(canForceDeleteJob ? VISIBLE : GONE);
