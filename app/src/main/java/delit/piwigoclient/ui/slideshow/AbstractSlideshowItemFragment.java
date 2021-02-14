@@ -173,7 +173,14 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         BundleUtils.putSet(outState, STATE_UPDATED_LINKED_ALBUM_SET, updatedLinkedAlbumSet);
         BundleUtils.putLongHashSet(outState, STATE_ALBUMS_REQUIRING_UPDATE, albumsRequiringReload);
         AbstractSlideshowFragment.storeGalleryModelClassToBundle(outState, modelStoreType);
-        outState.putLong(ARG_AND_STATE_CONTAINER_ID, model.getParentId());
+        if(model.getParentId() != null) {
+            outState.putLong(ARG_AND_STATE_CONTAINER_ID, model.getParentId());
+        } else {
+            Bundle b = new Bundle();
+            b.putString("model", model.toString());
+            b.putString("tag", TAG);
+            Logging.logAnalyticEventIfPossible("model parent null saveInstanceState", b);
+        }
         outState.putLong(ARG_AND_STATE_RESOURCE_ID, model.getId());
         outState.putInt(ARG_AND_STATE_SLIDESHOW_PAGE_IDX, slideshowPageIdx);
         outState.putInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
