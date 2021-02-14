@@ -474,7 +474,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         SimpleDocumentFileFilter filter = new SimpleDocumentFileFilter() {
             @Override
             protected boolean nonAcceptOverride(DocumentFile f) {
-                return compressVideos && MimeTypeFilter.matches(f.getType(), "video/*");
+                return compressVideos && IOUtils.isPlayableMedia(f.getType());
             }
         }.withFileExtIn(fileExtsToUpload).withMaxSizeBytes(maxFileSizeMb * 1024 * 1024);
         List<DocumentFile> matchingFiles = DocumentFileFilter.filterDocumentFiles(localFolderToMonitor.listFiles(), filter);
@@ -501,7 +501,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             return null;
         }
 
-        uploadJob.setVideoCompressionParams(jobConfig.getVideoCompressionParams(context));
+        uploadJob.setPlayableMediaCompressionParams(jobConfig.getVideoCompressionParams(context));
         uploadJob.setImageCompressionParams(jobConfig.getImageCompressionParams(context));
         return uploadJob;
     }

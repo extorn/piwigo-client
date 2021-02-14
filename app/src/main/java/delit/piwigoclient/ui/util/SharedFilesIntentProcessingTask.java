@@ -34,7 +34,7 @@ public class SharedFilesIntentProcessingTask<A extends MyActivity<A,AUIH>,AUIH e
     private final AppSettingsViewModel appSettingsViewModel;
     private final int fileSelectionEventId;
     private final Intent intent;
-    private String[] acceptedMimeTypes = new String[]{"image/*", "video/*", "application/pdf", "application/zip"};
+    private String[] acceptedMimeTypes = new String[]{"image/*", "audio/*", "video/*", "application/pdf", "application/zip"};
 
     public SharedFilesIntentProcessingTask(A parent, int fileSelectionEventId, Intent intent) {
         super(parent);

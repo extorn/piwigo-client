@@ -273,7 +273,7 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
                     }
                 }
                 String mimeType = IOUtils.getMimeType(multimediaUriMatcherUtil.getFileExt());
-                if (IOUtils.isVideoPlayable(mimeType)) {
+                if (IOUtils.isPlayableMedia(mimeType)) {
                     item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
                     item.setThumbnailUrl(thumbnailUriStr); // note we are using this as is. Only the original resource Uri gets altered.
                     item.addResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);

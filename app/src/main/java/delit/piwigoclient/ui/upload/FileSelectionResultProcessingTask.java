@@ -2,8 +2,6 @@ package delit.piwigoclient.ui.upload;
 
 import android.util.Log;
 
-import androidx.core.content.MimeTypeFilter;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,10 +65,9 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
             int missingPermissions = 0;
             while (iter.hasNext()) {
                 FolderItem f = iter.next();
-                //TODO check this is correct to assume that upper case extensions are okay (server isn't case sensitive!).
                 if (f.getExt() == null || (!allowedFileTypes.contains(f.getExt()) && !allowedFileTypes.contains(f.getExt().toLowerCase()))) {
                     String mimeType = f.getMime();
-                    if (mimeType == null || !MimeTypeFilter.matches(mimeType, "video/*")) {
+                    if (mimeType == null && !IOUtils.isPlayableMedia(mimeType)) {
                         iter.remove();
                         unsupportedExts.add(f.getExt());
                     }

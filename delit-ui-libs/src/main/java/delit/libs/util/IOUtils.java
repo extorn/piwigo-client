@@ -1407,9 +1407,14 @@ public class IOUtils {
     }
 
 
-    public static boolean isVideoPlayable(@Nullable String mimeType) {
+    public static boolean isPlayableMedia(@Nullable String mimeType) {
         boolean isVideo = MimeTypeFilter.matches(mimeType, "video/*");
         boolean isAudio = MimeTypeFilter.matches(mimeType, "audio/*");
         return isAudio || isVideo;
+    }
+
+    public static boolean isPlayableMedia(@NonNull Context context,  @NonNull Uri file) {
+        String mimeType = IOUtils.getMimeType(context, file);
+        return null != MimeTypeFilter.matches(mimeType, new String[]{"video/*", "audio/*"});
     }
 }

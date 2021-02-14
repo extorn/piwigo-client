@@ -78,7 +78,7 @@ public class UploadJob implements Parcelable {
     private long temporaryUploadAlbum = -1;
     private SortedSet<Uri> filesWithError = new TreeSet<>();
     private LinkedHashMap<String, AreaErrors> errors = new LinkedHashMap<>();
-    private VideoCompressionParams videoCompressionParams;
+    private VideoCompressionParams playableMediaCompressionParams;
     private ImageCompressionParams imageCompressionParams;
     private boolean allowUploadOfRawVideosIfIncompressible;
     private boolean isDeleteFilesAfterUpload;
@@ -126,7 +126,7 @@ public class UploadJob implements Parcelable {
         finished = ParcelUtils.readBool(in);
         temporaryUploadAlbum = in.readLong();
         errors = ParcelUtils.readMapTypedValues(in, errors, AreaErrors.class);
-        videoCompressionParams = ParcelUtils.readParcelable(in, UploadJob.VideoCompressionParams.class);
+        playableMediaCompressionParams = ParcelUtils.readParcelable(in, UploadJob.VideoCompressionParams.class);
         imageCompressionParams = ParcelUtils.readParcelable(in, UploadJob.ImageCompressionParams.class);
         allowUploadOfRawVideosIfIncompressible = ParcelUtils.readBool(in);
         isDeleteFilesAfterUpload = ParcelUtils.readBool(in);
@@ -153,7 +153,7 @@ public class UploadJob implements Parcelable {
             long val = entry.getValue();
             Uri f = entry.getKey();
             total += val;
-            if ((isPhoto(context, f) && isCompressPhotosBeforeUpload()) || (isVideo(context, f) && isCompressVideosBeforeUpload())) {
+            if ((isPhoto(context, f) && isCompressPhotosBeforeUpload()) || (isPlayableMedia(context, f) && isCompressPlayableMediaBeforeUpload())) {
                 total += val; // double the file for compression
             }
         }
@@ -218,7 +218,7 @@ public class UploadJob implements Parcelable {
                 workDone += size;
                 continue;
             }
-            if ((isPhoto(context, key) && isCompressPhotosBeforeUpload()) || (isVideo(context, key) && isCompressVideosBeforeUpload())) {
+            if ((isPhoto(context, key) && isCompressPhotosBeforeUpload()) || (isPlayableMedia(context, key) && isCompressPlayableMediaBeforeUpload())) {
                 if(getCompressionProgress(context, key) == 100) {
                     workDone += size; // if it is partially done, then it's going to be scrapped and re-done.
                 }
@@ -469,7 +469,7 @@ public class UploadJob implements Parcelable {
         if (COMPRESSED.equals(status)) {
             return 100;
         }
-        if ((isCompressVideosBeforeUpload() && canCompressVideoFile(context, uploadJobKey)) || isCompressPhotosBeforeUpload()) {
+        if ((isCompressPlayableMediaBeforeUpload() && canCompressVideoFile(context, uploadJobKey)) || isCompressPhotosBeforeUpload()) {
             // if we've started uploading this file it must have been compressed first!
             return getUploadProgress(uploadJobKey) > 0 ? 100 : 0;
         }
@@ -532,7 +532,7 @@ public class UploadJob implements Parcelable {
                     } else if (needsUpload(f) || needsVerification(f)) {
                         Uri fileForChecksumCalc = null;
                         if (!((isPhoto(context, f) && isCompressPhotosBeforeUpload())
-                                || canCompressVideoFile(context, f) && isCompressVideosBeforeUpload())) {
+                                || canCompressVideoFile(context, f) && isCompressPlayableMediaBeforeUpload())) {
                             fileForChecksumCalc = f;
                         } else if (getCompressedFile(f) != null) {
                             fileForChecksumCalc = getCompressedFile(f);
@@ -755,9 +755,8 @@ public class UploadJob implements Parcelable {
         return errors;
     }
 
-    public boolean isVideo(@NonNull Context context, @NonNull Uri file) {
-        String mimeType = IOUtils.getMimeType(context, file);
-        return MimeTypeFilter.matches(mimeType,"video/*");
+    public boolean isPlayableMedia(@NonNull Context context, @NonNull Uri file) {
+        return IOUtils.isPlayableMedia(context, file);
     }
 
     public boolean isPhoto(@NonNull Context context, @NonNull Uri file) {
@@ -799,8 +798,8 @@ public class UploadJob implements Parcelable {
         return compressedFolder;
     }
 
-    public boolean canCompressVideoFile(@NonNull Context context, Uri rawVideo) {
-        return isVideo(context, rawVideo);
+    public boolean canCompressVideoFile(@NonNull Context context, Uri rawMediaUri) {
+        return isPlayableMedia(context, rawMediaUri);
     }
 
     public void clearCancelUploadAsapFlag() {
@@ -822,20 +821,20 @@ public class UploadJob implements Parcelable {
         this.imageCompressionParams = imageCompressionParams;
     }
 
-    public boolean isCompressVideosBeforeUpload() {
-        return videoCompressionParams != null;
+    public boolean isCompressPlayableMediaBeforeUpload() {
+        return playableMediaCompressionParams != null;
     }
 
     public boolean isCompressPhotosBeforeUpload() {
         return imageCompressionParams != null;
     }
 
-    public VideoCompressionParams getVideoCompressionParams() {
-        return videoCompressionParams;
+    public VideoCompressionParams getPlayableMediaCompressionParams() {
+        return playableMediaCompressionParams;
     }
 
-    public void setVideoCompressionParams(VideoCompressionParams videoCompressionParams) {
-        this.videoCompressionParams = videoCompressionParams;
+    public void setPlayableMediaCompressionParams(VideoCompressionParams playableMediaCompressionParams) {
+        this.playableMediaCompressionParams = playableMediaCompressionParams;
     }
 
     public boolean isAllowUploadOfRawVideosIfIncompressible() {
@@ -894,7 +893,7 @@ public class UploadJob implements Parcelable {
         ParcelUtils.writeBool(dest, finished);
         dest.writeLong(temporaryUploadAlbum);
         ParcelUtils.writeMap(dest, errors);
-        ParcelUtils.writeParcelable(dest, videoCompressionParams);
+        ParcelUtils.writeParcelable(dest, playableMediaCompressionParams);
         ParcelUtils.writeParcelable(dest, imageCompressionParams);
         ParcelUtils.writeBool(dest, allowUploadOfRawVideosIfIncompressible);
         ParcelUtils.writeBool(dest, isDeleteFilesAfterUpload);

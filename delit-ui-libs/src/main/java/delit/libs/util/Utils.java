@@ -1,7 +1,12 @@
 package delit.libs.util;
 
+import android.os.Bundle;
+import android.util.Log;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+
+import delit.libs.core.util.Logging;
 
 public class Utils {
 
@@ -42,14 +47,20 @@ public class Utils {
                 try {
                     Field f = objectClass.getDeclaredField("TAG");
                     f.setAccessible(true);
-                    if (f.getType() == String.class && Modifier.isFinal(f.getModifiers())) {
-                        return (String) f.get(object);
+                    if (f.getType() == String.class && Modifier.isStatic(f.getModifiers())) {
+                        if(!Modifier.isFinal(f.getModifiers())) {
+                            Bundle b = new Bundle();
+                            b.putString("classname", objectClass.toString());
+                            Logging.logAnalyticEventIfPossible("ClassFieldTagNotFinal", b);
+                        }
+                        return (String) f.get(object) + '(' + object.getClass() +')';
                     }
                 } catch (NoSuchFieldException | IllegalAccessException e) {
-                    objectClass = objectClass.getSuperclass();
+                    // do nothing.
                 }
+                objectClass = objectClass.getSuperclass();
             }
-            return object.toString();
+            return object.getClass().toString();
         } else {
             return "?";
         }

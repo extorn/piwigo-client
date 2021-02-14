@@ -1051,8 +1051,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         ExoPlayerCompression compressor = new ExoPlayerCompression();
         ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
 
-        double desiredBitratePerPixelPerSec = uploadJob.getVideoCompressionParams().getQuality();
-        int desiredAudioBitrate = uploadJob.getVideoCompressionParams().getAudioBitrate();
+        double desiredBitratePerPixelPerSec = uploadJob.getPlayableMediaCompressionParams().getQuality();
+        int desiredAudioBitrate = uploadJob.getPlayableMediaCompressionParams().getAudioBitrate();
         compressionSettings.setAddAudioTrack(desiredAudioBitrate != 0); // -1 is used for pass-through.
         compressionSettings.setAddVideoTrack(desiredBitratePerPixelPerSec - 0.00001 > 0); // no pass-through option.
         compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(desiredBitratePerPixelPerSec);
@@ -1266,9 +1266,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
             if (thisUploadJob.needsUpload(fileForUploadUri)) {
                 DocumentFile compressedFile = null;
-                if (thisUploadJob.isVideo(this, fileForUploadUri)) {
+                if (thisUploadJob.isPlayableMedia(this, fileForUploadUri)) {
                     // it is compression wanted, and it this particular video compressible.
-                    if (thisUploadJob.isCompressVideosBeforeUpload() && thisUploadJob.canCompressVideoFile(this, fileForUploadUri)) {
+                    if (thisUploadJob.isCompressPlayableMediaBeforeUpload() && thisUploadJob.canCompressVideoFile(this, fileForUploadUri)) {
                         //Check if we've already compressed it
                         compressedFile = getCompressedVersionOfFileToUpload(thisUploadJob, fileForUploadUri);
                         if (thisUploadJob.isUploadProcessNotYetStarted(fileForUploadUri)) {

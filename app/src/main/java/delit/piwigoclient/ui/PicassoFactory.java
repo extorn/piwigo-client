@@ -18,7 +18,7 @@ import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.picasso.EnhancedPicassoListener;
 import delit.piwigoclient.picasso.PicassoErrorHandler;
 import delit.piwigoclient.picasso.ResourceRequestHandler;
-import delit.piwigoclient.picasso.VideoRequestHandler;
+import delit.piwigoclient.picasso.PlayableMediaRequestHandler;
 
 /**
  * Created by gareth on 13/07/17.
@@ -56,7 +56,7 @@ public class PicassoFactory {
                 // request handler would work but it can't because it doesn't get in before the broken one!
                 picasso = new MyPicasso.Builder(appContext)
                         .addRequestHandler(new ResourceRequestHandler(appContext))
-                        .addRequestHandler(new VideoRequestHandler(appContext))
+                        .addRequestHandler(new PlayableMediaRequestHandler(appContext))
                         .listener(errorHandler).downloader(getDownloader()).build();
             }
             return picasso;

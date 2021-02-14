@@ -85,7 +85,7 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
             UploadJob.VideoCompressionParams vidCompParams = getOwner().buildVideoCompressionParams();
             UploadJob.ImageCompressionParams imageCompParams = getOwner().buildImageCompressionParams();
             if (vidCompParams != null) {
-                activeJob.setVideoCompressionParams(vidCompParams);
+                activeJob.setPlayableMediaCompressionParams(vidCompParams);
                 activeJob.setAllowUploadOfRawVideosIfIncompressible(getOwner().isRawVideoUploadPermittedIfNeeded());
                 if(!vidCompParams.hasAStream()) {
                     DisplayUtils.runOnUiThread(()-> getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.video_compression_settings_invalid)));
@@ -129,7 +129,7 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
         StringBuilder filenameListStrB = new StringBuilder();
         Set<Uri> keysToRemove = new HashSet<>();
         for (Map.Entry<Uri,Double> f : filesForReview.entrySet()) {
-            if (compressVideos && MimeTypeFilter.matches(IOUtils.getMimeType(getContext(), f.getKey()), "video/*")) {
+            if (compressVideos && IOUtils.isPlayableMedia(getContext(), f.getKey())) {
                 keysToRemove.add(f.getKey());
                 continue;
             }
@@ -161,12 +161,12 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
         Set<String> fileTypesForUpload = IOUtils.getUniqueFileExts(getContext(), filesForUpload);
         Set<String> unacceptableFileExts = SetUtils.difference(fileTypesForUpload, serverAcceptedFileTypes);
         if (compressVideos) {
-            Iterator<String> iter = unacceptableFileExts.iterator();
+            Iterator<String> unacceptableMimesIter = unacceptableFileExts.iterator();
             MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-            while (iter.hasNext()) {
-                String mimeType = mimeTypeMap.getMimeTypeFromExtension(iter.next());
-                if (mimeType != null && MimeTypeFilter.matches(mimeType,"video/*")) {
-                    iter.remove();
+            while (unacceptableMimesIter.hasNext()) {
+                String mimeType = mimeTypeMap.getMimeTypeFromExtension(unacceptableMimesIter.next());
+                if (mimeType != null && IOUtils.isPlayableMedia(mimeType)) {
+                    unacceptableMimesIter.remove();
                 }
             }
         }

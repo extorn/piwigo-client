@@ -235,7 +235,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     public void withFilesUnacceptableForUploadRejected(Set<String> unacceptableFileExts) {
-        DisplayUtils.runOnUiThread(()-> getUiHelper().showOrQueueDialogQuestion(R.string.alert_error, getString(R.string.alert_upload_job_contains_files_server_will_not_accept_pattern, unacceptableFileExts.size()), R.string.button_cancel, R.string.button_yes, new UnacceptableFilesAction<>(getUiHelper(), unacceptableFileExts)));
+        DisplayUtils.runOnUiThread(()-> getUiHelper().showOrQueueDialogQuestion(R.string.alert_error, getString(R.string.alert_upload_job_contains_files_server_will_not_accept_pattern, unacceptableFileExts.size()), R.string.button_no, R.string.button_yes, new UnacceptableFilesAction<>(getUiHelper(), unacceptableFileExts)));
     }
 
     private void addUploadingAsFieldsIfAppropriate(View v) {
@@ -441,7 +441,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override
                 public void onChanged() {
-                    compressVideosCheckbox.setEnabled(isVideoFilesWaitingForUpload());
+                    compressVideosCheckbox.setEnabled(isPlayableMediaFilesWaitingForUpload());
                     compressVideosCheckbox.callOnClick();
                     compressImagesCheckbox.setEnabled(isImageFilesWaitingForUpload());
                     compressImagesCheckbox.callOnClick();
@@ -530,7 +530,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                compressVideosButton.setEnabled(isVideoFilesWaitingForUpload());
+                compressVideosButton.setEnabled(isPlayableMediaFilesWaitingForUpload());
             }
         });
         ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
@@ -556,14 +556,14 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         return hasFileMatchingMime("image/*");
     }
 
-    private boolean isVideoFilesWaitingForUpload() {
-        return hasFileMatchingMime("video/*");
+    private boolean isPlayableMediaFilesWaitingForUpload() {
+        return hasFileMatchingMime("video/*", "audio/*");
     }
 
-    private boolean hasFileMatchingMime(String mimeTypeFilter) {
+    private boolean hasFileMatchingMime(String... mimeTypeFilter) {
         for (int i = 0; i < filesToUploadAdapter.getItemCount(); i++) {
             String mimeType = filesToUploadAdapter.getItemMimeType(i);
-            if (MimeTypeFilter.matches(mimeType,mimeTypeFilter)) {
+            if (null != MimeTypeFilter.matches(mimeType,mimeTypeFilter)) {
                 return true;
             }
         }
@@ -598,7 +598,9 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             event.requestUriReadPermission();
 
             Set<String> visibleMimeTypes = new HashSet<>();
+            //FIXME only add this if the server supports video of some sort!
             visibleMimeTypes.add("video/*");
+            visibleMimeTypes.add("audio/*");
             IOUtils.getMimeTypesFromFileExts(visibleMimeTypes, allowedFileTypes);
             event.withVisibleMimeTypes(visibleMimeTypes);
 
@@ -941,7 +943,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         boolean jobYetToCompleteAfterUploadingFiles = !noJobIsYetConfigured && !filesStillToBeUploaded && !jobIsFinished && !jobIsRunningNow; // crashed job just loaded basically
         uploadFilesNowButton.setEnabled(jobYetToFinishUploadingFiles || jobYetToCompleteAfterUploadingFiles); // Allow restart of the job.
 
-        compressVideosCheckbox.setEnabled((noJobIsYetConfigured || jobIsFinished) && isVideoFilesWaitingForUpload());
+        compressVideosCheckbox.setEnabled((noJobIsYetConfigured || jobIsFinished) && isPlayableMediaFilesWaitingForUpload());
         compressVideosCheckbox.callOnClick(); // set relevant fields to enabled / disabled
 
         compressImagesCheckbox.setEnabled((noJobIsYetConfigured || jobIsFinished) && isImageFilesWaitingForUpload());
