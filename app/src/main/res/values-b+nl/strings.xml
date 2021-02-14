@@ -47,7 +47,6 @@
     <string name="alert_message_success_connectionTest">Succes\nGebruikerstype:%1$s.</string>
     <string name="alert_message_no_available_image_sizes">Waarschuwing\nDe server heeft geen beschikbare afbeeldingsformaten gerapporteerd.</string>
     <string name="alert_success">SUCCES!</string>
-    <string name="alert_partial_success">INCOMPLEET</string>
     <string name="alert_error">Fout</string>
     <string name="alert_error_no_app_available_to_handle_action">Er is geen app gevonden om deze actie uit te voeren.</string>
     <string name="alert_error_no_app_available_to_rate_app">Er is geen app gevonden om deze app te beoordelen. Bedankt voor het proberen.</string>
@@ -702,4 +701,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Er is een fout opgetreden tijdens het uploaden. Wilt u:\n\nBekijk de fouten voordat u de upload handmatig herstart?\n\nVerwijder de problematische bestanden van de upload en voltooi?\n\nActies opnieuw proberen met fouten?</string>
     <string name="button_finish">Af hebben</string>
     <string name="button_review">Beoordeling</string>
+    <string name="error_file_not_found">Bestand niet gevonden</string>
+    <string name="no_errors_found_text">Geen fouten gevonden</string>
+    <string name="no_errors_found_title">Fouten</string>
 </resources>

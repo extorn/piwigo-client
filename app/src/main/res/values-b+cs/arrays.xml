@@ -153,7 +153,9 @@
                  - nahrávání souborů sdílených některými aplikacemi může tiše selhat
                  - zobrazení stavu úlohy pro úlohy, které skončily s některými poruchami, které po dokončení úlohy nejsou k dispozici
                 Změna:
-                 - Soubor, jehož nahrávání bylo zrušeno úlohou nahrávání kvůli chybě, zobrazí červené X"</item>
+                 - Soubor, jehož nahrávání bylo zrušeno úlohou nahrávání kvůli chybě, zobrazí červené X
+                 - Chyby nahrávání jsou nyní seskupeny podle místního souboru na stránce stavu úlohy nahrávání
+                 - Pokud se nahrávání nezdaří, zobrazí se nový dialog s možnostmi řešení problému"</item>
         <item>1.4.0.116</item>
         <item>"Oprava chyby:
                  chyby prezentace způsobující pády -"</item>

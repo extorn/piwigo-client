@@ -47,7 +47,6 @@
     <string name="alert_message_success_connectionTest">Úspěch\nTyp uživatele:%1$s.</string>
     <string name="alert_message_no_available_image_sizes">Varování\nServer nehlásil dostupné velikosti obrázků.</string>
     <string name="alert_success">ÚSPĚCH!</string>
-    <string name="alert_partial_success">NEÚPLNÝ</string>
     <string name="alert_error">Chyba</string>
     <string name="alert_error_no_app_available_to_handle_action">Nebyla nalezena žádná aplikace, která by tuto akci zvládla.</string>
     <string name="alert_error_no_app_available_to_rate_app">Nebyla nalezena žádná aplikace pro hodnocení této aplikace. Díky, že jste to vyzkoušeli.</string>
@@ -702,4 +701,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Při nahrávání došlo k chybě. Přejete si:\n\nZkontrolovat chyby před ručním restartováním nahrávání?\n\nOdebrat problematické soubory z nahrávání a dokončit?\n\nOpakovat akci s chybami?</string>
     <string name="button_finish">Dokončit</string>
     <string name="button_review">Posouzení</string>
+    <string name="error_file_not_found">Soubor nenalezen</string>
+    <string name="no_errors_found_text">Nebyly nalezeny žádné chyby</string>
+    <string name="no_errors_found_title">Chyby</string>
 </resources>

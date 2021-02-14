@@ -47,7 +47,6 @@
     <string name="alert_message_success_connectionTest">Successo\nTipo utente:%1$s.</string>
     <string name="alert_message_no_available_image_sizes">avvertimento\nIl server non ha segnalato le dimensioni delle immagini disponibili.</string>
     <string name="alert_success">SUCCESSO!</string>
-    <string name="alert_partial_success">INCOMPLETO</string>
     <string name="alert_error">Errore</string>
     <string name="alert_error_no_app_available_to_handle_action">Non è stata trovata alcuna app per gestire questa azione.</string>
     <string name="alert_error_no_app_available_to_rate_app">Non è stata trovata alcuna app per valutare questa app. Grazie per aver provato comunque.</string>
@@ -702,4 +701,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Si è verificato un errore durante il caricamento. Desideri:\n\nRivedere gli errori prima di riavviare manualmente il caricamento?\n\nRimuovere i file problematici dal caricamento e finire?\n\nRiprovare le azioni con errori?</string>
     <string name="button_finish">finire</string>
     <string name="button_review">Revisione</string>
+    <string name="error_file_not_found">File non trovato</string>
+    <string name="no_errors_found_text">Nessun errore trovato</string>
+    <string name="no_errors_found_title">Errori</string>
 </resources>

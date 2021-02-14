@@ -47,7 +47,6 @@
     <string name="alert_message_success_connectionTest">Éxito\nTipo de usuario:%1$s.</string>
     <string name="alert_message_no_available_image_sizes">Advertencia\nEl servidor no informó los tamaños de imagen disponibles.</string>
     <string name="alert_success">¡ÉXITO!</string>
-    <string name="alert_partial_success">INCOMPLETO</string>
     <string name="alert_error">Error</string>
     <string name="alert_error_no_app_available_to_handle_action">No se pudo encontrar ninguna aplicación para manejar esta acción.</string>
     <string name="alert_error_no_app_available_to_rate_app">No se pudo encontrar ninguna aplicación para calificar esta aplicación. Gracias por intentarlo.</string>
@@ -702,4 +701,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Se encontró un error durante la carga. Deseas:\n\n¿Revisar los errores antes de reiniciar manualmente la carga?\n\n¿Eliminar los archivos problemáticos de la carga y finalizar?\n\n¿Reintentar acciones con errores?</string>
     <string name="button_finish">Terminar</string>
     <string name="button_review">revisión</string>
+    <string name="error_file_not_found">Archivo no encontrado</string>
+    <string name="no_errors_found_text">No se encontraron errores</string>
+    <string name="no_errors_found_title">Errores</string>
 </resources>

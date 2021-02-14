@@ -47,7 +47,6 @@
     <string name="alert_message_success_connectionTest">Успех\nТип пользователя:%1$s.</string>
     <string name="alert_message_no_available_image_sizes">Предупреждение\nСервер не сообщил о доступных размерах изображений.</string>
     <string name="alert_success">УСПЕХА!</string>
-    <string name="alert_partial_success">НЕПОЛНЫЙ</string>
     <string name="alert_error">ошибка</string>
     <string name="alert_error_no_app_available_to_handle_action">Не найдено приложение для обработки этого действия.</string>
     <string name="alert_error_no_app_available_to_rate_app">Не найдено ни одного приложения для оценки этого приложения. Спасибо за попытку.</string>
@@ -702,4 +701,7 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Произошла ошибка при загрузке. Вы хотите:\n\nПросмотреть ошибки перед перезапуском загрузки вручную?\n\nУдалить проблемные файлы из загрузки и завершить?\n\nПовторить действия с ошибками?</string>
     <string name="button_finish">Конец</string>
     <string name="button_review">Рассмотрение</string>
+    <string name="error_file_not_found">Файл не найден</string>
+    <string name="no_errors_found_text">Ошибок не найдено</string>
+    <string name="no_errors_found_title">Ошибки</string>
 </resources>

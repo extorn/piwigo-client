@@ -66,7 +66,6 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     protected void onUploadComplete(@NonNull final Context context, final UploadJob job) {
         if (getParent() != null && getParent().isAdded()) {
             if (job.hasJobCompletedAllActionsSuccessfully(context) && job.isFinished()) {
-                getParent().setUploadJobId(null);
                 ForegroundPiwigoUploadService.removeJob(job);
                 HashSet<Uri> filesPendingApproval = job.getFilesPendingApproval();
                 if (filesPendingApproval.size() > 0) {
@@ -76,12 +75,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
             } else if (job.getAndClearWasLastRunCancelled()) {
                 getParent().getUiHelper().showOrQueueDialogMessage(R.string.alert_message_upload_cancelled, context.getString(R.string.alert_message_upload_cancelled_message), R.string.button_ok);
             }
-            getParent().allowUserUploadConfiguration(job);
             updateOverallUploadProgress(job.getOverallUploadProgressInt());
-            // This will release permissions for the folder tree upload items loaded from (will get annoying)
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                    getParent().releaseUriPermissions();
-//                }
         }
 
         // ensure the album view is refreshed if visible (to remove temp upload album).
@@ -94,14 +88,10 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     private void notifyUserUploadJobComplete(@NonNull Context context, UploadJob job) {
-        String message;
         if (job.hasJobCompletedAllActionsSuccessfully(context)) {
-            message = context.getString(R.string.alert_upload_success);
-            getParent().notifyUser(context, R.string.alert_success, message);
+            getParent().onUploadJobSuccess(job);
         } else {
-            message = context.getString(R.string.alert_upload_partial_success);
-            getParent().notifyUser(context, R.string.alert_partial_success, message);
-            getParent().onUploadJobFailure();
+            getParent().onUploadJobFailure(job);
         }
         getParent().hideOverallUploadProgressIndicator();
     }
@@ -169,7 +159,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
             }
         }
         if (response.getProgress() == 100) {
-            onFileUploadComplete(context, response);
+            onUploadOfFileComplete(context, response);
         }
     }
 
@@ -192,7 +182,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
 //        adapter.updateUploadStatus(response.getCompressedFileUpload(), UploadJob.COMPRESSED);
     }
 
-    private void onFileUploadComplete(@NonNull Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+    private void onUploadOfFileComplete(@NonNull Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
 
         //TODO This method causes lots of server calls and is really unnecessary! Refresh once at the end
 

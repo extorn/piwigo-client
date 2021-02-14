@@ -47,7 +47,6 @@
     <string name="alert_message_success_connectionTest">Succès\nType d\'utilisateur:%1$s.</string>
     <string name="alert_message_no_available_image_sizes">Attention\nLe serveur n\'a pas signalé les tailles d\'image disponibles.</string>
     <string name="alert_success">SUCCÈS!</string>
-    <string name="alert_partial_success">INCOMPLET</string>
     <string name="alert_error">Erreur</string>
     <string name="alert_error_no_app_available_to_handle_action">Aucune application n\'a été trouvée pour gérer cette action.</string>
     <string name="alert_error_no_app_available_to_rate_app">Aucune application n\'a pu être trouvée pour évaluer cette application. Merci d\'avoir essayé.</string>
@@ -702,4 +701,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Une erreur s\'est produite lors du téléchargement. Souhaitez-vous:\n\nVérifiez les erreurs avant de redémarrer manuellement le téléchargement?\n\nSupprimer les fichiers problématiques du téléchargement et terminer?\n\nRéessayer les actions avec des erreurs?</string>
     <string name="button_finish">terminer</string>
     <string name="button_review">La revue</string>
+    <string name="error_file_not_found">Fichier introuvable</string>
+    <string name="no_errors_found_text">Aucune erreur trouvée</string>
+    <string name="no_errors_found_title">les erreurs</string>
 </resources>

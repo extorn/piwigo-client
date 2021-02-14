@@ -153,7 +153,9 @@
                  - Das Hochladen von Dateien, die von einigen Apps gemeinsam genutzt werden, kann unbemerkt fehlschlagen
                  - Jobstatusansicht für Jobs, die mit einigen Fehlern beendet wurden, die nach Beendigung des Jobs nicht verfügbar sind
                 Veränderung:
-                 - In einer Datei, deren Upload aufgrund eines Fehlers vom Upload-Auftrag abgebrochen wurde, wird ein rotes X angezeigt"</item>
+                 - In einer Datei, deren Upload aufgrund eines Fehlers vom Upload-Auftrag abgebrochen wurde, wird ein rotes X angezeigt
+                 - Die Upload-Fehler werden jetzt auf der Statusseite des Upload-Jobs nach lokaler Datei gruppiert
+                 - Wenn ein Upload fehlschlägt, werden Sie in einem neuen Dialogfeld mit den Optionen zur Problemlösung aufgefordert"</item>
         <item>1.4.0.116</item>
         <item>"Bug-Fix:
                  - Diashow-Fehler, die Abstürze verursachen"</item>

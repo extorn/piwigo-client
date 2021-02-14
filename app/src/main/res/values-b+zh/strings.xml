@@ -47,7 +47,6 @@
     <string name="alert_message_success_connectionTest">成功\n用户类型：%1$s。</string>
     <string name="alert_message_no_available_image_sizes">警告\n服务器未报告可用图像大小。</string>
     <string name="alert_success">成功！</string>
-    <string name="alert_partial_success">不完整</string>
     <string name="alert_error">错误</string>
     <string name="alert_error_no_app_available_to_handle_action">找不到应用程序来处理此操作。</string>
     <string name="alert_error_no_app_available_to_rate_app">找不到任何应用对该应用进行评分。感谢您的尝试。</string>
@@ -702,4 +701,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">上载时发生错误。 您是否希望：\n\n在手动重新启动上传之前查看错误？\n\n从上传中删除有问题的文件并完成？\n\n重试错误操作？</string>
     <string name="button_finish">完</string>
     <string name="button_review">评论</string>
+    <string name="error_file_not_found">文件未找到</string>
+    <string name="no_errors_found_text">找不到错误</string>
+    <string name="no_errors_found_title">失误</string>
 </resources>

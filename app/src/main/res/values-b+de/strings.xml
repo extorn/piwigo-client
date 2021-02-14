@@ -47,7 +47,6 @@
     <string name="alert_message_success_connectionTest">Erfolg\nBenutzertyp:%1$s.</string>
     <string name="alert_message_no_available_image_sizes">Warnung\nDer Server hat keine verfügbaren Bildgrößen gemeldet.</string>
     <string name="alert_success">ERFOLG!</string>
-    <string name="alert_partial_success">UNVOLLSTÄNDIG</string>
     <string name="alert_error">Error</string>
     <string name="alert_error_no_app_available_to_handle_action">Es konnte keine App gefunden werden, die diese Aktion ausführt.</string>
     <string name="alert_error_no_app_available_to_rate_app">Es wurde keine App gefunden, um diese App zu bewerten. Danke, dass du es versucht hast.</string>
@@ -702,4 +701,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Beim Hochladen ist ein Fehler aufgetreten. Möchten Sie:\n\nÜberprüfen Sie die Fehler, bevor Sie den Upload manuell neu starten.\n\nEntfernen Sie die problematischen Dateien aus dem Upload und beenden Sie?\n\nAktionen mit Fehlern wiederholen?</string>
     <string name="button_finish">Fertig</string>
     <string name="button_review">Rezension</string>
+    <string name="error_file_not_found">Datei nicht gefunden</string>
+    <string name="no_errors_found_text">Keine Fehler gefunden</string>
+    <string name="no_errors_found_title">Fehler</string>
 </resources>

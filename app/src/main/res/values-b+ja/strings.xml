@@ -47,7 +47,6 @@
     <string name="alert_message_success_connectionTest">成功\nユーザータイプ：%1$s。</string>
     <string name="alert_message_no_available_image_sizes">警告\nサーバーは利用可能な画像サイズを報告しませんでした。</string>
     <string name="alert_success">成功！</string>
-    <string name="alert_partial_success">不完全な</string>
     <string name="alert_error">エラー</string>
     <string name="alert_error_no_app_available_to_handle_action">このアクションを処理するアプリが見つかりませんでした。</string>
     <string name="alert_error_no_app_available_to_rate_app">このアプリを評価するアプリが見つかりませんでした。試してくれてありがとう。</string>
@@ -702,4 +701,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">アップロード中にエラーが発生しました。 あなたはしたいですか：\n\nアップロードを手動で再開する前にエラーを確認しますか？\n\n問題のあるファイルをアップロードから削除して終了しますか？\n\nエラーのあるアクションを再試行しますか？</string>
     <string name="button_finish">終了</string>
     <string name="button_review">レビュー</string>
+    <string name="error_file_not_found">ファイルが見つかりません</string>
+    <string name="no_errors_found_text">エラーは見つかりませんでした</string>
+    <string name="no_errors_found_title">エラー</string>
 </resources>

@@ -201,7 +201,7 @@
                 android:text="@string/errors_encountered_list_title"
                 android:textAppearance="?textAppearanceCaption" />
 
-            <ListView
+            <delit.libs.ui.view.list.CustomExpandableListView
                 android:id="@+id/errors_encountered_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -153,7 +153,9 @@
                  - le téléchargement de fichiers partagés par certaines applications peut échouer silencieusement
                  - vue de l\'état des travaux pour les travaux qui se sont terminés avec des échecs non disponibles après la fin du travail
                 Changement:
-                 - Un fichier dont le téléchargement a été annulé par la tâche de téléchargement en raison d\'une erreur affichera un X rouge"</item>
+                 - Un fichier dont le téléchargement a été annulé par la tâche de téléchargement en raison d\'une erreur affichera un X rouge
+                 - Les erreurs de téléchargement sont désormais regroupées par fichier local sur la page d\'état de la tâche de téléchargement
+                 - Si un téléchargement échoue, une nouvelle boîte de dialogue s\'affiche avec les options de résolution du problème"</item>
         <item>1.4.0.116</item>
         <item>"Correction d\'un bug:
                  - bugs de diaporama provoquant des plantages"</item>

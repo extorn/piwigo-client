@@ -46,7 +46,7 @@ public class StringMapExpandableListAdapterBuilder extends ExpandableListAdapter
     public static class StringViewBinding extends ViewBinding<String> {
 
         public StringViewBinding() {
-            this(R.layout.exif_list_group_layout, R.id.lblListItemHeader);
+            this(R.layout.layout_expandable_list_header_simple, R.id.lblListItemHeader);
         }
 
         public StringViewBinding(@LayoutRes int layoutId, @IdRes int textViewId) {

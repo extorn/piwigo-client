@@ -153,7 +153,9 @@
                  - la carga de archivos compartidos por algunas aplicaciones puede fallar silenciosamente
                  - Vista del estado del trabajo para trabajos que terminaron con algunas fallas no disponible después de que finaliza el trabajo
                 Cambio:
-                 - Un archivo cuya carga haya sido cancelada por el trabajo de carga debido a un error mostrará una X roja"</item>
+                 - Un archivo cuya carga haya sido cancelada por el trabajo de carga debido a un error mostrará una X roja
+                 - Los errores de carga ahora están agrupados por archivo local en la página de estado del trabajo de carga
+                 - Si una carga falla, aparece un nuevo cuadro de diálogo con las opciones para la resolución del problema."</item>
         <item>1.4.0.116</item>
         <item>"Arreglo del fallo:
                  - errores de presentación de diapositivas que causan bloqueos"</item>

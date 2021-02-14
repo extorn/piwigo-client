@@ -506,28 +506,28 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     errorMsg = ((PiwigoResponseBufferingHandler.CustomErrorResponse) error).getErrorMessage();
                 }
                 if(errorMsg != null) {
-                    thisUploadJob.recordError(new Date(), "PiwigoPrepareUpload:Failed : " + errorMsg);
+                    thisUploadJob.recordError("PiwigoPrepareUpload:Failed : " + errorMsg);
                 } else {
-                    thisUploadJob.recordError(new Date(), "PiwigoPrepareUpload:Failed");
+                    thisUploadJob.recordError("PiwigoPrepareUpload:Failed");
                 }
 
             }
             if(response instanceof PiwigoCleanupPostUploadFailedResponse) {
-                thisUploadJob.recordError(new Date(), "PiwigoCleanupPostUpload:Failed");
+                thisUploadJob.recordError("PiwigoCleanupPostUpload:Failed");
             }
             if(response instanceof PiwigoUploadFileAddToAlbumFailedResponse) {
-                thisUploadJob.recordError(new Date(), "PiwigoUploadFileAddToAlbum:Failed : " + ((PiwigoUploadFileAddToAlbumFailedResponse) response).getFileForUpload().getPath());
+                thisUploadJob.recordErrorLinkedToFile(((PiwigoUploadFileAddToAlbumFailedResponse) response).getFileForUpload(), "PiwigoUploadFileAddToAlbum:Failed : " + ((PiwigoUploadFileAddToAlbumFailedResponse) response).getFileForUpload().getPath());
             }
             if(response instanceof PiwigoUploadFileChunkFailedResponse) {
-                thisUploadJob.recordError(new Date(), "PiwigoUploadFileChunk:Failed : " + ((PiwigoUploadFileChunkFailedResponse) response).getFileForUpload().toString());
+                thisUploadJob.recordErrorLinkedToFile(((PiwigoUploadFileChunkFailedResponse) response).getFileForUpload(), "PiwigoUploadFileChunk:Failed : " + ((PiwigoUploadFileChunkFailedResponse) response).getFileForUpload().toString());
             }
             if(response instanceof PiwigoUploadFileLocalErrorResponse) {
                 String error = ((PiwigoUploadFileLocalErrorResponse) response).getError().getMessage();
-                thisUploadJob.recordError(new Date(), "PiwigoUploadFileLocalError: " + error);
+                thisUploadJob.recordErrorLinkedToFile(((PiwigoUploadFileLocalErrorResponse) response).getFileForUpload(), "PiwigoUploadFileLocalError: " + error);
             } else if(response instanceof PiwigoUploadUnexpectedLocalErrorResponse) {
                 // need else as this is extended by the previous exception
                 String error = ((PiwigoUploadUnexpectedLocalErrorResponse) response).getError().getMessage();
-                thisUploadJob.recordError(new Date(), "PiwigoUploadUnexpectedLocalError: " + error);
+                thisUploadJob.recordError("PiwigoUploadUnexpectedLocalError: " + error);
             }
         }
         postNewResponse(thisUploadJob.getJobId(), response);
@@ -751,6 +751,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     }
 
     private void invokeWithRetries(UploadJob thisUploadJob, AbstractPiwigoWsResponseHandler handler, int maxRetries) {
+        invokeWithRetries(thisUploadJob, null, handler, maxRetries);
+    }
+
+    private void invokeWithRetries(UploadJob thisUploadJob, Uri fileLinkedToAction, AbstractPiwigoWsResponseHandler handler, int maxRetries) {
         int allowedAttempts = maxRetries;
         while (!handler.isSuccess() && allowedAttempts > 0 && !thisUploadJob.isCancelUploadAsap()) {
             allowedAttempts--;
@@ -758,7 +762,11 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             handler.invokeAndWait(this, thisUploadJob.getConnectionPrefs());
         }
         if(!handler.isSuccess()) {
-            thisUploadJob.recordError(new Date(), buildPiwigoServerCallErrorMessage(handler));
+            if(fileLinkedToAction != null) {
+                thisUploadJob.recordErrorLinkedToFile(fileLinkedToAction, buildPiwigoServerCallErrorMessage(handler));
+            } else {
+                thisUploadJob.recordError(buildPiwigoServerCallErrorMessage(handler));
+            }
             recordServerCallError(handler, thisUploadJob.getConnectionPrefs());
         }
     }
@@ -1024,7 +1032,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             }
         } else {
             orphans = new ArrayList<>(0);
-            thisUploadJob.recordError(new Date(), getString(R.string.upload_error_orphaned_file_retrieval_unavailable));
+            thisUploadJob.recordError(getString(R.string.upload_error_orphaned_file_retrieval_unavailable));
         }
 
         return orphans;
@@ -1531,7 +1539,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 //            TaskProgressTracker verificationTracker = thisUploadJob.getTaskProgressTrackerForSingleFileVerification();
             try {
 
-                Boolean verifiedUploadedFile = verifyFileNotCorrupted(thisUploadJob, thisUploadJob.getUploadedFileResource(fileForUpload));
+                Boolean verifiedUploadedFile = verifyFileNotCorrupted(thisUploadJob, fileForUpload, thisUploadJob.getUploadedFileResource(fileForUpload));
                 if (verifiedUploadedFile == null) {
                     // notify the listener of the final error we received from the server
                     String errorMsg = getString(R.string.error_upload_file_verification_failed, fileForUpload.getPath());
@@ -1695,12 +1703,12 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
     }
 
-    private Boolean verifyFileNotCorrupted(UploadJob uploadJob, ResourceItem uploadedResource) {
+    private Boolean verifyFileNotCorrupted(UploadJob uploadJob, Uri fileForUpload, ResourceItem uploadedResource) {
         if(uploadedResource.getFileChecksum() == null) {
             return Boolean.FALSE; // cannot verify it as don't have a local checksum for some reason. Will have to assume it is corrupt.
         }
         ImageCheckFilesResponseHandler<ResourceItem> imageFileCheckHandler = new ImageCheckFilesResponseHandler<>(uploadedResource);
-        invokeWithRetries(uploadJob, imageFileCheckHandler, 2);
+        invokeWithRetries(uploadJob, fileForUpload, imageFileCheckHandler, 2);
         Boolean val = imageFileCheckHandler.isSuccess() ? imageFileCheckHandler.isFileMatch() : null;
         if (Boolean.FALSE.equals(val)) {
 
@@ -1729,7 +1737,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         ImageUpdateInfoResponseHandler<ResourceItem> imageInfoUpdateHandler = new ImageUpdateInfoResponseHandler<>(uploadedResource, false);
 
         imageInfoUpdateHandler.setFilename(IOUtils.getFilename(this, fileForUpload));
-        invokeWithRetries(thisUploadJob, imageInfoUpdateHandler, 2);
+        invokeWithRetries(thisUploadJob, fileForUpload, imageInfoUpdateHandler, 2);
         if (!imageInfoUpdateHandler.isSuccess()) {
             Iterator<Long> iter = uploadedResource.getLinkedAlbums().iterator();
             boolean ghostAlbumRemovedFromImage = false;
@@ -1742,7 +1750,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             }
             if (ghostAlbumRemovedFromImage) {
                 // retry.
-                invokeWithRetries(thisUploadJob, imageInfoUpdateHandler, 2);
+                invokeWithRetries(thisUploadJob, fileForUpload, imageInfoUpdateHandler, 2);
             }
         }
         return imageInfoUpdateHandler.getResponse();
@@ -1759,7 +1767,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         // Attempt to upload this chunk of the file
         NewImageUploadFileChunkResponseHandler imageChunkUploadHandler = new NewImageUploadFileChunkResponseHandler(currentUploadFileChunk);
-        invokeWithRetries(thisUploadJob, imageChunkUploadHandler, maxChunkUploadAutoRetries);
+        invokeWithRetries(thisUploadJob, uploadJobKey, imageChunkUploadHandler, maxChunkUploadAutoRetries);
 
         ResourceItem uploadedResource = null;
         if (imageChunkUploadHandler.isSuccess()) {

@@ -153,7 +153,9 @@
                  - il caricamento di file condivisi da alcune app può non riuscire silenziosamente
                  - Visualizzazione dello stato del lavoro per i lavori terminati con alcuni errori non disponibile al termine del lavoro
                 Modificare:
-                 - Un file il cui caricamento è stato annullato dal processo di caricamento a causa di un errore mostrerà una X rossa"</item>
+                 - Un file il cui caricamento è stato annullato dal processo di caricamento a causa di un errore mostrerà una X rossa
+                 - Gli errori di caricamento sono ora raggruppati per file locale nella pagina di stato del lavoro di caricamento
+                 - Se un caricamento non riesce, viene visualizzata una nuova finestra di dialogo con le opzioni per la risoluzione del problema"</item>
         <item>1.4.0.116</item>
         <item>"Risoluzione del problema:
                  - bug della presentazione che causano arresti anomali"</item>

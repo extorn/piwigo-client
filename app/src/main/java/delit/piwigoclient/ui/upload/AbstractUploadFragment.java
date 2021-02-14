@@ -966,7 +966,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     private void updateActiveJobActionButtonsStatus(@NonNull Context context, @Nullable UploadJob job) {
-        if (job != null) {
+        if (job != null && job.isRunningNow() || !job.hasJobCompletedAllActionsSuccessfully(context)) {
             uploadJobStatusButton.setVisibility(VISIBLE);
             boolean canForceDeleteJob = job.hasBeenRunBefore() && !job.isRunningNow() && !job.hasJobCompletedAllActionsSuccessfully(context);
             deleteUploadJobButton.setVisibility(canForceDeleteJob ? VISIBLE : GONE);
@@ -1152,8 +1152,16 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         }
     }
 
-    public void onUploadJobFailure() {
+    public void onUploadJobSuccess(UploadJob job) {
+        setUploadJobId(null);
+        String message = getString(R.string.alert_upload_success);
+        notifyUser(getContext(), R.string.alert_success, message);
+        allowUserUploadConfiguration(job);
+    }
+
+    public void onUploadJobFailure(UploadJob job) {
         getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_question_title, getString(R.string.some_files_failed_to_upload_what_action_do_you_wish_to_take), R.string.button_finish, R.string.button_review, R.string.button_retry, new OnUploadJobFailureQuestionListener<>(getUiHelper()));
+        allowUserUploadConfiguration(job);
     }
 
     private static class OnUploadJobFailureQuestionListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {

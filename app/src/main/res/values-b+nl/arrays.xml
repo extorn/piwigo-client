@@ -153,7 +153,9 @@
                  - het uploaden van bestanden die door sommige apps worden gedeeld, kan stil mislukken
                  - taakstatusweergave voor taken die zijn voltooid met enkele fouten die niet beschikbaar zijn nadat de taak is voltooid
                 Verandering:
-                 - Een bestand waarvan het uploaden is geannuleerd door de uploadtaak vanwege een fout, zal een rode X weergeven"</item>
+                 - Een bestand waarvan het uploaden is geannuleerd door de uploadtaak vanwege een fout, zal een rode X weergeven
+                 - De uploadfouten zijn nu gegroepeerd per lokaal bestand op de statuspagina van de uploadtaak
+                 - Als het uploaden mislukt, verschijnt er een nieuw dialoogvenster met de opties voor probleemoplossing"</item>
         <item>1.4.0.116</item>
         <item>"Bugfix:
                  - bugs in diavoorstellingen die crashes veroorzaken"</item>

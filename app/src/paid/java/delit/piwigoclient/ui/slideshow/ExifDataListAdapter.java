@@ -27,7 +27,7 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
     private final String[] childFrom;
 
     public ExifDataListAdapter(Context context, List<? extends Map<String, ?>> groupData, String[] groupFrom, int[] groupTo, List<? extends List<? extends Map<String, ?>>> childData, String[] childFrom, int[] childTo) {
-        super(context, groupData, R.layout.exif_list_group_layout, groupFrom, groupTo, childData, R.layout.exif_list_children_layout, childFrom, childTo);
+        super(context, groupData, R.layout.layout_expandable_list_header_simple, groupFrom, groupTo, childData, R.layout.layout_expandable_list_child_grid, childFrom, childTo);
         this.childData = childData;
         this.childFrom = childFrom;
         this.childTo = childTo;
@@ -76,10 +76,10 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
         View childView;
         switch(position % 2) {
             case 0:
-                childView = LayoutInflater.from(context).inflate(R.layout.exif_list_child_heading_layout, parent, false);
+                childView = LayoutInflater.from(context).inflate(R.layout.layout_list_expandable_list_child_heading, parent, false);
                 break;
             case 1:
-                childView = LayoutInflater.from(context).inflate(R.layout.exif_list_child_value_layout, parent, false);
+                childView = LayoutInflater.from(context).inflate(R.layout.layout_list_expandable_list_child_value, parent, false);
                 break;
             default:
                 throw new RuntimeException("Will never occur");

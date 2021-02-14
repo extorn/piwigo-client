@@ -30,6 +30,7 @@ import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.libs.util.progress.ProgressListener;
 import delit.libs.util.progress.TaskProgressTracker;
+import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -76,7 +77,7 @@ public class UploadJob implements Parcelable {
     private boolean finished;
     private long temporaryUploadAlbum = -1;
     private SortedSet<Uri> filesWithError = new TreeSet<>();
-    private LinkedHashMap<Date, String> errors = new LinkedHashMap<>();
+    private LinkedHashMap<String, AreaErrors> errors = new LinkedHashMap<>();
     private VideoCompressionParams videoCompressionParams;
     private ImageCompressionParams imageCompressionParams;
     private boolean allowUploadOfRawVideosIfIncompressible;
@@ -124,7 +125,7 @@ public class UploadJob implements Parcelable {
         fileChecksums = ParcelUtils.readMap(in, Uri.class.getClassLoader());
         finished = ParcelUtils.readBool(in);
         temporaryUploadAlbum = in.readLong();
-        errors = ParcelUtils.readMap(in, errors, Date.class.getClassLoader());
+        errors = ParcelUtils.readMapTypedValues(in, errors, AreaErrors.class);
         videoCompressionParams = ParcelUtils.readParcelable(in, UploadJob.VideoCompressionParams.class);
         imageCompressionParams = ParcelUtils.readParcelable(in, UploadJob.ImageCompressionParams.class);
         allowUploadOfRawVideosIfIncompressible = ParcelUtils.readBool(in);
@@ -526,7 +527,7 @@ public class UploadJob implements Parcelable {
                 TaskProgressTracker fileChecksumProgressTracker = checksumProgressTracker.addSubTask("file checksum", 100, 1); // tick one file off. Each file has 0 - 100% completion
                 if (filesNoLongerAvailable.contains(f)) {
                     // Remove file from upload list
-                    failures.put(f, new Md5SumUtils.Md5SumException("File not found"));
+                    failures.put(f, new Md5SumUtils.Md5SumException(context.getString(R.string.error_file_not_found)));
                 } else if (needsUpload(f) || needsVerification(f)) {
                     Uri fileForChecksumCalc = null;
                     if (!((isPhoto(context, f) && isCompressPhotosBeforeUpload())
@@ -625,6 +626,7 @@ public class UploadJob implements Parcelable {
         for (Uri f : files) {
             IOUtils.getSingleDocFile(context, f);
             DocumentFile docFile = IOUtils.getSingleDocFile(context, f);
+            //FIXME add this to the if statement for testing with job failure:   || !docFile.isFile()
             if (docFile != null && (docFile.isDirectory() || !docFile.exists())) {
                 unavailableFiles.add(f);
             }
@@ -723,15 +725,30 @@ public class UploadJob implements Parcelable {
         this.loadedFromFile = loadedFromFile;
     }
 
-    public void recordError(Date date, String message) {
-        errors.put(date, message);
+    private @NonNull AreaErrors getErrorsForKey(String key) {
+        AreaErrors keyedErrors = errors.get(key);
+        if(keyedErrors == null) {
+            keyedErrors = new AreaErrors();
+            errors.put(key, keyedErrors);
+        }
+        return keyedErrors;
+    }
+
+    public void recordError(String message) {
+        AreaErrors generalErrors = getErrorsForKey("General");
+        generalErrors.addError(new Date(), message);
+    }
+
+    public void recordErrorLinkedToFile(Uri fileLinkedToError, String message) {
+        AreaErrors fileErrors = getErrorsForKey(fileLinkedToError.toString());
+        fileErrors.addError(new Date(), message);
     }
 
     public boolean hasErrors() {
         return errors.size() > 0;
     }
 
-    public LinkedHashMap<Date, String> getErrors() {
+    public LinkedHashMap<String, AreaErrors> getErrors() {
         return errors;
     }
 
@@ -1117,4 +1134,49 @@ public class UploadJob implements Parcelable {
             return audioBitrate > 0 || quality - 0.0001 > 0;
         }
     }
+
+    public static class AreaErrors implements Parcelable {
+        private LinkedHashMap<Date,String> errorsRecorded = new LinkedHashMap<>();
+
+        protected AreaErrors() {}
+
+        protected AreaErrors(Parcel in) {
+            ParcelUtils.readMap(in, errorsRecorded);
+        }
+
+        public void addError(Date time, String error) {
+            errorsRecorded.put(time, error);
+        }
+
+        public LinkedHashMap<Date, String> getErrorsRecorded() {
+            return errorsRecorded;
+        }
+
+        public Set<Map.Entry<Date, String>> getEntrySet() {
+            return errorsRecorded.entrySet();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            ParcelUtils.writeMap(dest, errorsRecorded);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<AreaErrors> CREATOR = new Creator<AreaErrors>() {
+            @Override
+            public AreaErrors createFromParcel(Parcel in) {
+                return new AreaErrors(in);
+            }
+
+            @Override
+            public AreaErrors[] newArray(int size) {
+                return new AreaErrors[size];
+            }
+        };
+    }
+
 }

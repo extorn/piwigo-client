@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -243,6 +244,35 @@ public class ParcelUtils {
         } finally {
             p.recycle();
         }
+    }
+
+    public static <S,T,V extends Map<S, T>> V readMapTypedValues(Parcel in, V dest, Class<T> mapValueClass) {
+        ClassLoader loader = null;
+        if(mapValueClass != null) {
+            loader = mapValueClass.getClassLoader();
+        }
+        ArrayList<S> keys = readValue(in, loader, ArrayList.class);
+        ArrayList<T> values = readValue(in, loader, ArrayList.class);
+        boolean loadData = true;
+        if(mapValueClass != null) {
+            if (values != null && !values.isEmpty()) {
+                for (T item : values) {
+                    if (!mapValueClass.isInstance(item)) {
+                        Logging.log(Log.ERROR, TAG, "Unexpected type found reading typed map (all data rejected). Expected %1$s, was %2$s", mapValueClass, item == null ? null : item.getClass());
+                        loadData = false;
+                    }
+                }
+            }
+        }
+        if(dest == null) {
+            dest = (V)new HashMap<S,T>(keys != null ? keys.size() : 0);
+        }
+        if(loadData && keys != null && values != null) {
+            for(int i = 0; i < values.size(); i++) {
+                dest.put(keys.get(i), values.get(i));
+            }
+        }
+        return dest;
     }
 
     public static <S,T,V extends Map<S, T>> V readMap(Parcel in, V dest, ClassLoader loader) {
