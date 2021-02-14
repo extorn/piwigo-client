@@ -525,38 +525,41 @@ public class UploadJob implements Parcelable {
             }
             for (Uri f : filesNotFinished) {
                 TaskProgressTracker fileChecksumProgressTracker = checksumProgressTracker.addSubTask("file checksum", 100, 1); // tick one file off. Each file has 0 - 100% completion
-                if (filesNoLongerAvailable.contains(f)) {
-                    // Remove file from upload list
-                    failures.put(f, new Md5SumUtils.Md5SumException(context.getString(R.string.error_file_not_found)));
-                } else if (needsUpload(f) || needsVerification(f)) {
-                    Uri fileForChecksumCalc = null;
-                    if (!((isPhoto(context, f) && isCompressPhotosBeforeUpload())
-                            || canCompressVideoFile(context, f) && isCompressVideosBeforeUpload())) {
-                        fileForChecksumCalc = f;
-                    } else if (getCompressedFile(f) != null) {
-                        fileForChecksumCalc = getCompressedFile(f);
-                    }
-                    if (fileForChecksumCalc != null) {
-                        // if its not a file we're going to compress but haven't yet
+                try {
+                    if (filesNoLongerAvailable.contains(f)) {
+                        // Remove file from upload list
+                        failures.put(f, new Md5SumUtils.Md5SumException(context.getString(R.string.error_file_not_found)));
+                    } else if (needsUpload(f) || needsVerification(f)) {
+                        Uri fileForChecksumCalc = null;
+                        if (!((isPhoto(context, f) && isCompressPhotosBeforeUpload())
+                                || canCompressVideoFile(context, f) && isCompressVideosBeforeUpload())) {
+                            fileForChecksumCalc = f;
+                        } else if (getCompressedFile(f) != null) {
+                            fileForChecksumCalc = getCompressedFile(f);
+                        }
+                        if (fileForChecksumCalc != null) {
+                            // if its not a file we're going to compress but haven't yet
 
-                        // recalculate checksums for all files not yet uploaded
-                        String checksum = null;
-                        try {
-                            checksum = Md5SumUtils.calculateMD5(context.getContentResolver(), fileForChecksumCalc, fileChecksumProgressTracker);
-                        } catch (Md5SumUtils.Md5SumException e) {
-                            failures.put(f, e);
-                            Logging.log(Log.DEBUG, TAG, "Error calculating MD5 hash for file. Noting failure");
-                        } finally {
-                            if (!newJob) {
-                                fileChecksums.remove(f);
-                            }
-                            if (checksum != null) {
-                                fileChecksums.put(f, checksum);
+                            // recalculate checksums for all files not yet uploaded
+                            String checksum = null;
+                            try {
+                                checksum = Md5SumUtils.calculateMD5(context.getContentResolver(), fileForChecksumCalc, fileChecksumProgressTracker);
+                            } catch (Md5SumUtils.Md5SumException e) {
+                                failures.put(f, e);
+                                Logging.log(Log.DEBUG, TAG, "Error calculating MD5 hash for file. Noting failure");
+                            } finally {
+                                if (!newJob) {
+                                    fileChecksums.remove(f);
+                                }
+                                if (checksum != null) {
+                                    fileChecksums.put(f, checksum);
+                                }
                             }
                         }
                     }
+                } finally {
+                    fileChecksumProgressTracker.markComplete();
                 }
-                fileChecksumProgressTracker.markComplete();
             }
             return failures;
         } finally {
