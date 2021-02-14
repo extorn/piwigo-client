@@ -242,6 +242,7 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>
+        <item>"bugfixes only"</item>
         <item>1.4.0.118</item>
         <item>"Bugfix:
                 - implement the refresh button on the slideshow 'item not loaded' page"</item>
