@@ -31,7 +31,7 @@ public class ObjectUtils {
         try {
             return clazz.getField(fieldName).getInt(null);
         } catch (IllegalAccessException | NoSuchFieldException e) {
-            Logging.log(Log.ERROR, TAG, "Unable to get static field from class");
+            Logging.log(Log.ERROR, TAG, "Unable to get static int field from class");
         }
         return -1;
     }
@@ -40,7 +40,7 @@ public class ObjectUtils {
         try {
             return (String)clazz.getField(fieldName).get(null);
         } catch (IllegalAccessException | NoSuchFieldException e) {
-            Logging.log(Log.ERROR, TAG, "Unable to get static field from class");
+            Logging.log(Log.ERROR, TAG, "Unable to get static string field from class");
         }
         return null;
     }

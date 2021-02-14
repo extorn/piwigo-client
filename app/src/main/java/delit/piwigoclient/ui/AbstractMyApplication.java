@@ -136,7 +136,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         PicassoFactory.initialise();
 //        AdsManager.getInstance(this).updateShowAdvertsSetting(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
-        Logging.initialise(this, BuildConfig.class);
+        Logging.initialise(this, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE);
         Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
         idTask.addOnSuccessListener(this::withInstallGuid);
 

@@ -10,6 +10,7 @@ import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator226Paid;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator256Paid;
+import delit.piwigoclient.ui.upgrade.PreferenceMigrator362Paid;
 
 public class MyApplication extends AbstractMyApplication {
 
@@ -36,6 +37,7 @@ public class MyApplication extends AbstractMyApplication {
         List<PreferenceMigrator> migrators = super.getPreferenceMigrators();
         migrators.add(new PreferenceMigrator226Paid());
         migrators.add(new PreferenceMigrator256Paid());
+        migrators.add(new PreferenceMigrator362Paid());
         return migrators;
     }
 

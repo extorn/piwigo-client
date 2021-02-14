@@ -124,6 +124,11 @@ public class Logging {
         firebaseAnalytics.setUserProperty("global_app_version_code", "" + versionCode);
     }
 
+    public static void initialise(@NonNull Context context, String versionName, int versionCode) {
+        Logging.initialiseLogger(versionName, versionCode);
+        Logging.initialiseAnalytics(context, versionName, versionCode);
+    }
+
     public static void initialise(Context context, Class<?> buildConfigClass) {
         String versionName = ObjectUtils.getStaticStringFieldValue(buildConfigClass, "VERSION_NAME");
         int versionCode = ObjectUtils.getStaticIntFieldValue(buildConfigClass, "VERSION_CODE");

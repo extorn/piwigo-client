@@ -170,6 +170,10 @@
 -keep class **.R  { public *; }
 -keep class **.R$*  { public *; }
 -keep class delit.piwigoclient.database.**  { public *; }
+-keep class delit.piwigoclient.BuildConfig {
+    static java.lang.String VERSION_NAME;
+    static int VERSION_CODE;
+}
 
 -keepattributes *Annotation* # Keep crashlytics annotations (allow deobfuscated crashlytics stacktraces - unconfirmed as correct
 #-keep public class * implements java.lang.annotation.Annotation { *; }
