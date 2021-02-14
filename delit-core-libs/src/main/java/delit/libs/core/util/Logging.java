@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Size;
 
@@ -103,7 +104,11 @@ public class Logging {
         }
     }
 
-    public static void logAnalyticEvent(Context context, String message, Bundle detailBundle) {
+    public static void logAnalyticEvent(@NonNull Context context, @NonNull @Size(min = 1,max = 40) String message) {
+        logAnalyticEvent(context, message, null);
+    }
+
+    public static void logAnalyticEvent(@NonNull Context context, @NonNull @Size(min = 1,max = 40) String message, @Nullable Bundle detailBundle) {
         getFirebaseAnalytics(context).logEvent(message, detailBundle);
     }
 
@@ -112,7 +117,7 @@ public class Logging {
         FirebaseCrashlytics.getInstance().setCustomKey("global_app_version_code", versionCode);
     }
 
-    public static void initialiseAnalytics(Context context, String versionName, int versionCode) {
+    public static void initialiseAnalytics(@NonNull Context context, String versionName, int versionCode) {
 
         FirebaseAnalytics firebaseAnalytics = getFirebaseAnalytics(context);
         firebaseAnalytics.setUserProperty("global_app_version", versionName);
