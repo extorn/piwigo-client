@@ -705,4 +705,5 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="no_errors_found_text">找不到错误</string>
     <string name="no_errors_found_title">失误</string>
     <string name="upload">上载</string>
+    <string name="supported_file_types">此文件类型列表是此服务器配置为接受的文件类型。\n\n可以在local / config / config.inc.php文件中更改它。</string>
 </resources>

@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Будущее</item>
-        <item>"только исправления"</item>
-        <item>1.4.0.118</item>
+        <item>только исправления</item>
+        <item>1.4.0.119</item>
         <item>"Исправлена ошибка:
                  - реализовать кнопку обновления на странице слайд-шоу \"элемент не загружен\""</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.118</item>
+        <item>"Изменять:
+                 - Улучшена поддержка загрузки аудиофайлов."</item>
         <item>1.4.0.117</item>
         <item>"Исправлена ошибка:
                  - загрузка файлов, совместно используемых некоторыми приложениями, может завершиться сбоем

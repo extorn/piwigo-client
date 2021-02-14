@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Budoucnost</item>
-        <item>"pouze opravy chyb"</item>
-        <item>1.4.0.118</item>
+        <item>pouze opravy chyb</item>
+        <item>1.4.0.119</item>
         <item>"Oprava chyby:
                  - implementujte tlačítko pro obnovení na stránce slideshow \'item not loaded\'"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.118</item>
+        <item>"Změna:
+                 - Vylepšená podpora pro nahrávání zvukových souborů"</item>
         <item>1.4.0.117</item>
         <item>"Oprava chyby:
                  - nahrávání souborů sdílených některými aplikacemi může tiše selhat

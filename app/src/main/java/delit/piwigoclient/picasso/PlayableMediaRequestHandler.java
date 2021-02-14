@@ -58,7 +58,7 @@ public class PlayableMediaRequestHandler extends ResourceRequestHandler {
     }
 
     private Bitmap buildBitmapForAudio(Request data) {
-        Bitmap bm = drawableToBitmap(ResourcesCompat.getDrawable(getContext().getResources(), R.drawable.ic_audiotrack_black_24dp ,null), data.targetWidth, data.targetHeight);
+        Bitmap bm = drawableToBitmap(ResourcesCompat.getDrawable(getContext().getResources(), R.drawable.ic_audio_file ,null), data.targetWidth, data.targetHeight);
         Log.d(TAG, "Created an audio thumbnail for file : " + data.uri.getPath());
         return bm;
     }

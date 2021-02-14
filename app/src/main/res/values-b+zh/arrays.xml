@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>未来</item>
-        <item>"仅错误修正"</item>
-        <item>1.4.0.118</item>
+        <item>仅错误修正</item>
+        <item>1.4.0.119</item>
         <item>"错误修正：
                  -在幻灯片“项目未加载”页面上实现刷新按钮"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.118</item>
+        <item>"改变：
+                 -改进了对音频文件上传的支持"</item>
         <item>1.4.0.117</item>
         <item>"错误修正：
                  -上载某些应用程序共享的文件可能会自动失败

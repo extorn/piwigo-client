@@ -705,4 +705,5 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="no_errors_found_text">エラーは見つかりませんでした</string>
     <string name="no_errors_found_title">エラー</string>
     <string name="upload">アップロード</string>
+    <string name="supported_file_types">このファイルタイプのリストは、このサーバーが受け入れるように構成されているものです。\n\nlocal / config /config.inc.phpファイルで変更できます。</string>
 </resources>

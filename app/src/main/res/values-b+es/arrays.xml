@@ -142,13 +142,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
-        <item>"solo correcciones de errores"</item>
-        <item>1.4.0.118</item>
+        <item>solo correcciones de errores</item>
+        <item>1.4.0.119</item>
         <item>"Arreglo del fallo:
                  - implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.118</item>
+        <item>"Cambio:
+                 - Soporte mejorado para la carga de archivos de audio"</item>
         <item>1.4.0.117</item>
         <item>"Arreglo del fallo:
                  - la carga de archivos compartidos por algunas aplicaciones puede fallar silenciosamente

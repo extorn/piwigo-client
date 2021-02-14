@@ -705,4 +705,5 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="no_errors_found_text">Keine Fehler gefunden</string>
     <string name="no_errors_found_title">Fehler</string>
     <string name="upload">Hochladen</string>
+    <string name="supported_file_types">Diese Liste der Dateitypen ist die, für deren Annahme dieser Server konfiguriert ist.\n\nSie kann in der lokalen Datei / config / config.inc.php geändert werden.</string>
 </resources>

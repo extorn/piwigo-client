@@ -705,4 +705,5 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="no_errors_found_text">Ошибок не найдено</string>
     <string name="no_errors_found_title">Ошибки</string>
     <string name="upload">Загрузить</string>
+    <string name="supported_file_types">Этот список типов файлов предназначен для приема данным сервером.\n\nЕго можно изменить в файле local / config / config.inc.php.</string>
 </resources>

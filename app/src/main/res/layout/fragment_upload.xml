@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            tools:initialTabIdx="1"
+            tools:initialTabIdx="0"
             style="?appTabLayout"/>
 
         <TextView
@@ -39,7 +39,7 @@
             android:text="@string/upload_tab_title_files" />
 
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingStart="2dp"
@@ -47,55 +47,74 @@
             android:paddingEnd="2dp"
             android:paddingBottom="5dp">
 
-            <LinearLayout
-                android:id="@+id/files_for_upload_labels_layout"
+            <TextView
+                android:id="@+id/files_for_upload_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/select_files_for_upload_button"
-                android:orientation="vertical">
+                android:labelFor="@id/selected_files_for_upload"
+                android:paddingStart="5dp"
+                android:paddingTop="0dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="5dp"
+                android:text="@string/files_for_upload_title"
+                android:textAppearance="?textAppearanceCaption"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/files_uploadable_label"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintVertical_chainStyle="packed"/>
 
-                <TextView
-                    android:id="@+id/files_for_upload_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="0dp"
-                    android:gravity="top"
-                    android:labelFor="@id/selected_files_for_upload"
-                    android:paddingStart="5dp"
-                    android:paddingTop="0dp"
-                    android:paddingEnd="5dp"
-                    android:paddingBottom="5dp"
-                    android:text="@string/files_for_upload_title"
-                    android:textAppearance="?textAppearanceCaption" />
-
-                <TextView
-                    android:id="@+id/files_uploadable_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:gravity="bottom"
-                    android:padding="5dp"
-                    android:textAppearance="?textAppearanceCaption"
-                    tools:text="(jpg,mpg,avi)" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/files_uploadable_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:gravity="bottom"
+                android:padding="5dp"
+                style="?clickableTextViewStyleBody1"
+                tools:layout_editor_absoluteX="2dp"
+                tools:text="(jpg,mpg,avi)"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/files_for_upload_label"
+                app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constrainedWidth="true"/>
 
             <Button
                 android:id="@+id/select_files_for_upload_button"
+                style="?materialButtonIconStyle"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 app:icon="@drawable/ic_add_circle_black_24px"
-                style="?materialButtonIconStyle"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintVertical_bias="0"/>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/files_for_upload_header_bottom_barrier"
+                app:barrierDirection="bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="select_files_for_upload_button, files_uploadable_label"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/selected_files_for_upload"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/files_for_upload_labels_layout"
-                android:layout_alignParentBottom="true"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/files_for_upload_header_bottom_barrier"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constrainedHeight="true"/>
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:layout_width="wrap_content"

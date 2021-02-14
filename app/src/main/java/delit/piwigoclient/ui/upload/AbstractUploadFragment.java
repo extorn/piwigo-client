@@ -302,6 +302,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         fileSelectButton.setOnClickListener(v -> onClickFileSelectionWanted());
 
         uploadableFilesView = view.findViewById(R.id.files_uploadable_label);
+        uploadableFilesView.setOnClickListener((v) -> getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.supported_file_types)));
 
         // check for login status as need to be logged in to get this information (supplied by server)
         ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
