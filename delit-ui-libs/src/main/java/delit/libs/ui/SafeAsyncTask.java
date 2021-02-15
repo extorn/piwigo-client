@@ -41,7 +41,7 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
     @Override
     protected final Result doInBackground(Params... params) {
         try {
-                return doInBackgroundSafely(params);
+            return doInBackgroundSafely(params);
         } catch(Exception e) {
             Logging.log(Log.ERROR, TAG, "Error in async task");
             Logging.recordException(e);
