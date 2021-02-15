@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Size;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.BuildConfig;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -15,6 +17,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import delit.libs.util.ObjectUtils;
 
@@ -89,7 +92,11 @@ public class Logging {
         return firebaseAnalytics;
     }
 
-    public static void logAnalyticEventIfPossible(@Size(min = 1,max = 40) String message, Bundle detailBundle) {
+    public static void logAnalyticEventIfPossible(@Size(min = 1,max = 40) String message) {
+        logAnalyticEventIfPossible(message, null);
+    }
+
+    public static void logAnalyticEventIfPossible(@Size(min = 1,max = 40) String message, @Nullable Bundle detailBundle) {
         FirebaseAnalytics firebaseAnalytics = getFirebaseAnalytics(null);
         if(firebaseAnalytics != null) {
             if(message.length() > 40) {
@@ -175,6 +182,25 @@ public class Logging {
     public static void addContext(Context context, Map<String, ?> contextInfoMap) {
         for(Map.Entry<String,?> contextInfoEntry : contextInfoMap.entrySet()) {
             addContext(context, contextInfoEntry.getKey(), contextInfoEntry.getValue());
+        }
+    }
+
+    public static void waitForExceptionToBeSent() {
+        boolean hasUnsentLogs = false;
+        long timeoutAt = 2000 + System.currentTimeMillis();
+        boolean timeout;
+        do {
+            Task<Boolean> task = FirebaseCrashlytics.getInstance().checkForUnsentReports();
+            try {
+                Tasks.await(task);
+                hasUnsentLogs = task.getResult();
+            } catch (ExecutionException | InterruptedException e) {
+                Logging.log(Log.WARN, TAG, "Exception waiting for Crashlytics to upload report");
+            }
+            timeout = System.currentTimeMillis() > timeoutAt;
+        } while(hasUnsentLogs && !timeout);
+        if(timeout) {
+            Logging.logAnalyticEventIfPossible("CrashlyticsUploadTimeout");
         }
     }
 }

@@ -127,7 +127,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return uploadJob;
     }
 
-    public static UploadJob getFirstActiveForegroundJob(Context context) {
+    public static UploadJob getFirstActiveForegroundJob(@NonNull Context context) {
         synchronized (activeUploadJobs) {
             if (activeUploadJobs.size() == 0) {
                 return loadForegroundJobStateFromDisk(context);
@@ -164,7 +164,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return null;
     }
 
-    public static int getUploadJobsCount(Context context) {
+    public static int getUploadJobsCount(@NonNull Context context) {
         synchronized (activeUploadJobs) {
             if (activeUploadJobs.size() == 0) {
                 loadForegroundJobStateFromDisk(context);
@@ -279,7 +279,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return jobs;
     }
 
-    private static @Nullable UploadJob loadForegroundJobStateFromDisk(Context c) {
+    private static @Nullable UploadJob loadForegroundJobStateFromDisk(@NonNull Context c) {
 
         UploadJob loadedJobState = null;
 

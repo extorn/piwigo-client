@@ -122,9 +122,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
 
     @Override
     protected void onPostExecuteSafely(List<UploadDataItem> folderItems) {
-        getOwner().hideOverallUploadProgressIndicator();
-        getOwner().switchToUploadingFilesTab();
-        getOwner().updateFilesForUploadList(folderItems);
+        getOwner().onAddFilesForUpload(folderItems);
     }
 
 }

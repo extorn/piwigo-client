@@ -166,6 +166,7 @@ public class NumberPickerPreference extends MyDialogPreference {
             } catch (UnknownFormatConversionException e) {
                 Logging.log(Log.ERROR, TAG, getKey() + " : " + summary);
                 Logging.recordException(e);
+                Logging.waitForExceptionToBeSent();
                 throw e;
             }
         }

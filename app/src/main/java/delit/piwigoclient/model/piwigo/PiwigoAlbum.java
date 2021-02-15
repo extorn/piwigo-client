@@ -110,6 +110,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             // the purpose of this is to ensure we can debug any issue.
             Logging.log(Log.ERROR, TAG, toString()+" - itemToAdd : " + item);
             Logging.recordException(e);
+            Logging.waitForExceptionToBeSent();
             throw e;
         }
     }

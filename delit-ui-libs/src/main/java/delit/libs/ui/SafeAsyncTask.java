@@ -45,6 +45,7 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
         } catch(Exception e) {
             Logging.log(Log.ERROR, TAG, "Error in async task");
             Logging.recordException(e);
+            Logging.waitForExceptionToBeSent();
             throw e;
         }
     }
@@ -64,6 +65,7 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
         } catch(Exception e) {
             Logging.log(Log.ERROR, TAG, "Error in async task");
             Logging.recordException(e);
+            Logging.waitForExceptionToBeSent();
             throw e;
         }
     }
@@ -77,6 +79,7 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
         } catch(Exception e) {
             Logging.log(Log.ERROR, TAG, "Error in async task");
             Logging.recordException(e);
+            Logging.waitForExceptionToBeSent();
             throw e;
         }
     }
@@ -91,6 +94,7 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
         } catch(Exception e) {
             Logging.log(Log.ERROR, TAG, "Error in async task");
             Logging.recordException(e);
+            Logging.waitForExceptionToBeSent();
             throw e;
         }
     }
@@ -104,6 +108,7 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
         } catch(Exception e) {
             Logging.log(Log.ERROR, TAG, "Error in async task");
             Logging.recordException(e);
+            Logging.waitForExceptionToBeSent();
             throw e;
         }
     }
@@ -121,6 +126,7 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
         } catch(Exception e) {
             Logging.log(Log.ERROR, TAG, "Error in async task");
             Logging.recordException(e);
+            Logging.waitForExceptionToBeSent();
             throw e;
         }
     }

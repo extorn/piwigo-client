@@ -172,6 +172,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             onSuccess(statusCode, headers, responseBody, triedLoggingInAgain, isResponseCached(headers));
         } catch(RuntimeException e) {
             Logging.recordException(e);
+            Logging.waitForExceptionToBeSent();
             throw e;
         }
     }
@@ -308,6 +309,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 tryingAgain = onFailure(getRequestURIAsStr(), statusCode, headers, responseBody, error, triedLoggingInAgain, isResponseCached(headers));
             } catch(RuntimeException e) {
                 Logging.recordException(e);
+                Logging.waitForExceptionToBeSent();
                 throw e;
             }
             if(!tryingAgain) {

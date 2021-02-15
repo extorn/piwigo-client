@@ -799,7 +799,11 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
                     getUiHelper().showDetailedShortMsg(R.string.alert_information, getUiHelper().getAppContext().getString(R.string.duplicates_ignored_pattern, filesAlreadyPresent));
                 }
                 uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
-                updateActiveJobActionButtonsStatus();
+                try {
+                    updateActiveJobActionButtonsStatus();
+                } catch(IllegalStateException e) {
+                    Logging.log(Log.WARN,TAG, "Unable to update job action buttons without attached context");
+                }
             }
         } finally {
             overallUploadProgressBar.hideProgressIndicator();
@@ -1168,6 +1172,12 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     public void onUploadJobFailure(UploadJob job) {
         getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_question_title, getString(R.string.some_files_failed_to_upload_what_action_do_you_wish_to_take), R.string.button_finish, R.string.button_review, R.string.button_retry, new OnUploadJobFailureQuestionListener<>(getUiHelper()));
         allowUserUploadConfiguration(job);
+    }
+
+    public void onAddFilesForUpload(List<UploadDataItem> folderItems) {
+        hideOverallUploadProgressIndicator();
+        switchToUploadingFilesTab();
+        updateFilesForUploadList(folderItems);
     }
 
     private static class OnUploadJobFailureQuestionListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {

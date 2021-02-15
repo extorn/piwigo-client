@@ -51,6 +51,7 @@ public abstract class FileThumbnailGenerator<P extends FileThumbnailGenerator<P>
         } catch(RuntimeException e) {
             Logging.log(Log.ERROR, TAG, "Unexpected fatal error" );
             Logging.recordException(e);
+            Logging.waitForExceptionToBeSent();
             throw e;
         }
     }

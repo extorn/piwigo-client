@@ -294,6 +294,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, EnhancedPic
             if (!placeholderLoaded) {
                 Logging.log(Log.WARN, TAG, "All picasso loaders are currently busy, or picasso is not started. Please retry later");
                 Logging.recordException(e);
+                Logging.waitForExceptionToBeSent();
                 throw e;
             }
         }
