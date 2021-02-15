@@ -269,7 +269,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         return false;
     }
 
-    private void postPageInsert(ArrayList<T> sortedItems, List<T> newItems) {
+    protected void postPageInsert(ArrayList<T> sortedItems, List<T> newItems) {
         // do nothing as we assume the pages are arriving sorted before insert and being inserted in the correct place
     }
 
@@ -372,6 +372,10 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         }
     }
 
+    protected void postItemRemove(T item) {
+        // do nothing.
+    }
+
     protected void postItemInsert(T item) {
         sortItems();
     }
@@ -393,6 +397,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         if(!updatePageLoadedCount(idx, -1)) {
             Logging.log(Log.WARN, TAG, "RemoveItem (%1$s) at idx %2%d Unable to alter page loaded count in %3$s.", item, idx, Utils.getId(this));
         }
+        postItemRemove(item);
         return item;
     }
 

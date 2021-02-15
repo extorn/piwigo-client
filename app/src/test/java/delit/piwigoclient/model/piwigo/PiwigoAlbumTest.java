@@ -110,7 +110,7 @@ public class PiwigoAlbumTest {
         int resourceCount = album.getResourcesCount();
         int itemCount = album.getItemCount();
         album.setHideAlbums(true);
-        assertEquals(resourceCount, album.getItemCount());
+        assertEquals(1, album.getItemCount());
         assertEquals(resourceCount, album.getResourcesCount());
         assertEquals(albumsCount, album.getChildAlbumCount());
         assertEquals(album.getItemByIdx(0), StaticCategoryItem.ALBUM_HEADING);
@@ -121,12 +121,101 @@ public class PiwigoAlbumTest {
 
     @Test
     public void testAllCategoriesHideAlbumsReversed() {
+        PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategories(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true, 2);
+        int albumsCount = album.getChildAlbumCount();
+        int resourceCount = album.getResourcesCount();
+        int itemCount = album.getItemCount();
+        album.setHideAlbums(true);
+        assertEquals(1, album.getItemCount());
+        assertEquals(resourceCount, album.getResourcesCount());
+        assertEquals(albumsCount, album.getChildAlbumCount());
+        assertEquals(album.getItemByIdx(0), StaticCategoryItem.ALBUM_HEADING);
+        if(resourceCount > 0) {
+            assertEquals(album.getItemByIdx(1), ResourceItem.PICTURE_HEADING);
+        } else {
+            assertEquals(1, album.getItemCount()); // just the album header
+        }
+        for(int i = 2; i <= resourceCount; i++) {
+            assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
+        }
+    }
+
+    @Test
+    public void testAllResourcesHideAlbums() {
+        int sortOrder = PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
+        boolean reversed = false;
+
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, 5, 3);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(5, 15));
+        loadResourceItemPages(resourceItemLoadPages, album);
+        album.setRetrieveChildAlbumsInReverseOrder(reversed);
+        album.setRetrieveItemsInReverseOrder(reversed);
+
+        int albumsCount = album.getChildAlbumCount();
+        int resourceCount = album.getResourcesCount();
+        assertEquals(0, albumsCount);
+        assertEquals(15, resourceCount);
+        assertEquals(16, album.getItemCount());
+        album.setHideAlbums(true);
+        assertEquals(15, album.getResourcesCount());
+        assertEquals(16, album.getItemCount());
+        assertEquals(0, album.getChildAlbumCount());
+        assertEquals(album.getItemByIdx(0), StaticCategoryItem.PICTURE_HEADING);
+        for(int i = 2; i <= resourceCount; i++) {
+            assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
+        }
+    }
+
+    @Test
+    public void testAllResourcesHideAlbumsReversed() {
+        int sortOrder = PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
+        boolean reversed = true;
+
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, 5, 3);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(5, 15));
+        loadResourceItemPages(resourceItemLoadPages, album);
+        album.setRetrieveChildAlbumsInReverseOrder(reversed);
+        album.setRetrieveItemsInReverseOrder(reversed);
+
+        int albumsCount = album.getChildAlbumCount();
+        int resourceCount = album.getResourcesCount();
+        assertEquals(0, albumsCount);
+        assertEquals(15, resourceCount);
+        assertEquals(16, album.getItemCount());
+        album.setHideAlbums(true);
+        assertEquals(15, album.getResourcesCount());
+        assertEquals(16, album.getItemCount());
+        assertEquals(0, album.getChildAlbumCount());
+        assertEquals(album.getItemByIdx(0), StaticCategoryItem.PICTURE_HEADING);
+        for(int i = 2; i <= resourceCount; i++) {
+            assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
+        }
+    }
+
+    @Test
+    public void testMixedContentHideAlbums() {
+        PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, 0);
+        int albumsCount = album.getChildAlbumCount();
+        int resourceCount = album.getResourcesCount();
+        int itemCount = album.getItemCount();
+        album.setHideAlbums(true);
+        assertEquals(resourceCount + 2, album.getItemCount());
+        assertEquals(resourceCount, album.getResourcesCount());
+        assertEquals(albumsCount, album.getChildAlbumCount());
+        assertEquals(album.getItemByIdx(0), StaticCategoryItem.ALBUM_HEADING);
+        for(int i = 2; i <= resourceCount; i++) {
+            assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
+        }
+    }
+
+    @Test
+    public void testMixedContentHideAlbumsReversed() {
         PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true, 2);
         int albumsCount = album.getChildAlbumCount();
         int resourceCount = album.getResourcesCount();
         int itemCount = album.getItemCount();
         album.setHideAlbums(true);
-        assertEquals(resourceCount, album.getItemCount());
+        assertEquals(resourceCount + 2, album.getItemCount());
         assertEquals(resourceCount, album.getResourcesCount());
         assertEquals(albumsCount, album.getChildAlbumCount());
         assertEquals(album.getItemByIdx(0), StaticCategoryItem.ALBUM_HEADING);
@@ -565,9 +654,21 @@ public class PiwigoAlbumTest {
         }
 
         protected void replaceXthCategory(PiwigoAlbum<CategoryItem, GalleryItem> album, ArrayList<CategoryItem> categoryItemLoad, List<GalleryItem> expectedResult, int removeItemAtOffset) {
-            int lastAlbumIdx = album.getFirstResourceIdx() - 2;
+            boolean hideAlbums = false;
+            if(album.isHideAlbums()) {
+                album.setHideAlbums(false);
+                hideAlbums = true;
+            }
+            int lastAlbumIdx;
+            if(album.getResourcesCount() > 0) {
+                lastAlbumIdx = album.getFirstResourceIdx() - 2;
+            } else {
+                lastAlbumIdx = album.getItemCount() - 1;
+            }
+
             int idxItemToRemove = (album.isRetrieveAlbumsInReverseOrder() ? lastAlbumIdx - removeItemAtOffset : 1 + removeItemAtOffset);
             removeAndReplaceItem(album, categoryItemLoad.get(removeItemAtOffset), idxItemToRemove, expectedResult);
+            album.setHideAlbums(hideAlbums);
         }
 
         protected void replaceXthResource(@NonNull PiwigoAlbum<CategoryItem, GalleryItem> album, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, List<GalleryItem> expectedResult, int removeItemAtOffset) {
