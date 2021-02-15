@@ -262,6 +262,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         sb.append(", hideAlbums=").append(hideAlbums);
         sb.append(", itemType=").append(getItemType());
         sb.append(", reverseOrder=").append(isRetrieveAlbumsInReverseOrder());
+        sb.append(", super=").append(super.toString());
         sb.append('}');
         return sb.toString();
     }

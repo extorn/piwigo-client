@@ -355,7 +355,9 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
     }
 
     protected void addItem(int insertAtIdx, T item) {
-        updatePageLoadedCount(insertAtIdx -1, +1);
+        if(!updatePageLoadedCount(insertAtIdx -1, +1)) {
+            Logging.log(Log.WARN, TAG, "AddItem (%1$s) at idx %2$d. Unable to alter page loaded count in %3$s.", item, insertAtIdx, Utils.getId(this));
+        }
         items.add(insertAtIdx, item);
         sortedItems.add(insertAtIdx, item);
         postItemInsert(item);
@@ -385,9 +387,11 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
 
     @Override
     public T remove(int idx) {
-        updatePageLoadedCount(idx, -1);
         T item = sortedItems.remove(idx);
         items.remove(item);//FIXME - this is potentially not the right item if we used id (not available here!) to find the index and sort order isn't original
+        if(!updatePageLoadedCount(idx, -1)) {
+            Logging.log(Log.WARN, TAG, "RemoveItem (%1$s) at idx %2%d Unable to alter page loaded count in %3$s.", item, idx, Utils.getId(this));
+        }
         return item;
     }
 
@@ -411,18 +415,18 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         return false;
     }
 
-    private void updatePageLoadedCount(int idx, int change) {
+    private boolean updatePageLoadedCount(int idx, int change) {
         int pageIdx = getPageIndexContaining(idx);
-        if(pageIdx < 0) {
-            Logging.log(Log.WARN, TAG, "Unable to alter page loaded count by %1$+d in %2$s. Affected page not found", change, Utils.getId(this));
-        } else {
+        if(pageIdx > 0) {
             int pageLoadedCount = pagesLoadedIdxToSizeMap.get(pageIdx) + change;
             if(pageLoadedCount > 0) {
                 pagesLoadedIdxToSizeMap.put(pageIdx, pageLoadedCount);
             } else {
                 pagesLoadedIdxToSizeMap.remove(pageIdx);
             }
+            return true;
         }
+        return false;
     }
 
     protected int getPageIndexContaining(int resourceIdx) {

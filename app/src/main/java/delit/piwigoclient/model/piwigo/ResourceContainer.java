@@ -104,6 +104,7 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
         final StringBuilder sb = new StringBuilder("ResourceContainer{");
         sb.append("containerDetails=").append(containerDetails);
         sb.append(", resourceSortOrder='").append(resourceSortOrder).append('\'');
+        sb.append(", super=").append(super.toString());
         sb.append('}');
         return sb.toString();
     }
