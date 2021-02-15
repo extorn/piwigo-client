@@ -143,12 +143,16 @@
     <string-array name="planned_releases" translatable="true">
         <item>De toekomst</item>
         <item>alleen bugfixes</item>
-        <item>1.4.0.119</item>
+        <item>1.4.0.120</item>
         <item>"Bugfix:
                  - implementeer de vernieuwingsknop op de pagina \'item niet geladen\' van de diavoorstelling"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.119</item>
+        <item>"Bugfix:
+                 - crash op oudere versies als er geen toestemming is verleend om de cachemap te gebruiken
+                 - logboeken worden soms niet verzonden als de app te snel crasht na een logfout"</item>
         <item>1.4.0.118</item>
         <item>"Verandering:
                  - Verbeterde ondersteuning voor het uploaden van audiobestanden"</item>

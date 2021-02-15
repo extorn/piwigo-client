@@ -1,40 +1,50 @@
 <en-GB>
-Change:
-- Improved support for audio file upload
+Bugfix:
+- crash on older versions if permission not granted to use cache folder
+- logs sometimes not sent if app crashes too quickly after logging error
 </en-GB>
 <cs-CZ>
-Změna:
-- Vylepšená podpora pro nahrávání zvukových souborů
+Oprava chyby:
+- havárie na starších verzích, pokud není uděleno oprávnění k použití složky mezipaměti
+- protokoly se někdy neodesílají, pokud aplikace po chybě přihlášení selže příliš rychle
 </cs-CZ>
 <de-DE>
-Veränderung:
-- Verbesserte Unterstützung für das Hochladen von Audiodateien
+Fehlerbehebung:
+- Absturz bei älteren Versionen, wenn keine Berechtigung zur Verwendung des Cache-Ordners erteilt wurde
+- Protokolle werden manchmal nicht gesendet, wenn die App nach einem Protokollierungsfehler zu schnell abstürzt
 </de-DE>
 <es-ES>
-Cambio:
-- Soporte mejorado para la carga de archivos de audio
+Arreglo del fallo:
+- falla en versiones anteriores si no se otorga permiso para usar la carpeta de caché
+- los registros a veces no se envían si la aplicación se bloquea demasiado rápido después del error de registro
 </es-ES>
 <fr-FR>
-Changement:
-- Prise en charge améliorée du téléchargement de fichiers audio
+Correction d\'un bug:
+- crash sur les anciennes versions si la permission n\'est pas accordée d\'utiliser le dossier de cache
+- les journaux ne sont parfois pas envoyés si l\'application plante trop rapidement après une erreur de journalisation
 </fr-FR>
 <it-IT>
-Modificare:
-- Supporto migliorato per il caricamento di file audio
+Risoluzione del problema:
+- crash su versioni precedenti se l\'autorizzazione non è stata concessa per utilizzare la cartella della cache
+- i registri a volte non vengono inviati se l\'app si arresta in modo anomalo troppo rapidamente dopo l\'errore di registrazione
 </it-IT>
 <ja-JP>
-変化する：
--オーディオファイルのアップロードのサポートが改善されました
+バグ修正：
+-キャッシュフォルダを使用する権限が付与されていない場合、古いバージョンでクラッシュする
+-ログエラー後にアプリがすぐにクラッシュした場合、ログが送信されないことがあります
 </ja-JP>
 <nl-NL>
-Verandering:
-- Verbeterde ondersteuning voor het uploaden van audiobestanden
+Bugfix:
+- crash op oudere versies als er geen toestemming is verleend om de cachemap te gebruiken
+- logboeken worden soms niet verzonden als de app te snel crasht na een logfout
 </nl-NL>
 <ru-RU>
-Изменять:
-- Улучшена поддержка загрузки аудиофайлов.
+Исправлена ошибка:
+- сбой в старых версиях, если не предоставлено разрешение на использование папки кеша
+- журналы иногда не отправляются, если приложение вылетает слишком быстро после ошибки регистрации
 </ru-RU>
 <zh-CN>
-改变：
--改进了对音频文件上传的支持
+错误修正：
+-如果未授予使用缓存文件夹的权限，则在旧版本上崩溃
+-如果在记录错误后应用崩溃太快，有时日志可能不会发送
 </zh-CN>

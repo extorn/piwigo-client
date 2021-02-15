@@ -143,12 +143,16 @@
     <string-array name="planned_releases" translatable="true">
         <item>Budoucnost</item>
         <item>pouze opravy chyb</item>
-        <item>1.4.0.119</item>
+        <item>1.4.0.120</item>
         <item>"Oprava chyby:
                  - implementujte tlačítko pro obnovení na stránce slideshow \'item not loaded\'"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.119</item>
+        <item>"Oprava chyby:
+                 - havárie na starších verzích, pokud není uděleno oprávnění k použití složky mezipaměti
+                 - protokoly se někdy neodesílají, pokud aplikace po chybě přihlášení selže příliš rychle"</item>
         <item>1.4.0.118</item>
         <item>"Změna:
                  - Vylepšená podpora pro nahrávání zvukových souborů"</item>

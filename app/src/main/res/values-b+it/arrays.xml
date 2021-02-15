@@ -143,12 +143,16 @@
     <string-array name="planned_releases" translatable="true">
         <item>Il futuro</item>
         <item>solo correzioni di bug</item>
-        <item>1.4.0.119</item>
+        <item>1.4.0.120</item>
         <item>"Risoluzione del problema:
                  - implementare il pulsante di aggiornamento nella pagina \"elemento non caricato\" della presentazione"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.119</item>
+        <item>"Risoluzione del problema:
+                 - crash su versioni precedenti se l\'autorizzazione non è stata concessa per utilizzare la cartella della cache
+                 - i registri a volte non vengono inviati se l\'app si arresta in modo anomalo troppo rapidamente dopo l\'errore di registrazione"</item>
         <item>1.4.0.118</item>
         <item>"Modificare:
                  - Supporto migliorato per il caricamento di file audio"</item>
