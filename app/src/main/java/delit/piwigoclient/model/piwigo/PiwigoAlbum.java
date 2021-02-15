@@ -158,7 +158,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     @Override
     protected int getPageIndexContaining(int resourceIdx) {
         if(resourceIdx < childAlbumCount + spacerAlbums + bannerCount) {
-            return -1; // only the resource items are paged
+            return NOT_TRACKED_PAGE_ID; // only the resource items are paged
         }
         return super.getPageIndexContaining(resourceIdx);
     }

@@ -29,6 +29,7 @@ import delit.libs.util.Utils;
 public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, Parcelable {
 
     private static final String TAG = "PagedList";
+    protected static final int NOT_TRACKED_PAGE_ID = -2;
     public static int MISSING_ITEMS_PAGE = -1;
     private String itemType;
     private final SortedMap<Integer,Integer> pagesLoadedIdxToSizeMap = new TreeMap<>();
@@ -415,6 +416,12 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         return false;
     }
 
+    /**
+     *
+     * @param idx index of item where change occured
+     * @param change the change to effect on the tracked page
+     * @return true if the operation was deemed a success
+     */
     private boolean updatePageLoadedCount(int idx, int change) {
         int pageIdx = getPageIndexContaining(idx);
         if(pageIdx > 0) {
@@ -426,7 +433,8 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
             }
             return true;
         }
-        return false;
+        // if the item with this index isn't tracked in pages, then we succeeded
+        return pageIdx == NOT_TRACKED_PAGE_ID;
     }
 
     protected int getPageIndexContaining(int resourceIdx) {
