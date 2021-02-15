@@ -53,6 +53,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
@@ -585,7 +586,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             adView.setVisibility(GONE);
         }
 
-        setGalleryHeadings();
+        fillGalleryHeadings();
 
         showInformationButton.setVisibility(VISIBLE);
 
@@ -629,7 +630,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
             if (!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())) {
                 //trigger total screen refresh. Any errors will result in screen being closed.
-                forceReloadAlbumContent();
+                doServerActionForceReloadAlbumContent();
             } else {
                 if (galleryModel.getContainerDetails().isRoot()) {
                     // root of gallery can always be refreshed successfully.
@@ -772,33 +773,33 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
         bulkActionButtonPermissions.setOnTouchListener((v, event) -> {
             if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                onBulkActionPermissionsButtonPressed();
+                onClickBulkActionPermissionsButton();
             }
             return true; // consume the event
         });
         bulkActionButtonDownload.setOnTouchListener((v, event) -> {
             if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                onBulkActionDownloadButtonPressed();
+                onClickBulkActionDownloadButton();
             }
             return true; // consume the event
         });
         bulkActionButtonDelete.setOnTouchListener((v, event) -> {
             if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                onBulkActionDeleteButtonPressed();
+                onClickBulkActionDeleteButton();
             }
             return true; // consume the event
         });
         bulkActionButtonCopy.setOnTouchListener((v, event) -> {
             boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
             if (bulkActionsAllowed && event.getActionMasked() == MotionEvent.ACTION_UP) {
-                addItemsToBasket(Basket.ACTION_COPY);
+                onUserActionAddSelectedItemsToBasket(Basket.ACTION_COPY);
             }
             return true; // consume the event
         });
         bulkActionButtonCut.setOnTouchListener((v, event) -> {
             boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
             if (bulkActionsAllowed && event.getActionMasked() == MotionEvent.ACTION_UP) {
-                addItemsToBasket(Basket.ACTION_CUT);
+                onUserActionAddSelectedItemsToBasket(Basket.ACTION_CUT);
             }
             return true; // consume the event
         });
@@ -870,13 +871,13 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         onDownloadAllItems(bulkActionData);
     }
 
-    private void onUpdateImagePermissionsButtonClick(HashSet<Long> imageIds, HashSet<ResourceItem> selectedItems) {
+    private void onClickUpdateImagePermissionsButton(HashSet<Long> imageIds, HashSet<ResourceItem> selectedItems) {
         BulkResourceActionData bulkActionData = new BulkResourceActionData(imageIds, selectedItems, BulkResourceActionData.ACTION_UPDATE_PERMISSIONS);
         this.bulkResourceActionData = bulkActionData;
-        onUpdateImagePermissions(bulkActionData);
+        onUserActionUpdateImagePermissions(bulkActionData);
     }
 
-    private void onUpdateImagePermissions(BulkResourceActionData bulkActionData) {
+    private void onUserActionUpdateImagePermissions(BulkResourceActionData bulkActionData) {
         final HashSet<ResourceItem> resourcesReadyForAction = new HashSet<>();
         if (bulkResourceActionData.isResourceInfoAvailable()) {
             for (ResourceItem item : bulkResourceActionData.getSelectedItems()) {
@@ -955,24 +956,24 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
     }
 
-    private void onBulkActionDownloadButtonPressed() {
+    private void onClickBulkActionDownloadButton() {
         HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
         if (selectedItemIds.size() > 0) {
             onDownloadAllItemsButtonClick(selectedItemIds, viewAdapter.getSelectedItemsOfType(ResourceItem.class));
         }
     }
 
-    private void onBulkActionPermissionsButtonPressed() {
+    private void onClickBulkActionPermissionsButton() {
         boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
         if (bulkActionsAllowed) {
             HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
             if (selectedItemIds.size() > 0) {
-                onUpdateImagePermissionsButtonClick(selectedItemIds, viewAdapter.getSelectedItemsOfType(ResourceItem.class));
+                onClickUpdateImagePermissionsButton(selectedItemIds, viewAdapter.getSelectedItemsOfType(ResourceItem.class));
             }
         }
     }
 
-    private void onBulkActionDeleteButtonPressed() {
+    private void onClickBulkActionDeleteButton() {
         boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
         if (bulkActionsAllowed) {
             HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
@@ -1016,7 +1017,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         return activity.getBasket();
     }
 
-    private void addItemsToBasket(int action) {
+    private void onUserActionAddSelectedItemsToBasket(int action) {
         Basket basket = getBasket();
 
         Set<Long> selectedItems = viewAdapter.getSelectedItemIds();
@@ -1143,7 +1144,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         return pageToActuallyLoad;
     }
 
-    protected void onAlbumDeleteRequest(final CategoryItem album) {
+    protected void onUserActionAlbumDeleteRequest(final CategoryItem album) {
         if (album.getTotalPhotos() > 0 || album.getSubCategories() > 0) {
             String msg;
             if(album.getSubCategories() > 0) {
@@ -1197,7 +1198,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 if (userIdsInSelectedGroups == null) {
                     userIdsInSelectedGroups = new HashSet<>(0);
                 }
-                HashSet<Long> preselectedUsernames = getSetFromArray(currentUsers);
+                HashSet<Long> preselectedUsernames = CollectionUtils.getSetFromArray(currentUsers);
                 UsernameSelectionNeededEvent usernameSelectionNeededEvent = new UsernameSelectionNeededEvent(true, editingItemDetails, userIdsInSelectedGroups, preselectedUsernames);
                 getUiHelper().setTrackingRequest(usernameSelectionNeededEvent.getActionId());
                 EventBus.getDefault().post(usernameSelectionNeededEvent);
@@ -1323,7 +1324,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         boolean resorted = updateAlbumSortOrder(galleryModel);
 
         if (albumIsDirty) {
-            reloadAlbumContent();
+            doServerActionReloadAlbumContent();
         } else if (itemsToLoad.size() > 0) {
             onReloadAlbum();
         } else {
@@ -1365,13 +1366,13 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
     }
 
-    protected void forceReloadAlbumContent() {
+    protected void doServerActionForceReloadAlbumContent() {
         albumIsDirty = true;
         //we've altered the album content (now update this album view to reflect the server content)
-        reloadAlbumContent();
+        doServerActionReloadAlbumContent();
     }
 
-    protected void reloadAlbumContent() {
+    protected void doServerActionReloadAlbumContent() {
 
         if (albumIsDirty) {
             emptyGalleryLabel.setVisibility(GONE);
@@ -1385,7 +1386,6 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             galleryListViewScrollListener.resetState();
             cellSpanLookup.replaceGalleryModel(galleryModel);
             galleryListView.swapAdapter(viewAdapter, true);
-//            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
 
             loadAlbumSubCategories(galleryModel.getContainerDetails());
             loadAlbumResourcesPage(0);
@@ -1452,13 +1452,13 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             notifyAllParentAlbumsOfContentChange();
 
             //we've altered the album content (now update this album view to reflect the server content)
-            forceReloadAlbumContent();
+            doServerActionForceReloadAlbumContent();
         } else {
             Logging.log(Log.ERROR, getTag(), "processed onResourceMoved but basket (" + basket.getItemCount() + " items) does not contain resource");
         }
     }
 
-    private void updateAlbumDetails() {
+    private void doServerActionUpdateAlbumDetails() {
         switch (updateAlbumDetailsProgress) {
             case UPDATE_IN_PROGRESS:
             case UPDATE_NOT_RUNNING:
@@ -1536,7 +1536,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             galleryModel.getContainerDetails().setDescription(galleryDescriptionView.getText().toString());
             galleryModel.getContainerDetails().setUserCommentsAllowed(galleryUserCommentsPermittedField.isChecked());
             galleryModel.getContainerDetails().setPrivate(galleryPrivacyStatusField.isChecked());
-            updateAlbumDetails();
+            doServerActionUpdateAlbumDetails();
         });
 
         discardButton = bottomSheet.findViewById(R.id.gallery_details_discard_button);
@@ -1567,15 +1567,15 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
         deleteAlbumButton = bottomSheet.findViewById(R.id.gallery_action_delete);
         deleteAlbumButton.setVisibility(editFieldsVisibility);
-        deleteAlbumButton.setOnClickListener(v -> onAlbumDeleteRequest(galleryModel.getContainerDetails()));
+        deleteAlbumButton.setOnClickListener(v -> onUserActionAlbumDeleteRequest(galleryModel.getContainerDetails()));
 
         pasteButton = bottomSheet.findViewById(R.id.gallery_action_paste);
         pasteButton.setVisibility(editFieldsVisibility);
-        pasteButton.setOnClickListener(v -> onMoveItem(galleryModel.getContainerDetails()));
+        pasteButton.setOnClickListener(v -> onUserActionMoveItemRequest(galleryModel.getContainerDetails()));
 
         cutButton = bottomSheet.findViewById(R.id.gallery_action_cut);
         cutButton.setVisibility(editFieldsVisibility);
-        cutButton.setOnClickListener(v -> onCopyItem(galleryModel.getContainerDetails()));
+        cutButton.setOnClickListener(v -> onUserActionCopyItemRequest(galleryModel.getContainerDetails()));
     }
 
     protected boolean addingAlbumPermissions() {
@@ -1765,7 +1765,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         allowedUsersField.setVisibility(visibility);
     }
 
-    private void setGalleryHeadings() {
+    private void fillGalleryHeadings() {
         if (galleryModel == null) {
             return;
         }
@@ -1802,12 +1802,12 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         EventBus.getDefault().register(this);
     }
 
-    private void onMoveItem(CategoryItem model) {
+    private void onUserActionMoveItemRequest(CategoryItem model) {
         //TODO implement this
         getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unimplemented));
     }
 
-    private void onCopyItem(CategoryItem model) {
+    private void onUserActionCopyItemRequest(CategoryItem model) {
         //TODO implement this
         getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unimplemented));
     }
@@ -1899,7 +1899,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                         onDeleteResources(bulkResourceActionData);
                         break;
                     case BulkResourceActionData.ACTION_UPDATE_PERMISSIONS:
-                        onUpdateImagePermissions(bulkResourceActionData);
+                        onUserActionUpdateImagePermissions(bulkResourceActionData);
                         break;
                     case BulkResourceActionData.ACTION_DOWNLOAD_ALL:
                         onDownloadAllItems(bulkResourceActionData);
@@ -1969,7 +1969,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
             if (usernameSelectionWantedNext) {
                 usernameSelectionWantedNext = false;
-                HashSet<Long> preselectedUsernames = getSetFromArray(currentUsers);
+                HashSet<Long> preselectedUsernames = CollectionUtils.getSetFromArray(currentUsers);
                 UsernameSelectionNeededEvent usernameSelectionNeededEvent = new UsernameSelectionNeededEvent(true, editingItemDetails, userIdsInSelectedGroups, preselectedUsernames);
                 getUiHelper().setTrackingRequest(usernameSelectionNeededEvent.getActionId());
                 EventBus.getDefault().post(usernameSelectionNeededEvent);
@@ -1977,22 +1977,10 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
     }
 
-    private HashSet<Long> getSetFromArray(long[] itemIds) {
-        HashSet<Long> itemIdsSet;
-        itemIdsSet = new HashSet<>(itemIds != null ? itemIds.length : 0);
-        if (itemIds != null) {
-            int i = 0;
-            for (long id : itemIds) {
-                itemIdsSet.add(id);
-            }
-        }
-        return itemIdsSet;
-    }
-
     protected void onPiwigoResponseThumbnailUpdated(AlbumThumbnailUpdatedResponseHandler.PiwigoAlbumThumbnailUpdatedResponse response) {
         if (response.getAlbumParentIdAltered() != null && response.getAlbumParentIdAltered() == galleryModel.getContainerDetails().getId()) {
             // need to refresh this gallery content.
-            forceReloadAlbumContent();
+            doServerActionForceReloadAlbumContent();
         }
     }
 
@@ -2024,7 +2012,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         // Now ensure any parents are also updated when next shown
         notifyAllParentAlbumsOfContentChange();
 
-        forceReloadAlbumContent();
+        doServerActionForceReloadAlbumContent();
 
     }
 
@@ -2048,7 +2036,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 loadAlbumPermissionsIfNeeded();
                 break;
             case SERVER_CALL_ID_ALBUM_INFO_DETAIL:
-                updateAlbumDetails();
+                doServerActionUpdateAlbumDetails();
                 break;
             case SERVER_CALL_ID_ADMIN_LIST_ALBUMS:
                 loadAdminListOfAlbums();
@@ -2101,7 +2089,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 // now update the reference.
                 galleryModel.setContainerDetails(item);
                 // update the display.
-                setGalleryHeadings();
+                fillGalleryHeadings();
             }
         }
         if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
@@ -2150,13 +2138,13 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     protected void onPiwigoResponseAlbumContentAltered(final ImageCopyToAlbumResponseHandler.PiwigoUpdateAlbumContentResponse<?> response) {
         getBasket().removeItem(response.getPiwigoResource());
         notifyAllParentAlbumsOfContentChange();
-        forceReloadAlbumContent();
+        doServerActionForceReloadAlbumContent();
     }
 
     protected void onPiwigoResponseAlbumInfoAltered(final AlbumUpdateInfoResponseHandler.PiwigoUpdateAlbumInfoResponse response) {
         galleryModel.setContainerDetails(response.getAlbum());
-        setGalleryHeadings();
-        updateAlbumPermissions();
+        fillGalleryHeadings();
+        onModelUpdatedAlbumPermissions();
     }
 
     protected void onPiwigoResponseAlbumPermissionsAdded(AlbumAddPermissionsResponseHandler.PiwigoAddAlbumPermissionsResponse response) {
@@ -2168,7 +2156,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         galleryModel.getContainerDetails().setUsers(CollectionUtils.asLongArray(newUsersSet));
 
         if (!removeAlbumPermissions()) {
-            onAlbumUpdateFinished();
+            updateViewFromModelAlbumPermissions();
         }
     }
 
@@ -2180,22 +2168,22 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         newUsersSet.removeAll(response.getUserIdsAffected());
         galleryModel.getContainerDetails().setUsers(CollectionUtils.asLongArray(newUsersSet));
 
-        onAlbumUpdateFinished();
+        updateViewFromModelAlbumPermissions();
     }
 
-    private void updateAlbumPermissions() {
+    private void onModelUpdatedAlbumPermissions() {
         if (galleryModel.getContainerDetails().isPrivate()) {
             if (!addingAlbumPermissions() && !removeAlbumPermissions()) {
-                onAlbumUpdateFinished();
+                updateViewFromModelAlbumPermissions();
             }
         } else {
-            onAlbumUpdateFinished();
+            updateViewFromModelAlbumPermissions();
         }
     }
 
-    protected void onAlbumUpdateFinished() {
+    protected void updateViewFromModelAlbumPermissions() {
         updateAlbumDetailsProgress = UPDATE_NOT_RUNNING;
-        setGalleryHeadings();
+        fillGalleryHeadings();
         getUiHelper().hideProgressIndicator();
         if (editingItemDetails) {
             editingItemDetails = false;
@@ -2206,7 +2194,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     protected void onPiwigoResponseAlbumStatusUpdated(AlbumSetStatusResponseHandler.PiwigoSetAlbumStatusResponse response) {
-        updateAlbumPermissions();
+        onModelUpdatedAlbumPermissions();
     }
 
     protected void onPiwigoResponseAlbumPermissionsRetrieved(AlbumGetPermissionsResponseHandler.PiwigoAlbumPermissionsRetrievedResponse response) {
@@ -2233,7 +2221,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             }
             galleryDetails.removeChildAlbum(response.getAlbumId()); // will return false if it was the admin copy (unlikely but do after to be sure).
             //we've deleted a child album (now update this album view to reflect the server content)
-            forceReloadAlbumContent();
+            doServerActionForceReloadAlbumContent();
         }
         List<Long> parentageChain = galleryDetails.getParentageChain();
         if (!parentageChain.isEmpty()) {
@@ -2277,7 +2265,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             albumIsDirty = true;
             if (isResumed()) {
-                reloadAlbumContent();
+                doServerActionReloadAlbumContent();
             }
         }
     }
@@ -2359,7 +2347,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             albumIsDirty = true;
             if (isResumed()) {
                 //TODO Do something more fine grained to avoid refreshing the entire album view!
-                reloadAlbumContent();
+                doServerActionReloadAlbumContent();
             }
             if (albumAlteredEvent.isCascadeToParents()) {
                 notifyAllParentAlbumsOfContentChange();
@@ -2395,7 +2383,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         return loadingMessageIds;
     }
 
-    protected void onServerDataLoadFailed(long messageId) {
+    protected void onPiwigoResponseLoadFailed(long messageId) {
 
         String failedCall = loadingMessageIds.get(messageId);
         if (failedCall == null) {
@@ -3021,7 +3009,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 PiwigoAlbum<CategoryItem,GalleryItem> galleryModel = fragment.getGalleryModel();
                 getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers));
             } else {
-                getUiHelper().getParent().onAlbumUpdateFinished();
+                getUiHelper().getParent().updateViewFromModelAlbumPermissions();
             }
         }
     }
@@ -3410,9 +3398,9 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
                 getParent().onPiwigoResponseResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?>) response);
             } else if (response instanceof AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse) {
-                // do nothing. This is handled. just dont want it to be registered as an error.
+                // do nothing. This is handled. just don't want it to be registered as an error.
             } else {
-                getParent().onServerDataLoadFailed(response.getMessageId());
+                getParent().onPiwigoResponseLoadFailed(response.getMessageId());
             }
         }
     }
@@ -3467,12 +3455,12 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
         @Override
         public void onItemSelectionCountChanged(LVA adapter, int selectionCount) {
-            getParentFragment().onListSelectionChanged(selectionCount);
+            getParentFragment().onUserActionListSelectionChanged(selectionCount);
         }
 
         @Override
         public void onCategoryLongClick(CategoryItem album) {
-            getParentFragment().onAlbumDeleteRequest(album);
+            getParentFragment().onUserActionAlbumDeleteRequest(album);
         }
 
         public F getParentFragment() {
@@ -3481,7 +3469,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
         @Override
         protected void onCategoryClick(CategoryItem item) {
-            getParentFragment().onListItemCategoryClick(item);
+            getParentFragment().onClickListItemCategory(item);
         }
 
         @Override
@@ -3510,17 +3498,17 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
     }
 
-    protected void onListItemCategoryClick(CategoryItem item) {
+    protected void onClickListItemCategory(CategoryItem item) {
         if (viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();
         }
     }
 
     protected void scrollToListItem(int scrollToItemIdx) {
-        galleryListView.getLayoutManager().scrollToPosition(scrollToItemIdx);
+        Objects.requireNonNull(galleryListView.getLayoutManager()).scrollToPosition(scrollToItemIdx);
     }
 
-    protected void onListSelectionChanged(int selectionCount) {
+    protected void onUserActionListSelectionChanged(int selectionCount) {
         bulkActionsContainer.setVisibility(selectionCount > 0 || getBasket().getItemCount() > 0 ? VISIBLE : GONE);
         updateBasketDisplay(getBasket());
     }

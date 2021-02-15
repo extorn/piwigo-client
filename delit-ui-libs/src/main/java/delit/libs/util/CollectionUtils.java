@@ -2,11 +2,15 @@ package delit.libs.util;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -205,5 +209,16 @@ public class CollectionUtils {
             Collections.addAll(wrapper, objects);
         }
         return wrapper;
+    }
+
+    public static @NonNull HashSet<Long> getSetFromArray(@Nullable long[] itemIds) {
+        HashSet<Long> itemIdsSet;
+        itemIdsSet = new HashSet<>(itemIds != null ? itemIds.length : 0);
+        if (itemIds != null) {
+            for (long id : itemIds) {
+                itemIdsSet.add(id);
+            }
+        }
+        return itemIdsSet;
     }
 }
