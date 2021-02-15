@@ -59,7 +59,7 @@ public class CacheUtils {
         // do an incremental clean
         HttpClientFactory.getInstance(c).clearCache();
         // now delete the theoretically empty folder.
-        File cacheDir = getBasicCacheFolder(c);
+        File cacheDir = getBasicCacheFolder(c, false);
         deleteQuietly(cacheDir);
     }
 
@@ -209,7 +209,7 @@ public class CacheUtils {
     }
 
     public static void clearBasicCache(Context c) {
-        File cacheDir = getBasicCacheFolder(c);
+        File cacheDir = getBasicCacheFolder(c, false);
         deleteQuietly(cacheDir);
 //        for(File f : cacheDir.listFiles()) {
 //            if(f.isDirectory()) {
@@ -255,7 +255,7 @@ public class CacheUtils {
         return succeededDeletion;
     }
 
-    public static @NonNull File getBasicCacheFolder(@NonNull Context context) {
+    public static @NonNull File getBasicCacheFolder(@NonNull Context context, boolean checkPermission) {
         File cacheFolder;
         try {
             cacheFolder = new File(context.getExternalCacheDir(), "basic-cache");
@@ -265,7 +265,9 @@ public class CacheUtils {
             }
             if (!(created && cacheFolder.canRead() && cacheFolder.canWrite())) {
                 //Permission has been revoked!
-                throw new SecurityException(context.getString(R.string.error_insufficient_permissions_for_cache_folder));
+                if(checkPermission) {
+                    throw new SecurityException(context.getString(R.string.error_insufficient_permissions_for_cache_folder));
+                }
             }
         } catch (SecurityException e) {
             Logging.recordException(e);
@@ -277,7 +279,7 @@ public class CacheUtils {
 
     public static long getResponseCacheSize(Context context) {
         try {
-            File responseCacheFolder = getBasicCacheFolder(context);
+            File responseCacheFolder = getBasicCacheFolder(context, false);
             return folderSize(responseCacheFolder);
         } catch (SecurityException e) {
             Logging.recordException(e);

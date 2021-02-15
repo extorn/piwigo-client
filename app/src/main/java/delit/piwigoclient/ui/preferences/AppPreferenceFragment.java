@@ -209,7 +209,7 @@ public class AppPreferenceFragment<F extends AppPreferenceFragment<F,FUIH>,FUIH 
     private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = (preference, value) -> {
         final Boolean val = (Boolean) value;
         if (Boolean.TRUE.equals(val)) {
-            Uri videoCacheFolder = Uri.fromFile(CacheUtils.getBasicCacheFolder(requireContext()));
+            Uri videoCacheFolder = Uri.fromFile(CacheUtils.getBasicCacheFolder(requireContext(), false));
             String permission = IOUtils.getManifestFilePermissionsNeeded(requireContext(), videoCacheFolder, IOUtils.URI_PERMISSION_READ_WRITE);
             getUiHelper().runWithExtraPermissions(AppPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, permission, getString(R.string.alert_write_permission_needed_for_video_caching));
         } else {

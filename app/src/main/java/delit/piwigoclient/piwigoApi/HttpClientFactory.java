@@ -266,7 +266,7 @@ public class HttpClientFactory {
             } else {
                 File cacheFolder = null;
                 if (cacheLevel.equals("disk")) {
-                    cacheFolder = CacheUtils.getBasicCacheFolder(context);
+                    cacheFolder = CacheUtils.getBasicCacheFolder(context, true);
                 }
                 int maxCacheEntries = ConnectionPreferences.getMaxCacheEntries(prefs, context);
 

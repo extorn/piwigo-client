@@ -593,7 +593,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
 
             if ("disk".equals(newValue) || valueChanged) {
                 if (!initialising) {
-                    Uri videoCacheFolder = Uri.fromFile(CacheUtils.getBasicCacheFolder(requireContext()));
+                    Uri videoCacheFolder = Uri.fromFile(CacheUtils.getBasicCacheFolder(requireContext(), false));
                     String permission = IOUtils.getManifestFilePermissionsNeeded(requireContext(), videoCacheFolder, IOUtils.URI_PERMISSION_READ_WRITE);
                     getUiHelper().runWithExtraPermissions(BaseConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, permission, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
                 }

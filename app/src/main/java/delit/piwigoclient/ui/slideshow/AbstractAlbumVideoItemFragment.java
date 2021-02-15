@@ -498,7 +498,7 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
         if (dataSourceFactory.isCachingEnabled()) {
             logStatus("configuring datasource and player - caching enabled - check permissions first");
             getUiHelper().setPermissionsNeededReason(PERMISSIONS_FOR_CACHE);
-            Uri videoCacheFolder = Uri.fromFile(CacheUtils.getBasicCacheFolder(requireContext()));
+            Uri videoCacheFolder = Uri.fromFile(CacheUtils.getBasicCacheFolder(requireContext(), false));
             String permission = IOUtils.getManifestFilePermissionsNeeded(requireContext(), videoCacheFolder, IOUtils.URI_PERMISSION_READ_WRITE);
             getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, permission, getString(R.string.alert_write_permission_needed_for_video_caching));
         } else {
