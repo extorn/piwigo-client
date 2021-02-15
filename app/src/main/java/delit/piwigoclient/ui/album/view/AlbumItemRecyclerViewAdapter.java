@@ -156,7 +156,7 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
             return super.getParentAdapter();
         }
 
-        private void onCategoryClick() {
+        private void onClickCategory() {
             if (getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled() && getParentAdapter().getMultiSelectStatusListener() != null) {
                 AlbumItemMultiSelectStatusAdapter multiSelectListener = getParentAdapter().getMultiSelectStatusListener();
                 multiSelectListener.onCategoryClick((CategoryItem) getViewHolder().getItem());
@@ -165,7 +165,7 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
             EventBus.getDefault().post(event);
         }
 
-        private void onNonCategoryClick() {
+        private void onClickNonCategory() {
             if (!getParentAdapter().getAdapterPrefs().isAllowItemSelection()) {
                 //If not currently in multiselect mode
                 AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(modelType, (ResourceContainer<?, GalleryItem>) getParentAdapter().getItemStore(), getViewHolder().getItem());
@@ -195,17 +195,17 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
             } else {
                 if(getViewHolder().getItem() != null) {
                     if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
-                        onCategoryClick();
+                        onClickCategory();
                     } else {
-                        onNonCategoryClick();
+                        onClickNonCategory();
                     }
                 } else {
                     switch (getViewHolder().getItemViewType()) {
                         case GalleryItem.ALBUM_HEADING_TYPE:
-                            onAlbumsHeadingClick();
+                            onClickAlbumsHeading();
                             break;
                         case GalleryItem.PICTURE_HEADING_TYPE:
-                            onPicturesHeadingClick();
+                            onClickPicturesHeading();
                             break;
                         default:
                             // do nothing.
@@ -214,11 +214,11 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
             }
         }
 
-        private void onPicturesHeadingClick() {
+        private void onClickPicturesHeading() {
             // do nothing for now.
         }
 
-        private void onAlbumsHeadingClick() {
+        private void onClickAlbumsHeading() {
             RC itemStore = getParentAdapter().getItemStore();
             if (itemStore instanceof PiwigoAlbum) {
                 if (getParentAdapter().getMultiSelectStatusListener() != null) {
@@ -240,14 +240,14 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
             manualRetries = 0;
         }
 
-        private void onCategoryLongClick() {
+        private void onLongClickCategory() {
             if (getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled() && getParentAdapter().getMultiSelectStatusListener() != null) {
                 MSL multiSelectListener = getParentAdapter().getMultiSelectStatusListener();
                 multiSelectListener.onCategoryLongClick((CategoryItem) getViewHolder().getItem());
             }
         }
 
-        private void onNonCategoryLongClick() {
+        private void onLongClickNonCategory() {
             if (getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled()) {
                 getParentAdapter().toggleItemSelection();
                 if (getParentAdapter().getAdapterPrefs().isAllowItemSelection()) {
@@ -261,9 +261,9 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
             GalleryItem item = getViewHolder().getItem();
             if(item != null) {
                 if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
-                    onCategoryLongClick();
+                    onLongClickCategory();
                 } else {
-                    onNonCategoryLongClick();
+                    onLongClickNonCategory();
                 }
                 return true;
             }
