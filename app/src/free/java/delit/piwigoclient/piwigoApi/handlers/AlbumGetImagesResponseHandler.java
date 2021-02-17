@@ -1,5 +1,7 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import java.util.List;
+
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 
@@ -10,17 +12,17 @@ public class AlbumGetImagesResponseHandler extends AlbumGetImagesBasicResponseHa
     }
 
     @Override
-    protected ResourceParser buildResourceParser(String basePiwigoUrl) {
+    protected ResourceParser buildResourceParser(String basePiwigoUrl, List<String> piwigoSites) {
         boolean defaultVal = Boolean.TRUE.equals(PiwigoSessionDetails.getInstance(getConnectionPrefs()).isUsingPiwigoPrivacyPlugin());
         boolean isApplyPrivacyPluginUriFix = getConnectionPrefs().isFixPiwigoPrivacyPluginMediaUris(getSharedPrefs(), getContext(), defaultVal);
-        return new ResourceParser(basePiwigoUrl, isApplyPrivacyPluginUriFix);
+        return new ResourceParser(basePiwigoUrl, piwigoSites, isApplyPrivacyPluginUriFix);
     }
 
     public static class ResourceParser extends BasicCategoryImageResourceParser {
 
-        public ResourceParser(String basePiwigoUrl, boolean usePrivacyPluginFix) {
+        public ResourceParser(String basePiwigoUrl, List<String> piwigoSites, boolean usePrivacyPluginFix) {
 
-            super(basePiwigoUrl, usePrivacyPluginFix);
+            super(basePiwigoUrl, piwigoSites, usePrivacyPluginFix);
         }
     }
 }
