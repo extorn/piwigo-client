@@ -42,7 +42,7 @@
     <string name="gallery_photos_summary_text_pattern">%1$dの写真</string>
     <string name="gallery_subcategory_summary_text_pattern">%1$dのサブアルバムと%2$dの写真</string>
     
-    <string name="alert_title_login">ログインする</string>
+    <string name="alert_title_login">ログイン</string>
     <string name="alert_title_connectionTest">接続テスト</string>
     <string name="alert_message_success_connectionTest">成功\nユーザータイプ：%1$s。</string>
     <string name="alert_message_no_available_image_sizes">警告\nサーバーは利用可能な画像サイズを報告しませんでした。</string>
@@ -50,8 +50,8 @@
     <string name="alert_error">エラー</string>
     <string name="alert_error_no_app_available_to_handle_action">このアクションを処理するアプリが見つかりませんでした。</string>
     <string name="alert_error_no_app_available_to_rate_app">このアプリを評価するアプリが見つかりませんでした。試してくれてありがとう。</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">ダウンロードがキャンセルされました。 必要なFileSystem権限が利用できません。</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">ダウンロードがキャンセルされました。 必要なFileSystem権限が利用できません。 システム全体の権限の代わりに、アプリの設定で使用するフォルダーを再選択します。</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">ダウンロードがキャンセルされました。必要なFileSystem権限が利用できません。</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">ダウンロードがキャンセルされました。必要なFileSystem権限が利用できません。システム全体の権限の代わりに、アプリの設定で使用するフォルダーを再選択します。</string>
     <string name="button_retry">リトライ</string>
 
 
@@ -132,14 +132,14 @@
     <string name="progress_resource_details_updating">リソースの詳細の更新</string>
     <string name="gallery_details_name_title">アルバム名</string>
     <string name="gallery_details_description_title">アルバムの説明</string>
-    <string name="gallery_details_save_button">保存する</string>
+    <string name="gallery_details_save_button">セーブ</string>
     <string name="notification_upload_event">Piwigoアップロード</string>
     <string name="progress_downloading">ファイルのダウンロード</string>
     <string name="alert_error_unimplemented">機能はまだ実装されていません。</string>
     <string name="button_ok">はい</string>
     <string name="button_yes">はい</string>
     <string name="button_no">番号</string>
-    <string name="button_save">保存する</string>
+    <string name="button_save">セーブ</string>
     <string name="alert_confirm_title">確認</string>
     <string name="alert_question_title">質問</string>
     <string name="alert_confirm_really_delete_from_server">これにより、アイテムがサーバーから完全に削除されます。継続する？</string>
@@ -174,7 +174,7 @@
 
 **定義
 
-ライセンシー：ライセンシーとは、ライセンスされたソフトウェアを使用することを意図している、またはすでに合法または違法に使用している個人または会社です。 「ライセンシー」という用語は、ソフトウェアがデフォルトで合法的にライセンスされていることを意味するものではありません。
+ライセンシー：ライセンシーとは、ライセンスされたソフトウェアを使用することを意図している、またはすでに合法または違法に使用している個人または企業です。 「ライセンシー」という用語は、ソフトウェアがデフォルトで合法的にライセンスされていることを意味するものではありません。
 
 
 **ライセンス
@@ -206,7 +206,7 @@ Firebase統合がこのアプリケーションに追加され、アプリケー
 
 **責任の制限
 
-ライセンシーは、ソフトウェアの使用の結果、およびそれによって法的に可能な限り、直接的および間接的な損害をもたらす責任を負います。責任は、法的に可能な限り、購入価格に限定されます。それ以外の場合は、法的に可能な最小値に制限されます。
+ライセンシーは、ソフトウェアの使用の結果、およびそれによって法的に可能な限り、直接的および間接的な損害をもたらす責任を負います。法的責任は、法的に可能な限り購入価格に限定されます。それ以外の場合は、法的に可能な最小値に制限されます。
 
 
 **メンテナンスとサポート
@@ -268,7 +268,7 @@ Gareth Deliは、独自の裁量により、これを変更または置換する
 注：バージョンは時間の経過とともに分岐します。ほとんどの変更は、無料版と有料版の両方に加えられます。
 
 現在、有料版ではタグのサポートが追加されています。
-        Piwigoは、箱から出してすぐにタグをサポートしますが、ユーザータグプラグインはより多くの機能を追加します（基本的なテストが実行されます）。
+        Piwigoは箱から出してすぐにタグをサポートしますが、ユーザータグプラグインはより多くの機能を追加します（基本的なテストが実行されます）。
 
 
 現時点では、既存のギャラリー内を移動したり、新しい写真やビデオをアップロードしたり、ギャラリー内に新しいカテゴリを作成したりできる基本レベルの機能を提供しています。一部のフィールドは作成後に修正できますが、多くはまだ読み取り専用です....今のところ！
@@ -379,7 +379,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="progress_loading_user_details">ユーザーの詳細を取得する</string>
     <string name="progress_delete_user">ユーザーを削除しています</string>
     <string name="alert_read_permissions_needed_for_file_upload">ファイルを選択してアップロードするには、ファイルシステムを読み取るためのアクセス許可が必要です</string>
-    <string name="alert_file_permissions_needed_for_pattern">ファイルシステムには%1$sのアクセス許可が必要です。 目的：%2$s</string>
+    <string name="alert_file_permissions_needed_for_pattern">ファイルシステムには%1$sのアクセス許可が必要です。目的：%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">ビデオファイルのローカルキャッシュが有効になります。これを許可するには、ファイルシステムへの書き込みアクセスを許可する必要があります。拒否された場合、ローカルキャッシュは無効になります。</string>
     <string name="alert_error_tidying_video_cache">ビデオキャッシュを整理できません。この問題が解決しない場合は、報告してください。</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">キャッシュからファイルをコピーできません。 %1$s</string>
@@ -399,7 +399,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="group_is_default_title">デフォルトですか？</string>
     <string name="progress_adding_group">グループの追加</string>
     <string name="alert_error_unable_to_access_local_filesystem">ローカルファイルシステムへのアクセスがないと、このアクションを続行できません。ごめんなさい。</string>
-    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">ローカルファイルシステムへのアクセスがないと、このアクションを続行できません。 システム全体の権限の代わりに、アプリの設定で使用するフォルダーを再選択します。</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">ローカルファイルシステムへのアクセスがないと、このアクションを続行できません。システム全体の権限の代わりに、アプリの設定で使用するフォルダーを再選択します。</string>
     <string name="alert_error_admin_user_required">コミュニティプラグインがインストールされていない限り、管理者ユーザーのみがアップロードできます。ごめんなさい。</string>
     <string name="upload_username_title">としてアップロード</string>
     <string name="certificates_heading">証明書</string>
@@ -477,7 +477,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_error_item_not_unique">申し訳ありませんが、そのアイテムはすでに存在します。</string>
     <string name="alert_warning_no_server_url_specified">サーバーURIが指定されていません。サーバーの場所を追加して、再試行してください。</string>
     <string name="error_heading_unloadable_certificate_files">次の証明書ファイルを読み込めませんでした。</string>
-    <string name="error_heading_unloadable_keystore_files">次のキーストアファイルをロードできませんでした。</string>
+    <string name="error_heading_unloadable_keystore_files">次のキーストアファイルを読み込めませんでした。</string>
     <string name="error_heading_unloadable_keystore_aliases">次のキーストアエイリアスを読み込めませんでした。</string>
     <string name="heading_keystore_filename">キーストア</string>
     <string name="heading_keystore_alias">エイリアス</string>
@@ -576,7 +576,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="subalbum_detail_txt_pattern">%1$dの子アルバム</string>
     <string name="please_read_and_agree_with_eula_first">最初にEULAの条件を読んで同意を確認してください</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">必要な権限が付与されていません。アクションはキャンセルされました。</string>
-    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">必要な権限が付与されていません。 アクションはキャンセルされました。 システム全体の権限の代わりに、アプリの設定で使用するフォルダーを再選択します。</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">必要な権限が付与されていません。アクションはキャンセルされました。システム全体の権限の代わりに、アプリの設定で使用するフォルダーを再選択します。</string>
     <string name="copied_to_clipboard">クリップボードにコピー</string>
     <string name="alert_plugin_required_pattern">%1$sサーバープラグインが必要-バージョン%2$s以降</string>
 
@@ -603,13 +603,13 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">サーバーは、アップロード用に選択された%1$dファイルを受け入れません。これらがビデオの場合、圧縮を有効にすることができます。これらのファイルをアップロードから削除しますか？</string>
     <string name="upload_status_tab_title_details">詳細</string>
     <string name="upload_status_tab_title_errors">エラー</string>
-    <string name="message_piwigo_server_inconsistent_results">Piwigo API呼び出し%1$sはファイルのチェックサムが一致しないことを報告しますが、API呼び出し%2$sはそれが一致することを報告します。これは、PIWIGOサーバーまたは使用しているプラ​​グインのバグである可能性があり、報告する価値がある場合があります。</string>
+    <string name="message_piwigo_server_inconsistent_results">Piwigo API呼び出し%1$sはファイルのチェックサムが一致しないことを報告しますが、API呼び出し%2$sはそれが一致することを報告します。これは、PIWIGOサーバーまたは使用しているプラ​​グインのバグである可能性があり、報告する価値がある可能性があります。</string>
     <string name="alert_bulk_image_permissions_title">アクセス許可を設定する</string>
     <string name="alert_bulk_image_permissions_message">選択した%1$dリソースのアクセス許可レベルを設定します</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">「%1$s」のMIMEタイプと共有されているファイルを処理できません</string>
     <string name="alert_error_unsupported_file_extensions_pattern">次の拡張子のファイルはアップロードできず、削除されています：%1$s</string>
     <string name="please_select_a_parent_album">親アルバムを選択してください</string>
-    <string name="unsupported_device">申し訳ありませんが、このデバイスはサポートされていません。 GooglePlay開発者サービスへのアクセスに問題があります。</string>
+    <string name="unsupported_device">申し訳ありませんが、このデバイスはサポートされていません。 GooglePlayサービスへのアクセスに問題があります。</string>
     <string name="hint_album_view">画面の下部をタップして、このアルバムの詳細を表示します</string>
     <string name="usage_hint_title">ヒント</string>
     <string name="hint_slideshow_base_view_1">画面の下部またはリソース名をタップして、このリソースの詳細を表示します</string>
@@ -676,10 +676,10 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="downloads_menu_title">ダウンロード</string>
     <string name="view_exported_files">エクスポートされたファイルを表示する</string>
     <string name="generating_upload_job">選択したアップロードジョブの構成</string>
-    <string name="alert_error_files_without_permissions_pattern">Uri権限がすべてのファイルに提供されたわけではありません。 ジョブが一時停止され、後で再開された場合（Androidの電源管理など）、アップロードされないものはアップロードされません。 この問題を回避するには、可能であれば、このアプリの使用からアップロードするファイルを選択してください。 影響を受けるファイル：%1$d。</string>
+    <string name="alert_error_files_without_permissions_pattern">Uri権限がすべてのファイルに提供されたわけではありません。ジョブが一時停止され、後で再開された場合（Androidの電源管理など）、アップロードされないものはアップロードされません。この問題を回避するには、可能であれば、このアプリの使用からアップロードするファイルを選択してください。影響を受けるファイル：%1$d。</string>
     <string name="button_compress">圧縮</string>
     <string name="unable_to_compress_without_data">設定なしでは圧縮できません</string>
-    <string name="video_compression_settings_invalid">ビデオ圧縮設定が無効です。 確認して再試行してください。</string>
+    <string name="video_compression_settings_invalid">ビデオ圧縮設定が無効です。確認して再試行してください。</string>
     <string name="alert_password_entry">パスワードが必要</string>
     <string name="import_x_of_type_y_cancelled_pattern">%2$s%1$sのインポートがキャンセルされました</string>
     <string name="import_cancelled">インポートがキャンセルされました</string>

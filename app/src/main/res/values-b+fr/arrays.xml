@@ -51,7 +51,7 @@
         <item>xsmall</item>
         <item>petit</item>
         <item>moyen</item>
-        <item>grand</item>
+        <item>grande</item>
         <item>xlarge</item>
         <item>xxlarge</item>
         
@@ -83,7 +83,7 @@
     <string-array name="server_ssl_certificate_hostname_verification_entries">
         <item>Strict</item>
         <item>Compatible avec les navigateurs</item>
-        <item>De</item>
+        <item>Désactivé</item>
     </string-array>
     
     <string-array name="user_types_array">
@@ -91,7 +91,7 @@
         <item>admin</item>
         <item>Ordinaire</item>
         <item>générique</item>
-        <item>client</item>
+        <item>invité</item>
     </string-array>
 
     
@@ -135,20 +135,34 @@
         <item>Cliquez longuement sur une image d\'album pour activer la sélection en bloc d\'images pour une action</item>
         <item>Lors de la visualisation d\'une image dans le diaporama, cliquez longuement pour faire pivoter / modifier la taille de l\'image affichée / permettre un zoom supplémentaire</item>
         <item>Vous pouvez zoomer sur une image lors de la visualisation dans un diaporama en dessinant deux doigts ensemble ou en écartant sur l\'écran</item>
-        <item>Lorsque vous êtes connecté en tant qu\'administrateur, avant de confier votre appareil à un ami pour voir vos photos, activez la fonction de verrouillage de l\'application pour éviter que des modifications involontaires soient apportées à votre galerie</item>
+        <item>Lorsque vous êtes connecté en tant qu\'administrateur, avant de confier votre appareil à un ami pour qu\'il affiche vos photos, activez la fonction de verrouillage de l\'application pour éviter que des modifications involontaires soient apportées à votre galerie</item>
         <item>Une fois que vous avez visionné une vidéo entière, si la mise en cache des fichiers locaux est activée, il est possible d\'enregistrer cette vidéo dans votre dossier de téléchargements</item>
         <item>Cliquez longuement sur le bouton de suppression sur un \'fichier à télécharger \' pour supprimer tous les fichiers à télécharger (lorsque le travail n\'est pas en cours)</item>
         <item>Si les images sont lentes à charger, vérifiez que votre serveur génère automatiquement la taille utilisée par cette application lors de leur téléchargement</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>L\'avenir</item>
-        <item>corrections de bogues uniquement</item>
-        <item>1.4.0.120</item>
+        <item>"* Principalement des corrections de bugs uniquement
+                * Peut-être ajouter une option pour autoriser le partage de l\'accès à un dossier en tant qu\'URI dans un e-mail - cela impliquera de créer un utilisateur normal, de lui donner l\'autorisation d\'accéder au dossier et au fichier, de créer un jeton pour les informations d\'identification et les détails d\'URI pour l\'incorporation dans un lien http , et un moyen de gérer ces jetons sur le serveur."</item>
+        
+        <item>1.4.0.121</item>
         <item>"Correction d\'un bug:
-                 - implémenter le bouton d\'actualisation sur la page \'élément non chargé\' du diaporama"</item>
+                 - implémenter le bouton d\'actualisation sur la page \'élément non chargé\'"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        
+        <item>1.4.0.120</item>
+        <item>"Changement:
+                - Prise en charge du téléchargement de fichiers au format de ressources alternatifs hébergés dans les dossiers pwg_format des sites piwigo. REMARQUE: privacy_plugin ne prend pas en charge cela pour le moment.
+                    * Remarque: cela nécessitera une modification du fichier de configuration de votre serveur Nginx pour permettre le téléchargement des URL.
+                            Exemple d\'extrait de la configuration de mon serveur nginx de test:
+                            # avertissement, cela contourne entièrement le privacy_plugin (tout utilisateur peut télécharger le fichier s\'il devine l\'url)
+                            emplacement ~ (^ / piwigo) (/ \ d) (/.*/ pwg_format /.*) {
+                                    # Pour l\'instant, supprimez simplement l\'ID d\'image de l\'URI et récupérez l\'image
+                                    try_files $ 1 $ 3 = 404;
+                            }
+                            # la route vers piwigo_privacy / get.php doit être remplacée par ceci - attention, cela contourne complètement le privacy_plugin (n\'importe qui peut télécharger le fichier s\'il devine l\'url)
+                            emplacement ~ (^ / piwigo) (/ \ d /.*/(?&lt;!pwg_format/)[^/ &lt;/font&gt;*) {
+                - Prise en charge des fichiers multimédias hébergés sur des sites piwigo nommés arbitraires (voir &lt;server_uri&gt; /admin.php?page=site_manager) - nécessite l\'installation du plugin PiwigoClientWsExts version 1.0.15"</item>
         <item>1.4.0.119</item>
         <item>"Correction d\'un bug:
                  - crash sur les anciennes versions si la permission n\'est pas accordée d\'utiliser le dossier de cache
@@ -172,7 +186,7 @@
         <item>1.4.0.115</item>
         <item>"Correction d\'un bug:
                  - les vidéos non identifiées si vous utilisez le plugin de confidentialité et les vidéos accessibles depuis / galeries.
-                 - les pages de diaporama et de vue d\'album ne gèrent pas correctement le changement d\'orientation
+                 - les pages de diaporama et d\'album ne gèrent pas correctement le changement d\'orientation
                 Changement:
                  - l\'application reconnaît maintenant que certains serveurs stockent des vidéos sous / galeries plutôt que / upload"</item>
         <item>1.4.0.114</item>
@@ -182,7 +196,7 @@
                  - nom donné aux trackers de progression de tâche pour permettre la résolution de bogue où la tâche enfant d\'un tracker de progression est inopinément incomplète"</item>
         <item>1.4.0.113</item>
         <item>"Correction d\'un bug:
-                 - Finalement! déterminé pourquoi l\'application plantait sur le diaporama pour certains utilisateurs
+                 - Pour terminer! déterminé pourquoi l\'application plantait sur le diaporama pour certains utilisateurs
                  - modification de la disposition des boîtes de dialogue
                 Changement:
                  - Boîte de dialogue affichant toutes les notes de publication depuis la dernière mise à jour après une mise à jour"</item>
@@ -234,7 +248,7 @@
                      : Cela devrait résoudre les plantages qui se produisaient sur la page du diaporama
                  - L\'icône d\'étoile jaune récemment modifiée n\'apparaissait pas dans certains ordres de tri
                  - Corriger le chargement des vignettes
-                 - Correction d\'un bug empêchant le rechargement manuel de l\'échec du chargement des vignettes en cliquant - une seule fois pour ne pas trop déranger si vous voulez changer d\'album
+                 - Correction d\'un bug empêchant le rechargement manuel de l\'échec du chargement des vignettes en cliquant - une seule fois pour que ce ne soit pas trop irritant si vous voulez changer d\'album
                 Changements:
              - Nouvelle préférence pour permettre l\'inversion indépendante de l\'ordre de tri des albums enfants et des ressources"</item>
         <item>1.4.0.104</item>
@@ -245,13 +259,13 @@
                  - les éléments peuvent maintenant être sélectionnés en cliquant n\'importe où et pas seulement dans la case à cocher"</item>
         <item>1.4.0.103</item>
         <item>"Correction d\'un bug:
-                 - La modification des éléments de keystore et de certificat de confiance a causé un plantage.
+                 - La modification du fichier de clés et des éléments de certificat de confiance a provoqué un plantage.
                      : Veuillez m\'envoyer un e-mail depuis l\'application lorsque des fonctionnalités clés comme celle-ci ne fonctionnent pas.
                  - Parfois impossible de sortir des fichiers récents avec la sélection de fichiers système
                  - Liste des groupes alignée verticalement au centre de l\'écran
                 Changements:
                  - Meilleure expérience utilisateur pour l\'importation de keystore et de certificat
-                 - Nouvelle préférence pour contrôler la durée d\'affichage des détails de l\'image en plein écran ou en diaporama"</item>
+                 - Nouvelle préférence pour contrôler la durée d\'affichage des détails de l\'image en plein écran ou en mode diaporama"</item>
         <item>1.4.0.102</item>
         <item>"Correction d\'un bug:
                  - Des changements récents ont rendu impossible l\'installation des versions gratuite et payante en même temps sur un seul appareil

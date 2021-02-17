@@ -45,7 +45,7 @@
 
     <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
         <item>beste Passform</item>
-        <item>Quadrat</item>
+        <item>Platz</item>
         <item>Daumen</item>
         <item>2klein</item>
         <item>xsmall</item>
@@ -60,7 +60,7 @@
     
 
     <string-array name="preference_gallery_item_thumbnail_size_entry_text">
-        <item>Quadrat</item>
+        <item>Platz</item>
         <item>Daumen</item>
         <item>2klein</item>
         <item>xsmall</item>
@@ -127,7 +127,7 @@
     <string-array name="top_tips" translatable="true">
         <item>Wenn Sie Probleme mit der App haben, benachrichtigen Sie mich bitte per E-Mail. Wenn Sie möchten, veröffentlichen Sie eine negative Bewertung bei Google Play. Ich versuche nicht, dies zu stoppen, aber bitte senden Sie auch eine E-Mail. Oben im Menü der ausziehbaren Schublade befindet sich ein Link, über den Sie mir eine E-Mail senden können. Ich kann eine E-Mail-Adresse viel umfassender unterstützen. Danke vielmals.</item>
         <item>Sie können nur Dateien zum Hochladen auswählen, die zum Hochladen auf Ihren Server zulässig sind. Wenn Sie Videos hochladen möchten, müssen Sie die Datei config.inc.php Ihres Servers so ändern, dass sie $ conf [\'upload_form_all_types\'] = true enthält. eher als falsch</item>
-        <item>Wenn ein Upload gerade nicht erfolgreich ist, versuchen Sie, die Einstellungen auf der Upload-Seite für die App-Einstellungen zu verwenden, um alle verbleibenden fehlgeschlagenen Uploads vom Server zu löschen</item>
+        <item>Wenn ein Upload gerade nicht erfolgreich ist, versuchen Sie, die Einstellungen auf der Upload-Seite der App-Einstellungen zu verwenden, um alle verbleibenden fehlgeschlagenen Uploads vom Server zu löschen</item>
         <item>Beim Versuch, Tags zu aktualisieren, tritt immer ein Fehler auf. - "Sie dürfen keine Tags löschen." - Stellen Sie sicher, dass Benutzer Tags hinzufügen und löschen können (Server-Plugin-Einstellung).</item>
         <item>Teilen Sie Dateien aus einer anderen App mit dieser App, um sie dem Upload-Bildschirm hinzuzufügen und auf Ihren aktuellen Server zu übertragen</item>
         <item>Klicken Sie lange auf ein Bild (entweder Miniaturbild oder Diashow), das nicht geladen werden konnte, um es erneut abzurufen</item>
@@ -142,13 +142,27 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Die Zukunft</item>
-        <item>Nur Bugfixes</item>
-        <item>1.4.0.120</item>
-        <item>"Bug-Fix:
+        <item>"* Hauptsächlich nur Bugfixes
+                * Möglicherweise Option hinzufügen, um den Zugriff auf einen Ordner als URL in einer E-Mail freizugeben. Dazu muss ein normaler Benutzer erstellt, ihm die Berechtigung für den Ordner und die Datei erteilt und ein Token für die Anmeldeinformationen und URL-Details zum Einbetten in einen http-Link erstellt werden und eine Möglichkeit, diese Token auf dem Server zu verwalten."</item>
+        
+        <item>1.4.0.121</item>
+        <item>"Fehlerbehebung:
                  - Implementieren Sie die Schaltfläche \"Aktualisieren\" auf der Diashow-Seite \"Element nicht geladen\""</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        
+        <item>1.4.0.120</item>
+        <item>"Veränderung:
+                - Unterstützung für das Herunterladen von Dateien im alternativen Ressourcenformat, die in Ordnern von pwg_format auf piwigo-Sites gehostet werden. HINWEIS: privacy_plugin unterstützt dies derzeit nicht.
+                    * Hinweis: Dies erfordert eine Änderung Ihrer Nginx-Serverkonfigurationsdatei, damit die URLs heruntergeladen werden können.
+                            Beispielauszug aus meiner Testkonfiguration des Nginx-Servers:
+                            # Warnung, dies umgeht das privacy_plugin vollständig (jeder Benutzer kann die Datei herunterladen, wenn er die URL errät).
+                            Ort ~ (^ / piwigo) (/ \ d) (/.*/ pwg_format /.*) {
+                                    # Entfernen Sie vorerst einfach die Bild-ID aus dem Uri und rufen Sie das Bild ab
+                                    try_files $ 1 $ 3 = 404;
+                            }}
+                            # Die Route zu piwigo_privacy / get.php sollte in diese geändert werden - Warnung, dies umgeht das privacy_plugin vollständig (jeder kann die Datei herunterladen, wenn er die URL errät).
+                            Ort ~ (^ / piwigo) (/ \ d /.*/(?&lt;!pwg_format/)[^/‹*) {
+                - Unterstützung für Multimediadateien, die auf willkürlich benannten piwigo-Sites gehostet werden (siehe &lt;server_uri&gt; /admin.php?page=site_manager) - muss das PiwigoClientWsExts-Plugin Version 1.0.15 installiert sein"</item>
         <item>1.4.0.119</item>
         <item>"Fehlerbehebung:
                  - Absturz bei älteren Versionen, wenn keine Berechtigung zur Verwendung des Cache-Ordners erteilt wurde
@@ -158,7 +172,7 @@
                  - Verbesserte Unterstützung für das Hochladen von Audiodateien"</item>
         <item>1.4.0.117</item>
         <item>"Fehlerbehebung:
-                 - Das Hochladen von Dateien, die von einigen Apps gemeinsam genutzt werden, kann im Hintergrund fehlschlagen
+                 - Das Hochladen von Dateien, die von einigen Apps gemeinsam genutzt werden, kann unbemerkt fehlschlagen
                  - Jobstatusansicht für Jobs, die mit einigen Fehlern beendet wurden, die nach Beendigung des Jobs nicht verfügbar sind
                  - Der Bildschirm wird nicht geöffnet
                  - alle identifizierten Ursachen für App-Abstürze
@@ -167,22 +181,22 @@
                  - Die Upload-Fehler werden jetzt auf der Statusseite des Upload-Jobs nach lokaler Datei gruppiert
                  - Wenn ein Upload fehlschlägt, werden Sie in einem neuen Dialogfeld mit den Optionen zur Problemlösung aufgefordert"</item>
         <item>1.4.0.116</item>
-        <item>"Bug-Fix:
+        <item>"Fehlerbehebung:
                  - Diashow-Fehler, die Abstürze verursachen"</item>
         <item>1.4.0.115</item>
-        <item>"Bug-Fix:
+        <item>"Fehlerbehebung:
                  - Videos, die bei Verwendung des Datenschutz-Plugins nicht identifiziert wurden, und Videos, auf die von / gallery zugegriffen wird.
                  - Diashow- und Albumansichtseiten behandeln Orientierungsänderungen nicht korrekt
                 Veränderung:
                  - Die App erkennt jetzt, dass einige Server Videos unter / gallery anstatt unter / upload speichern"</item>
         <item>1.4.0.114</item>
-        <item>"Bug-Fix:
-                 - Laden der Seite mit verwaisten Elementen, die einen Absturz verursacht
+        <item>"Fehlerbehebung:
+                 - Laden der Seite mit verwaisten Elementen, was zu einem Absturz führt
                 Veränderung:
                  - Name für Task-Fortschritts-Tracker, um die Fehlerbehebung zu ermöglichen, wenn die untergeordnete Aufgabe eines Fortschritts-Trackers unerwartet unvollständig ist"</item>
         <item>1.4.0.113</item>
-        <item>"Bug-Fix:
-                 - Schließlich! hat herausgefunden, warum die App in der Diashow für einige Benutzer abstürzte
+        <item>"Fehlerbehebung:
+                 - Endlich! hat herausgefunden, warum die App in der Diashow für einige Benutzer abstürzte
                  - Einige Dialoglayouts wurden optimiert
                 Veränderung:
                  - Dialogfeld mit allen Versionshinweisen seit Ihrer letzten Aktualisierung nach einem Update"</item>
@@ -190,13 +204,13 @@
         <item>"Veränderung:
                  - Räumen Sie die Seiten mit den App-Einstellungen auf"</item>
         <item>1.4.0.111</item>
-        <item>"Bug-Fix:
+        <item>"Fehlerbehebung:
                  - Multimedia-URIs funktionieren nicht für Benutzer von Nicht-Datenschutz-Plugins.
                  - Die Videowiedergabe startet nicht, wenn die Einstellung so eingestellt ist, dass keine Videos in Diashows aufgenommen werden
                 Veränderung:
                  - Es gibt eine neue Einstellung in den Verbindungseinstellungen für die Reparatur des Datenschutz-Plugins uri"</item>
         <item>1.4.0.110</item>
-        <item>"Bug-Fix:
+        <item>"Fehlerbehebung:
                  - Mehrere untergeordnete Alben stürzen nebeneinander ab, wobei eine ungerade Anzahl von untergeordneten Alben vorhanden ist (Querformat oder Großbildgeräte).
                  - Upload-Auftrag - Upload auf Piwigo-Serverliste nicht auswählbar (Auswirkung für Benutzer mit mehr als einem in der App konfigurierten Serververbindungsprofil)
                  - Serveralben werden beim ersten Eintrag für den automatischen Upload-Auftrag nicht geladen. Wählen Sie eine Kategorieeinstellung aus
@@ -207,7 +221,7 @@
                  - Erklärung zu Ihrer Klarheit oben in der von dieser App für Supportanfragen erstellten E-Mail-Vorlage hinzugefügt
                  - Nur bezahlt: Unterstützung für Benachrichtigung über Updates für den Server oder die Plugins hinzugefügt"</item>
         <item>1.4.0.108</item>
-        <item>"Bug-Fix:
+        <item>"Fehlerbehebung:
                  - Beheben Sie viele Probleme, die nach dem letzten Monat der Änderungen zu Abstürzen in der gesamten App führen
                  - Standardeinstellung für Videokomprimierung korrigiert
                  - Unterstützung für das Minimieren von Alben wurde hinzugefügt
@@ -215,20 +229,20 @@
                Änderungen:
                  - Option entfernt, um anzugeben, welche Dateien per Video abgespielt werden können. Dies erfolgt basierend auf dem von der Dateierweiterung abgeleiteten Mimetyp"</item>
         <item>1.4.0.107</item>
-        <item>"Bug-Fix:
+        <item>"Fehlerbehebung:
                  - Möglicherweise wird eine Ressource in der Diashow der Albumressource übersehen (Vollbildvorschau).
                  - Absturz bei Vorschau der verwaisten Datei
                 Veränderung:
                  - Die Vorschau verwaister Dateien und die Ansicht innerhalb einer Diashow, falls gewünscht, wird jetzt unterstützt
                  - Die Menüoption \"Waisen\" steht nur Administratoren zur Verfügung, wenn die App nicht schreibgeschützt ist"</item>
         <item>1.4.0.106</item>
-        <item>"Bug-Fix:
+        <item>"Fehlerbehebung:
                  - Hoffentlich wurde der letzte Fehler, bei dem die Miniaturansichten des Albums nicht richtig geladen wurden
                 Änderungen:
                  - Beim Löschen eines Albums können untergeordnete Ressourcen entweder nicht verbunden oder vom Server gelöscht werden
                  - Nur bezahlt: Es gibt eine neue verwaiste Ressourcenverwaltungsseite"</item>
         <item>1.4.0.105</item>
-        <item>"Bug-Fix:
+        <item>"Fehlerbehebung:
                  - Schreiben Sie das Album, das Tag und den bevorzugten Sortiercode neu, da es voller Fehler war
                      : Wenn etwas in diesem Bereich jetzt nicht wie erwartet funktioniert, lassen Sie es mich bitte wissen.
                      : Dies sollte Abstürze beheben, die auf der Diashow-Seite aufgetreten sind
@@ -238,13 +252,13 @@
                 Änderungen:
              - Neue Einstellung, um die unabhängige Umkehrung der Sortierreihenfolge von untergeordneten Alben und Ressourcen zu ermöglichen"</item>
         <item>1.4.0.104</item>
-        <item>"Bug-Fix:
+        <item>"Fehlerbehebung:
                  - Probleme beim Hochladen nach Überarbeitung der Dateiauswahl für Keystore und Zertifikate
                      : Vielen Dank für Ihre Geduld, die Verwaltung von Android-Dateiberechtigungen ist schwierig
                  - Löschen von Alben im Stammverzeichnis jetzt bei Bedarf immer beim Laden der App verfügbar
                  - Elemente können jetzt ausgewählt werden, indem Sie auf eine beliebige Stelle klicken, nicht nur in das Kontrollkästchen"</item>
         <item>1.4.0.103</item>
-        <item>"Bug-Fix:
+        <item>"Fehlerbehebung:
                  - Die Bearbeitung von Keystore- und vertrauenswürdigen Zertifikatelementen verursachte einen Absturz.
                      : Bitte senden Sie mir eine E-Mail von der App, wenn solche Schlüsselfunktionen nicht funktionieren.
                  - Manchmal kann mit der Auswahl der Systemdateien nicht aus den zuletzt verwendeten Dateien navigiert werden
@@ -253,7 +267,7 @@
                  - Bessere Benutzererfahrung für den Import von Schlüsselspeichern und Zertifikaten
                  - Neue Einstellung zur Steuerung der Zeitdauer, in der die Bilddetails in der Vollbild- oder Diashow-Ansicht angezeigt werden"</item>
         <item>1.4.0.102</item>
-        <item>"Bug-Fix:
+        <item>"Fehlerbehebung:
                  - Aufgrund der jüngsten Änderungen war es nicht möglich, sowohl die kostenlose als auch die kostenpflichtige Version gleichzeitig auf einem einzigen Gerät zu installieren
                  - Album-Miniaturansichten werden für Administratoren nicht immer angezeigt
                  - gegen Piwigo 11 getestet. Das Öffnen eines Bildes funktionierte nicht"</item>

@@ -42,7 +42,7 @@
     <string name="gallery_photos_summary_text_pattern">%1$d foto</string>
     <string name="gallery_subcategory_summary_text_pattern">%1$d album secondari e%2$d foto</string>
     
-    <string name="alert_title_login">Accesso</string>
+    <string name="alert_title_login">Login</string>
     <string name="alert_title_connectionTest">Test di connessione</string>
     <string name="alert_message_success_connectionTest">Successo\nTipo utente:%1$s.</string>
     <string name="alert_message_no_available_image_sizes">avvertimento\nIl server non ha segnalato le dimensioni delle immagini disponibili.</string>
@@ -183,7 +183,7 @@ Gareth Deli ti concede una licenza revocabile, non esclusiva, non trasferibile e
 scaricare, installare e utilizzare l\'Applicazione esclusivamente per scopi personali o commerciali
 rigorosamente in conformità con i termini del presente Contratto.
 
-IL SOFTWARE VIENE FORNITO \"COSÌ COM\'È\", SENZA GARANZIA DI ALCUN TIPO, ESPLICITA O IMPLICITA, INCLUSE, MA NON SOLO, LE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ PER UNO SCOPO PARTICOLARE E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI PER QUALSIASI RIVENDICAZIONE, DANNO O ALTRA RESPONSABILITÀ, SIA IN UN\'AZIONE DI CONTRATTO, TORTO O ALTRO, DERIVANTE DAL, O IN CONNESSIONE CON IL SOFTWARE O L\'USO O ALTRI TRATTAMENTI NEL SOFTWARE
+IL SOFTWARE VIENE FORNITO \"COSÌ COM\'È\", SENZA GARANZIA DI ALCUN TIPO, ESPLICITA O IMPLICITA, INCLUSE, MA NON SOLO, LE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ PER UN PARTICOLARE SCOPO E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI PER QUALSIASI RIVENDICAZIONE, DANNO O ALTRA RESPONSABILITÀ, SIA IN UN\'AZIONE DI CONTRATTO, TORTO O ALTRO, DERIVANTE DAL, O IN CONNESSIONE CON IL SOFTWARE O L\'USO O ALTRI TRATTAMENTI NEL SOFTWARE
 
 
 ** Restrizioni
@@ -206,7 +206,7 @@ Il software viene fornito \"così com\'è\" e il licenziatario lo utilizza a pro
 
 ** Limitazioni di responsabilità
 
-Il licenziatario è responsabile delle conseguenze dell\'utilizzo del software e dei danni diretti e indiretti che ne derivano per quanto legalmente possibile. La responsabilità è limitata al prezzo di acquisto per quanto legalmente possibile; altrimenti è limitato al minimo legalmente possibile.
+Il licenziatario è responsabile delle conseguenze dell\'uso del software e dei danni diretti e indiretti che ne derivano per quanto legalmente possibile. La responsabilità è limitata al prezzo di acquisto per quanto legalmente possibile; altrimenti è limitato al minimo legalmente possibile.
 
 
 ** Manutenzione e supporto
@@ -268,7 +268,7 @@ Esistono due versioni, una versione gratuita (con pubblicità) e una versione a 
 Nota: le versioni divergeranno nel tempo. La maggior parte delle modifiche verrà apportata sia alla versione gratuita che a quella a pagamento.
 
 Attualmente, la versione a pagamento ha aggiunto il supporto per i tag:
-        Piwigo supporta i tag a un livello fuori dagli schemi, ma il plug-in Tag utente aggiunge più funzionalità (test di base eseguiti).
+        Piwigo supporta i tag a un livello fuori dalla scatola, ma il plug-in Tag utente aggiunge più funzionalità (test di base eseguiti).
 
 
 Al momento, fornisce un livello di funzionalità di base per consentire la navigazione in una galleria esistente, il caricamento di nuove foto e video e la creazione di nuove categorie all\'interno di una galleria. Alcuni campi possono essere modificati una volta creati, ma molti sono ancora di sola lettura .... per ora!
@@ -355,7 +355,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="users_heading">Utenti</string>
     <string name="albums_heading">Album</string>
     <string name="user_high_definition_title">Alta definizione</string>
-    <string name="user_email_title">Indirizzo email</string>
+    <string name="user_email_title">Indirizzo e-mail</string>
     <string name="none_value">Nessuna</string>
     <string name="access_rights_heading">Diritti di accesso</string>
     <string name="progress_loading_album_content">Caricamento del contenuto dell\'album</string>
@@ -532,7 +532,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_error_album_no_longer_on_server">Questo album non può essere caricato dal server. Passaggio all\'album principale.</string>
     <string name="button_show_details">Mostra i dettagli</string>
     <string name="button_hide_details">Nascondi dettagli</string>
-    <string name="alert_message_max_upload_file_count_reached">Numero massimo di file da caricare raggiunto. Per caricarne di più contemporaneamente, acquista e utilizza la versione a pagamento di questa app.</string>
+    <string name="alert_message_max_upload_file_count_reached">Numero massimo di file da caricare raggiunto. Per caricarne più in una volta, acquista e utilizza la versione a pagamento di questa app.</string>
     <string name="alert_message_advert_load_error">Gli annunci hanno costantemente problemi di caricamento. Per favore, segnalacelo, poiché per me costituiscono un\'importante, anche se molto piccola, fonte di entrate. Si prega di considerare l\'acquisto della versione a pagamento per rimuovere completamente gli annunci. L\'app si blocca ora per 5 secondi durante i quali questa schermata deve rimanere visibile. Il conto alla rovescia ricomincerà se il messaggio è nascosto. Dopo 5 secondi puoi chiudere questo messaggio e continuare a utilizzare l\'app normalmente.</string>
     <string name="alert_deleting_temporary_upload_album">Eliminazione dell\'album di caricamento temporaneo</string>
     <string name="alert_invalid_uri_pattern">URI non valido. %1$s</string>
@@ -574,7 +574,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="x_of_y">%1$s /%2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">La tua versione di PiwigoClientWsExts è obsoleta. Aggiornalo come priorità.</string>
     <string name="subalbum_detail_txt_pattern">%1$d album secondari</string>
-    <string name="please_read_and_agree_with_eula_first">Leggere e confermare prima l\'accordo con i termini dell\'EULA</string>
+    <string name="please_read_and_agree_with_eula_first">Si prega di leggere e confermare prima l\'accordo con i termini dell\'EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Le autorizzazioni richieste non sono state concesse. Azione annullata.</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Le autorizzazioni richieste non sono state concesse. Azione annullata. In alternativa alle autorizzazioni a livello di sistema, riselezionare la cartella da utilizzare nelle preferenze dell\'app.</string>
     <string name="copied_to_clipboard">Copiato negli Appunti</string>
@@ -666,7 +666,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="selected_files">File selezionati</string>
     <string name="uri_permission_justification_file_selection">Per selezionare file o cartelle da utilizzare con questa app</string>
     <string name="alert_error_please_select_download_folder_and_retry">Seleziona una cartella in cui scaricare i file nelle impostazioni dell\'app, quindi riprova.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Impossibile trovare un\'estensione di file di output valida (la preferenza è%2$s) per il file (video:%3$b audio:%4$b) accettabile dal server tra le opzioni (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Impossibile trovare un\'estensione del file di output valida (preferibilmente%2$s) per il file (video:%3$b audio:%4$b) accettabile per il server tra le opzioni (%1$s)</string>
     <string name="uuid_title">Installa UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Impossibile aggiungere file per il caricamento. È in corso un processo di caricamento.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Impossibile aggiungere file per il caricamento. Il processo di caricamento corrente deve essere completato per primo.</string>

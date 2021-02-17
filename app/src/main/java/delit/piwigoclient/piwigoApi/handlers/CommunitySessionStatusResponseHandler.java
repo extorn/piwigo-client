@@ -76,7 +76,7 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
         String uploadToAlbumsList = result.get("upload_categories_getList_method").getAsString();
         String realUserStatus = result.get("real_user_status").getAsString();
 
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         if (uploadToAlbumsList.equals("community.categories.getList")
                 || (uploadToAlbumsList.equals("pwg.categories.getAdminList") && forceUsingCommunityPlugin)) {
             sessionDetails.setUseCommunityPlugin(true);

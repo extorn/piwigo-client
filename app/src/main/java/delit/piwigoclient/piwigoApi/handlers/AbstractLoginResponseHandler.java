@@ -95,7 +95,7 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
             if (PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
                 canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
             } else {
-                PiwigoSessionDetails instance = PiwigoSessionDetails.getInstance(connectionPrefs);
+                PiwigoSessionDetails instance = getPiwigoSessionDetails();
                 if (instance != null) {
                     instance.setUseCommunityPlugin(false);
                 } else {
@@ -111,7 +111,7 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
         }
 
         if(canContinue) {
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
             if (sessionDetails.isMethodAvailable(PiwigoClientGetPluginDetailResponseHandler.WS_METHOD_NAME)) {
                 sessionDetails.setPiwigoClientPluginVersion("1.0.5");
                 canContinue = loadPiwigoClientPluginDetails();
@@ -149,7 +149,7 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
 
     private boolean loadGalleryConfig() {
         GalleryGetConfigResponseHandler handler = new GalleryGetConfigResponseHandler();
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         if (sessionDetails.isMethodAvailable(handler.getPiwigoMethod())) {
             handler.setPerformingLogin();
             handler.invokeAndWait(getContext(), getConnectionPrefs());
@@ -261,7 +261,7 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
 
     private boolean loadUserDetails() {
         boolean canContinue;
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         UserGetInfoResponseHandler userInfoHandler = new UserGetInfoResponseHandler(sessionDetails.getUsername(), sessionDetails.getUserType());
         userInfoHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         userInfoHandler.invokeAndWait(getContext(), getConnectionPrefs());
@@ -323,7 +323,7 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
     }
 
     private boolean loadActiveServerPlugins(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         if(sessionDetails.isAdminUser()) {
             ServerAdminGetPluginsResponseHandler pluginsResponseHandler = new ServerAdminGetPluginsResponseHandler();
             pluginsResponseHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session

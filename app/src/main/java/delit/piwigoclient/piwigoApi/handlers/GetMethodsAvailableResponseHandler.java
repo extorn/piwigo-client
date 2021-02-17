@@ -30,7 +30,7 @@ public class GetMethodsAvailableResponseHandler extends AbstractPiwigoWsResponse
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
-        PiwigoSessionDetails currentCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails currentCredentials = getPiwigoSessionDetails();
         currentCredentials.setMethodsAvailable(parseMethodsAvailable(rsp));
         PiwigoGetMethodsAvailableResponse r = new PiwigoGetMethodsAvailableResponse(getMessageId(), getPiwigoMethod(), isCached);
         storeResponse(r);

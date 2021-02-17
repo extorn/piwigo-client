@@ -1,5 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
+import java.util.List;
+
 public class ServerConfig {
     private boolean commentsAllowed;
     private boolean anonymousCommentsAllowed;
@@ -11,6 +13,7 @@ public class ServerConfig {
     private boolean anonymousRatingAllowed;
     private boolean commentsUserDeletable;
     private boolean commentsUserEditable;
+    private List<String> sites;
 
     public boolean isCommentsAllowed() {
         return commentsAllowed;
@@ -90,5 +93,13 @@ public class ServerConfig {
 
     public void setCommentsUserEditable(boolean commentsUserEditable) {
         this.commentsUserEditable = commentsUserEditable;
+    }
+
+    public void setSites(List<String> sites) {
+        this.sites = sites;
+    }
+
+    public List<String> getSites() {
+        return sites;
     }
 }

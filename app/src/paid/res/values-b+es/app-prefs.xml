@@ -13,7 +13,7 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Cargas automáticas</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Solo use la carga automática en la conexión inalámbrica</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Solo use la carga automática en modo inalámbrico</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Solo por conexión inalámbrica</string>
     
     

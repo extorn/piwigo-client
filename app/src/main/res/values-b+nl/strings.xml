@@ -89,7 +89,7 @@
     <string name="alert_error_upload_chunk_failed_message_pattern">Uploaden van blok voor bestand%1$s is mislukt. Uploaden van bestand verlaten.</string>
     <string name="alert_error_upload_file_no_longer_available_message_pattern">Bestand%1$s is niet langer beschikbaar op het apparaat, misschien is het verwijderd of verplaatst.\n%2$s</string>
     <string name="alert_error_upload_file_read_error_message_pattern">Fout tijdens het uploaden van bestand%1$s.\n%2$s</string>
-    <string name="alert_error_upload_file_already_on_server_message_pattern">Geüpload bestand%1$s is al aanwezig op de server, actie geannuleerd.</string>
+    <string name="alert_error_upload_file_already_on_server_message_pattern">Het geüploade bestand%1$s is al aanwezig op de server, actie geannuleerd.</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Upload bestand%1$s is mislukt vanwege een fout in PIWIGO-server (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Upload bestand%1$s is mislukt vanwege een webserverfout (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webresponse_message_pattern">Upload bestand%1$s is mislukt vanwege een fout bij het verwerken van de PIWIGO-reactie. Dit komt waarschijnlijk door een PIWIGO API-wijziging. Niet-parseerbare reactie:%2$s.</string>
@@ -105,7 +105,7 @@
     <string name="createGallery_permissions_allowedGroupsTitle">Toegestane groepen</string>
     <string name="createGallery_permissions_allowedUsersTitle">Toegestane gebruikers</string>
     <string name="createGallery_createGalleryButtonTitle">Maak album</string>
-    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">Kan machtigingen voor galerij niet correct instellen. Weer verwijderd. Probeer het a.u.b. opnieuw. Als de fout zich blijft voordoen, meldt u een probleem met deze app zodat we deze kunnen verbeteren en voer de stap handmatig uit.</string>
+    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">Kan machtigingen voor galerij niet correct instellen. Weer verwijderd. Probeer het a.u.b. opnieuw. Als de fout zich blijft voordoen, meld dan een probleem met deze app zodat we deze kunnen verbeteren en voer de stap handmatig uit.</string>
 
     <string name="logging_in_to_piwigo_pattern">Inloggen op%1$s</string>
 
@@ -132,14 +132,14 @@
     <string name="progress_resource_details_updating">Brongegevens bijwerken</string>
     <string name="gallery_details_name_title">Albumnaam</string>
     <string name="gallery_details_description_title">Albumbeschrijving</string>
-    <string name="gallery_details_save_button">Sparen</string>
+    <string name="gallery_details_save_button">Opslaan</string>
     <string name="notification_upload_event">Piwigo uploaden</string>
     <string name="progress_downloading">Bestand downloaden</string>
     <string name="alert_error_unimplemented">Functie nog niet geïmplementeerd.</string>
     <string name="button_ok">Oke</string>
     <string name="button_yes">Ja</string>
     <string name="button_no">Nee</string>
-    <string name="button_save">Sparen</string>
+    <string name="button_save">Opslaan</string>
     <string name="alert_confirm_title">Bevestigen</string>
     <string name="alert_question_title">Vraag</string>
     <string name="alert_confirm_really_delete_from_server">Hiermee wordt het item definitief van de server verwijderd. Doorgaan met?</string>
@@ -183,7 +183,7 @@ Gareth Deli verleent u een herroepbare, niet-exclusieve, niet-overdraagbare, bep
 om de applicatie uitsluitend voor uw persoonlijke of commerciële doeleinden te downloaden, installeren en gebruiken
 strikt in overeenstemming met de voorwaarden van deze overeenkomst.
 
-DE SOFTWARE WORDT \"AS IS\" GELEVERD, ZONDER ENIGE GARANTIE, EXPLICIET OF IMPLICIET, MET INBEGRIP VAN MAAR NIET BEPERKT TOT DE GARANTIES VAN VERKOOPBAARHEID, GESCHIKTHEID VOOR EEN BEPAALD DOEL EN NIET-INBREUK. IN GEEN GEVAL ZULLEN DE AUTEURS OF AUTEURSRECHTHOUDERS AANSPRAKELIJK ZIJN VOOR ENIGE CLAIM, SCHADE OF ANDERE AANSPRAKELIJKHEID, ONGEACHT IN EEN CONTRACT, ONRECHTMATIGE OF ANDERSZINS, VOORTVLOEIEND UIT, UIT OF IN VERBAND MET DE SOFTWARE OF HET GEBRUIK OF ANDERE HANDELINGEN IN DE SOFTWARE
+DE SOFTWARE WORDT GELEVERD \"AS IS\", ZONDER ENIGE GARANTIE, EXPLICIET OF IMPLICIET, MET INBEGRIP VAN, MAAR NIET BEPERKT TOT DE GARANTIES VAN VERKOOPBAARHEID, GESCHIKTHEID VOOR EEN BEPAALD DOEL EN NIET-INBREUK. IN GEEN GEVAL ZULLEN DE AUTEURS OF AUTEURSRECHTHOUDERS AANSPRAKELIJK ZIJN VOOR ENIGE CLAIM, SCHADE OF ANDERE AANSPRAKELIJKHEID, ONGEACHT IN EEN CONTRACT, ONRECHTMATIGE OF ANDERSZINS, VOORTVLOEIEND UIT, UIT OF IN VERBAND MET DE SOFTWARE OF SOFTWARE
 
 
 ** Beperkingen
@@ -196,7 +196,7 @@ b) afgeleide werken maken op basis van deze applicatie.
 
 ** Verzameling van gebruikersgegevens
 
-Firebase-integratie is aan deze applicatie toegevoegd om het volgen van het gebruik van de applicatie te vergemakkelijken, met als belangrijkste doelen het efficiënter oplossen van bugs en het vaststellen van de manier waarop de app wordt gebruikt. De minimaal vereiste gegevens om dit doel te bereiken, worden verzameld.
+Firebase-integratie is aan deze applicatie toegevoegd om het volgen van het gebruik van de applicatie te vergemakkelijken, met als belangrijkste doelen het efficiënter oplossen van bugs en het vaststellen van de manier waarop de app wordt gebruikt. De minimaal benodigde gegevens om dit doel te bereiken, worden verzameld.
 
 
 ** Beperkte garantie en disclaimer
@@ -237,7 +237,7 @@ van de applicatie vanaf uw mobiele apparaat of vanaf uw desktop.
 
 ** Scheidbaarheid
 
-Als een bepaling van deze overeenkomst als niet-afdwingbaar of ongeldig wordt beschouwd, zal een dergelijke bepaling dat zijn
+Als een bepaling van deze overeenkomst als niet-afdwingbaar of ongeldig wordt beschouwd, zal die bepaling dat ook zijn
 gewijzigd en geïnterpreteerd om de doelstellingen van een dergelijke bepaling zo goed mogelijk te bereiken
 mogelijk onder toepasselijk recht en de overige bepalingen blijven volledig van kracht.
 
@@ -285,7 +285,7 @@ Ik heb getest met een kopie van de plug-in piwigo_privacy geïnstalleerd en ook 
 Ik heb een kopie van de Extended Description-plug-in geïnstalleerd, maar helaas is deze functionaliteit nog niet beschikbaar via de PIWIGO API.
 Ik zou graag ondersteuning willen toevoegen voor \"favoriete\" foto\'s, maar deze functionaliteit lijkt nog niet te worden getoond via de PIWIGO API.
 
-Meld dit alsjeblieft, stuur me een e-mail als je bugs tegenkomt. Ik heb dit getest op de Android-emulator, een Samsung-telefoon en een Samsung-tablet, maar het is mijn eerste app, dus ik weet zeker dat er iets mis zal gaan met iemand.
+Meld dit alsjeblieft, stuur me een e-mail als je bugs tegenkomt. Ik heb dit getest op de Android-emulator, een Samsung-telefoon en een Samsung-tablet, maar het is mijn eerste app, dus ik weet zeker dat het bij iemand mis zal gaan.
 
 Hartelijk dank aan iedereen die me een e-mail heeft gestuurd met suggesties of bugs. Ik zal proberen al uw suggesties zo snel mogelijk te behandelen.Kies ervoor om elke crash die optreedt te rapporteren. Als u merkt dat de bug zich na de volgende update nog steeds voordoet, neem dan even de tijd om mij een e-mail te sturen. Het is waarschijnlijk dat ik wat meer context nodig heb rond wat er gebeurt net voordat de bug optreedt.
 
@@ -385,7 +385,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">Kan bestand niet kopiëren uit cache. %1$s</string>
     <string name="gallery_empty_text">Dit album is momenteel leeg</string>
     <string name="alert_error_unable_to_clear_cached_content">Kan inhoud in de cache niet verwijderen.</string>
-    <string name="alert_clear_cached_content">Gegevens in de cache wissen voor deze bron en opnieuw downloaden vanaf de server forceren?</string>
+    <string name="alert_clear_cached_content">Gegevens in de cache voor deze bron wissen en opnieuw downloaden vanaf de server forceren?</string>
     <string name="gallery_album_content_load_failed_text">Kan albuminhoud niet laden</string>
     <string name="gallery_permissions_load_failed_text">Kan details van albummachtigingen niet laden</string>
     <string name="gallery_update_failed_text">Kan albumdetails niet updaten</string>
@@ -406,7 +406,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
 
     <string name="alert_slideshow_out_of_sync_with_tag">Deze diavoorstelling geeft niet langer nauwkeurig de huidige tag-inhoud weer</string>
     <string name="alert_error_app_not_yet_configured">App nog niet geconfigureerd en verbonden met een PIWIGO-server. Open de app handmatig en configureer deze voordat u probeert items ermee te delen.</string>
-    <string name="error_server_configuration_invalid">Onacceptabele piwigo-serverdetails, controleer de app-verbindingsconfiguratie</string>
+    <string name="error_server_configuration_invalid">Onacceptabele piwigo-servergegevens, controleer de app-verbindingsconfiguratie</string>
     <string name="alert_image_show_image_select_max_zoom">Sta tot 100x zoom toe</string>
     <string name="alert_image_show_image_select_rotation">Draai de afbeelding</string>
     <string name="top_tips_menu_title">Beste adviezen</string>
@@ -466,11 +466,11 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="x509_cert_valid_from_field_pattern">Geldig vanaf:%1$s</string>
     <string name="x509_cert_valid_to_field_pattern">Geldig tot:%1$s</string>
     <string name="alert_warning_multiple_users_found_pattern">Er zijn%1$d andere gebruikers gevonden die deze gebruikersnaam (%2$s) delen. De meest recente gebruiker van deze Piwigo-server is geselecteerd, maar dit is niet veilig als het mogelijk is dat ze de server op hetzelfde of een vergelijkbaar tijdstip zullen gebruiken. Overweeg om deze gebruikersnamen te wijzigen, zodat de gebruikersnaam een ​​unieke identificatie is voor een bepaalde gebruikersklasse.</string>
-    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Deze machtigingen zijn nodig om een ​​uploadproces te starten en vervolgens het uploadproces te laten draaien zodra het scherm is uitgeschakeld</string>
+    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Deze machtigingen zijn nodig om een ​​uploadproces te starten en om het uploadproces te laten doorgaan zodra het scherm is uitgeschakeld</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">De volgende%1$d bestanden hebben de waarschuwingsdrempel overschreden:%2$s. Wilt u deze uit de upload verwijderen?</string>
     <string name="alert_files_larger_than_upload_threshold_compress">Wil je video\'s comprimeren voordat je ze uploadt?</string>
     <string name="download_link_clipboard_data_desc">Downloadlink voor%1$s</string>
-    <string name="alert_http_scheme_specified">Uw server gebruikt http. Dit is geen goed idee omdat de gebruikersnaam en het wachtwoord in platte tekst naar de server worden verzonden. Ik raad u ten zeerste aan om uw server te wijzigen om https te gebruiken.</string>
+    <string name="alert_http_scheme_specified">Uw server gebruikt http. Dit is geen goed idee, omdat de gebruikersnaam en het wachtwoord in platte tekst naar de server worden verzonden. Ik raad u ten zeerste aan om uw server te wijzigen om https te gebruiken.</string>
     <string name="gallery_admin_albums_list_load_failed_text">Het laden van de volledige beheerderslijst met albums is mislukt</string>
     <string name="title_adding_item">Item toevoegen</string>
     <string name="title_editing_item">Item bewerken</string>
@@ -639,7 +639,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="missing_permissions_warning_message_pattern">"Sinds de laatste keer dat deze app is geopend, zijn de bestandsrechten die vereist zijn voor de volgende delen van de app verwijderd\n\n%1$s\n\nSelecteer nieuwe machtigingen voor deze instellingen om ervoor te zorgen dat alles werkt zoals verwacht."</string>
     <string name="folder_selection_title">Selecteer map</string>
     <string name="files_selection_title">Selecteer bestand</string>
-    <string name="all">Allemaal</string>
+    <string name="all">Alle</string>
     <string name="user_high_definition_field">Sta toegang toe tot originele (volledige grootte) bestanden</string>
     <string name="group_is_default_field">Wijs nieuwe gebruikers toe aan deze groep</string>
     <string name="createGallery_galleryCommentsAllowed_title">Gebruikerscommentaar</string>
@@ -666,7 +666,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="selected_files">Geselecteerde bestanden</string>
     <string name="uri_permission_justification_file_selection">Om bestanden of mappen te selecteren voor gebruik door deze app</string>
     <string name="alert_error_please_select_download_folder_and_retry">Selecteer een map om bestanden naar te downloaden in de app-instellingen en probeer het opnieuw.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Geen geldige uitvoerbestandsextensie (bij voorkeur%2$s) kon gevonden worden voor bestand (video:%3$b audio:%4$b) dat acceptabel is voor de server onder de opties (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Geen geldige uitvoerbestandsextensie (bij voorkeur%2$s) kon gevonden worden voor bestand (video:%3$b audio:%4$b) acceptabel voor de server onder opties (%1$s)</string>
     <string name="uuid_title">Installeer UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Kan geen bestanden toevoegen om te uploaden. Er wordt een uploadtaak uitgevoerd.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Kan geen bestanden toevoegen om te uploaden. De huidige uploadtaak moet eerst worden voltooid.</string>
@@ -689,12 +689,12 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="piwigo_server_plugin">Server-plug-in</string>
     <string name="piwigo_server_updates_available_pattern">Piwigo-update beschikbaar:\n\n%1$s\n%2$s</string>
     
-    <string name="localizedEmailHelp">Dit e-mailsjabloon is bedoeld voor uw gemak.\nAls u denkt dat het niet relevant is om een van de volgende gegevens te verstrekken, verwijder deze dan.\n\nMet de UUID kan ik alle gelogde gegevens filteren om alleen die gegevens te tonen die voor jou relevant zijn. Dit is alleen nodig als ik moeite heb om een bug op te lossen die u ondervindt.</string>
+    <string name="localizedEmailHelp">Dit e-mailsjabloon is bedoeld voor uw gemak.\nAls u denkt dat het niet relevant is om een van de volgende gegevens te verstrekken, verwijder deze dan.\n\nMet de UUID kan ik alle gelogde gegevens filteren om alleen de gegevens te tonen die voor jou relevant zijn. Dit is alleen nodig als ik moeite heb om een bug op te lossen die u ondervindt.</string>
     <string name="try_enabling_privacy_plugin_media_uris">De bron is niet gevonden op de server. Wilt u de privacy-plug-in multimedia uri fix inschakelen?</string>
     <string name="multimedia_playback_currently_disabled">Multimedia afspelen is uitgeschakeld. U heeft dit waarschijnlijk gekozen om gegevens op te slaan. Schakel afspelen op aanvraag in of afspelen in diavoorstellingsmodus in de app-voorkeuren.</string>
     <string name="release_changes">Recente veranderingen</string>
     <string name="item_not_yet_loaded">Item nog niet geladen</string>
-    <string name="button_refresh">Pagina vernieuwen</string>
+    <string name="button_refresh">Pagina hernieuwen</string>
     <string name="alert_slideshow_feature_refresh_coming_soon">Deze functie is binnenkort beschikbaar. Ga voorlopig een aantal items in de diavoorstelling vooruit of achteruit voordat u terugkeert naar dit item</string>
     <string name="cancelled_indicator">upload geannuleerd voor bestand</string>
     <string name="media_type_indicator">Mediatype-indicator</string>

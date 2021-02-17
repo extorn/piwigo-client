@@ -49,6 +49,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
         if(communityPluginInstalled) {
             params.put("faked_by_community", String.valueOf(false));
         }
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 

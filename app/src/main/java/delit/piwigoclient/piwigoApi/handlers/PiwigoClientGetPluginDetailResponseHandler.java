@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import delit.libs.http.RequestParams;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
 public class PiwigoClientGetPluginDetailResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -31,7 +30,7 @@ public class PiwigoClientGetPluginDetailResponseHandler extends AbstractPiwigoWs
         JsonElement elem = result.get("version");
         String pluginVersion = elem.getAsString();
 
-        PiwigoSessionDetails.getInstance(getConnectionPrefs()).setPiwigoClientPluginVersion(pluginVersion);
+        getPiwigoSessionDetails().setPiwigoClientPluginVersion(pluginVersion);
         PiwigoPwgCliPluginDetailsResponse r = new PiwigoPwgCliPluginDetailsResponse(getMessageId(), getPiwigoMethod(), pluginVersion, isCached);
         storeResponse(r);
     }

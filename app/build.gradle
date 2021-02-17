@@ -31,13 +31,13 @@ android {
 
     defaultConfig {
         //NB: non standard fields must be defined (def)
-        versionCode 364
-        versionName "1.4.0.119"
+        versionCode 365
+        versionName "1.4.0.120"
         applicationId "delit.piwigoclient"
 
-        def latestPiwigoClientWsPluginVersion = "1.0.13"
+        def latestPiwigoClientWsExtsPluginVersion = "1.0.15"
 
-        buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"${latestPiwigoClientWsPluginVersion}\""
+        buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"${latestPiwigoClientWsExtsPluginVersion}\""
 
         minSdkVersion 19
         targetSdkVersion 30

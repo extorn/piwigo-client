@@ -285,7 +285,7 @@
     
 
     
-    <string name="preference_fix_privacy_plugin_media_uris_title">Risolto il problema con Media Uris durante l\'utilizzo del plug-in per la privacy</string>
+    <string name="preference_fix_privacy_plugin_media_uris_title">Risolto il problema con Media Uris durante l\'utilizzo del plugin per la privacy</string>
     <string name="preference_fix_privacy_plugin_media_uris_summary">Abilita solo se ricevi un errore 4xx per le risorse multimediali.</string>
     
 

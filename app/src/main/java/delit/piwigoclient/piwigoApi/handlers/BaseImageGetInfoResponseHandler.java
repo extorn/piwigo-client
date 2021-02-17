@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
+import java.util.List;
+
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -64,8 +66,8 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
 
         private final boolean usingPiwigoClientOveride;
 
-        public BaseImageGetInfoResourceParser(String basePiwigoUrl, boolean usePrivacyPluginFix, boolean usingPiwigoClientOveride) {
-            super(basePiwigoUrl, usePrivacyPluginFix);
+        public BaseImageGetInfoResourceParser(String basePiwigoUrl, List<String> piwigoSites, boolean usePrivacyPluginFix, boolean usingPiwigoClientOveride) {
+            super(basePiwigoUrl, piwigoSites, usePrivacyPluginFix);
             this.usingPiwigoClientOveride = usingPiwigoClientOveride;
         }
 

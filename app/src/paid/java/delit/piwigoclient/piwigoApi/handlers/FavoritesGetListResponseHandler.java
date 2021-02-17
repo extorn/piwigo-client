@@ -30,6 +30,7 @@ public class FavoritesGetListResponseHandler extends AbstractPiwigoWsResponseHan
         params.put("method", getPiwigoMethod());
         params.put("page", String.valueOf(page));
         params.put("per_page", String.valueOf(pageSize));
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 

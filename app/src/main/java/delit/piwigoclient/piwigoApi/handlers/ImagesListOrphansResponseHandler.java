@@ -73,7 +73,7 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
     public boolean isMethodAvailable(@NonNull Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         boolean available = super.isMethodAvailable(context, connectionPrefs);
         if(available && "piwigo_client.images.getOrphans".equals(getPiwigoMethod())) {
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
             int[] pluginVersion = VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion());
             boolean versionSupported = VersionUtils.versionExceeds(new int[]{1,0,5}, pluginVersion);
             available = versionSupported;

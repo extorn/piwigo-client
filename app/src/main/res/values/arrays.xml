@@ -242,17 +242,32 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>
-        <item>"bugfixes only"</item>
-        <item>1.4.0.120</item>
+        <item>"* Primarily Bugfixes only
+               * Possibly Add option to allow sharing access to a folder as a uri in an email - it will involve creating a normal user, giving them permission to the folder and file, creating a token for the credentials and uri details for embedding in an http link, and a way of managing these tokens on the server."</item>
+        <!--
+        Use the new pwg.images.uploadAsync method to simplify the upload service? (what is the benefit?)
+
+        Could Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
+        Background async loading of images in the slideshow, perhaps not to bitmap them, just caching - if local http caching enabled - ?impact on videos?
+        -->
+        <item>1.4.0.121</item>
         <item>"Bugfix:
                 - implement the refresh button on the slideshow 'item not loaded' page"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        <!--
-        Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
-        Add option to show password field contents in preferences (new preference type?)
-        investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
-        -->
+        <item>1.4.0.120</item>
+        <item><![CDATA["Change:
+                - Support for downloading alternative resource format files hosted in pwg_format folders within piwigo sites. NOTE: privacy_plugin does not support this at present.
+                    * Note: this will require a change to your Nginx server configuration file to allow the URLs to download.
+                            Example extract from my testing nginx server configuration:
+                            # warning, this circumvents the privacy_plugin entirely (any user could download the file if they guess the url)
+                            location ~ (^/piwigo)(/\d+)(/.*/pwg_format/.*) {
+                                    # For now, just remove the image Id from the uri and retrieve the image
+                                    try_files $1$3 =404;
+                            }
+                            # the route to piwigo_privacy/get.php should be changed to this - warning, this circumvents the privacy_plugin entirely (anyone could download the file if they guess the url)
+                            location ~ (^/piwigo)(/\d+/.*/(?<!pwg_format/)[^/]*) {
+                - Support for multimedia files hosted on arbitrary named piwigo sites (see <server_uri>/admin.php?page=site_manager) - needs PiwigoClientWsExts plugin version 1.0.15 to be installed"]]></item>
         <item>1.4.0.119</item>
         <item>"Bugfix:
                 - crash on older versions if permission not granted to use cache folder

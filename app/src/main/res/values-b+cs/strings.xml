@@ -183,7 +183,7 @@ Gareth Deli vám uděluje odvolatelnou, nevýhradní, nepřenosnou a omezenou li
 stahovat, instalovat a používat aplikaci výhradně pro své osobní nebo komerční účely
 přísně v souladu s podmínkami této smlouvy.
 
-SOFTWARE JE POSKYTOVÁN „TAK, JAK JE“, BEZ ZÁRUKY JAKÉHOKOLI DRUHU, VÝSLOVNÉ NEBO PŘEDPOKLÁDANÉ, VČETNĚ, ALE NENÍ OMEZENO NA ZÁRUKY PRODEJNOSTI, VHODNOSTI PRO KONKRÉTNÍ ÚČEL A NEPLATNOST. AUTORI NEBO DRŽITELÉ AUTORSKÝCH PRÁV V ŽÁDNÉM PŘÍPADĚ NEBUDOU ODPOVĚDNÍ ZA JAKÝKOLI NÁROK, ŠKODY NEBO JINOU ODPOVĚDNOST, TAKŽE PŘI AKCI SMLOUVY, DĚLENÍ NEBO JINÉHO VÝSLEDKU, VYPLÝVAJÍCÍ Z SOFTWARU NEBO POUŽITÍ NEBO JINÉHO OBCHODOVÁNÍ SOFTWARE
+SOFTWARE JE POSKYTOVÁN „TAK, JAK JE“, BEZ ZÁRUKY JAKÉHOKOLI DRUHU, VÝSLOVNÉ NEBO PŘEDPOKLÁDANÉ, VČETNĚ, ALE NENÍ OMEZENO NA ZÁRUKY PRODEJNOSTI, VHODNOSTI PRO KONKRÉTNÍ ÚČEL A NEPROPOJENÍ. AUTORI NEBO DRŽITELÉ AUTORSKÝCH PRÁV V ŽÁDNÉM PŘÍPADĚ NEBUDOU ODPOVĚDNÍ ZA JAKÝKOLI NÁROK, ŠKODY NEBO JINOU ODPOVĚDNOST, KDYKOLI VE SKUTEČNÉ SMLOUVĚ, DĚLENÍ NEBO JINÉ, VYPLÝVAJÍCÍ Z SOFTWARU NEBO POUŽITÍ NEBO JINÉHO OBCHODOVÁNÍ SOFTWARE
 
 
 ** Omezení
@@ -277,13 +277,13 @@ Mohu vás požádat, abyste odinstalovali aplikaci pomocí odkazu v nabídce apl
 
 Verze serveru PIWIGO, proti které testuji, je aktuálně 2.10.2.
 
-Moje testovací galerie obsahuje pouze soubory .jpg a .mp4. Pokud vaše obsahuje jiné, můžete narazit na problémy - pokud ano, řekněte mi to a já upřednostním práci na těchto typech souborů.
+Moje testovací galerie obsahuje pouze soubory .jpg a .mp4. Pokud vaše obsahuje další, můžete se setkat s problémy - pokud ano, řekněte mi to a já upřednostním práci na těchto typech souborů.
 
 UPOZORNĚNÍ: Verze Piwigo pod 1.9.2 - nahrávání videí je podle mého názoru závislé na opravě # 756, která se použije na váš server.
 
 Testoval jsem s nainstalovanou kopií pluginu piwigo_privacy a také nainstalovaného pluginu VideoJS.
 Mám nainstalovanou kopii pluginu Extended Description, ale bohužel tato funkce ještě není vystavena prostřednictvím PIWIGO API.
-Chtěl bych zahrnout podporu pro „oblíbené“ fotografie, ale tato funkce se zatím nezdá být odhalena prostřednictvím PIWIGO API.
+Chtěl bych zahrnout podporu pro „oblíbené“ fotografie, ale zdá se, že tato funkce zatím není odhalena prostřednictvím PIWIGO API.
 
 Pokud narazíte na nějaké chyby, nahlaste nám prosím jakýkoli e-mail. Testoval jsem to na emulátoru Androidu, telefonu Samsung a tabletu Samsung, ale je to moje první aplikace, takže jsem si jistý, že se někomu něco pokazí.
 
@@ -443,7 +443,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_information_video_caching_disabled">Ukládání videí na disk je zakázáno</string>
     <string name="error_building_http_engine">Nelze vytvořit modul HTTP</string>
     <string name="error_unexpected_error_calling_server">Neočekávaná chyba při volání serveru nebo analýze odpovědi</string>
-    <string name="error_insufficient_permissions_for_cache_folder">Je vyžadován přístup pro čtení a zápis do složky mezipaměti. Zkontrolujte nastavení aplikace.</string>
+    <string name="error_insufficient_permissions_for_cache_folder">Je zapotřebí přístup pro čtení a zápis do složky mezipaměti. Zkontrolujte nastavení aplikace.</string>
     <string name="alert_title_error_talking_to_server">Chyba při hovoru se serverem</string>
     <string name="alert_title_error_connecting_to_server">Chyba při připojení k serveru</string>
     <string name="alert_error_adding_certificate_to_truststore">Chyba při přidávání certifikátu do úložiště důvěryhodnosti</string>
@@ -513,7 +513,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="folder_default">Výchozí</string>
     <string name="button_show_all">Ukázat vše</string>
     <string name="button_select_all">Vybrat vše</string>
-    <string name="button_show_none">Schovat vše</string>
+    <string name="button_show_none">Skrýt vše</string>
     <string name="button_select_none">Vyberte Žádný</string>
     <string name="button_reset">Resetovat</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Mělo by být povoleno monitorování sítě, aby bylo možné efektivně využívat pouze nahrávání WIFI</string>
@@ -666,7 +666,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="selected_files">Vybrané soubory</string>
     <string name="uri_permission_justification_file_selection">Výběr souborů nebo složek pro použití v této aplikaci</string>
     <string name="alert_error_please_select_download_folder_and_retry">V nastavení aplikace vyberte složku, do které chcete stáhnout soubory, a zkuste to znovu.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Pro soubor (video:%3$b zvuk:%4$b) není mezi serverem přijatelná žádná platná přípona výstupního souboru (preferováno je%2$s) (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Nebyla nalezena žádná platná přípona výstupního souboru (preferováno je%2$s) pro soubor (video:%3$b audio:%4$b) přijatelné pro server mezi možnostmi (%1$s)</string>
     <string name="uuid_title">Nainstalujte UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Nelze přidat soubory k nahrání. Probíhá nahrávání úlohy.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Nelze přidat soubory k nahrání. Nejprve je třeba dokončit aktuální úlohu nahrávání.</string>

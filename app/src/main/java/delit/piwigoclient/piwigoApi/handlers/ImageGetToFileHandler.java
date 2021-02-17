@@ -236,7 +236,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
         boolean testForExposingProxiedServer = getConnectionPrefs().isWarnInternalUriExposed(getSharedPrefs(), getContext());
         String uri = UriUtils.sanityCheckFixAndReportUri(resourceUrl, getPiwigoServerUrl(), forceHttps, testForExposingProxiedServer, getConnectionPrefs());
 
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
         return client.get(getContext(), uri, buildCustomCacheControlHeaders(forceResponseRevalidation, onlyUseCache), null, handler);
     }

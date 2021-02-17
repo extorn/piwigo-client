@@ -23,7 +23,7 @@ public class LoginResponseHandler extends AbstractLoginResponseHandler<LoginResp
 
     @Override
     protected void performExtraServerCalls(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs) {
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         if(sessionDetails.isAdminUser() && AppPreferences.isCheckForPiwigoServerUpdates(context, getSharedPrefs())) {
             getUpdatesOfServerComponents(context, connectionPrefs);
         }

@@ -8,6 +8,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -23,15 +24,20 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseIma
     }
 
     protected AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser buildResourceParser(boolean usingPiwigoClientOveride) {
-        boolean defaultVal = Boolean.TRUE.equals(PiwigoSessionDetails.getInstance(getConnectionPrefs()).isUsingPiwigoPrivacyPlugin());
+        boolean defaultVal = Boolean.TRUE.equals(getPiwigoSessionDetails().isUsingPiwigoPrivacyPlugin());
         boolean isApplyPrivacyPluginUriFix = getConnectionPrefs().isFixPiwigoPrivacyPluginMediaUris(getSharedPrefs(), getContext(), defaultVal);
-        return new ImageGetInfoResourceParser(getPiwigoServerUrl(), isApplyPrivacyPluginUriFix, usingPiwigoClientOveride);
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
+        List<String> piwigoSites = null;
+        if(sessionDetails.getServerConfig() != null) {
+            piwigoSites = sessionDetails.getServerConfig().getSites();
+        }
+        return new ImageGetInfoResourceParser(getPiwigoServerUrl(), piwigoSites, isApplyPrivacyPluginUriFix, usingPiwigoClientOveride);
     }
 
     public static class ImageGetInfoResourceParser extends BaseImageGetInfoResourceParser {
 
-        public ImageGetInfoResourceParser(String basePiwigoUrl, Boolean usingPiwigoPrivacyPlugin, boolean usingPiwigoClientOveride) {
-            super(basePiwigoUrl, usingPiwigoPrivacyPlugin, usingPiwigoClientOveride);
+        public ImageGetInfoResourceParser(String basePiwigoUrl, List<String> piwigoSites, Boolean usingPiwigoPrivacyPlugin, boolean usingPiwigoClientOveride) {
+            super(basePiwigoUrl, piwigoSites, usingPiwigoPrivacyPlugin, usingPiwigoClientOveride);
         }
 
         @Override

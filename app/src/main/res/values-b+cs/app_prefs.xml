@@ -297,7 +297,7 @@
     <string name="preference_gallery_clearVideoCache_title">Vymazat mezipaměť videa</string>
     
     <string name="preference_gallery_clearVideoCache_summary">Odstraní všechna videa uložená v mezipaměti na disk</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">Odstraní všechna%1$.2fMB videí uložených na disk</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Odstraní všech%1$.2fMB videí uložených na disk</string>
 
     
     
@@ -318,7 +318,7 @@
 
     
     <string name="preference_gallery_slideshow_image_rotate_title">Otočte obrázek tak, aby odpovídal poměru stran obrazovky</string>
-    <string name="preference_gallery_slideshow_image_rotate_summary">Obrázek byl otočen tak, aby se vešel na obrazovku</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">Obrázek byl otočen tak, aby odpovídal obrazovce</string>
     
 
     

@@ -42,6 +42,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
@@ -61,6 +62,7 @@ import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
 import delit.piwigoclient.business.video.RemoteDirectHttpClientBasedHttpDataSource;
 import delit.piwigoclient.business.video.RemoteFileCachingDataSourceFactory;
 import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
@@ -747,7 +749,12 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
                     ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(null, getPrefs(), requireContext());
                     String basePiwigoUri = connPrefs.getPiwigoServerAddress(getPrefs(), requireContext());
                     String resourceUri = err.getUri();
-                    AlbumGetImagesBasicResponseHandler.MultimediaUriMatcherUtil multimediaUriMatcherUtil = new AlbumGetImagesBasicResponseHandler.MultimediaUriMatcherUtil(basePiwigoUri, resourceUri);
+                    PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connPrefs);
+                    List<String> piwigoSites = null;
+                    if(sessionDetails.getServerConfig() != null) {
+                        piwigoSites = sessionDetails.getServerConfig().getSites();
+                    }
+                    AlbumGetImagesBasicResponseHandler.MultimediaUriMatcherUtil multimediaUriMatcherUtil = new AlbumGetImagesBasicResponseHandler.MultimediaUriMatcherUtil(basePiwigoUri, piwigoSites, resourceUri);
                     if (multimediaUriMatcherUtil.matchesUri()) {
                         // should always match, but we should check.
                         if (multimediaUriMatcherUtil.isPathMissingResourceId()

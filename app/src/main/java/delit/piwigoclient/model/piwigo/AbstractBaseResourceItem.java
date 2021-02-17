@@ -7,6 +7,8 @@ import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 
+import com.drew.lang.StringUtil;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -86,24 +88,24 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
 
     public void setThumbnailUrl(String thumbnailUrl) {
         if (getFile(ResourceFile.THUMB) == null) {
-            addResourceFile(ResourceFile.THUMB, thumbnailUrl, -1, -1);
+            addResourceFile(ResourceFile.THUMB, thumbnailUrl, -1, -1, false);
         }
     }
 
     public ResourceFile getFile(String name) {
-        byte wantedId = ResourceFile.getId(name);
+        String wantedId = ResourceFile.getId(name);
         for (ResourceFile rf : availableFiles) {
-            if (rf.id == wantedId) {
+            if (rf.id.equals(wantedId)) {
                 return rf;
             }
         }
         return null;
     }
 
-    private void addResourceFile(ResourceFile img) {
+    private void addResourceFile(ResourceFile img, boolean allowDuplicateSize) {
         if (availableFiles.size() > 0) {
             ResourceFile last = availableFiles.get(availableFiles.size() - 1);
-            if (last.width == img.width && last.height == img.height) {
+            if (!allowDuplicateSize && last.width == img.width && last.height == img.height) {
                 return;
             }
         }
@@ -260,12 +262,12 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         return null;
     }
 
-    public void addResourceFile(String name, String url, int originalResourceUrlWidth, int originalResourceUrlHeight) {
+    public void addResourceFile(String name, String url, int originalResourceUrlWidth, int originalResourceUrlHeight, boolean allowDuplicateSize) {
         ResourceItem.ResourceFile img = new ResourceItem.ResourceFile(name, getRelativePath(url), originalResourceUrlWidth, originalResourceUrlHeight);
         if (getFile(name) != null) {
             Logging.log(Log.ERROR, TAG, "attempting to add duplicate resource file of type " + name);
         }
-        addResourceFile(img);
+        addResourceFile(img, allowDuplicateSize);
     }
 
     public String getFirstSuitableUrl() {
@@ -318,7 +320,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         public static final String SQUARE = "square";
         public static final String OPTIMAL = "Optimal";
 
-        private final byte id;
+        private final String id;
         private final String url;
         private final int width;
         private final int height;
@@ -335,82 +337,83 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         }
 
         public ResourceFile(Parcel in) {
-            id = in.readByte();
+            id = in.readString();
             url = in.readString();
             width = in.readInt();
             height = in.readInt();
         }
 
-        private static String getName(byte id) {
+        private static String getName(String id) {
             switch (id) {
-                case 0:
+                case ORIGINAL:
                     return ORIGINAL;
-                case 1:
+                case BEST_FIT:
                     return BEST_FIT;
-                case 2:
+                case XXLARGE:
                     return XXLARGE;
-                case 3:
+                case XLARGE:
                     return XLARGE;
-                case 4:
+                case LARGE:
                     return LARGE;
-                case 5:
+                case MEDIUM:
                     return MEDIUM;
-                case 6:
+                case SMALL:
                     return SMALL;
-                case 7:
+                case XSMALL:
                     return XSMALL;
-                case 8:
+                case SMALL1:
                     return SMALL1;
-                case 9:
+                case THUMB:
                     return THUMB;
-                case 10:
+                case SQUARE:
                     return SQUARE;
-                case 11:
+                case OPTIMAL:
                     return OPTIMAL;
                 default:
-                    Logging.log(Log.ERROR, TAG, "Unsupported resource id encountered : " + id);
-                    return BEST_FIT;
+//                    Logging.log(Log.ERROR, TAG, "Unsupported resource id encountered : " + id);
+//                    return BEST_FIT;
+                    return id;
             }
         }
 
-        private static byte getId(String name) {
+        private static String getId(String name) {
             if (name == null) {
                 name = "null";
             }
             switch (name) {
                 case ORIGINAL:
-                    return 0;
+                    return name;
                 case BEST_FIT:
-                    return 1;
+                    return name;
                 case XXLARGE:
-                    return 2;
+                    return name;
                 case XLARGE:
-                    return 3;
+                    return name;
                 case LARGE:
-                    return 4;
+                    return name;
                 case MEDIUM:
-                    return 5;
+                    return name;
                 case SMALL:
-                    return 6;
+                    return name;
                 case XSMALL:
-                    return 7;
+                    return name;
                 case SMALL1:
-                    return 8;
+                    return name;
                 case THUMB:
-                    return 9;
+                    return name;
                 case SQUARE:
-                    return 10;
+                    return name;
                 case OPTIMAL:
-                    return 11;
+                    return name;
                 default:
                     Logging.log(Log.ERROR, TAG, "Unsupported resource name encountered : " + name);
-                    return -1;
+                    return name;
             }
         }
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeByte(id);
+            dest.writeString(id);
             dest.writeString(url);
             dest.writeInt(width);
             dest.writeInt(height);
@@ -466,7 +469,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             if (this.width < o.width) {
                 return -1;
             }
-            return Byte.compare(this.id, o.id);
+            return StringUtil.compare(this.id, o.id);
         }
 
         @Override

@@ -72,7 +72,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     protected String getPwgSessionToken() {
         String sessionToken = "";
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
             sessionToken = sessionDetails.getSessionToken();
         }
@@ -82,11 +82,11 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     protected String getPiwigoMethodOverrideIfPossible(String overrideMethod) {
         if(piwigoMethodToUse == null) {
             piwigoMethodToUse = piwigoMethod;
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+            PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
             if(sessionDetails == null) {
                 boolean newLoginAcquired = testLoginGetNewSessionIfNeeded();
                 if(newLoginAcquired) {
-                    sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+                    sessionDetails = getPiwigoSessionDetails();
                 }
             }
             if (sessionDetails != null) {
@@ -100,12 +100,12 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     public boolean isMethodAvailable(@NonNull Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         setCallDetails(context, connectionPrefs, false);
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         if(sessionDetails == null) {
             LoginResponseHandler handler = new LoginResponseHandler();
             handler.invokeAndWait(context, connectionPrefs);
             if(handler.isLoginSuccess()) {
-                sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+                sessionDetails = getPiwigoSessionDetails();
             }
         }
         return sessionDetails != null && sessionDetails.isMethodAvailable(getPiwigoMethod());
@@ -413,7 +413,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         if (statusCode == 501 && "Method name is not valid".equals(error.getMessage())) {
             failedOriginalMethod = getPiwigoMethod();
             if(!failedOriginalMethod.startsWith("pwg.")) {
-                PiwigoSessionDetails.getInstance(getConnectionPrefs()).onMethodNotAvailable(getPiwigoMethod());
+                getPiwigoSessionDetails().onMethodNotAvailable(getPiwigoMethod());
                 // allow retry if there is a fallback method (otherwise report it!).
                 canRetryCall = !failedOriginalMethod.equals(getPiwigoMethod());
                 if(!canRetryCall) {
@@ -459,7 +459,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             Log.e(getTag(), "Invoking call to server (" + getRequestParameters() + ") thread from thread " + Thread.currentThread().getName());
         }
         if(isUseHttpGet()) {
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+            PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
             boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
             return client.get(getContext(), getPiwigoWsApiUri(), buildCustomCacheControlHeaders(forceResponseRevalidation, onlyUseCache), getRequestParameters(), handler);
         } else {

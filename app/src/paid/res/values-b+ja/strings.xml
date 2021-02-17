@@ -37,5 +37,5 @@
     <string name="orphans_album_description">PiwigoClientアプリによって収集されたすべての孤立したリソース</string>
     <string name="orphans_no_orphans_found_on_server">孤児は見つかりませんでした</string>
     <string name="orphans_found_on_server_pattern">孤児が見つかりました：%1$d</string>
-    <string name="alert_confirm_okay_to_create_orphans_album">孤児がいます。 これらを表示するには、管理者のみがアクセスできるプライベートフォルダを作成する必要があります。 その後、いつでもアルバムを削除できます。 同意しない場合は、サーバー上でこれらを自分で処理する必要があります。</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">孤児がいます。これらを表示するには、管理者のみがアクセスできるプライベートフォルダを作成する必要があります。その後、いつでもアルバムを削除できます。同意しない場合は、サーバー上でこれらを自分で処理する必要があります。</string>
 </resources>

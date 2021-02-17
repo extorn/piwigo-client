@@ -29,7 +29,7 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         if (sessionDetails == null || !sessionDetails.isLoggedIn()) {
             onLogout(sessionDetails, false);
             return null;
@@ -40,7 +40,7 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
-        onLogout(PiwigoSessionDetails.getInstance(getConnectionPrefs()), isCached);
+        onLogout(getPiwigoSessionDetails(), isCached);
     }
 
     private void onLogout(PiwigoSessionDetails sessionDetails, boolean isCached) {

@@ -4,8 +4,9 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
+import java.util.List;
+
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 public class AlbumGetImagesResponseHandler extends AlbumGetImagesBasicResponseHandler {
@@ -15,16 +16,16 @@ public class AlbumGetImagesResponseHandler extends AlbumGetImagesBasicResponseHa
     }
 
     @Override
-    protected ResourceParser buildResourceParser(String basePiwigoUrl) {
-        boolean defaultVal = Boolean.TRUE.equals(PiwigoSessionDetails.getInstance(getConnectionPrefs()).isUsingPiwigoPrivacyPlugin());
+    protected ResourceParser buildResourceParser(String basePiwigoUrl, List<String> piwigoSites) {
+        boolean defaultVal = Boolean.TRUE.equals(getPiwigoSessionDetails().isUsingPiwigoPrivacyPlugin());
         boolean isApplyPrivacyPluginUriFix = getConnectionPrefs().isFixPiwigoPrivacyPluginMediaUris(getSharedPrefs(), getContext(), defaultVal);
-        return new ResourceParser(basePiwigoUrl, isApplyPrivacyPluginUriFix);
+        return new ResourceParser(basePiwigoUrl, piwigoSites, isApplyPrivacyPluginUriFix);
     }
 
     public static class ResourceParser extends BasicCategoryImageResourceParser {
 
-        public ResourceParser(String basePiwigoUrl, boolean usePrivacyPluginFix) {
-            super(basePiwigoUrl, usePrivacyPluginFix);
+        public ResourceParser(String basePiwigoUrl, List<String> piwigoSites, boolean usePrivacyPluginFix) {
+            super(basePiwigoUrl, piwigoSites, usePrivacyPluginFix);
         }
 
         @Override

@@ -15,12 +15,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
+import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
+import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
@@ -63,6 +66,7 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
         }
         params.put("page", String.valueOf(page));
         params.put("per_page", String.valueOf(pageSize));
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 
@@ -95,7 +99,12 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
             images = null;
         }
 
-        BasicCategoryImageResourceParser resourceParser = buildResourceParser(getPiwigoServerUrl());
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
+        List<String> sites = null;
+        if(sessionDetails.getServerConfig() != null) {
+            sites = sessionDetails.getServerConfig().getSites();
+        }
+        BasicCategoryImageResourceParser resourceParser = buildResourceParser(getPiwigoServerUrl(), sites);
 
         if(images != null) {
             for (int i = 0; i < images.size(); i++) {
@@ -130,10 +139,10 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
         storeResponse(r);
     }
 
-    protected BasicCategoryImageResourceParser buildResourceParser(String basePiwigoUrl) {
-        boolean defaultVal = Boolean.TRUE.equals(PiwigoSessionDetails.getInstance(getConnectionPrefs()).isUsingPiwigoPrivacyPlugin());
+    protected BasicCategoryImageResourceParser buildResourceParser(String basePiwigoUrl, List<String> piwigoSites) {
+        boolean defaultVal = Boolean.TRUE.equals(getPiwigoSessionDetails().isUsingPiwigoPrivacyPlugin());
         boolean isApplyPrivacyPluginUriFix = getConnectionPrefs().isFixPiwigoPrivacyPluginMediaUris(getSharedPrefs(), getContext(), defaultVal);
-        return new BasicCategoryImageResourceParser(basePiwigoUrl, isApplyPrivacyPluginUriFix);
+        return new BasicCategoryImageResourceParser(basePiwigoUrl, piwigoSites, isApplyPrivacyPluginUriFix);
     }
 
     public static class BasicCategoryImageResourceParser {
@@ -141,6 +150,7 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
         private final boolean usePrivacyPluginFix;
         private MultimediaUriMatcherUtil multimediaUriMatcherUtil;
         private final String basePiwigoUrl;
+        private final List<String> piwigoSites;
         private boolean fixedImageUrisForPrivacyPluginUser;
         private boolean fixedImageUrisWithAmpEscaping;
         private boolean fixedPrivacyPluginImageUrisForPrivacyPluginUser;
@@ -167,8 +177,9 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
          *
          * @param basePiwigoUrl the Uri path to piwigo homepage
          */
-        public BasicCategoryImageResourceParser(String basePiwigoUrl, boolean usePrivacyPluginFix) {
+        public BasicCategoryImageResourceParser(String basePiwigoUrl, List<String> piwigoSites, boolean usePrivacyPluginFix) {
             this.basePiwigoUrl = basePiwigoUrl;
+            this.piwigoSites = piwigoSites;
             this.usePrivacyPluginFix = usePrivacyPluginFix;
         }
 
@@ -200,7 +211,7 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
 
             if (originalResourceUrl != null) {
                 if (multimediaUriMatcherUtil == null) {
-                    multimediaUriMatcherUtil = new MultimediaUriMatcherUtil(basePiwigoUrl, originalResourceUrl);
+                    multimediaUriMatcherUtil = new MultimediaUriMatcherUtil(basePiwigoUrl, piwigoSites, originalResourceUrl);
                 } else {
                     multimediaUriMatcherUtil.withNewUri(originalResourceUrl);
                 }
@@ -276,59 +287,91 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
                 if (IOUtils.isPlayableMedia(mimeType)) {
                     item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
                     item.setThumbnailUrl(thumbnailUriStr); // note we are using this as is. Only the original resource Uri gets altered.
-                    item.addResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
+                    item.addResourceFile(AbstractBaseResourceItem.ResourceFile.ORIGINAL, fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight, false);
                 }
             }
             if (item == null) {
 
-                Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
 
                 PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
 
-                boolean needToFixUrl = true; // if we don't fix one, we don't fix them all.
-                while (imageSizeKeys.hasNext()) {
-                    String imageSizeKey = imageSizeKeys.next();
-                    JsonObject imageSizeObj = derivatives.get(imageSizeKey).getAsJsonObject();
-                    JsonElement jsonElem = imageSizeObj.get("url");
-                    if (jsonElem == null || jsonElem.isJsonNull()) {
-                        continue;
-                    }
-                    String url = jsonElem.getAsString();
-
-                    jsonElem = imageSizeObj.get("width");
-                    if (jsonElem == null || jsonElem.isJsonNull()) {
-                        continue;
-                    }
-                    int thisImageWidth = jsonElem.getAsInt();
-
-                    jsonElem = imageSizeObj.get("height");
-                    if (jsonElem == null || jsonElem.isJsonNull()) {
-                        continue;
-                    }
-                    int thisImageHeight = jsonElem.getAsInt();
-
-                    if (needToFixUrl) {
-                        String fixed = fixUrl(url);
-                        if (fixed.equals(url)) {
-                            needToFixUrl = false;
-                        } else {
-                            url = fixed;
-                        }
-                    }
-                    picItem.addResourceFile(imageSizeKey, url, thisImageWidth, thisImageHeight);
-
-                }
+                addDerivatives(derivatives, picItem);
 
                 if (originalResourceUrl != null) {
-                    picItem.addResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
+                    picItem.addResourceFile(AbstractBaseResourceItem.ResourceFile.ORIGINAL, fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight, false);
                 }
 
                 item = picItem;
             }
 
+            if(image.has("formats")) {
+                JsonArray formats = image.get("formats").getAsJsonArray();
+                addFormats(formats, item, originalResourceUrlWidth, originalResourceUrlHeight);
+            }
+
             item.setLinkedAlbums(linkedAlbums);
 
             return item;
+        }
+
+        private void addFormats(JsonArray formats, ResourceItem item, int originalWidth, int originalHeight) {
+
+            boolean needToFixUrl = true; // if we don't fix one, we don't fix them all.
+            for (JsonElement format : formats) {
+                JsonObject imageSizeObj = format.getAsJsonObject().get("format").getAsJsonObject();
+                String imageFormatKey = imageSizeObj.get("ext").getAsString();
+                long imageFormatSizeKb = imageSizeObj.get("sizeKb").getAsLong();
+                JsonElement jsonElem = imageSizeObj.get("uri");
+
+                String url = jsonElem.getAsString();
+
+                if (needToFixUrl) {
+                    String fixed = fixUrl(url);
+                    if (fixed.equals(url)) {
+                        needToFixUrl = false;
+                    } else {
+                        url = fixed;
+                    }
+                }
+                item.addResourceFile(imageFormatKey, url, originalWidth, originalHeight, true);
+            }
+        }
+
+        private void addDerivatives(JsonObject derivatives, PictureResourceItem picItem) {
+            Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
+            boolean needToFixUrl = true; // if we don't fix one, we don't fix them all.
+            while (imageSizeKeys.hasNext()) {
+                String imageSizeKey = imageSizeKeys.next();
+                JsonObject imageSizeObj = derivatives.get(imageSizeKey).getAsJsonObject();
+                JsonElement jsonElem = imageSizeObj.get("url");
+                if (jsonElem == null || jsonElem.isJsonNull()) {
+                    continue;
+                }
+                String url = jsonElem.getAsString();
+
+                jsonElem = imageSizeObj.get("width");
+                if (jsonElem == null || jsonElem.isJsonNull()) {
+                    continue;
+                }
+                int thisImageWidth = jsonElem.getAsInt();
+
+                jsonElem = imageSizeObj.get("height");
+                if (jsonElem == null || jsonElem.isJsonNull()) {
+                    continue;
+                }
+                int thisImageHeight = jsonElem.getAsInt();
+
+                if (needToFixUrl) {
+                    String fixed = fixUrl(url);
+                    if (fixed.equals(url)) {
+                        needToFixUrl = false;
+                    } else {
+                        url = fixed;
+                    }
+                }
+                picItem.addResourceFile(imageSizeKey, url, thisImageWidth, thisImageHeight, false);
+
+            }
         }
 
         private String fixUrl(String url) {
@@ -347,12 +390,16 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
 
         private final Matcher matcher;
 
-        public MultimediaUriMatcherUtil(String basePiwigoUrl, String originalResourceUrl) {
+        public MultimediaUriMatcherUtil(String basePiwigoUrl, List<String> sitePaths, String originalResourceUrl) {
             String basePiwigoUri = basePiwigoUrl;
             if (basePiwigoUri.charAt(basePiwigoUri.length() - 1) != '/') {
                 basePiwigoUri += '/';
             }
-            String pattern = "^(" + basePiwigoUri + ")([\\d]*/.*)?((?<=/)(?:upload|galleries)/.*\\.([a-zA-Z0-9]{3,5}))$";
+            String sitePathsPattern = CollectionUtils.toCsvList(sitePaths, "|");
+            if(sitePathsPattern != null) {
+                sitePathsPattern = "|" + sitePathsPattern;
+            }
+            String pattern = "^(" + basePiwigoUri + ")([\\d]*/.*)?((?<=/)(?:upload"+sitePathsPattern+")/.*\\.([a-zA-Z0-9]{3,5}))$";
             Pattern multimediaPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
             matcher = multimediaPattern.matcher(originalResourceUrl);
         }

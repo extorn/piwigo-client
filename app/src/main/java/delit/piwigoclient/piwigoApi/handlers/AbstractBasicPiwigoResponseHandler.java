@@ -348,7 +348,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         synchronized (AbstractBasicPiwigoResponseHandler.class) {
             // Only one instance of this class can perform a login at a time - all others will wait for the outcome
             triedLoggingInAgain = true;
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
             String newToken = null;
             if (sessionDetails != null) {
                 newToken = sessionDetails.getSessionToken();
@@ -511,7 +511,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         int loopcount = 0;
         do {
             handler.invokeAndWait(context, getConnectionPrefs());
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
             if (handler.isLoginSuccess()) {
                 if (handler.getNestedFailureMethod() != null) {
                     // failed internally. - still a failure!
@@ -649,5 +649,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     public void setRunInBackground(boolean runInBackground) {
         this.runInBackground = runInBackground;
+    }
+
+    protected PiwigoSessionDetails getPiwigoSessionDetails() {
+        return PiwigoSessionDetails.getInstance(getConnectionPrefs());
     }
 }

@@ -33,7 +33,7 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
-        PiwigoSessionDetails oldCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails oldCredentials = getPiwigoSessionDetails();
         PiwigoSessionDetails newCredentials = parseSessionDetails(rsp);
         if (isCached) {
             // try and ensure it gets a new one before doing anything vital!

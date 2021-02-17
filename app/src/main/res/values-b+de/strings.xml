@@ -132,14 +132,14 @@
     <string name="progress_resource_details_updating">Ressourcendetails aktualisieren</string>
     <string name="gallery_details_name_title">Albumname</string>
     <string name="gallery_details_description_title">Albumbeschreibung</string>
-    <string name="gallery_details_save_button">sparen</string>
+    <string name="gallery_details_save_button">speichern</string>
     <string name="notification_upload_event">Piwigo Upload</string>
     <string name="progress_downloading">Datei wird heruntergeladen</string>
     <string name="alert_error_unimplemented">Funktion noch nicht implementiert.</string>
     <string name="button_ok">okay</string>
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
-    <string name="button_save">sparen</string>
+    <string name="button_save">speichern</string>
     <string name="alert_confirm_title">Bestätigen</string>
     <string name="alert_question_title">Frage</string>
     <string name="alert_confirm_really_delete_from_server">Dadurch wird das Element dauerhaft vom Server gelöscht. Fortsetzen?</string>
@@ -339,7 +339,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_confirm_really_delete_user">Möchten Sie diesen Benutzer wirklich löschen?</string>
     <string name="users_menu_title">Benutzer</string>
     <string name="alert_error_unable_to_delete_yourself_pattern">Der Benutzer, unter dem Sie angemeldet sind (%1$s), kann leider nicht gelöscht werden.</string>
-    <string name="alert_information_coming_soon">Diese Funktion wird bald verfügbar sein.</string>
+    <string name="alert_information_coming_soon">Diese Funktion kommt bald.</string>
 
     <string name="user_username_title">Nutzername</string>
     <string name="user_lastvisit_title">Zuletzt besucht die Website</string>
@@ -422,7 +422,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_confirm_copy_items_here_pattern">Kopieren Sie die%1$d Artikel in den Warenkorb hier (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Verschieben Sie die%1$d-Artikel im Warenkorb hierher (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Verknüpfte Alben</string>
-    <string name="list_ok_button">in Ordnung</string>
+    <string name="list_ok_button">OK</string>
     <string name="alert_confirm_really_remove_album_permissions_pattern">Sie haben ausgewählt, den Zugriff auf dieses Album und den navigierbaren Zugriff auf alle untergeordneten Alben von%1$d-Gruppen und%2$d-Benutzern zu entfernen. Mit dieser Aktion fortfahren?</string>
     <string name="alert_confirm_add_album_permissions_recursively_pattern">Sie haben ausgewählt, dass für%1$d-Gruppen und%2$d-Benutzer Zugriff auf dieses Album hinzugefügt werden soll. Möchten Sie diese Änderungen auf die%3$d-Kinderalben anwenden?</string>
     <string name="alert_information_own_user_readded_to_permissions_list">Ihre Änderungen hätten Sie daran gehindert, auf dieses Album zuzugreifen. Ihr Benutzername wurde der Liste der Personen mit ausdrücklicher Genehmigung hinzugefügt.</string>
@@ -445,7 +445,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="error_unexpected_error_calling_server">Unerwarteter Fehler beim Aufrufen des Servers oder beim Analysieren der Antwort</string>
     <string name="error_insufficient_permissions_for_cache_folder">Lese- / Schreibzugriff auf den Cache-Ordner ist erforderlich. Überprüfen Sie die App-Einstellungen.</string>
     <string name="alert_title_error_talking_to_server">Fehler beim Sprechen mit dem Server</string>
-    <string name="alert_title_error_connecting_to_server">Fehler bei der Verbindung zum Server</string>
+    <string name="alert_title_error_connecting_to_server">Fehler beim Verbinden mit dem Server</string>
     <string name="alert_error_adding_certificate_to_truststore">Fehler beim Hinzufügen eines Zertifikats zum Trust Store</string>
     <string name="alert_add_cert_to_truststore_pattern">Zertifikatkette zur Liste der vertrauenswürdigen Zertifizierungsstellen hinzufügen?</string>
     <string name="certificate_summary_pattern">Betreff:%1$s\nGültig:%2$s -%3$s\nSeriennummer:%4$s</string>
@@ -649,7 +649,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_starting_download">Fehler beim Starten des Dateidownloads</string>
     <string name="progress_importing_files">Dateien importieren</string>
     <string name="content_filter">Inhaltsfilter</string>
-    <string name="alert_advert_importance_message">Die Einnahmen aus Werbung sind mir wichtig. Es tut mir leid, dass sie dich frustrieren (sie tun es auch), aber wenn du sie siehst, werden sie so lange erscheinen, bis du eine siehst. Um dieses Problem zu vermeiden, beobachten Sie sie bitte, bis sie die Option zum Schließen anbieten. Alternativ können Sie die kostenpflichtige Version dieser App erwerben. Vielen Dank für Ihre Unterstützung.</string>
+    <string name="alert_advert_importance_message">Die Einnahmen aus Werbung sind mir wichtig. Es tut mir leid, dass sie dich frustrieren (sie tun es auch), aber wenn du sie siehst, werden sie so lange erscheinen, bis du eine siehst. Um dieses Problem zu vermeiden, beobachten Sie sie bitte, bis sie die Option zum Schließen anbieten. Alternativ können Sie die kostenpflichtige Version dieser App erwerben. Vielen Dank für deine Unterstützung.</string>
     <string name="eula_privacy_title">Privatsphäre</string>
     <string name="privacy_policy_label">Unsere Datenschutzerklärung</string>
     <string name="title_advert_consent">Ihre Privatsphäre</string>
@@ -695,7 +695,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="release_changes">Letzte Änderungen</string>
     <string name="item_not_yet_loaded">Artikel noch nicht geladen</string>
     <string name="button_refresh">Seite neu laden</string>
-    <string name="alert_slideshow_feature_refresh_coming_soon">Diese Funktion wird bald verfügbar sein. Bewegen Sie zunächst einige Elemente in der Diashow vorwärts oder rückwärts, bevor Sie zu diesem Element zurückkehren</string>
+    <string name="alert_slideshow_feature_refresh_coming_soon">Diese Funktion kommt bald. Bewegen Sie zunächst einige Elemente in der Diashow vorwärts oder rückwärts, bevor Sie zu diesem Element zurückkehren</string>
     <string name="cancelled_indicator">Upload für Datei abgebrochen</string>
     <string name="media_type_indicator">Medientypanzeige</string>
     <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Beim Hochladen ist ein Fehler aufgetreten. Möchten Sie:\n\nÜberprüfen Sie die Fehler, bevor Sie den Upload manuell neu starten.\n\nEntfernen Sie die problematischen Dateien aus dem Upload und beenden Sie?\n\nAktionen mit Fehlern wiederholen?</string>

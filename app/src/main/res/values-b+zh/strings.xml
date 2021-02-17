@@ -50,14 +50,14 @@
     <string name="alert_error">错误</string>
     <string name="alert_error_no_app_available_to_handle_action">找不到应用程序来处理此操作。</string>
     <string name="alert_error_no_app_available_to_rate_app">找不到任何应用对该应用进行评分。感谢您的尝试。</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">下载已取消。 必需的文件系统权限不可用。</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">下载已取消。 必需的文件系统权限不可用。 作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">下载已取消。必需的文件系统权限不可用。</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">下载已取消。必需的文件系统权限不可用。作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
     <string name="button_retry">重试</string>
 
 
     <string name="button_unlink">取消连结</string>
     <string name="button_untag">删除标签</string>
-    <string name="button_close">关</string>
+    <string name="button_close">关闭</string>
     <string name="settings_menu_title">应用程式设定</string>
     <string name="offline_mode_menu_title">离线模式</string>
     <string name="online_mode_menu_title">在线模式</string>
@@ -105,13 +105,13 @@
     <string name="createGallery_permissions_allowedGroupsTitle">允许的团体</string>
     <string name="createGallery_permissions_allowedUsersTitle">允许的用户</string>
     <string name="createGallery_createGalleryButtonTitle">建立相簿</string>
-    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">无法正确设置图库的权限。再次删除。请再试一次。如果错误仍然存​​在，请向此应用提出问题，以便我们进行改进，然后手动执行此步骤。</string>
+    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">无法正确设置图库的权限。再次删除。请再试一遍。如果错误仍然存​​在，请向此应用提出问题，以便我们进行改进，然后手动执行此步骤。</string>
 
     <string name="logging_in_to_piwigo_pattern">登录到%1$s</string>
 
     <string name="delete_upload_job_button_title">删除工作</string>
     <string name="upload_files_button_title">上载</string>
-    <string name="upload_files_finish_job_button_title">完</string>
+    <string name="upload_files_finish_job_button_title">结束</string>
     <string name="upload_job_status_button">状态</string>
     <string name="alert_really_delete_upload_job">这将从该设备删除作业状态。您将需要手动清除部分上传到服务器的任何文件（或使用此应用程序中的首选项-上传设置页面）。如果以后再恢复作业，通常会成功完成。您确定要采取这个激烈的步骤吗？</string>
     <string name="loading_please_wait">加载请稍候</string>
@@ -132,16 +132,16 @@
     <string name="progress_resource_details_updating">更新资源详细信息</string>
     <string name="gallery_details_name_title">专辑名称</string>
     <string name="gallery_details_description_title">专辑说明</string>
-    <string name="gallery_details_save_button">保存</string>
+    <string name="gallery_details_save_button">救</string>
     <string name="notification_upload_event">Piwigo上传</string>
     <string name="progress_downloading">下载文件</string>
     <string name="alert_error_unimplemented">功能尚未实现。</string>
     <string name="button_ok">好的</string>
-    <string name="button_yes">是</string>
-    <string name="button_no">没有</string>
-    <string name="button_save">保存</string>
+    <string name="button_yes">是的</string>
+    <string name="button_no">不</string>
+    <string name="button_save">救</string>
     <string name="alert_confirm_title">确认</string>
-    <string name="alert_question_title">题</string>
+    <string name="alert_question_title">问题</string>
     <string name="alert_confirm_really_delete_from_server">这将从服务器上永久删除该项目。继续？</string>
     <string name="alert_confirm_really_delete_items_from_server">这将从服务器上永久删除项目。继续？</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">您已请求删除与其他相册共享的%1$d个资源。您是要从所有相册（和服务器-永久删除）中删除这些相册，还是要将它们与该相册取消链接？</string>
@@ -183,10 +183,10 @@ Gareth Deli授予您可撤销的，非排他的，不可转让的有限许可
 仅出于个人或商业目的下载，安装和使用该应用程序
 严格按照本协议的条款。
 
-该软件按“原样”提供，不提供任何形式的明示或暗示担保，包括但不限于对适销性，特定目的的适用性和非侵权性的担保。无论是由于软件，使用或其他方式产生的，与之有关或与之有关的合同，侵权或其他形式的任何索赔，损害或其他责任，作者或版权所有者概不负责。软件
+本软件按“原样”提供，不提供任何形式的明示或暗示担保，包括但不限于对适销性，特定目的的适用性和非侵权性的保证。无论是由于软件，使用或其他方式产生的，与之有关或与之有关的合同，侵权或其他形式的任何索赔，损害或其他责任，作者或版权所有者概不负责。软件
 
 
-**限制
+** 限制
 
 您同意不这样做，也不会允许其他人：
 a）许可，出售，出租，租赁，转让，分发，传输，托管，外包，披露或以其他方式
@@ -196,7 +196,7 @@ b）基于此应用程序创建派生作品。
 
 **用户数据收集
 
-Firebase集成已添加到此应用程序中，以促进跟踪应用程序的使用，其主要目的是更有效地解决错误并确定应用程序的使用方式。将收集达到此目的所需的最少数据。
+Firebase集成已添加到此应用程序中，以便于跟踪应用程序的使用，其主要目的是更有效地解决问题并确定应用程序的使用方式。将收集达到此目的所需的最少数据。
 
 
 **有限保修和免责声明
@@ -320,7 +320,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="share_with_an_app">与应用共享</string>
     <string name="alert_image_show_image_title">图像渲染控制</string>
     <string name="alert_image_show_image_message">请选择您要查看的文件大小</string>
-    <string name="alert_image_download_complete_message">下载完成。</string>
+    <string name="alert_image_download_complete_message">下载完毕。</string>
     <string name="alert_error_unsupported_piwigo_version_pattern">服务器正在运行PIWIGO版本%1$s。此应用程序测试的最低版本为%2$s。应用程序中的某些功能可能无法正常使用。请检查“关于”页面上是否有任何已发现的问题。</string>
     <string name="notification_download_event">文件下载</string>
     <string name="alert_image_download_cancelled_message">您已成功取消下载</string>
@@ -346,8 +346,8 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="user_groups_title">团体会员</string>
     <string name="user_usertype_title">用户类型</string>
     <string name="user_user_heading">用户</string>
-    <string name="group_heading">组</string>
-    <string name="group_name_title">名称</string>
+    <string name="group_heading">团体</string>
+    <string name="group_name_title">姓名</string>
     <string name="group_members_title">会员</string>
     <string name="user_access_rights_title">访问权</string>
     <string name="group_access_rights_title">访问权</string>
@@ -379,7 +379,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="progress_loading_user_details">检索用户详细信息</string>
     <string name="progress_delete_user">删除用户</string>
     <string name="alert_read_permissions_needed_for_file_upload">需要读取文件系统的权限才能选择和上传文件</string>
-    <string name="alert_file_permissions_needed_for_pattern">文件系统需要%1$s权限。 目的：%2$s</string>
+    <string name="alert_file_permissions_needed_for_pattern">文件系统需要%1$s权限。目的：%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">启用了视频文件的本地缓存。为此，必须授予对文件系统的写访问权限。如果被拒绝，本地缓存将被禁用。</string>
     <string name="alert_error_tidying_video_cache">无法整理视频缓存。如果此问题仍然存在，请报告。</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">无法从缓存中复制文件。 %1$s</string>
@@ -392,15 +392,15 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="progress_saving_changes">保存更改</string>
     <string name="user_privacy_level_title">隐私等级</string>
     <string name="progress_adding_user">新增使用者</string>
-    <string name="last_visit_never">决不</string>
+    <string name="last_visit_never">绝不</string>
     <string name="user_password_title">密码</string>
     <string name="password_unchanged">********</string>
     <string name="progress_reloading_album_permissions">重新计算相册访问权限</string>
     <string name="group_is_default_title">是默认值吗？</string>
     <string name="progress_adding_group">新增群组</string>
-    <string name="alert_error_unable_to_access_local_filesystem">如果无法访问本地文件系统，则无法执行此操作。抱歉。</string>
-    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">如果无法访问本地文件系统，则无法执行此操作。 作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
-    <string name="alert_error_admin_user_required">除非安装了社区插件，否则只有管理员用户可以上传。抱歉。</string>
+    <string name="alert_error_unable_to_access_local_filesystem">如果无法访问本地文件系统，则无法执行此操作。对不起。</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">如果无法访问本地文件系统，则无法执行此操作。作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
+    <string name="alert_error_admin_user_required">除非安装了社区插件，否则只有管理员用户可以上传。对不起。</string>
     <string name="upload_username_title">上载为</string>
     <string name="certificates_heading">证明书</string>
 
@@ -422,7 +422,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_confirm_copy_items_here_pattern">将篮子中的%1$d个项目复制到这里（%2$s）？</string>
     <string name="alert_confirm_move_items_here_pattern">将购物篮中的%1$d个项目移到这里（%2$s）？</string>
     <string name="slideshow_image_details_linked_albums_title">连结相簿</string>
-    <string name="list_ok_button">好</string>
+    <string name="list_ok_button">好的</string>
     <string name="alert_confirm_really_remove_album_permissions_pattern">您已选择从%1$d组和%2$d用户中删除对此相册的访问权限以及对所有子相册的导航权限。继续执行此操作？</string>
     <string name="alert_confirm_add_album_permissions_recursively_pattern">您已选择为%1$d个群组和%2$d个用户添加对此相册的访问权限。您想将这些更改应用于%3$d个儿童相册吗？</string>
     <string name="alert_information_own_user_readded_to_permissions_list">您所做的更改将阻止您访问此相册。您的用户名已添加到具有明确权限的用户列表中。</string>
@@ -495,7 +495,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="tag_empty_text">没有使用该标签标记的项目</string>
     <string name="tag_content_load_failed_text">加载链接到标签的资源失败</string>
     <string name="tag_heading">标签</string>
-    <string name="tag_tagname_title">标签名称</string>
+    <string name="tag_tagname_title">标签名</string>
     <string name="alert_paid_feature_only">此功能仅在付费应用中可用</string>
     <string name="paid_feature_only">仅付费应用</string>
     <string name="slideshow_image_details_tags_title">标签</string>
@@ -508,21 +508,21 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="folder_root_label">选择器根</string>
     <string name="folder_root_root">设备根</string>
     <string name="folder_root_userdata">用户数据</string>
-    <string name="folder_extstorage">外置储存</string>
+    <string name="folder_extstorage">外部存储</string>
     <string name="folder_extstorage_device_pattern">外部存储%1$d</string>
     <string name="folder_default">默认</string>
     <string name="button_show_all">显示所有</string>
     <string name="button_select_all">全选</string>
     <string name="button_show_none">全部藏起来</string>
     <string name="button_select_none">选择无</string>
-    <string name="button_reset">重启</string>
+    <string name="button_reset">重置</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">应该允许进行网络监视以仅通过WIFI有效地使用WIFI上传</string>
     <string name="inaccessible_remote_folder">** 私人的 **</string>
     <string name="error_unable_to_acquire_valid_session">无法获取与服务器的有效会话</string>
     <string name="upload_job_is_enabled_label">有效且已启用？</string>
     <string name="notification_title_foreground_upload_service">Piwigo上传服务</string>
     <string name="notification_message_upload_service">跑步</string>
-    <string name="slideshow_image_tab_basic_info">基础信息</string>
+    <string name="slideshow_image_tab_basic_info">基本信息</string>
     <string name="slideshow_image_tab_exif_data">EXIF数据</string>
     <string name="alert_bad_request_http_to_https">使用HTTP对资源的错误请求。您是否要为此连接配置文件将所有HTTP URI重写为HTTPS？可以稍后在应用偏好中进行更改。</string>
     <string name="alert_bad_request_follow_redirects">服务器返回了302重定向响应。您是否要允许对此服务器执行以下操作？</string>
@@ -576,7 +576,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="subalbum_detail_txt_pattern">%1$d个儿童相册</string>
     <string name="please_read_and_agree_with_eula_first">请先阅读并确认同意EULA的条款</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">未授予所需的权限。动作已取消。</string>
-    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">未授予所需的权限。 动作已取消。 作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">未授予所需的权限。动作已取消。作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
     <string name="copied_to_clipboard">复制到剪贴板</string>
     <string name="alert_plugin_required_pattern">需要%1$s服务器插件-版本%2$s或更高版本</string>
 
@@ -639,7 +639,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="missing_permissions_warning_message_pattern">"自上次打开此应用以来，该应用以下各部分所需的文件权限已被删除\n\n%1$s\n\n请为这些设置选择新的权限，以确保一切正常。"</string>
     <string name="folder_selection_title">选择文件夹</string>
     <string name="files_selection_title">选择文件</string>
-    <string name="all">所有</string>
+    <string name="all">全部</string>
     <string name="user_high_definition_field">允许访问原始（完整大小）文件</string>
     <string name="group_is_default_field">向该组分配新用户</string>
     <string name="createGallery_galleryCommentsAllowed_title">用户评论</string>
@@ -676,10 +676,10 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="downloads_menu_title">资料下载</string>
     <string name="view_exported_files">查看导出的文件</string>
     <string name="generating_upload_job">根据您的选择配置上传作业</string>
-    <string name="alert_error_files_without_permissions_pattern">没有为所有文件提供Uri权限。 如果作业暂停并稍后恢复（例如，通过Android电源管理），则没有上传内容的用户将不会上传。 为避免此问题，请尽可能选择要使用此应用上传的文件。 受影响的文件：%1$d。</string>
+    <string name="alert_error_files_without_permissions_pattern">没有为所有文件提供Uri权限。如果作业暂停并稍后恢复（例如，通过Android电源管理），则没有上传内容的用户将不会上传。为避免此问题，请尽可能选择要使用此应用上传的文件。受影响的文件：%1$d。</string>
     <string name="button_compress">压缩</string>
     <string name="unable_to_compress_without_data">没有设置就无法压缩</string>
-    <string name="video_compression_settings_invalid">视频压缩设置无效。 请检查并重试。</string>
+    <string name="video_compression_settings_invalid">视频压缩设置无效。请检查并重试。</string>
     <string name="alert_password_entry">要求输入密码</string>
     <string name="import_x_of_type_y_cancelled_pattern">已取消导入%2$s%1$s</string>
     <string name="import_cancelled">导入已取消</string>
@@ -699,8 +699,8 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="cancelled_indicator">上传文件已取消</string>
     <string name="media_type_indicator">媒体类型指示</string>
     <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">上载时发生错误。 您是否希望：\n\n在手动重新启动上传之前查看错误？\n\n从上传中删除有问题的文件并完成？\n\n重试错误操作？</string>
-    <string name="button_finish">完</string>
-    <string name="button_review">评论</string>
+    <string name="button_finish">结束</string>
+    <string name="button_review">审查</string>
     <string name="error_file_not_found">文件未找到</string>
     <string name="no_errors_found_text">找不到错误</string>
     <string name="no_errors_found_title">失误</string>

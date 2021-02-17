@@ -24,11 +24,11 @@ public class CollectionUtils {
     private CollectionUtils() {
     }
 
-    public static String toCsvList(Collection<?> items) {
+    public static String toCsvList(@Nullable Collection<?> items) {
         return toCsvList(items, ",");
     }
 
-    public static String toCsvList(Collection<?> items, String delimiter) {
+    public static @Nullable String toCsvList(@Nullable Collection<?> items, String delimiter) {
 
         if (items == null || items.size() == 0) {
             return null;

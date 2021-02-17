@@ -54,7 +54,7 @@ public class GroupRemoveMembersResponseHandler<T extends ResourceItem> extends A
             throw new JSONException("Expected one group to be returned, but there were " + groups.size());
         }
         //Ensure we remove the group from the current logged in user's session details (so we don't need to retrieve them again).
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         long currentUsersId = sessionDetails.getUserId();
         if (groupMemberIdsToRemove.contains(currentUsersId)) {
             HashSet<Long> currentUsersGroupMemberships = sessionDetails.getGroupMemberships();

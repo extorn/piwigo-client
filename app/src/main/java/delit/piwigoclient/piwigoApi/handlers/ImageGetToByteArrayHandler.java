@@ -86,7 +86,7 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
                 uri = UriUtils.encodeUriSegments(Uri.parse(uri));
             }
         }
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
         return client.get(getContext(), uri, buildCustomCacheControlHeaders(forceResponseRevalidation, onlyUseCache), null, handler);
     }

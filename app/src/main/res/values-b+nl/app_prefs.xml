@@ -250,7 +250,7 @@
 
     
     <string name="preference_video_cache_enabled_title">Cache video\'s die zijn bekeken naar een bestand</string>
-    <string name="preference_video_cache_enabled_summary">Indien ingeschakeld, worden alle gestreamde video\'s in de cache opgeslagen om later af te spelen</string>
+    <string name="preference_video_cache_enabled_summary">Indien ingeschakeld, worden alle gestreamde video\'s in de cache opgeslagen voor later afspelen</string>
     
 
     
@@ -351,7 +351,7 @@
     <string name="preference_gallery_album_thumbnail_size_summary">%1$s</string>
     
 
-    <string name="preference_gallery_item_slideshow_image_size_title">Standaard afbeeldingsgrootte van de diavoorstelling</string>
+    <string name="preference_gallery_item_slideshow_image_size_title">Standaard afbeeldingsgrootte voor diavoorstelling</string>
     
     <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
     
@@ -511,7 +511,7 @@
     <string name="preference_app_desired_language_summary">%1$s</string>
 
     
-    <string name="preference_app_clear_list_of_user_hints_shown_title">Alle gebruikershints opnieuw weergeven</string>
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Toon alle gebruikershints opnieuw</string>
 
     
     <string name="preference_app_uri_permissions_held_title">URI-machtigingen behouden</string>

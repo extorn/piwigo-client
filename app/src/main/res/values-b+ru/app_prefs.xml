@@ -20,7 +20,7 @@
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Чистый сервер</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Очистите неудачные загрузки PiwigoClient с сервера</string>
 
-    <string name="preference_page_connection">Подключение</string>
+    <string name="preference_page_connection">Связь</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
 
     
@@ -124,7 +124,7 @@
 
 
     
-    <string name="preference_piwigo_server_password_title">пароль</string>
+    <string name="preference_piwigo_server_password_title">Пароль</string>
     <string name="preference_piwigo_server_password_summary">%1$s</string>
 
     
@@ -181,7 +181,7 @@
     <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s миллисекунды</string>
     
 
-    <string name="preference_gallery_category_general">генеральный</string>
+    <string name="preference_gallery_category_general">Общий</string>
     
     <string name="preference_gallery_category_server_calls">Подробная информация о вызове сервера Piwigo</string>
     <string name="preference_gallery_category_slideshow">Слайд-шоу</string>
@@ -464,7 +464,7 @@
 
     
 
-    <string name="preference_page_other">разное</string>
+    <string name="preference_page_other">Другой</string>
     <string name="preference_other_category_file_selector">Селектор файлов</string>
 
     

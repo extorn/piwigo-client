@@ -20,7 +20,7 @@
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">清洁服务器</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">从服务器清除失败的PiwigoClient上传</string>
 
-    <string name="preference_page_connection">连接</string>
+    <string name="preference_page_connection">联系</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
 
     
@@ -181,7 +181,7 @@
     <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s毫米</string>
     
 
-    <string name="preference_gallery_category_general">一般</string>
+    <string name="preference_gallery_category_general">一般的</string>
     
     <string name="preference_gallery_category_server_calls">Piwigo服务器呼叫详细信息</string>
     <string name="preference_gallery_category_slideshow">幻灯片放映</string>
@@ -402,7 +402,7 @@
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_max_filesize_mb_title">最多上传文件大小而不会警告您（以MB为单位）</string>
+    <string name="preference_data_upload_max_filesize_mb_title">最多上传文件大小而不会警告您（MB）</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     
 
@@ -458,7 +458,7 @@
     
 
     
-    <string name="preference_page_app">应用程式</string>
+    <string name="preference_page_app">应用程序</string>
     
     <string name="preference_app_resource_caching_title">资源缓存</string>
 
