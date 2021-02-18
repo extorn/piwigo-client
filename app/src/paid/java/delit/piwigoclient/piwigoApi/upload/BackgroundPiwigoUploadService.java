@@ -22,7 +22,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
 import org.greenrobot.eventbus.EventBus;
@@ -222,7 +221,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                         saveStateToDisk(unfinishedJob);
                     }
                     runJob(unfinishedJob, this, true);
-                    if (unfinishedJob.hasJobCompletedAllActionsSuccessfully(this)) {
+                    if (unfinishedJob.hasJobCompletedAllActionsSuccessfully()) {
                         removeJob(unfinishedJob);
                     }
                 } else {

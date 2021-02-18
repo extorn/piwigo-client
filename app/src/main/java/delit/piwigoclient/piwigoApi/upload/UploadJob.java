@@ -72,16 +72,16 @@ public class UploadJob implements Parcelable {
     private final byte privacyLevelWanted;
     private int jobConfigId = -1;
     private boolean runInBackground;
-    private ConnectionPreferences.ProfilePreferences connectionPrefs;
+    private final ConnectionPreferences.ProfilePreferences connectionPrefs;
     private HashMap<Uri, String> fileChecksums;
     private boolean finished;
     private long temporaryUploadAlbum = -1;
-    private SortedSet<Uri> filesWithError = new TreeSet<>();
+    private final SortedSet<Uri> filesWithError = new TreeSet<>();
     private LinkedHashMap<String, AreaErrors> errors = new LinkedHashMap<>();
     private VideoCompressionParams playableMediaCompressionParams;
     private ImageCompressionParams imageCompressionParams;
     private boolean allowUploadOfRawVideosIfIncompressible;
-    private boolean isDeleteFilesAfterUpload;
+    private final boolean isDeleteFilesAfterUpload;
 
     private volatile boolean submitted = false;
     private volatile boolean runningNow = false;
@@ -166,11 +166,16 @@ public class UploadJob implements Parcelable {
             // at least one file isn't marked with error state
             return !filesWithError.containsAll(filesForUploadAndSize.keySet());
         }
-        return hasFilesToUpload;
+        return false;
     }
 
-    public long getFileSize(Uri toUpload) {
-        return filesForUploadAndSize.get(toUpload);
+    public long getFileSize(@NonNull Uri toUpload) {
+        Long size = filesForUploadAndSize.get(toUpload);
+        if(size == null) {
+            Logging.log(Log.ERROR, TAG, "getFilesize requested for Uri not present in job");
+            throw new IllegalStateException("UploadJob does not contain uri");
+        }
+        return size;
     }
 
     public void cancelAllFailedUploads() {
@@ -186,15 +191,21 @@ public class UploadJob implements Parcelable {
 
 
     public static class ProgressAdapterChain extends TaskProgressTracker.ProgressAdapter {
-        private UploadJob uploadJob;
-        private ProgressListener chained;
+        private final UploadJob uploadJob;
+        private final ProgressListener chained;
         @Override
         public void onProgress(double percent) {
             uploadJob.overallUploadProgress = percent;
             if(uploadJob.uploadProgressTracker != null) {
                 uploadJob.dataWorkAlreadyDone = uploadJob.totalDataToWorkOn - uploadJob.uploadProgressTracker.getRemainingWork();
             }
-//            chained.onProgress(percent);
+            if(chained != null) {
+                chained.onProgress(percent);
+            }
+        }
+
+        public ProgressAdapterChain(@NonNull UploadJob uploadJob) {
+            this(uploadJob, null);
         }
 
         public ProgressAdapterChain(@NonNull UploadJob uploadJob, @Nullable ProgressListener chained) {
@@ -238,7 +249,7 @@ public class UploadJob implements Parcelable {
                 this.totalDataToWorkOn = calculateTotalWork(context);
                 this.dataWorkAlreadyDone = calculateWorkDone(context); // this will assume checksums need to occur still, but will deal with files uploaded or partially so as best it can.
             }
-            overallJobProgressTracker = new TaskProgressTracker("Upload Job", TOTAL_WORK, new ProgressAdapterChain(this, null));
+            overallJobProgressTracker = new TaskProgressTracker("Upload Job", TOTAL_WORK, new ProgressAdapterChain(this));
             overallJobProgressTracker.setExactProgress(overallUploadProgress);
         }
         return overallJobProgressTracker;
@@ -612,7 +623,7 @@ public class UploadJob implements Parcelable {
         return partialUploadData.getUploadedItem();
     }
 
-    public boolean hasJobCompletedAllActionsSuccessfully(@NonNull Context context) {
+    public boolean hasJobCompletedAllActionsSuccessfully() {
         ArrayList<Uri> filesToUpload = getFilesNotYetUploaded();
         return (filesToUpload.isEmpty() && filesWithError.isEmpty()) && getTemporaryUploadAlbum() < 0;
     }
@@ -764,8 +775,11 @@ public class UploadJob implements Parcelable {
         return MimeTypeFilter.matches(mimeType,"image/*");
     }
 
-    public DocumentFile buildCompressedFile(@NonNull Context context, Uri baseFile, String mimeType) {
+    public DocumentFile buildCompressedFile(@NonNull Context context, @NonNull Uri baseFile, @NonNull String mimeType) {
         String uploadFileDisplayName = IOUtils.getFilename(context, baseFile);
+        if(uploadFileDisplayName == null) {
+            throw new IllegalStateException("Unable to retrieve filename for file : " + baseFile);
+        }
         uploadFileDisplayName = IOUtils.getFileNameWithoutExt(uploadFileDisplayName);
         DocumentFile compressedFile = getCompressedFilesFolder(context).createFile(mimeType, uploadFileDisplayName);
         if (compressedFilesMap == null) {
@@ -774,9 +788,8 @@ public class UploadJob implements Parcelable {
         return compressedFile;
     }
 
-    public DocumentFile addCompressedFile(Uri rawFileForUpload, DocumentFile compressedFile) {
+    public void addCompressedFile(Uri rawFileForUpload, DocumentFile compressedFile) {
         compressedFilesMap.put(rawFileForUpload, compressedFile.getUri());
-        return compressedFile;
     }
 
     public Uri getCompressedFile(Uri rawFileForUpload) {
@@ -786,8 +799,8 @@ public class UploadJob implements Parcelable {
         return compressedFilesMap.get(rawFileForUpload);
     }
 
-    private DocumentFile getCompressedFilesFolder(Context c) {
-        DocumentFile f = DocumentFile.fromFile(c.getExternalCacheDir());
+    private DocumentFile getCompressedFilesFolder(@NonNull Context c) {
+        DocumentFile f = DocumentFile.fromFile(Objects.requireNonNull(c.getExternalCacheDir()));
         DocumentFile compressedFolder = f.findFile("compressed_vids_for_upload");
         if (compressedFolder == null) {
             compressedFolder = f.createDirectory("compressed_vids_for_upload");
@@ -1138,7 +1151,7 @@ public class UploadJob implements Parcelable {
     }
 
     public static class AreaErrors implements Parcelable {
-        private LinkedHashMap<Date,String> errorsRecorded = new LinkedHashMap<>();
+        private final LinkedHashMap<Date,String> errorsRecorded = new LinkedHashMap<>();
 
         protected AreaErrors() {}
 
@@ -1146,21 +1159,26 @@ public class UploadJob implements Parcelable {
             ParcelUtils.readMap(in, errorsRecorded);
         }
 
-        public void addError(Date time, String error) {
-            errorsRecorded.put(time, error);
+        public void addError(@NonNull Date time, @NonNull String error) {
+            synchronized (errorsRecorded) {
+                errorsRecorded.put(time, error);
+            }
         }
 
-        public LinkedHashMap<Date, String> getErrorsRecorded() {
-            return errorsRecorded;
-        }
-
+        /**
+         * @return A copy of the current state.
+         */
         public Set<Map.Entry<Date, String>> getEntrySet() {
-            return errorsRecorded.entrySet();
+            synchronized (errorsRecorded) {
+                return new LinkedHashMap<>(errorsRecorded).entrySet();
+            }
         }
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            ParcelUtils.writeMap(dest, errorsRecorded);
+            synchronized (errorsRecorded) {
+                ParcelUtils.writeMap(dest, errorsRecorded);
+            }
         }
 
         @Override

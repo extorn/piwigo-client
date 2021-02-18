@@ -65,7 +65,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     @Override
     protected void onUploadComplete(@NonNull final Context context, final UploadJob job) {
         if (getParent() != null && getParent().isAdded()) {
-            if (job.hasJobCompletedAllActionsSuccessfully(context) && job.isFinished()) {
+            if (job.hasJobCompletedAllActionsSuccessfully() && job.isFinished()) {
                 ForegroundPiwigoUploadService.removeJob(job);
                 HashSet<Uri> filesPendingApproval = job.getFilesPendingApproval();
                 if (filesPendingApproval.size() > 0) {
@@ -88,7 +88,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     private void notifyUserUploadJobComplete(@NonNull Context context, UploadJob job) {
-        if (job.hasJobCompletedAllActionsSuccessfully(context)) {
+        if (job.hasJobCompletedAllActionsSuccessfully()) {
             getParent().onUploadJobSuccess(job);
         } else {
             getParent().onUploadJobFailure(job);

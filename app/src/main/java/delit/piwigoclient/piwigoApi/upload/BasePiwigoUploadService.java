@@ -722,7 +722,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
                 updateNotificationProgressText(thisUploadJob.getOverallUploadProgressInt());
 
-                if (!thisUploadJob.hasJobCompletedAllActionsSuccessfully(this)) {
+                if (!thisUploadJob.hasJobCompletedAllActionsSuccessfully()) {
                     saveStateToDisk(thisUploadJob);
                 } else {
                     deleteStateFromDisk(this, thisUploadJob, deleteJobConfigFileOnSuccess);
