@@ -145,11 +145,15 @@
         <item>"*主要仅限错误修正
                 *可能添加选项，以允许以电子邮件中的uri形式共享对文件夹的访问-这将涉及创建普通用户，授予他们对该文件夹和文件的权限，创建用于凭证和uri详细信息的令牌以嵌入到http链接中 ，以及在服务器上管理这些令牌的方法。"</item>
         
-        <item>1.4.0.121</item>
+        <item>1.4.0.122</item>
         <item>"错误修正：
                  -在幻灯片“项目未加载”页面上实现刷新按钮"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.121</item>
+        <item>"错误修正：
+                 -添加限制到显示错误响应时显示的服务器响应长度
+                 -在HTTP 4xx之后重试服务器调用时，不要只返回缓存的错误"</item>
         <item>1.4.0.120</item>
         <item>"改变：
                 -支持下载piwigo网站内pwg_format文件夹中托管的替代资源格式文件。注意：privacy_plugin目前不支持此功能。

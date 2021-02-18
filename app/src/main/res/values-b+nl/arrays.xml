@@ -145,11 +145,15 @@
         <item>"* Alleen voornamelijk bugfixes
                 * Eventueel optie toevoegen om gedeelde toegang tot een map als een uri in een e-mail toe te staan - het omvat het aanmaken van een normale gebruiker, het geven van toestemming voor de map en het bestand, het maken van een token voor de inloggegevens en uri-details voor insluiting in een http-link , en een manier om deze tokens op de server te beheren."</item>
         
-        <item>1.4.0.121</item>
+        <item>1.4.0.122</item>
         <item>"Bugfix:
                  - implementeer de vernieuwingsknop op de pagina \'item niet geladen\' van de diavoorstelling"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.121</item>
+        <item>"Bugfix:
+                 - limiet toegevoegd aan de lengte van de serverreactie die wordt weergegeven bij het tonen van een foutreactie
+                 - bij het opnieuw proberen van de serveroproep na http 4xx, retourneer dan niet alleen fouten in de cache"</item>
         <item>1.4.0.120</item>
         <item>"Verandering:
                 - Ondersteuning voor het downloaden van bestanden in alternatieve bronindelingen die worden gehost in pwg_format-mappen op piwigo-sites. OPMERKING: privacy_plugin ondersteunt dit momenteel niet.

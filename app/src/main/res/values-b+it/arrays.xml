@@ -145,11 +145,15 @@
         <item>"* Principalmente solo correzioni di bug
                 * Possibilmente Aggiungi opzione per consentire la condivisione dell\'accesso a una cartella come uri in un\'e-mail: comporterà la creazione di un utente normale, dando loro il permesso per la cartella e il file, creando un token per le credenziali e i dettagli uri per l\'incorporamento in un collegamento http e un modo per gestire questi token sul server."</item>
         
-        <item>1.4.0.121</item>
+        <item>1.4.0.122</item>
         <item>"Risoluzione del problema:
                  - implementare il pulsante di aggiornamento nella pagina \"elemento non caricato\" della presentazione"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.121</item>
+        <item>"Risoluzione del problema:
+                 - limite aggiunto alla lunghezza della risposta del server visualizzata quando si mostra la risposta all\'errore
+                 - al nuovo tentativo di chiamata al server dopo http 4xx, non restituire solo errori memorizzati nella cache"</item>
         <item>1.4.0.120</item>
         <item>"Modificare:
                 - Supporto per il download di file di formati di risorse alternativi ospitati nelle cartelle pwg_format all\'interno dei siti piwigo. NOTA: privacy_plugin non lo supporta al momento.

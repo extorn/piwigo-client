@@ -1,86 +1,50 @@
 <en-GB>
-Change:
-- Support for downloading alternative resource format files hosted in pwg_format folders within piwigo sites. NOTE: privacy_plugin does not support this at present.
-* Note: this will require a change to your Nginx server configuration file to allow the URLs to download.
-Example extract from my testing nginx server configuration:
-# warning, this circumvents the privacy_plugin entirely (any user could download the file if they guess the url)
-location ~ (^/piwigo)(/\d+)(/.*/pwg_format/...."
+Bugfix:
+- limit added to length of server response displayed when showing error response
+- on retry of server call after http 4xx, don't just return cached errors
 </en-GB>
 <cs-CZ>
-Změna:
-- Podpora stahování souborů alternativního formátu zdrojů hostovaných ve složkách pwg_format na stránkách piwigo. POZNÁMKA: privacy_plugin to v současné době nepodporuje.
-* Poznámka: to vyžaduje změnu konfiguračního souboru serveru Nginx, aby bylo možné stahovat adresy URL.
-Příklad výpisu z mé konfigurace konfigurace serveru nginx:
-# varování, toto zcela obchází privacy_plugin (jakýkoli uživatel si může stáhnout soubor, pokud uhodne adresu URL)
-umístění ~ (^ / piwigo) (/ \ d) (/.*/ pw..."
+Oprava chyby:
+- limit přidaný k délce odpovědi serveru zobrazený při zobrazení chybové odpovědi
+- při pokusu o volání serveru po http 4xx nevracejte pouze chyby uložené v mezipaměti
 </cs-CZ>
 <de-DE>
-Veränderung:
-- Unterstützung für das Herunterladen von Dateien im alternativen Ressourcenformat, die in Ordnern von pwg_format auf piwigo-Sites gehostet werden. HINWEIS: privacy_plugin unterstützt dies derzeit nicht.
-* Hinweis: Dies erfordert eine Änderung Ihrer Nginx-Serverkonfigurationsdatei, damit die URLs heruntergeladen werden können.
-Beispielauszug aus meiner Testkonfiguration des Nginx-Servers:
-# Warnung, dies umgeht das privacy_plugin vollständig (jeder Benutzer kann die Datei herunt..."
+Fehlerbehebung:
+- Begrenzung der Länge der Serverantwort hinzugefügt, die angezeigt wird, wenn eine Fehlerantwort angezeigt wird
+- Geben Sie bei einem erneuten Versuch des Serveraufrufs nach http 4xx nicht nur zwischengespeicherte Fehler zurück
 </de-DE>
 <es-ES>
-Cambio:
-- Soporte para descargar archivos de formato de recursos alternativos alojados en carpetas pwg_format dentro de sitios piwigo. NOTA: privacy_plugin no admite esto en este momento.
-* Nota: esto requerirá un cambio en el archivo de configuración del servidor Nginx para permitir que se descarguen las URL.
-Extracto de ejemplo de mi configuración del servidor nginx de prueba:
-# advertencia, esto elude el privacy_plugin por completo (cualquier usuario podría descargar el archivo si adivina..."
+Arreglo del fallo:
+- límite agregado a la longitud de la respuesta del servidor que se muestra cuando se muestra la respuesta de error
+- al reintentar la llamada al servidor después de http 4xx, no devuelva solo los errores almacenados en caché
 </es-ES>
 <fr-FR>
-Changement:
-- Prise en charge du téléchargement de fichiers au format de ressources alternatifs hébergés dans les dossiers pwg_format des sites piwigo. REMARQUE: privacy_plugin ne prend pas en charge cela pour le moment.
-* Remarque: cela nécessitera une modification du fichier de configuration de votre serveur Nginx pour permettre le téléchargement des URL.
-Exemple d\'extrait de la configuration de mon serveur nginx de test:
-# avertissement, cela contourne entièrement le privacy_plugin (tout..."
+Correction d\'un bug:
+- limite ajoutée à la longueur de la réponse du serveur affichée lors de l\'affichage de la réponse d\'erreur
+- lors d\'une nouvelle tentative d\'appel du serveur après http 4xx, ne renvoyez pas simplement les erreurs mises en cache
 </fr-FR>
 <it-IT>
-Modificare:
-- Supporto per il download di file di formati di risorse alternativi ospitati nelle cartelle pwg_format all\'interno dei siti piwigo. NOTA: privacy_plugin non lo supporta al momento.
-* Nota: questo richiederà una modifica al file di configurazione del server Nginx per consentire il download degli URL.
-Estratto di esempio dalla mia configurazione del server nginx di prova:
-# avviso, questo aggira completamente il privacy_plugin (qualsiasi utente potrebbe scaricare il file se indov..."
+Risoluzione del problema:
+- limite aggiunto alla lunghezza della risposta del server visualizzata quando si mostra la risposta all\'errore
+- al nuovo tentativo di chiamata al server dopo http 4xx, non restituire solo errori memorizzati nella cache
 </it-IT>
 <ja-JP>
-変化する：
--piwigoサイト内のpwg_formatフォルダーでホストされている代替リソース形式ファイルのダウンロードのサポート。注：privacy_pluginは現在これをサポートしていません。
-*注：URLをダウンロードできるようにするには、Nginxサーバー構成ファイルを変更する必要があります。
-テスト中のnginxサーバー構成からの抜粋例：
-＃警告、これはprivacy_pluginを完全に回避します（URLを推測すれば、どのユーザーもファイルをダウンロードできます）
-場所〜（^ / piwigo）（/ \ d）（/.*/ pwg_format /.*）{
-＃今のところ、URIから画像IDを削除し、画像を取得するだけです
-try_files $ 1 $ 3 = 404;
-}
-＃piwigo_privacy / get.phpへのルートをこれに変更する必要があります-警告、これはprivacy_pluginを完全に回避します（URLを推測すれば誰でもファイルをダウンロードできます）
-場所〜（^ / piwigo）（/ \ d /.*/（？&lt;！pwg_format...
+バグ修正：
+-エラー応答を表示するときに表示されるサーバー応答の長さに制限が追加されました
+-http 4xx以降のサーバー呼び出しの再試行時に、キャッシュされたエラーを返すだけではありません
 </ja-JP>
 <nl-NL>
-Verandering:
-- Ondersteuning voor het downloaden van bestanden in alternatieve bronindelingen die worden gehost in pwg_format-mappen op piwigo-sites. OPMERKING: privacy_plugin ondersteunt dit momenteel niet.
-* Opmerking: dit vereist een wijziging in uw Nginx-serverconfiguratiebestand om de URL\'s te kunnen downloaden.
-Voorbeelduittreksel uit mijn testende nginx-serverconfiguratie:
-# waarschuwing, hiermee wordt de privacy_plugin volledig omzeild (elke gebruiker kan het bestand downloaden als ..."
+Bugfix:
+- limiet toegevoegd aan de lengte van de serverreactie die wordt weergegeven bij het tonen van een foutreactie
+- bij het opnieuw proberen van de serveroproep na http 4xx, retourneer dan niet alleen fouten in de cache
 </nl-NL>
 <ru-RU>
-Изменять:
-- Поддержка загрузки файлов альтернативных форматов ресурсов, размещенных в папках pwg_format на сайтах piwigo. ПРИМЕЧАНИЕ: privacy_plugin в настоящее время не поддерживает это.
-* Примечание: для этого потребуется изменить файл конфигурации вашего сервера Nginx, чтобы разрешить загрузку URL-адресов.
-Пример отрывка из моей тестовой конфигурации сервера nginx:
-# предупреждение, это полностью обходит плагин privacy_plugin (любой пользователь может скачать файл, если угадывает URL)
-рас..."
+Исправлена ошибка:
+- добавлено ограничение на длину ответа сервера, отображаемого при отображении ответа об ошибке
+- при повторном вызове сервера после http 4xx не возвращать только кешированные ошибки
 </ru-RU>
 <zh-CN>
-改变：
--支持下载piwigo网站内pwg_format文件夹中托管的替代资源格式文件。注意：privacy_plugin目前不支持此功能。
-*注意：这需要更改您的Nginx服务器配置文件以允许URL下载。
-我的测试nginx服务器配置的示例摘录：
-＃警告，这会完全绕开privacy_plugin（任何使用者只要猜到网址便可以下载档案）
-位置〜（^ / piwigo）（/ \ d）（/.*/ pwg_format /.*）{
-＃现在，只需从uri中删除图像ID并检索图像
-try_files $ 1 $ 3 = 404;
-}
-＃应当将piwigo_privacy / get.php的路由更改为此-警告，这会完全绕过privacy_plugin（任何人如果猜测到URL都可以下载文件）
-位置〜（^ / piwigo）（/ \ d /.*/(?&lt;!pwg_format/)[^/]*）{
--支持在任意命名的piwigo网站上托管的多媒体文件（请参见&lt;server_uri&gt; /admin.php?page=site_manager）-需要安装PiwigoClientWsEx...
+错误修正：
+-添加限制到显示错误响应时显示的服务器响应长度
+-在HTTP 4xx之后重试服务器调用时，不要只返回缓存的错误
 </zh-CN>

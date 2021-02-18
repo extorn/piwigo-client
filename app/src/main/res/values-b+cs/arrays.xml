@@ -145,11 +145,15 @@
         <item>"* Primárně pouze opravy chyb
                 * Možnost Přidat možnost umožňující sdílení přístupu ke složce jako uri v e-mailu - bude to zahrnovat vytvoření normálního uživatele, povolení ke složce a souboru, vytvoření tokenu pro pověření a podrobnosti uri pro vložení do odkazu http a způsob správy těchto tokenů na serveru."</item>
         
-        <item>1.4.0.121</item>
+        <item>1.4.0.122</item>
         <item>"Oprava chyby:
                  - implementujte tlačítko pro obnovení na stránce slideshow \'item not loaded\'"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.121</item>
+        <item>"Oprava chyby:
+                 - limit přidaný k délce odpovědi serveru zobrazený při zobrazení chybové odpovědi
+                 - při pokusu o volání serveru po http 4xx nevracejte pouze chyby uložené v mezipaměti"</item>
         <item>1.4.0.120</item>
         <item>"Změna:
                 - Podpora stahování souborů alternativního formátu zdrojů hostovaných ve složkách pwg_format na stránkách piwigo. POZNÁMKA: privacy_plugin to v současné době nepodporuje.

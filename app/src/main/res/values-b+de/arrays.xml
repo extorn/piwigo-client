@@ -145,11 +145,15 @@
         <item>"* Hauptsächlich nur Bugfixes
                 * Möglicherweise Option hinzufügen, um den Zugriff auf einen Ordner als URL in einer E-Mail freizugeben. Dazu muss ein normaler Benutzer erstellt, ihm die Berechtigung für den Ordner und die Datei erteilt und ein Token für die Anmeldeinformationen und URL-Details zum Einbetten in einen http-Link erstellt werden und eine Möglichkeit, diese Token auf dem Server zu verwalten."</item>
         
-        <item>1.4.0.121</item>
+        <item>1.4.0.122</item>
         <item>"Fehlerbehebung:
                  - Implementieren Sie die Schaltfläche \"Aktualisieren\" auf der Diashow-Seite \"Element nicht geladen\""</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.121</item>
+        <item>"Fehlerbehebung:
+                 - Begrenzung der Länge der Serverantwort hinzugefügt, die angezeigt wird, wenn eine Fehlerantwort angezeigt wird
+                 - Geben Sie bei einem erneuten Versuch des Serveraufrufs nach http 4xx nicht nur zwischengespeicherte Fehler zurück"</item>
         <item>1.4.0.120</item>
         <item>"Veränderung:
                 - Unterstützung für das Herunterladen von Dateien im alternativen Ressourcenformat, die in Ordnern von pwg_format auf piwigo-Sites gehostet werden. HINWEIS: privacy_plugin unterstützt dies derzeit nicht.

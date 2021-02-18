@@ -145,11 +145,15 @@
         <item>"* Principalmente solo correcciones de errores
                 * Posiblemente Agregar opción para permitir el acceso compartido a una carpeta como un uri en un correo electrónico: implicará la creación de un usuario normal, dándoles permiso para la carpeta y el archivo, creando un token para las credenciales y los detalles del uri para incrustar en un enlace http y una forma de administrar estos tokens en el servidor."</item>
         
-        <item>1.4.0.121</item>
+        <item>1.4.0.122</item>
         <item>"Arreglo del fallo:
                  - implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.121</item>
+        <item>"Arreglo del fallo:
+                 - límite agregado a la longitud de la respuesta del servidor que se muestra cuando se muestra la respuesta de error
+                 - al reintentar la llamada al servidor después de http 4xx, no devuelva solo los errores almacenados en caché"</item>
         <item>1.4.0.120</item>
         <item>"Cambio:
                 - Soporte para descargar archivos de formato de recursos alternativos alojados en carpetas pwg_format dentro de sitios piwigo. NOTA: privacy_plugin no admite esto en este momento.
