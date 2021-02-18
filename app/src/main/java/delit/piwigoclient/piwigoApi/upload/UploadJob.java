@@ -77,7 +77,7 @@ public class UploadJob implements Parcelable {
     private boolean finished;
     private long temporaryUploadAlbum = -1;
     private final SortedSet<Uri> filesWithError = new TreeSet<>();
-    private LinkedHashMap<String, AreaErrors> errors = new LinkedHashMap<>();
+    private final LinkedHashMap<String, AreaErrors> errors = new LinkedHashMap<>();
     private VideoCompressionParams playableMediaCompressionParams;
     private ImageCompressionParams imageCompressionParams;
     private boolean allowUploadOfRawVideosIfIncompressible;
@@ -125,7 +125,7 @@ public class UploadJob implements Parcelable {
         fileChecksums = ParcelUtils.readMap(in, Uri.class.getClassLoader());
         finished = ParcelUtils.readBool(in);
         temporaryUploadAlbum = in.readLong();
-        errors = ParcelUtils.readMapTypedValues(in, errors, AreaErrors.class);
+        ParcelUtils.readMapTypedValues(in, errors, AreaErrors.class);
         playableMediaCompressionParams = ParcelUtils.readParcelable(in, UploadJob.VideoCompressionParams.class);
         imageCompressionParams = ParcelUtils.readParcelable(in, UploadJob.ImageCompressionParams.class);
         allowUploadOfRawVideosIfIncompressible = ParcelUtils.readBool(in);
@@ -740,12 +740,14 @@ public class UploadJob implements Parcelable {
     }
 
     private @NonNull AreaErrors getErrorsForKey(String key) {
-        AreaErrors keyedErrors = errors.get(key);
-        if(keyedErrors == null) {
-            keyedErrors = new AreaErrors();
-            errors.put(key, keyedErrors);
+        synchronized (errors) {
+            AreaErrors keyedErrors = errors.get(key);
+            if (keyedErrors == null) {
+                keyedErrors = new AreaErrors();
+                errors.put(key, keyedErrors);
+            }
+            return keyedErrors;
         }
-        return keyedErrors;
     }
 
     public void recordError(String message) {
@@ -759,11 +761,18 @@ public class UploadJob implements Parcelable {
     }
 
     public boolean hasErrors() {
-        return errors.size() > 0;
+        synchronized (errors) {
+            return errors.size() > 0;
+        }
     }
 
+    /**
+     * @return A copy of the errors.
+     */
     public LinkedHashMap<String, AreaErrors> getErrors() {
-        return errors;
+        synchronized (errors) {
+            return new LinkedHashMap<>(errors);
+        }
     }
 
     public boolean isPlayableMedia(@NonNull Context context, @NonNull Uri file) {
@@ -905,7 +914,9 @@ public class UploadJob implements Parcelable {
         ParcelUtils.writeMap(dest, fileChecksums);
         ParcelUtils.writeBool(dest, finished);
         dest.writeLong(temporaryUploadAlbum);
-        ParcelUtils.writeMap(dest, errors);
+        synchronized (errors) {
+            ParcelUtils.writeMap(dest, errors);
+        }
         ParcelUtils.writeParcelable(dest, playableMediaCompressionParams);
         ParcelUtils.writeParcelable(dest, imageCompressionParams);
         ParcelUtils.writeBool(dest, allowUploadOfRawVideosIfIncompressible);
