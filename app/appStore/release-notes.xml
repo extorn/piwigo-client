@@ -1,50 +1,60 @@
 <en-GB>
 Bugfix:
+- PiwigoClientWsExts plugin version warning not appearing for affected users
 - limit added to length of server response displayed when showing error response
 - on retry of server call after http 4xx, don't just return cached errors
 </en-GB>
 <cs-CZ>
 Oprava chyby:
+- Varování verze pluginu pluginu PiwigoClientWsExts se u postižených uživatelů nezobrazuje
 - limit přidaný k délce odpovědi serveru zobrazený při zobrazení chybové odpovědi
 - při pokusu o volání serveru po http 4xx nevracejte pouze chyby uložené v mezipaměti
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
+- Die Versionswarnung für das PiwigoClientWsExts-Plugin wird für betroffene Benutzer nicht angezeigt
 - Begrenzung der Länge der Serverantwort hinzugefügt, die angezeigt wird, wenn eine Fehlerantwort angezeigt wird
 - Geben Sie bei einem erneuten Versuch des Serveraufrufs nach http 4xx nicht nur zwischengespeicherte Fehler zurück
 </de-DE>
 <es-ES>
 Arreglo del fallo:
+- La advertencia de la versión del complemento PiwigoClientWsExts no aparece para los usuarios afectados
 - límite agregado a la longitud de la respuesta del servidor que se muestra cuando se muestra la respuesta de error
 - al reintentar la llamada al servidor después de http 4xx, no devuelva solo los errores almacenados en caché
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
+- L\'avertissement de version du plugin PiwigoClientWsExts n\'apparaît pas pour les utilisateurs concernés
 - limite ajoutée à la longueur de la réponse du serveur affichée lors de l\'affichage de la réponse d\'erreur
 - lors d\'une nouvelle tentative d\'appel du serveur après http 4xx, ne renvoyez pas simplement les erreurs mises en cache
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
+- L\'avviso della versione del plug-in PiwigoClientWsExts non viene visualizzato per gli utenti interessati
 - limite aggiunto alla lunghezza della risposta del server visualizzata quando si mostra la risposta all\'errore
 - al nuovo tentativo di chiamata al server dopo http 4xx, non restituire solo errori memorizzati nella cache
 </it-IT>
 <ja-JP>
 バグ修正：
+-影響を受けるユーザーにPiwigoClientWsExtsプラグインバージョンの警告が表示されない
 -エラー応答を表示するときに表示されるサーバー応答の長さに制限が追加されました
 -http 4xx以降のサーバー呼び出しの再試行時に、キャッシュされたエラーを返すだけではありません
 </ja-JP>
 <nl-NL>
 Bugfix:
+- PiwigoClientWsExts plug-in versiewaarschuwing verschijnt niet voor getroffen gebruikers
 - limiet toegevoegd aan de lengte van de serverreactie die wordt weergegeven bij het tonen van een foutreactie
 - bij het opnieuw proberen van de serveroproep na http 4xx, retourneer dan niet alleen fouten in de cache
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
+- Предупреждение о версии плагина PiwigoClientWsExts не отображается для затронутых пользователей
 - добавлено ограничение на длину ответа сервера, отображаемого при отображении ответа об ошибке
 - при повторном вызове сервера после http 4xx не возвращать только кешированные ошибки
 </ru-RU>
 <zh-CN>
 错误修正：
+-对受影响的用户未出现PiwigoClientWsExts插件版本警告
 -添加限制到显示错误响应时显示的服务器响应长度
 -在HTTP 4xx之后重试服务器调用时，不要只返回缓存的错误
 </zh-CN>

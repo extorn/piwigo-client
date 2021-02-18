@@ -152,6 +152,7 @@
     <string-array name="release_history" translatable="true">
         <item>1.4.0.121</item>
         <item>"Fehlerbehebung:
+                 - Die Versionswarnung für das PiwigoClientWsExts-Plugin wird für betroffene Benutzer nicht angezeigt
                  - Begrenzung der Länge der Serverantwort hinzugefügt, die angezeigt wird, wenn eine Fehlerantwort angezeigt wird
                  - Geben Sie bei einem erneuten Versuch des Serveraufrufs nach http 4xx nicht nur zwischengespeicherte Fehler zurück"</item>
         <item>1.4.0.120</item>
