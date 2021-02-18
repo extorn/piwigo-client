@@ -11,6 +11,8 @@ Se ti piace l\'app, ma non la pubblicità, cerca la versione a pagamento che è 
 ** L\'app non viene ora sviluppata attivamente (solo correzioni di bug) **
 ** Se qualcosa non funziona, inviami un\'email: verrà risolto **
 
+** Per la piena funzionalità, è necessario installare il plug-in del server PiwigoClientWsExts. **
+
 Vedi l\'elenco completo delle funzionalità di seguito.
 
 Connettiti a server in esecuzione su porte http o https non standard
@@ -32,8 +34,9 @@ Copia o sposta le immagini all\'interno della galleria
 Seleziona le immagini da caricare utilizzando altre app e condividile con PIWIGO
 App speciale modalità di sola lettura disponibile per evitare alterazioni indesiderate alla galleria
 Alcuni controlli sul layout degli schermi sull\'app (utilizzare per personalizzare lo schermo sul dispositivo)
+Supporto per il download di formati alternativi (ad es. Raw, psd ecc.) Per gli elementi ospitati nella cartella figlio pwg_format (siti sincronizzati)
 
-Plugin del server supportati: community, piwigo_privacy, videojs, descrizioni estese.
+Plugin del server supportati: PiwigoClientWsExts, community, piwigo_privacy, videojs, descrizioni estese.
 
 Vuoi qualcos\'altro non elencato? Prova l\'app. Se non fa esattamente quello che ti serve. Inviami un\'e-mail utilizzando il collegamento nell\'app e cercherò di aggiungere le funzionalità mancanti.
 

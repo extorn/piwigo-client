@@ -14,6 +14,8 @@ If you  like the app, but not the adverts, look for the paid version that is adv
 ** App is now not being Actively Developed (bug fixes only) **
 ** If something doesn't work - email me - it'll be fixed **
 
+** For full functionality, you should install the PiwigoClientWsExts server plugin. **
+
 See full list of features below.
 
 Connect to servers running on non-standard http or https ports
@@ -35,8 +37,9 @@ Copy or move images around within the gallery
 Select image(s) for upload using other apps and share them with PIWIGO
 Special app read-only mode available to prevent any unwanted alterations to the gallery
 Some control over the layout of screens on the app (use to customise for the screen on your device)
+Support for alternative format (e.g. raw, psd etc) download for items hosted in pwg_format child folder (synchronised sites)
 
-Supported server plugins : community, piwigo_privacy, videojs, extended descriptions.
+Supported server plugins : PiwigoClientWsExts, community, piwigo_privacy, videojs, extended descriptions.
 
 Want something else not listed? Try the app. If it doesn't do exactly what you need. Drop me an email using the link in the app and I'll look into adding the missing feature(s).
 

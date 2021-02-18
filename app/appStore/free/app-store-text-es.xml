@@ -11,6 +11,8 @@ Si te gusta la aplicación, pero no los anuncios, busca la versión de pago que 
 ** La aplicación ahora no se está desarrollando activamente (solo correcciones de errores) **
 ** Si algo no funciona, envíeme un correo electrónico, se solucionará **
 
+** Para una funcionalidad completa, debe instalar el complemento de servidor PiwigoClientWsExts. **
+
 Vea la lista completa de características a continuación.
 
 Conéctese a servidores que se ejecutan en puertos http o https no estándar
@@ -32,8 +34,9 @@ Copie o mueva imágenes dentro de la galería
 Seleccione imágenes para cargar usando otras aplicaciones y compártalas con PIWIGO
 Modo de solo lectura de la aplicación especial disponible para evitar alteraciones no deseadas en la galería
 Algún control sobre el diseño de las pantallas en la aplicación (utilícelo para personalizar la pantalla de su dispositivo)
+Soporte para descarga de formato alternativo (por ejemplo, sin formato, psd, etc.) para elementos alojados en la carpeta secundaria pwg_format (sitios sincronizados)
 
-Complementos de servidor compatibles: comunidad, piwigo_privacy, videojs, descripciones extendidas.
+Complementos de servidor compatibles: PiwigoClientWsExts, community, piwigo_privacy, videojs, descripciones extendidas.
 
 ¿Quieres algo más que no esté en la lista? Prueba la aplicación. Si no hace exactamente lo que necesita. Envíeme un correo electrónico utilizando el enlace de la aplicación y buscaré agregar las funciones que faltan.
 
