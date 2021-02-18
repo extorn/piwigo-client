@@ -133,7 +133,10 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
     @NonNull
     @Override
     public String toString() {
-        return String.valueOf(id);
+        final StringBuilder sb = new StringBuilder("GalleryItem{");
+        sb.append("id=").append(id);
+        sb.append('}');
+        return sb.toString();
     }
 
     @Override
