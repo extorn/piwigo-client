@@ -11,7 +11,10 @@ Diese App hat alle Funktionen in der kostenlosen Version mit ein paar anderen. K
 ** App wird derzeit nicht aktiv entwickelt (nur Fehlerbehebungen) **
 ** Wenn etwas nicht funktioniert - mailen Sie mir - es wird behoben **
 
+** Für die volle Funktionalität sollten Sie das PiwigoClientWsExts-Server-Plugin installieren. ** **.
+
 Die vollständige Liste der Funktionen finden Sie unten.
+
 
 Stellen Sie eine Verbindung zu Servern her, die an nicht standardmäßigen http- oder https-Ports ausgeführt werden
 Akzeptieren Sie bei Bedarf ungültige (falscher Hostname) oder selbstsignierte Serverzertifikate
@@ -36,8 +39,9 @@ Verwalten verwaister Ressourcen (solche ohne Album)
 Wählen Sie Bilder zum Hochladen mit anderen Apps aus und teilen Sie sie mit PIWIGO
 Spezieller Nur-Lese-Modus für Apps verfügbar, um unerwünschte Änderungen an der Galerie zu verhindern
 Einige Kontrolle über das Layout der Bildschirme in der App (zum Anpassen des Bildschirms auf Ihrem Gerät)
+Unterstützung für das Herunterladen alternativer Formate (z. B. Raw, PSD usw.) für Elemente, die im untergeordneten Ordner pwg_format (synchronisierte Sites) gehostet werden
 
-Unterstützte Server-Plugins: Community, piwigo_privacy, Videojs, Benutzer-Tags, erweiterte Beschreibungen.
+Unterstützte Server-Plugins: PiwigoClientWsExts, Community, piwigo_privacy, Videojs, Benutzer-Tags, erweiterte Beschreibungen.
 
 Möchten Sie etwas anderes nicht aufgeführt? Probieren Sie die App aus. Wenn es nicht genau das tut, was Sie brauchen. Schreiben Sie mir eine E-Mail über den Link in der App und ich werde die fehlenden Funktionen hinzufügen.
 

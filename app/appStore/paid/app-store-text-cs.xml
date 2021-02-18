@@ -11,7 +11,10 @@ Tato aplikace má všechny funkce v bezplatné verzi s několika dalšími. Žá
 ** Aplikace nyní není aktivně vyvíjena (pouze opravy chyb) **
 ** Pokud něco nefunguje - pošlete mi e-mail - bude to opraveno **
 
+** Pro plnou funkčnost byste měli nainstalovat plugin serveru PiwigoClientWsExts. **
+
 Úplný seznam funkcí naleznete níže.
+
 
 Připojte se k serverům běžícím na nestandardních portech http nebo https
 V případě potřeby přijměte neplatné (nesprávné jméno hostitele) nebo certifikáty serveru s vlastním podpisem
@@ -26,7 +29,7 @@ Můžete také vyloučit videa z prezentací
 Ohodnoťte obrázky a zobrazte průměrné hodnocení
 Nahrajte nové obrázky nebo videa (lze volitelně komprimovat)
 Automatické sledování složek zařízení a odesílání souborů v úloze na pozadí
-Prohlížejte, přidávejte, upravujte, odstraňujte štítky a označené obrázky
+Prohlížejte, přidávejte, upravujte, mazejte značky a označené obrázky
 Nastavení a změna oprávnění, popisu a dalších podrobností o albech a souborech
 Přidejte nebo upravte alba, jejich oprávnění, popis atd
 Přidat, zobrazit a upravit uživatele galerie
@@ -36,14 +39,15 @@ Správa osiřelých zdrojů (bez alba)
 Vyberte obrázky pro nahrání pomocí jiných aplikací a sdílejte je s PIWIGO
 K dispozici je speciální režim jen pro čtení, který zabraňuje nežádoucím změnám v galerii
 Určitá kontrola nad rozložením obrazovek v aplikaci (slouží k přizpůsobení obrazovky na vašem zařízení)
+Podpora alternativního formátu (např. Raw, psd atd.) Stahování pro položky hostované v podřízené složce pwg_format (synchronizované weby)
 
-Podporované doplňky serveru: komunita, piwigo_privacy, videojs, uživatelské značky, rozšířené popisy.
+Podporované pluginy serveru: PiwigoClientWsExts, komunita, piwigo_privacy, videojs, uživatelské značky, rozšířené popisy.
 
 Chcete něco jiného, ​​co není uvedeno? Vyzkoušejte aplikaci. Pokud to nedělá přesně to, co potřebujete. Napište mi e-mail pomocí odkazu v aplikaci a já se podívám na přidání chybějících funkcí.
 
 Připravované změny:
 
-Záměrem je postupné vylepšování uživatelského rozhraní a jeden z uživatelů, David Klement, laskavě poskytl několik návrhů pro rozvržení obrazovky do budoucna, které jsem začal používat od verze 1.3.95 a bezpochyby bude brát další nápady. Návrhy jsou k dispozici v plném znění:
+Záměrem je postupné vylepšování uživatelského rozhraní a jeden z uživatelů, David Klement, laskavě poskytl několik návrhů pro rozvržení obrazovky do budoucna, které jsem začal používat od verze 1.3.95 a bezpochyby bude brát více nápadů. Návrhy jsou k dispozici v plném znění:
 https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
 
 Známá omezení:

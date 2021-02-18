@@ -9,9 +9,12 @@ OPMERKING: EULA moet bij het downloaden worden geaccepteerd.
 Deze app heeft alle functies in de gratis versie met een paar andere. Geen advertenties.
 
 ** App wordt nu niet actief ontwikkeld (alleen bugfixes) **
-** Als iets niet werkt - e-mail me - wordt het opgelost **
+** Als iets niet werkt - e-mail mij - het wordt opgelost **
+
+** Voor volledige functionaliteit moet u de PiwigoClientWsExts-serverplug-in installeren.​
 
 Zie de volledige lijst met functies hieronder.
+
 
 Maak verbinding met servers die op niet-standaard http- of https-poorten draaien
 Accepteer indien nodig ongeldige (verkeerde hostnaam) of zelfondertekende servercertificaten
@@ -25,7 +28,7 @@ Sla volledig gedownloade video\'s op
 Sluit eventueel video\'s uit van diavoorstellingen
 Beoordeel afbeeldingen en bekijk gemiddelde beoordelingen
 Upload nieuwe afbeeldingen of video\'s (kan optioneel worden gecomprimeerd)
-Automatische bewaking van apparaatmappen en uploaden van bestanden in een achtergrondtaak
+Automatische controle van apparaatmappen en uploaden van bestanden in een achtergrondtaak
 Bekijk, voeg toe, wijzig, verwijder tags en getagde afbeeldingen
 Toestemmingen, beschrijving en andere details van albums en bestanden instellen en wijzigen
 Albums toevoegen of wijzigen, hun rechten, beschrijving, enz
@@ -36,8 +39,9 @@ Beheer weesbronnen (die zonder album)
 Selecteer afbeelding (en) om te uploaden met andere apps en deel ze met PIWIGO
 Speciale app alleen-lezen modus beschikbaar om ongewenste wijzigingen aan de galerij te voorkomen
 Enige controle over de lay-out van schermen op de app (gebruik om aan te passen voor het scherm op uw apparaat)
+Ondersteuning voor het downloaden van alternatieve formaten (bijv. Raw, psd enz.) Voor items die worden gehost in de onderliggende map pwg_format (gesynchroniseerde sites)
 
-Ondersteunde serverplug-ins: community, piwigo_privacy, videojs, user-tags, uitgebreide beschrijvingen.
+Ondersteunde serverplug-ins: PiwigoClientWsExts, community, piwigo_privacy, videojs, user-tags, uitgebreide beschrijvingen.
 
 Wil je iets anders dat er niet tussen staat? Probeer de app. Als het niet precies doet wat u nodig heeft. Stuur me een e-mail via de link in de app en ik zal kijken of ik de ontbrekende functie (s) kan toevoegen.
 
@@ -48,5 +52,5 @@ https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.ht
 
 Bekende beperkingen:
 
-1. Opmerkingen worden momenteel niet ondersteund - u kunt geen opmerkingen zien of toevoegen. Als deze ontbrekende functie belangrijk voor je is, neem dan contact met me op.</string>
+1. Opmerkingen worden momenteel niet ondersteund. U kunt opmerkingen niet zien of toevoegen. Als deze ontbrekende functie belangrijk voor je is, neem dan contact met me op.</string>
 </resources>

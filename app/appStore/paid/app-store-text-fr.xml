@@ -11,7 +11,10 @@ Cette application a toutes les fonctionnalités de la version gratuite avec quel
 ** L\'application n\'est pas en cours de développement actif (correction de bogues uniquement) **
 ** Si quelque chose ne fonctionne pas - envoyez-moi un e-mail - ce sera corrigé **
 
+** Pour une fonctionnalité complète, vous devez installer le plugin serveur PiwigoClientWsExts. **
+
 Consultez la liste complète des fonctionnalités ci-dessous.
+
 
 Connectez-vous à des serveurs fonctionnant sur des ports http ou https non standard
 Acceptez les certificats de serveur non valides (mauvais nom d\'hôte) ou auto-signés si nécessaire
@@ -36,8 +39,9 @@ Gérer les ressources orphelines (celles sans album)
 Sélectionnez les images à télécharger à l\'aide d\'autres applications et partagez-les avec PIWIGO
 Mode lecture seule de l\'application spéciale disponible pour éviter toute modification indésirable de la galerie
 Un certain contrôle sur la disposition des écrans sur l\'application (à utiliser pour personnaliser l\'écran de votre appareil)
+Prise en charge du téléchargement au format alternatif (par exemple, raw, psd, etc.) pour les éléments hébergés dans le dossier enfant pwg_format (sites synchronisés)
 
-Plugins de serveur pris en charge: communauté, piwigo_privacy, videojs, user-tags, descriptions étendues.
+Plugins de serveur pris en charge: PiwigoClientWsExts, communauté, piwigo_privacy, videojs, user-tags, descriptions étendues.
 
 Vous voulez quelque chose d\'autre non répertorié? Essayez l\'appli. Si cela ne fait pas exactement ce dont vous avez besoin. Envoyez-moi un e-mail en utilisant le lien dans l\'application et je chercherai à ajouter la ou les fonctionnalités manquantes.
 
