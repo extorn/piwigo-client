@@ -29,6 +29,7 @@ import java.util.Set;
 
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.libs.core.util.Logging;
+import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
@@ -95,7 +96,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
                     '\n' +
                     errorResponse.getErrorDetail() +
                     '\n' +
-                    errorResponse.getResponseBody();
+                    Utils.safeToString(errorResponse.getResponseBody());
 
             // these are going to be caught by listeners registered on a uri basis with the PicassoFactory.
             throw new CustomResponseException(errMsg, networkPolicy, errorResponse.getStatusCode());

@@ -21,6 +21,7 @@ import java.lang.ref.WeakReference;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.util.Utils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -231,16 +232,18 @@ public class BasicPiwigoResponseListener<P extends UIHelper<P,T>, T> implements 
 
     private void handleUrlErrorResponse(PiwigoResponseBufferingHandler.UrlErrorResponse msg) {
         if (msg.getStatusCode() < 0) {
-            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_talking_to_server, msg.getErrorMessage(), msg.getResponseBody());
+            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_talking_to_server, msg.getErrorMessage(), Utils.safeToString(msg.getResponseBody()));
         } else if (msg.getStatusCode() == 0) {
-            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage(), msg.getResponseBody());
+            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage(), Utils.safeToString(msg.getResponseBody()));
         } else {
             if (!(msg.getStatusCode() == HttpStatus.SC_GATEWAY_TIMEOUT && PiwigoSessionDetails.isCached(ConnectionPreferences.getActiveProfile()))) {
-                String detailStr = uiHelper.getAppContext().getString(R.string.alert_server_uri_response_pattern, msg.getUrl(), msg.getResponseBody());
+
+                String detailStr = uiHelper.getAppContext().getString(R.string.alert_server_uri_response_pattern, msg.getUrl(), Utils.safeToString(msg.getResponseBody()));
                 showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_server_error, uiHelper.getAppContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode(), msg.getErrorMessage()), detailStr);
             }
         }
     }
+
 
     protected void handlePiwigoServerErrorResponse(PiwigoResponseBufferingHandler.PiwigoServerErrorResponse msg) {
         String httpUriAndError = uiHelper.getAppContext().getString(R.string.alert_server_uri_response_pattern, msg.getUri(), msg.getPiwigoErrorMessage());

@@ -152,6 +152,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     protected boolean invokeAgain(Context context) {
         Worker w = buildWorker(context);
         w.setConnectionPreferences(worker.getConnectionPreferences());
+        w.setRerunning(true);
         setWorker(w);
         return w.run(messageId);
     }
@@ -159,6 +160,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     protected long invokeAsyncAgain(Context context) {
         Worker w = buildWorker(context);
         w.setConnectionPreferences(worker.getConnectionPreferences());
+        w.setRerunning(true);
         setWorker(w);
         return w.start(messageId);
     }

@@ -65,4 +65,14 @@ public class Utils {
             return "?";
         }
     }
+
+    public static String safeToString(byte[] data) {
+        int len = Math.min(data.length, 1000);
+        if(len < data.length) {
+            data[len - 1] = '.';
+            data[len - 2] = '.';
+            data[len - 3] = '.';
+        }
+        return new String(data, 0, len);
+    }
 }

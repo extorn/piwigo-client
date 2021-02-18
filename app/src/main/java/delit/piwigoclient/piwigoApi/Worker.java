@@ -100,6 +100,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
     private String tag = DEFAULT_TAG;
 
 
+    private boolean rerunning = false;
     private AbstractPiwigoDirectResponseHandler handler;
     private ConnectionPreferences.ProfilePreferences connectionPreferences;
 
@@ -189,7 +190,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 
         if (haveValidSession) {
             handler.beforeCall();
-            handler.runCall(false);
+            handler.runCall(rerunning);
 
             // this is the absolute timeout - in case something is seriously wrong.
             long callTimeoutAtTime = System.currentTimeMillis() + 300000;
@@ -356,5 +357,9 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 
     public void setConnectionPreferences(ConnectionPreferences.ProfilePreferences connectionPreferences) {
         this.connectionPreferences = connectionPreferences;
+    }
+
+    public void setRerunning(boolean rerunning) {
+        this.rerunning = rerunning;
     }
 }

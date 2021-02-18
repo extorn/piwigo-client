@@ -522,8 +522,8 @@ public class PiwigoResponseBufferingHandler {
             return errorDetail;
         }
 
-        public String getResponseBody() {
-            return responseBody == null ? "" : new String(responseBody);
+        public byte[] getResponseBody() {
+            return responseBody != null ? responseBody : new byte[0];
         }
 
         @Override
