@@ -295,7 +295,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             errBundle.putLong("indexOfItem", modelStore.getItemIdx(modelStore.getItemById(galleryItemId)));
 
             for (int i = 0; i < modelStore.getItemCount(); i++) {
-                GalleryItem item = modelStore.getItemById(i);
+                GalleryItem item = modelStore.getItemByIdx(i);
                 if (item.getId() == galleryItemId) {
                     errBundle.putInt("correctIndexOfItem", i);
                 }
