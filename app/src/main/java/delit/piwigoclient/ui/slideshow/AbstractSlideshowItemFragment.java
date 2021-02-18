@@ -55,6 +55,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
@@ -292,15 +293,18 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             errBundle.putLong("galleryItemId", galleryItemId);
             errBundle.putLong("modelId", galleryModelId);
             errBundle.putLong("itemCount", modelStore.getItemCount());
+            errBundle.putInt("resourceCount", modelStore.getResourcesCount());
             errBundle.putLong("indexOfItem", modelStore.getItemIdx(modelStore.getItemById(galleryItemId)));
-
             for (int i = 0; i < modelStore.getItemCount(); i++) {
                 GalleryItem item = modelStore.getItemByIdx(i);
                 if (item.getId() == galleryItemId) {
                     errBundle.putInt("correctIndexOfItem", i);
                 }
             }
-
+            if(modelStore instanceof PiwigoAlbum) {
+                errBundle.putBoolean("hidingAlbums", ((PiwigoAlbum)modelStore).isHideAlbums());
+                errBundle.putInt("albumCount", ((PiwigoAlbum)modelStore).getChildAlbumCount());
+            }
             errBundle.putInt("sortOrder", modelStore.isRetrieveItemsInReverseOrder() ? 1 : 0);
             Logging.logAnalyticEvent(requireContext(),"modelClassWrong", null);
             String errMsg = String.format(Locale.UK, "slideshow model is wrong type - %1$s(%2$d)\n%3$s", galleryModelClass.getName(), galleryModelId, errBundle.toString());
