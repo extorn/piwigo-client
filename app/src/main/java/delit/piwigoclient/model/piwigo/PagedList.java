@@ -430,7 +430,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
      */
     private boolean updatePageLoadedCount(int idx, int change) {
         int pageIdx = getPageIndexContaining(idx);
-        if(pageIdx > 0) {
+        if(pageIdx >= 0) {
             int pageLoadedCount = pagesLoadedIdxToSizeMap.get(pageIdx) + change;
             if(pageLoadedCount > 0) {
                 pagesLoadedIdxToSizeMap.put(pageIdx, pageLoadedCount);

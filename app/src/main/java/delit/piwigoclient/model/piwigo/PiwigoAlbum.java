@@ -165,10 +165,11 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
 
     @Override
     protected int getPageIndexContaining(int resourceIdx) {
-        if(resourceIdx < nonResourceItemsIncResourcesHeader()) {
+        int nonPageLoadedItems = nonResourceItemsIncResourcesHeader();
+        if(resourceIdx < nonPageLoadedItems) {
             return NOT_TRACKED_PAGE_ID; // only the resource items are paged
         }
-        return super.getPageIndexContaining(resourceIdx);
+        return super.getPageIndexContaining(resourceIdx - nonPageLoadedItems);
     }
 
     private void addCategoryItem(CategoryItem item) {

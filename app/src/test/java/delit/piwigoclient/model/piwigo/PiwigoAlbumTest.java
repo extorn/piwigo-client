@@ -117,6 +117,8 @@ public class PiwigoAlbumTest {
         for(int i = 2; i <= resourceCount; i++) {
             assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
         }
+        album.removeAllResources();
+        assertEquals(0, album.getResourcesCount());
     }
 
     @Test
@@ -138,6 +140,8 @@ public class PiwigoAlbumTest {
         for(int i = 2; i <= resourceCount; i++) {
             assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
         }
+        album.removeAllResources();
+        assertEquals(0, album.getResourcesCount());
     }
 
     @Test
@@ -164,6 +168,8 @@ public class PiwigoAlbumTest {
         for(int i = 2; i <= resourceCount; i++) {
             assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
         }
+        album.removeAllResources();
+        assertEquals(0, album.getResourcesCount());
     }
 
     @Test
@@ -190,6 +196,8 @@ public class PiwigoAlbumTest {
         for(int i = 2; i <= resourceCount; i++) {
             assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
         }
+        album.removeAllResources();
+        assertEquals(0, album.getResourcesCount());
     }
 
     @Test
@@ -498,6 +506,9 @@ public class PiwigoAlbumTest {
         assertArrayEquals("Final gallery should match expected content", expectedResult.toArray(), album.getItems().toArray());
         assertEquals(getAlbumCount(expectedResult), album.getChildAlbumCount());
         assertEquals(getResourcesCount(expectedResult), album.getResourcesCount());
+
+        album.removeAllResources();
+        assertEquals(0, album.getResourcesCount());
     }
 
     private static interface AlbumAction {
