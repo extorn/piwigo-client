@@ -32,10 +32,10 @@ android {
     defaultConfig {
         //NB: non standard fields must be defined (def)
         versionCode 366
-        versionName "1.4.0.121"
+        versionName "1.4.0.122"
         applicationId "delit.piwigoclient"
 
-        def latestPiwigoClientWsExtsPluginVersion = "1.0.16"
+        def latestPiwigoClientWsExtsPluginVersion = "1.0.17"
 
         buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"${latestPiwigoClientWsExtsPluginVersion}\""
 
@@ -251,7 +251,7 @@ dependencies {
     //EXIF Support
     implementation 'androidx.exifinterface:exifinterface:1.3.2'
     // v7 appcompat stuff
-    implementation 'androidx.mediarouter:mediarouter:1.2.1'
+    implementation 'androidx.mediarouter:mediarouter:1.2.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
