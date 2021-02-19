@@ -18,9 +18,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/slideshow_image_ratingBar"
         app:layout_constraintEnd_toStartOf="@+id/slideshow_image_favorite"
         app:layout_constraintTop_toBottomOf="@+id/slideshow_image_average_ratingBar"
         app:layout_constraintTop_toTopOf="@+id/slideshow_image_favorite"
+        app:layout_constraintHorizontal_bias="1"
         app:srcCompat="@drawable/ic_file_gray_24dp"
         tools:visibility="visible" />
 
@@ -42,6 +44,18 @@
         tools:targetApi="lollipop"
         tools:visibility="visible" />
 
+    <TextView
+        android:id="@+id/slideshow_image_details_rating_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/slideshow_image_ratingBar"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="4dp"
+        android:text="@string/upload_file_rating"
+        android:textAppearance="?textAppearanceBody2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/slideshow_resource_action_use_for_album_thumbnail" />
+
     <RatingBar
         android:id="@+id/slideshow_image_ratingBar"
         style="?ratingBarStyleIndicator"
@@ -58,17 +72,6 @@
         tools:progress="50" />
 
 
-    <TextView
-        android:id="@+id/slideshow_image_details_rating_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:labelFor="@+id/slideshow_image_ratingBar"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="4dp"
-        android:text="@string/upload_file_rating"
-        android:textAppearance="?textAppearanceBody2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/slideshow_resource_action_use_for_album_thumbnail" />
 
 
     <TextView
@@ -91,6 +94,13 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="x/y" />
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/slideshow_barrier_rating_favs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="slideshow_image_ratingBar, slideshow_image_favorite"/>
+
     <Button
         android:id="@+id/show_information_action_button"
         style="?materialButtonIconAccentedStyle"
@@ -101,8 +111,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:icon="@drawable/ic_info_black_24dp"
+        app:layout_constraintStart_toEndOf="@+id/slideshow_resource_item_title"
+        app:layout_constraintHorizontal_bias="1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/slideshow_image_ratingBar" />
+        app:layout_constraintTop_toBottomOf="@id/slideshow_barrier_rating_favs" />
 
     <TextView
         android:id="@+id/slideshow_resource_item_title"
@@ -119,7 +131,7 @@
         android:textAppearance="?textAppearanceHeadline5"
         app:layout_constraintEnd_toStartOf="@+id/show_information_action_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/slideshow_image_ratingBar"
+        app:layout_constraintTop_toBottomOf="@id/slideshow_barrier_rating_favs"
         tools:text="Image 20121.jpg" />
 
     <TextView
@@ -146,6 +158,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/slideshow_image_ratingBar"
+        app:layout_constraintHorizontal_bias="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/slideshow_image_average_ratingBar"
         tools:visibility="visible" />
