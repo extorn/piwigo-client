@@ -206,11 +206,11 @@ dependencies {
     //    compile 'com.squareup.okhttp:okhttp-urlconnection:1.6.0'
     implementation 'com.github.MikeOrtiz:TouchImageView:3.0.1' // am extending this file locally (check if my functionality is now in the release v)
     //implementation ('com.squareup.picasso:picasso:2.5.2')
-    implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'org.greenrobot:eventbus:3.2.0'
     implementation 'com.github.hotchemi:android-rate:1.0.1'
     implementation 'com.loopj.android:android-async-http:1.4.9'
 
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.22'
 
 
 
