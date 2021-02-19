@@ -84,10 +84,12 @@ public class DisplayUtils {
         @DrawableRes int glowDrawableId = context.getResources().getIdentifier("overscroll_glow", "drawable", "android");
         if(glowDrawableId != Resources.ID_NULL) {
             Drawable androidGlow = ContextCompat.getDrawable(context, glowDrawableId);
-            androidGlow = DrawableCompat.wrap(androidGlow);
+            if(androidGlow != null) {
+                androidGlow = DrawableCompat.wrap(androidGlow);
 //        DrawableCompat.setTint(androidGlow, color);
-            DrawableCompat.setTintList(androidGlow, ColorStateList.valueOf(color));
-            DrawableCompat.setTintMode(androidGlow, PorterDuff.Mode.SRC_ATOP);
+                DrawableCompat.setTintList(androidGlow, ColorStateList.valueOf(color));
+                DrawableCompat.setTintMode(androidGlow, PorterDuff.Mode.SRC_ATOP);
+            }
         }
     }
 

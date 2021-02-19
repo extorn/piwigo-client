@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.common.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -110,11 +111,15 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
         if(theme != Resources.ID_NULL || !(context instanceof ContextThemeWrapper)) {
             context = new ContextThemeWrapper(context, theme);
         }
-        // set the glow on overscroll for recycler view etc.
-        //TODO this isn't used in the album view or preferences  :-(
 
-        DisplayUtils.setOverscrollEdgeColor(context, DisplayUtils.getColor(context, R.attr.colorPrimary));
-        DisplayUtils.setOverscrollGlowColor(context, DisplayUtils.getColor(context, R.attr.colorPrimary));
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+            // set the glow on overscroll for recycler view etc.
+            //TODO this isn't used in the album view or preferences (so where is it used - point?)  :-(
+
+            // Think these are only important on really old versions and they take ages during profiling.
+            DisplayUtils.setOverscrollEdgeColor(context, DisplayUtils.getColor(context, R.attr.colorPrimary));
+            DisplayUtils.setOverscrollGlowColor(context, DisplayUtils.getColor(context, R.attr.colorPrimary));
+        }
         return context;
     }
 
