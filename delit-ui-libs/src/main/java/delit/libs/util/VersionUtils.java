@@ -39,4 +39,13 @@ public class VersionUtils {
         }
         return version.length > minimumVersion.length;
     }
+
+    public static boolean versionAtLeast(int[] minimumVersion, int[] version) {
+        for(int i = 0; i < Math.min(minimumVersion.length, version.length); i++) {
+            if (version[i] > minimumVersion[i]) {
+                return true;
+            }
+        }
+        return version.length >= minimumVersion.length;
+    }
 }

@@ -258,7 +258,8 @@
         <item>1.4.0.123</item>
         <item>"Bugfix:
                 - Admin list of tags merged correctly with user list on tags load
-                - Allow delete of tags for admin users"</item>
+                - Allow delete of tags for admin users
+                - PiwigoClientWsExt plugin version check corrected"</item>
         <item>1.4.0.122</item>
         <item>"Bugfix:
                 - crash on slideshow (if you still encounter crashes here, please email me if you work out what sequence of events causes it'.
