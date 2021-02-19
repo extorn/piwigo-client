@@ -253,11 +253,15 @@ optie om de wijzigingen te accepteren of het gebruik van de applicatie stop te z
 
 Als u vragen heeft over deze overeenkomst, neem dan contact met ons op."
 </string>
-    <string name="about_content">"Deze app is geschreven om me onderweg gemakkelijker toegang te geven tot mijn fotogalerij.
+    <string name="about_content">"Deze app is geschreven om me onderweg gemakkelijker toegang te geven tot mijn Piwigo-fotogalerij.
 
 Broncode: https://github.com/extorn/piwigo-client
 
 Er zijn geen verdere updates gepland voor deze app, bedankt voor je steun als je een exemplaar hebt gekocht. Zonder betaalde gebruikers zou ik de ontwikkeling van deze app al lang geleden hebben stopgezet.
+Ik werk momenteel door bugs terwijl ze opduiken en ze vrijgeven, soms worden er nieuwe functies toegevoegd.
+In wezen werkt de app, en wat hij met de server doet, doet hij correct, maar mijn gebrek aan Android-ontwikkelervaring laat zien en hij crasht soms.
+
+Als je een reeks stappen kunt vaststellen die altijd een crash veroorzaken, stuur me dan een e-mail of meld een probleem op mijn github-projectpagina om me te helpen het probleem op te lossen.
 
 In augustus 2018 kwam een ​​gebruiker, David Klement, bij me terug met schermmodellen voor een professioneler ontwerp. Vanaf release 1.3.95 heb ik die ideeën verwerkt, te beginnen met het albumweergavescherm.
 Deze volledige lijst met voorgestelde schermontwerpen kan worden bekeken op de app-website (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html).
@@ -269,25 +273,24 @@ Opmerking: de versies zullen in de loop van de tijd uiteenlopen. De meeste wijzi
 
 Momenteel heeft de betaalde versie ondersteuning voor tags toegevoegd:
         Piwigo ondersteunt tags tot op zekere hoogte uit de doos, maar de plug-in voor gebruikerstags voegt meer functies toe (basistests uitgevoerd).
-
+        Als er een functie is met betrekking tot tags die u wilt, maar de app biedt deze niet, vraag het dan.
 
 Momenteel biedt het een basisfunctionaliteit om door een bestaande galerij te navigeren, nieuwe foto\'s en video\'s te uploaden en nieuwe categorieën binnen een galerij te maken. Sommige velden kunnen worden gewijzigd nadat ze zijn gemaakt, maar veel zijn nog steeds alleen-lezen ... voor nu!
 
 Mag ik alsjeblieft vragen dat als je de app verwijdert, je de link in het app-menu gebruikt om me te e-mailen waarom de app niet aan je behoeften voldeed, zodat ik hier iets aan kan doen.
 
-De versie van de PIWIGO-server waartegen ik test is momenteel 2.10.2.
+De versie van de PIWIGO-server waartegen ik test is momenteel 11.0.3.
 
-Mijn testgalerie bevat alleen .jpg- en .mp4-bestanden. Als de jouwe andere bevat, kun je problemen tegenkomen - als dat zo is, vertel het me dan en ik zal prioriteit geven aan het werk aan die bestandstypen.
-
-WAARSCHUWING: versies van Piwigo onder 1.9.2 - het uploaden van video\'s is denk ik afhankelijk van fix # 756 die op je server wordt toegepast.
+Mijn testgalerie bevat alleen .jpg- en .mp4- en .m4v-bestanden. Als de jouwe andere bevat, kun je problemen tegenkomen - als dat zo is, vertel het me dan en ik zal prioriteit geven aan het werk aan die bestandstypen.
 
 Ik heb getest met een kopie van de plug-in piwigo_privacy geïnstalleerd en ook de VideoJS-plug-in geïnstalleerd.
-Ik heb een kopie van de Extended Description-plug-in geïnstalleerd, maar helaas is deze functionaliteit nog niet beschikbaar via de PIWIGO API.
-Ik zou graag ondersteuning willen toevoegen voor \"favoriete\" foto\'s, maar deze functionaliteit lijkt nog niet te worden getoond via de PIWIGO API.
+* Opmerking: ik heb enkele wijzigingen in de privacy-plug-in moeten aanvragen voor enkele recente wijzigingen. Als je problemen hebt met deze plug-in, kan ik je misschien helpen (deze plug-in is echter niet mijn werk).Ik heb een kopie van de Extended Description-plug-in geïnstalleerd en heb ondersteuning toegevoegd voor enkele van de functies die deze biedt, maar het vereist dat je mijn plug-in op je server installeert - PiwigoClientWsExts.
 
-Meld dit alsjeblieft, stuur me een e-mail als je bugs tegenkomt. Ik heb dit getest op de Android-emulator, een Samsung-telefoon en een Samsung-tablet, maar het is mijn eerste app, dus ik weet zeker dat het bij iemand mis zal gaan.
+Meld dit alsjeblieft, stuur me een e-mail als je bugs tegenkomt. Ik heb dit getest op de Android-emulator, een Samsung-telefoon en een Samsung-tablet, maar het is mijn eerste app, dus ik weet zeker dat er iets mis zal gaan met iemand.
 
-Hartelijk dank aan iedereen die me een e-mail heeft gestuurd met suggesties of bugs. Ik zal proberen al uw suggesties zo snel mogelijk te behandelen.Kies ervoor om elke crash die optreedt te rapporteren. Als u merkt dat de bug na de volgende update nog steeds optreedt, neem dan even de tijd om mij een e-mail te sturen. Het is waarschijnlijk dat ik wat meer context nodig heb rond wat er gebeurt net voordat de bug optreedt.
+Hartelijk dank aan iedereen die me een e-mail heeft gestuurd met suggesties of bugs. Ik zal proberen al uw suggesties zo snel mogelijk te behandelen.
+
+Kies ervoor om elke crash die optreedt te rapporteren. Als u merkt dat de bug zich na de volgende update nog steeds voordoet, neem dan even de tijd om mij een e-mail te sturen. Het is waarschijnlijk dat ik wat meer context nodig heb rond wat er gebeurt net voordat de bug optreedt.
 
 Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verwachting afnemen naarmate de app ouder wordt. Het releaseschema en de geschiedenis worden hieronder weergegeven. Dit kan veranderen en dingen kunnen vertraging oplopen, maar u kunt zien wat er op de lijst staat."</string>
     <string name="licences_heading">Licenties voor bronnen die in deze app worden gebruikt</string>

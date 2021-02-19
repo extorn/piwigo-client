@@ -253,11 +253,15 @@ možnost buď přijmout změny, nebo přestat aplikaci používat.
 
 Máte-li jakékoli dotazy týkající se této smlouvy, kontaktujte nás."
 </string>
-    <string name="about_content">"Tato aplikace byla napsána, aby mi umožnila snadnější přístup k mé fotogalerii na cestách.
+    <string name="about_content">"Tato aplikace byla napsána, aby mi umožnila snadnější přístup k mé fotogalerii Piwigo na cestách.
 
 Zdrojový kód: https://github.com/extorn/piwigo-client
 
 Pro tuto aplikaci nejsou plánovány žádné další aktualizace, děkujeme vám za podporu, pokud jste si zakoupili kopii. Bez placených uživatelů bych vývoj této aplikace zastavil už dávno.
+V současné době pracuji na chybách, které se objevují a uvolňují, někdy se přidávají nové funkce.
+Aplikace v podstatě funguje a co dělá na serveru, dělá správně, ale můj nedostatek zkušeností s vývojem systému Android se projevuje a někdy selže.
+
+Pokud jste schopni vytvořit sadu kroků, které vždy způsobí selhání, napište mi e-mail nebo upozorněte na problém na mé stránce projektu github, aby mi pomohl s opravou.
 
 V srpnu 2018 se ke mně uživatel David Klement vrátil s maketami obrazovek pro profesionálnější design. Počínaje vydáním 1.3.95 začleňuji tyto nápady, počínaje obrazovkou zobrazení alba.
 Tento úplný seznam navrhovaných návrhů obrazovek je k dispozici k zobrazení na webu aplikace (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html).
@@ -269,25 +273,24 @@ Poznámka: Verze se časem rozcházejí. Většina změn bude provedena v bezpla
 
 V současné době placená verze přidala podporu značek:
         Piwigo podporuje značky do určité míry po vybalení z krabice, ale plugin User Tags přidává další funkce (provádí se základní testování).
-
+        Pokud existuje funkce s ohledem na značky, které chcete, ale aplikace neposkytuje, zeptejte se.
 
 V tuto chvíli poskytuje základní úroveň funkčnosti, která umožňuje navigaci po existující galerii, nahrávání nových fotografií a videí a vytváření nových kategorií v galerii. Některá pole lze po vytvoření upravit, ale mnohá jsou stále jen pro čtení .... zatím!
 
-Mohu vás požádat, abyste při odinstalování aplikace pomocí odkazu v nabídce aplikace poslali e-mail a řekli mi, proč aplikace nesplňovala vaše potřeby, abych to mohl vyřešit.
+Mohu vás požádat, abyste odinstalovali aplikaci pomocí odkazu v nabídce aplikace a poslali mi e-mail s informací, proč aplikace nesplňovala vaše potřeby, abych to mohl vyřešit.
 
-Verze serveru PIWIGO, proti které testuji, je aktuálně 2.10.2.
+Verze serveru PIWIGO, proti které testuji, je aktuálně 11.0.3.
 
-Moje testovací galerie obsahuje pouze soubory .jpg a .mp4. Pokud vaše obsahuje jiné, můžete narazit na problémy - pokud ano, řekněte mi to a já upřednostním práci na těchto typech souborů.
-
-UPOZORNĚNÍ: Verze Piwigo pod 1.9.2 - nahrávání videí je podle mého názoru závislé na opravě # 756, která se použije na váš server.
+Moje testovací galerie obsahuje pouze soubory .jpg a .mp4 a .m4v. Pokud vaše obsahuje jiné, můžete narazit na problémy - pokud ano, řekněte mi to a já upřednostním práci na těchto typech souborů.
 
 Testoval jsem s nainstalovanou kopií pluginu piwigo_privacy a také nainstalovaného pluginu VideoJS.
-Mám nainstalovanou kopii pluginu Extended Description, ale bohužel tato funkce ještě není vystavena prostřednictvím PIWIGO API.
-Chtěl bych zahrnout podporu pro „oblíbené“ fotografie, ale tato funkce se zatím nezdá být odhalena prostřednictvím PIWIGO API.
+* Poznámka: U některých posledních změn jsem musel požádat o některé změny pluginu ochrany osobních údajů. Pokud máte s tímto pluginem problémy, mohl bych vám pomoci (tento plugin však není moje práce).Mám nainstalovanou kopii pluginu Extended Description a přidal jsem podporu pro některé funkce, které poskytuje, ale bude to vyžadovat, abyste si nainstalovali můj plugin na svůj server - PiwigoClientWsExts.
 
 Pokud narazíte na nějaké chyby, nahlaste nám prosím jakýkoli e-mail. Testoval jsem to na emulátoru Androidu, telefonu Samsung a tabletu Samsung, ale je to moje první aplikace, takže jsem si jistý, že se někomu něco pokazí.
 
-Velké poděkování všem, kteří mi poslali e-mail s návrhy nebo chybami. Budu se snažit vyřešit všechny vaše návrhy, jakmile to bude praktické.Rozhodněte se hlásit každou havárii, která nastane. Pokud zjistíte, že k chybě stále dochází i po další aktualizaci, udělejte si prosím čas a pošlete mi e-mail. Je pravděpodobné, že potřebuji trochu více kontextu ohledně toho, co se děje těsně předtím, než dojde k chybě.
+Velké poděkování všem, kteří mi poslali e-mail s návrhy nebo chybami. Budu se snažit vyřešit všechny vaše návrhy, jakmile to bude praktické.
+
+Rozhodněte se hlásit každou havárii, která nastane. Pokud zjistíte, že k chybě stále dochází i po další aktualizaci, udělejte si prosím čas a pošlete mi e-mail. Je pravděpodobné, že potřebuji trochu více kontextu ohledně toho, co se děje těsně předtím, než dojde k chybě.
 
 Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikací s dozráváním aplikace sníží. Níže je uveden plán a historie vydání. To se může změnit a věci se mohou zpozdit, ale vidíte, co je na seznamu."</string>
     <string name="licences_heading">Licence na zdroje použité v této aplikaci</string>

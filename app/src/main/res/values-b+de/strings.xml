@@ -253,11 +253,15 @@ Option, um entweder die Änderungen zu akzeptieren oder die Verwendung der Anwen
 
 Wenn Sie Fragen zu dieser Vereinbarung haben, wenden Sie sich bitte an uns."
 </string>
-    <string name="about_content">"Diese App wurde geschrieben, um mir unterwegs den Zugriff auf meine Fotogalerie zu erleichtern.
+    <string name="about_content">"Diese App wurde geschrieben, um mir unterwegs einen einfacheren Zugriff auf meine Piwigo-Fotogalerie zu ermöglichen.
 
 Quellcode: https://github.com/extorn/piwigo-client
 
 Für diese App sind keine weiteren Updates geplant. Vielen Dank für Ihre Unterstützung, wenn Sie eine Kopie gekauft haben. Ohne bezahlte Benutzer hätte ich die Entwicklung dieser App vor langer Zeit eingestellt.
+Ich arbeite derzeit an Fehlern, wenn sie auftauchen und sie freigeben. Manchmal werden neue Funktionen hinzugefügt.
+Im Wesentlichen funktioniert die App und was sie mit dem Server macht, macht sie richtig, aber meine mangelnde Erfahrung in der Android-Entwicklung zeigt, dass sie manchmal abstürzt.
+
+Wenn Sie eine Reihe von Schritten festlegen können, die immer zu einem Absturz führen, senden Sie mir bitte eine E-Mail oder werfen Sie ein Problem auf meiner Github-Projektseite auf, um mich bei der Behebung des Problems zu unterstützen.
 
 Im August 2018 kam ein Benutzer, David Klement, mit Bildschirmmodellen für ein professionelleres Design zu mir zurück. Ab Release 1.3.95 habe ich diese Ideen aufgenommen, beginnend mit dem Albumansichtsbildschirm.
 Diese vollständige Liste der vorgeschlagenen Bildschirmdesigns kann auf der App-Website (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html) angezeigt werden.
@@ -269,25 +273,24 @@ Hinweis: Die Versionen weichen mit der Zeit voneinander ab. Die meisten Änderun
 
 Derzeit bietet die kostenpflichtige Version Unterstützung für Tags:
         Piwigo unterstützt Tags bis zu einem gewissen Grad, aber das User Tags-Plugin fügt weitere Funktionen hinzu (grundlegende Tests werden durchgeführt).
-
+        Wenn es eine Funktion in Bezug auf Tags gibt, die Sie möchten, die App jedoch nicht bietet, fragen Sie bitte.
 
 Derzeit bietet es eine grundlegende Funktionalitätsebene, mit der Sie in einer vorhandenen Galerie navigieren, neue Fotos und Videos hochladen und neue Kategorien in einer Galerie erstellen können. Einige Felder können nach dem Erstellen geändert werden, aber viele sind noch schreibgeschützt ... für jetzt!
 
 Kann ich Sie bitten, wenn Sie die App deinstallieren, den Link im App-Menü zu verwenden, um mir per E-Mail mitzuteilen, warum die App nicht Ihren Anforderungen entspricht, damit ich dies beheben kann.
 
-Die Version des PIWIGO-Servers, gegen den ich teste, ist derzeit 2.10.2.
+Die Version des PIWIGO-Servers, gegen den ich teste, ist derzeit 11.0.3.
 
-Meine Testgalerie enthält nur JPG- und MP4-Dateien. Wenn Ihre andere enthält, können Probleme auftreten. Wenn ja, sagen Sie es mir bitte, und ich werde die Arbeit an diesen Dateitypen priorisieren.
-
-WARNUNG: Versionen von Piwigo unter 1.9.2 - Das Hochladen von Videos hängt meiner Meinung nach davon ab, dass Fix Nr. 756 auf Ihren Server angewendet wird.
+Meine Testgalerie enthält nur JPG-, MP4- und MP4-Dateien. Wenn Ihre andere enthält, können Probleme auftreten. Wenn ja, sagen Sie es mir bitte, und ich werde die Arbeit an diesen Dateitypen priorisieren.
 
 Ich habe mit einer Kopie des installierten piwigo_privacy-Plugins und des installierten VideoJS-Plugins getestet.
-Ich habe eine Kopie des Extended Description-Plugins installiert, aber leider ist diese Funktionalität noch nicht über die PIWIGO-API verfügbar.
-Ich möchte Unterstützung für \"Lieblings\" -Fotos einschließen, aber diese Funktionalität scheint noch nicht über die PIWIGO-API verfügbar zu sein.
+* Hinweis: Ich musste einige Änderungen am Datenschutz-Plugin für einige kürzlich vorgenommene Änderungen anfordern. Wenn Sie Probleme mit diesem Plugin haben, kann ich Ihnen möglicherweise helfen (dieses Plugin ist jedoch nicht meine Arbeit).Ich habe eine Kopie des Plugins für die erweiterte Beschreibung installiert und einige der darin enthaltenen Funktionen unterstützt. Sie müssen jedoch mein Plugin auf Ihrem Server installieren - PiwigoClientWsExts.
 
 Bitte melden Sie mir eine E-Mail, wenn Sie auf Fehler stoßen. Ich habe dies auf dem Android-Emulator, einem Samsung-Handy und einem Samsung-Tablet getestet, aber es ist meine erste App, sodass ich sicher bin, dass für jemanden etwas schief gehen wird.
 
-Ein großes Dankeschön an alle, die mir Vorschläge oder Fehler per E-Mail geschickt haben. Ich werde mich bemühen, alle Ihre Vorschläge so schnell wie möglich zu beantworten.Bitte melden Sie jeden auftretenden Absturz. Wenn Sie feststellen, dass der Fehler nach dem nächsten Update immer noch auftritt, nehmen Sie sich bitte die Zeit, mir eine E-Mail zu senden. Es ist wahrscheinlich, dass ich etwas mehr Kontext brauche, um zu sehen, was gerade passiert, bevor der Fehler auftritt.
+Ein großes Dankeschön an alle, die mir Vorschläge oder Fehler per E-Mail geschickt haben. Ich werde mich bemühen, alle Ihre Vorschläge so schnell wie möglich zu beantworten.
+
+Bitte melden Sie jeden auftretenden Absturz. Wenn Sie feststellen, dass der Fehler nach dem nächsten Update immer noch auftritt, nehmen Sie sich bitte die Zeit, mir eine E-Mail zu senden. Es ist wahrscheinlich, dass ich etwas mehr Kontext brauche, um zu sehen, was gerade passiert, bevor der Fehler auftritt.
 
 Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, dass sich die Häufigkeit von Veröffentlichungen mit zunehmender Laufzeit der App verringert. Der Release-Zeitplan und der Verlauf werden unten angezeigt. Dies kann sich ändern und die Dinge können sich verzögern, aber Sie können sehen, was auf der Liste steht."</string>
     <string name="licences_heading">Lizenzen für Ressourcen, die in dieser App verwendet werden</string>

@@ -253,11 +253,15 @@ opción para aceptar los cambios o dejar de usar la aplicación.
 
 Si tiene alguna pregunta sobre este Acuerdo, comuníquese con nosotros."
 </string>
-    <string name="about_content">"Esta aplicación fue escrita para permitirme un acceso más fácil a mi galería de fotos mientras estoy en movimiento.
+    <string name="about_content">"Esta aplicación fue escrita para permitirme un acceso más fácil a mi galería de fotos de Piwigo mientras estoy en movimiento.
 
 Código fuente: https://github.com/extorn/piwigo-client
 
 No se planean más actualizaciones para esta aplicación, gracias por su apoyo si ha comprado una copia. Sin usuarios pagos, habría dejado de desarrollar esta aplicación hace mucho tiempo.
+Actualmente estoy trabajando en errores a medida que surgen y los lanzo, a veces se agregan nuevas funciones.
+Esencialmente, la aplicación funciona, y lo que le hace al servidor lo hace correctamente, pero mi falta de experiencia en el desarrollo de Android se nota y a veces falla.
+
+Si puede establecer un conjunto de pasos que siempre provocan un bloqueo, envíeme un correo electrónico o plantee un problema en la página de mi proyecto de github para ayudarme a solucionarlo.
 
 En agosto de 2018, un usuario, David Klement, volvió a mí con maquetas de pantalla para un diseño más profesional. A partir de la versión 1.3.95, he ido incorporando esas ideas, comenzando con la pantalla de visualización de álbumes.
 Esta lista completa de diseños de pantalla propuestos está disponible para verla en el sitio web de la aplicación (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html).
@@ -269,25 +273,24 @@ Nota: las versiones divergirán con el tiempo. La mayoría de los cambios se rea
 
 Actualmente, la versión paga ha agregado soporte para etiquetas:
         Piwigo admite etiquetas hasta cierto punto, pero el complemento Etiquetas de usuario agrega más funciones (pruebas básicas realizadas).
-
+        Si hay una función con respecto a las etiquetas que desea, pero la aplicación no proporciona, pregunte.
 
 Por el momento, proporciona un nivel básico de funcionalidad para permitir la navegación por una galería existente, cargar nuevas fotos y videos y crear nuevas categorías dentro de una galería. Algunos campos se pueden modificar una vez creados, pero muchos siguen siendo de solo lectura ... ¡por ahora!
 
 Por favor, ¿puedo pedirle que si desinstala la aplicación, use el enlace en el menú de la aplicación para enviarme un correo electrónico diciéndome por qué la aplicación no satisfizo sus necesidades para que pueda abordar esto?
 
-La versión del servidor PIWIGO con la que pruebo es actualmente 2.10.2.
+La versión del servidor PIWIGO con la que pruebo es actualmente la 11.0.3.
 
-Mi galería de prueba solo contiene archivos .jpg y .mp4. Si el tuyo contiene otros, es posible que tengas problemas; de ser así, dímelo y daré prioridad al trabajo en esos tipos de archivos.
-
-ADVERTENCIA: Versiones de Piwigo por debajo de 1.9.2: la carga de videos creo que depende de la corrección # 756 que se aplique a su servidor.
+Mi galería de prueba contiene archivos .jpg, .mp4 y .m4v únicamente. Si el tuyo contiene otros, es posible que tengas problemas; de ser así, dímelo y daré prioridad al trabajo en esos tipos de archivos.
 
 He estado probando con una copia del complemento piwigo_privacy instalado y también con el complemento VideoJS instalado.
-Tengo una copia del complemento de descripción extendida instalado, pero desafortunadamente, esta funcionalidad aún no está expuesta a través de la API de PIWIGO.
-Me gustaría incluir soporte para fotos \"favoritas\", pero esta funcionalidad aún no parece estar expuesta a través de la API de PIWIGO.
+* Nota: he tenido que solicitar algunos cambios en el complemento de privacidad para algunos cambios recientes. Si tiene problemas con este complemento, es posible que pueda ayudarlo (aunque este complemento no es mi trabajo).Tengo una copia del complemento de descripción extendida instalado y he agregado soporte para algunas de las funciones que proporciona, pero será necesario que instales mi complemento en tu servidor: PiwigoClientWsExts.
 
 Por favor, infórmeme de cualquier mensaje de correo electrónico si encuentra algún error. He probado esto en el emulador de Android, un teléfono Samsung y una tableta Samsung, pero es mi primera aplicación, así que estoy seguro de que a alguien le saldrá mal.
 
-Un gran agradecimiento a todos los que me enviaron correos electrónicos con sugerencias o errores. Me esforzaré por abordar todas sus sugerencias tan pronto como sea posible.Elija informar cada bloqueo que ocurra. Si encuentra que el error persiste después de la próxima actualización, tómese el tiempo para enviarme un correo electrónico. Es probable que necesite un poco más de contexto sobre lo que está sucediendo justo antes de que ocurra el error.
+Un gran agradecimiento a todos los que me enviaron correos electrónicos con sugerencias o errores. Me esforzaré por abordar todas sus sugerencias tan pronto como sea posible.
+
+Elija informar cada bloqueo que ocurra. Si encuentra que el error persiste después de la próxima actualización, tómese el tiempo para enviarme un correo electrónico. Es probable que necesite un poco más de contexto sobre lo que está sucediendo justo antes de que ocurra el error.
 
 Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia de los lanzamientos se reduzca a medida que madure la aplicación. El calendario y el historial de lanzamientos se muestran a continuación. Esto puede cambiar y las cosas pueden retrasarse, pero puede ver lo que hay en la lista."</string>
     <string name="licences_heading">Licencias para recursos utilizados dentro de esta aplicación</string>

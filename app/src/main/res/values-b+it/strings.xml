@@ -253,11 +253,15 @@ opzione per accettare le modifiche o interrompere l\'utilizzo dell\'applicazione
 
 Se hai domande sul presente Contratto, contattaci."
 </string>
-    <string name="about_content">"Questa app è stata scritta per permettermi di accedere più facilmente alla mia galleria fotografica mentre sono in movimento.
+    <string name="about_content">"Questa app è stata scritta per permettermi di accedere più facilmente alla mia galleria fotografica di Piwigo mentre sono in movimento.
 
 Codice sorgente: https://github.com/extorn/piwigo-client
 
 Non sono previsti ulteriori aggiornamenti per questa app, grazie per il supporto se ne hai acquistata una copia. Senza utenti a pagamento avrei interrotto lo sviluppo di questa app molto tempo fa.
+Attualmente sto lavorando ai bug man mano che si presentano e li rilasciano, a volte vengono aggiunte nuove funzionalità.
+In sostanza, l\'app funziona e ciò che fa al server lo fa correttamente, ma la mia mancanza di esperienza di sviluppo Android mostra e a volte si blocca.
+
+Se sei in grado di stabilire una serie di passaggi che causano sempre un arresto anomalo, inviami un\'e-mail o solleva un problema nella pagina del mio progetto GitHub per aiutarmi a risolverlo.
 
 Nell\'agosto 2018, un utente, David Klement, è tornato da me con modelli di schermate per un design più professionale. A partire dalla versione 1.3.95, ho incorporato queste idee, a partire dalla schermata di visualizzazione dell\'album.
 L\'elenco completo dei design delle schermate proposti è disponibile per la visualizzazione sul sito Web dell\'app (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html).
@@ -268,26 +272,25 @@ Esistono due versioni, una versione gratuita (con pubblicità) e una versione a 
 Nota: le versioni divergeranno nel tempo. La maggior parte delle modifiche verrà apportata sia alla versione gratuita che a quella a pagamento.
 
 Attualmente, la versione a pagamento ha aggiunto il supporto per i tag:
-        Piwigo supporta i tag a un livello fuori dagli schemi, ma il plug-in Tag utente aggiunge più funzionalità (test di base eseguiti).
-
+        Piwigo supporta i tag a un livello fuori dalla scatola, ma il plug-in Tag utente aggiunge più funzionalità (test di base eseguiti).
+        Se è presente una funzionalità relativa ai tag che desideri ma l\'app non fornisce, chiedi.
 
 Al momento, fornisce un livello di funzionalità di base per consentire la navigazione in una galleria esistente, il caricamento di nuove foto e video e la creazione di nuove categorie all\'interno di una galleria. Alcuni campi possono essere modificati una volta creati, ma molti sono ancora di sola lettura .... per ora!
 
-Per favore, posso chiederti che se disinstalli l\'app, utilizzi il link nel menu dell\'app per inviarmi un\'e-mail dicendomi perché l\'app non ha soddisfatto le tue esigenze in modo che io possa risolvere il problema.
+Per favore, posso chiederti che se disinstalli l\'app, utilizzi il link nel menu dell\'app per inviarmi un\'e-mail dicendomi perché l\'app non ha soddisfatto le tue esigenze, in modo che io possa risolvere il problema.
 
-La versione del server PIWIGO su cui provo è attualmente 2.10.2.
+La versione del server PIWIGO su cui provo è attualmente la 11.0.3.
 
-La mia galleria di prova contiene solo file .jpg e .mp4. Se il tuo ne contiene altri, potresti incontrare dei problemi: in tal caso, dimmelo e darò la priorità al lavoro su questi tipi di file.
-
-ATTENZIONE: Versioni di Piwigo precedenti alla 1.9.2 - il caricamento di video credo dipenda dalla correzione # 756 applicata al tuo server.
+La mia galleria di prova contiene solo file .jpg, .mp4 e .m4v. Se il tuo ne contiene altri, potresti incontrare dei problemi - in tal caso, per favore dimmelo e darò la priorità al lavoro su quei tipi di file.
 
 Ho provato con una copia del plug-in piwigo_privacy installata e anche con il plug-in VideoJS installato.
-Ho installato una copia del plugin Extended Description, ma sfortunatamente questa funzionalità non è ancora esposta tramite l\'API PIWIGO.
-Vorrei includere il supporto per le foto \"preferite\" ma questa funzionalità non sembra ancora essere esposta tramite l\'API PIWIGO.
+* Nota: ho dovuto richiedere alcune modifiche al plug-in per la privacy per alcune modifiche recenti. Se hai problemi con questo plugin, potrei essere in grado di aiutarti (questo plugin non è il mio lavoro però).Ho installato una copia del plug-in Extended Description e ho aggiunto il supporto per alcune delle funzionalità che fornisce, ma sarà necessario installare il mio plug-in sul tuo server: PiwigoClientWsExts.
 
 Si prega di segnalare qualsiasi messaggio di posta elettronica se si riscontrano bug. L\'ho testato su un emulatore Android, un telefono Samsung e un tablet Samsung, ma è la mia prima app, quindi sono sicuro che le cose andranno storte per qualcuno.
 
-Un grande grazie a tutti coloro che mi hanno inviato un\'email con suggerimenti o bug. Cercherò di rispondere a tutti i tuoi suggerimenti non appena possibile.Scegli di segnalare ogni arresto anomalo che si verifica. Se trovi che il bug persiste anche dopo il prossimo aggiornamento, ti preghiamo di inviarmi un\'e-mail. È probabile che abbia bisogno di un po \'più di contesto su ciò che sta accadendo appena prima che si verifichi il bug.
+Un grande grazie a tutti coloro che mi hanno inviato un\'email con suggerimenti o bug. Cercherò di rispondere a tutti i tuoi suggerimenti non appena possibile.
+
+Scegli di segnalare ogni arresto anomalo che si verifica. Se trovi che il bug persiste anche dopo il prossimo aggiornamento, ti preghiamo di inviarmi un\'e-mail. È probabile che abbia bisogno di un po \'più di contesto su ciò che sta accadendo appena prima che si verifichi il bug.
 
 I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridursi con la maturazione dell\'app. La pianificazione e la cronologia del rilascio sono mostrate di seguito. Questo potrebbe cambiare e le cose potrebbero subire ritardi, ma puoi vedere cosa c\'è nell\'elenco."</string>
     <string name="licences_heading">Licenze per le risorse utilizzate all\'interno di questa app</string>
