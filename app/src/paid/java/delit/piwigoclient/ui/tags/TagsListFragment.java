@@ -30,6 +30,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import delit.libs.core.util.Logging;
@@ -71,7 +72,6 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
     private ExtendedFloatingActionButton addListItemButton;
     private AlertDialog addNewTagDialog;
     private TagRecyclerViewAdapter.TagViewAdapterPreferences viewPrefs;
-    private RecyclerView recyclerView;
 
     public static TagsListFragment<?,?> newInstance(TagRecyclerViewAdapter.TagViewAdapterPreferences viewPrefs) {
         TagsListFragment<?,?> fragment = new TagsListFragment<>();
@@ -153,7 +153,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
             loadTagsPage(tagsModel.getNextPageToReload());
         });
 
-        recyclerView = view.findViewById(R.id.list);
+        RecyclerView recyclerView = view.findViewById(R.id.list);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
 
@@ -252,7 +252,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
             }
             AlertDialog alert = (AlertDialog)dialog;
             EditText tagNameEdit1 = alert.findViewById(R.id.tag_tagname);
-            String tagName = tagNameEdit1.getText().toString();
+            String tagName = Objects.requireNonNull(tagNameEdit1).getText().toString();
             createNewTag(tagName);
         };
 
@@ -452,7 +452,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(TagDeletedEvent event) {
         viewAdapter.remove(event.getTag());
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, event.getTag().getName()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, event.getTag().getName()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -464,19 +464,19 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(TagContentAlteredEvent event) {
         Tag item = viewAdapter.getItemById(event.getId());
-        item.setUsageCount(item.getUsageCount() + event.getContentChange());
+        Objects.requireNonNull(item).setUsageCount(item.getUsageCount() + event.getContentChange());
         viewAdapter.notifyItemChanged(viewAdapter.getItemPosition(item));
     }
 
     public void onTagDeleted(final AdminTagDeleteResponseHandler.PiwigoDeleteTagResponse response) {
         Tag tag = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(tag);
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, tag.getName()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, Objects.requireNonNull(tag).getName()));
     }
 
     public void onTagDeleteFailed(final long messageId) {
         Tag tag = deleteActionsPending.remove(messageId);
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_tag_delete_failed_pattern, tag.getName()));
+        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_tag_delete_failed_pattern, Objects.requireNonNull(tag).getName()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
