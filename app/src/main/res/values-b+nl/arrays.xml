@@ -145,15 +145,16 @@
         <item>"* Alleen voornamelijk bugfixes
                 * Eventueel optie toevoegen om gedeelde toegang tot een map als een uri in een e-mail toe te staan - het omvat het aanmaken van een normale gebruiker, het geven van toestemming voor de map en het bestand, het maken van een token voor de inloggegevens en uri-details voor insluiting in een http-link , en een manier om deze tokens op de server te beheren."</item>
         
-        <item>1.4.0.123</item>
+        <item>1.4.0.124</item>
         <item>"Bugfix:
                  - implementeer de vernieuwingsknop op de pagina \'item niet geladen\' van de diavoorstelling"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.4.0.122</item>
+        <item>1.4.0.123</item>
         <item>"Bugfix:
                  - Beheerderslijst met tags correct samengevoegd met gebruikerslijst bij het laden van tags
-                 - Sta het verwijderen van tags toe voor admin-gebruikers"</item>
+                 - Sta het verwijderen van tags toe voor admin-gebruikers
+                 - Controle van versie van PiwigoClientWsExt-plug-in gecorrigeerd"</item>
         <item>1.4.0.122</item>
         <item>"Bugfix:
                  - crash op diavoorstelling (als je hier nog steeds crashes tegenkomt, stuur me dan een e-mail als je weet welke reeks gebeurtenissen dit veroorzaakt \'.

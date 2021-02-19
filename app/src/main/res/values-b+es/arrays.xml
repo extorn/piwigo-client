@@ -145,15 +145,16 @@
         <item>"* Principalmente solo correcciones de errores
                 * Posiblemente Agregar opción para permitir el acceso compartido a una carpeta como un uri en un correo electrónico; implicará la creación de un usuario normal, dándoles permiso para la carpeta y el archivo, creando un token para las credenciales y los detalles del uri para incrustar en un enlace http y una forma de administrar estos tokens en el servidor."</item>
         
-        <item>1.4.0.123</item>
+        <item>1.4.0.124</item>
         <item>"Arreglo del fallo:
                  - implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.4.0.122</item>
+        <item>1.4.0.123</item>
         <item>"Arreglo del fallo:
                  - La lista de administración de etiquetas se fusionó correctamente con la lista de usuarios al cargar las etiquetas
-                 - Permitir la eliminación de etiquetas para usuarios administradores"</item>
+                 - Permitir la eliminación de etiquetas para usuarios administradores
+                 - Se corrigió la verificación de la versión del complemento PiwigoClientWsExt"</item>
         <item>1.4.0.122</item>
         <item>"Arreglo del fallo:
                  - bloqueo en la presentación de diapositivas (si todavía encuentra bloqueos aquí, envíeme un correo electrónico si averigua qué secuencia de eventos lo causa \'\'.

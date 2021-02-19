@@ -2,49 +2,59 @@
 Bugfix:
 - Admin list of tags merged correctly with user list on tags load
 - Allow delete of tags for admin users
+- PiwigoClientWsExt plugin version check corrected
 </en-GB>
 <cs-CZ>
 Oprava chyby:
 - Seznam administrátorů tagů sloučených správně se seznamem uživatelů při načítání tagů
 - Povolit mazání značek pro uživatele správce
+- Opravena kontrola verze pluginu PiwigoClientWsExt
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
 - Die Admin-Liste der Tags wurde beim Laden der Tags korrekt mit der Benutzerliste zusammengeführt
 - Ermöglichen das Löschen von Tags für Administratorbenutzer
+- Die Versionsprüfung des PiwigoClientWsExt-Plugins wurde korrigiert
 </de-DE>
 <es-ES>
 Arreglo del fallo:
 - La lista de administración de etiquetas se fusionó correctamente con la lista de usuarios al cargar las etiquetas
 - Permitir la eliminación de etiquetas para usuarios administradores
+- Se corrigió la verificación de la versión del complemento PiwigoClientWsExt
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
 - Liste d\'administration des balises fusionnée correctement avec la liste des utilisateurs lors du chargement des balises
 - Autoriser la suppression des balises pour les utilisateurs administrateurs
+- Vérification de la version du plugin PiwigoClientWsExt corrigée
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
 - Elenco di tag amministratore unito correttamente con l\'elenco utenti al caricamento dei tag
 - Consenti l\'eliminazione dei tag per gli utenti amministratori
+- Corretto il controllo della versione del plugin PiwigoClientWsExt
 </it-IT>
 <ja-JP>
 バグ修正：
 -タグの管理者リストがタグの読み込み時にユーザーリストと正しくマージされました
 -管理者ユーザーのタグの削除を許可する
+-PiwigoClientWsExtプラグインのバージョンチェックが修正されました
 </ja-JP>
 <nl-NL>
 Bugfix:
 - Beheerderslijst met tags correct samengevoegd met gebruikerslijst bij het laden van tags
 - Sta het verwijderen van tags toe voor admin-gebruikers
+- Controle van versie van PiwigoClientWsExt-plug-in gecorrigeerd
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
 - Список тегов администратора правильно объединен со списком пользователей при загрузке тегов
 - Разрешить удаление тегов для администраторов
+- Исправлена проверка версии плагина PiwigoClientWsExt.
 </ru-RU>
 <zh-CN>
 错误修正：
 -标签的管理员列表与标签加载时的用户列表正确合并
 -允许删除管理员用户的标签
+-PiwigoClientWsExt插件版本检查已更正
 </zh-CN>
