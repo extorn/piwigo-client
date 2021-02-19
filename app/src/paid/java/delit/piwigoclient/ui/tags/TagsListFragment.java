@@ -42,6 +42,7 @@ import delit.piwigoclient.model.piwigo.PiwigoTags;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AdminTagDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
@@ -52,6 +53,7 @@ import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
+import delit.piwigoclient.ui.events.TagDeletedEvent;
 import delit.piwigoclient.ui.events.TagUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
 import delit.piwigoclient.ui.model.PiwigoTagModel;
@@ -289,7 +291,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
         EventBus.getDefault().post(new ViewTagEvent(selectedTag));
     }
 
-    public void onDeleteTag(final Tag thisItem) {
+    public void onUserActionDeleteTag(final Tag thisItem) {
         String message = getString(R.string.alert_confirm_really_delete_tag);
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction<>(getUiHelper(), thisItem));
     }
@@ -345,10 +347,14 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
     }
 
     protected void deleteTagNow(Tag thisItem) {
-        throw new UnsupportedOperationException("Not supported in Piwigo API");
-//        long deleteActionId = PiwigoAccessService.startActionDeleteTag(thisItem.getId(), this.getContext());
-//        this.deleteActionsPending.put(deleteActionId, thisItem);
-//        callServer(R.string.progress_delete_tag,deleteActionId);
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        if(sessionDetails.isAdminUser()) {
+            long deleteActionId = addActiveServiceCall(R.string.deleting_tag, new AdminTagDeleteResponseHandler(thisItem));
+            this.deleteActionsPending.put(deleteActionId, thisItem);
+        } else {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_error_admin_user_required));
+        }
     }
 
     @Override
@@ -368,17 +374,14 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            /*if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteTagResponse) {
-                onTagDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteTagResponse) response);
-            } else*/ if(response instanceof TagAddResponseHandler.PiwigoAddTagResponse) {
+            if (response instanceof AdminTagDeleteResponseHandler.PiwigoDeleteTagResponse) {
+                getParent().onTagDeleted((AdminTagDeleteResponseHandler.PiwigoDeleteTagResponse) response);
+            } else if(response instanceof TagAddResponseHandler.PiwigoAddTagResponse) {
                 getParent().onTagCreated(((TagAddResponseHandler.PiwigoAddTagResponse)response).getTag());
             } else if (response instanceof TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) {
-                getParent().onTagsLoaded((TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) response);
+                getParent().onPiwigoResponseTagsLoaded((TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) response);
             } else if(response instanceof PiwigoResponseBufferingHandler.ErrorResponse){
-//                if(deleteActionsPending.size() == 0) {
-//                    // assume this to be a list reload that's required.
-//                    retryActionButton.setVisibility(View.VISIBLE);
-//                }
+                getParent().onPiwigoError(response);
             }
         }
 
@@ -386,30 +389,41 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
 
         @Override
         protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
-            /*if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onTagDeleteFailed(msg.getMessageId());
-            } else*/ {
+            if (getParent().isDeleteAction(msg.getMessageId())) {
+                getParent().onTagDeleteFailed(msg.getMessageId());
+            } else {
                 super.handlePiwigoHttpErrorResponse(msg);
             }
         }
 
         @Override
         protected void handlePiwigoServerErrorResponse(PiwigoResponseBufferingHandler.PiwigoServerErrorResponse msg) {
-            /*if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onTagDeleteFailed(msg.getMessageId());
-            } else*/ {
+            if (getParent().isDeleteAction(msg.getMessageId())) {
+                getParent().onTagDeleteFailed(msg.getMessageId());
+            } else {
                 super.handlePiwigoServerErrorResponse(msg);
             }
         }
 
         @Override
         protected void handlePiwigoUnexpectedReplyErrorResponse(PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse msg) {
-            /*if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onTagDeleteFailed(msg.getMessageId());
-            } else*/ {
+            if (getParent().isDeleteAction(msg.getMessageId())) {
+                getParent().onTagDeleteFailed(msg.getMessageId());
+            } else {
                 super.handlePiwigoUnexpectedReplyErrorResponse(msg);
             }
         }
+    }
+
+    protected void onPiwigoError(PiwigoResponseBufferingHandler.Response response) {
+        if(deleteActionsPending.size() == 0) {
+            // assume this to be a list reload that's required.
+            retryActionButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    protected boolean isDeleteAction(long messageId) {
+        return deleteActionsPending.containsKey(messageId);
     }
 
     protected void onTagCreated(Tag newTag) {
@@ -418,7 +432,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
         viewAdapter.notifyItemRangeInserted(firstIndexChanged, 1);
     }
 
-    public void onTagsLoaded(final TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
+    public void onPiwigoResponseTagsLoaded(final TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
         tagsModel.acquirePageLoadLock();
         try {
             retryActionButton.hide();
@@ -435,11 +449,11 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
         }
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-//    public void onEvent(TagDeletedEvent event) {
-//        viewAdapter.remove(event.getTag());
-//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, event.getTag().getName()));
-//    }
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(TagDeletedEvent event) {
+        viewAdapter.remove(event.getTag());
+        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, event.getTag().getName()));
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(TagUpdatedEvent event) {
@@ -454,16 +468,16 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
         viewAdapter.notifyItemChanged(viewAdapter.getItemPosition(item));
     }
 
-//    public void onTagDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteTagResponse response) {
-//        Tag tag = deleteActionsPending.remove(response.getMessageId());
-//        viewAdapter.remove(tag);
-//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, tag.getName()));
-//    }
+    public void onTagDeleted(final AdminTagDeleteResponseHandler.PiwigoDeleteTagResponse response) {
+        Tag tag = deleteActionsPending.remove(response.getMessageId());
+        viewAdapter.remove(tag);
+        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, tag.getName()));
+    }
 
-//    public void onTagDeleteFailed(final long messageId) {
-//        Tag tag = deleteActionsPending.remove(messageId);
-//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_tag_delete_failed_pattern, tag.getName()));
-//    }
+    public void onTagDeleteFailed(final long messageId) {
+        Tag tag = deleteActionsPending.remove(messageId);
+        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_tag_delete_failed_pattern, tag.getName()));
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
@@ -479,7 +493,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
 
         @Override
         public void onItemDeleteRequested(LVA adapter, Tag item) {
-            onDeleteTag(item);
+            onUserActionDeleteTag(item);
         }
 
         @Override

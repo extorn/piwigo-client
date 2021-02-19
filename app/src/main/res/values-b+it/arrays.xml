@@ -152,6 +152,10 @@
     <string-array name="release_history" translatable="true">
         <item>1.4.0.122</item>
         <item>"Risoluzione del problema:
+                 - Elenco di tag amministratore unito correttamente con l\'elenco utenti al caricamento dei tag
+                 - Consenti l\'eliminazione dei tag per gli utenti amministratori"</item>
+        <item>1.4.0.122</item>
+        <item>"Risoluzione del problema:
                  - crash nella presentazione (se si verificano ancora arresti anomali qui, scrivetemi se cercate quale sequenza di eventi lo causa \".
                  - crash dopo l\'eliminazione dell\'utente o del gruppo
                  - visualizzazione di utenti e gruppi non aggiornata dopo l\'aggiunta di un elemento"</item>

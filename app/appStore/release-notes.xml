@@ -1,60 +1,50 @@
 <en-GB>
 Bugfix:
-- crash on slideshow (if you still encounter crashes here, please email me if you work out what sequence of events causes it'.
-- crash after deleting user or group
-- user and group display not updated after adding an item
+- Admin list of tags merged correctly with user list on tags load
+- Allow delete of tags for admin users
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- zhroucení při prezentaci (pokud se zde stále setkáte se zhroucením, pošlete mi e-mail, pokud zjistíte, jaká posloupnost událostí to způsobuje \'.
-- havárie po odstranění uživatele nebo skupiny
-- zobrazení uživatele a skupiny se po přidání položky neaktualizuje
+- Seznam administrátorů tagů sloučených správně se seznamem uživatelů při načítání tagů
+- Povolit mazání značek pro uživatele správce
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Absturz in der Diashow (wenn hier immer noch Abstürze auftreten, senden Sie mir bitte eine E-Mail, wenn Sie herausfinden, welche Abfolge von Ereignissen dies verursacht).
-- Absturz nach dem Löschen des Benutzers oder der Gruppe
-- Benutzer- und Gruppenanzeige werden nach dem Hinzufügen eines Elements nicht aktualisiert
+- Die Admin-Liste der Tags wurde beim Laden der Tags korrekt mit der Benutzerliste zusammengeführt
+- Ermöglichen das Löschen von Tags für Administratorbenutzer
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- bloqueo en la presentación de diapositivas (si todavía encuentra bloqueos aquí, envíeme un correo electrónico si averigua qué secuencia de eventos lo causa \'\'.
-- falla después de eliminar usuario o grupo
-- la visualización de usuario y grupo no se actualiza después de agregar un elemento
+- La lista de administración de etiquetas se fusionó correctamente con la lista de usuarios al cargar las etiquetas
+- Permitir la eliminación de etiquetas para usuarios administradores
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- crash sur le diaporama (si vous rencontrez toujours des plantages ici, veuillez m\'envoyer un e-mail si vous déterminez quelle séquence d\'événements le provoque \'.
-- crash après la suppression d\'un utilisateur ou d\'un groupe
-- Affichage des utilisateurs et des groupes non mis à jour après l\'ajout d\'un élément
+- Liste d\'administration des balises fusionnée correctement avec la liste des utilisateurs lors du chargement des balises
+- Autoriser la suppression des balises pour les utilisateurs administrateurs
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- crash nella presentazione (se si verificano ancora arresti anomali qui, scrivetemi se cercate quale sequenza di eventi lo causa ".
-- crash dopo l\'eliminazione dell\'utente o del gruppo
-- visualizzazione di utenti e gruppi non aggiornata dopo l\'aggiunta di un elemento
+- Elenco di tag amministratore unito correttamente con l\'elenco utenti al caricamento dei tag
+- Consenti l\'eliminazione dei tag per gli utenti amministratori
 </it-IT>
 <ja-JP>
 バグ修正：
--スライドショーでクラッシュします（ここでまだクラッシュが発生する場合は、どのようなイベントのシーケンスが原因であるかを調べたら、私にメールしてください。
--ユーザーまたはグループを削除した後にクラッシュする
--アイテムを追加した後、ユーザーとグループの表示が更新されない
+-タグの管理者リストがタグの読み込み時にユーザーリストと正しくマージされました
+-管理者ユーザーのタグの削除を許可する
 </ja-JP>
 <nl-NL>
 Bugfix:
-- crash op diavoorstelling (als je hier nog steeds crashes tegenkomt, stuur me dan een e-mail als je weet welke reeks gebeurtenissen dit veroorzaakt \'.
-- crash na het verwijderen van gebruiker of groep
-- gebruikers- en groepsweergave niet bijgewerkt na het toevoegen van een item
+- Beheerderslijst met tags correct samengevoegd met gebruikerslijst bij het laden van tags
+- Sta het verwijderen van tags toe voor admin-gebruikers
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- сбой при слайд-шоу (если вы все еще сталкиваетесь с сбоями здесь, напишите мне, если вы выясните, какая последовательность событий вызывает это ».
-- сбой после удаления пользователя или группы
-- отображение пользователя и группы не обновляется после добавления элемента
+- Список тегов администратора правильно объединен со списком пользователей при загрузке тегов
+- Разрешить удаление тегов для администраторов
 </ru-RU>
 <zh-CN>
 错误修正：
--幻灯片崩溃（如果您仍然在此处遇到崩溃，请确定发生事件的顺序是多少，请给我发送电子邮件。）
--删除用户或组后崩溃
--添加项目后用户和组显示未更新
+-标签的管理员列表与标签加载时的用户列表正确合并
+-允许删除管理员用户的标签
 </zh-CN>

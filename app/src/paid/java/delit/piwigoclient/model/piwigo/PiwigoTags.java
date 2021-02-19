@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import delit.libs.core.util.Logging;
@@ -92,7 +93,13 @@ public class PiwigoTags<T extends Tag> extends IdentifiablePagedList<T> {
             ArrayList<T> itemsToAdd = new ArrayList<>(newItems);
             if (preferExistingItems) {
                 // remove any items loaded into the store already from the new items as the admin items contain less information
-                itemsToAdd.removeAll(getItems());
+                // we use the item id hence
+                for (Iterator<T> iterator = itemsToAdd.iterator(); iterator.hasNext(); ) {
+                    T item = iterator.next();
+                    if(containsItem(item)) {
+                        iterator.remove();
+                    }
+                }
             } else {
                 // remove any items loaded into the store already by the admin page so there are no duplicates
                 removeAllById(itemsToAdd);

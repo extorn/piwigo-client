@@ -706,4 +706,5 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="no_errors_found_title">Fouten</string>
     <string name="upload">Uploaden</string>
     <string name="supported_file_types">Deze lijst met bestandstypen zijn de bestandstypen die deze server moet accepteren.\n\nHet kan worden gewijzigd in het lokale / config / config.inc.php-bestand.</string>
+    <string name="deleting_tag">Tag verwijderen</string>
 </resources>

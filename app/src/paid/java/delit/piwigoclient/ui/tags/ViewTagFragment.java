@@ -68,7 +68,6 @@ import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
-import delit.piwigoclient.ui.common.dialogmessage.QuestionResultListener;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -400,14 +399,14 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
             HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
             if(deleteActionData != null && selectedItemIds.equals(deleteActionData.getSelectedItemIds())) {
                 //continue with previous action
-                onDeleteResources(deleteActionData);
+                onUserActionDeleteResources(deleteActionData);
             } else if(selectedItemIds.size() > 0) {
                 HashSet<ResourceItem> selectedItems = viewAdapter.getSelectedItemsOfType(ResourceItem.class);
                 DeleteActionData deleteActionData = new DeleteActionData(selectedItemIds, selectedItems);
                 if(!deleteActionData.isResourceInfoAvailable()) {
                     this.deleteActionData = deleteActionData;
                 }
-                onDeleteResources(deleteActionData);
+                onUserActionDeleteResources(deleteActionData);
             }
         }
     }
@@ -533,7 +532,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         }
     }
     
-    private void onDeleteResources(final DeleteActionData deleteActionData) {
+    private void onUserActionDeleteResources(final DeleteActionData deleteActionData) {
 
         if (!deleteActionData.isResourceInfoAvailable()) {
 
@@ -543,7 +542,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
             return;
         }
 
-        QuestionResultListener<FUIH,F> dialogListener = new OnDeleteTagsAction<>(getUiHelper());
+        OnDeleteTagsAction<F,FUIH> dialogListener = new OnDeleteTagsAction<>(getUiHelper());
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean isTagAlterationSupported = sessionDetails != null && (sessionDetails.isUseUserTagPluginForUpdate() || sessionDetails.isAdminUser());
@@ -648,9 +647,9 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
                 for (ResourceItem item : fragment.getDeleteActionData().getSelectedItems()) {
                     item.getTags().remove(fragment.getCurrentTag());
                     if (allowTagEdit) {
-                        getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new PluginUserTagsUpdateResourceTagsListResponseHandler(item));
+                        getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new PluginUserTagsUpdateResourceTagsListResponseHandler<>(item));
                     } else {
-                        getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new ImageUpdateInfoResponseHandler(item, true));
+                        getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new ImageUpdateInfoResponseHandler<>(item, true));
                     }
                 }
             } else {
@@ -1017,7 +1016,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         if(this.deleteActionData.isTrackingMessageId(response.getMessageId())) {
             this.deleteActionData.updateLinkedAlbums(response.getResource());
             if (this.deleteActionData.isResourceInfoAvailable()) {
-                onDeleteResources(deleteActionData);
+                onUserActionDeleteResources(deleteActionData);
             }
         }
     }

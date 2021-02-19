@@ -6,6 +6,7 @@ import android.util.Log;
 import com.drew.lang.annotations.Nullable;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 import org.json.JSONException;
@@ -305,8 +306,11 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
             }
 
             if(image.has("formats")) {
-                JsonArray formats = image.get("formats").getAsJsonArray();
-                addFormats(formats, item, originalResourceUrlWidth, originalResourceUrlHeight);
+                JsonElement formatsElem = image.get("formats");
+                if(!(formatsElem instanceof JsonNull)) {
+                    JsonArray formats = formatsElem.getAsJsonArray();
+                    addFormats(formats, item, originalResourceUrlWidth, originalResourceUrlHeight);
+                }
             }
 
             item.setLinkedAlbums(linkedAlbums);

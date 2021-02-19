@@ -90,10 +90,9 @@ public class MainActivity extends AbstractMainActivity {
         TagRecyclerViewAdapter.TagViewAdapterPreferences prefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences();
         prefs.setEnabled(true);
         prefs.setAllowItemAddition(true);
-        //TODO tags deletion is not working (unsupported in piwigo server at the moment)
-//        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-//            prefs.deletable();
-//        }
+        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+            prefs.deletable();
+        }
         TagsListFragment<?,?> fragment = TagsListFragment.newInstance(prefs);
         showFragmentNow(fragment);
     }
@@ -106,6 +105,9 @@ public class MainActivity extends AbstractMainActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(TagSelectionNeededEvent event) {
         TagRecyclerViewAdapter.TagViewAdapterPreferences prefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+//        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+//            prefs.deletable();
+//        }
         showTagSelectionFragment(event.getActionId(), prefs , event.getInitialSelection(), event.getNewUnsavedTags());
     }
 

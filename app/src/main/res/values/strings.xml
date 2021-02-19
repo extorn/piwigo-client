@@ -1085,4 +1085,5 @@ App Install UUID: %5$s
     <string name="no_errors_found_title">Errors</string>
     <string name="upload">Upload</string>
     <string name="supported_file_types">This list of file types are those this server is configured to accept.\n\nIt can be altered in the  local/config/config.inc.php file.</string>
+    <string name="deleting_tag">Deleting Tag</string>
 </resources>

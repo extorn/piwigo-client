@@ -59,7 +59,7 @@ public class ResourceRequestHandler extends RequestHandler {
             Logging.logAnalyticEventIfPossible("1x1 bitmap created", b);
             bitmapHeight = 1;
             bitmapWidth = 1;
-        } else if(width < bitmapWidth || height < bitmapHeight) {
+        } else if(width < bitmapWidth || height < bitmapHeight && width > 0 && height > 0) {
             // this might be the case if the aspect is different, not just if desire smaller.
             bitmapWidth = width;
             bitmapHeight = height;

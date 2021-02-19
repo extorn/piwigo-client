@@ -706,4 +706,5 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="no_errors_found_title">Chyby</string>
     <string name="upload">nahrát</string>
     <string name="supported_file_types">Tento seznam typů souborů je takový, na který je tento server nakonfigurován.\n\nLze jej změnit v místním souboru / config / config.inc.php.</string>
+    <string name="deleting_tag">Mazání značky</string>
 </resources>

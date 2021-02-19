@@ -706,4 +706,5 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="no_errors_found_title">Errori</string>
     <string name="upload">Caricare</string>
     <string name="supported_file_types">Questo elenco di tipi di file sono quelli che questo server è configurato per accettare.\n\nPuò essere modificato nel file local / config / config.inc.php.</string>
+    <string name="deleting_tag">Eliminazione del tag</string>
 </resources>

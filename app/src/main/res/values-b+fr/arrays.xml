@@ -152,6 +152,10 @@
     <string-array name="release_history" translatable="true">
         <item>1.4.0.122</item>
         <item>"Correction d\'un bug:
+                 - Liste d\'administration des balises fusionnée correctement avec la liste des utilisateurs lors du chargement des balises
+                 - Autoriser la suppression des balises pour les utilisateurs administrateurs"</item>
+        <item>1.4.0.122</item>
+        <item>"Correction d\'un bug:
                  - crash sur le diaporama (si vous rencontrez toujours des plantages ici, veuillez m\'envoyer un e-mail si vous déterminez quelle séquence d\'événements le provoque \'.
                  - crash après la suppression d\'un utilisateur ou d\'un groupe
                  - Affichage des utilisateurs et des groupes non mis à jour après l\'ajout d\'un élément"</item>

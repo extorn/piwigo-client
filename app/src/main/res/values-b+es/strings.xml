@@ -706,4 +706,5 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="no_errors_found_title">Errores</string>
     <string name="upload">Subir</string>
     <string name="supported_file_types">Esta lista de tipos de archivos son aquellos que este servidor está configurado para aceptar.\n\nPuede modificarse en el archivo local / config / config.inc.php.</string>
+    <string name="deleting_tag">Eliminar etiqueta</string>
 </resources>
