@@ -99,8 +99,6 @@ import static android.view.View.VISIBLE;
 public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>,T extends ResourceItem> extends MyFragment<F,FUIH> implements MyFragmentRecyclerPagerAdapter.PagerItemView {
 
     private static final String TAG = "SlideshowItemFragment";
-
-    private static final String ARG_GALLERY_TYPE = "containerModelType";
     private static final String ARG_AND_STATE_CONTAINER_ID = "containerId";
     private static final String ARG_AND_STATE_RESOURCE_ID = "itemId";
     private static final String ARG_AND_STATE_SLIDESHOW_PAGE_IDX = "slideshowPageIdx";
@@ -271,7 +269,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             modelStoreType = galleryModelClass;
 
             ViewModelContainer viewModelContainer = obtainActivityViewModel(requireActivity(), "" + galleryModelId, galleryModelClass);
-            modelStore = ((ResourceContainer<?, T>) viewModelContainer.getModel());
+            modelStore = viewModelContainer.getModel();
         }
         if (modelStore == null) {
             Bundle errBundle = new Bundle();
@@ -302,8 +300,8 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
                 }
             }
             if(modelStore instanceof PiwigoAlbum) {
-                errBundle.putBoolean("hidingAlbums", ((PiwigoAlbum)modelStore).isHideAlbums());
-                errBundle.putInt("albumCount", ((PiwigoAlbum)modelStore).getChildAlbumCount());
+                errBundle.putBoolean("hidingAlbums", ((PiwigoAlbum<?,?>)modelStore).isHideAlbums());
+                errBundle.putInt("albumCount", ((PiwigoAlbum<?,?>)modelStore).getChildAlbumCount());
             }
             errBundle.putInt("sortOrder", modelStore.isRetrieveItemsInReverseOrder() ? 1 : 0);
             Logging.logAnalyticEvent(requireContext(),"modelClassWrong", null);
@@ -436,7 +434,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     }
 
     protected void doOnceOnPageSelectedAndAdded() {
-        FragmentUIHelper uiHelper = getUiHelper();
+        FUIH uiHelper = getUiHelper();
         uiHelper.registerToActiveServiceCalls();
         uiHelper.setBlockDialogsFromShowing(false);
         uiHelper.handleAnyQueuedPiwigoMessages();
@@ -832,7 +830,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
 
         private static final long DEFAULT_DELAY_MILLIS = 2000;
         private long delayMillis = DEFAULT_DELAY_MILLIS;
-        private List<View> views;
+        private final List<View> views;
         private int visibilityOnRun = View.INVISIBLE;
         private long timerStarted;
 
@@ -894,7 +892,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         doOnPageSelectedAndAddedRun = false;
                 // pick up responses when the page is visible again.
         isPrimarySlideshowItem = false;
-        FragmentUIHelper uiHelper = getUiHelper();
+        FUIH uiHelper = getUiHelper();
         if(uiHelper != null) {
             uiHelper.setBlockDialogsFromShowing(true);
             uiHelper.deregisterFromActiveServiceCalls();
@@ -1193,14 +1191,14 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             return 0;
         }
 
-        public static final Creator<BaseDownloadQuestionResult> CREATOR = new Creator<BaseDownloadQuestionResult>() {
+        public static final Creator<BaseDownloadQuestionResult<?,?,?>> CREATOR = new Creator<BaseDownloadQuestionResult<?,?,?>>() {
             @Override
-            public BaseDownloadQuestionResult createFromParcel(Parcel in) {
-                return new BaseDownloadQuestionResult(in);
+            public BaseDownloadQuestionResult<?,?,?> createFromParcel(Parcel in) {
+                return new BaseDownloadQuestionResult<>(in);
             }
 
             @Override
-            public BaseDownloadQuestionResult[] newArray(int size) {
+            public BaseDownloadQuestionResult<?,?,?>[] newArray(int size) {
                 return new BaseDownloadQuestionResult[size];
             }
         };
