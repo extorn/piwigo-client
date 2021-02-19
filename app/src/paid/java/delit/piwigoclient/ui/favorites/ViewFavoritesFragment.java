@@ -35,7 +35,6 @@ import java.util.Set;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.ParcelUtils;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
@@ -47,6 +46,7 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoFavorites;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -61,10 +61,10 @@ import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.ui.MainActivity;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.album.view.AlbumItemViewHolder;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
-import delit.piwigoclient.ui.common.dialogmessage.QuestionResultListener;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -87,7 +87,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
     private static final String STATE_FAVORITES_DIRTY = "favoritesIsDirty";
     private static final String TAG = "FavsFrag";
 
-    private AlbumItemRecyclerViewAdapter viewAdapter;
+    private AlbumItemRecyclerViewAdapter<?,ResourceItem,?,?,?> viewAdapter;
     private ExtendedFloatingActionButton retryActionButton;
     private RelativeLayout bulkActionsContainer;
     private ExtendedFloatingActionButton bulkActionButtonDelete;
@@ -125,14 +125,8 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
 
     private float getScreenWidth() {
         DisplayMetrics dm = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         return (float)dm.widthPixels / dm.xdpi;
-    }
-
-    private int getDefaultImagesColumnCount() {
-        float screenWidth = getScreenWidth();
-        int columnsToShow = Math.round(screenWidth - (screenWidth % 1)); // allow 1 inch per column
-        return Math.max(1,columnsToShow);
     }
 
     @Override
@@ -484,12 +478,12 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         if (!deleteActionData.isResourceInfoAvailable()) {
 
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
-                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item)));
+                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler<>(item)));
             }
             return;
         }
 
-        QuestionResultListener dialogListener = new OnDeleteFavoritesAction<>(getUiHelper(), deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
+        OnDeleteFavoritesAction<F,FUIH> dialogListener = new OnDeleteFavoritesAction<>(getUiHelper(), deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean isFavoritesAlterationSupported = sessionDetails != null && sessionDetails.isPiwigoClientPluginInstalled();
@@ -538,7 +532,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         return pageToActuallyLoad;
     }
 
-    protected BaseRecyclerViewAdapter getViewAdapter() {
+    protected AlbumItemRecyclerViewAdapter<?,ResourceItem,?,?,?> getViewAdapter() {
         return viewAdapter;
     }
 
@@ -603,9 +597,9 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
                         getUiHelper().addActiveServiceCall(R.string.progress_remove_favorite_resources, new FavoritesRemoveImageResponseHandler(item));
                     }
                 }
-            } else {
+            } /*else {
                 // Neutral (cancel button) - do nothing
-            }
+            }*/
         }
     }
 
@@ -750,13 +744,13 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
                 if (response instanceof AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) {
                     getParent().onGetResources((AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) response);
                 } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
-                    getParent().onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) response);
+                    getParent().onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?>) response);
                 } else if(response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
                     for(ResourceItem r : ((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response).getDeletedItems()) {
                         getParent().onItemRemovedFromServer(r);
                     }
                 } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
-                    ResourceItem r = ((BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) response).getPiwigoResource();
+                    ResourceItem r = ((BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<?>) response).getPiwigoResource();
                     getParent().onItemRemovedFromFavorites(r);
                 } else if (response instanceof FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse) {
                     getParent().onFavoritesUpdateResponse(((FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse) response));
@@ -900,7 +894,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
     }
 
-    void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {
+    void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?> response) {
         if(this.deleteActionData.isTrackingMessageId(response.getMessageId())) {
             this.deleteActionData.updateLinkedAlbums(response.getResource());
             if (this.deleteActionData.isResourceInfoAvailable()) {
@@ -909,15 +903,15 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
     }
 
-    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter {
+    private class AlbumViewAdapterListener<MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>,LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC> , VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>, T extends GalleryItem> extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T> {
 
         @Override
-        public void onMultiSelectStatusChanged(BaseRecyclerViewAdapter adapter, boolean multiSelectEnabled) {
+        public void onMultiSelectStatusChanged(LVA adapter, boolean multiSelectEnabled) {
 //            bulkActionsContainer.setVisibility(multiSelectEnabled?VISIBLE:GONE);
         }
 
         @Override
-        public void onItemSelectionCountChanged(BaseRecyclerViewAdapter adapter, int size) {
+        public void onItemSelectionCountChanged(LVA adapter, int size) {
             bulkActionsContainer.setVisibility(size > 0?VISIBLE:GONE);
 //            bulkActionsContainer.setVisibility(size > 0 || getBasket().getItemCount() > 0 ?VISIBLE:GONE);
             updateBasketDisplay(getBasket());

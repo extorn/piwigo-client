@@ -34,7 +34,7 @@ public class FavoritesRemoveImageResponseHandler extends AbstractPiwigoWsRespons
         storeResponse(r);
     }
 
-    public static class PiwigoRemoveFavoriteResponse extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {
+    public static class PiwigoRemoveFavoriteResponse extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse<ResourceItem> {
         public PiwigoRemoveFavoriteResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource, boolean isCached) {
             super(messageId, piwigoMethod, piwigoResource, isCached);
         }
