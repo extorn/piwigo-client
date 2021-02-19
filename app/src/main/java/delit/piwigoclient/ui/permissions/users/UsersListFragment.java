@@ -101,7 +101,7 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
-        usersModel = ((PiwigoUsersModel)obtainFragmentViewModel(this, PiwigoUsersModel.class)).getPiwigoUsers().getValue();
+        usersModel = obtainFragmentViewModel(this, PiwigoUsersModel.class).getPiwigoUsers().getValue();
 
         if (isSessionDetailsChanged()) {
             usersModel.clear();
@@ -135,7 +135,7 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
 
         ExtendedFloatingActionButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(viewPrefs.isAllowItemAddition() ? View.VISIBLE : View.GONE);
-        addListItemButton.setOnClickListener(v -> addNewUser());
+        addListItemButton.setOnClickListener(v -> onUserActionAddNewUser());
 
         retryActionButton = view.findViewById(R.id.list_retryAction_actionButton);
         retryActionButton.setOnClickListener(v -> {
@@ -210,15 +210,15 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
         }
     }
 
-    private void addNewUser() {
+    private void onUserActionAddNewUser() {
         EventBus.getDefault().post(new ViewUserEvent(new User()));
     }
 
-    private void onUserSelected(User selectedUser) {
+    private void onUserActionUserSelected(User selectedUser) {
         EventBus.getDefault().post(new ViewUserEvent(selectedUser));
     }
 
-    private void onDeleteUser(final User thisItem) {
+    private void onUserActionDeleteUser(final User thisItem) {
         String currentUser = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getUsername();
         if (currentUser.equals(thisItem.getUsername())) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_delete_yourself_pattern, currentUser));
@@ -411,12 +411,12 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
     private class UserMultiSelectListener<MSL extends UserMultiSelectListener<MSL,LVA,VH>, LVA extends UserRecyclerViewAdapter<LVA,VH,MSL>,VH extends UserRecyclerViewAdapter.UserViewHolder<VH,LVA,MSL>> extends UserRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA, UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences, User,VH> {
         @Override
         public  void onItemDeleteRequested(LVA adapter, User u) {
-            onDeleteUser(u);
+            onUserActionDeleteUser(u);
         }
 
         @Override
         public void onItemClick(LVA adapter, User item) {
-            EventBus.getDefault().post(new ViewUserEvent(item));
+            onUserActionUserSelected(item);
         }
     }
 }

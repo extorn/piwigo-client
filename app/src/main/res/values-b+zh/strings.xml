@@ -273,7 +273,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 目前，它提供了基本功能级别，以允许在现有图库中导航，上传新照片和视频以及在图库中创建新类别。创建后，某些字段可以修改，但许多字段目前仍是只读的。
 
-请问如果您卸载该应用程序，可以使用应用程序菜单上的链接向我发送电子邮件，告诉我为什么该应用程序无法满足您的需求，因此我可以解决此问题。
+请问如果您卸载应用程序，可以使用应用程序菜单上的链接向我发送电子邮件，告诉我为什么该应用程序无法满足您的需求，因此我可以解决此问题。
 
 我测试的PIWIGO服务器的版本当前为2.10.2。
 
@@ -649,7 +649,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_error_starting_download">开始下载文件时出错</string>
     <string name="progress_importing_files">导入文件</string>
     <string name="content_filter">内容过滤</string>
-    <string name="alert_advert_importance_message">广告收入对我来说很重要。对不起，它们使您感到沮丧（他们也对我如此），但是如果您观看它们，它们将一直出现，直到您观看一个。为避免此问题，请看着他们，直到他们提供关闭选项为止。或者，购买此应用程序的付费版本。非常感谢您的支持。</string>
+    <string name="alert_advert_importance_message">广告收入对我来说很重要。很抱歉，它们使您感到沮丧（他们也对我如此），但是如果您观看它们，它们会一直出现直到您观看一个。为避免此问题，请看着他们，直到他们提供关闭选项为止。或者，购买此应用程序的付费版本。非常感谢您的支持。</string>
     <string name="eula_privacy_title">隐私</string>
     <string name="privacy_policy_label">我们的隐私政策</string>
     <string name="title_advert_consent">您的隐私</string>
@@ -659,7 +659,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="no_adverts_label">喜欢这个应用程序的免费广告版吗？</string>
     <string name="view_the_paid_version">带我去看免费广告版</string>
     <string name="advert_providers">使用中的广告提供者</string>
-    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">抱歉，该文件无法使用，因为它是由未授权对此文件的请求的扩展访问权且该访问权已过期的应用共享的。</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">抱歉，该文件无法使用，因为它是由未授权对该文件的请求的扩展访问权且该访问权已到期的应用共享的。</string>
     <string name="files_shared_without_required_permissions_error">您用来选择文件的应用程序尚未将必要的文件权限委派给Piwigo Client。在Piwigo Client的付费版本中已添加了针对此问题的解决方案，但您也可以使用其他方法来选择文件。</string>
     <string name="files_cached_from_other_apps">缓存的共享</string>
     <string name="progress_copying_imported_files">复制导入的文件</string>

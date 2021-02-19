@@ -183,7 +183,7 @@ Gareth Deli te otorga una licencia limitada, revocable, no exclusiva, intransfer
 para descargar, instalar y utilizar la Aplicación únicamente para sus fines personales o comerciales
 estrictamente de acuerdo con los términos de este Acuerdo.
 
-EL SOFTWARE SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD, ADECUACIÓN PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS AUTORES O TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES DE CUALQUIER RECLAMO, DAÑOS U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN DE CONTRATO, AGRAVIO O DE OTRO MODO, QUE SURJA DE, FUERA DE O EN RELACIÓN CON EL SOFTWARE O EL USO U OTRAS NEGOCIACIONES EN EL SOFTWARE
+EL SOFTWARE SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD, APTITUD PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS AUTORES O TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES DE CUALQUIER RECLAMO, DAÑOS U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN DE CONTRATO, AGRAVIO O DE OTRO MODO, QUE SURJA DE, FUERA DE O EN RELACIÓN CON EL SOFTWARE O EL USO U OTRAS NEGOCIACIONES EN EL SOFTWARE
 
 
 ** Restricciones
@@ -546,7 +546,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="connection_reset_warning_pattern">El servidor ha cerrado la conexión%1$d veces en los últimos%2$d minutos. Esto podría indicar un problema con la configuración de su servidor.</string>
     <string name="content_description_icon">icono</string>
     <string name="duplicates_ignored_pattern">Se ignoraron%1$d duplicados.</string>
-    <string name="alert_msg_using_fallback_piwigo_method_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor y se ha utilizado la alternativa%2$s. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor y se ha utilizado el respaldo%2$s. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor. Deshabilitar la funcionalidad afectada en la aplicación. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
     <string name="removing_favorite">Eliminando favorito</string>
     <string name="adding_favorite">Agregar favorito</string>
@@ -660,7 +660,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="view_the_paid_version">Llévame a la versión gratuita de anuncios</string>
     <string name="advert_providers">Proveedores de anuncios en uso</string>
     <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">Lo sentimos, este archivo no se pudo usar porque fue compartido por una aplicación que no autorizó el acceso extendido solicitado a este archivo y ese acceso ha expirado.</string>
-    <string name="files_shared_without_required_permissions_error">La aplicación que usó para seleccionar los archivos no ha delegado los permisos de archivo necesarios al cliente Piwigo. Se ha agregado una solución para este problema en la versión paga de Piwigo Client, pero como alternativa, puede usar un método diferente para seleccionar los archivos.</string>
+    <string name="files_shared_without_required_permissions_error">La aplicación que usó para seleccionar los archivos no ha delegado los permisos de archivo necesarios al cliente Piwigo. Se ha agregado una solución para este problema en la versión paga de Piwigo Client, pero alternativamente, puede usar un método diferente para seleccionar los archivos.</string>
     <string name="files_cached_from_other_apps">Recursos compartidos en caché</string>
     <string name="progress_copying_imported_files">Copiar archivos importados</string>
     <string name="selected_files">Archivos seleccionados</string>
@@ -676,7 +676,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="downloads_menu_title">Descargas</string>
     <string name="view_exported_files">Ver archivos exportados</string>
     <string name="generating_upload_job">Configuración de Cargar trabajo con su selección</string>
-    <string name="alert_error_files_without_permissions_pattern">No se proporcionaron permisos Uri para todos los archivos. Los que no lo tengan no se cargarán si el trabajo se pausa y luego se reanuda (por ejemplo, mediante la administración de energía de Android). Para evitar este problema, seleccione los archivos para cargar desde esta aplicación si es posible. Archivos afectados:%1$d.</string>
+    <string name="alert_error_files_without_permissions_pattern">No se proporcionaron permisos Uri para todos los archivos. Aquellos que no lo tengan no se cargarán si el trabajo se detiene y luego se reanuda (por ejemplo, mediante la administración de energía de Android). Para evitar este problema, seleccione los archivos para cargar desde esta aplicación si es posible. Archivos afectados:%1$d.</string>
     <string name="button_compress">Comprimir</string>
     <string name="unable_to_compress_without_data">No se puede comprimir sin la configuración</string>
     <string name="video_compression_settings_invalid">La configuración de compresión de video no es válida. Por favor revisa e intenta de nuevo.</string>

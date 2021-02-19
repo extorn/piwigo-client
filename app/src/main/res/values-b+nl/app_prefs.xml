@@ -274,7 +274,7 @@
     
 
     
-    <string name="preference_gallery_child_resource_sort_order_inverted_title">Keer de sorteervolgorde van de albumbronnen om</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Keer de sorteervolgorde van albumbronnen om</string>
     <string name="preference_gallery_child_resource_sort_order_inverted_summary">Indien ingeschakeld, keert u de geselecteerde sorteervolgorde van albumbronnen om</string>
     
 
@@ -351,7 +351,7 @@
     <string name="preference_gallery_album_thumbnail_size_summary">%1$s</string>
     
 
-    <string name="preference_gallery_item_slideshow_image_size_title">Standaard afbeeldingsgrootte voor diavoorstelling</string>
+    <string name="preference_gallery_item_slideshow_image_size_title">Standaard afbeeldingsgrootte van de diavoorstelling</string>
     
     <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
     

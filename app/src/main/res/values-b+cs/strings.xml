@@ -183,7 +183,7 @@ Gareth Deli vám uděluje odvolatelnou, nevýhradní, nepřenosnou a omezenou li
 stahovat, instalovat a používat aplikaci výhradně pro své osobní nebo komerční účely
 přísně v souladu s podmínkami této smlouvy.
 
-SOFTWARE JE POSKYTOVÁN „TAK, JAK JE“, BEZ ZÁRUKY JAKÉHOKOLI DRUHU, VÝSLOVNÉ NEBO PŘEDPOKLÁDANÉ, VČETNĚ, ALE NENÍ OMEZENO NA ZÁRUKY PRODEJNOSTI, VHODNOSTI PRO KONKRÉTNÍ ÚČEL A NEPROPOJENÍ. AUTORI NEBO DRŽITELÉ AUTORSKÝCH PRÁV V ŽÁDNÉM PŘÍPADĚ NEBUDOU ODPOVĚDNÍ ZA JAKÝKOLI NÁROK, ŠKODY NEBO JINOU ODPOVĚDNOST, KDYKOLI VE SKUTEČNÉ SMLOUVĚ, DĚLENÍ NEBO JINÉ, VYPLÝVAJÍCÍ Z SOFTWARU NEBO POUŽITÍ NEBO JINÉHO OBCHODOVÁNÍ SOFTWARE
+SOFTWARE JE POSKYTOVÁN „TAK, JAK JE“, BEZ ZÁRUKY JAKÉHOKOLI DRUHU, VÝSLOVNÉ NEBO PŘEDPOKLÁDANÉ, VČETNĚ, ALE NENÍ OMEZENO NA ZÁRUKY PRODEJNOSTI, VHODNOSTI PRO KONKRÉTNÍ ÚČEL A NEPROPOJENÍ. AUTORI NEBO DRŽITELÉ AUTORSKÝCH PRÁV V ŽÁDNÉM PŘÍPADĚ NEBUDOU ODPOVĚDNÍ ZA JAKÝKOLI NÁROK, ŠKODY NEBO JINOU ODPOVĚDNOST, TAKŽE PŘI AKCI SMLOUVY, DĚLENÍ NEBO JINÉHO VÝSLEDKU, VYPLÝVAJÍCÍ Z SOFTWARU NEBO POUŽITÍ NEBO JINÉHO OBCHODOVÁNÍ SOFTWARE
 
 
 ** Omezení
@@ -273,17 +273,17 @@ V současné době placená verze přidala podporu značek:
 
 V tuto chvíli poskytuje základní úroveň funkčnosti, která umožňuje navigaci po existující galerii, nahrávání nových fotografií a videí a vytváření nových kategorií v galerii. Některá pole lze po vytvoření upravit, ale mnohá jsou stále jen pro čtení .... zatím!
 
-Mohu vás požádat, abyste odinstalovali aplikaci pomocí odkazu v nabídce aplikace a poslali mi e-mail s informací, proč aplikace nesplňovala vaše potřeby, abych to mohl vyřešit.
+Mohu vás požádat, abyste při odinstalování aplikace pomocí odkazu v nabídce aplikace poslali e-mail a řekli mi, proč aplikace nesplňovala vaše potřeby, abych to mohl vyřešit.
 
 Verze serveru PIWIGO, proti které testuji, je aktuálně 2.10.2.
 
-Moje testovací galerie obsahuje pouze soubory .jpg a .mp4. Pokud vaše obsahuje další, můžete se setkat s problémy - pokud ano, řekněte mi to a já upřednostním práci na těchto typech souborů.
+Moje testovací galerie obsahuje pouze soubory .jpg a .mp4. Pokud vaše obsahuje jiné, můžete narazit na problémy - pokud ano, řekněte mi to a já upřednostním práci na těchto typech souborů.
 
 UPOZORNĚNÍ: Verze Piwigo pod 1.9.2 - nahrávání videí je podle mého názoru závislé na opravě # 756, která se použije na váš server.
 
 Testoval jsem s nainstalovanou kopií pluginu piwigo_privacy a také nainstalovaného pluginu VideoJS.
 Mám nainstalovanou kopii pluginu Extended Description, ale bohužel tato funkce ještě není vystavena prostřednictvím PIWIGO API.
-Chtěl bych zahrnout podporu pro „oblíbené“ fotografie, ale zdá se, že tato funkce zatím není odhalena prostřednictvím PIWIGO API.
+Chtěl bych zahrnout podporu pro „oblíbené“ fotografie, ale tato funkce se zatím nezdá být odhalena prostřednictvím PIWIGO API.
 
 Pokud narazíte na nějaké chyby, nahlaste nám prosím jakýkoli e-mail. Testoval jsem to na emulátoru Androidu, telefonu Samsung a tabletu Samsung, ale je to moje první aplikace, takže jsem si jistý, že se někomu něco pokazí.
 
@@ -418,7 +418,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_message_set_album_thumbnail">Aktualizovat miniaturu alba na tento obrázek?</string>
     <string name="alert_confirm_really_delete_album_from_server_pattern">Opravdu chcete smazat album (%1$s)?\n\nNeexistuje žádná funkce zpět</string>
     <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Mazáte album (%1$s) s%2$d fotkami.\n\nChcete trvale smazat veškerý osiřelý obsah?</string>
-    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Mazáte album (%1$s) s%2$d fotkami a%3$d podřízenými alby obsahujícími další%4$d fotografie.\n\nChcete trvale smazat veškerý osiřelý obsah?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Mazáte album (%1$s) s%2$d fotkami a%3$d podřízená alba obsahující dalších%4$d fotek.\n\nChcete trvale smazat veškerý osiřelý obsah?</string>
     <string name="alert_confirm_copy_items_here_pattern">Zkopírovat sem položky (%1$d) v košíku (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Přesunout sem položky (%1$d) v košíku sem (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Propojená alba</string>
@@ -443,7 +443,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_information_video_caching_disabled">Ukládání videí na disk je zakázáno</string>
     <string name="error_building_http_engine">Nelze vytvořit modul HTTP</string>
     <string name="error_unexpected_error_calling_server">Neočekávaná chyba při volání serveru nebo analýze odpovědi</string>
-    <string name="error_insufficient_permissions_for_cache_folder">Je zapotřebí přístup pro čtení a zápis do složky mezipaměti. Zkontrolujte nastavení aplikace.</string>
+    <string name="error_insufficient_permissions_for_cache_folder">Je vyžadován přístup pro čtení a zápis do složky mezipaměti. Zkontrolujte nastavení aplikace.</string>
     <string name="alert_title_error_talking_to_server">Chyba při hovoru se serverem</string>
     <string name="alert_title_error_connecting_to_server">Chyba při připojení k serveru</string>
     <string name="alert_error_adding_certificate_to_truststore">Chyba při přidávání certifikátu do úložiště důvěryhodnosti</string>

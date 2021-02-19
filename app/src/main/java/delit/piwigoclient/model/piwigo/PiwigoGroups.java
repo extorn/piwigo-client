@@ -2,8 +2,11 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.List;
+
+import delit.libs.core.util.Logging;
 
 /**
  *
@@ -11,6 +14,8 @@ import java.util.List;
  */
 
 public class PiwigoGroups extends IdentifiablePagedList<Group> {
+    private static final String TAG = "PiwigoGroups";
+
     public PiwigoGroups() {
         super("Group");
     }
@@ -26,7 +31,8 @@ public class PiwigoGroups extends IdentifiablePagedList<Group> {
 
     @Override
     protected void sortItems(List<Group> items) {
-        throw new UnsupportedOperationException("cannot sort the items");
+        //no-op don't sort the items.
+        Logging.log(Log.DEBUG, TAG, "Unable to sort list of Groups");
     }
 
     public static final Parcelable.Creator<PiwigoGroups> CREATOR

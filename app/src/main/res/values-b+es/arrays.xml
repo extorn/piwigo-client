@@ -137,24 +137,29 @@
         <item>Puede acercar una imagen al ver una presentación de diapositivas juntando o separando dos dedos en la pantalla</item>
         <item>Cuando inicie sesión como administrador, antes de entregar su dispositivo a un amigo para que vea sus fotos, active la función de bloqueo de la aplicación para evitar que se realicen cambios involuntarios en su galería.</item>
         <item>Una vez que haya visto un video completo, si el almacenamiento en caché de archivos local está habilitado, es posible guardar ese video en su carpeta de descargas</item>
-        <item>Haga clic largo en el botón Eliminar en un \'archivo para cargar \' para eliminar todos los archivos que se cargarán (cuando el trabajo no esté en curso)</item>
+        <item>Haga clic prolongadamente en el botón eliminar en un \'archivo para cargar \' para eliminar todos los archivos que se cargarán (cuando el trabajo no está en curso)</item>
         <item>Si las imágenes tardan en cargarse, compruebe que su servidor genera automáticamente el tamaño utilizado por esta aplicación cuando se cargan</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
         <item>"* Principalmente solo correcciones de errores
-                * Posiblemente Agregar opción para permitir el acceso compartido a una carpeta como un uri en un correo electrónico: implicará la creación de un usuario normal, dándoles permiso para la carpeta y el archivo, creando un token para las credenciales y los detalles del uri para incrustar en un enlace http y una forma de administrar estos tokens en el servidor."</item>
+                * Posiblemente Agregar opción para permitir el acceso compartido a una carpeta como un uri en un correo electrónico; implicará la creación de un usuario normal, dándoles permiso para la carpeta y el archivo, creando un token para las credenciales y los detalles del uri para incrustar en un enlace http y una forma de administrar estos tokens en el servidor."</item>
         
-        <item>1.4.0.122</item>
+        <item>1.4.0.123</item>
         <item>"Arreglo del fallo:
                  - implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.122</item>
+        <item>"Arreglo del fallo:
+                 - bloqueo en la presentación de diapositivas (si todavía encuentra bloqueos aquí, envíeme un correo electrónico si averigua qué secuencia de eventos lo causa \'\'.
+                 - falla después de eliminar usuario o grupo
+                 - la visualización de usuario y grupo no se actualiza después de agregar un elemento"</item>
         <item>1.4.0.121</item>
         <item>"Arreglo del fallo:
                  - La advertencia de la versión del complemento PiwigoClientWsExts no aparece para los usuarios afectados
                  - límite agregado a la longitud de la respuesta del servidor que se muestra cuando se muestra la respuesta de error
-                 - al reintentar la llamada al servidor después de http 4xx, no devuelva solo los errores almacenados en caché"</item>
+                 - al reintentar la llamada al servidor después de http 4xx, no devuelva los errores almacenados en caché"</item>
         <item>1.4.0.120</item>
         <item>"Cambio:
                 - Soporte para descargar archivos de formato de recursos alternativos alojados en carpetas pwg_format dentro de sitios piwigo. NOTA: privacy_plugin no admite esto en este momento.
@@ -220,7 +225,7 @@
                  - Cargar trabajo: cargar a la lista de servidores Piwigo no seleccionable (impacto para usuarios con más de un perfil de conexión de servidor configurado en la aplicación)
                  - los álbumes del servidor no se cargan en la primera entrada al trabajo de carga automática seleccione una preferencia de categoría
                  - las miniaturas del álbum del servidor no se cargan para las carpetas secundarias al cargarlas en la selección de carpetas
-                 - No se puede seleccionar cargar al álbum del servidor para el trabajo de carga automática usando un servidor no predeterminado"</item>
+                 - No se puede seleccionar la carga al álbum del servidor para el trabajo de carga automática utilizando un servidor no predeterminado"</item>
         <item>1.4.0.109</item>
         <item>"Cambio:
                  - Declaración agregada para su claridad en la parte superior de la plantilla de correo electrónico creada por esta aplicación para solicitudes de soporte
@@ -242,7 +247,7 @@
                  - la opción de menú huérfanos solo está disponible para los usuarios administradores cuando la aplicación no es de solo lectura"</item>
         <item>1.4.0.106</item>
         <item>"Arreglo del fallo:
-                 - Con suerte, el error final en el que las miniaturas de álbumes parecían no cargarse correctamente
+                 - Con suerte, el error final en el que las miniaturas de los álbumes parecían no cargarse correctamente
                 Cambios:
                  - Al eliminar un álbum, los recursos secundarios se pueden desvincular o eliminar del servidor
                  - Solo pago: hay una nueva página de gestión de recursos huérfana"</item>
@@ -270,7 +275,7 @@
                  - Lista de grupos alineados verticalmente al centro de la pantalla
                 Cambios:
                  - Mejor experiencia de usuario para el almacén de claves y la importación de certificados
-                 - Nueva preferencia para controlar la cantidad de tiempo que se muestra el detalle de la imagen en la vista de pantalla completa o presentación de diapositivas"</item>
+                 - Nueva preferencia para controlar el tiempo que se muestra el detalle de la imagen en la vista de pantalla completa o presentación de diapositivas"</item>
         <item>1.4.0.102</item>
         <item>"Arreglo del fallo:
                  - Los cambios recientes hicieron imposible tener las versiones gratuitas y de pago instaladas al mismo tiempo en un solo dispositivo

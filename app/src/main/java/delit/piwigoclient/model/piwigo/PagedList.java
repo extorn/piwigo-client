@@ -380,6 +380,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         sortItems();
     }
 
+    @Override
     public boolean replace(T item, T newItem) {
         int idx = getItemIdx(item);
         if(idx >= 0) {

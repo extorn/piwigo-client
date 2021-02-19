@@ -183,7 +183,7 @@ Gareth Deli ti concede una licenza revocabile, non esclusiva, non trasferibile e
 scaricare, installare e utilizzare l\'Applicazione esclusivamente per scopi personali o commerciali
 rigorosamente in conformità con i termini del presente Contratto.
 
-IL SOFTWARE VIENE FORNITO \"COSÌ COM\'È\", SENZA GARANZIA DI ALCUN TIPO, ESPLICITA O IMPLICITA, INCLUSE, MA NON SOLO, LE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ PER UN PARTICOLARE SCOPO E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI PER QUALSIASI RIVENDICAZIONE, DANNO O ALTRA RESPONSABILITÀ, SIA IN UN\'AZIONE DI CONTRATTO, TORTO O ALTRO, DERIVANTE DAL, O IN CONNESSIONE CON IL SOFTWARE O L\'USO O ALTRI TRATTAMENTI NEL SOFTWARE
+IL SOFTWARE VIENE FORNITO \"COSÌ COM\'È\", SENZA GARANZIA DI ALCUN TIPO, ESPLICITA O IMPLICITA, INCLUSE, MA NON SOLO, LE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ PER UNO SCOPO PARTICOLARE E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI PER QUALSIASI RIVENDICAZIONE, DANNO O ALTRA RESPONSABILITÀ, SIA IN UN\'AZIONE DI CONTRATTO, TORTO O ALTRO, DERIVANTE DAL, O IN CONNESSIONE CON IL SOFTWARE O L\'USO O ALTRI TRATTAMENTI NEL SOFTWARE
 
 
 ** Restrizioni
@@ -206,7 +206,7 @@ Il software viene fornito \"così com\'è\" e il licenziatario lo utilizza a pro
 
 ** Limitazioni di responsabilità
 
-Il licenziatario è responsabile delle conseguenze dell\'uso del software e dei danni diretti e indiretti che ne derivano per quanto legalmente possibile. La responsabilità è limitata al prezzo di acquisto per quanto legalmente possibile; altrimenti è limitato al minimo legalmente possibile.
+Il licenziatario è responsabile delle conseguenze dell\'utilizzo del software e dei danni diretti e indiretti che ne derivano per quanto legalmente possibile. La responsabilità è limitata al prezzo di acquisto per quanto legalmente possibile; altrimenti è limitato al minimo legalmente possibile.
 
 
 ** Manutenzione e supporto
@@ -268,12 +268,12 @@ Esistono due versioni, una versione gratuita (con pubblicità) e una versione a 
 Nota: le versioni divergeranno nel tempo. La maggior parte delle modifiche verrà apportata sia alla versione gratuita che a quella a pagamento.
 
 Attualmente, la versione a pagamento ha aggiunto il supporto per i tag:
-        Piwigo supporta i tag a un livello fuori dalla scatola, ma il plug-in Tag utente aggiunge più funzionalità (test di base eseguiti).
+        Piwigo supporta i tag a un livello fuori dagli schemi, ma il plug-in Tag utente aggiunge più funzionalità (test di base eseguiti).
 
 
 Al momento, fornisce un livello di funzionalità di base per consentire la navigazione in una galleria esistente, il caricamento di nuove foto e video e la creazione di nuove categorie all\'interno di una galleria. Alcuni campi possono essere modificati una volta creati, ma molti sono ancora di sola lettura .... per ora!
 
-Per favore, posso chiederti che se disinstalli l\'app, utilizzi il link nel menu dell\'app per inviarmi un\'e-mail dicendomi perché l\'app non ha soddisfatto le tue esigenze, in modo che io possa risolvere il problema.
+Per favore, posso chiederti che se disinstalli l\'app, utilizzi il link nel menu dell\'app per inviarmi un\'e-mail dicendomi perché l\'app non ha soddisfatto le tue esigenze in modo che io possa risolvere il problema.
 
 La versione del server PIWIGO su cui provo è attualmente 2.10.2.
 
@@ -532,8 +532,8 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_error_album_no_longer_on_server">Questo album non può essere caricato dal server. Passaggio all\'album principale.</string>
     <string name="button_show_details">Mostra i dettagli</string>
     <string name="button_hide_details">Nascondi dettagli</string>
-    <string name="alert_message_max_upload_file_count_reached">Numero massimo di file da caricare raggiunto. Per caricarne più in una volta, acquista e utilizza la versione a pagamento di questa app.</string>
-    <string name="alert_message_advert_load_error">Gli annunci hanno costantemente problemi di caricamento. Per favore, segnalacelo, poiché per me costituiscono un\'importante, anche se molto piccola, fonte di entrate. Si prega di considerare l\'acquisto della versione a pagamento per rimuovere completamente gli annunci. L\'app si blocca ora per 5 secondi durante i quali questa schermata deve rimanere visibile. Il conto alla rovescia ricomincerà se il messaggio è nascosto. Dopo 5 secondi puoi chiudere questo messaggio e continuare a utilizzare l\'app normalmente.</string>
+    <string name="alert_message_max_upload_file_count_reached">Numero massimo di file da caricare raggiunto. Per caricarne di più contemporaneamente, acquista e utilizza la versione a pagamento di questa app.</string>
+    <string name="alert_message_advert_load_error">Gli annunci hanno costantemente problemi di caricamento. Per favore, segnalacelo, in quanto per me costituiscono una fonte di entrate importante, sebbene molto piccola. Si prega di considerare l\'acquisto della versione a pagamento per rimuovere completamente gli annunci. L\'app si blocca ora per 5 secondi durante i quali questa schermata deve rimanere visibile. Il conto alla rovescia ricomincerà se il messaggio è nascosto. Dopo 5 secondi puoi chiudere questo messaggio e continuare a utilizzare l\'app normalmente.</string>
     <string name="alert_deleting_temporary_upload_album">Eliminazione dell\'album di caricamento temporaneo</string>
     <string name="alert_invalid_uri_pattern">URI non valido. %1$s</string>
     <string name="album_section_heading_albums">album</string>

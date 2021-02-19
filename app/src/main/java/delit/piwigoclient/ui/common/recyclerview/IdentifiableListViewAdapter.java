@@ -37,7 +37,13 @@ public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListVi
 
     @Override
     public long getItemId(int position) {
-        return itemStore.getItemByIdx(position).getId();
+        try {
+            T item = itemStore.getItemByIdx(position);
+            return item.getId();
+        } catch(IndexOutOfBoundsException e) {
+            // this will occur if the item has been removed from the itemStore since the adapter user was last aware.
+            return -1;
+        }
     }
 
     @NonNull
@@ -47,7 +53,7 @@ public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListVi
     @Override
     protected T removeItemFromInternalStore(int idxRemoved) {
         if (idxRemoved >= 0 && idxRemoved < itemStore.getItemCount()) {
-            itemStore.getItems().remove(idxRemoved);
+            itemStore.remove(idxRemoved);
         }
         return null;
     }
@@ -67,8 +73,8 @@ public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListVi
 
     @Override
     protected void replaceItemInInternalStore(int idxToReplace, @NonNull T newItem) {
-        itemStore.getItems().remove(idxToReplace);
-        itemStore.getItems().add(idxToReplace, newItem);
+        T item = itemStore.getItemByIdx(idxToReplace);
+        itemStore.replace(item, newItem);
     }
 
     @NonNull
@@ -114,7 +120,12 @@ public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListVi
 
     @Override
     public int getItemPosition(@NonNull T item) {
-        return itemStore.getItemIdx(item);
+        try {
+            return itemStore.getItemIdx(item);
+        } catch(IndexOutOfBoundsException e) {
+            // this will occur if the item has been removed from the itemStore since the adapter user was last aware.
+            return -1;
+        }
     }
 
 

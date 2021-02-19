@@ -402,7 +402,7 @@
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_max_filesize_mb_title">最多上传文件大小而不会警告您（MB）</string>
+    <string name="preference_data_upload_max_filesize_mb_title">最多上传文件大小而不会警告您（以MB为单位）</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     
 

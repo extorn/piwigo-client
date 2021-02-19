@@ -128,7 +128,7 @@
         <item>In caso di problemi con l\'app, utilizzare l\'email per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarla, ma per favore invia anche un\'email. C\'è un collegamento per inviarmi un\'e-mail nella parte superiore del menu a scomparsa del cassetto. Posso fornire un supporto molto più completo a un indirizzo email. Grazie molto.</item>
         <item>Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso</item>
         <item>Se un caricamento non riesce, prova a utilizzare la preferenza nella pagina di caricamento delle impostazioni dell\'app per cancellare eventuali caricamenti non riusciti residui dal server</item>
-        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - "Non è consentito eliminare i tag" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plug-in del server)</item>
+        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - "Non sei autorizzato a eliminare i tag" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plug-in del server)</item>
         <item>Condividi i file da un\'app diversa con questa app per aggiungerli alla schermata di caricamento pronti per essere trasferiti al tuo server corrente</item>
         <item>Fare clic a lungo su un\'immagine (miniatura o elemento della presentazione) che non è stato caricato per recuperarla di nuovo</item>
         <item>Fare clic a lungo su un album per eliminare quell\'album e tutto il contenuto</item>
@@ -138,18 +138,23 @@
         <item>Dopo aver effettuato l\'accesso come amministratore, prima di consegnare il dispositivo a un amico per visualizzare le foto, attivare la funzione di blocco dell\'applicazione per evitare modifiche involontarie alla tua galleria</item>
         <item>Dopo aver visualizzato un intero video, se la memorizzazione nella cache dei file locali è abilitata, è possibile salvare quel video nella cartella dei download</item>
         <item>Fare clic a lungo sul pulsante Elimina su un \'file da caricare \' per eliminare tutti i file da caricare (quando il lavoro non è in corso)</item>
-        <item>Se il caricamento delle immagini è lento, verifica che il tuo server generi automaticamente la dimensione utilizzata da questa app quando vengono caricate</item>
+        <item>Se le immagini si caricano lentamente, verifica che il tuo server generi automaticamente le dimensioni utilizzate da questa app quando vengono caricate</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Il futuro</item>
         <item>"* Principalmente solo correzioni di bug
                 * Possibilmente Aggiungi opzione per consentire la condivisione dell\'accesso a una cartella come uri in un\'e-mail: comporterà la creazione di un utente normale, dando loro il permesso per la cartella e il file, creando un token per le credenziali e i dettagli uri per l\'incorporamento in un collegamento http e un modo per gestire questi token sul server."</item>
         
-        <item>1.4.0.122</item>
+        <item>1.4.0.123</item>
         <item>"Risoluzione del problema:
                  - implementare il pulsante di aggiornamento nella pagina \"elemento non caricato\" della presentazione"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.122</item>
+        <item>"Risoluzione del problema:
+                 - crash nella presentazione (se si verificano ancora arresti anomali qui, scrivetemi se cercate quale sequenza di eventi lo causa \".
+                 - crash dopo l\'eliminazione dell\'utente o del gruppo
+                 - visualizzazione di utenti e gruppi non aggiornata dopo l\'aggiunta di un elemento"</item>
         <item>1.4.0.121</item>
         <item>"Risoluzione del problema:
                  - L\'avviso della versione del plug-in PiwigoClientWsExts non viene visualizzato per gli utenti interessati
@@ -160,7 +165,7 @@
                 - Supporto per il download di file di formati di risorse alternativi ospitati nelle cartelle pwg_format all\'interno dei siti piwigo. NOTA: privacy_plugin non lo supporta al momento.
                     * Nota: questo richiederà una modifica al file di configurazione del server Nginx per consentire il download degli URL.
                             Estratto di esempio dalla mia configurazione del server nginx di prova:
-                            # avviso, questo aggira completamente il privacy_plugin (qualsiasi utente potrebbe scaricare il file se indovina l\'url)
+                            # attenzione, questo aggira completamente il privacy_plugin (qualsiasi utente potrebbe scaricare il file se indovina l\'url)
                             posizione ~ (^ / piwigo) (/ \ d) (/.*/ pwg_format /.*) {
                                     # Per ora, rimuovi semplicemente l\'ID dell\'immagine dall\'URI e recupera l\'immagine
                                     try_files $ 1 $ 3 = 404;
@@ -170,7 +175,7 @@
                 - Supporto per file multimediali ospitati su siti piwigo con nomi arbitrari (vedere &lt;server_uri&gt; /admin.php?page=site_manager) - richiede l\'installazione del plugin PiwigoClientWsExts versione 1.0.15"</item>
         <item>1.4.0.119</item>
         <item>"Risoluzione del problema:
-                 - crash su versioni precedenti se l\'autorizzazione non è stata concessa per utilizzare la cartella cache
+                 - crash su versioni precedenti se l\'autorizzazione non è stata concessa per utilizzare la cartella della cache
                  - i registri a volte non vengono inviati se l\'app si arresta in modo anomalo troppo rapidamente dopo l\'errore di registrazione"</item>
         <item>1.4.0.118</item>
         <item>"Modificare:
@@ -210,7 +215,7 @@
                  - Riordina le pagine delle preferenze dell\'app"</item>
         <item>1.4.0.111</item>
         <item>"Risoluzione del problema:
-                 - Gli URI multimediali non funzionano per gli utenti di plugin non per la privacy.
+                 - Gli URI multimediali non funzionano per gli utenti di plug-in non per la privacy.
                  - La riproduzione video non si avvia se la preferenza è impostata per non includere i video nelle presentazioni
                 Modificare:
                  - c\'è una nuova impostazione nelle preferenze di connessione per la riparazione uri del plugin per la privacy"</item>
@@ -242,7 +247,7 @@
                  - L\'opzione di menu orfani è disponibile solo per gli utenti amministratori quando l\'app non è di sola lettura"</item>
         <item>1.4.0.106</item>
         <item>"Risoluzione del problema:
-                 - Si spera che il bug finale in cui le miniature degli album sembravano non caricarsi correttamente
+                 - Si spera che il bug finale in cui le miniature degli album sembravano non essere caricate correttamente
                 I cambiamenti:
                  - Quando si elimina un album, le risorse figlio possono essere scollegate o eliminate dal server
                  - Solo a pagamento: c\'è una nuova pagina di gestione delle risorse orfane"</item>
@@ -265,7 +270,7 @@
         <item>1.4.0.103</item>
         <item>"Risoluzione del problema:
                  - La modifica dell\'archivio chiavi e dell\'elemento certificato attendibile ha causato un arresto anomalo.
-                     : Inviami un\'email dall\'app quando funzionalità chiave come questa non funzionano.
+                     : Inviami un\'e-mail dall\'app quando funzionalità chiave come questa non funzionano.
                  - A volte non è possibile uscire dai file recenti con la selezione del file di sistema
                  - Elenco dei gruppi allineato verticalmente al centro dello schermo
                 I cambiamenti:

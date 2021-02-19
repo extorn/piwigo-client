@@ -15,7 +15,7 @@
     <string name="alert_auto_upload_service_job_finished_success">Se terminó de ejecutar el trabajo de carga en segundo plano en el servidor%1$s.</string>
     <string name="alert_auto_upload_service_job_finished_partial_success">Se terminó de ejecutar el trabajo de carga en segundo plano en el servidor%1$s. Algunos archivos no se pudieron cargar y se volverán a intentar más tarde.</string>
     <string name="alert_auto_upload_service_job_finished_failure">Se terminó de ejecutar el trabajo de carga en segundo plano en el servidor%1$s. No se pudieron cargar archivos. El trabajo se reintentará más tarde.</string>
-    <string name="alert_auto_upload_service_checking_for_tasks">Comprobación de tareas del servicio de carga en segundo plano</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Comprobación del servicio de carga en segundo plano para las tareas</string>
     <string name="progress_creating_tag">Creando etiqueta</string>
     <string name="error_updating_favorites_pattern">Error al eliminar el recurso (%1$s) de favoritos:%2$s</string>
     <string name="favorites_content_load_failed_text">No se pudieron cargar los recursos marcados como favoritos</string>

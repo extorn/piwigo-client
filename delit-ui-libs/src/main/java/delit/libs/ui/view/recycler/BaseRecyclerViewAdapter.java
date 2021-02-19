@@ -109,18 +109,23 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
-        T newItem = getItemByPosition(position);
-        if (isHolderOutOfSync(holder, newItem)) {
-            // store the item in this recyclable holder.
-            holder.fillValues(newItem, prefs.isAllowItemDeletion());
-        } else {
-            holder.redisplayOldValues(newItem, prefs.isAllowItemDeletion());
-        }
         try {
-            holder.setChecked(isItemSelected(getItemId(position)));
-        } catch (UnsupportedOperationException e) {
-            // this is fine. Clearly selection is not wished for.
+            T newItem = getItemByPosition(position);
+            if (isHolderOutOfSync(holder, newItem)) {
+                // store the item in this recyclable holder.
+                holder.fillValues(newItem, prefs.isAllowItemDeletion());
+            } else {
+                holder.redisplayOldValues(newItem, prefs.isAllowItemDeletion());
+            }
+            try {
+                holder.setChecked(isItemSelected(getItemId(position)));
+            } catch (UnsupportedOperationException e) {
+                // this is fine. Clearly selection is not wished for.
+            }
+        } catch (IndexOutOfBoundsException e) {
+            Logging.log(Log.DEBUG, TAG, "Unable to bind item in viewAdapter - IndexOutOfBoundsException");
         }
+
     }
 
     @Override
@@ -248,10 +253,7 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
 
     public void remove(T item) {
         int idxRemoved = getItemPosition(item);
-        if (idxRemoved >= 0) {
-            removeItemFromInternalStore(idxRemoved);
-            notifyItemRemoved(idxRemoved);
-        }
+        removeItemByPosition(idxRemoved);
     }
 
     public final void replaceOrAddItem(T item) {

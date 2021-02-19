@@ -19,7 +19,7 @@
     <string name="progress_creating_tag">Tag maken</string>
     <string name="error_updating_favorites_pattern">Fout bij het verwijderen van bron (%1$s) uit favorieten:%2$s</string>
     <string name="favorites_content_load_failed_text">Kan bronnen die als favoriet zijn gemarkeerd, niet laden</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">U heeft verzocht om%1$d bronnen te verwijderen. Wilt u deze permanent van alle albums (en de server) verwijderen, of wilt u ze gewoon loskoppelen van deze favoriet?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">U heeft verzocht om%1$d bronnen te verwijderen. Wilt u deze van alle albums (en de server) permanent verwijderen, of wilt u ze gewoon loskoppelen van deze favoriet?</string>
     <string name="progress_remove_favorite_resources">Bronnen verwijderen uit de favorietenlijst</string>
     <string name="favorites_empty_text">Je hebt momenteel geen favorieten</string>
     <string name="favorites_heading">Uw favorieten</string>

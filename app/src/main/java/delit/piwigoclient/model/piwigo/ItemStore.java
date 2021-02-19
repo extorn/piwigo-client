@@ -16,9 +16,13 @@ public interface ItemStore<T> {
 
     void addItem(T item);
 
+//    void add(int insertAtIdx, T newItem);
+
     int getItemIdx(T newTag);
 
     boolean removeAllByEquality(Collection<T> itemsForDeletion);
+
+    boolean replace(T item, T newItem);
 
     T remove(int idx);
 

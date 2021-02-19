@@ -3474,8 +3474,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
         @Override
         public void onAlbumHeadingClick(RC itemStore) {
-            PiwigoAlbum album = (PiwigoAlbum)itemStore;
-            int firstResourceIdx = itemStore.getItems().size() - itemStore.getResourcesCount();
+            int firstResourceIdx = itemStore.getItemCount() - itemStore.getResourcesCount();
             // need to do this because otherwise the next page of data won't be triggered to load.
             getParentFragment().scrollToListItem(firstResourceIdx);
         }

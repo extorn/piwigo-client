@@ -250,11 +250,16 @@
         Could Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
         Background async loading of images in the slideshow, perhaps not to bitmap them, just caching - if local http caching enabled - ?impact on videos?
         -->
-        <item>1.4.0.122</item>
+        <item>1.4.0.123</item>
         <item>"Bugfix:
                 - implement the refresh button on the slideshow 'item not loaded' page"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.122</item>
+        <item>"Bugfix:
+                - crash on slideshow (if you still encounter crashes here, please email me if you work out what sequence of events causes it'.
+                - crash after deleting user or group
+                - user and group display not updated after adding an item"</item>
         <item>1.4.0.121</item>
         <item>"Bugfix:
                 - PiwigoClientWsExts plugin version warning not appearing for affected users

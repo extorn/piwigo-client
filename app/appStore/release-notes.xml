@@ -1,60 +1,60 @@
 <en-GB>
 Bugfix:
-- PiwigoClientWsExts plugin version warning not appearing for affected users
-- limit added to length of server response displayed when showing error response
-- on retry of server call after http 4xx, don't just return cached errors
+- crash on slideshow (if you still encounter crashes here, please email me if you work out what sequence of events causes it'.
+- crash after deleting user or group
+- user and group display not updated after adding an item
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Varování verze pluginu pluginu PiwigoClientWsExts se u postižených uživatelů nezobrazuje
-- limit přidaný k délce odpovědi serveru zobrazený při zobrazení chybové odpovědi
-- při pokusu o volání serveru po http 4xx nevracejte pouze chyby uložené v mezipaměti
+- zhroucení při prezentaci (pokud se zde stále setkáte se zhroucením, pošlete mi e-mail, pokud zjistíte, jaká posloupnost událostí to způsobuje \'.
+- havárie po odstranění uživatele nebo skupiny
+- zobrazení uživatele a skupiny se po přidání položky neaktualizuje
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Die Versionswarnung für das PiwigoClientWsExts-Plugin wird für betroffene Benutzer nicht angezeigt
-- Begrenzung der Länge der Serverantwort hinzugefügt, die angezeigt wird, wenn eine Fehlerantwort angezeigt wird
-- Geben Sie bei einem erneuten Versuch des Serveraufrufs nach http 4xx nicht nur zwischengespeicherte Fehler zurück
+- Absturz in der Diashow (wenn hier immer noch Abstürze auftreten, senden Sie mir bitte eine E-Mail, wenn Sie herausfinden, welche Abfolge von Ereignissen dies verursacht).
+- Absturz nach dem Löschen des Benutzers oder der Gruppe
+- Benutzer- und Gruppenanzeige werden nach dem Hinzufügen eines Elements nicht aktualisiert
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- La advertencia de la versión del complemento PiwigoClientWsExts no aparece para los usuarios afectados
-- límite agregado a la longitud de la respuesta del servidor que se muestra cuando se muestra la respuesta de error
-- al reintentar la llamada al servidor después de http 4xx, no devuelva solo los errores almacenados en caché
+- bloqueo en la presentación de diapositivas (si todavía encuentra bloqueos aquí, envíeme un correo electrónico si averigua qué secuencia de eventos lo causa \'\'.
+- falla después de eliminar usuario o grupo
+- la visualización de usuario y grupo no se actualiza después de agregar un elemento
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- L\'avertissement de version du plugin PiwigoClientWsExts n\'apparaît pas pour les utilisateurs concernés
-- limite ajoutée à la longueur de la réponse du serveur affichée lors de l\'affichage de la réponse d\'erreur
-- lors d\'une nouvelle tentative d\'appel du serveur après http 4xx, ne renvoyez pas simplement les erreurs mises en cache
+- crash sur le diaporama (si vous rencontrez toujours des plantages ici, veuillez m\'envoyer un e-mail si vous déterminez quelle séquence d\'événements le provoque \'.
+- crash après la suppression d\'un utilisateur ou d\'un groupe
+- Affichage des utilisateurs et des groupes non mis à jour après l\'ajout d\'un élément
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- L\'avviso della versione del plug-in PiwigoClientWsExts non viene visualizzato per gli utenti interessati
-- limite aggiunto alla lunghezza della risposta del server visualizzata quando si mostra la risposta all\'errore
-- al nuovo tentativo di chiamata al server dopo http 4xx, non restituire solo errori memorizzati nella cache
+- crash nella presentazione (se si verificano ancora arresti anomali qui, scrivetemi se cercate quale sequenza di eventi lo causa ".
+- crash dopo l\'eliminazione dell\'utente o del gruppo
+- visualizzazione di utenti e gruppi non aggiornata dopo l\'aggiunta di un elemento
 </it-IT>
 <ja-JP>
 バグ修正：
--影響を受けるユーザーにPiwigoClientWsExtsプラグインバージョンの警告が表示されない
--エラー応答を表示するときに表示されるサーバー応答の長さに制限が追加されました
--http 4xx以降のサーバー呼び出しの再試行時に、キャッシュされたエラーを返すだけではありません
+-スライドショーでクラッシュします（ここでまだクラッシュが発生する場合は、どのようなイベントのシーケンスが原因であるかを調べたら、私にメールしてください。
+-ユーザーまたはグループを削除した後にクラッシュする
+-アイテムを追加した後、ユーザーとグループの表示が更新されない
 </ja-JP>
 <nl-NL>
 Bugfix:
-- PiwigoClientWsExts plug-in versiewaarschuwing verschijnt niet voor getroffen gebruikers
-- limiet toegevoegd aan de lengte van de serverreactie die wordt weergegeven bij het tonen van een foutreactie
-- bij het opnieuw proberen van de serveroproep na http 4xx, retourneer dan niet alleen fouten in de cache
+- crash op diavoorstelling (als je hier nog steeds crashes tegenkomt, stuur me dan een e-mail als je weet welke reeks gebeurtenissen dit veroorzaakt \'.
+- crash na het verwijderen van gebruiker of groep
+- gebruikers- en groepsweergave niet bijgewerkt na het toevoegen van een item
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Предупреждение о версии плагина PiwigoClientWsExts не отображается для затронутых пользователей
-- добавлено ограничение на длину ответа сервера, отображаемого при отображении ответа об ошибке
-- при повторном вызове сервера после http 4xx не возвращать только кешированные ошибки
+- сбой при слайд-шоу (если вы все еще сталкиваетесь с сбоями здесь, напишите мне, если вы выясните, какая последовательность событий вызывает это ».
+- сбой после удаления пользователя или группы
+- отображение пользователя и группы не обновляется после добавления элемента
 </ru-RU>
 <zh-CN>
 错误修正：
--对受影响的用户未出现PiwigoClientWsExts插件版本警告
--添加限制到显示错误响应时显示的服务器响应长度
--在HTTP 4xx之后重试服务器调用时，不要只返回缓存的错误
+-幻灯片崩溃（如果您仍然在此处遇到崩溃，请确定发生事件的顺序是多少，请给我发送电子邮件。）
+-删除用户或组后崩溃
+-添加项目后用户和组显示未更新
 </zh-CN>

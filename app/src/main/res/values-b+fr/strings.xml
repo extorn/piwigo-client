@@ -113,7 +113,7 @@
     <string name="upload_files_button_title">Télécharger</string>
     <string name="upload_files_finish_job_button_title">Finir</string>
     <string name="upload_job_status_button">Statut</string>
-    <string name="alert_really_delete_upload_job">Cela supprimera l\'état du travail de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - page des paramètres de téléchargement). Les travaux se termineront souvent avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir franchir cette étape radicale?</string>
+    <string name="alert_really_delete_upload_job">Cela supprimera l\'état du travail de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - page de paramètres de téléchargement). Les travaux se termineront souvent avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir franchir cette étape radicale?</string>
     <string name="loading_please_wait">Chargement, veuillez patienter</string>
     <string name="alert_title_server_error">erreur du serveur</string>
     <string name="alert_server_error_pattern">Le serveur a renvoyé une erreur HTTP:%1$d (%2$s)</string>
@@ -273,13 +273,13 @@ Actuellement, la version payante a ajouté la prise en charge des balises:
 
 Pour le moment, il fournit un niveau de fonctionnalité de base pour permettre la navigation dans une galerie existante, le téléchargement de nouvelles photos et vidéos et la création de nouvelles catégories dans une galerie. Certains champs peuvent être modifiés une fois créés, mais beaucoup sont encore en lecture seule .... pour l\'instant!
 
-S\'il vous plaît, puis-je demander que si vous désinstallez l\'application, vous utilisez le lien dans le menu de l\'application pour m\'envoyer un e-mail en m\'expliquant pourquoi l\'application ne répond pas à vos besoins afin que je puisse y remédier.
+S\'il vous plaît, puis-je vous demander que si vous désinstallez l\'application, vous utilisez le lien dans le menu de l\'application pour m\'envoyer un e-mail m\'indiquant pourquoi l\'application ne répond pas à vos besoins afin que je puisse y remédier.
 
 La version du serveur PIWIGO sur laquelle je teste est actuellement la 2.10.2.
 
 Ma galerie de tests contient uniquement des fichiers .jpg et .mp4. Si le vôtre en contient d\'autres, vous risquez de rencontrer des problèmes - si oui, dites-le-moi et je prioriserai le travail sur ces types de fichiers.
 
-AVERTISSEMENT: Versions de Piwigo inférieures à 1.9.2 - je pense que le téléchargement de vidéos dépend du correctif # 756 appliqué à votre serveur.
+AVERTISSEMENT: Versions de Piwigo inférieures à 1.9.2 - le téléchargement de vidéos dépend, je pense, de l\'application du correctif n ° 756 à votre serveur.
 
 J\'ai testé avec une copie du plugin piwigo_privacy installé et aussi le plugin VideoJS installé.
 J\'ai une copie du plugin Extended Description installé, mais malheureusement, cette fonctionnalité n\'est pas encore exposée via l\'API PIWIGO.
@@ -666,7 +666,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="selected_files">Fichiers sélectionnés</string>
     <string name="uri_permission_justification_file_selection">Pour sélectionner des fichiers ou des dossiers à utiliser par cette application</string>
     <string name="alert_error_please_select_download_folder_and_retry">Veuillez sélectionner un dossier dans lequel télécharger les fichiers dans les paramètres de l\'application, puis réessayer.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Aucune extension de fichier de sortie valide (la préférence est%2$s) n\'a été trouvée pour le fichier (vidéo:%3$b audio:%4$b) acceptable pour le serveur parmi les options (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Aucune extension de fichier de sortie valide (la préférence est%2$s) n\'a pu être trouvée pour le fichier (vidéo:%3$b audio:%4$b) acceptable pour le serveur parmi les options (%1$s)</string>
     <string name="uuid_title">Installez UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Impossible d\'ajouter des fichiers à télécharger. Un travail de téléchargement est en cours.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Impossible d\'ajouter des fichiers à télécharger. La tâche de téléchargement en cours doit se terminer en premier.</string>

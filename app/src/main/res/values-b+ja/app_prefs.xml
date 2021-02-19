@@ -275,7 +275,7 @@
 
     
     <string name="preference_gallery_child_resource_sort_order_inverted_title">アルバムリソースの並べ替え順序を反転</string>
-    <string name="preference_gallery_child_resource_sort_order_inverted_summary">有効にすると、選択したアルバムリソースの並べ替え順序を逆にします</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">有効にすると、アルバムリソースの選択した並べ替え順序を逆にします</string>
     
 
 

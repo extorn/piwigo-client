@@ -89,7 +89,7 @@
     <string name="alert_error_upload_chunk_failed_message_pattern">Uploaden van blok voor bestand%1$s is mislukt. Uploaden van bestand verlaten.</string>
     <string name="alert_error_upload_file_no_longer_available_message_pattern">Bestand%1$s is niet langer beschikbaar op het apparaat, misschien is het verwijderd of verplaatst.\n%2$s</string>
     <string name="alert_error_upload_file_read_error_message_pattern">Fout tijdens het uploaden van bestand%1$s.\n%2$s</string>
-    <string name="alert_error_upload_file_already_on_server_message_pattern">Het geüploade bestand%1$s is al aanwezig op de server, actie geannuleerd.</string>
+    <string name="alert_error_upload_file_already_on_server_message_pattern">Geüpload bestand%1$s is al aanwezig op de server, actie geannuleerd.</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Upload bestand%1$s is mislukt vanwege een fout in PIWIGO-server (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Upload bestand%1$s is mislukt vanwege een webserverfout (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webresponse_message_pattern">Upload bestand%1$s is mislukt vanwege een fout bij het verwerken van de PIWIGO-reactie. Dit komt waarschijnlijk door een PIWIGO API-wijziging. Niet-parseerbare reactie:%2$s.</string>
@@ -105,7 +105,7 @@
     <string name="createGallery_permissions_allowedGroupsTitle">Toegestane groepen</string>
     <string name="createGallery_permissions_allowedUsersTitle">Toegestane gebruikers</string>
     <string name="createGallery_createGalleryButtonTitle">Maak album</string>
-    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">Kan machtigingen voor galerij niet correct instellen. Weer verwijderd. Probeer het a.u.b. opnieuw. Als de fout zich blijft voordoen, meld dan een probleem met deze app zodat we deze kunnen verbeteren en voer de stap handmatig uit.</string>
+    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">Kan machtigingen voor galerij niet correct instellen. Weer verwijderd. Probeer het opnieuw. Als de fout zich blijft voordoen, meldt u een probleem met deze app zodat we deze kunnen verbeteren en voer de stap handmatig uit.</string>
 
     <string name="logging_in_to_piwigo_pattern">Inloggen op%1$s</string>
 
@@ -161,15 +161,15 @@
 ** Laatst bijgewerkt: 18 september 2020
 
 Lees deze licentieovereenkomst voor eindgebruikers (\"Overeenkomst\") zorgvuldig door voordat u op \"Ik ga akkoord\" klikt.
-Piwigo Client downloaden of gebruiken (\"Applicatie\").
+-knop, Piwigo Client downloaden of gebruiken (\"Applicatie\").
 
 Door op de knop \"Ik ga akkoord\" te klikken, de applicatie te downloaden of te gebruiken, gaat u ermee akkoord gebonden te zijn
 volgens de voorwaarden van deze overeenkomst.
 Als u niet akkoord gaat met de voorwaarden van deze overeenkomst, klik dan niet op de knop \"Ik ga akkoord\" en doe dit ook niet
 download of gebruik de applicatie.
 
-Als u overweegt deze app te gebruiken om toegang te krijgen tot en / of wijzigingen aan te brengen in een server die wordt gebruikt voor commerciële doeleinden, is het essentieel dat u de aansprakelijkheidsbeperkingen leest en begrijpt.
-U moet dit naar tevredenheid testen op een niet-productieserver voordat u zelf enig risico en aansprakelijkheid accepteert op basis van uw beslissingen. Deze app is in de eerste plaats ontworpen
+Als u overweegt deze app te gebruiken om toegang te krijgen tot en / of wijzigingen aan te brengen in een server die voor commerciële doeleinden wordt gebruikt, is het essentieel dat u de aansprakelijkheidsbeperkingen leest en begrijpt.
+U moet dit naar uw tevredenheid testen op een niet-productieserver voordat u zelf enig risico en aansprakelijkheid aanvaardt op basis van uw beslissingen. Deze app is in de eerste plaats ontworpen
 voor niet-commerciële doeleinden.
 
 ** Definities
@@ -237,7 +237,7 @@ van de applicatie vanaf uw mobiele apparaat of vanaf uw desktop.
 
 ** Scheidbaarheid
 
-Als een bepaling van deze overeenkomst als niet-afdwingbaar of ongeldig wordt beschouwd, zal die bepaling dat ook zijn
+Als een bepaling van deze overeenkomst als niet-afdwingbaar of ongeldig wordt beschouwd, zal een dergelijke bepaling dat zijn
 gewijzigd en geïnterpreteerd om de doelstellingen van een dergelijke bepaling zo goed mogelijk te bereiken
 mogelijk onder toepasselijk recht en de overige bepalingen blijven volledig van kracht.
 
@@ -287,7 +287,7 @@ Ik zou graag ondersteuning willen toevoegen voor \"favoriete\" foto\'s, maar dez
 
 Meld dit alsjeblieft, stuur me een e-mail als je bugs tegenkomt. Ik heb dit getest op de Android-emulator, een Samsung-telefoon en een Samsung-tablet, maar het is mijn eerste app, dus ik weet zeker dat het bij iemand mis zal gaan.
 
-Hartelijk dank aan iedereen die me een e-mail heeft gestuurd met suggesties of bugs. Ik zal proberen al uw suggesties zo snel mogelijk te behandelen.Kies ervoor om elke crash die optreedt te rapporteren. Als u merkt dat de bug zich na de volgende update nog steeds voordoet, neem dan even de tijd om mij een e-mail te sturen. Het is waarschijnlijk dat ik wat meer context nodig heb rond wat er gebeurt net voordat de bug optreedt.
+Hartelijk dank aan iedereen die me een e-mail heeft gestuurd met suggesties of bugs. Ik zal proberen al uw suggesties zo snel mogelijk te behandelen.Kies ervoor om elke crash die optreedt te rapporteren. Als u merkt dat de bug na de volgende update nog steeds optreedt, neem dan even de tijd om mij een e-mail te sturen. Het is waarschijnlijk dat ik wat meer context nodig heb rond wat er gebeurt net voordat de bug optreedt.
 
 Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verwachting afnemen naarmate de app ouder wordt. Het releaseschema en de geschiedenis worden hieronder weergegeven. Dit kan veranderen en dingen kunnen vertraging oplopen, maar u kunt zien wat er op de lijst staat."</string>
     <string name="licences_heading">Licenties voor bronnen die in deze app worden gebruikt</string>
@@ -466,7 +466,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="x509_cert_valid_from_field_pattern">Geldig vanaf:%1$s</string>
     <string name="x509_cert_valid_to_field_pattern">Geldig tot:%1$s</string>
     <string name="alert_warning_multiple_users_found_pattern">Er zijn%1$d andere gebruikers gevonden die deze gebruikersnaam (%2$s) delen. De meest recente gebruiker van deze Piwigo-server is geselecteerd, maar dit is niet veilig als het mogelijk is dat ze de server op hetzelfde of een vergelijkbaar tijdstip zullen gebruiken. Overweeg om deze gebruikersnamen te wijzigen, zodat de gebruikersnaam een ​​unieke identificatie is voor een bepaalde gebruikersklasse.</string>
-    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Deze machtigingen zijn nodig om een ​​uploadproces te starten en om het uploadproces te laten doorgaan zodra het scherm is uitgeschakeld</string>
+    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Deze machtigingen zijn nodig om een ​​uploadproces te starten en vervolgens het uploadproces te laten draaien zodra het scherm is uitgeschakeld</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">De volgende%1$d bestanden hebben de waarschuwingsdrempel overschreden:%2$s. Wilt u deze uit de upload verwijderen?</string>
     <string name="alert_files_larger_than_upload_threshold_compress">Wil je video\'s comprimeren voordat je ze uploadt?</string>
     <string name="download_link_clipboard_data_desc">Downloadlink voor%1$s</string>
@@ -599,7 +599,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="watch_advert_to_buy_advert_free_time">Wilt u een advertentie bekijken om een ​​korte periode zonder advertenties te kopen? U kunt dit meerdere keren doen om de tijdsduur desgewenst te verlengen.</string>
     <string name="reward_video_not_yet_loaded">Sorry, maar de beloningsvideo is nog niet geladen. Probeer het later opnieuw.</string>
     <string name="bought_time_menu_title_pattern">Advertenties in%1$02d:%2$02d</string>
-    <string name="allow_upload_of_incompressible_videos">Upload het onbewerkte bestand als het niet kan worden gecomprimeerd</string>
+    <string name="allow_upload_of_incompressible_videos">Upload het onbewerkte bestand als u het niet kunt comprimeren</string>
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">De server accepteert geen%1$d bestanden die zijn geselecteerd voor uploaden. Als dit video\'s zijn, kunt u compressie inschakelen. Wilt u deze bestanden uit de upload verwijderen?</string>
     <string name="upload_status_tab_title_details">Details</string>
     <string name="upload_status_tab_title_errors">Fouten</string>
@@ -666,7 +666,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="selected_files">Geselecteerde bestanden</string>
     <string name="uri_permission_justification_file_selection">Om bestanden of mappen te selecteren voor gebruik door deze app</string>
     <string name="alert_error_please_select_download_folder_and_retry">Selecteer een map om bestanden naar te downloaden in de app-instellingen en probeer het opnieuw.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Geen geldige uitvoerbestandsextensie (bij voorkeur%2$s) kon gevonden worden voor bestand (video:%3$b audio:%4$b) acceptabel voor de server onder opties (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Geen geldige uitvoerbestandsextensie (bij voorkeur%2$s) kon gevonden worden voor bestand (video:%3$b audio:%4$b) dat acceptabel is voor de server onder de opties (%1$s)</string>
     <string name="uuid_title">Installeer UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Kan geen bestanden toevoegen om te uploaden. Er wordt een uploadtaak uitgevoerd.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Kan geen bestanden toevoegen om te uploaden. De huidige uploadtaak moet eerst worden voltooid.</string>
@@ -676,7 +676,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="downloads_menu_title">Downloads</string>
     <string name="view_exported_files">Bekijk geëxporteerde bestanden</string>
     <string name="generating_upload_job">Upload Job configureren met uw selectie</string>
-    <string name="alert_error_files_without_permissions_pattern">Uri-machtigingen zijn niet voor alle bestanden verstrekt. Degenen zonder zullen niet uploaden als de taak wordt onderbroken en later wordt hervat (bijvoorbeeld door Android-energiebeheer). Om dit probleem te voorkomen, selecteert u bestanden om te uploaden met deze app indien mogelijk. Betreffende bestanden:%1$d.</string>
+    <string name="alert_error_files_without_permissions_pattern">Uri-machtigingen zijn niet voor alle bestanden verstrekt. Degenen zonder zullen niet uploaden als de taak wordt onderbroken en later wordt hervat (bijvoorbeeld door Android-energiebeheer). Om dit probleem te voorkomen, selecteert u indien mogelijk bestanden om te uploaden met deze app. Betreffende bestanden:%1$d.</string>
     <string name="button_compress">Samendrukken</string>
     <string name="unable_to_compress_without_data">Kan niet comprimeren zonder de instellingen</string>
     <string name="video_compression_settings_invalid">Videocompressie-instellingen zijn ongeldig. Controleer het en probeer het opnieuw.</string>
@@ -705,5 +705,5 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="no_errors_found_text">Geen fouten gevonden</string>
     <string name="no_errors_found_title">Fouten</string>
     <string name="upload">Uploaden</string>
-    <string name="supported_file_types">Deze lijst met bestandstypen zijn degene die door deze server zijn geconfigureerd om te accepteren.\n\nHet kan worden gewijzigd in het lokale / config / config.inc.php-bestand.</string>
+    <string name="supported_file_types">Deze lijst met bestandstypen zijn de bestandstypen die deze server moet accepteren.\n\nHet kan worden gewijzigd in het lokale / config / config.inc.php-bestand.</string>
 </resources>
