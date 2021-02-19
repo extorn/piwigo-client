@@ -176,18 +176,19 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         if (item == null) {
             throw new RuntimeException("unsupported gallery item.");
         }
+        int totalSlideshowItems = getTotalSlideshowItems();
+        int albumResourceCount = galleryResourceItemsFullGalleryIdx.size();
         if(item instanceof AlbumItemNotLoadedFragment) {
-            Bundle b = AlbumItemNotLoadedFragment.buildArgs(position);
+            Bundle b = AlbumItemNotLoadedFragment.buildArgs(position, albumResourceCount, totalSlideshowItems);
             item.setArguments(b);
             Logging.log(Log.DEBUG,TAG, "Created resource placeholder slideshow item");
         } else {
             GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItemsFullGalleryIdx.get(position));
-            int totalSlideshowItems = getTotalSlideshowItems();
             if (galleryItem instanceof PictureResourceItem) {
-                Bundle b = AlbumPictureItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItemsFullGalleryIdx.size(), totalSlideshowItems);
+                Bundle b = AlbumPictureItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, albumResourceCount, totalSlideshowItems);
                 item.setArguments(b);
             } else if (galleryItem instanceof VideoResourceItem) {
-                Bundle args = AbstractAlbumVideoItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItemsFullGalleryIdx.size(), totalSlideshowItems, false);
+                Bundle args = AbstractAlbumVideoItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, albumResourceCount, totalSlideshowItems, false);
                 item.setArguments(args);
             }
         }
