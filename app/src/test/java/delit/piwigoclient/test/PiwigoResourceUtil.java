@@ -115,4 +115,34 @@ public class PiwigoResourceUtil {
         }
         return expected;
     }
+
+    public static GalleryItem getItemFromPage(int pageIdx, int resourceIdxInPage, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages) {
+        for (ItemLoadPage<GalleryItem> resourceItemLoadPage : resourceItemLoadPages) {
+            if(resourceItemLoadPage.getPageIdx() == pageIdx) {
+                if(resourceIdxInPage >= 0 && resourceIdxInPage < resourceItemLoadPage.getItems().size()) {
+                    return resourceItemLoadPage.getItems().get(resourceIdxInPage);
+                }
+                throw new IllegalArgumentException("ResourceIdx ("+resourceIdxInPage+") not present on page");
+
+            }
+        }
+        throw new IllegalArgumentException("PageIdx ("+pageIdx+") not found amongst the pages provided");
+    }
+
+    public static int getExpectedAlbumIdx(PiwigoAlbum<?,?> album, GalleryItem seekItem, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages) {
+        int firstResourceIdx = album.getItemCount() - album.getResourcesCount();
+        int expectedIdx = 1; // account for the album header (if no albums, it is overwritten anyway)
+        if(seekItem instanceof ResourceItem) {
+            expectedIdx = firstResourceIdx;
+        }
+        for (ItemLoadPage<GalleryItem> resourceItemLoadPage : resourceItemLoadPages) {
+            int idxOfItem = resourceItemLoadPage.getItems().indexOf(seekItem);
+            if(idxOfItem < 0) {
+                expectedIdx += resourceItemLoadPage.getItems().size();
+            } else {
+                return expectedIdx + idxOfItem;
+            }
+        }
+        return -1; // item not present
+    }
 }
