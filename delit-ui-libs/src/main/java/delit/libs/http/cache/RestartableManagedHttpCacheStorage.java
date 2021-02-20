@@ -176,7 +176,7 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
                 if (sourceFile.exists()) {
                     if (sourceFile.length() > MAX_EXPECTED_CACHE_SIZE) {
                         oversizedCache  = true;
-                        Logging.recordException(new Exception("Cache index size larger than anticipated! - " + IOUtils.bytesToNormalizedText(sourceFile.length())));
+                        Logging.recordException(new Exception(String.format(Locale.UK, "Cache index size larger than anticipated on load! (%1$s). unknown entries (see next message)", IOUtils.bytesToNormalizedText(sourceFile.length()))));
                     }
                     entries = LegacyIOUtils.readObjectFromFile(sourceFile);
                     if(entries == null && oversizedCache) {
@@ -234,7 +234,7 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
                 }
             }
             if (destination.length() > MAX_EXPECTED_CACHE_SIZE) {
-                Logging.recordException(new Exception(String.format(Locale.UK, "Cache index size larger than anticipated! (%1$s). %2$d entries", IOUtils.bytesToNormalizedText(destination.length()), entries.size())));
+                Logging.recordException(new Exception(String.format(Locale.UK, "Cache index size larger than anticipated at save! (%1$s). %2$d entries", IOUtils.bytesToNormalizedText(destination.length()), entries.size())));
             }
         }
     }
