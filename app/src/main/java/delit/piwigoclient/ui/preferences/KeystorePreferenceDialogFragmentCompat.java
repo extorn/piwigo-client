@@ -64,6 +64,7 @@ import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.IOUtils;
+import delit.libs.util.Utils;
 import delit.libs.util.X509Utils;
 import delit.libs.util.security.CertificateLoadException;
 import delit.libs.util.security.CertificateLoadOperationResult;
@@ -400,7 +401,7 @@ public class KeystorePreferenceDialogFragmentCompat<F extends KeystorePreference
             } else if (item instanceof KeyStore.TrustedCertificateEntry) {
                 return VIEW_TYPE_CERTIFICATE;
             } else {
-                throw new RuntimeException("Unsupported keystore entry type : " + item.getClass().getName());
+                throw new RuntimeException("Unsupported keystore entry type : " + Utils.getId(item));
             }
         }
 
