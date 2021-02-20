@@ -175,9 +175,9 @@ public class ServerManagedPolicy implements Policy {
         try {
             lValidityTimestamp = Long.parseLong(validityTimestamp);
         } catch (NumberFormatException e) {
-Logging.recordException(e);
+            Logging.recordException(e);
             // No response or not parsable, expire in one minute.
-            Log.w(TAG, "License validity timestamp (VT) missing, caching for a minute");
+            Logging.log(Log.WARN, TAG, "License validity timestamp (VT) missing, caching for a minute");
             lValidityTimestamp = System.currentTimeMillis() + MILLIS_PER_MINUTE;
             validityTimestamp = Long.toString(lValidityTimestamp);
         }
@@ -202,9 +202,9 @@ Logging.recordException(e);
         try {
             lRetryUntil = Long.parseLong(retryUntil);
         } catch (NumberFormatException e) {
-Logging.recordException(e);
+            Logging.recordException(e);
             // No response or not parsable, expire immediately
-            Log.w(TAG, "License retry timestamp (GT) missing, grace period disabled");
+            Logging.log(Log.WARN, TAG, "License retry timestamp (GT) missing, grace period disabled");
             retryUntil = "0";
             lRetryUntil = 0L;
         }
@@ -231,7 +231,7 @@ Logging.recordException(e);
         } catch (NumberFormatException e) {
 //Logging.recordException(e);
             // No response or not parsable, expire immediately
-            Log.w(TAG, "Licence retry count (GR) missing, grace period disabled");
+            Logging.log(Log.WARN, TAG, "Licence retry count (GR) missing, grace period disabled");
             maxRetries = "0";
             lMaxRetries = 0L;
         }
@@ -278,8 +278,8 @@ Logging.recordException(e);
                 results.put(item.getName(), item.getValue());
             }
         } catch (URISyntaxException e) {
-Logging.recordException(e);
-          Log.w(TAG, "Invalid syntax error while decoding extras data from server.");
+            Logging.recordException(e);
+            Logging.log(Log.WARN, TAG, "Invalid syntax error while decoding extras data from server.");
         }
         return results;
     }
