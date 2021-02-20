@@ -62,6 +62,7 @@ import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.libs.util.ObjectUtils;
+import delit.libs.util.Utils;
 import delit.libs.util.progress.TaskProgressTracker;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -820,7 +821,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             b.putString("requestParams", handler.getRequestParameters().toString());
         }
         if(handler.getResponse() != null) {
-            b.putString("responseType", handler.getResponse().getClass().getName());
+            b.putString("responseType", Utils.getId(handler.getResponse()));
         }
         Throwable error = handler.getError();
         if(error != null) {
@@ -828,7 +829,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
         PiwigoSessionDetails.writeToBundle(b, connectionPrefs);
         Logging.logAnalyticEvent(this,"uploadError", b);
-        Logging.log(Log.WARN, TAG, "PwgMethod: %1$s, ReqP: %2$s, RespT: %3$s", handler.getPiwigoMethod(), handler.getRequestParameters(), handler.getResponse().getClass());
+        Logging.log(Log.WARN, TAG, "PwgMethod: %1$s, ReqP: %2$s, RespT: %3$s", handler.getPiwigoMethod(), handler.getRequestParameters(), Utils.getId(handler.getResponse()));
         if(handler.getError() != null) {
             Logging.recordException(handler.getError());
         }
