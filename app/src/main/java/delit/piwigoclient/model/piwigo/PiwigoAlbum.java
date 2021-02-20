@@ -156,11 +156,16 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     protected void sortItems(List<T> items) {
         Collections.sort(items, comparator);
         if(albumsNeedReversing) {
+            // reverses just the albums.
             albumsNeedReversing = false;
-            int fromIdx = Math.max(0,getItemIdx((T)StaticCategoryItem.ALBUM_HEADING) + 1);
-            int toIdx = Math.min(Math.max(0,getFirstResourceIdx() - 1), getItems().size());
-            Collections.reverse(getItems().subList(fromIdx, toIdx));
+            reverseTheAlbumOrder();
         }
+    }
+
+    private void reverseTheAlbumOrder() {
+        int fromIdx = Math.max(0,getItemIdx((T)StaticCategoryItem.ALBUM_HEADING) + 1);
+        int toIdx = fromIdx + childAlbumCount;
+        Collections.reverse(getItems().subList(fromIdx, toIdx));
     }
 
     @Override
@@ -221,18 +226,19 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
 
     @Override
     public T getItemByIdx(int idx) {
+        int wantedIdx = idx;
         try {
             if (hideAlbums) {
-                if (idx == 0) {
-                    super.getItemByIdx(0); // the album header
-                } else {
-                    // add the number of non resource items - 1 (for the album header)
-                    return super.getItemByIdx(idx + nonResourceItemsExcResourcesHeader() -1);
+                if (idx > 0) {
+                    wantedIdx += nonResourceItemsExcResourcesHeader();
+                    if(idx < getBannerCount()) {
+                        wantedIdx -= 1;
+                    }
                 }
             }
-            return super.getItemByIdx(idx);
+            return super.getItemByIdx(wantedIdx);
         } catch(IndexOutOfBoundsException e) {
-            Logging.log(Log.ERROR, TAG, toString()+" - idx requested : "+ idx);
+            Logging.log(Log.ERROR, TAG, toString()+" - idx requested : "+ idx + " translated to : " + wantedIdx);
             throw e;
         }
     }
@@ -304,9 +310,10 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             changed = false;
         }
         long blankId = StaticCategoryItem.BLANK.getId() + spacerAlbums; // ensure we don't add a duplicate ID
+        int insertAtIdx = 1 + childAlbumCount + spacerAlbums;
         while(spacerAlbums < spacerAlbumsNeeded) {
             changed = true;
-            addItem((T)StaticCategoryItem.BLANK.toInstance(blankId++));
+            addItem(insertAtIdx, (T)StaticCategoryItem.BLANK.toInstance(blankId++));
         }
         if(changed) {
             Logging.log(Log.DEBUG, TAG, "Spacer album count corrected by add");
@@ -354,7 +361,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
                     actualBannerCount++;
                 } else if(item instanceof CategoryItem) {
                     actualSubAlbumCount++;
-                } else if(ResourceItem.PICTURE_HEADING.equals(item)) {
+                } else if(GalleryItem.PICTURE_HEADING.equals(item)) {
                     actualBannerCount++;
                 }
             }
@@ -438,4 +445,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     }
 
 
+    protected int getSpacerAlbumCount() {
+        return spacerAlbums;
+    }
 }
