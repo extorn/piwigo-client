@@ -32,14 +32,14 @@ public enum VersionCompatability {
     }
 
     private boolean isFavoritesSupported() {
-        boolean nativeSupport = versionExceedsMinimum(getMinimumVersionForFavorites());
+        boolean nativeSupport = versionExceedsMinimum(getMinimumVersionForNativeFavoritesSupport());
         if(!nativeSupport) {
             nativeSupport = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isPiwigoClientPluginInstalled();
         }
         return nativeSupport;
     }
 
-    private int[] getMinimumVersionForFavorites() {
+    private int[] getMinimumVersionForNativeFavoritesSupport() {
         //TODO add this in when it is known
         //return new int[]{2, 9, 5};
         return new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
