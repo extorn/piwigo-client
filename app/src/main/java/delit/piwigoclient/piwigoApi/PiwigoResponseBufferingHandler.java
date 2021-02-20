@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.SafeRunnable;
+import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
@@ -182,7 +183,7 @@ public class PiwigoResponseBufferingHandler {
     private synchronized void requeueResponseForLaterProcessing(Response r, PiwigoResponseListener h) {
         //Trying to replace the handler and the response back on the queue for later processing.
         if (BuildConfig.DEBUG) {
-            Log.e("PiwigoResponseHandler", String.format("Unable to handle message response of type %1$s at this time - queuing for later", r.getClass().getName()));
+            Log.e("PiwigoResponseHandler", String.format("Unable to handle message response of type %1$s at this time - queuing for later", Utils.getId(r)));
         }
         if (r.isEndResponse()) {
             handlerResponseMap.put(r.getMessageId(), h.getHandlerId());
@@ -196,7 +197,7 @@ public class PiwigoResponseBufferingHandler {
         if (response.isEndResponse()) {
             handlerId = handlerResponseMap.remove(response.getMessageId());
 //            if (BuildConfig.DEBUG) {
-//                Log.d(TAG, String.format("Removed handler registered for message with id %2$d after receiving message of type %1$s ", response.getClass().getName(), response.getMessageId()));
+//                Log.d(TAG, String.format("Removed handler registered for message with id %2$d after receiving message of type %1$s ", Utils.getId(response), response.getMessageId()));
 //            }
         } else {
             handlerId = handlerResponseMap.get(response.getMessageId());
