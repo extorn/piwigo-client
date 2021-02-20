@@ -1067,8 +1067,8 @@ public class IOUtils {
         } catch (FileNotFoundException e) {
             return -1;
         } catch(SecurityException e) {
-            Logging.log(Log.ERROR, TAG, "No longer able to access file. %1$s", e.getMessage());
-            Logging.recordException(e);
+            Logging.log(Log.WARN, TAG, "No longer able to access file. %1$s", e.getMessage());
+//            Logging.recordException(e); (just noise on dashboard)
             return -1;
         } finally {
             if(pfd != null) {
