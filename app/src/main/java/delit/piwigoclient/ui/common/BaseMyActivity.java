@@ -235,27 +235,32 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
     protected DrawerLayout configureDrawer(CustomToolbar toolbar) {
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ViewCompat.setOnApplyWindowInsetsListener(drawer, (v, insets) -> {
-                if (!AppPreferences.isAlwaysShowStatusBar(prefs, v.getContext())) {
-                    insets.replaceSystemWindowInsets(
-                            insets.getStableInsetLeft(),
-                            0,
-                            insets.getStableInsetRight(),
-                            0);
-                    insets.consumeStableInsets();
-                    //TODO forcing the top margin like this is really not a great idea. Find a better way.
-                    ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = 0;
-                } else {
-                    if (!AppPreferences.isAlwaysShowNavButtons(prefs, v.getContext())) {
-                        int topMargin = ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin;
-                        if (topMargin == 0) {
-                            ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = insets.getSystemWindowInsetTop();
+            if(drawer == null) {
+                Logging.log(Log.ERROR, TAG, "Unable to retrieve drawer view in activity %1$s", Utils.getId(this));
+            } else {
+                ViewCompat.setOnApplyWindowInsetsListener(drawer, (v, insets) -> {
+                    if (!AppPreferences.isAlwaysShowStatusBar(prefs, v.getContext())) {
+                        insets.replaceSystemWindowInsets(
+                                insets.getStableInsetLeft(),
+                                0,
+                                insets.getStableInsetRight(),
+                                0);
+                        insets.consumeStableInsets();
+                        //TODO forcing the top margin like this is really not a great idea. Find a better way.
+                        ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = 0;
+                    } else {
+                        if (!AppPreferences.isAlwaysShowNavButtons(prefs, v.getContext())) {
+                            int topMargin = ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin;
+                            if (topMargin == 0) {
+                                ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = insets.getSystemWindowInsetTop();
+                            }
                         }
                     }
-                }
-                return insets;
-            });
+                    return insets;
+                });
+            }
         }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
