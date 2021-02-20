@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpUriRequest;
+import cz.msebera.android.httpclient.conn.HttpHostConnectException;
 import cz.msebera.android.httpclient.protocol.HttpContext;
 import delit.libs.core.util.Logging;
 import delit.libs.util.Utils;
@@ -93,7 +94,7 @@ public class AsyncHttpRequest implements Runnable {
 
     @Override
     public void run() {
-        Log.e("AsyncHttpRequest", "Running request " + request.toString() + " on thread " + Thread.currentThread().getName());
+        Log.d("AsyncHttpRequest", "Running request " + request.toString() + " on thread " + Thread.currentThread().getName());
 
         if (isCancelled()) {
             return;
@@ -189,8 +190,18 @@ public class AsyncHttpRequest implements Runnable {
                 try {
                     makeRequest();
                     return;
+                } catch(HttpHostConnectException e) {
+                    // host unavailable - device off network or just no route to host
+                    if(BuildConfig.DEBUG) {
+                        Logging.recordException(e);
+                    }
+                    // initiate retry logic in case this is for the same reason as UnknownHost - i.e. switching to/from WIFI
+                    cause = new IOException("HttpHostConnectException: " + e.getMessage(), e);
+                    retry = (executionCount > 0) && retryHandler.retryRequest(e, ++executionCount, context);
                 } catch (UnknownHostException e) {
-                    Logging.recordException(e);
+                    if(BuildConfig.DEBUG) {
+                        Logging.recordException(e);
+                    }
                     // switching between WI-FI and mobile data networks can cause a retry which then results in an UnknownHostException
                     // while the WI-FI is initialising. The retry logic will be invoked here, if this is NOT the first retry
                     // (to assist in genuine cases of unknown host) which seems better than outright failure
