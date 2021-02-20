@@ -80,10 +80,9 @@ public class LicenceCheckingHelper<T extends BaseMyActivity<T,UIH>,UIH extends A
         new Random(getVersionCode(activity)).nextBytes(salt);
 
 
-        mChecker = new LicenseChecker(
-                activity, new ServerManagedPolicy(activity.getApplicationContext(),
-                new AESObfuscator(salt, delit.piwigoclient.BuildConfig.APPLICATION_ID, appInstallGuid, true)),
-                BASE64_PUBLIC_KEY);
+        AESObfuscator obfuscator = new AESObfuscator(salt, delit.piwigoclient.BuildConfig.APPLICATION_ID, appInstallGuid, true);
+        ServerManagedPolicy policy = new ServerManagedPolicy(activity.getApplicationContext(), obfuscator);
+        mChecker = new LicenseChecker(activity, policy, BASE64_PUBLIC_KEY);
         doVisualCheck(activity.getApplicationContext());
     }
 
@@ -181,6 +180,7 @@ public class LicenceCheckingHelper<T extends BaseMyActivity<T,UIH>,UIH extends A
 
     private synchronized void doCheck() {
         if(mLicenseCheckerCallback == null || mChecker == null) {
+            Logging.logAnalyticEventIfPossible("Skipping licence check");
             Logging.log(Log.DEBUG, TAG, "Skipping licence check");
             return;
         }
