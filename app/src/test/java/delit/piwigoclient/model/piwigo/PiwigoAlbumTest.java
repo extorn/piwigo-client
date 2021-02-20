@@ -10,15 +10,19 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.internal.util.Primitives;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import delit.libs.core.util.Logging;
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.test.CategoryItemFactory;
 import delit.piwigoclient.test.IdentifiableItemFactory;
 import delit.piwigoclient.test.ItemLoadPage;
@@ -114,7 +118,7 @@ public class PiwigoAlbumTest {
         assertEquals(resourceCount, album.getResourcesCount());
         assertEquals(albumsCount, album.getChildAlbumCount());
         assertEquals(album.getItemByIdx(0), StaticCategoryItem.ALBUM_HEADING);
-        for(int i = 2; i <= resourceCount; i++) {
+        for(int i = album.getBannerCount(); i <= resourceCount; i++) {
             assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
         }
         album.removeAllResources();
@@ -137,11 +141,84 @@ public class PiwigoAlbumTest {
         } else {
             assertEquals(1, album.getItemCount()); // just the album header
         }
-        for(int i = 2; i <= resourceCount; i++) {
+        for(int i = album.getBannerCount(); i <= resourceCount; i++) {
             assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
         }
         album.removeAllResources();
         assertEquals(0, album.getResourcesCount());
+    }
+
+    @Test
+    public void testAllResourcesPagesMissing() {
+        int sortOrder = PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
+        boolean reversed = false;
+        int pages = 5;
+        int pageSize = 3;
+        int headers = 1;
+        int loadedAlbums = 0;
+
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, pages, pageSize);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(0, 15));
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesToSkip = skipResourcePageLoads(resourceItemLoadPages, Arrays.asList(1,2,5));
+        loadResourceItemPages(resourceItemLoadPages, album);
+        album.setRetrieveChildAlbumsInReverseOrder(reversed);
+        album.setRetrieveItemsInReverseOrder(reversed);
+
+        int loadedItemCount = getItemCountForPages(resourceItemLoadPages);
+        int skippedItems = getItemCountForPages(resourceItemLoadPagesToSkip);
+
+        assertEquals(loadedAlbums, album.getChildAlbumCount());
+        assertEquals(loadedItemCount, album.getResourcesCount());
+        assertEquals(loadedItemCount + headers, album.getItemCount());
+        int expectedResourceHeaderIdx = album.getItemCount() - album.getResourcesCount() - 1;
+        assertEquals(album.getItemByIdx(expectedResourceHeaderIdx), StaticCategoryItem.PICTURE_HEADING);
+
+        for(int i = headers; i <= album.getResourcesCount(); i++) {
+            GalleryItem testItem = album.getItemByIdx(i);
+            assertTrue("Item at idx "+ i+" was not a resource item : " + testItem ,testItem instanceof ResourceItem);
+        }
+
+        album.setHideAlbums(true);
+
+        assertEquals(loadedAlbums, album.getChildAlbumCount());
+        assertEquals(loadedItemCount, album.getResourcesCount());
+        assertEquals(loadedItemCount + headers, album.getItemCount());
+
+        expectedResourceHeaderIdx = album.getItemCount() - album.getResourcesCount() - 1;
+        assertEquals(album.getItemByIdx(expectedResourceHeaderIdx), StaticCategoryItem.PICTURE_HEADING);
+
+        for(int i = headers; i <= album.getResourcesCount(); i++) {
+            GalleryItem testItem = album.getItemByIdx(i);
+            assertTrue("Item at idx "+ i+" was not a resource item : " + testItem ,testItem instanceof ResourceItem);
+        }
+        album.removeAllResources();
+        assertEquals(0, album.getResourcesCount());
+    }
+
+    private int getItemCountForPages(List<ItemLoadPage<GalleryItem>> resourceItemLoadPages) {
+        int count = 0;
+        for (ItemLoadPage<GalleryItem> resourceItemLoadPage : resourceItemLoadPages) {
+            count += resourceItemLoadPage.getItems().size();
+        }
+        return count;
+    }
+
+    /**
+     * Removes the pages from the list to load and returns them as a new list.
+     * @param resourceItemLoadPages
+     * @param pagesToSkip
+     * @return
+     */
+    private List<ItemLoadPage<GalleryItem>> skipResourcePageLoads(List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, List<Integer> pagesToSkip) {
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesSkipped = new ArrayList<ItemLoadPage<GalleryItem>>();
+        for (Iterator<ItemLoadPage<GalleryItem>> iterator = resourceItemLoadPages.iterator(); iterator.hasNext(); ) {
+            ItemLoadPage<GalleryItem> resourceItemLoadPage = iterator.next();
+            if (pagesToSkip.contains(resourceItemLoadPage.getPageIdx())) {
+                resourceItemLoadPagesSkipped.add(resourceItemLoadPage);
+                iterator.remove();
+            }
+        }
+        return resourceItemLoadPagesSkipped;
     }
 
     @Test
@@ -226,8 +303,8 @@ public class PiwigoAlbumTest {
         assertEquals(resourceCount + 2, album.getItemCount());
         assertEquals(resourceCount, album.getResourcesCount());
         assertEquals(albumsCount, album.getChildAlbumCount());
-        assertEquals(album.getItemByIdx(0), StaticCategoryItem.ALBUM_HEADING);
-        assertEquals(album.getItemByIdx(1), ResourceItem.PICTURE_HEADING);
+        assertEquals(StaticCategoryItem.ALBUM_HEADING, album.getItemByIdx(0));
+        assertEquals(ResourceItem.PICTURE_HEADING, album.getItemByIdx(1));
         for(int i = 2; i <= resourceCount; i++) {
             assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
         }
@@ -254,6 +331,28 @@ public class PiwigoAlbumTest {
     }
 
     @Test
+    public void testAddSpacerAlbumsMixedContentReversed() {
+        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategoriesFirst(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true, 0);
+        int startCount = album.getItemCount();
+        int startAlbumCount = album.getChildAlbumCount();
+        int startResourceCount = album.getResourcesCount();
+        album.setSpacerAlbumCount(3);
+        assertEquals(startCount + 3, album.getItemCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startResourceCount, album.getResourcesCount());
+        assertEquals(3, album.getItemCount() - (album.getResourcesCount() + album.getChildAlbumCount() + album.getBannerCount()));
+        assertEquals(StaticCategoryItem.BLANK,  album.getItemByIdx(album.getChildAlbumCount() + 1));
+        // try changing the spacer album count
+        album.setSpacerAlbumCount(5);
+        assertEquals(startCount + 5, album.getItemCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startResourceCount, album.getResourcesCount());
+        assertEquals(5, album.getItemCount() - (album.getResourcesCount() + album.getChildAlbumCount() + album.getBannerCount()));
+        assertEquals(StaticCategoryItem.BLANK,  album.getItemByIdx(album.getChildAlbumCount() + 1));
+    }
+
+    @Test
     public void testAddSpacerAlbumsCategoriesOnly() {
         PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategories(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, 0);
         int startCount = album.getItemCount();
@@ -264,6 +363,7 @@ public class PiwigoAlbumTest {
         assertEquals(startAlbumCount, album.getChildAlbumCount());
         assertEquals(startResourceCount, album.getResourcesCount());
         assertEquals(3, album.getItemCount() - (album.getResourcesCount() + album.getChildAlbumCount() + album.getBannerCount()));
+        assertEquals(StaticCategoryItem.BLANK,  album.getItemByIdx(album.getChildAlbumCount() + 1));
         // try changing the spacer album count
         album.setSpacerAlbumCount(5);
         assertEquals(startCount + 5, album.getItemCount());
@@ -271,6 +371,29 @@ public class PiwigoAlbumTest {
         assertEquals(startAlbumCount, album.getChildAlbumCount());
         assertEquals(startResourceCount, album.getResourcesCount());
         assertEquals(5, album.getItemCount() - (album.getResourcesCount() + album.getChildAlbumCount() + album.getBannerCount()));
+        assertEquals(StaticCategoryItem.BLANK,  album.getItemByIdx(album.getChildAlbumCount() + 1));
+    }
+
+    @Test
+    public void testAddSpacerAlbumsCategoriesOnlyReversed() {
+        PiwigoAlbum<CategoryItem,GalleryItem> album = loadCategories(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true, 0);
+        int startCount = album.getItemCount();
+        int startAlbumCount = album.getChildAlbumCount();
+        int startResourceCount = album.getResourcesCount();
+        album.setSpacerAlbumCount(3);
+        assertEquals(startCount + 3, album.getItemCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startResourceCount, album.getResourcesCount());
+        assertEquals(3, album.getItemCount() - (album.getResourcesCount() + album.getChildAlbumCount() + album.getBannerCount()));
+        assertEquals(StaticCategoryItem.BLANK,  album.getItemByIdx(album.getChildAlbumCount() + 1));
+        // try changing the spacer album count
+        album.setSpacerAlbumCount(5);
+        assertEquals(startCount + 5, album.getItemCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startAlbumCount, album.getChildAlbumCount());
+        assertEquals(startResourceCount, album.getResourcesCount());
+        assertEquals(5, album.getItemCount() - (album.getResourcesCount() + album.getChildAlbumCount() + album.getBannerCount()));
+        assertEquals(StaticCategoryItem.BLANK,  album.getItemByIdx(album.getChildAlbumCount() + 1));
     }
 
     @Test
@@ -562,8 +685,9 @@ public class PiwigoAlbumTest {
             expected.add(StaticCategoryItem.ALBUM_HEADING);
         }
         ArrayList<CategoryItem> cats = new ArrayList<>(categoryItemLoad);
+        int insertAt = reverseOrder ? 0 : cats.size();
         for(int i = 0; i < spacerAlbumCount; i++) {
-            cats.add(StaticCategoryItem.BLANK.toInstance());
+            cats.add(insertAt, StaticCategoryItem.BLANK.toInstance());
         }
         if(reverseOrder) {
             Collections.reverse(cats);
@@ -594,9 +718,10 @@ public class PiwigoAlbumTest {
         album.setSpacerAlbumCount(spacerAlbumCount);
 
         List<CategoryItem> expected = new ArrayList<>(categoryItemLoad);
+        int insertAt = album.isRetrieveItemsInReverseOrder() ? 0 : expected.size();
         for(int i = 0; i < spacerAlbumCount; i++) {
             CategoryItem spacer = StaticCategoryItem.BLANK.toInstance();
-            expected.add(spacer);
+            expected.add(insertAt, spacer);
         }
 
         if(album.isRetrieveItemsInReverseOrder()) {
@@ -676,8 +801,8 @@ public class PiwigoAlbumTest {
             } else {
                 lastAlbumIdx = album.getItemCount() - 1;
             }
-
-            int idxItemToRemove = (album.isRetrieveAlbumsInReverseOrder() ? lastAlbumIdx - removeItemAtOffset : 1 + removeItemAtOffset);
+            int spacerCount = album.getSpacerAlbumCount();
+            int idxItemToRemove = (album.isRetrieveAlbumsInReverseOrder() ? lastAlbumIdx - removeItemAtOffset - spacerCount : 1 + removeItemAtOffset);
             removeAndReplaceItem(album, categoryItemLoad.get(removeItemAtOffset), idxItemToRemove, expectedResult);
             album.setHideAlbums(hideAlbums);
         }

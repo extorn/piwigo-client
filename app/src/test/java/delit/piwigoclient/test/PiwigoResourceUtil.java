@@ -45,24 +45,26 @@ public class PiwigoResourceUtil {
     }
 
     public static void assertHasBeenReversed(List<GalleryItem> originalOrder, ArrayList<GalleryItem> reversedOrder, boolean categoriesReversed, boolean resourcesReversed) {
-        List<Integer> bannersAtIdx = new ArrayList<>();
+        List<Integer> staticItemAtIdx = new ArrayList<>();
         int i = 0;
         for(GalleryItem item : originalOrder) {
-            if(item == ResourceItem.PICTURE_HEADING || item == StaticCategoryItem.ALBUM_HEADING || item == StaticCategoryItem.ADVERT) {
-                bannersAtIdx.add(i);
+            if(item == ResourceItem.PICTURE_HEADING || item == StaticCategoryItem.ALBUM_HEADING || item.equals(StaticCategoryItem.BLANK) || item == StaticCategoryItem.ADVERT) {
+                staticItemAtIdx.add(i);
             }
             i++;
         }
+        // add a phantom static item beyond the end of the list so we catch up to this.
+        staticItemAtIdx.add(originalOrder.size());
         int fromIdx = 0;
         int toIdx = 0;
         int checksDone = 0;
-        for(int nonItemIdx : bannersAtIdx) {
-            if(fromIdx == nonItemIdx) {
-                fromIdx++;
+        for(int staticItemIdx : staticItemAtIdx) {
+            if(fromIdx == staticItemIdx || fromIdx < 0) {
+                fromIdx = staticItemIdx + 1;
                 continue;
             }
-            if(fromIdx >= 0) {
-                toIdx = nonItemIdx;
+            if(toIdx < staticItemIdx) {
+                toIdx = staticItemIdx;
             }
             if(toIdx != fromIdx) {
                 if(toIdx - fromIdx > 1) {
@@ -70,7 +72,7 @@ public class PiwigoResourceUtil {
                     if(originalOrder.get(fromIdx-1) == StaticCategoryItem.ALBUM_HEADING) {
                         reverseExpected = categoriesReversed;
                     } else if(originalOrder.get(fromIdx-1) == CategoryItem.PICTURE_HEADING) {
-                        reverseExpected = resourcesReversed;
+                        reverseExpected = false;//resourcesReversed;
                     }
                     // there is an item to check is reversed
                     List<GalleryItem> originalArr = originalOrder.subList(fromIdx, toIdx);
@@ -82,6 +84,7 @@ public class PiwigoResourceUtil {
                     logger.log(Level.FINE, String.format("Checking for equality from album idx %1$d to %2$d", fromIdx, toIdx));
                     assertArrayEquals(expectedReversed.toArray(), reversedArr.toArray());
                     checksDone++;
+                    fromIdx = -1; // reset so it grabs the next block
                 } else {
                     fromIdx = toIdx;
                 }
