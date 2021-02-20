@@ -19,4 +19,6 @@
     android:versionName="1.5">
     <!-- Required permission to check licensing. -->
     <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
+    <!-- required for monitoring wifi etc (for the licence check) -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 </manifest>
