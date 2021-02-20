@@ -145,11 +145,15 @@
         <item>"* Primárně pouze opravy chyb
                 * Možnost Přidat možnost umožňující sdílení přístupu ke složce jako uri v e-mailu - bude to zahrnovat vytvoření běžného uživatele, povolení ke složce a souboru, vytvoření tokenu pro pověření a podrobnosti uri pro vložení do odkazu http a způsob správy těchto tokenů na serveru."</item>
         
-        <item>1.4.0.124</item>
+        <item>1.4.0.125</item>
         <item>"Oprava chyby:
                  - implementujte tlačítko pro obnovení na stránce slideshow \'item not loaded\'"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.124</item>
+        <item>"Oprava chyby:
+                 - Několik neočekávaných chyb
+                 - chyba při objednávání na prezentacích a stránkách alba"</item>
         <item>1.4.0.123</item>
         <item>"Oprava chyby:
                  - Seznam administrátorů tagů sloučených správně se seznamem uživatelů při načítání tagů

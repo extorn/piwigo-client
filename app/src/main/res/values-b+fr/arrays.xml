@@ -145,11 +145,15 @@
         <item>"* Principalement des corrections de bugs uniquement
                 * Peut-être ajouter une option pour autoriser le partage de l\'accès à un dossier en tant qu\'URI dans un e-mail - cela impliquera de créer un utilisateur normal, de lui donner l\'autorisation d\'accéder au dossier et au fichier, de créer un jeton pour les informations d\'identification et les détails d\'URI pour l\'incorporation dans un lien http , et un moyen de gérer ces jetons sur le serveur."</item>
         
-        <item>1.4.0.124</item>
+        <item>1.4.0.125</item>
         <item>"Correction d\'un bug:
                  - implémenter le bouton d\'actualisation sur la page \'élément non chargé\' du diaporama"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.124</item>
+        <item>"Correction d\'un bug:
+                 - Plusieurs erreurs inattendues
+                 - erreur de commande sur les pages de diaporama et d\'album"</item>
         <item>1.4.0.123</item>
         <item>"Correction d\'un bug:
                  - Liste d\'administration des balises fusionnée correctement avec la liste des utilisateurs lors du chargement des balises
