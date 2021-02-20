@@ -48,6 +48,7 @@ import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
+import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -287,7 +288,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             Bundle errBundle = new Bundle();
             errBundle.putString("error", e.getMessage());
             errBundle.putString("galleryModelClass", galleryModelClass.getName());
-            errBundle.putString("modelStoreClass", modelStore.getClass().getName());
+            errBundle.putString("modelStore", Utils.getId(modelStore));
             errBundle.putLong("galleryItemId", galleryItemId);
             errBundle.putLong("modelId", galleryModelId);
             errBundle.putLong("itemCount", modelStore.getItemCount());
