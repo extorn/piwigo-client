@@ -54,9 +54,9 @@ public class AlbumSortingCategoryComparator implements Comparator<GalleryItem>, 
                 // avoid perpetual sorting of blank items
                 boolean sortInList = albumSortOrder == PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT;
                 if (StaticCategoryItem.BLANK.equals(o1)) {
-                    return StaticCategoryItem.BLANK.equals(o2) ? 0 : sortInList ? -autoReverse : autoReverse; // push the spacers to the end
+                    return StaticCategoryItem.BLANK.equals(o2) ? 0 : sortInList ? 1 : 1; // push the spacers to the end
                 } else if (StaticCategoryItem.BLANK.equals(o2)) {
-                    return StaticCategoryItem.BLANK.equals(o1) ? 0 : sortInList ? autoReverse : -autoReverse;  // push the spacers to the end
+                    return StaticCategoryItem.BLANK.equals(o1) ? 0 : sortInList ? -1 : -1;  // push the spacers to the end
                 }
                 switch (albumSortOrder) {
                     case PiwigoAlbum.ALBUM_SORT_ORDER_DATE:
