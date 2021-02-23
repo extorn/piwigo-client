@@ -1417,4 +1417,19 @@ public class IOUtils {
         String mimeType = IOUtils.getMimeType(context, file);
         return null != MimeTypeFilter.matches(mimeType, new String[]{"video/*", "audio/*"});
     }
+
+    public static int fillBufferFromStream(InputStream inputStream, byte[] buffer) throws IOException {
+        int bytesRead;
+        int totalBytesRead = 0;
+        do {
+            bytesRead = inputStream.read(buffer, totalBytesRead, buffer.length - totalBytesRead);
+            if (bytesRead > 0) {
+                totalBytesRead += bytesRead;
+            }
+        } while(bytesRead > 0 && totalBytesRead < buffer.length);
+        if(totalBytesRead == 0 && bytesRead == -1) {
+            totalBytesRead = -1;
+        }
+        return totalBytesRead;
+    }
 }
