@@ -59,8 +59,8 @@ public class TaskProgressTracker implements ProgressListener {
         return Math.max(listenerMinimumNotifiableProgress, taskTrackerMinimumReportingProgress);
     }
 
-    public synchronized TaskProgressTracker addSubTask(String subTaskName, long subTaskTotalWork, long mainTaskWorkUnits) {
-        TaskProgressTracker subTaskTracker = new TaskProgressTracker(subTaskName, subTaskTotalWork, calculateScalar(mainTaskWorkUnits), getSubTaskListener());
+    public synchronized TaskProgressTracker addSubTask(String subTaskName, long subTaskTotalWork, long mainTaskWorkUnitsInSubTask) {
+        TaskProgressTracker subTaskTracker = new TaskProgressTracker(subTaskName, subTaskTotalWork, calculateScalar(mainTaskWorkUnitsInSubTask), getSubTaskListener());
         subTasks.add(subTaskTracker);
         return subTaskTracker;
     }
@@ -109,7 +109,9 @@ public class TaskProgressTracker implements ProgressListener {
             currentScaledProgress = calculateProgressValue() * scalar;
         }
         notifyListenersOfProgress();
-        notifyAll();
+        synchronized (this) {
+            notifyAll();
+        }
     }
 
     public synchronized boolean isComplete() {
@@ -250,12 +252,12 @@ public class TaskProgressTracker implements ProgressListener {
           * @param percent current task completion status
           */
          @Override
-         public void onProgress(@FloatRange(from = 0, to = 1) double percent) {
+         public synchronized void onProgress(@FloatRange(from = 0, to = 1) double percent) {
              overallTaskTracker.afterTaskProgress();
          }
 
          @Override
-         public double getUpdateStep() {
+         public synchronized double getUpdateStep() {
              // update this 10 times as frequently as this updates its listener.
              return overallTaskTracker.notifiableProgressStep / 10;
          }
