@@ -414,7 +414,7 @@
     <string name="preference_data_upload_allow_upload_of_incompressible_videos_key" translatable="false">preference_data_upload_allow_upload_of_incompressible_videos</string>
     <string name="preference_data_upload_allow_upload_of_incompressible_videos_summary" translatable="false">@string/allow_upload_of_incompressible_videos</string>
     <string name="preference_data_upload_allow_upload_of_incompressible_videos_title" translatable="false">@string/allow_upload_of_incompressible_videos</string>
-    <bool name="preference_data_upload_allow_upload_of_incompressible_videos_default">true</bool>
+    <bool name="preference_data_upload_allow_upload_of_incompressible_videos_default">false</bool>
 
     <string name="preference_data_upload_compress_videos_quality_title">Video Quality</string>
     <string name="preference_data_upload_compress_videos_quality_summary">Video compression quality %1$s</string>
