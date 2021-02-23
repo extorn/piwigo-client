@@ -60,6 +60,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     private TreeSet<Sample> queuedData = new TreeSet<>();
     private boolean safeShutdownInProgress;
     private Context context;
+    private int dumpedDataByteCount;
 
 
     public MediaMuxerControl(Context context, Uri inputFile, Uri outputFile, ExoPlayerCompression.CompressionListener listener) throws IOException {
@@ -156,6 +157,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         trackStatistics.clear();
         mediaMuxer = null;
         isFinished = false;
+        dumpedDataByteCount = 0;
     }
 
     public boolean startMediaMuxer() {
@@ -393,7 +395,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
      * @return percentage 0 - 1
      */
     public double getOverallProgress() {
-        long bytesTranscoded = getBytesTranscoded();
+        long bytesTranscoded = getBytesTranscoded() + dumpedDataByteCount;
 
         double progress = BigDecimal.valueOf(bytesTranscoded).divide(BigDecimal.valueOf(inputBytes), new MathContext(2, RoundingMode.DOWN)).doubleValue();
         return progress;
@@ -416,11 +418,11 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         long bytesTranscoded = 0;
         TrackStats trackStats = trackStatistics.get("video");
         if (trackStats != null) {
-            bytesTranscoded += trackStats.getOriginalBytesTranscoded();
+            bytesTranscoded += Math.max(0, trackStats.getOriginalBytesTranscoded());
         }
         trackStats = trackStatistics.get("audio");
         if (trackStats != null) {
-            bytesTranscoded += trackStats.getOriginalBytesTranscoded();
+            bytesTranscoded += Math.max(0, trackStats.getOriginalBytesTranscoded());
         }
         return bytesTranscoded;
     }
@@ -627,6 +629,10 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
                 }
             }
         }
+    }
+
+    public void writeDumpedInputData(int limit) {
+        dumpedDataByteCount += limit;
     }
 
 

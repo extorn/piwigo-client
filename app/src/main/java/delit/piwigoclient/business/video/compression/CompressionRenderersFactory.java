@@ -50,6 +50,15 @@ public class CompressionRenderersFactory extends DefaultRenderersFactory {
                     eventHandler,
                     eventListener,
                     MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY, mediaMuxerControl, compressionParameters.getVideoCompressionParameters()));
+        } else {
+            out.add(new VideoTrackDumpingRenderer(context,
+                    MediaCodecSelector.DEFAULT,
+                    allowedVideoJoiningTimeMs,
+                    drmSessionManager,
+                    false,
+                    eventHandler,
+                    eventListener,
+                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY, mediaMuxerControl));
         }
     }
 

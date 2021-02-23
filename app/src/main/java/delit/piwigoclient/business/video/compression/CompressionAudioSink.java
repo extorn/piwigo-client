@@ -34,7 +34,7 @@ public class CompressionAudioSink implements AudioSink {
     public static final String SUCCESS_ERROR_CODE = "1234567890";
     private final ExoPlayerCompression.AudioCompressionParameters compressionSettings;
 
-    private static final boolean VERBOSE_LOGGING = true;
+    private static final boolean VERBOSE_LOGGING = false;
     private static final String TAG = "MyAudioSink";
     private final MediaMuxerControl mediaMuxerControl;
     private MediaCodec.BufferInfo audioBufferInfo = new MediaCodec.BufferInfo(); // shared copy for efficiency.
@@ -551,8 +551,8 @@ public class CompressionAudioSink implements AudioSink {
         audioBufferInfo.size = buffer.remaining();
         audioBufferInfo.presentationTimeUs = bufferPresentationTimeUs;
 
-
-        mediaMuxerControl.writeSampleData(mediaMuxerControl.getAudioTrackId(), buffer, audioBufferInfo, -1L);
+        long origAudioBytes = getAudioDataOriginalBytesToTime(bufferPresentationTimeUs);
+        mediaMuxerControl.writeSampleData(mediaMuxerControl.getAudioTrackId(), buffer, audioBufferInfo, origAudioBytes);
     }
 
     private void releaseEncoder() {

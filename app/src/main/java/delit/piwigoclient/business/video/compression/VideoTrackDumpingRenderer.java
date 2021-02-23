@@ -10,47 +10,34 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.audio.AudioCapabilities;
-import com.google.android.exoplayer2.audio.AudioProcessor;
-import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-import com.google.android.exoplayer2.audio.DefaultAudioSink;
-import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.util.MediaClock;
+import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
+import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.nio.ByteBuffer;
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-public class AudioTrackDumpingRenderer extends MediaCodecAudioRenderer {
+public class VideoTrackDumpingRenderer extends MediaCodecVideoRenderer {
 
-    private static final String TAG = "AudioDumpRender";
+    private static final String TAG = "VideoDumpRender";
     private final boolean VERBOSE = false;
     private final MediaMuxerControl mediaMuxerControl;
 
-    public AudioTrackDumpingRenderer(Context context, MediaCodecSelector mediaCodecSelector, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable AudioRendererEventListener eventListener, MediaMuxerControl mediaMuxerControl) {
-        super(context, mediaCodecSelector, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, new DefaultAudioSink(AudioCapabilities.getCapabilities(context), new AudioProcessor[0]));
+    public VideoTrackDumpingRenderer(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify, MediaMuxerControl mediaMuxerControl) {
+        super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, maxDroppedFramesToNotify);
         this.mediaMuxerControl = mediaMuxerControl;
     }
 
     @Override
-    protected boolean allowPassthrough(String mimeType) {
-        return true;
-    }
-
-    @Override
     protected void onStarted() {
-        //super.super.onStarted(); // does nothing
-//        audioSink.play(); // illogical
     }
 
     @Override
     protected void onStopped() {
-//        updateCurrentPosition(); // corrupts current position by reading from the sink which we're not using.
-//        audioSink.pause(); // illogical
-//        super.super.onStopped(); // does nothing
     }
 
     @Override
@@ -65,7 +52,7 @@ public class AudioTrackDumpingRenderer extends MediaCodecAudioRenderer {
     @Override
     public void render(long positionUs, long elapsedRealtimeUs) throws ExoPlaybackException {
         if (VERBOSE) {
-            Log.d(TAG, String.format("Checking audio buffer at positionUs %1$d", positionUs));
+            Log.d(TAG, String.format("Checking video buffer at positionUs %1$d", positionUs));
         }
         super.render(positionUs, elapsedRealtimeUs);
     }
@@ -74,7 +61,7 @@ public class AudioTrackDumpingRenderer extends MediaCodecAudioRenderer {
     protected boolean processOutputBuffer(long positionUs, long elapsedRealtimeUs, MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean shouldSkip) {
         if (bufferPresentationTimeUs > positionUs + 500000) {
             if (VERBOSE) {
-                Log.e(TAG, "Audio Processor - Giving up render to video at position " + positionUs);
+                Log.e(TAG, "Video Processor - Giving up render to audio at position " + positionUs);
             }
             return false;
         }
@@ -89,10 +76,6 @@ public class AudioTrackDumpingRenderer extends MediaCodecAudioRenderer {
 
     @Override
     public MediaClock getMediaClock() {
-        if (mediaMuxerControl.isHasVideo()) {
-            return null; // don't act like a clock!
-        } else {
-            return super.getMediaClock();
-        }
+        return null;
     }
 }

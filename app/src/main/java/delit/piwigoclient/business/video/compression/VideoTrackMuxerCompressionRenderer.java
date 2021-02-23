@@ -54,7 +54,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
     //    private static final String MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_MPEG4; // MPEG4 format
     private final static boolean VERBOSE_LOGGING = false;
     private final MediaMuxerControl mediaMuxerControl;
-    private static final String TAG = "CompressionVidRenderer";
+    private static final String TAG = "VideoCompressRenderer";
     private final ExoPlayerCompression.VideoCompressionParameters compressionSettings;
     private int pendingRotationDegrees;
     private LinkedHashMap<Long,Integer> sampleTimeSizeMap = new LinkedHashMap<>(100);

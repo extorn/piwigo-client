@@ -32,7 +32,7 @@ import delit.libs.core.util.Logging;
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer {
 
-    private static final String TAG = "AudioCompressingRenderer";
+    private static final String TAG = "AudioCompressRender";
     private final MediaMuxerControl mediaMuxerControl;
     private final ExoPlayerCompression.AudioCompressionParameters compressionSettings;
     private final CompressionAudioSink audioSink;
