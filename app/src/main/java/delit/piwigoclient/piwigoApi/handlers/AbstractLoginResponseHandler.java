@@ -14,6 +14,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
 import java.net.UnknownHostException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
@@ -86,14 +89,13 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
 
         loginResponse.setNewSessionDetails(PiwigoSessionDetails.getInstance(connectionPrefs));
 
-        if(canContinue && !PiwigoSessionDetails.getInstance(connectionPrefs).isMethodsAvailableListAvailable()) {
-            canContinue = loadMethodsAvailable();
-        }
-
-
-        if (canContinue) {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 5, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        if(canContinue) {
+            if(!PiwigoSessionDetails.getInstance(connectionPrefs).isMethodsAvailableListAvailable()) {
+                executor.execute(this::loadMethodsAvailable);
+            }
             if (PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
-                canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
+                executor.execute(()->retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs)));
             } else {
                 PiwigoSessionDetails instance = getPiwigoSessionDetails();
                 if (instance != null) {
@@ -104,32 +106,29 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
                     Logging.logAnalyticEvent(getContext(),"SessionNull", b);
                 }
             }
-        }
-
-        if (canContinue && isNeedUserDetails(PiwigoSessionDetails.getInstance(connectionPrefs))) {
-            canContinue = loadUserDetails();
-        }
-
-        if(canContinue) {
+            if (isNeedUserDetails(PiwigoSessionDetails.getInstance(connectionPrefs))) {
+                executor.execute(this::loadUserDetails);
+            }
             PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
             if (sessionDetails.isMethodAvailable(PiwigoClientGetPluginDetailResponseHandler.WS_METHOD_NAME)) {
                 sessionDetails.setPiwigoClientPluginVersion("1.0.5");
-                canContinue = loadPiwigoClientPluginDetails();
+                executor.execute(this::loadPiwigoClientPluginDetails);
             } else {
                 sessionDetails.setPiwigoClientPluginVersion("1.0.4");
             }
-        }
+            executor.execute(this::loadGalleryConfig);
+            executor.execute(()->loadActiveServerPlugins(getContext(), connectionPrefs));
+            performExtraServerCalls(getContext(), connectionPrefs, executor);
 
-        if(canContinue) {
-            loadGalleryConfig();
-        }
-
-        if(canContinue) {
-            loadActiveServerPlugins(getContext(), connectionPrefs);
-        }
-
-        if(canContinue) {
-            performExtraServerCalls(getContext(), connectionPrefs);
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException ex) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
         }
 
         setRequestURI(getNestedRequestURI());
@@ -144,7 +143,7 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
         return null;
     }
 
-    protected void performExtraServerCalls(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    protected void performExtraServerCalls(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs, ThreadPoolExecutor executor) {
     }
 
     private boolean loadGalleryConfig() {
@@ -187,7 +186,7 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
         return true;
     }
 
-    private boolean retrieveCommunityPluginSession(PiwigoSessionDetails newCredentials) {
+    protected boolean retrieveCommunityPluginSession(PiwigoSessionDetails newCredentials) {
         //TODO forcing true will allow thumbnails to be made available (with extra call) for albums hidden to admin users.
         CommunitySessionStatusResponseHandler communitySessionLoadHandler = new CommunitySessionStatusResponseHandler(false);
         communitySessionLoadHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
