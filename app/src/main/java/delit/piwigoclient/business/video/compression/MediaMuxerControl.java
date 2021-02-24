@@ -36,7 +36,7 @@ import delit.libs.util.SafeRunnable;
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class MediaMuxerControl /*implements MetadataOutput*/ {
     private static final String TAG = "MediaMuxerControl";
-    private static final boolean VERBOSE_LOGGING = true;
+    private static final boolean VERBOSE_LOGGING = false;
     private final Uri inputFile;
     private long inputBytes;
     private final ExoPlayerCompression.CompressionListener listener;
