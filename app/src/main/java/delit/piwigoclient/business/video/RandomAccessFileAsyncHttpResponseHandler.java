@@ -43,6 +43,7 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
 import delit.libs.core.util.Logging;
+import delit.libs.http.cache.CachingAsyncHttpClient;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 
@@ -248,7 +249,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 }
             }
         }
-        header = httpResponse.getFirstHeader("Content-Range");
+        header = httpResponse.getFirstHeader(CachingAsyncHttpClient.HEADER_CONTENT_RANGE);
         String contentRangeHeader = header != null ? header.getValue() : null;
         if (contentRangeHeader != null && !contentRangeHeader.isEmpty()) {
             Matcher matcher = CONTENT_RANGE_HEADER.matcher(contentRangeHeader);

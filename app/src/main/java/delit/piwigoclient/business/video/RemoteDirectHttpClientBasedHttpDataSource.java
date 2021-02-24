@@ -472,7 +472,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
                 }
             }
         }
-        header = httpResponse.getFirstHeader("Content-Range");
+        header = httpResponse.getFirstHeader(CachingAsyncHttpClient.HEADER_CONTENT_RANGE);
         String contentRangeHeader = header != null ? header.getValue() : null;
         if (!TextUtils.isEmpty(contentRangeHeader)) {
             Matcher matcher = CONTENT_RANGE_HEADER.matcher(contentRangeHeader);
