@@ -111,6 +111,47 @@ public class PiwigoAlbumTest {
     }
 
     @Test
+    public void testAllCategoriesUpdateSpacerCountWhileHideAlbumsOrderByName() {
+        testAllCategoriesUpdatingSpacerCount(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false);
+    }
+
+    @Test
+    public void testAllCategoriesUpdateSpacerCountWhileHideAlbumsOrderByNameReversed() {
+        testAllCategoriesUpdatingSpacerCount(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true);
+    }
+
+    @Test
+    public void testAllCategoriesUpdateSpacerCountWhileHideAlbumsOrderByDefault() {
+        testAllCategoriesUpdatingSpacerCount(PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, false);
+    }
+
+    @Test
+    public void testAllCategoriesUpdateSpacerCountWhileHideAlbumsOrderByDefaultReversed() {
+        testAllCategoriesUpdatingSpacerCount(PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT, true);
+    }
+
+    private void testAllCategoriesUpdatingSpacerCount(int sortOrder, boolean reversed) {
+        PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategories(sortOrder, reversed, 0);
+        int albumsCount = album.getChildAlbumCount();
+        int resourceCount = album.getResourcesCount();
+        int itemCount = album.getItemCount();
+        album.setHideAlbums(true);
+        album.setSpacerAlbumCount(1);
+        album.setSpacerAlbumCount(3);
+        album.setSpacerAlbumCount(1);
+        album.setSpacerAlbumCount(0);
+        assertEquals(1, album.getItemCount());
+        assertEquals(resourceCount, album.getResourcesCount());
+        assertEquals(albumsCount, album.getChildAlbumCount());
+        assertEquals(album.getItemByIdx(0), StaticCategoryItem.ALBUM_HEADING);
+        for(int i = album.getBannerCount(); i <= resourceCount; i++) {
+            assertTrue("Item at idx"+ i+" was not a resource item : " + album.getItemByIdx(i) ,album.getItemByIdx(i) instanceof ResourceItem);
+        }
+        album.removeAllResources();
+        assertEquals(0, album.getResourcesCount());
+    }
+
+    @Test
     public void testAllCategoriesHideAlbums() {
         PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategories(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, 0);
         int albumsCount = album.getChildAlbumCount();

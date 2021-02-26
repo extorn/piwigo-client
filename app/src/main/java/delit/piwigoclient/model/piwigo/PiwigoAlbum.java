@@ -334,16 +334,43 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             Logging.log(Log.DEBUG, TAG, "Spacer album count corrected by remove");
             changed = false;
         }
-        long blankId = StaticCategoryItem.BLANK.getId() + spacerAlbums; // ensure we don't add a duplicate ID
-        int insertAtIdx = 1 + childAlbumCount + spacerAlbums;
-        while(spacerAlbums < spacerAlbumsNeeded) {
-            changed = true;
-            addItem(insertAtIdx, (T)StaticCategoryItem.BLANK.toInstance(blankId++));
+        if(spacerAlbums < spacerAlbumsNeeded) {
+            long lastSpacerId = getLargestSpacerIdCorrectingCountAsNeeded();
+            long blankId = Math.max(StaticCategoryItem.BLANK.getId(), lastSpacerId + 1); // ensure we don't add a duplicate ID
+            int insertAtIdx = 1 + childAlbumCount + spacerAlbums;
+            while (spacerAlbums < spacerAlbumsNeeded) {
+                changed = true;
+                addItem(insertAtIdx, (T) StaticCategoryItem.BLANK.toInstance(blankId++));
+            }
         }
+
+
         if(changed) {
-            Logging.log(Log.DEBUG, TAG, "Spacer album count corrected by add");
+            Logging.log(Log.DEBUG, TAG, "Spacer album count corrected");
         }
         return true;
+    }
+
+    private long getLargestSpacerIdCorrectingCountAsNeeded() {
+        int startIdx = 0;
+        int spacerCount = 0;
+        long currentLargestId = StaticCategoryItem.BLANK.getId();
+        int toIdx = getFirstResourceIdx();
+        if(toIdx < 0) {
+            toIdx = Math.min(getItems().size(), nonResourceItemsIncResourcesHeader());
+        }
+        for(int i = startIdx; i < toIdx; i++) {
+            T item = getItems().get(i);
+            if(StaticCategoryItem.BLANK.equals(item)) {
+                spacerCount++;
+                currentLargestId = Math.max(currentLargestId, item.getId());
+            }
+        }
+        if(spacerCount != this.spacerAlbums) {
+            this.spacerAlbums = spacerCount;
+            Logging.log(Log.WARN, TAG, "Corrected invalid spacer count");
+        }
+        return currentLargestId;
     }
 
     @Override
