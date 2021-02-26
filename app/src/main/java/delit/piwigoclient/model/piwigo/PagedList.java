@@ -41,6 +41,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
     private boolean fullyLoaded;
     private ReentrantLock pageLoadLock;
     private boolean retrieveItemsInReverseOrder;
+    private boolean isGrowingOrganically;
 
     public PagedList(String itemType) {
         this(itemType, 10);
@@ -238,6 +239,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
                 sortedItems.addAll(firstInsertPos, newItems);
             }
             recordPageLoadSucceeded(page, newItems.size());
+            isGrowingOrganically = calculateIfGrowingOrganically();
             fullyLoaded = internalIsFullyLoadedCheck(page, pageSize, itemsToAdd);
         } catch(IllegalStateException e) {
             // page already loaded (can occur after resume...)
@@ -245,6 +247,31 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         }
         postPageInsert(sortedItems, newItems);
         return firstInsertPos;
+    }
+
+    protected boolean calculateIfGrowingOrganically() {
+        // if any page is loaded and at that point, not all pages are present from 0 or from x (if reversed)
+        int lastPageIdx = -1;
+        List<Integer> orderedPagesLoaded = new ArrayList<>(pagesLoadedIdxToSizeMap.keySet());
+        int firstPage = 0;
+        int nextPageOffset = 1;
+        int lastPage = orderedPagesLoaded.size() -1;
+        if(isRetrieveItemsInReverseOrder()) {
+            firstPage = lastPage;
+            lastPage = 0;
+            nextPageOffset = -1;
+        }
+        if(lastPage > 0) {
+            // more than a single page loaded.
+            for (int i = firstPage; i <= lastPage; i += nextPageOffset) {
+                Integer pageIdx = orderedPagesLoaded.get(i);
+                if (lastPageIdx >= 0 && pageIdx != lastPageIdx + nextPageOffset) {
+                    return true;
+                }
+                lastPageIdx = pageIdx;
+            }
+        }
+        return false;
     }
 
     /**
@@ -307,10 +334,61 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
 
     @Override
     public T getItemByIdx(int idx) {
+        int wantedIdx = idx;
         if (retrieveItemsInReverseOrder) {
-            return sortedItems.get(getReverseItemIdx(idx));
+            wantedIdx = getReverseItemIdx(idx);
         }
-        return sortedItems.get(idx);
+        if(!isFullyLoaded() && isGrowingOrganically()) {
+            int adjustedIdx = adjustIdxForWhatIsLoaded(wantedIdx);
+            return sortedItems.get(adjustedIdx);
+        }
+        return sortedItems.get(wantedIdx);
+    }
+
+    protected boolean isGrowingOrganically() {
+        return isGrowingOrganically;
+    }
+
+    /**
+     * The server idx would exactly equal local idx if we had a copy, but if pages are missing
+     * local idx may be very different.
+     * @param serverIdx the idx of the resource if all pages were loaded
+     * @return the actual list idx given current load status.
+     */
+    protected int getLocalIdxFromServerIdx(int serverIdx) {
+        if(serverIdx >= 0) {
+            int listIdx = -1;
+            int resourceCountAllToAndIncCurrentPage = 0;
+            int firstPageInListResourceCount = -1; // this might be smaller than the rest if reverse ordered (and item count not perfectly divisible by page size)
+            int desiredIdxOffsetFromFirstPage = 0;
+
+            for (Map.Entry<Integer, Integer> pageIdxToSizeEntry : pagesLoadedIdxToSizeMap.entrySet()) {
+                int thisPageIdx = pageIdxToSizeEntry.getKey();
+                int itemsInThisPage = pageIdxToSizeEntry.getValue();
+                if(firstPageInListResourceCount < 0) {
+                    firstPageInListResourceCount = itemsInThisPage;
+                    resourceCountAllToAndIncCurrentPage = itemsInThisPage;
+                    desiredIdxOffsetFromFirstPage = serverIdx - firstPageInListResourceCount;
+                } else {
+                    resourceCountAllToAndIncCurrentPage = firstPageInListResourceCount + (itemsInThisPage * thisPageIdx);
+                }
+                int pageIdxContainingServerIdx = 1 + (desiredIdxOffsetFromFirstPage / itemsInThisPage);
+                listIdx += itemsInThisPage;
+                if (serverIdx < resourceCountAllToAndIncCurrentPage && thisPageIdx <= pageIdxContainingServerIdx) {
+                    int overshoot = resourceCountAllToAndIncCurrentPage - (serverIdx + 1);//+1 because idx is zero based
+                    listIdx -= overshoot;
+                    return listIdx;
+                }
+            }
+            Logging.log(Log.WARN, TAG, "Unable to find a page with the resource index %1$d present in %4$s. There are %2$d resources loaded across %3$d pages", serverIdx, resourceCountAllToAndIncCurrentPage, pagesLoadedIdxToSizeMap.size(), Utils.getId(this));
+        } else {
+            Logging.log(Log.WARN, TAG, "resource index provided cannot ever be in a page of loaded items in %4$s. Pages : %1$d, itemCount %2$d, resourceIdx : %3$d", pagesLoadedIdxToSizeMap.size(), getItemCount(), serverIdx, Utils.getId(this));
+        }
+        return -1;
+    }
+
+    protected int adjustIdxForWhatIsLoaded(int wantedIdx) {
+        return getLocalIdxFromServerIdx(wantedIdx);
     }
 
     @Override
@@ -424,7 +502,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
 
     /**
      *
-     * @param idx index of item where change occured
+     * @param idx index of item where change occurred
      * @param change the change to effect on the tracked page
      * @return true if the operation was deemed a success
      */
@@ -445,16 +523,27 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
 
     protected int getPageIndexContaining(int resourceIdx) {
         if(resourceIdx >= 0) {
-            int resourceIdxs = 0;
+            int serverResourceIdx = -1;
+            int resourceCountAllToAndIncCurrentPage = 0;
+            int firstPageInListResourceCount = -1; // this might be smaller than the rest if reverse ordered (and item count not perfectly divisible by page size)
             for (Map.Entry<Integer, Integer> pageIdxToSizeEntry : pagesLoadedIdxToSizeMap.entrySet()) {
                 int itemsInThisPage = pageIdxToSizeEntry.getValue();
-                resourceIdxs += itemsInThisPage;
-                if (resourceIdx <= resourceIdxs) {
+                if(firstPageInListResourceCount < 0) {
+                    firstPageInListResourceCount = itemsInThisPage;
+                    resourceCountAllToAndIncCurrentPage = itemsInThisPage;
+                } else {
+                    resourceCountAllToAndIncCurrentPage = firstPageInListResourceCount + (itemsInThisPage * pageIdxToSizeEntry.getKey());
+                }
+                serverResourceIdx += itemsInThisPage;
+                if (resourceIdx <= resourceCountAllToAndIncCurrentPage) {
+//                    int overshoot = resourceIdx - resourceCountAllToAndIncCurrentPage;
+//                    serverResourceIdx -= overshoot;
+//                    return serverResourceIdx;
                     // this page contains the resource index in question
                     return pageIdxToSizeEntry.getKey();
                 }
             }
-            Logging.log(Log.WARN, TAG, "Unable to find a page with the resource index %1$d present in %4$s. There are %2$d resources loaded across %3$d pages", resourceIdx, resourceIdxs, pagesLoadedIdxToSizeMap.size(), Utils.getId(this));
+            Logging.log(Log.WARN, TAG, "Unable to find a page with the resource index %1$d present in %4$s. There are %2$d resources loaded across %3$d pages", resourceIdx, resourceCountAllToAndIncCurrentPage, pagesLoadedIdxToSizeMap.size(), Utils.getId(this));
         } else {
             Logging.log(Log.WARN, TAG, "resource index provided cannot ever be in a page of loaded items in %4$s. Pages : %1$d, itemCount %2$d, resourceIdx : %3$d", pagesLoadedIdxToSizeMap.size(), getItemCount(), resourceIdx, Utils.getId(this));
         }

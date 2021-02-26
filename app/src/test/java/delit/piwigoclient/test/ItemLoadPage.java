@@ -17,6 +17,11 @@ public class ItemLoadPage<T> {
         this(Arrays.asList(items));
     }
 
+    public static void resetLoadId() {
+        nextLoadId = 0;
+        nextPageId = 0;
+    }
+
     public ItemLoadPage(List<T> items) {
         this.loadId = nextLoadId++;
         this.pageIdx = nextPageId++;

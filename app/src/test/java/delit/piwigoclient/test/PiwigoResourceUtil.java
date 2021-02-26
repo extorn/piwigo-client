@@ -25,7 +25,7 @@ public class PiwigoResourceUtil {
     public static ArrayList<ItemLoadPage<GalleryItem>> initialiseResourceItemLoadPages(ResourceItemFactory resourceItemFactory, int sortOrder, int pagesWanted, int pageSizeWanted) {
         ArrayList<ItemLoadPage<GalleryItem>> resourceItemLoadPages = new ArrayList<>();
         for(int pageIdx = 0; pageIdx < pagesWanted; pageIdx++) {
-            ItemLoadPage<GalleryItem> page = new ItemLoadPage<GalleryItem>();
+            ItemLoadPage<GalleryItem> page = new ItemLoadPage<>();
             for(int pageSize = 0; pageSize < pageSizeWanted; pageSize++) {
                 switch(sortOrder) {
                     case PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT:

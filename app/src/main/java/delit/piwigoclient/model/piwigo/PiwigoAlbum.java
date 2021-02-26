@@ -243,6 +243,31 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         }
     }
 
+    @Override
+    protected int adjustIdxForWhatIsLoaded(int wantedIdx) {
+        /*if (hideAlbums) {
+            if (wantedIdx < nonResourceItemsIncResourcesHeader()) {
+                return wantedIdx; // no adjustment for which pages may or may not be present.
+            }
+        } else {
+            if (wantedIdx < getItemCount() - getResourcesCount()) {
+                return wantedIdx; // no adjustment for which pages may or may not be present.
+            }
+        }*/
+        // this is simpler and should always be the case.
+        if (wantedIdx < getItemCount() - getResourcesCount()) {
+            return wantedIdx; // no adjustment for which pages may or may not be present.
+        }
+        int resourcePageIdxWanted = wantedIdx - getFirstResourceIdx();
+        int adjustment = super.adjustIdxForWhatIsLoaded(resourcePageIdxWanted);
+        if(adjustment < 0) {
+            // item requested is not present in the list (yet)
+            return -1;
+        }
+        return getFirstResourceIdx() + adjustment;
+    }
+
+
     private int nonResourceItemsExcResourcesHeader() {
         int nonResourceItems = nonResourceItemsIncResourcesHeader();
         if(bannerCount > (childAlbumCount == 0 ? 0 : 1)) {
@@ -346,11 +371,21 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         return itemCount;
     }
 
+
+    /**
+     * Number of resources on the server.
+     * The value should match the number in the list once all pages are loaded.
+     * @return server resource count
+     */
+    public int getServerResourcesCount() {
+        return getContainerDetails().getPhotoCount();
+    }
+
     @Override
     public int getResourcesCount() {
-        int serverResourceCount = super.getItemCount() - nonResourceItemsIncResourcesHeader();
-        if(serverResourceCount < 0) {
-            Logging.log(Log.ERROR, TAG, "PiwigoAlbum Resource count is wrong - %1$d items - %2$d childAlbums - %3$d spacerAlbums - %4$d banners = %5$d", super.getItemCount(), childAlbumCount, spacerAlbums, bannerCount, serverResourceCount);
+        int listResourceCount = super.getItemCount() - nonResourceItemsIncResourcesHeader();
+        if(listResourceCount < 0) {
+            Logging.log(Log.ERROR, TAG, "PiwigoAlbum Resource count is wrong - %1$d items - %2$d childAlbums - %3$d spacerAlbums - %4$d banners = %5$d", super.getItemCount(), childAlbumCount, spacerAlbums, bannerCount, listResourceCount);
             int actualSubAlbumCount = 0;
             int actualSpacerAlbums = 0;
             int actualBannerCount = 0;
@@ -376,9 +411,9 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             spacerAlbums = actualSpacerAlbums;
             bannerCount = actualBannerCount;
 
-            Logging.log(Log.ERROR, TAG, "Corrected PiwigoAlbum Resource count: - %1$d items - %2$d childAlbums - %3$d spacerAlbums - %4$d banners = %5$d", super.getItemCount(), childAlbumCount, spacerAlbums, bannerCount, serverResourceCount);
+            Logging.log(Log.ERROR, TAG, "Corrected PiwigoAlbum Resource count: - %1$d items - %2$d childAlbums - %3$d spacerAlbums - %4$d banners = %5$d", super.getItemCount(), childAlbumCount, spacerAlbums, bannerCount, listResourceCount);
         }
-        return serverResourceCount;
+        return listResourceCount;
     }
 
     public int getChildAlbumCount() {

@@ -1,5 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -10,7 +12,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.internal.util.Primitives;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +23,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import delit.libs.core.util.Logging;
-import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.test.CategoryItemFactory;
 import delit.piwigoclient.test.IdentifiableItemFactory;
 import delit.piwigoclient.test.ItemLoadPage;
@@ -31,7 +31,9 @@ import delit.piwigoclient.test.ResourceItemFactory;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 public class PiwigoAlbumTest {
@@ -58,6 +60,7 @@ public class PiwigoAlbumTest {
         resourceItemFactory = new ResourceItemFactory();
         categoryItemFactory = new CategoryItemFactory();
         IdentifiableItemFactory.resetId();
+        ItemLoadPage.resetLoadId();
     }
 
     @After
@@ -149,50 +152,166 @@ public class PiwigoAlbumTest {
     }
 
     @Test
-    public void testAllResourcesPagesMissing() {
+    public void testPagesMissingAllResources() {
         int sortOrder = PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
-        boolean reversed = false;
+        boolean isReversed = false;
         int pages = 5;
         int pageSize = 3;
         int headers = 1;
-        int loadedAlbums = 0;
+        int loadedAlbumCount = 0;
+        List<Integer> skipPages = Arrays.asList(1,2,5);
 
+        runPagesMissingAllResourcesTest(sortOrder, isReversed, pages, pageSize, headers, loadedAlbumCount, skipPages);
+    }
+
+    @Test
+    public void testPagesMissingAllResourcesReversed() {
+        int sortOrder = PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
+        boolean isReversed = true;
+        int pages = 5;
+        int pageSize = 3;
+        int headers = 1;
+        int loadedAlbumCount = 0;
+        List<Integer> skipPages = Arrays.asList(1,2,5);
+
+        runPagesMissingAllResourcesTest(sortOrder, isReversed, pages, pageSize, headers, loadedAlbumCount, skipPages);
+    }
+
+    private void runPagesMissingAllResourcesTest(int sortOrder, boolean isReversed, int pages, int pageSize, int headers, int loadedAlbumCount, List<Integer> skipPages) {
         List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, pages, pageSize);
-        PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(0, 15));
-        List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesToSkip = skipResourcePageLoads(resourceItemLoadPages, Arrays.asList(1,2,5));
+        PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(0, pages * pageSize));
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesToSkip = skipResourcePageLoads(resourceItemLoadPages, skipPages);
         loadResourceItemPages(resourceItemLoadPages, album);
-        album.setRetrieveChildAlbumsInReverseOrder(reversed);
-        album.setRetrieveItemsInReverseOrder(reversed);
-
+        album.setRetrieveChildAlbumsInReverseOrder(isReversed);
+        album.setRetrieveItemsInReverseOrder(isReversed);
+        GalleryItem itemPresent = PiwigoResourceUtil.getItemFromPage(3,1, resourceItemLoadPages);
+        GalleryItem itemNotPresent = PiwigoResourceUtil.getItemFromPage(1,1, resourceItemLoadPagesToSkip);
+        int expectedAlbumIdx = PiwigoResourceUtil.getExpectedAlbumIdx(album, itemPresent, resourceItemLoadPages);
+        int missingItemsBelowItemPresentInPage = PiwigoResourceUtil.countItemsInPagesLessThan(3, resourceItemLoadPagesToSkip);
         int loadedItemCount = getItemCountForPages(resourceItemLoadPages);
-        int skippedItems = getItemCountForPages(resourceItemLoadPagesToSkip);
-
-        assertEquals(loadedAlbums, album.getChildAlbumCount());
+        int skippedItemCount = getItemCountForPages(resourceItemLoadPagesToSkip);
+        assertEquals(expectedAlbumIdx, album.getItemIdx(itemPresent));
+        assertEquals(-1, album.getItemIdx(itemNotPresent));
+        assertEquals(itemPresent, album.getItemByIdx(missingItemsBelowItemPresentInPage + expectedAlbumIdx));
+        assertEquals(loadedAlbumCount, album.getChildAlbumCount());
         assertEquals(loadedItemCount, album.getResourcesCount());
         assertEquals(loadedItemCount + headers, album.getItemCount());
         int expectedResourceHeaderIdx = album.getItemCount() - album.getResourcesCount() - 1;
         assertEquals(album.getItemByIdx(expectedResourceHeaderIdx), StaticCategoryItem.PICTURE_HEADING);
 
-        for(int i = headers; i <= album.getResourcesCount(); i++) {
-            GalleryItem testItem = album.getItemByIdx(i);
-            assertTrue("Item at idx "+ i+" was not a resource item : " + testItem ,testItem instanceof ResourceItem);
-        }
+        // this needs to loop over all the i in the loaded items pages. Then check the remainder (in skip) are all returning exception
+        runResourceIdxTestsOnOrganicLoadedList(pageSize, resourceItemLoadPages, album, resourceItemLoadPagesToSkip);
 
         album.setHideAlbums(true);
 
-        assertEquals(loadedAlbums, album.getChildAlbumCount());
+        assertEquals(loadedAlbumCount, album.getChildAlbumCount());
         assertEquals(loadedItemCount, album.getResourcesCount());
         assertEquals(loadedItemCount + headers, album.getItemCount());
 
         expectedResourceHeaderIdx = album.getItemCount() - album.getResourcesCount() - 1;
         assertEquals(album.getItemByIdx(expectedResourceHeaderIdx), StaticCategoryItem.PICTURE_HEADING);
 
-        for(int i = headers; i <= album.getResourcesCount(); i++) {
-            GalleryItem testItem = album.getItemByIdx(i);
-            assertTrue("Item at idx "+ i+" was not a resource item : " + testItem ,testItem instanceof ResourceItem);
-        }
+        runResourceIdxTestsOnOrganicLoadedList(pageSize, resourceItemLoadPages, album, resourceItemLoadPagesToSkip);
         album.removeAllResources();
         assertEquals(0, album.getResourcesCount());
+    }
+
+    @Test
+    public void testPagesMissingMixedContent() {
+        int sortOrder = PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
+        boolean isReversed = false;
+        int spacerAlbums = 0;
+        int pages = 5;
+        int pageSize = 3;
+        int headers = 1;
+        int loadedAlbumCount = 0;
+        List<Integer> skipPages = Arrays.asList(1,2,5);
+
+        runPagesMissingMixedContentTest(sortOrder, isReversed, spacerAlbums, pages, pageSize, headers, loadedAlbumCount, skipPages);
+    }
+
+    @Test
+    public void testPagesMissingMixedContentReversed() {
+        int sortOrder = PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
+        boolean isReversed = true;
+        int spacerAlbums = 0;
+        int pages = 5;
+        int pageSize = 3;
+        int headers = 1;
+        int loadedAlbumCount = 0;
+        List<Integer> skipPages = Arrays.asList(1,2,5);
+
+        runPagesMissingMixedContentTest(sortOrder, isReversed, spacerAlbums, pages, pageSize, headers, loadedAlbumCount, skipPages);
+    }
+
+    private void runPagesMissingMixedContentTest(int sortOrder, boolean isReversed, int spacerAlbums, int pages, int pageSize, int headers, int loadedAlbumCount, List<Integer> skipPages) {
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, pages, pageSize);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(0, pages * pageSize));
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesToSkip = skipResourcePageLoads(resourceItemLoadPages, skipPages);
+        loadCategories(sortOrder, isReversed,spacerAlbums);
+        loadResourceItemPages(resourceItemLoadPages, album);
+        album.setRetrieveChildAlbumsInReverseOrder(isReversed);
+        album.setRetrieveItemsInReverseOrder(isReversed);
+        GalleryItem itemPresent = PiwigoResourceUtil.getItemFromPage(3,1, resourceItemLoadPages);
+        GalleryItem itemNotPresent = PiwigoResourceUtil.getItemFromPage(1,1, resourceItemLoadPagesToSkip);
+        int expectedAlbumIdx = PiwigoResourceUtil.getExpectedAlbumIdx(album, itemPresent, resourceItemLoadPages);
+        int missingItemsBelowItemPresentInPage = PiwigoResourceUtil.countItemsInPagesLessThan(3, resourceItemLoadPagesToSkip);
+        int loadedItemCount = getItemCountForPages(resourceItemLoadPages);
+        int skippedItemCount = getItemCountForPages(resourceItemLoadPagesToSkip);
+        assertEquals(expectedAlbumIdx, album.getItemIdx(itemPresent));
+        assertEquals(-1, album.getItemIdx(itemNotPresent));
+        assertEquals(itemPresent, album.getItemByIdx(missingItemsBelowItemPresentInPage + expectedAlbumIdx));
+        assertEquals(loadedAlbumCount, album.getChildAlbumCount());
+        assertEquals(loadedItemCount, album.getResourcesCount());
+        assertEquals(loadedItemCount + headers, album.getItemCount());
+        int expectedResourceHeaderIdx = album.getItemCount() - album.getResourcesCount() - 1;
+        assertEquals(album.getItemByIdx(expectedResourceHeaderIdx), StaticCategoryItem.PICTURE_HEADING);
+
+        // this needs to loop over all the i in the loaded items pages. Then check the remainder (in skip) are all returning exception
+        runResourceIdxTestsOnOrganicLoadedList(pageSize, resourceItemLoadPages, album, resourceItemLoadPagesToSkip);
+
+        album.setHideAlbums(true);
+
+        assertEquals(loadedAlbumCount, album.getChildAlbumCount());
+        assertEquals(loadedItemCount, album.getResourcesCount());
+        assertEquals(loadedItemCount + headers, album.getItemCount());
+
+        expectedResourceHeaderIdx = album.getItemCount() - album.getResourcesCount() - 1;
+        assertEquals(album.getItemByIdx(expectedResourceHeaderIdx), StaticCategoryItem.PICTURE_HEADING);
+
+        runResourceIdxTestsOnOrganicLoadedList(pageSize, resourceItemLoadPages, album, resourceItemLoadPagesToSkip);
+        album.removeAllResources();
+        assertEquals(0, album.getResourcesCount());
+    }
+
+    private void runResourceIdxTestsOnOrganicLoadedList(int pageSize, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, PiwigoAlbum<CategoryItem, GalleryItem> album, List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesToSkip) {
+        List<ItemLoadPage<GalleryItem>> allResourceItemLoadPages = new ArrayList<>(resourceItemLoadPages);
+        allResourceItemLoadPages.addAll(resourceItemLoadPagesToSkip);
+        int firstResourceIdx = album.getFirstResourceIdx();
+        int lastResourceIdx = album.getServerResourcesCount();
+        for(int i = firstResourceIdx; i < lastResourceIdx; i++) {
+            int zeroIdxdI = i - firstResourceIdx;
+            int pageIdx = zeroIdxdI / pageSize;
+            int resourceIdxInPage = zeroIdxdI - (pageIdx * pageSize);
+            GalleryItem item = PiwigoResourceUtil.getItemFromPage(pageIdx,resourceIdxInPage, allResourceItemLoadPages);
+            int expectedItemIdx = PiwigoResourceUtil.getExpectedAlbumIdx(album, item, resourceItemLoadPages);
+            String failMsg = String.format("Error retrieving resource item with server idx %1$d (resource Idx %7$d)" +
+                                            " in server range %2$d-%3$d \ncontained in page %4$d (pageIdx %5$d)." +
+                                            " We expect it to be at list idx %6$d",
+                                            i, firstResourceIdx,  lastResourceIdx, pageIdx,
+                                            resourceIdxInPage, expectedItemIdx, zeroIdxdI);
+            if(expectedItemIdx < 0) {
+                int finalListIdx = i;
+                assertThrows(failMsg, IndexOutOfBoundsException.class, () -> album.getItemByIdx(finalListIdx));
+            } else {
+                try {
+                    GalleryItem retrievedItem = album.getItemByIdx(i);
+                    assertEquals(failMsg, item, retrievedItem);
+                } catch(RuntimeException e) {
+                    fail(failMsg);
+                }
+            }
+        }
     }
 
     private int getItemCountForPages(List<ItemLoadPage<GalleryItem>> resourceItemLoadPages) {
@@ -210,7 +329,7 @@ public class PiwigoAlbumTest {
      * @return
      */
     private List<ItemLoadPage<GalleryItem>> skipResourcePageLoads(List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, List<Integer> pagesToSkip) {
-        List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesSkipped = new ArrayList<ItemLoadPage<GalleryItem>>();
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesSkipped = new ArrayList<>();
         for (Iterator<ItemLoadPage<GalleryItem>> iterator = resourceItemLoadPages.iterator(); iterator.hasNext(); ) {
             ItemLoadPage<GalleryItem> resourceItemLoadPage = iterator.next();
             if (pagesToSkip.contains(resourceItemLoadPage.getPageIdx())) {
@@ -677,6 +796,7 @@ public class PiwigoAlbumTest {
         for(AlbumAction action : actions) {
             action.doWithAlbumPostLoad(album, null, resourceItemLoadPages, null);
         }
+        logger.info("Loaded resource pages");
     }
 
     private List<GalleryItem> buildExpectedOutcome(ArrayList<CategoryItem> categoryItemLoad, List<ItemLoadPage<GalleryItem>> resourceItemLoadPages, int spacerAlbumCount, boolean reverseOrder) {
