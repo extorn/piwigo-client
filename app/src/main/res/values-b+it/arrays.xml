@@ -146,14 +146,17 @@
                 * Forse una riscrittura completa del processo di caricamento in quanto non si presta a essere migliorato iterativamente
                 * Possibilmente una riscrittura completa dell\'app con un focus sulla semplicità per la navigazione utente generale inizialmente"</item>
         
-        <item>1.4.0.126</item>
+        <item>1.4.0.128</item>
         <item>"Modificare:
                  - Analisi del miglioramento delle prestazioni e, si spera, implementazione per la velocità di trasferimento dei dati di caricamento"</item>
-        <item>1.4.0.125</item>
+        <item>1.4.0.127</item>
         <item>"Risoluzione del problema:
                  - implementare il pulsante di aggiornamento nella pagina \"elemento non caricato\" della presentazione"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.126</item>
+        <item>"Risoluzione del problema:
+                 - Blocco in cui un ID profilo di connessione non sarebbe un nome file legale"</item>
         <item>1.4.0.125</item>
         <item>"Risoluzione del problema:
                  - quando si riavvia un lavoro, assicurarsi di utilizzare le impostazioni originali del lavoro

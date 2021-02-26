@@ -669,7 +669,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="selected_files">选定文件</string>
     <string name="uri_permission_justification_file_selection">选择此应用程序要使用的文件或文件夹</string>
     <string name="alert_error_please_select_download_folder_and_retry">请在应用程序设置中选择一个文件夹下载文件，然后重试。</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">在选项（%1$s）中找不到服务器可接受的文件（视频：%3$b音频：%4$b）的有效输出文件扩展名（优选为%2$s）</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">在选项（%1$s）中找不到服务器可接受的文件（视频：%3$b音频：%4$b）的有效输出文件扩展名（优选为%2$s）。 可以通过安装插件（例如VideoJs）或编辑服务器php配置文件（local / config / config.inc.php）$ conf [\'file_ext \']在服务器上更改可接受的文件。</string>
     <string name="uuid_title">安装UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">无法添加文件进行上传。上载作业正在进行中。</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">无法添加文件进行上传。当前的上传作业需要先完成。</string>

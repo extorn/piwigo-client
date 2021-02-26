@@ -669,7 +669,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="selected_files">Vybrané soubory</string>
     <string name="uri_permission_justification_file_selection">Výběr souborů nebo složek pro použití v této aplikaci</string>
     <string name="alert_error_please_select_download_folder_and_retry">V nastavení aplikace vyberte složku, do které chcete stáhnout soubory, a zkuste to znovu.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Nebyla nalezena žádná platná přípona výstupního souboru (preferováno je%2$s) pro soubor (video:%3$b audio:%4$b) přijatelné pro server mezi možnostmi (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Pro soubor (video:%3$b audio:%4$b) není mezi serverem přijatelná žádná platná přípona výstupního souboru (upřednostňováno je%2$s). Mezi možnostmi (%1$s) je server přijatelný. Přijatelné soubory lze na serveru změnit instalací pluginu (například VideoJs) nebo úpravou konfiguračního souboru php serveru (local / config / config.inc.php) $ conf [\'file_ext \'].</string>
     <string name="uuid_title">Nainstalujte UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Nelze přidat soubory k nahrání. Probíhá nahrávání úlohy.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Nelze přidat soubory k nahrání. Nejprve je třeba dokončit aktuální úlohu nahrávání.</string>

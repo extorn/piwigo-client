@@ -669,7 +669,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="selected_files">Ausgewählte Dateien</string>
     <string name="uri_permission_justification_file_selection">Auswählen von Dateien oder Ordnern zur Verwendung durch diese App</string>
     <string name="alert_error_please_select_download_folder_and_retry">Bitte wählen Sie in den App-Einstellungen einen Ordner zum Herunterladen von Dateien aus und versuchen Sie es erneut.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Es wurde keine gültige Ausgabedateierweiterung (bevorzugt ist%2$s) für eine Datei gefunden (Video:%3$b Audio:%4$b), die für den Server unter den Optionen akzeptabel ist (%1$s).</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Für die Datei (Video:%3$b Audio:%4$b) konnte keine gültige Ausgabedateierweiterung (bevorzugt ist%2$s) gefunden werden, die für den Server unter den Optionen (%1$s) akzeptabel ist. Akzeptable Dateien können auf dem Server geändert werden, indem ein Plugin (z. B. VideoJs) installiert oder die PHP-Konfigurationsdatei Ihres Servers (local / config / config.inc.php) bearbeitet wird. $ Conf [\'file_ext \'].</string>
     <string name="uuid_title">Installieren Sie die UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Dateien zum Hochladen können nicht hinzugefügt werden. Ein Upload-Auftrag wird ausgeführt.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Dateien zum Hochladen können nicht hinzugefügt werden. Der aktuelle Upload-Job muss zuerst beendet werden.</string>

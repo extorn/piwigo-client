@@ -1,103 +1,40 @@
 <en-GB>
 Bugfix:
-- when restarting a job, ensure the original job settings are used
-- when deleting a failed job, remove any compressed but not uploaded file
-- unable to scroll through errors in upload status page
-Change:
-- Upload status errors are now listed most recent first with an improved layout
-- Vast improvement to the resilience of the upload of files, lots of bugs off the perfect path fixed
-- Performance improvement for all http server calls
-- Don't delete a compressed file if a job fails (w..."
+- Crash where a connection profile id would not be a legal filename
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- při restartování úlohy zkontrolujte, zda je použito původní nastavení úlohy
-- při mazání neúspěšné úlohy odeberte veškerý komprimovaný, ale ne nahraný soubor
-- nelze procházet chybami na stránce se stavem nahrávání
-Změna:
-- Chyby stavu nahrávání jsou nyní uvedeny nejnovější jako první s vylepšeným rozložením
-- Velké zlepšení odolnosti nahrávání souborů, opraveno mnoho chyb z dokonalé cesty
-- Zlepšení výkonu pro všechna volání serveru HTTP
-- Neodstraňujte komprimovaný soubor, ..."
+- Selhání, kde by ID profilu připojení nebylo legálním názvem souboru
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Stellen Sie beim Neustart eines Jobs sicher, dass die ursprünglichen Jobeinstellungen verwendet werden
-- Entfernen Sie beim Löschen eines fehlgeschlagenen Jobs alle komprimierten, aber nicht hochgeladenen Dateien
-- Fehler beim Hochladen der Upload-Statusseite nicht möglich
-Veränderung:
-- Upload-Statusfehler werden jetzt mit einem verbesserten Layout als letztes zuerst aufgeführt
-- Deutliche Verbesserung der Ausfallsicherheit beim Hochladen von Dateien, viele Fehler auf dem ..."
+- Absturz, bei dem eine Verbindungsprofil-ID kein zulässiger Dateiname ist
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- al reiniciar un trabajo, asegúrese de utilizar la configuración original del trabajo
-- al eliminar un trabajo fallido, elimine cualquier archivo comprimido pero no cargado
-- incapaz de desplazarse por los errores en la página de estado de carga
-Cambio:
-- Los errores de estado de carga ahora se enumeran primero los más recientes con un diseño mejorado
-- Gran mejora en la resistencia de la carga de archivos, muchos errores fuera de la ruta perfecta corregidos
-- Mejora del ..."
+- Fallo donde una identificación de perfil de conexión no sería un nombre de archivo legal
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- lors du redémarrage d\'une tâche, assurez-vous que les paramètres d\'origine de la tâche sont utilisés
-- lors de la suppression d\'un travail ayant échoué, supprimez tout fichier compressé mais non téléchargé
-- impossible de faire défiler les erreurs dans la page d\'état de téléchargement
-Changement:
-- Les erreurs d\'état de téléchargement sont désormais répertoriées les plus récentes en premier avec une mise en page améliorée
-- Vaste amélioration de la résilience du ..."
+- Crash où un identifiant de profil de connexion ne serait pas un nom de fichier légal
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- quando si riavvia un lavoro, assicurarsi di utilizzare le impostazioni originali del lavoro
-- quando si elimina un lavoro non riuscito, rimuovere qualsiasi file compresso ma non caricato
-- impossibile scorrere gli errori nella pagina di stato del caricamento
-Modificare:
-- Gli errori di stato del caricamento sono ora elencati per primi con un layout migliorato
-- Vasto miglioramento della resilienza del caricamento dei file, risolti molti bug fuori dal percorso perf..."
+- Blocco in cui un ID profilo di connessione non sarebbe un nome file legale
 </it-IT>
 <ja-JP>
 バグ修正：
--ジョブを再開するときは、元のジョブ設定が使用されていることを確認してください
--失敗したジョブを削除するときは、圧縮されているがアップロードされていないファイルをすべて削除します
--アップロードステータスページのエラーをスクロールできません
-変化する：
--アップロードステータスエラーは、レイアウトが改善され、最新のものが最初に表示されるようになりました
--ファイルのアップロードの復元力が大幅に改善され、完璧なパスから外れた多くのバグが修正されました
--すべてのhttpサーバー呼び出しのパフォーマンスが向上しました
--ジョブが失敗した場合は圧縮ファイルを削除しない（削除されるまで待つ）-再圧縮せずに再試行できるようにする
--アップロードされたチャンクが、構成された最大チャンクサイズ内で可能な限り大きいことを確認します
+-接続プロファイルIDが正当なファイル名ではない場合のクラッシュ
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Zorg er bij het herstarten van een job voor dat de originele jobinstellingen worden gebruikt
-- verwijder bij het verwijderen van een mislukte taak elk gecomprimeerd maar niet geüpload bestand
-- kan niet door fouten scrollen op de uploadstatuspagina
-Verandering:
-- Uploadstatusfouten worden nu als meest recent bovenaan weergegeven met een verbeterde lay-out
-- Enorme verbetering van de veerkracht van het uploaden van bestanden, veel bugs buiten het perfecte pad opgelost
-- Prestatiever..."
+- Crash waarbij een verbindingsprofiel-ID geen legale bestandsnaam zou zijn
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- при перезапуске задания убедитесь, что используются исходные настройки задания
-- при удалении неудачного задания удалите все сжатые, но не загруженные файлы
-- невозможно просмотреть ошибки на странице статуса загрузки
-Изменять:
-- Ошибки статуса загрузки теперь отображаются первыми в списке самых последних с улучшенным макетом.
-- Значительное улучшение устойчивости загрузки файлов, исправлено множество ошибок, связанных с неправильным путем.
-- Повышение производительности..."
+- Сбой, когда идентификатор профиля подключения не был законным именем файла
 </ru-RU>
 <zh-CN>
 错误修正：
--重新启动作业时，请确保使用原始作业设置
--删除失败的作业时，请删除所有压缩但未上传的文件
--无法浏览上传状态页面中的错误
-改变：
--现在将上传状态错误列在最近的位置，布局进行了改进
--极大地提高了文件上传的弹性，修复了完美路径上的许多错误
--所有HTTP服务器调用的性能提高
--如果作业失败，请勿删除压缩文件（等待删除）-允许重试而无需重新压缩
--确保上传的块在配置的最大块大小内尽可能大
+-当连接配置文件ID不是合法文件名时崩溃
 </zh-CN>

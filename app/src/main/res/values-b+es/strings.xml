@@ -669,7 +669,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="selected_files">Archivos seleccionados</string>
     <string name="uri_permission_justification_file_selection">Para seleccionar archivos o carpetas para usar con esta aplicación</string>
     <string name="alert_error_please_select_download_folder_and_retry">Seleccione una carpeta para descargar archivos en la configuración de la aplicación, luego vuelva a intentarlo.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">No se pudo encontrar una extensión de archivo de salida válida (la preferida es%2$s) para el archivo (video:%3$b audio:%4$b) aceptable para el servidor entre las opciones (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">No se pudo encontrar una extensión de archivo de salida válida (se prefiere%2$s) para el archivo (video:%3$b audio:%4$b) aceptable para el servidor entre las opciones (%1$s). Los archivos aceptables pueden modificarse en el servidor instalando un complemento (como VideoJs) o editando el archivo de configuración php de su servidor (local / config / config.inc.php) $ conf [\'file_ext \'].</string>
     <string name="uuid_title">Instalar UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">No se pueden agregar archivos para cargar. Hay un trabajo de carga en curso.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">No se pueden agregar archivos para cargar. El trabajo de carga actual debe finalizar primero.</string>

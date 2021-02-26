@@ -250,14 +250,17 @@
         Could Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
         Background async loading of images in the slideshow, perhaps not to bitmap them, just caching - if local http caching enabled - ?impact on videos?
         -->
-        <item>1.4.0.126</item>
+        <item>1.4.0.128</item>
         <item>"Change:
                 - Performance improvement investigation and hopefully implementation for upload data transfer speed"</item>
-        <item>1.4.0.125</item>
+        <item>1.4.0.127</item>
         <item>"Bugfix:
                 - implement the refresh button on the slideshow 'item not loaded' page"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.126</item>
+        <item>"Bugfix:
+                - Crash where a connection profile id would not be a legal filename"</item>
         <item>1.4.0.125</item>
         <item>"Bugfix:
                 - when restarting a job, ensure the original job settings are used

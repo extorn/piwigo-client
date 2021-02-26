@@ -669,7 +669,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="selected_files">Fichiers sélectionnés</string>
     <string name="uri_permission_justification_file_selection">Pour sélectionner des fichiers ou des dossiers à utiliser par cette application</string>
     <string name="alert_error_please_select_download_folder_and_retry">Veuillez sélectionner un dossier dans lequel télécharger les fichiers dans les paramètres de l\'application, puis réessayer.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Aucune extension de fichier de sortie valide (la préférence est%2$s) n\'a pu être trouvée pour le fichier (vidéo:%3$b audio:%4$b) acceptable pour le serveur parmi les options (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Aucune extension de fichier de sortie valide (la préférence est%2$s) n\'a pu être trouvée pour le fichier (vidéo:%3$b audio:%4$b) acceptable pour le serveur parmi les options (%1$s). Les fichiers acceptables peuvent être modifiés sur le serveur en installant un plugin (tel que VideoJs) ou en éditant le fichier de configuration php de votre serveur (local / config / config.inc.php) $ conf [\'file_ext \'].</string>
     <string name="uuid_title">Installez UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Impossible d\'ajouter des fichiers à télécharger. Un travail de téléchargement est en cours.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Impossible d\'ajouter des fichiers à télécharger. La tâche de téléchargement en cours doit se terminer en premier.</string>

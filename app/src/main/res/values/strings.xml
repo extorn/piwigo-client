@@ -1025,7 +1025,7 @@ SOFTWARE.
     <string name="selected_files">Selected Files</string>
     <string name="uri_permission_justification_file_selection">To select files or folders for use by this app</string>
     <string name="alert_error_please_select_download_folder_and_retry">Please select a folder to download files to in the app settings, then retry.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">No valid output file extension (preferred is %2$s) could be found for file (video:%3$b audio:%4$b) acceptable to the server amongst options (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">No valid output file extension (preferred is %2$s) could be found for file (video:%3$b audio:%4$b) acceptable to the server amongst options (%1$s). Acceptable files may be altered on the server by installing a plugin (such as VideoJs), or editing your server php configuration file (local/config/config.inc.php) $conf[\'file_ext\'].</string>
     <string name="uuid_title">Install UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Unable to add files for upload. An upload job is in progress.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Unable to add files for upload. The current  upload job needs to finish first.</string>

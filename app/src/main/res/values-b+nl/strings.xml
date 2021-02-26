@@ -669,7 +669,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="selected_files">Geselecteerde bestanden</string>
     <string name="uri_permission_justification_file_selection">Om bestanden of mappen te selecteren voor gebruik door deze app</string>
     <string name="alert_error_please_select_download_folder_and_retry">Selecteer een map om bestanden naar te downloaden in de app-instellingen en probeer het opnieuw.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Geen geldige uitvoerbestandsextensie (bij voorkeur%2$s) kon gevonden worden voor bestand (video:%3$b audio:%4$b) dat acceptabel is voor de server onder de opties (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Er kon geen geldige uitvoerbestandsextensie (bij voorkeur%2$s) worden gevonden voor het bestand (video:%3$b audio:%4$b) dat acceptabel is voor de server onder de opties (%1$s). Acceptabele bestanden kunnen op de server worden gewijzigd door een plug-in te installeren (zoals VideoJs), of door je server php-configuratiebestand (local / config / config.inc.php) $ conf [\'file_ext \'] te bewerken.</string>
     <string name="uuid_title">Installeer UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Kan geen bestanden toevoegen om te uploaden. Er wordt een uploadtaak uitgevoerd.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Kan geen bestanden toevoegen om te uploaden. De huidige uploadtaak moet eerst worden voltooid.</string>

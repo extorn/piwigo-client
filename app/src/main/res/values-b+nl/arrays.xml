@@ -146,14 +146,17 @@
                 * Mogelijk een volledig herschrijven van het uploadproces, aangezien het zich niet leent om iteratief te worden verbeterd
                 * Mogelijk een volledige herschrijving van de app met de nadruk in eerste instantie op eenvoud voor algemene gebruikers"</item>
         
-        <item>1.4.0.126</item>
+        <item>1.4.0.128</item>
         <item>"Verandering:
                  - Onderzoek naar prestatieverbetering en hopelijk implementatie voor uploadsnelheid van gegevensoverdracht"</item>
-        <item>1.4.0.125</item>
+        <item>1.4.0.127</item>
         <item>"Bugfix:
                  - implementeer de vernieuwingsknop op de pagina \'item niet geladen\' van de diavoorstelling"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.126</item>
+        <item>"Bugfix:
+                 - Crash waarbij een verbindingsprofiel-ID geen legale bestandsnaam zou zijn"</item>
         <item>1.4.0.125</item>
         <item>"Bugfix:
                  - Zorg er bij het herstarten van een job voor dat de originele jobinstellingen worden gebruikt

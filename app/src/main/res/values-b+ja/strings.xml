@@ -669,7 +669,7 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="selected_files">選択したファイル</string>
     <string name="uri_permission_justification_file_selection">このアプリで使用するファイルまたはフォルダーを選択するには</string>
     <string name="alert_error_please_select_download_folder_and_retry">アプリの設定でファイルをダウンロードするフォルダを選択して、再試行してください。</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">オプション（%1$s）の中でサーバーに受け入れられるファイル（ビデオ：%3$bオーディオ：%4$b）の有効な出力ファイル拡張子（推奨は%2$s）が見つかりませんでした</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">オプション（%1$s）の中で、サーバーに受け入れられるファイル（ビデオ：%3$bオーディオ：%4$b）の有効な出力ファイル拡張子（推奨は%2$s）が見つかりませんでした。 受け入れ可能なファイルは、プラグイン（VideoJsなど）をインストールするか、サーバーのphp構成ファイル（local / config / config.inc.php）$ conf [\'file_ext \']を編集することにより、サーバー上で変更できます。</string>
     <string name="uuid_title">UUIDをインストールします</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">アップロードするファイルを追加できません。アップロードジョブが進行中です。</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">アップロードするファイルを追加できません。現在のアップロードジョブを最初に終了する必要があります。</string>

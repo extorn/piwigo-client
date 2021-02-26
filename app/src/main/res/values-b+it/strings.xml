@@ -669,7 +669,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="selected_files">File selezionati</string>
     <string name="uri_permission_justification_file_selection">Per selezionare file o cartelle da utilizzare con questa app</string>
     <string name="alert_error_please_select_download_folder_and_retry">Seleziona una cartella in cui scaricare i file nelle impostazioni dell\'app, quindi riprova.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Impossibile trovare un\'estensione del file di output valida (preferibilmente%2$s) per il file (video:%3$b audio:%4$b) accettabile per il server tra le opzioni (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Impossibile trovare un\'estensione di file di output valida (preferibilmente%2$s) per il file (video:%3$b audio:%4$b) accettabile per il server tra le opzioni (%1$s). I file accettabili possono essere alterati sul server installando un plugin (come VideoJs) o modificando il file di configurazione php del server (local / config / config.inc.php) $ conf [\'file_ext \'].</string>
     <string name="uuid_title">Installa UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Impossibile aggiungere file per il caricamento. È in corso un processo di caricamento.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Impossibile aggiungere file per il caricamento. Il processo di caricamento corrente deve essere completato per primo.</string>
