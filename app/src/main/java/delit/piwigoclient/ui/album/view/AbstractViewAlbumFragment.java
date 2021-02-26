@@ -447,10 +447,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
-
-        View v = inflater.inflate(R.layout.fragment_album_view, container, false);
-        Logging.log(Log.DEBUG, getTag(), "view from album fragment - " + v);
-        return v;
+        return inflater.inflate(R.layout.fragment_album_view, container, false);
     }
 
     @Override
