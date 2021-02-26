@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.preference.PreferenceManager;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -463,6 +464,7 @@ public class ConnectionPreferences {
 
     public static class ResumeActionPreferences {
 
+        private static final String TAG = "ResumeActionPrefs";
         private final String profileId;
 
         public ResumeActionPreferences(String profileId) {
@@ -470,7 +472,13 @@ public class ConnectionPreferences {
         }
 
         public SharedPreferences getResumeSharedPrefs(@NonNull Context context) {
-            return context.getSharedPreferences(profileId + "resume_actions", Context.MODE_PRIVATE);
+            String safeProfileId = profileId;
+            try {
+                safeProfileId = java.net.URLEncoder.encode(safeProfileId, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                Logging.log(Log.ERROR,TAG, "Unable to url encode profileId '%1$s' to filename", safeProfileId);
+            }
+            return context.getSharedPreferences("resume_actions_" + safeProfileId, Context.MODE_PRIVATE);
         }
 
 
