@@ -1336,7 +1336,12 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             if (spacerAlbumsNeeded > 0) {
                 spacerAlbumsNeeded = albumsPerRow - spacerAlbumsNeeded;
             }
-            galleryModel.setSpacerAlbumCount(spacerAlbumsNeeded);
+            try {
+                galleryModel.setSpacerAlbumCount(spacerAlbumsNeeded);
+            } catch(IndexOutOfBoundsException e) {
+                Logging.log(Log.ERROR, TAG, "Unexpected exception trapped");
+                Logging.recordException(e);
+            }
             DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
         }
 
