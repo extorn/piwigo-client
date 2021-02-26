@@ -184,6 +184,11 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
         return uploadDataItemsModel;
     }
 
+    public void clearUploadProgress() {
+        getUploadDataItemsModel().clear();
+        notifyDataSetChanged();
+    }
+
     public interface RemoveListener<LVA extends FilesToUploadRecyclerViewAdapter<LVA,MSA,VH>, MSA extends UploadItemMultiSelectStatusAdapter<MSA, LVA,VH>, VH extends UploadDataItemViewHolder<VH, LVA,MSA>> {
         void onRemove(LVA adapter, Uri itemToRemove, boolean longClick);
     }

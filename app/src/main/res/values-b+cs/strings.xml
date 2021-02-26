@@ -110,8 +110,8 @@
     <string name="logging_in_to_piwigo_pattern">Přihlašování k%1$s</string>
 
     <string name="delete_upload_job_button_title">Smazat úlohu</string>
-    <string name="upload_files_button_title">nahrát</string>
-    <string name="upload_files_finish_job_button_title">Dokončit</string>
+    <string name="upload_files_button_title">Zahajte nahrávání</string>
+    <string name="upload_files_finish_job_button_title">Dokončete nahrávání</string>
     <string name="upload_job_status_button">Postavení</string>
     <string name="alert_really_delete_upload_job">Tímto odstraníte stav úlohy z tohoto zařízení. Budete muset ručně vyčistit všechny soubory částečně nahrané na server (nebo použít předvolbu v této aplikaci - stránka nastavení nahrávání). Úlohy se často úspěšně dokončí, pokud je později obnovíte. Opravdu chcete udělat tento drastický krok?</string>
     <string name="loading_please_wait">Načítání prosím čekejte</string>
@@ -434,7 +434,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="error_upload_file_chunk_upload_failed_after_retries">Nahrání části souboru se nezdařilo po%1$d pokusech. Po dokončení restartujte toto nahrávání a zkuste to znovu.</string>
     <string name="error_upload_file_ext_missing_pattern">Nelze nahrát soubor%1$s, protože mu chybí přípona souboru, například .jpg</string>
     <string name="error_upload_file_verification_failed">Ověření souboru na serveru se nezdařilo při nahrávání%1$s</string>
-    <string name="alert_message_remove_file_server_state_incorrect">Tento soubor byl částečně nahrán a poté nezapomeňte kliknout na tlačítko nahrávání, abyste odstranili poškozený soubor ze serveru. Pokračovat?</string>
+    <string name="alert_message_remove_file_server_state_incorrect">Tento soubor byl částečně nahrán. Úloha nahrávání je aktuálně pozastavena. Po dokončení nahrávání bude soubor ze serveru odstraněn</string>
     <string name="alert_message_file_upload_cancelled_pattern">Nahrávání souboru (%1$s) bylo zrušeno.</string>
     <string name="alert_message_upload_cancelled">Nahrávání bylo zrušeno</string>
     <string name="alert_message_upload_cancelled_message">Pokud nechcete nahrávání znovu spustit později. Odeberte soubory z úlohy nahrávání a poté klikněte na upload. Tím se vymaže stav zrušeného nahrávání ze serveru.</string>
@@ -701,7 +701,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_slideshow_feature_refresh_coming_soon">Tato funkce bude brzy k dispozici. Prozatím posuňte dopředu nebo dozadu několik položek v prezentaci, než se vrátíte k této položce</string>
     <string name="cancelled_indicator">nahrávání pro soubor zrušeno</string>
     <string name="media_type_indicator">Indikátor typu média</string>
-    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Při nahrávání došlo k chybě. Přejete si:\n\nZkontrolovat chyby před ručním restartováním nahrávání?\n\nOdebrat problematické soubory z nahrávání a dokončit?\n\nOpakovat akci s chybami?</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Při nahrávání došlo k chybě. Přejete si:\n\nZkontrolovat chyby před ručním restartováním nahrávání?\n\nOpakovat akci s chybami?</string>
     <string name="button_finish">Dokončit</string>
     <string name="button_review">Posouzení</string>
     <string name="error_file_not_found">Soubor nenalezen</string>
@@ -710,4 +710,5 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="upload">nahrát</string>
     <string name="supported_file_types">Tento seznam typů souborů je takový, na který je tento server nakonfigurován.\n\nLze jej změnit v místním souboru / config / config.inc.php.</string>
     <string name="deleting_tag">Mazání značky</string>
+    <string name="compressed_progress_bar_message">Stlačený</string>
 </resources>

@@ -243,18 +243,32 @@
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>
         <item>"* Primarily Bugfixes only
-               * Possibly Add option to allow sharing access to a folder as a uri in an email - it will involve creating a normal user, giving them permission to the folder and file, creating a token for the credentials and uri details for embedding in an http link, and a way of managing these tokens on the server."</item>
+               * Possibly a complete re-write of the upload process as it doesn't lend itself to being improved iteratively
+               * Possibly a complete re-write of the app with a focus on simplicity for general user browsing initially"</item>
         <!--
         Use the new pwg.images.uploadAsync method to simplify the upload service? (what is the benefit?)
-
         Could Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
         Background async loading of images in the slideshow, perhaps not to bitmap them, just caching - if local http caching enabled - ?impact on videos?
         -->
+        <item>1.4.0.126</item>
+        <item>"Change:
+                - Performance improvement investigation and hopefully implementation for upload data transfer speed"</item>
         <item>1.4.0.125</item>
         <item>"Bugfix:
                 - implement the refresh button on the slideshow 'item not loaded' page"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.125</item>
+        <item>"Bugfix:
+                - when restarting a job, ensure the original job settings are used
+                - when deleting a failed job, remove any compressed but not uploaded file
+                - unable to scroll through errors in upload status page
+               Change:
+                - Upload status errors are now listed most recent first with an improved layout
+                - Vast improvement to the resilience of the upload of files, lots of bugs off the perfect path fixed
+                - Performance improvement for all http server calls
+                - Don't delete a compressed file if a job fails (wait until it is deleted) - to allow retry without re-compressing
+                - ensure chunks uploaded are as large as possible within the configured maximum chunk size"</item>
         <item>1.4.0.124</item>
         <item>"Bugfix:
                 - Several unexpected errors

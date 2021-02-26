@@ -52,6 +52,7 @@ import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDirectResponseHandler {
 
     private static final String TAG = "AbPwgResHndlr";
+    private static final boolean VERBOSE_LOGGING = false;
     private final String piwigoMethod;
     private RequestParams requestParams;
     private String nestedFailureMethod;
@@ -99,7 +100,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     public boolean isMethodAvailable(@NonNull Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
-        setCallDetails(context, connectionPrefs, false);
+        setCallDetails(context, connectionPrefs, !getUseSynchronousMode());
         PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         if(sessionDetails == null) {
             LoginResponseHandler handler = new LoginResponseHandler();
@@ -181,7 +182,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     @Override
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
-        if (BuildConfig.DEBUG) {
+        if (VERBOSE_LOGGING && BuildConfig.DEBUG) {
             String responseBodyStr = "<NONE PRESENT>";
             if (responseBody != null) {
                 responseBodyStr = new String(responseBody);
@@ -269,6 +270,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                 Logging.recordException(e);
             }
             if (!handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, e, hasBrandNewSession)) {
+                //Uh-oh something weird has occurred - possibly the server threw a load of sql back
                 recordFailureHandingHttp200Response(statusCode, isCached, e, responseBodyStr);
             }
         } catch (JsonIOException e) {

@@ -110,8 +110,8 @@
     <string name="logging_in_to_piwigo_pattern">Accesso a%1$s</string>
 
     <string name="delete_upload_job_button_title">Elimina lavoro</string>
-    <string name="upload_files_button_title">Caricare</string>
-    <string name="upload_files_finish_job_button_title">finire</string>
+    <string name="upload_files_button_title">Inizia il caricamento</string>
+    <string name="upload_files_finish_job_button_title">Completa il caricamento</string>
     <string name="upload_job_status_button">Stato</string>
     <string name="alert_really_delete_upload_job">Questo cancellerà lo stato del lavoro da questo dispositivo. Dovrai pulire manualmente tutti i file parzialmente caricati sul server (o utilizzare la preferenza in questa app - pagina delle impostazioni di caricamento). I lavori vengono spesso completati con successo se li riprendi in seguito. Sei sicuro di voler fare questo passo drastico?</string>
     <string name="loading_please_wait">Attendere il caricamento prego</string>
@@ -434,7 +434,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="error_upload_file_chunk_upload_failed_after_retries">Caricamento della sezione del file non riuscito dopo%1$d tentativi. Riavvia questo caricamento una volta completato per riprovare.</string>
     <string name="error_upload_file_ext_missing_pattern">Impossibile caricare il file%1$s perché manca un\'estensione di file, ad esempio .jpg</string>
     <string name="error_upload_file_verification_failed">Verifica del file sul server non riuscita per il caricamento di%1$s</string>
-    <string name="alert_message_remove_file_server_state_incorrect">Questo file è stato parzialmente caricato e devi ricordarti di fare clic sul pulsante di caricamento dopo questo per rimuovere il file danneggiato dal server. Continua?</string>
+    <string name="alert_message_remove_file_server_state_incorrect">Questo file è stato parzialmente caricato. Il processo di caricamento è attualmente in pausa. Il file verrà rimosso dal server al termine del caricamento</string>
     <string name="alert_message_file_upload_cancelled_pattern">Caricamento del file (%1$s) annullato.</string>
     <string name="alert_message_upload_cancelled">Caricamento annullato</string>
     <string name="alert_message_upload_cancelled_message">Se non desideri riavviare il caricamento in un secondo momento. È necessario rimuovere i file dal processo di caricamento, quindi fare clic su Carica. Questo cancellerà lo stato di caricamento annullato dal server.</string>
@@ -701,7 +701,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_slideshow_feature_refresh_coming_soon">Questa funzionalità arriverà presto. Per ora, sposta avanti o indietro un paio di elementi nella presentazione prima di tornare a questo elemento</string>
     <string name="cancelled_indicator">caricamento annullato per il file</string>
     <string name="media_type_indicator">Indicatore del tipo di supporto</string>
-    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Si è verificato un errore durante il caricamento. Desideri:\n\nRivedere gli errori prima di riavviare manualmente il caricamento?\n\nRimuovere i file problematici dal caricamento e finire?\n\nRiprovare le azioni con errori?</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Si è verificato un errore durante il caricamento. Desideri:\n\nRivedere gli errori prima di riavviare manualmente il caricamento?\n\nRiprovare le azioni con errori?</string>
     <string name="button_finish">finire</string>
     <string name="button_review">Revisione</string>
     <string name="error_file_not_found">File non trovato</string>
@@ -710,4 +710,5 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="upload">Caricare</string>
     <string name="supported_file_types">Questo elenco di tipi di file sono quelli che questo server è configurato per accettare.\n\nPuò essere modificato nel file local / config / config.inc.php.</string>
     <string name="deleting_tag">Eliminazione del tag</string>
+    <string name="compressed_progress_bar_message">Compressa</string>
 </resources>

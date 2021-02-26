@@ -110,8 +110,8 @@
     <string name="logging_in_to_piwigo_pattern">Logging in to %1$s</string>
 
     <string name="delete_upload_job_button_title">Delete Job</string>
-    <string name="upload_files_button_title">Upload</string>
-    <string name="upload_files_finish_job_button_title">Finish</string>
+    <string name="upload_files_button_title">Start Uploading</string>
+    <string name="upload_files_finish_job_button_title">Finish Uploading</string>
     <string name="upload_job_status_button">Status</string>
     <string name="alert_really_delete_upload_job">This will delete the job status from this device. You will need to manually cleanup any files partially uploaded to the server (or use the preference in this app - upload settings page). Jobs will often complete successfully if you resume them later. Are you sure you wish to take this drastic step?</string>
     <string name="loading_please_wait">Loading, Please wait</string>
@@ -790,7 +790,7 @@ SOFTWARE.
     <string name="error_upload_file_chunk_upload_failed_after_retries">Upload of section of file failed after %1$d attempts. Please restart this upload once complete to retry.</string>
     <string name="error_upload_file_ext_missing_pattern">Cannot upload file %1$s as it is missing a file extension, for example .jpg</string>
     <string name="error_upload_file_verification_failed">Verification of file on server failed for upload of %1$s</string>
-    <string name="alert_message_remove_file_server_state_incorrect">This file has been partially uploaded and you must remember to click the upload button after this to remove the corrupt file from the server. Continue?</string>
+    <string name="alert_message_remove_file_server_state_incorrect">This file has been partially uploaded. The Upload job is currently paused. The file will be removed from the server when you finish the upload</string>
     <string name="alert_message_file_upload_cancelled_pattern">Upload of file (%1$s) cancelled.</string>
     <string name="alert_message_upload_cancelled">Upload cancelled</string>
     <string name="alert_message_upload_cancelled_message">If you don\'t wish to restart the upload later. You should remove the files from the upload job, then click upload. This will clean the cancelled upload state from the server.</string>
@@ -1079,7 +1079,7 @@ App Install UUID: %5$s
     <string name="alert_slideshow_feature_refresh_coming_soon">This feature is coming soon. For now, move forward or backwards a couple of items in the slideshow before returning to this item</string>
     <string name="cancelled_indicator">upload cancelled for file</string>
     <string name="media_type_indicator">Media type indicator</string>
-    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">An error was encountered while uploading. Do you wish to:\n\nReview the errors before manually restarting the upload?\n\nRemove the problematic files from the upload and finish?\n\nRetry actions with errors?</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">An error was encountered while uploading. Do you wish to:\n\nReview the errors before manually restarting the upload?\n\nRetry actions with errors?</string>
     <string name="button_finish">Finish</string>
     <string name="button_review">Review</string>
     <string name="error_file_not_found">File not found</string>
@@ -1088,4 +1088,5 @@ App Install UUID: %5$s
     <string name="upload">Upload</string>
     <string name="supported_file_types">This list of file types are those this server is configured to accept.\n\nIt can be altered in the  local/config/config.inc.php file.</string>
     <string name="deleting_tag">Deleting Tag</string>
+    <string name="compressed_progress_bar_message">Compressed</string>
 </resources>

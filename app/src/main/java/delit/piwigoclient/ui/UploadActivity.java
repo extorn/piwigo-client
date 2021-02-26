@@ -57,7 +57,7 @@ import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsernameRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.upload.UploadFragment;
-import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
+import delit.piwigoclient.ui.upload.status.UploadJobStatusDetailsFragment;
 import delit.piwigoclient.ui.util.SharedFilesIntentProcessingTask;
 
 /**

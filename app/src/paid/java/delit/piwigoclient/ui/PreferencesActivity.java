@@ -19,7 +19,7 @@ import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewRequestedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.preferences.AutoUploadJobPreferenceFragment;
-import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
+import delit.piwigoclient.ui.upload.status.UploadJobStatusDetailsFragment;
 
 public class PreferencesActivity<A extends PreferencesActivity<A,AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends AbstractPreferencesActivity<A,AUIH> {
 

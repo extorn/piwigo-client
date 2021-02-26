@@ -57,8 +57,6 @@ public class PartialUploadFileAction<F extends AbstractUploadFragment<F,FUIH>,FU
             F fragment = getUiHelper().getParent();
             UploadJob activeJob = fragment.getActiveJob(getContext());
             if (activeJob != null) {
-                activeJob.cancelFileUpload(itemToRemove);
-                fragment.getFilesForUploadViewAdapter().remove(itemToRemove);
                 int countFilesNeedingServerAction = activeJob.getFilesAwaitingUpload().size();
                 if (countFilesNeedingServerAction == 0) {
                     // no files left to upload. Lets switch the button from upload to finish

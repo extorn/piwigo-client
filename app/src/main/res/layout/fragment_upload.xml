@@ -260,7 +260,7 @@
                     android:text="@string/compress_videos"
                     style="?editableFieldSwitch"/>
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/video_compression_options"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -271,32 +271,52 @@
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/allow_upload_of_incompressible_videos_button"
                         android:text="@string/allow_upload_of_incompressible_videos"
-                        style="?editableFieldSwitch"/>
+                        style="?editableFieldSwitch"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintHorizontal_bias="0"/>
 
                     <TextView
                         android:id="@+id/compress_videos_quality_label"
                         android:labelFor="@id/compress_videos_quality"
                         android:text="@string/preference_data_upload_compress_videos_quality_title"
-                        style="?editableFieldLabel" />
+                        style="?editableFieldLabel"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/allow_upload_of_incompressible_videos_button"
+                        app:layout_constraintHorizontal_bias="0"/>
 
                     <Spinner
                         android:id="@+id/compress_videos_quality"
                         android:duplicateParentState="true"
-                        style="?editableFieldSpinner"/>
+                        style="?editableFieldSpinner"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/compress_videos_quality_label"
+                        app:layout_constraintHorizontal_bias="0"/>
 
                     <TextView
                         android:id="@+id/compress_videos_audio_bitrate_label"
                         android:labelFor="@id/compress_videos_audio_bitrate"
                         android:text="@string/preference_data_upload_compress_videos_audio_bitrate_title"
-                        style="?editableFieldLabel"/>
+                        style="?editableFieldLabel"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/compress_videos_quality"
+                        app:layout_constraintHorizontal_bias="0"/>
 
                     <Spinner
                         android:id="@+id/compress_videos_audio_bitrate"
                         android:duplicateParentState="true"
-                        style="?editableFieldSpinner"/>
+                        style="?editableFieldSpinner"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/compress_videos_audio_bitrate_label"
+                        app:layout_constraintHorizontal_bias="0"/>
 
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             </LinearLayout>
@@ -319,8 +339,9 @@
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/delete_upload_job_button"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/upload_files_button"
+            app:layout_constraintHorizontal_bias="0"
             android:text="@string/upload_job_status_button"
             style="?materialButtonOutlinedStyle"/>
 
@@ -335,7 +356,7 @@
             android:text="@string/delete_upload_job_button_title"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/view_detailed_upload_status_button"
             style="?materialButtonOutlinedStyle"/>
         <Button
             android:id="@+id/upload_files_button"

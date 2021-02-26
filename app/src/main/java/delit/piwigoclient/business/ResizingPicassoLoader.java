@@ -32,6 +32,7 @@ public class ResizingPicassoLoader<T extends ImageView> extends PicassoLoader<T>
         this.centerCrop = centerCrop;
     }
 
+
     @Override
     protected RequestCreator customiseLoader(RequestCreator placeholder) {
         try {
@@ -49,9 +50,14 @@ public class ResizingPicassoLoader<T extends ImageView> extends PicassoLoader<T>
         }
     }
 
-    public void setResizeTo(int imgWidth, int imgHeight) {
+    public boolean setResizeTo(int imgWidth, int imgHeight) {
+        boolean loadNeeded = false;
+        if(imgWidth != widthPx || imgHeight != heightPx) {
+            loadNeeded = true;
+        }
         this.widthPx = imgWidth;
         this.heightPx = imgHeight;
+        return loadNeeded;
     }
 
     @Override
@@ -75,13 +81,12 @@ public class ResizingPicassoLoader<T extends ImageView> extends PicassoLoader<T>
         @Override
         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             // now have width and height
-            imageLoader.setResizeTo(v.getWidth(), v.getHeight());
-
-            if(!imageLoader.hasResourceToLoad()) {
-                return;
+            if(imageLoader.setResizeTo(v.getWidth(), v.getHeight()) || !imageLoader.isImageLoaded()) {
+                if(!imageLoader.hasResourceToLoad()) {
+                    return;
+                }
+                imageLoader.load();
             }
-            imageLoader.load();
-
         }
     }
 }

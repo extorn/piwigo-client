@@ -67,7 +67,7 @@ public class UnacceptableFilesAction<F extends AbstractUploadFragment<F,FUIH>,FU
                 }
             }
             for (Uri file : unaccceptableFiles) {
-                fragment.onRemove(fragment.getFilesForUploadViewAdapter(), file, false);
+                fragment.onUserActionDeleteFileFromUpload(fragment.getFilesForUploadViewAdapter(), file, false);
             }
 
             fragment.buildAndSubmitNewUploadJob(false);

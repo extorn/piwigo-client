@@ -343,7 +343,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        getUiHelper().showQueuedMsg(); // show any queued toast messages.
+        getUiHelper().showQueuedToastMsg(); // show any queued toast messages.
     }
 
     private void checkPrerequisites() {

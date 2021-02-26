@@ -143,13 +143,28 @@
     <string-array name="planned_releases" translatable="true">
         <item>De toekomst</item>
         <item>"* Alleen voornamelijk bugfixes
-                * Eventueel optie toevoegen om gedeelde toegang tot een map als een uri in een e-mail toe te staan - het omvat het aanmaken van een normale gebruiker, het geven van toestemming voor de map en het bestand, het maken van een token voor de inloggegevens en uri-details voor insluiting in een http-link , en een manier om deze tokens op de server te beheren."</item>
+                * Mogelijk een volledig herschrijven van het uploadproces, aangezien het zich niet leent om iteratief te worden verbeterd
+                * Mogelijk een volledige herschrijving van de app met de nadruk in eerste instantie op eenvoud voor algemene gebruikers"</item>
         
+        <item>1.4.0.126</item>
+        <item>"Verandering:
+                 - Onderzoek naar prestatieverbetering en hopelijk implementatie voor uploadsnelheid van gegevensoverdracht"</item>
         <item>1.4.0.125</item>
         <item>"Bugfix:
                  - implementeer de vernieuwingsknop op de pagina \'item niet geladen\' van de diavoorstelling"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.125</item>
+        <item>"Bugfix:
+                 - Zorg er bij het herstarten van een job voor dat de originele jobinstellingen worden gebruikt
+                 - verwijder bij het verwijderen van een mislukte taak elk gecomprimeerd maar niet geüpload bestand
+                 - kan niet door fouten scrollen op de uploadstatuspagina
+                Verandering:
+                 - Uploadstatusfouten worden nu als meest recent bovenaan weergegeven met een verbeterde lay-out
+                 - Enorme verbetering van de veerkracht van het uploaden van bestanden, veel bugs buiten het perfecte pad opgelost
+                 - Prestatieverbetering voor alle http-serveroproepen
+                 - Verwijder geen gecomprimeerd bestand als een taak mislukt (wacht tot het is verwijderd) - om opnieuw te proberen zonder opnieuw te comprimeren
+                 - zorg ervoor dat de geüploade brokken zo groot mogelijk zijn binnen de geconfigureerde maximale brokgrootte"</item>
         <item>1.4.0.124</item>
         <item>"Bugfix:
                  - Verschillende onverwachte fouten

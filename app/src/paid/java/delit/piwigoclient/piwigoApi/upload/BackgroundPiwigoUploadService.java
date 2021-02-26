@@ -159,7 +159,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     }
 
     @Override
-    protected void updateNotificationProgressText(int uploadProgress) {
+    public void updateNotificationProgressText(int uploadProgress) {
         updateNotificationText(getString(R.string.notification_text_background_upload_running), uploadProgress);
     }
 
@@ -506,7 +506,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     }
 
     @Override
-    protected void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response) {
+    public void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response) {
         //TODO do something useful with the messages... build a log file?
 
 //        PiwigoResponseBufferingHandler.getDefault().preRegisterResponseHandlerForNewMessage(jobId, response.getMessageId());

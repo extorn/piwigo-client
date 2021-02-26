@@ -8,39 +8,22 @@ import org.json.JSONException;
 import java.security.SecureRandom;
 
 import delit.libs.http.RequestParams;
+import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
 
-public class UploadAlbumCreateResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class UploadAlbumCreateResponseHandler extends AlbumCreateResponseHandler {
 
-    private static final String TAG = "CreateGalleryRspHdlr";
+    private static final String TAG = "UplCreateAlbRspHdlr";
     private static final SecureRandom random = new SecureRandom();
-    private final long parentAlbumId;
 
-    public UploadAlbumCreateResponseHandler(long parentAlbumId) {
-        super("pwg.categories.add", TAG);
-        this.parentAlbumId = parentAlbumId;
+    public UploadAlbumCreateResponseHandler(String parentAlbumName, long parentAlbumId) {
+        super(buildGalleryDetails(parentAlbumName, parentAlbumId), false, TAG);
     }
 
-    @Override
-    public RequestParams buildRequestParameters() {
-        RequestParams params = new RequestParams();
-        params.put("method", getPiwigoMethod());
-        params.put("parent", parentAlbumId);
-        params.put("name", "uploads-" + Math.abs(random.nextInt()));
-        params.put("comment", "PiwigoClient - uploads in progress");
-        params.put("visible", "false");
-        params.put("status", "private");
-        params.put("commentable", "false");
-        return params;
-    }
-
-    @Override
-    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
-
-        JsonObject result = rsp.getAsJsonObject();
-        long newAlbumnId = result.get("id").getAsLong();
-        AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse r = new AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse(getMessageId(), getPiwigoMethod(), newAlbumnId, isCached);
-        storeResponse(r);
+    private static final PiwigoGalleryDetails buildGalleryDetails(String parentAlbumName, long parentAlbumId) {
+        CategoryItemStub parent = new CategoryItemStub(parentAlbumName, parentAlbumId);
+        return new PiwigoGalleryDetails(parent, null, "uploads-" + Math.abs(random.nextInt()), "PiwigoClient - uploads in progress", false, true);
     }
 }

@@ -35,7 +35,7 @@ import delit.piwigoclient.business.video.opengl.TextureRender;
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
 
-    private final static boolean VERBOSE_LOGGING = true;
+    private final static boolean VERBOSE_LOGGING = false;
     private static final String TAG = "FrameCaptureVidRenderer";
     private static final String KEY_ROTATION = "rotation-degrees"; // MediaFormat.KEY_ROTATION @since Api.23
     private OutputSurface decoderOutputSurface;

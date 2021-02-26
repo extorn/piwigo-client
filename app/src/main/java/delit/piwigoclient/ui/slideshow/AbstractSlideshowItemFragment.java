@@ -263,7 +263,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         if (b == null) {
             return;
         }
-        Class<? extends ViewModelContainer> galleryModelClass = AbstractSlideshowFragment.loadGalleryModelClassFromBundle(b);
+        Class<? extends ViewModelContainer> galleryModelClass = AbstractSlideshowFragment.loadGalleryModelClassFromBundle(b, TAG);
         long galleryModelId = b.getLong(ARG_AND_STATE_CONTAINER_ID);
         ResourceContainer<?, T> modelStore = null;
         if (galleryModelClass != null) {

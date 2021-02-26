@@ -24,7 +24,7 @@ import delit.libs.util.X509Utils;
 
 public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSignedStrategy implements Observer {
 
-    private static Observable observable = new Observable();
+    private static final Observable observable = new Observable();
     private final Set<String> certThumbprints;
     private final Set<String> preNotifiedCerts;
 

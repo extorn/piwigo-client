@@ -110,8 +110,8 @@
     <string name="logging_in_to_piwigo_pattern">Iniciando sesión en%1$s</string>
 
     <string name="delete_upload_job_button_title">Eliminar trabajo</string>
-    <string name="upload_files_button_title">Subir</string>
-    <string name="upload_files_finish_job_button_title">Finalizar</string>
+    <string name="upload_files_button_title">Empezar a cargar</string>
+    <string name="upload_files_finish_job_button_title">Terminar de cargar</string>
     <string name="upload_job_status_button">Estado</string>
     <string name="alert_really_delete_upload_job">Esto eliminará el estado del trabajo de este dispositivo. Deberá limpiar manualmente los archivos cargados parcialmente en el servidor (o utilizar la preferencia en esta aplicación: página de configuración de carga). Los trabajos a menudo se completarán correctamente si los reanuda más tarde. ¿Está seguro de que desea dar este paso drástico?</string>
     <string name="loading_please_wait">Cargando por favor espere</string>
@@ -434,7 +434,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="error_upload_file_chunk_upload_failed_after_retries">Error al cargar la sección del archivo después de%1$d intentos. Reinicie esta carga una vez que se complete para volver a intentarlo.</string>
     <string name="error_upload_file_ext_missing_pattern">No se puede cargar el archivo%1$s porque le falta una extensión de archivo, por ejemplo .jpg</string>
     <string name="error_upload_file_verification_failed">Error de verificación del archivo en el servidor para la carga de%1$s</string>
-    <string name="alert_message_remove_file_server_state_incorrect">Este archivo se ha cargado parcialmente y debe recordar hacer clic en el botón de carga después de esto para eliminar el archivo dañado del servidor. ¿Continuar?</string>
+    <string name="alert_message_remove_file_server_state_incorrect">Este archivo se ha subido parcialmente. El trabajo de carga está actualmente en pausa. El archivo se eliminará del servidor cuando finalice la carga.</string>
     <string name="alert_message_file_upload_cancelled_pattern">Se canceló la carga del archivo (%1$s).</string>
     <string name="alert_message_upload_cancelled">Subida cancelada</string>
     <string name="alert_message_upload_cancelled_message">Si no desea reiniciar la carga más tarde. Debe eliminar los archivos del trabajo de carga y luego hacer clic en cargar. Esto limpiará el estado de carga cancelada del servidor.</string>
@@ -701,7 +701,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_slideshow_feature_refresh_coming_soon">Esta característica estará disponible en breve. Por ahora, avance o retroceda un par de elementos en la presentación de diapositivas antes de volver a este elemento.</string>
     <string name="cancelled_indicator">carga cancelada para archivo</string>
     <string name="media_type_indicator">Indicador de tipo de medio</string>
-    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Se encontró un error durante la carga. Deseas:\n\n¿Revisar los errores antes de reiniciar manualmente la carga?\n\n¿Eliminar los archivos problemáticos de la carga y finalizar?\n\n¿Reintentar acciones con errores?</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Se encontró un error durante la carga. Deseas:\n\n¿Revisar los errores antes de reiniciar manualmente la carga?\n\n¿Reintentar acciones con errores?</string>
     <string name="button_finish">Finalizar</string>
     <string name="button_review">Revisar</string>
     <string name="error_file_not_found">Archivo no encontrado</string>
@@ -710,4 +710,5 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="upload">Subir</string>
     <string name="supported_file_types">Esta lista de tipos de archivos son aquellos que este servidor está configurado para aceptar.\n\nPuede modificarse en el archivo local / config / config.inc.php.</string>
     <string name="deleting_tag">Eliminar etiqueta</string>
+    <string name="compressed_progress_bar_message">Comprimida</string>
 </resources>

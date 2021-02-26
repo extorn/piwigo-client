@@ -116,7 +116,7 @@ public class CachingAsyncHttpClient implements Closeable {
     public static final int DEFAULT_SOCKET_TIMEOUT = 10 * 1000;
     public static final int DEFAULT_MAX_RETRIES = 5;
     public static final int DEFAULT_RETRY_SLEEP_TIME_MILLIS = 1500;
-    public static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;
+    public static final int DEFAULT_SOCKET_BUFFER_SIZE = 128 * 1024;
     public static LogInterface log = new LogHandler();
     private final Map<Context, List<RequestHandle>> requestMap;
     private final Map<String, String> clientHeaderMap;
@@ -312,7 +312,7 @@ public class CachingAsyncHttpClient implements Closeable {
 
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
         cm.setMaxTotal(maxConcurrentConnections);
-        cm.setDefaultMaxPerRoute(maxConcurrentConnections);
+        cm.setDefaultMaxPerRoute(5);
         SocketConfig.Builder socketBuilder = cm.getDefaultSocketConfig() != null ? SocketConfig.copy(cm.getDefaultSocketConfig()) : SocketConfig.custom();
         SocketConfig socketConfig = socketBuilder.setTcpNoDelay(true).setSoTimeout(responseTimeout).build();
         cm.setDefaultSocketConfig(socketConfig);

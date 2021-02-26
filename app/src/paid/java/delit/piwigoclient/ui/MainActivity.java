@@ -34,7 +34,7 @@ import delit.piwigoclient.ui.tags.TagRecyclerViewAdapter;
 import delit.piwigoclient.ui.tags.TagSelectFragment;
 import delit.piwigoclient.ui.tags.TagsListFragment;
 import delit.piwigoclient.ui.tags.ViewTagFragment;
-import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
+import delit.piwigoclient.ui.upload.status.UploadJobStatusDetailsFragment;
 
 /**
  * Created by gareth on 07/04/18.

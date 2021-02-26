@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import java.util.Locale;
 import java.util.Objects;
 
-import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.libs.util.progress.ProgressListener;
@@ -221,7 +220,7 @@ public class UploadDataItem implements Parcelable {
             this.uploadStatus = uploadStatus;
         }
 
-        public boolean inProgress() {
+        public boolean isCompressingOrUploading() {
             return getUploadProgress() + getCompressionProgress() > 0;
         }
 
@@ -255,6 +254,10 @@ public class UploadDataItem implements Parcelable {
 
         public boolean isMidCompression() {
             return getUploadProgress() <= 0 && getCompressionProgress() > 0;
+        }
+
+        public boolean isMidUpload() {
+            return getUploadProgress() > 0;
         }
     }
 }

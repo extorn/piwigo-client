@@ -47,7 +47,7 @@ public class BasicPiwigoResponseListener<P extends UIHelper<P,T>, T> implements 
     }
 
     public @Nullable T getParent() {
-        return parent == null ? null : parent.get();
+        return parent == null ? (getUiHelper() != null ? getUiHelper().getParent() : null) : parent.get();
     }
 
     @Override
@@ -62,6 +62,10 @@ public class BasicPiwigoResponseListener<P extends UIHelper<P,T>, T> implements 
     public void withUiHelper(T parent, P uiHelper) {
         this.uiHelper = uiHelper;
         this.parent = new WeakReference<>(parent);
+    }
+
+    public P getUiHelper() {
+        return uiHelper;
     }
 
     public void onSaveInstanceState(Bundle savedInstanceState) {

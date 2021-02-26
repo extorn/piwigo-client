@@ -110,8 +110,8 @@
     <string name="logging_in_to_piwigo_pattern">%1$sにログイン</string>
 
     <string name="delete_upload_job_button_title">ジョブを削除する</string>
-    <string name="upload_files_button_title">アップロード</string>
-    <string name="upload_files_finish_job_button_title">終了</string>
+    <string name="upload_files_button_title">アップロードを開始します</string>
+    <string name="upload_files_finish_job_button_title">アップロードを終了します</string>
     <string name="upload_job_status_button">状態</string>
     <string name="alert_really_delete_upload_job">これにより、このデバイスからジョブステータスが削除されます。サーバーに部分的にアップロードされたファイルを手動でクリーンアップする必要があります（または、このアプリの設定を使用して、設定ページをアップロードします）。後で再開すると、ジョブは正常に完了することがよくあります。この抜本的な一歩を踏み出してもよろしいですか？</string>
     <string name="loading_please_wait">読み込み中。。。待って下さい</string>
@@ -434,7 +434,7 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="error_upload_file_chunk_upload_failed_after_retries">ファイルのセクションのアップロードは、%1$dの試行後に失敗しました。完了したら、このアップロードを再開して再試行してください。</string>
     <string name="error_upload_file_ext_missing_pattern">.jpgなどのファイル拡張子がないため、ファイル%1$sをアップロードできません</string>
     <string name="error_upload_file_verification_failed">%1$sのアップロードでサーバー上のファイルの検証に失敗しました</string>
-    <string name="alert_message_remove_file_server_state_incorrect">このファイルは部分的にアップロードされています。破損したファイルをサーバーから削除するには、この後、アップロードボタンをクリックすることを忘れないでください。継続する？</string>
+    <string name="alert_message_remove_file_server_state_incorrect">このファイルは部分的にアップロードされています。 アップロードジョブは現在一時停止されています。 アップロードが完了すると、ファイルはサーバーから削除されます</string>
     <string name="alert_message_file_upload_cancelled_pattern">ファイル（%1$s）のアップロードがキャンセルされました。</string>
     <string name="alert_message_upload_cancelled">アップロードがキャンセルされました</string>
     <string name="alert_message_upload_cancelled_message">後でアップロードを再開したくない場合。アップロードジョブからファイルを削除してから、[アップロード]をクリックする必要があります。これにより、キャンセルされたアップロード状態がサーバーから削除されます。</string>
@@ -701,7 +701,7 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="alert_slideshow_feature_refresh_coming_soon">この機能はまもなく登場します。 今のところ、このアイテムに戻る前に、スライドショーのいくつかのアイテムを前後に移動してください</string>
     <string name="cancelled_indicator">ファイルのアップロードがキャンセルされました</string>
     <string name="media_type_indicator">メディアタイプインジケーター</string>
-    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">アップロード中にエラーが発生しました。 あなたはしたいですか：\n\nアップロードを手動で再開する前にエラーを確認しますか？\n\n問題のあるファイルをアップロードから削除して終了しますか？\n\nエラーのあるアクションを再試行しますか？</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">アップロード中にエラーが発生しました。 あなたはしたいですか：\n\nアップロードを手動で再開する前にエラーを確認しますか？\n\nエラーのあるアクションを再試行しますか？</string>
     <string name="button_finish">終了</string>
     <string name="button_review">レビュー</string>
     <string name="error_file_not_found">ファイルが見つかりません</string>
@@ -710,4 +710,5 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="upload">アップロード</string>
     <string name="supported_file_types">このファイルタイプのリストは、このサーバーが受け入れるように構成されているものです。\n\nlocal / config /config.inc.phpファイルで変更できます。</string>
     <string name="deleting_tag">タグの削除</string>
+    <string name="compressed_progress_bar_message">圧縮</string>
 </resources>

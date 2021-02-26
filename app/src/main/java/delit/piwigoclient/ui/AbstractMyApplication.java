@@ -34,6 +34,7 @@ import delit.piwigoclient.ui.upgrade.PreferenceMigrator;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator226;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator282;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator348;
+import delit.piwigoclient.ui.upgrade.PreferenceMigrator371;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator44;
 
 /**
@@ -60,6 +61,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         migrators.add(new PreferenceMigrator226());
         migrators.add(new PreferenceMigrator282());
         migrators.add(new PreferenceMigrator348());
+        migrators.add(new PreferenceMigrator371());
         return migrators;
     }
 

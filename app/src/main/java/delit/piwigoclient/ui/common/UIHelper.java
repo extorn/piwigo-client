@@ -42,7 +42,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
@@ -254,7 +253,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         }
         if(!toastShowing) {
             // do this here in case the queue is already full (will only occur if there is a bug in the display logic really).
-            showQueuedMsg();
+            showQueuedToastMsg();
         }
         if (newItem.getId() >= 0) {
             if (!simpleMessageQueue.isEmpty()) {
@@ -275,7 +274,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
             }
         }
         if(!toastShowing) {
-            showQueuedMsg();
+            showQueuedToastMsg();
         }
     }
 
@@ -283,72 +282,32 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         showDetailedShortMsg(messageResId, null);
     }
 
-    protected void showQueuedMsg() {
-        View parentView = getParentView();
-        if(parentView == null || !canShowDialog()) {
-            String parentId = Utils.getId(getParent());
-            Logging.log(Log.WARN,TAG,"Unable to show message, parent has no view. Parent : " + parentId);
-            return;
-        }
-        if(simpleMessageQueue.isEmpty()) {
-            return;
-        }
-        if(canShowDialog()) {
-            setupDialogBoxes();
-        }
-        final CustomSnackbar snackbar;
-        toastShowing = true;
-        QueuedSimpleMessage toastMsg = simpleMessageQueue.remove();
-        final String message;
-        if(toastMsg.getMessage() == null) {
-            message = getAppContext().getString(toastMsg.getTitleResId());
-            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.getTitleResId(), null, toastMsg.getSnackbarDuration());
-        } else {
-            message = toastMsg.getMessage();
-            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.getTitleResId(), toastMsg.getMessage(), toastMsg.getSnackbarDuration());
-        }
-        snackbar.addCallback(new CustomSnackbar.BaseCallback() {
-            private boolean dismissHandled;
-
-            @Override
-            public void onDismissed(CustomSnackbar transientBottomBar, int event) {
-                super.onDismissed(transientBottomBar, event);
-                if(!dismissHandled) {
-                    toastShowing = false;
-                    showQueuedMsg();
-                }
+    protected void showQueuedToastMsg() {
+        synchronized(simpleMessageQueue) {
+            View parentView = getParentView();
+            if (parentView == null || !canShowDialog()) {
+                String parentId = Utils.getId(getParent());
+                Logging.log(Log.WARN, TAG, "Unable to show message, parent has no view. Parent : " + parentId);
+                return;
             }
-            
-            @Override
-            public boolean onLongClick(View v) {
-                if(v == null) {
-                    //TODO check why... this can occur if the app is minimised at this point?
-                    return false;
-                }
-                ClipboardManager clipboardService = (ClipboardManager) v.getContext().getSystemService(CLIPBOARD_SERVICE);
-                if(clipboardService != null) {
-                    clipboardService.setPrimaryClip(ClipData.newPlainText("Piwigo Client", message));
-                    dismissHandled = true;
-                    snackbar.dismiss();
-                    CustomSnackbar snackbarNotification = TransientMsgUtils.makeSnackbar(v, R.string.copied_to_clipboard, null, CustomSnackbar.LENGTH_SHORT);
-                    snackbarNotification.getView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-                        @Override
-                        public void onViewAttachedToWindow(View v) {
-                            //do nothing.
-                        }
-
-                        @Override
-                        public void onViewDetachedFromWindow(View v) {
-                            toastShowing = false;
-                            showQueuedMsg();
-                        }
-                    });
-                    snackbarNotification.show();
-                }
-                return false;
+            if (simpleMessageQueue.isEmpty()) {
+                return;
             }
-        });
-        snackbar.show();
+
+            final CustomSnackbar snackbar;
+            toastShowing = true;
+            QueuedSimpleMessage toastMsg = simpleMessageQueue.remove();
+            final String message;
+            if (toastMsg.getMessage() == null) {
+                message = getAppContext().getString(toastMsg.getTitleResId());
+                snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.getTitleResId(), null, toastMsg.getSnackbarDuration());
+            } else {
+                message = toastMsg.getMessage();
+                snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.getTitleResId(), toastMsg.getMessage(), toastMsg.getSnackbarDuration());
+            }
+            snackbar.addCallback(new MySnackbarCallback(message, snackbar));
+            snackbar.show();
+        }
     }
 
 
@@ -671,7 +630,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
                     showDialog(nextMessage);
                 }
             } else if(simpleMessageQueue.size() > 0 && !toastShowing) {
-                showQueuedMsg();
+                showQueuedToastMsg();
             }
         }
     }
@@ -1214,7 +1173,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
 
         protected void onNoDialogToShow() {
             if(!toastShowing) {
-                showQueuedMsg();
+                showQueuedToastMsg();
             }
         }
 
@@ -1271,4 +1230,39 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         }
     }
 
+    private class MySnackbarCallback extends CustomSnackbar.BaseCallback {
+        private final String message;
+        private final CustomSnackbar snackBar;
+        private boolean dismissHandled;
+
+        public MySnackbarCallback(String message, CustomSnackbar snackbar) {
+            this.message = message;
+            this.snackBar = snackbar;
+        }
+
+        @Override
+        public void onDismissed(CustomSnackbar transientBottomBar, int event) {
+            super.onDismissed(transientBottomBar, event);
+            if(!dismissHandled) {
+                toastShowing = false;
+                DisplayUtils.postOnUiThread(UIHelper.this::showQueuedToastMsg);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if(v == null) {
+                //TODO check why... this can occur if the app is minimised at this point?
+                return false;
+            }
+            ClipboardManager clipboardService = (ClipboardManager) v.getContext().getSystemService(CLIPBOARD_SERVICE);
+            if(clipboardService != null) {
+                clipboardService.setPrimaryClip(ClipData.newPlainText("Piwigo Client", message));
+                dismissHandled = true;
+                snackBar.dismiss();
+                showDetailedMsg(R.string.copied_to_clipboard, null, CustomSnackbar.LENGTH_SHORT);
+            }
+            return false;
+        }
+    }
 }

@@ -180,6 +180,9 @@ public class UploadDataItemModel implements Parcelable {
         } else {
             UploadDataItem.UploadProgressInfo progress = uploadDataItem.uploadProgress;
             if (progress != null) {
+                if(progress.isUploadFailed()) {
+                    progress.setUploadProgress(0);
+                }
                 progress.setUploadStatus(processingStatus);
             } else {
                 Logging.log(Log.ERROR, TAG, "Unable to Update Upload Status : %1$s %2$d%%", fileBeingUploaded, processingStatus);

@@ -110,8 +110,8 @@
     <string name="logging_in_to_piwigo_pattern">Inloggen op%1$s</string>
 
     <string name="delete_upload_job_button_title">Job verwijderen</string>
-    <string name="upload_files_button_title">Uploaden</string>
-    <string name="upload_files_finish_job_button_title">Af hebben</string>
+    <string name="upload_files_button_title">Begin met uploaden</string>
+    <string name="upload_files_finish_job_button_title">Voltooi het uploaden</string>
     <string name="upload_job_status_button">Toestand</string>
     <string name="alert_really_delete_upload_job">Hierdoor wordt de taakstatus van dit apparaat verwijderd. U moet alle bestanden die gedeeltelijk naar de server zijn geüpload handmatig opschonen (of gebruik de voorkeur in deze app - pagina met uploadinstellingen). Taken worden vaak met succes voltooid als u ze later hervat. Weet u zeker dat u deze drastische stap wilt zetten?</string>
     <string name="loading_please_wait">Laden even geduld aub</string>
@@ -434,7 +434,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="error_upload_file_chunk_upload_failed_after_retries">Uploaden van sectie van bestand is mislukt na%1$d pogingen. Start deze upload opnieuw om het opnieuw te proberen.</string>
     <string name="error_upload_file_ext_missing_pattern">Kan bestand%1$s niet uploaden omdat het een bestandsextensie mist, bijvoorbeeld .jpg</string>
     <string name="error_upload_file_verification_failed">Verificatie van bestand op server mislukt voor uploaden van%1$s</string>
-    <string name="alert_message_remove_file_server_state_incorrect">Dit bestand is gedeeltelijk geüpload en u moet eraan denken om hierna op de uploadknop te klikken om het corrupte bestand van de server te verwijderen. Doorgaan met?</string>
+    <string name="alert_message_remove_file_server_state_incorrect">Dit bestand is gedeeltelijk geüpload. De uploadtaak is momenteel onderbroken. Het bestand wordt van de server verwijderd wanneer u klaar bent met uploaden</string>
     <string name="alert_message_file_upload_cancelled_pattern">Upload van bestand (%1$s) geannuleerd.</string>
     <string name="alert_message_upload_cancelled">Upload geannuleerd</string>
     <string name="alert_message_upload_cancelled_message">Als je het uploaden later niet wilt herstarten. U moet de bestanden uit de uploadtaak verwijderen en vervolgens op uploaden klikken. Hiermee wordt de geannuleerde uploadstatus van de server verwijderd.</string>
@@ -701,7 +701,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="alert_slideshow_feature_refresh_coming_soon">Deze functie is binnenkort beschikbaar. Ga voorlopig een aantal items in de diavoorstelling vooruit of achteruit voordat u terugkeert naar dit item</string>
     <string name="cancelled_indicator">upload geannuleerd voor bestand</string>
     <string name="media_type_indicator">Mediatype-indicator</string>
-    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Er is een fout opgetreden tijdens het uploaden. Wilt u:\n\nBekijk de fouten voordat u de upload handmatig herstart?\n\nVerwijder de problematische bestanden van de upload en voltooi?\n\nActies opnieuw proberen met fouten?</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Er is een fout opgetreden tijdens het uploaden. Wilt u:\n\nBekijk de fouten voordat u de upload handmatig herstart?\n\nActies opnieuw proberen met fouten?</string>
     <string name="button_finish">Af hebben</string>
     <string name="button_review">Beoordeling</string>
     <string name="error_file_not_found">Bestand niet gevonden</string>
@@ -710,4 +710,5 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="upload">Uploaden</string>
     <string name="supported_file_types">Deze lijst met bestandstypen zijn de bestandstypen die deze server moet accepteren.\n\nHet kan worden gewijzigd in het lokale / config / config.inc.php-bestand.</string>
     <string name="deleting_tag">Tag verwijderen</string>
+    <string name="compressed_progress_bar_message">Gecomprimeerd</string>
 </resources>

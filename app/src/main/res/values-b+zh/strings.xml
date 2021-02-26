@@ -110,8 +110,8 @@
     <string name="logging_in_to_piwigo_pattern">登录到%1$s</string>
 
     <string name="delete_upload_job_button_title">删除工作</string>
-    <string name="upload_files_button_title">上载</string>
-    <string name="upload_files_finish_job_button_title">结束</string>
+    <string name="upload_files_button_title">开始上传</string>
+    <string name="upload_files_finish_job_button_title">完成上传</string>
     <string name="upload_job_status_button">状态</string>
     <string name="alert_really_delete_upload_job">这将从该设备删除作业状态。您将需要手动清除部分上传到服务器的任何文件（或使用此应用程序中的首选项-上传设置页面）。如果以后再恢复作业，通常会成功完成。您确定要采取这个激烈的步骤吗？</string>
     <string name="loading_please_wait">加载请稍候</string>
@@ -434,7 +434,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="error_upload_file_chunk_upload_failed_after_retries">尝试%1$d后，文件部分的上传失败。完成后，请重新启动此上传，然后重试。</string>
     <string name="error_upload_file_ext_missing_pattern">无法上传文件%1$s，因为它缺少文件扩展名，例如.jpg</string>
     <string name="error_upload_file_verification_failed">无法验证服务器上的文件，无法上传%1$s</string>
-    <string name="alert_message_remove_file_server_state_incorrect">此文件已部分上传，您必须记住此后单击“上传”按钮才能从服务器中删除损坏的文件。继续？</string>
+    <string name="alert_message_remove_file_server_state_incorrect">该文件已部分上传。 上传作业当前已暂停。 完成上传后，该文件将从服务器中删除</string>
     <string name="alert_message_file_upload_cancelled_pattern">文件（%1$s）的上传已取消。</string>
     <string name="alert_message_upload_cancelled">上载已取消</string>
     <string name="alert_message_upload_cancelled_message">如果您不希望以后再重新开始上传。您应该从上载作业中删除文件，然后单击上载。这将从服务器中清除已取消的上传状态。</string>
@@ -701,7 +701,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_slideshow_feature_refresh_coming_soon">此功能即将推出。 现在，在幻灯片显示中向前或向后移动几个项目，然后再返回该项目</string>
     <string name="cancelled_indicator">上传文件已取消</string>
     <string name="media_type_indicator">媒体类型指示</string>
-    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">上载时发生错误。 您是否希望：\n\n在手动重新启动上传之前查看错误？\n\n从上传中删除有问题的文件并完成？\n\n重试错误操作？</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">上载时发生错误。 您是否希望：\n\n在手动重新启动上传之前查看错误？\n\n重试错误操作？</string>
     <string name="button_finish">结束</string>
     <string name="button_review">审查</string>
     <string name="error_file_not_found">文件未找到</string>
@@ -710,4 +710,5 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="upload">上载</string>
     <string name="supported_file_types">此文件类型列表是此服务器配置为接受的文件类型。\n\n可以在local / config / config.inc.php文件中更改它。</string>
     <string name="deleting_tag">删除标签</string>
+    <string name="compressed_progress_bar_message">压缩的</string>
 </resources>

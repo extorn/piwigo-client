@@ -7,12 +7,12 @@
     <!-- Only supports API >= 18 -->
     <!--<uses-sdk tools:overrideLibrary="net.ypresto.androidtranscoder" />-->
     <!-- Required permission to stop CPU sleeping while uploading -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <!-- required for monitoring wifi etc -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- needed to create a service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" tools:ignore="ScopedStorage" />
     <!--<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/> googleplay doesn't yet support this (might not need it too!)-->

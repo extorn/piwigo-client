@@ -143,13 +143,28 @@
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
         <item>"* Principalmente solo correcciones de errores
-                * Posiblemente Agregar opción para permitir el acceso compartido a una carpeta como un uri en un correo electrónico; implicará la creación de un usuario normal, dándoles permiso para la carpeta y el archivo, creando un token para las credenciales y los detalles del uri para incrustar en un enlace http y una forma de administrar estos tokens en el servidor."</item>
+                * Posiblemente una reescritura completa del proceso de carga, ya que no se presta a una mejora iterativa
+                * Posiblemente una reescritura completa de la aplicación con un enfoque en la simplicidad para la navegación general del usuario inicialmente"</item>
         
+        <item>1.4.0.126</item>
+        <item>"Cambio:
+                 - Investigación de mejora del rendimiento y, con suerte, implementación para la velocidad de transferencia de datos de carga"</item>
         <item>1.4.0.125</item>
         <item>"Arreglo del fallo:
                  - implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.125</item>
+        <item>"Arreglo del fallo:
+                 - al reiniciar un trabajo, asegúrese de utilizar la configuración original del trabajo
+                 - al eliminar un trabajo fallido, elimine cualquier archivo comprimido pero no cargado
+                 - incapaz de desplazarse por los errores en la página de estado de carga
+                Cambio:
+                 - Los errores de estado de carga ahora se enumeran primero los más recientes con un diseño mejorado
+                 - Gran mejora en la resistencia de la carga de archivos, muchos errores fuera de la ruta perfecta corregidos
+                 - Mejora del rendimiento para todas las llamadas al servidor http
+                 - No elimine un archivo comprimido si falla un trabajo (espere hasta que se elimine) - para permitir reintentar sin volver a comprimir
+                 - asegúrese de que los fragmentos cargados sean lo más grandes posible dentro del tamaño de fragmento máximo configurado"</item>
         <item>1.4.0.124</item>
         <item>"Arreglo del fallo:
                  - Varios errores inesperados

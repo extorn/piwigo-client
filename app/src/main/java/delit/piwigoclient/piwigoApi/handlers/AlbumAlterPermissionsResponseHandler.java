@@ -33,7 +33,7 @@ public abstract class AlbumAlterPermissionsResponseHandler extends AbstractPiwig
     @Override
     public RequestParams buildRequestParameters() {
 
-        //TODO this will give an unusual error if the user is not logged in.... better way?
+        //FIXME this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());

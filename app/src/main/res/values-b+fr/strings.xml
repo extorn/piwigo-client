@@ -110,8 +110,8 @@
     <string name="logging_in_to_piwigo_pattern">Connexion à%1$s</string>
 
     <string name="delete_upload_job_button_title">Supprimer le travail</string>
-    <string name="upload_files_button_title">Télécharger</string>
-    <string name="upload_files_finish_job_button_title">Finir</string>
+    <string name="upload_files_button_title">Lancer le téléchargement</string>
+    <string name="upload_files_finish_job_button_title">Terminer le téléchargement</string>
     <string name="upload_job_status_button">Statut</string>
     <string name="alert_really_delete_upload_job">Cela supprimera l\'état du travail de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - page de paramètres de téléchargement). Les travaux se termineront souvent avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir franchir cette étape radicale?</string>
     <string name="loading_please_wait">Chargement, veuillez patienter</string>
@@ -434,7 +434,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="error_upload_file_chunk_upload_failed_after_retries">Le téléchargement de la section du fichier a échoué après%1$d tentatives. Veuillez redémarrer ce téléchargement une fois terminé pour réessayer.</string>
     <string name="error_upload_file_ext_missing_pattern">Impossible de télécharger le fichier%1$s car il manque une extension de fichier, par exemple .jpg</string>
     <string name="error_upload_file_verification_failed">La vérification du fichier sur le serveur a échoué pour le téléchargement de%1$s</string>
-    <string name="alert_message_remove_file_server_state_incorrect">Ce fichier a été partiellement téléchargé et vous devez vous rappeler de cliquer sur le bouton de téléchargement après cela pour supprimer le fichier corrompu du serveur. Continuez?</string>
+    <string name="alert_message_remove_file_server_state_incorrect">Ce fichier a été partiellement téléchargé. Le travail de téléchargement est actuellement suspendu. Le fichier sera supprimé du serveur lorsque vous aurez terminé le téléchargement</string>
     <string name="alert_message_file_upload_cancelled_pattern">Téléchargement du fichier (%1$s) annulé.</string>
     <string name="alert_message_upload_cancelled">Importation annulée</string>
     <string name="alert_message_upload_cancelled_message">Si vous ne souhaitez pas redémarrer le téléchargement plus tard. Vous devez supprimer les fichiers de la tâche de téléchargement, puis cliquez sur Télécharger. Cela nettoiera l\'état de téléchargement annulé du serveur.</string>
@@ -701,7 +701,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_slideshow_feature_refresh_coming_soon">Cette option sera disponible sous peu. Pour l\'instant, avancez ou reculez de quelques éléments dans le diaporama avant de revenir à cet élément</string>
     <string name="cancelled_indicator">téléchargement annulé pour le fichier</string>
     <string name="media_type_indicator">Indicateur de type de support</string>
-    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Une erreur s\'est produite lors du téléchargement. Souhaitez-vous:\n\nVérifiez les erreurs avant de redémarrer manuellement le téléchargement?\n\nSupprimer les fichiers problématiques du téléchargement et terminer?\n\nRéessayer les actions avec des erreurs?</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Une erreur s\'est produite lors du téléchargement. Souhaitez-vous:\n\nVérifiez les erreurs avant de redémarrer manuellement le téléchargement?\n\nRéessayer les actions avec des erreurs?</string>
     <string name="button_finish">Finir</string>
     <string name="button_review">La revue</string>
     <string name="error_file_not_found">Fichier introuvable</string>
@@ -710,4 +710,5 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="upload">Télécharger</string>
     <string name="supported_file_types">Cette liste de types de fichiers est celle que ce serveur est configuré pour accepter.\n\nIl peut être modifié dans le fichier local / config / config.inc.php.</string>
     <string name="deleting_tag">Suppression du tag</string>
+    <string name="compressed_progress_bar_message">Comprimée</string>
 </resources>

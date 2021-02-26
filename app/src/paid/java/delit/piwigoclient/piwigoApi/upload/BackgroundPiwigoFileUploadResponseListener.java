@@ -6,6 +6,16 @@ import android.net.Uri;
 import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.upload.messages.MessageForUserResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoCleanupPostUploadFailedResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoPrepareUploadFailedResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileAddToAlbumFailedResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileChunkFailedResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileFilesExistAlreadyResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileLocalErrorResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadProgressUpdateResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadUnexpectedLocalErrorResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoVideoCompressionProgressUpdateResponse;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.upload.PiwigoFileUploadResponseListener;
 
@@ -16,7 +26,7 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
-    protected void onMessageForUser(Context context, BasePiwigoUploadService.MessageForUserResponse response) {
+    protected void onMessageForUser(Context context, MessageForUserResponse response) {
 
     }
 
@@ -31,43 +41,43 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
-    protected void onAddUploadedFileToAlbumFailure(Context context, BasePiwigoUploadService.PiwigoUploadFileAddToAlbumFailedResponse response) {
+    protected void onAddUploadedFileToAlbumFailure(Context context, PiwigoUploadFileAddToAlbumFailedResponse response) {
 
     }
 
     @Override
-    protected void onChunkUploadFailed(Context context, BasePiwigoUploadService.PiwigoUploadFileChunkFailedResponse response) {
+    protected void onChunkUploadFailed(Context context, PiwigoUploadFileChunkFailedResponse response) {
 
     }
 
     @Override
-    protected void onFilesSelectedForUploadAlreadyExistOnServer(Context context, BasePiwigoUploadService.PiwigoUploadFileFilesExistAlreadyResponse response) {
+    protected void onFilesSelectedForUploadAlreadyExistOnServer(Context context, PiwigoUploadFileFilesExistAlreadyResponse response) {
 
     }
 
     @Override
-    protected void onLocalFileError(Context context, BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse response) {
+    protected void onLocalFileError(Context context, PiwigoUploadFileLocalErrorResponse response) {
 
     }
 
     @Override
-    protected void onLocalUnexpectedError(Context context, BasePiwigoUploadService.PiwigoUploadUnexpectedLocalErrorResponse response) {
+    protected void onLocalUnexpectedError(Context context, PiwigoUploadUnexpectedLocalErrorResponse response) {
 
     }
 
     @Override
-    protected void onFileCompressionProgressUpdate(Context context, BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
+    protected void onFileCompressionProgressUpdate(Context context, PiwigoVideoCompressionProgressUpdateResponse response) {
         // Do nothing for now.
     }
 
     @Override
-    protected void onFileUploadProgressUpdate(Context context, BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+    protected void onFileUploadProgressUpdate(Context context, PiwigoUploadProgressUpdateResponse response) {
         if (response.getProgress() == 100) {
             onFileUploadComplete(context, response);
         }
     }
 
-    private void onFileUploadComplete(Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+    private void onFileUploadComplete(Context context, final PiwigoUploadProgressUpdateResponse response) {
         UploadJob uploadJob = BackgroundPiwigoUploadService.getActiveBackgroundJobByJobId(context, response.getJobId());
         if (uploadJob != null) {
             for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
@@ -78,12 +88,12 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
-    protected void onPrepareUploadFailed(Context context, BasePiwigoUploadService.PiwigoPrepareUploadFailedResponse response) {
+    protected void onPrepareUploadFailed(Context context, PiwigoPrepareUploadFailedResponse response) {
 
     }
 
     @Override
-    protected void onCleanupPostUploadFailed(Context context, BasePiwigoUploadService.PiwigoCleanupPostUploadFailedResponse response) {
+    protected void onCleanupPostUploadFailed(Context context, PiwigoCleanupPostUploadFailedResponse response) {
 
     }
 

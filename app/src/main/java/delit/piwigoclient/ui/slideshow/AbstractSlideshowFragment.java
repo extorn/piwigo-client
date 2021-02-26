@@ -164,17 +164,17 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         Logging.log(Log.DEBUG, TAG, "Stored MVC type "+ modelClassname);
     }
 
-    protected static Class<? extends ViewModelContainer> loadGalleryModelClassFromBundle(Bundle b) {
+    protected static Class<? extends ViewModelContainer> loadGalleryModelClassFromBundle(Bundle b, String tag) {
         String modelClassname =  b.getString(STATE_ARG_GALLERY_TYPE);
         if(modelClassname == null) {
-            Logging.log(Log.ERROR, TAG, "Failed to load MVC type. Bundle does not contain required key");
+            Logging.log(Log.ERROR, tag, "Failed to load MVC type. Bundle does not contain required key");
             return null;
         }
-        Logging.log(Log.DEBUG, TAG, "Loaded MVC type "+ modelClassname);
+        Logging.log(Log.DEBUG, tag, "Loaded MVC type "+ modelClassname);
         try {
             return Class.forName(modelClassname, true, ViewModelContainer.class.getClassLoader()).asSubclass(ViewModelContainer.class);
         } catch (ClassNotFoundException e) {
-            Logging.log(Log.ERROR, TAG, "Failed to load MVC type. Class not found");
+            Logging.log(Log.ERROR, tag, "Failed to load MVC type. Class not found");
             Logging.recordException(e);
             return null;
         }
@@ -186,7 +186,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         if(arguments == null) {
             throw new IllegalStateException("Unable to load model from null arguments");
         }
-        Class<? extends ViewModelContainer> galleryModelClass = loadGalleryModelClassFromBundle(arguments);
+        Class<? extends ViewModelContainer> galleryModelClass = loadGalleryModelClassFromBundle(arguments,TAG);
         long galleryModelId = arguments.getLong(ARG_GALLERY_ID);
 
         if(galleryModelClass == null) {
@@ -243,7 +243,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         if(arguments == null) {
             throw new IllegalStateException("Unable to load model from null arguments");
         }
-        Class<? extends ViewModelContainer> galleryModelClass = loadGalleryModelClassFromBundle(arguments);
+        Class<? extends ViewModelContainer> galleryModelClass = loadGalleryModelClassFromBundle(arguments, TAG);
         int rawCurrentGalleryItemPosition = arguments.getInt(ARG_GALLERY_ITEM_DISPLAYED);
 
         if (galleryItemAdapter == null) {

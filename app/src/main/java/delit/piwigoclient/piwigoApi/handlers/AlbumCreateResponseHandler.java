@@ -15,10 +15,14 @@ public class AlbumCreateResponseHandler extends AbstractPiwigoWsResponseHandler 
     private final PiwigoGalleryDetails newAlbum;
     private final boolean isVisibleOnWebsite;
 
-    public AlbumCreateResponseHandler(PiwigoGalleryDetails newAlbum, boolean isVisibleOnWebsite) {
-        super("pwg.categories.add", TAG);
+    protected AlbumCreateResponseHandler(PiwigoGalleryDetails newAlbum, boolean isVisibleOnWebsite, String tag) {
+        super("pwg.categories.add", tag);
         this.newAlbum = newAlbum;
         this.isVisibleOnWebsite = isVisibleOnWebsite;
+    }
+
+    public AlbumCreateResponseHandler(PiwigoGalleryDetails newAlbum, boolean isVisibleOnWebsite) {
+        this(newAlbum, isVisibleOnWebsite, TAG);
     }
 
     @Override

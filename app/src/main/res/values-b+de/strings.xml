@@ -110,8 +110,8 @@
     <string name="logging_in_to_piwigo_pattern">Anmelden bei%1$s</string>
 
     <string name="delete_upload_job_button_title">Job löschen</string>
-    <string name="upload_files_button_title">Hochladen</string>
-    <string name="upload_files_finish_job_button_title">Fertig</string>
+    <string name="upload_files_button_title">Starten Sie das Hochladen</string>
+    <string name="upload_files_finish_job_button_title">Beenden Sie das Hochladen</string>
     <string name="upload_job_status_button">Status</string>
     <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen alle Dateien, die teilweise auf den Server hochgeladen wurden, manuell bereinigen (oder die Einstellungen in dieser App verwenden - Seite mit den Upload-Einstellungen). Jobs werden häufig erfolgreich abgeschlossen, wenn Sie sie später fortsetzen. Sind Sie sicher, dass Sie diesen drastischen Schritt machen möchten?</string>
     <string name="loading_please_wait">Laden, bitte warten</string>
@@ -434,7 +434,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="error_upload_file_chunk_upload_failed_after_retries">Das Hochladen des Dateibereichs ist nach%1$d-Versuchen fehlgeschlagen. Bitte starten Sie diesen Upload nach Abschluss erneut, um es erneut zu versuchen.</string>
     <string name="error_upload_file_ext_missing_pattern">Datei%1$s kann nicht hochgeladen werden, da eine Dateierweiterung fehlt, z. B. .jpg</string>
     <string name="error_upload_file_verification_failed">Überprüfung der Datei auf dem Server fehlgeschlagen beim Hochladen von%1$s</string>
-    <string name="alert_message_remove_file_server_state_incorrect">Diese Datei wurde teilweise hochgeladen und Sie müssen daran denken, danach auf die Schaltfläche zum Hochladen zu klicken, um die beschädigte Datei vom Server zu entfernen. Fortsetzen?</string>
+    <string name="alert_message_remove_file_server_state_incorrect">Diese Datei wurde teilweise hochgeladen. Der Upload-Job ist derzeit angehalten. Die Datei wird vom Server entfernt, wenn Sie den Upload abgeschlossen haben</string>
     <string name="alert_message_file_upload_cancelled_pattern">Hochladen der Datei (%1$s) abgebrochen.</string>
     <string name="alert_message_upload_cancelled">Upload abgebrochen</string>
     <string name="alert_message_upload_cancelled_message">Wenn Sie den Upload später nicht neu starten möchten. Sie sollten die Dateien aus dem Upload-Auftrag entfernen und dann auf Hochladen klicken. Dadurch wird der abgebrochene Upload-Status vom Server gelöscht.</string>
@@ -701,7 +701,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_slideshow_feature_refresh_coming_soon">Diese Funktion kommt bald. Bewegen Sie zunächst einige Elemente in der Diashow vorwärts oder rückwärts, bevor Sie zu diesem Element zurückkehren</string>
     <string name="cancelled_indicator">Upload für Datei abgebrochen</string>
     <string name="media_type_indicator">Medientypanzeige</string>
-    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Beim Hochladen ist ein Fehler aufgetreten. Möchten Sie:\n\nÜberprüfen Sie die Fehler, bevor Sie den Upload manuell neu starten.\n\nEntfernen Sie die problematischen Dateien aus dem Upload und beenden Sie?\n\nAktionen mit Fehlern wiederholen?</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">Beim Hochladen ist ein Fehler aufgetreten. Möchten Sie:\n\nÜberprüfen Sie die Fehler, bevor Sie den Upload manuell neu starten.\n\nAktionen mit Fehlern wiederholen?</string>
     <string name="button_finish">Fertig</string>
     <string name="button_review">Rezension</string>
     <string name="error_file_not_found">Datei nicht gefunden</string>
@@ -710,4 +710,5 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload">Hochladen</string>
     <string name="supported_file_types">Diese Liste der Dateitypen ist die, für deren Annahme dieser Server konfiguriert ist.\n\nSie kann in der lokalen Datei / config / config.inc.php geändert werden.</string>
     <string name="deleting_tag">Tag löschen</string>
+    <string name="compressed_progress_bar_message">Komprimiert</string>
 </resources>

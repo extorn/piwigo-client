@@ -56,7 +56,7 @@ public class FileSizeExceededAction<F extends AbstractUploadFragment<F,FUIH>,FUI
 
         if (Boolean.TRUE == positiveAnswer) {
             for (Uri file : filesToDelete) {
-                fragment.onRemove(fragment.getFilesForUploadViewAdapter(), file, false);
+                fragment.onUserActionDeleteFileFromUpload(fragment.getFilesForUploadViewAdapter(), file, false);
             }
         }
         if (positiveAnswer != null) {

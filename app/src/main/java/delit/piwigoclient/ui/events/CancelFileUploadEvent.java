@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.events;
 
-import java.io.File;
+import android.net.Uri;
 
 /**
  * Created by gareth on 12/06/17.
@@ -9,9 +9,9 @@ import java.io.File;
 public class CancelFileUploadEvent {
 
     private final long jobId;
-    private final File cancelledFile;
+    private final Uri cancelledFile;
 
-    public CancelFileUploadEvent(long jobId, File cancelledFile) {
+    public CancelFileUploadEvent(long jobId, Uri cancelledFile) {
         this.jobId = jobId;
         this.cancelledFile = cancelledFile;
     }
@@ -20,7 +20,7 @@ public class CancelFileUploadEvent {
         return jobId;
     }
 
-    public File getCancelledFile() {
+    public Uri getCancelledFile() {
         return cancelledFile;
     }
 }

@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -84,6 +83,8 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
+import delit.piwigoclient.ui.events.CancelFileUploadEvent;
+import delit.piwigoclient.ui.events.ForegroundUploadFinishedEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
@@ -103,6 +104,8 @@ import delit.piwigoclient.ui.upload.actions.PartialUploadFileAction;
 import delit.piwigoclient.ui.upload.actions.UnacceptableFilesAction;
 import delit.piwigoclient.ui.upload.list.UploadDataItem;
 import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
+import delit.piwigoclient.ui.upload.list.UploadDataItemViewHolder;
+import delit.piwigoclient.ui.upload.list.UploadItemMultiSelectStatusAdapter;
 import delit.piwigoclient.ui.util.UiUpdatingProgressListener;
 
 import static android.view.View.GONE;
@@ -115,7 +118,7 @@ import static android.view.View.VISIBLE;
  * Use the {@link UploadFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends MyFragment<F,FUIH> implements FilesToUploadRecyclerViewAdapter.RemoveListener {
+public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends MyFragment<F,FUIH> {
     // the fragment initialization parameters
     private static final String TAG = "UploadFragment";
     private static final String SAVED_STATE_UPLOAD_TO_ALBUM = "uploadToAlbum";
@@ -144,8 +147,8 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     private SwitchMaterial allowUploadOfRawVideosIfIncompressibleCheckbox;
     private SwitchMaterial compressImagesCheckbox;
     private ViewPager mViewPager;
-    private LinearLayout compressImagesSettings;
-    private LinearLayout compressVideosSettings;
+    private ViewGroup compressImagesSettings;
+    private ViewGroup compressVideosSettings;
     private Spinner compressVideosQualitySpinner;
     private Spinner compressVideosAudioBitrateSpinner;
     private NumberPicker compressImagesQualityNumberPicker;
@@ -338,7 +341,6 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         deleteUploadJobButton = view.findViewById(R.id.delete_upload_job_button);
         deleteUploadJobButton.setOnClickListener(v -> {
-            uploadFilesNowButton.setText(R.string.upload_files_button_title);
             onClickDeleteUploadJobButton();
         });
 
@@ -431,12 +433,11 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         uploadFilesNowButton = view.findViewById(R.id.upload_files_button);
         uploadFilesNowButton.setOnClickListener(v -> {
-            uploadFilesNowButton.setText(R.string.upload_files_button_title);
-            uploadFiles();
+            onClickUploadFilesButton();
         });
 
         if (filesToUploadAdapter == null) {
-            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter<>(new ArrayList<DocumentFile>(), this);
+            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter<>(new ArrayList<DocumentFile>(), new AdapterActionListener());
             filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
 
             filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -745,6 +746,14 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         if(evt != null) {
             onEvent(evt);
         }
+
+        UploadJob job = null;
+        Context ctx = requireContext();
+        if (uploadJobId != null) {
+            job = ForegroundPiwigoUploadService.getActiveForegroundJob(ctx, uploadJobId);
+
+        }
+        allowUserUploadConfiguration(job);
     }
 
     @Override
@@ -828,8 +837,14 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         }
     }
 
-    private void uploadFiles() {
-        buildAndSubmitNewUploadJob();
+    private void onClickUploadFilesButton() {
+        UploadJob job = getActiveJob(requireContext());
+        if(job != null) {
+            // resubmit the old job.
+            submitUploadJob(job);
+        } else {
+            buildAndSubmitNewUploadJob();
+        }
     }
 
     private void buildAndSubmitNewUploadJob() {
@@ -895,19 +910,18 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         AdsManager.getInstance(getContext()).showFileToUploadAdvertIfAppropriate(getContext());
     }
 
-    @Override
-    public void onRemove(final FilesToUploadRecyclerViewAdapter adapter, final Uri itemToRemove, boolean longClick) {
+    public void onUserActionDeleteFileFromUpload(final FilesToUploadRecyclerViewAdapter adapter, final Uri itemToRemove, boolean longClick) {
         final UploadJob activeJob = getActiveJob(getContext());
         if (activeJob != null) {
-            if (activeJob.isFinished()) {
+            if (!activeJob.isRunningNow()) {
+                activeJob.cancelFileUpload(itemToRemove);
+                adapter.remove(itemToRemove);
+                releaseUriPermissionsForUploadItem(itemToRemove);
+                ForegroundPiwigoUploadService.saveStateToDisk(requireContext(), activeJob);
                 if (activeJob.uploadItemRequiresAction(itemToRemove)) {
+                    // job stopped, the upload of this file has been started
                     String message = getString(R.string.alert_message_remove_file_server_state_incorrect);
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new PartialUploadFileAction<>(getUiHelper(), itemToRemove));
-                } else {
-                    // job stopped, but upload of this file never got to the server.
-                    activeJob.cancelFileUpload(itemToRemove);
-                    adapter.remove(itemToRemove);
-                    releaseUriPermissionsForUploadItem(itemToRemove);
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_information, message, new PartialUploadFileAction<>(getUiHelper(), itemToRemove));
                 }
             } else {
                 // job running.
@@ -918,6 +932,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
                     adapter.remove(itemToRemove);
                     releaseUriPermissionsForUploadItem(itemToRemove);
                 }
+                EventBus.getDefault().post(new CancelFileUploadEvent(activeJob.getJobId(), itemToRemove));
             }
             if (!activeJob.isRunningNow() && activeJob.getFilesAwaitingUpload().size() == 0) {
                 // no files left to upload. Lets switch the button from upload to finish
@@ -946,7 +961,17 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         boolean jobYetToFinishUploadingFiles = filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !(jobIsSubmitted || jobIsRunningNow));
         boolean jobYetToCompleteAfterUploadingFiles = !noJobIsYetConfigured && !filesStillToBeUploaded && !jobIsFinished && !jobIsRunningNow; // crashed job just loaded basically
-        uploadFilesNowButton.setEnabled(jobYetToFinishUploadingFiles || jobYetToCompleteAfterUploadingFiles); // Allow restart of the job.
+
+        if(uploadJob == null) {
+            filesToUploadAdapter.clearUploadProgress();
+            uploadFilesNowButton.setText(R.string.upload_files_button_title);
+        } else {
+            uploadFilesNowButton.setText(R.string.upload_files_finish_job_button_title);
+        }
+
+        boolean allowJobSubmission = !(jobIsSubmitted || jobIsRunningNow);
+        allowJobSubmission &= (jobYetToFinishUploadingFiles || jobYetToCompleteAfterUploadingFiles);
+        uploadFilesNowButton.setEnabled(allowJobSubmission); // Allow restart of the job.
 
         compressVideosCheckbox.setEnabled((noJobIsYetConfigured || jobIsFinished) && isPlayableMediaFilesWaitingForUpload());
         compressVideosCheckbox.callOnClick(); // set relevant fields to enabled / disabled
@@ -973,16 +998,25 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     private void updateActiveJobActionButtonsStatus(@NonNull Context context, @Nullable UploadJob job) {
-        if (job != null && (job.isRunningNow() || !job.hasJobCompletedAllActionsSuccessfully())) {
+        boolean essentiallyRunning = job != null && (job.isSubmitted() || job.isRunningNow());
+        if (job != null && !essentiallyRunning && !job.hasJobCompletedAllActionsSuccessfully()) {
             uploadJobStatusButton.setVisibility(VISIBLE);
-            boolean canForceDeleteJob = job.hasBeenRunBefore() && !job.isRunningNow() && !job.hasJobCompletedAllActionsSuccessfully();
-            if(canForceDeleteJob) {
-                Logging.logAnalyticEvent(context, "AllowForceDeleteUploadJob");
-            }
+            boolean canForceDeleteJob = job.hasBeenRunBefore();
             deleteUploadJobButton.setVisibility(canForceDeleteJob ? VISIBLE : GONE);
+            uploadFilesNowButton.setEnabled(canForceDeleteJob || uploadFilesNowButton.isEnabled());
         } else {
             uploadJobStatusButton.setVisibility(GONE);
             deleteUploadJobButton.setVisibility(GONE);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(ForegroundUploadFinishedEvent event) {
+        if(getUiHelper().getPiwigoResponseListener().getParent() == null) {
+            //listenerDetached
+            getUiHelper().getPiwigoResponseListener().withUiHelper((F) this, getUiHelper());
+            UploadJob job = getActiveJob(requireContext());
+            ((ForegroundPiwigoFileUploadResponseListener)getUiHelper().getPiwigoResponseListener()).onUploadComplete(requireContext(), job);
         }
     }
 
@@ -996,7 +1030,6 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
-            UploadJob activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(requireContext(), uploadJobId);
             if (!event.areAllPermissionsGranted()) {
                 if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_required_permissions_not_granted_action_cancelled));
@@ -1005,11 +1038,16 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
                 }
                 return;
             }
-            //ensure the handler is actively listening before the job starts.
-            getUiHelper().addBackgroundServiceCall(uploadJobId);
-            ForegroundPiwigoUploadService.startActionRunOrReRunUploadJob(requireContext(), activeJob);
-            allowUserUploadConfiguration(activeJob);
+            submitUploadJobWithPermissions();
         }
+    }
+
+    private void submitUploadJobWithPermissions() {
+        UploadJob activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(requireContext(), uploadJobId);
+        //ensure the handler is actively listening before the job starts.
+        getUiHelper().addBackgroundServiceCall(uploadJobId);
+        ForegroundPiwigoUploadService.startActionRunOrReRunUploadJob(requireContext(), activeJob);
+        allowUserUploadConfiguration(activeJob);
     }
 
     @Override
@@ -1162,15 +1200,15 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         }
     }
 
-    public void onUploadJobSuccess(UploadJob job) {
+    public void onNotificationUploadJobSuccess(UploadJob job) {
         setUploadJobId(null);
         String message = getString(R.string.alert_upload_success);
         notifyUser(getContext(), R.string.alert_success, message);
-        allowUserUploadConfiguration(job);
+        allowUserUploadConfiguration(null);
     }
 
-    public void onUploadJobFailure(UploadJob job) {
-        getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_question_title, getString(R.string.some_files_failed_to_upload_what_action_do_you_wish_to_take), R.string.button_finish, R.string.button_review, R.string.button_retry, new OnUploadJobFailureQuestionListener<>(getUiHelper()));
+    public void onNotificationUploadJobFailure(UploadJob job) {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.some_files_failed_to_upload_what_action_do_you_wish_to_take), R.string.button_review, R.string.button_retry, new OnUploadJobFailureQuestionListener<>(getUiHelper()));
         allowUserUploadConfiguration(job);
     }
 
@@ -1178,6 +1216,29 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         hideOverallUploadProgressIndicator();
         switchToUploadingFilesTab();
         updateFilesForUploadList(folderItems);
+    }
+
+    public void onUserActionDeleteUploadJob() {
+        UploadJob job = getActiveJob(requireContext());
+        if (job == null) {
+            Logging.log(Log.WARN, TAG, "User attempted to delete job that was no longer exists");
+            return;
+        }
+        onUserActionDeleteUploadJob(job);
+    }
+
+    public void onUserActionDeleteUploadJob(@NonNull UploadJob job) {
+        if (job.getTemporaryUploadAlbum() > 0) {
+            AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(job.getTemporaryUploadAlbum(), false);
+            getUiHelper().addNonBlockingActiveServiceCall(getString(R.string.alert_deleting_temporary_upload_album), albumDelHandler.invokeAsync(getContext(), job.getConnectionPrefs()), albumDelHandler.getTag());
+        }
+        IOUtils.deleteAllFilesSharedWithThisApp(requireContext());
+        ForegroundPiwigoUploadService.removeJob(job);
+        ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), job, true);
+        job.deleteAnyCompressedFiles(requireContext());
+        filesToUploadAdapter.clear();
+        uploadJobId = null;
+        allowUserUploadConfiguration(null);
     }
 
     private static class OnUploadJobFailureQuestionListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
@@ -1207,9 +1268,6 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             if (Boolean.TRUE == positiveAnswer) {
                 getParent().onUserActionClearUploadErrorsAndRetry();
             } else if (Boolean.FALSE == positiveAnswer) {
-                getParent().onUserActionRemoveFailedUploadsAndFinish();
-            } else {
-                //Do nothing.
                 getParent().onUserActionReviewUploadErrors();
             }
         }
@@ -1236,6 +1294,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         UploadJob uploadJob = getActiveJob(requireContext());
         getFilesForUploadViewAdapter().removeAll(uploadJob.getFilesWithStatus(UploadJob.ERROR));
         uploadJob.cancelAllFailedUploads();
+        ForegroundPiwigoUploadService.saveStateToDisk(requireContext(), uploadJob);
         submitUploadJob(uploadJob);
     }
 
@@ -1245,6 +1304,14 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             getFilesForUploadViewAdapter().updateUploadStatus(file, null);
         }
         uploadJob.clearUploadErrors();
+        ForegroundPiwigoUploadService.saveStateToDisk(requireContext(), uploadJob);
         submitUploadJob(uploadJob);
+    }
+
+    private class AdapterActionListener<LVA extends FilesToUploadRecyclerViewAdapter<LVA,MSA,VH>, MSA extends UploadItemMultiSelectStatusAdapter<MSA, LVA,VH>, VH extends UploadDataItemViewHolder<VH, LVA,MSA>> implements FilesToUploadRecyclerViewAdapter.RemoveListener<LVA,MSA,VH> {
+        @Override
+        public void onRemove(LVA adapter, Uri itemToRemove, boolean longClick) {
+            onUserActionDeleteFileFromUpload(adapter, itemToRemove, longClick);
+        }
     }
 }

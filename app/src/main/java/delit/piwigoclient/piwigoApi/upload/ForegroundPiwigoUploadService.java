@@ -10,12 +10,16 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.HashMap;
 
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.UploadActivity;
+import delit.piwigoclient.ui.events.ForegroundUploadFinishedEvent;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -41,11 +45,11 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
 
     /**
      *
-     * @param context
-     * @param uploadJob
+     * @param context an active context
+     * @param uploadJob the job to run
      * @return jobId of the started job (passed in as param)
      */
-    public static long startActionRunOrReRunUploadJob(@NonNull Context context, UploadJob uploadJob) {
+    public static long startActionRunOrReRunUploadJob(@NonNull Context context, @NonNull UploadJob uploadJob) {
         Context appContext = context.getApplicationContext();
         Intent intent = new Intent(appContext, ForegroundPiwigoUploadService.class);
         intent.setAction(ACTION_UPLOAD_FILES);
@@ -54,6 +58,8 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
         try {
             enqueueWork(appContext, ForegroundPiwigoUploadService.class, JOB_ID, intent);
         } catch(RuntimeException e) {
+            Logging.log(Log.ERROR,TAG, "Unexpected error starting upload service");
+            Logging.recordException(e);
             uploadJob.setSubmitted(false);
         }
         return uploadJob.getJobId();
@@ -68,11 +74,18 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
             }
             doBeforeWork(intent);
             doWork(intent);
+            if(BuildConfig.DEBUG) {
+                Log.d(TAG, "Foreground upload service about to end nicely");
+            }
         } finally {
             if(BuildConfig.DEBUG) {
                 Log.d(TAG, "Foreground upload service ending");
             }
             stopForeground(true);
+            EventBus.getDefault().post(new ForegroundUploadFinishedEvent());
+        }
+        if(BuildConfig.DEBUG) {
+            Log.d(TAG, "Foreground upload service really ended nicely");
         }
     }
 
@@ -112,7 +125,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     }
 
     @Override
-    protected void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response) {
+    public void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response) {
         PiwigoResponseBufferingHandler.getDefault().preRegisterResponseHandlerForNewMessage(jobId, response.getMessageId());
         PiwigoResponseBufferingHandler.getDefault().processResponse(response);
     }

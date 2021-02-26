@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -28,8 +29,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
-
-import static android.os.AsyncTask.Status.FINISHED;
+import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 
 public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 
@@ -80,6 +80,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
             return new Thread(r, "AsyncLoginTask #" + mCount.getAndIncrement());
         }
     };
+    private static final String TAG = "WORKER";
 
     static {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
@@ -103,6 +104,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
     private boolean rerunning = false;
     private AbstractPiwigoDirectResponseHandler handler;
     private ConnectionPreferences.ProfilePreferences connectionPreferences;
+    private boolean workerDone;
 
     public Worker(@NonNull AbstractPiwigoDirectResponseHandler handler, Context context) {
         this.handler = handler;
@@ -110,6 +112,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
     }
 
     public void beforeCall() {
+        workerDone = false;
     }
 
     //TODO why can't I use the WeakReference here (OwnedSafeAsyncTask)
@@ -134,6 +137,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
     }
 
     public void afterCallInBackgroundThread(boolean success) {
+        recordExcutionFinished();
         Logging.log(Log.DEBUG, tag, "Worker "+getTaskName()+" terminated, handler success : " + success);
     }
 
@@ -168,60 +172,83 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
             Logging.log(Log.ERROR, tag, "Running worker for handler " + getOwner().getClass().getSimpleName() + " on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
         }
 
-        AbstractPiwigoDirectResponseHandler handler = getOwner();
-        this.tag = handler.getTag();
+        final AbstractPiwigoDirectResponseHandler handler = getOwner();
 
-        ConnectionPreferences.ProfilePreferences profilePrefs = getProfilePreferences();
+        try {
+            this.tag = handler.getTag();
 
-        handler.setMessageId(messageId);
-        handler.setCallDetails(getContext(), profilePrefs, true);
+            ConnectionPreferences.ProfilePreferences profilePrefs = getProfilePreferences();
 
-        beforeCall();
-        updatePoolSize(handler);
+            handler.setMessageId(messageId);
+            handler.setCallDetails(getContext(), profilePrefs, !handler.getUseSynchronousMode());
 
-        boolean haveValidSession = true;
-        if (!handler.isPerformingLogin()) {
-            synchronized (Worker.class) {
-                if (PiwigoSessionDetails.getInstance(profilePrefs) == null) {
-                    haveValidSession = handler.getNewLogin();
-                }
-            }
-        }
+            beforeCall();
+            updatePoolSize(handler);
 
-        if (haveValidSession) {
-            handler.beforeCall();
-            handler.runCall(rerunning);
-
-            // this is the absolute timeout - in case something is seriously wrong.
-            long callTimeoutAtTime = System.currentTimeMillis() + 300000;
-
-            synchronized (getOwner()) {
-                boolean timedOut = false;
-                while (handler.isRunning() && !isCancelled() && !timedOut) {
-                    long waitForMillis = Math.min(1000, callTimeoutAtTime - System.currentTimeMillis());
-                    if (waitForMillis > 0) {
-                        try {
-                            handler.wait(waitForMillis);
-                        } catch (InterruptedException e) {
-                            // Either this has been cancelled or the wait timed out or the handler completed okay and notified us
-                            if (isCancelled()) {
-                                if (BuildConfig.DEBUG) {
-                                    Log.e(handler.getTag(), "Service call cancelled before handler " + handler.getClass().getSimpleName() + " could finish running");
-                                }
-                                handler.cancelCallAsap();
-                            }
-                        }
-                    } else {
-                        timedOut = true;
+            boolean haveValidSession = true;
+            if (!handler.isPerformingLogin()) {
+                synchronized (Worker.class) {
+                    if (PiwigoSessionDetails.getInstance(profilePrefs) == null) {
+                        haveValidSession = handler.getNewLogin();
                     }
                 }
             }
-        } else {
-            handler.sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_unable_to_acquire_valid_session)));
+
+            if (haveValidSession) {
+                handler.beforeCall();
+                handler.runCall(rerunning);
+
+                // this is the absolute timeout - in case something is seriously wrong.
+                long callTimeoutAtTime = System.currentTimeMillis() + 300000;
+
+                synchronized (handler) {
+                    boolean timedOut = false;
+                    long start = System.currentTimeMillis();
+                    while (handler.isRunning() && !isCancelled() && !timedOut) {
+                        long waitForMillis = Math.min(1000, callTimeoutAtTime - System.currentTimeMillis());
+                        if (waitForMillis > 0) {
+                            try {
+                                handler.wait(waitForMillis);
+                            } catch (InterruptedException e) {
+                                // Either this has been cancelled or the wait timed out or the handler completed okay and notified us
+                                if (isCancelled()) {
+                                    if (BuildConfig.DEBUG) {
+                                        Log.e(handler.getTag(), "Service call cancelled before handler " + handler.getClass().getSimpleName() + " could finish running");
+                                    }
+                                    handler.cancelCallAsap();
+                                }
+                            }
+                        } else {
+                            timedOut = true;
+                        }
+                    }
+                    if(BuildConfig.DEBUG) {
+                        long callTookMillis = System.currentTimeMillis() - start;
+                        String call;
+                        if (handler instanceof AbstractPiwigoWsResponseHandler) {
+                            call = ((AbstractPiwigoWsResponseHandler) handler).getPiwigoMethod();
+                        } else {
+                            URI uri = handler.getRequestURI();
+                            if(uri != null) {
+                                call = handler.getRequestURI().toASCIIString();
+                            } else {
+                                call = handler.getTag();
+                            }
+                        }
+                        Logging.log(Log.ERROR, TAG, "HANDLER_TIME: %2$dms : calling [%3$d]%1$s", call, callTookMillis, handler.getMessageId());
+                    }
+                }
+            } else {
+                handler.sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_unable_to_acquire_valid_session)));
+            }
+
+            afterCallInBackgroundThread(handler.isSuccess());
+
+        } catch(RuntimeException e) {
+            Logging.log(Log.ERROR,TAG, "Unexpected error in execute");
+            Logging.recordException(e);
+            Logging.waitForExceptionToBeSent();
         }
-
-        afterCallInBackgroundThread(handler.isSuccess());
-
 
         return handler.isSuccess();
     }
@@ -249,11 +276,14 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
         synchronized (runningExecutorTasks) {
             runningExecutorTasks.remove(getTaskName());
         }
+        workerDone = true;
+        synchronized (this) {
+            notifyAll();
+        }
     }
 
     @Override
     protected void onPostExecuteSafely(Boolean aBoolean) {
-        recordExcutionFinished();
         Logging.log(Log.DEBUG, tag, "Worker "+getTaskName()+" terminated: " + aBoolean);
     }
 
@@ -298,12 +328,13 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
      * @return true if succeeded
      */
     public boolean startAndWait(long messageId) {
-        AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
+        final AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
         //TODO collect a list of tasks and kill them all if the app exits.
         Boolean retVal = null;
         boolean timedOut = false;
-        long timeoutAt = System.currentTimeMillis() + MAX_TIMEOUT_MILLIS;
-        while (!task.isCancelled() && !task.getStatus().equals(FINISHED) && !timedOut) {
+        long workerStartedAt = System.currentTimeMillis();
+        long timeoutAt = workerStartedAt + MAX_TIMEOUT_MILLIS;
+        while (!task.isCancelled() && !workerDone && !timedOut) {
 
             if(retVal != null) {
                 timedOut = System.currentTimeMillis() > timeoutAt;
@@ -313,18 +344,21 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
                     Log.e(tag, "Thread " + Thread.currentThread().getName() + " starting to wait for response from handler " + getOwner().getClass().getSimpleName());
                 }
                 if(retVal == null) {
+                    long pauseMillis = 1000;
                     try {
-                        retVal = task.get(1000, TimeUnit.MILLISECONDS); // allow it to loop around until timed out (rather than hang forever)
+                        long currentTime = System.currentTimeMillis();
+                        retVal = task.get(pauseMillis, TimeUnit.MILLISECONDS); // allow it to loop around until timed out (rather than hang forever)
+                        Logging.log(Log.DEBUG, TAG, "WORKER waited %2$dms for task %1$s to provide result", handler.getTag(), System.currentTimeMillis() - currentTime);
                     } catch (TimeoutException e) {
-
-                        Log.e(tag, " Thread " + Thread.currentThread().getName() + " timed out waiting for response from handler " + getOwner().getClass().getSimpleName() + " in task with status : " + task.getStatus().name());
+                        Logging.log(Log.DEBUG, TAG, "WORKER timed out after %2$dms waiting for task %1$s to provide result", handler.getTag(), pauseMillis);
                     }
                     if (retVal != null) {
                         timeoutAt = System.currentTimeMillis() + 1500;
                     }
                 } else {
-                    synchronized (task) {
-                        task.wait(500);
+                    Logging.log(Log.DEBUG, TAG, "Waiting up to 500ms for task %1$s to finish after result received", handler.getTag());
+                    synchronized (this) {
+                        wait(500);
                     }
                 }
             } catch (InterruptedException e) {
@@ -337,6 +371,16 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
                     Log.e(tag, "Thread " + Thread.currentThread().getName() + ": Error retrieving result from handler " + getOwner().getClass().getSimpleName(), e);
                 }
             }
+        }
+        if(BuildConfig.DEBUG) {
+            long callTookMillis = System.currentTimeMillis() - workerStartedAt;
+            String call;
+            if (handler instanceof AbstractPiwigoWsResponseHandler) {
+                call = ((AbstractPiwigoWsResponseHandler) handler).getPiwigoMethod();
+            } else {
+                call = handler.getRequestURI().toASCIIString();
+            }
+            Logging.log(Log.ERROR, TAG, "WORKER_TIME: %2$dms : calling [%3$d]%1$s", call, callTookMillis, handler.getMessageId());
         }
         if(timedOut) {
             if (BuildConfig.DEBUG) {

@@ -38,6 +38,10 @@ public class TaskProgressTracker implements ProgressListener {
         this(taskName, totalWork, 1, listener);
     }
 
+    public String getTaskName() {
+        return taskName;
+    }
+
     private TaskProgressTracker(String taskName, long totalWork, double scalar, ProgressListener listener) {
         this.taskName = taskName;
         this.totalWork = totalWork;
@@ -59,10 +63,24 @@ public class TaskProgressTracker implements ProgressListener {
         return Math.max(listenerMinimumNotifiableProgress, taskTrackerMinimumReportingProgress);
     }
 
-    public synchronized TaskProgressTracker addSubTask(String subTaskName, long subTaskTotalWork, long mainTaskWorkUnitsInSubTask) {
+    public synchronized TaskProgressTracker addSubTask(String subTaskName, long subTaskTotalWork, long subTaskWorkDone, long mainTaskWorkUnitsInSubTask) {
         TaskProgressTracker subTaskTracker = new TaskProgressTracker(subTaskName, subTaskTotalWork, calculateScalar(mainTaskWorkUnitsInSubTask), getSubTaskListener());
+        //initialise the work done so far (don't notify anyone as it's accounted for already).
+        subTaskTracker.initialiseWithWorkDone(subTaskWorkDone);
         subTasks.add(subTaskTracker);
+        if(mainTaskWorkUnitsInSubTask > totalWork - workDone) {
+            Logging.log(Log.ERROR, TAG, "creating subtask that will push main task over 100% once complete");
+        }
         return subTaskTracker;
+    }
+
+    private void initialiseWithWorkDone(long workDone) {
+        this.workDone = workDone;
+        updateScaledProgress();
+    }
+
+    public synchronized TaskProgressTracker addSubTask(String subTaskName, long subTaskTotalWork, long mainTaskWorkUnitsInSubTask) {
+        return addSubTask(subTaskName, subTaskTotalWork, 0, mainTaskWorkUnitsInSubTask);
     }
 
     private ProgressListener getSubTaskListener() {
@@ -76,9 +94,18 @@ public class TaskProgressTracker implements ProgressListener {
         return ((double)subTaskTotalWork) / totalWork;
     }
 
-    public synchronized void incrementWorkDone(long workDone) {
-        this.workDone += workDone;
-        afterTaskProgress();
+    public synchronized void rollbackWorkDone(long workToRollback) {
+        if(workDone - workToRollback < 0) {
+            Logging.log(Log.ERROR,TAG, "Rolling back work done will take progress negative");
+        }
+        this.workDone -= workToRollback;
+        this.workDone = Math.max(0, this.workDone);
+        afterTaskProgress(true);
+    }
+
+    public synchronized void incrementWorkDone(long newWorkDone) {
+        this.workDone += newWorkDone;
+        afterTaskProgress(newWorkDone < 0);
         // should be fine. its all synchronized.
 //        if(!subTasks.isEmpty()) {
 //            throw new IllegalStateException("Unable to update overall work progress when sub divided.");
@@ -102,15 +129,23 @@ public class TaskProgressTracker implements ProgressListener {
     }
 
     private synchronized void afterTaskProgress() {
+        afterTaskProgress(isComplete());
+    }
+
+    private synchronized void afterTaskProgress(boolean guaranteeNotificationOfListeners) {
+        updateScaledProgress();
+        notifyListenersOfProgress(guaranteeNotificationOfListeners);
+        synchronized (this) {
+            notifyAll();
+        }
+    }
+
+    private void updateScaledProgress() {
         if(workDone == totalWork) {
             currentScaledProgress = scalar;
             notifiableProgressStep = 0; // ensure the listener is called.
         } else {
             currentScaledProgress = calculateProgressValue() * scalar;
-        }
-        notifyListenersOfProgress();
-        synchronized (this) {
-            notifyAll();
         }
     }
 
@@ -134,9 +169,13 @@ public class TaskProgressTracker implements ProgressListener {
     }
 
     private void notifyListenersOfProgress() {
+        notifyListenersOfProgress(false);
+    }
+
+    private void notifyListenersOfProgress(boolean force) {
         if(progressListener != null) {
             double notifyAfter = lastNotifiedProgress + notifiableProgressStep;
-            if(currentScaledProgress >= notifyAfter) {
+            if(force || currentScaledProgress >= notifyAfter) {
                 progressListener.onProgress(currentScaledProgress);
                 lastNotifiedProgress = currentScaledProgress;
             }
@@ -181,7 +220,11 @@ public class TaskProgressTracker implements ProgressListener {
                 }
             }
         }
-        return (((double) workDone) / totalWork) + totalSubTasksProgress;
+        double overallProgress = (((double) workDone) / totalWork) + totalSubTasksProgress;
+        if(overallProgress > 1 && workDone != totalWork) {
+            Logging.log(Log.ERROR, TAG, "task progress is over 100%. Subtask count : " + subTasks.size());
+        }
+        return Math.min(1,overallProgress);
     }
 
     public synchronized int getActiveSubTasks() {
@@ -199,6 +242,8 @@ public class TaskProgressTracker implements ProgressListener {
 
     public synchronized void markComplete() {
         if(workDone != totalWork) {
+            // flush any complete sub-tasks.
+            calculateProgressValue();
             setWorkDone(totalWork);
         }
     }

@@ -1,0 +1,130 @@
+package delit.piwigoclient.piwigoApi.upload.actors;
+
+import android.content.Context;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.webkit.MimeTypeMap;
+
+import androidx.annotation.RequiresApi;
+import androidx.documentfile.provider.DocumentFile;
+
+import java.util.Set;
+
+import delit.libs.core.util.Logging;
+import delit.libs.util.IOUtils;
+import delit.piwigoclient.business.video.compression.ExoPlayerCompression;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileLocalErrorResponse;
+
+import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler.getNextMessageId;
+
+public class VideoCompressor extends Thread {
+    private static final String TAG = "VideoCompressor";
+    private final Context context;
+
+    public VideoCompressor(Context context) {
+        this.context = context;
+    }
+
+    public interface VideoCompressorListener extends ExoPlayerCompression.CompressionListener {
+
+        boolean isCompressionComplete();
+
+        Exception getCompressionError();
+
+        boolean isUnsupportedVideoFormat();
+
+        void notifyUsersOfError(long jobId, PiwigoUploadFileLocalErrorResponse piwigoUploadFileLocalErrorResponse);
+
+        void onCompressionSuccess(Uri inputFile, DocumentFile outputVideo);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public void compressVideo(UploadJob uploadJob, Uri rawVideo, VideoCompressorListener listener){
+
+        ExoPlayerCompression compressor = new ExoPlayerCompression();
+        ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
+
+        double desiredBitratePerPixelPerSec = uploadJob.getPlayableMediaCompressionParams().getQuality();
+        int desiredAudioBitrate = uploadJob.getPlayableMediaCompressionParams().getAudioBitrate();
+        compressionSettings.setAddAudioTrack(desiredAudioBitrate != 0); // -1 is used for pass-through.
+        compressionSettings.setAddVideoTrack(desiredBitratePerPixelPerSec - 0.00001 > 0); // no pass-through option.
+        compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(desiredBitratePerPixelPerSec);
+        compressionSettings.getAudioCompressionParameters().setBitRate(desiredAudioBitrate);
+        Set<String> serverAcceptedFileExts = PiwigoSessionDetails.getInstance(uploadJob.getConnectionPrefs()).getAllowedFileTypes();
+
+        String outputFileExt = compressionSettings.getOutputFileExt(context, serverAcceptedFileExts);
+        DocumentFile outputVideo;
+
+        if (outputFileExt == null) {
+            if (uploadJob.isAllowUploadOfRawVideosIfIncompressible()) {
+                Bundle b = new Bundle();
+                b.putString("file_ext", IOUtils.getFileExt(rawVideo.toString()));
+                Logging.logAnalyticEvent(context, "incompressible_video_encountered", b);
+                uploadJob.markFileAsCompressed(rawVideo);
+                outputVideo = IOUtils.getSingleDocFile(context, rawVideo);
+            } else {
+                String msg = "Unable to find acceptable file extension for compressed video amongst " + serverAcceptedFileExts;
+                Logging.log(Log.ERROR, TAG, msg);
+                // cancel the upload of this file
+                uploadJob.setErrorFlag(rawVideo);
+                // notify listeners that this file encountered an error
+                listener.notifyUsersOfError(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, new Exception(msg)));
+                outputVideo = null;
+            }
+        } else {
+            String outputMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(outputFileExt);
+            outputVideo = uploadJob.buildCompressedFile(context, rawVideo, outputMimeType);
+
+            compressor.invokeFileCompression(context, rawVideo, outputVideo.getUri(), listener, compressionSettings);
+
+            while (!listener.isCompressionComplete() && null == listener.getCompressionError()) {
+                try {
+                    synchronized (this) {
+                        wait(1000);
+                        if (uploadJob.isCancelUploadAsap() || !uploadJob.isFileUploadStillWanted(rawVideo)) {
+                            compressor.cancel();
+                            return;
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Listener awoken!");
+                    // either spurious wakeup or the upload job wished to be cancelled.
+                }
+            }
+            if (listener.getCompressionError() != null && uploadJob.isFileUploadStillWanted(rawVideo)) {
+                if (outputVideo.exists()) {
+                    if (!outputVideo.delete()) {
+                        Logging.log(Log.ERROR, TAG, "Unable to delete corrupt compressed file.");
+                    }
+                }
+
+                Exception e = listener.getCompressionError();
+                if (listener.isUnsupportedVideoFormat() && uploadJob.isAllowUploadOfRawVideosIfIncompressible()) {
+                    Bundle b = new Bundle();
+                    b.putString("file_ext", IOUtils.getFileExt(rawVideo.toString()));
+                    Logging.logAnalyticEvent(context, "incompressible_video_encountered", b);
+                    uploadJob.markFileAsCompressed(rawVideo);
+                    outputVideo = IOUtils.getSingleDocFile(context, rawVideo);
+                } else {
+                    Logging.recordException(e);
+                    // mark the upload for this file as cancelled
+                    uploadJob.setErrorFlag(rawVideo);
+                    // notify the listener of the error
+                    listener.notifyUsersOfError(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, e));
+                }
+            } else {
+                if (outputVideo.exists()) {
+                    uploadJob.addCompressedFile(rawVideo, outputVideo);
+                } else {
+                    outputVideo = null;
+                }
+            }
+        }
+        listener.onCompressionSuccess(rawVideo, outputVideo);
+    }
+
+}

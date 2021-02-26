@@ -52,7 +52,7 @@ import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR;
 public class ExoPlayerCompression {
 
     private static final String TAG = "ExoPlayerCompression";
-    private static final boolean VERBOSE_LOGGING = true;
+    private static final boolean VERBOSE_LOGGING = false;
     private final ArrayList<ExoPlayerCompressionThread> activeCompressionThreads = new ArrayList<>(1);
     private Context context;
 

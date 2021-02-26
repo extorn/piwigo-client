@@ -8,5 +8,9 @@
     app:layout_gravity="start"
     app:layout_columnWeight="1"
     tools:text="Child Value"
+    android:paddingTop="8dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="16dp"
     android:textAppearance="?textAppearanceBody1"/>
 <!--android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"-->

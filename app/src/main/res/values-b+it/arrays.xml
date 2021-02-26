@@ -143,13 +143,28 @@
     <string-array name="planned_releases" translatable="true">
         <item>Il futuro</item>
         <item>"* Principalmente solo correzioni di bug
-                * Possibilmente Aggiungi opzione per consentire la condivisione dell\'accesso a una cartella come uri in un\'e-mail: comporterà la creazione di un utente normale, dando loro il permesso per la cartella e il file, creando un token per le credenziali e i dettagli uri per l\'incorporamento in un collegamento http e un modo per gestire questi token sul server."</item>
+                * Forse una riscrittura completa del processo di caricamento in quanto non si presta a essere migliorato iterativamente
+                * Possibilmente una riscrittura completa dell\'app con un focus sulla semplicità per la navigazione utente generale inizialmente"</item>
         
+        <item>1.4.0.126</item>
+        <item>"Modificare:
+                 - Analisi del miglioramento delle prestazioni e, si spera, implementazione per la velocità di trasferimento dei dati di caricamento"</item>
         <item>1.4.0.125</item>
         <item>"Risoluzione del problema:
                  - implementare il pulsante di aggiornamento nella pagina \"elemento non caricato\" della presentazione"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.125</item>
+        <item>"Risoluzione del problema:
+                 - quando si riavvia un lavoro, assicurarsi di utilizzare le impostazioni originali del lavoro
+                 - quando si elimina un lavoro non riuscito, rimuovere qualsiasi file compresso ma non caricato
+                 - impossibile scorrere gli errori nella pagina di stato del caricamento
+                Modificare:
+                 - Gli errori di stato del caricamento sono ora elencati per primi con un layout migliorato
+                 - Vasto miglioramento della resilienza del caricamento dei file, risolti molti bug fuori dal percorso perfetto
+                 - Miglioramento delle prestazioni per tutte le chiamate al server http
+                 - Non eliminare un file compresso se un processo non riesce (attendere finché non viene eliminato) - per consentire di riprovare senza ricomprimere
+                 - assicurati che i blocchi caricati siano il più grandi possibile entro la dimensione massima del blocco configurata"</item>
         <item>1.4.0.124</item>
         <item>"Risoluzione del problema:
                  - Diversi errori imprevisti

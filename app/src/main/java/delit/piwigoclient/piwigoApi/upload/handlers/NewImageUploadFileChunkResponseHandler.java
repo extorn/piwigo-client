@@ -43,7 +43,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
         params.put("chunk", String.valueOf(fileChunk.getChunkId()));
         params.put("chunks", String.valueOf(fileChunk.getChunkCount()));
         params.put("category", fileChunk.getUploadToAlbumId());
-        params.put("file", fileChunk.getChunkData(), null, fileChunk.getMimeType(), true);
+        params.put("file", fileChunk.getChunkDataStream(), null, fileChunk.getMimeType(), true);
         params.put("name", fileChunk.getFilenameOnServer().replace('/', '_'));
         params.put("pwg_token", getPwgSessionToken());
         return params;
@@ -60,7 +60,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
     @Override
     protected void logJsonSyntaxError(String responseBodyStr) {
         if(responseBodyStr != null && responseBodyStr.contains("forbidden file type")) {
-            DocumentFile originalFile = IOUtils.getSingleDocFile(getContext(), fileChunk.getOriginalFile());
+            DocumentFile originalFile = IOUtils.getSingleDocFile(getContext(), fileChunk.getFileBeingUploaded());
             String fileType = originalFile.isDirectory() ? "dir" : "file";
             String filePath = originalFile.getUri().toString();
             String mimeType = fileChunk.getMimeType();

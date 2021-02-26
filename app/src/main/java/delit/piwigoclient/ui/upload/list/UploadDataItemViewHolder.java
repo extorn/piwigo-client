@@ -89,18 +89,16 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
         } else {
             fileUploadCancelledIndicator.setVisibility(View.GONE);
         }
-        if (uploadDataItem.uploadProgress != null && uploadDataItem.uploadProgress.inProgress()) {
+        if (uploadDataItem.uploadProgress != null && uploadDataItem.uploadProgress.isCompressingOrUploading()) {
 
             // Update the progress bar text and values
             @StringRes int progressTextResId = R.string.uploading_progress_bar_message;
             if (uploadDataItem.uploadProgress.isMidCompression()) {
-                progressTextResId = R.string.compressing_progress_bar_message;
-            }
-
-            progressBar.showMultiProgressIndicator(progressTextResId, uploadDataItem.uploadProgress.getUploadProgress(), uploadDataItem.uploadProgress.getCompressionProgress());
-
-            // if has finished compressing the file, update the file size heading text
-            if (uploadDataItem.uploadProgress.getCompressionProgress() == 100) {
+                if(uploadDataItem.uploadProgress.getCompressionProgress() == 100) {
+                    progressTextResId = R.string.compressed_progress_bar_message;
+                } else {
+                    progressTextResId = R.string.compressing_progress_bar_message;
+                }
                 // change the shown file name and size to be that of the compressed file
                 try {
                     fileNameField.setText(uploadDataItem.getFilename(itemView.getContext()));
@@ -108,9 +106,12 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
                 } catch (IllegalStateException e) {
                     // don't care - this happens due to file being deleted post upload
                 }
-            } else if(!uploadDataItem.uploadProgress.isMidCompression()) {
-                Logging.log(Log.ERROR, TAG, "Finished compression but not set to 100%");
+                if(uploadDataItem.uploadProgress.isMidUpload()) {
+                    Logging.log(Log.ERROR, TAG, "Finished compression but not set to 100%");
+                }
             }
+            progressBar.showMultiProgressIndicator(progressTextResId, uploadDataItem.uploadProgress.getUploadProgress(), uploadDataItem.uploadProgress.getCompressionProgress());
+
         } else {
             progressBar.hideProgressIndicator();
         }

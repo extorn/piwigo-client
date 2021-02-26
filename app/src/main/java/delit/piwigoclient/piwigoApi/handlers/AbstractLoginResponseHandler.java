@@ -89,11 +89,11 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
 
         loginResponse.setNewSessionDetails(PiwigoSessionDetails.getInstance(connectionPrefs));
 
+        loadMethodsAvailable();
+
         ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 5, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         if(canContinue) {
-            if(!PiwigoSessionDetails.getInstance(connectionPrefs).isMethodsAvailableListAvailable()) {
-                executor.execute(this::loadMethodsAvailable);
-            }
+
             if (PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
                 executor.execute(()->retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs)));
             } else {
@@ -109,6 +109,10 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
             if (isNeedUserDetails(PiwigoSessionDetails.getInstance(connectionPrefs))) {
                 executor.execute(this::loadUserDetails);
             }
+            executor.execute(this::loadGalleryConfig);
+            executor.execute(()->loadActiveServerPlugins(getContext(), connectionPrefs));
+
+
             PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
             if (sessionDetails.isMethodAvailable(PiwigoClientGetPluginDetailResponseHandler.WS_METHOD_NAME)) {
                 sessionDetails.setPiwigoClientPluginVersion("1.0.5");
@@ -116,13 +120,12 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
             } else {
                 sessionDetails.setPiwigoClientPluginVersion("1.0.4");
             }
-            executor.execute(this::loadGalleryConfig);
-            executor.execute(()->loadActiveServerPlugins(getContext(), connectionPrefs));
             performExtraServerCalls(getContext(), connectionPrefs, executor);
 
+            // shut the executor waiting for the server calls to finish.
             executor.shutdown();
             try {
-                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                if (!executor.awaitTermination(15, TimeUnit.SECONDS)) {
                     executor.shutdownNow();
                 }
             } catch (InterruptedException ex) {

@@ -145,4 +145,14 @@ public class PiwigoResourceUtil {
         }
         return -1; // item not present
     }
+
+    public static int countItemsInPagesLessThan(int pageIdx, List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesToSkip) {
+        int count = 0;
+        for (ItemLoadPage<GalleryItem> galleryItemItemLoadPage : resourceItemLoadPagesToSkip) {
+            if(pageIdx > galleryItemItemLoadPage.getPageIdx()) {
+                count += galleryItemItemLoadPage.getItems().size();
+            }
+        }
+        return count;
+    }
 }

@@ -19,13 +19,22 @@ import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
-import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.piwigoApi.upload.messages.MessageForUserResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoCleanupPostUploadFailedResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoPrepareUploadFailedResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileAddToAlbumFailedResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileChunkFailedResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileFilesExistAlreadyResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileLocalErrorResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadProgressUpdateResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadUnexpectedLocalErrorResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoVideoCompressionProgressUpdateResponse;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 
-class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends PiwigoFileUploadResponseListener<F,FUIH> {
+public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends PiwigoFileUploadResponseListener<F,FUIH> {
 
     private static final String TAG = "FgFileUploadRespL";
 
@@ -63,7 +72,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     @Override
-    protected void onUploadComplete(@NonNull final Context context, final UploadJob job) {
+    public void onUploadComplete(@NonNull final Context context, final UploadJob job) {
         if (getParent() != null && getParent().isAdded()) {
             if (job.hasJobCompletedAllActionsSuccessfully() && job.isFinished()) {
                 ForegroundPiwigoUploadService.removeJob(job);
@@ -88,16 +97,22 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     private void notifyUserUploadJobComplete(@NonNull Context context, UploadJob job) {
-        if (job.hasJobCompletedAllActionsSuccessfully()) {
-            getParent().onUploadJobSuccess(job);
+        F parent = getParent();
+        if(parent != null) {
+            if (job.hasJobCompletedAllActionsSuccessfully()) {
+                getParent().onNotificationUploadJobSuccess(job);
+            } else {
+                getParent().onNotificationUploadJobFailure(job);
+            }
+            getParent().hideOverallUploadProgressIndicator();
         } else {
-            getParent().onUploadJobFailure(job);
+            Logging.logAnalyticEventIfPossible("FGJobListenerDetached", null);
+            Logging.log(Log.ERROR, TAG, "Unable to notify user of job completion status as parent is gone");
         }
-        getParent().hideOverallUploadProgressIndicator();
     }
 
     @Override
-    protected void onLocalUnexpectedError(Context context, BasePiwigoUploadService.PiwigoUploadUnexpectedLocalErrorResponse response) {
+    protected void onLocalUnexpectedError(Context context, PiwigoUploadUnexpectedLocalErrorResponse response) {
         String errorMessage;
         Logging.log(Log.ERROR, TAG, "Local Upload Error");
         Logging.recordException(response.getError());
@@ -107,7 +122,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     @Override
-    protected void onLocalFileError(Context context, final BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse response) {
+    protected void onLocalFileError(Context context, final PiwigoUploadFileLocalErrorResponse response) {
         if(response.isItemUploadCancelled()) {
             getParent().getFilesForUploadViewAdapter().updateUploadStatus(response.getFileForUpload(), UploadJob.ERROR);
         }
@@ -129,14 +144,14 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     @Override
-    protected void onPrepareUploadFailed(Context context, final BasePiwigoUploadService.PiwigoPrepareUploadFailedResponse response) {
+    protected void onPrepareUploadFailed(Context context, final PiwigoPrepareUploadFailedResponse response) {
 
         PiwigoResponseBufferingHandler.Response error = response.getError();
         getParent().processPiwigoError(context, error);
     }
 
     @Override
-    protected void onCleanupPostUploadFailed(@NonNull Context context, BasePiwigoUploadService.PiwigoCleanupPostUploadFailedResponse response) {
+    protected void onCleanupPostUploadFailed(@NonNull Context context, PiwigoCleanupPostUploadFailedResponse response) {
         PiwigoResponseBufferingHandler.Response error = response.getError();
         getParent().processPiwigoError(context, error);
     }
@@ -149,7 +164,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     @Override
-    protected void onFileUploadProgressUpdate(@NonNull Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+    protected void onFileUploadProgressUpdate(@NonNull Context context, final PiwigoUploadProgressUpdateResponse response) {
         if (getParent() != null && getParent().isAdded()) {
             FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
             adapter.updateUploadProgress(response.getFileForUpload(), response.getProgress());
@@ -164,7 +179,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     @Override
-    protected void onFileCompressionProgressUpdate(@NonNull Context context, BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
+    protected void onFileCompressionProgressUpdate(@NonNull Context context, PiwigoVideoCompressionProgressUpdateResponse response) {
         if (getParent() != null && getParent().isAdded()) {
             FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
             adapter.updateCompressionProgress(response.getFileForUpload(), response.getCompressedFileUpload(), response.getProgress());
@@ -175,14 +190,14 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
         }
     }
 
-    private void onFileCompressionComplete(@NonNull Context context, final BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
+    private void onFileCompressionComplete(@NonNull Context context, final PiwigoVideoCompressionProgressUpdateResponse response) {
         FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
         adapter.updateUploadStatus(response.getFileForUpload(), UploadJob.COMPRESSED);
         //FIXME is this next line needed or in preference to the one above?
 //        adapter.updateUploadStatus(response.getCompressedFileUpload(), UploadJob.COMPRESSED);
     }
 
-    private void onUploadOfFileComplete(@NonNull Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+    private void onUploadOfFileComplete(@NonNull Context context, final PiwigoUploadProgressUpdateResponse response) {
 
         //TODO This method causes lots of server calls and is really unnecessary! Refresh once at the end
 
@@ -212,7 +227,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     @Override
-    protected void onFilesSelectedForUploadAlreadyExistOnServer(@NonNull Context context, final BasePiwigoUploadService.PiwigoUploadFileFilesExistAlreadyResponse response) {
+    protected void onFilesSelectedForUploadAlreadyExistOnServer(@NonNull Context context, final PiwigoUploadFileFilesExistAlreadyResponse response) {
         if (getParent() != null && getParent().isAdded()) {
             UploadJob uploadJob = getParent().getActiveJob(context);
 
@@ -231,12 +246,12 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     @Override
-    protected void onMessageForUser(Context context, BasePiwigoUploadService.MessageForUserResponse response) {
+    protected void onMessageForUser(Context context, MessageForUserResponse response) {
         getParent().notifyUser(context, R.string.alert_information, response.getMessage());
     }
 
     @Override
-    protected void onChunkUploadFailed(Context context, final BasePiwigoUploadService.PiwigoUploadFileChunkFailedResponse response) {
+    protected void onChunkUploadFailed(Context context, final PiwigoUploadFileChunkFailedResponse response) {
         PiwigoResponseBufferingHandler.Response error = response.getError();
         Uri fileForUpload = response.getFileForUpload();
         String errorMessage = null;
@@ -275,7 +290,7 @@ class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragmen
     }
 
     @Override
-    protected void onAddUploadedFileToAlbumFailure(Context context, final BasePiwigoUploadService.PiwigoUploadFileAddToAlbumFailedResponse response) {
+    protected void onAddUploadedFileToAlbumFailure(Context context, final PiwigoUploadFileAddToAlbumFailedResponse response) {
         PiwigoResponseBufferingHandler.Response error = response.getError();
         Uri fileForUploadUri = response.getFileForUpload();
         DocumentFile fileForUpload = IOUtils.getSingleDocFile(context, fileForUploadUri);

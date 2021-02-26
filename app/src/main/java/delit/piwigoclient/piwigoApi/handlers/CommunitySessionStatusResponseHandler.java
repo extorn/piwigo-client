@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 
 import cz.msebera.android.httpclient.Header;
+import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -46,10 +47,13 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
             PiwigoJsonResponse piwigoResponse = gson.fromJson(new InputStreamReader(new ByteArrayInputStream(responseBody)), PiwigoJsonResponse.class);
             onPiwigoFailure(piwigoResponse, isCached);
         } catch (JsonSyntaxException e) {
+            Logging.recordException(e);
             super.onFailure(uri, statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         } catch (JsonIOException e) {
+            Logging.recordException(e);
             super.onFailure(uri, statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         } catch (JSONException e) {
+            Logging.recordException(e);
             super.onFailure(uri, statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         }
         return triedToGetNewSession;

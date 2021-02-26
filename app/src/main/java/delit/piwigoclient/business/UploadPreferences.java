@@ -39,7 +39,7 @@ public class UploadPreferences {
         return getInt(context, prefs, R.string.preference_data_upload_max_filesize_mb_key, R.integer.preference_data_upload_max_filesize_mb_default);
     }
 
-    public static int getMaxUploadChunkSizeMb(Context context, SharedPreferences prefs) {
+    public static int getMaxUploadChunkSizeKb(Context context, SharedPreferences prefs) {
         return getInt(context, prefs, R.string.preference_data_upload_chunkSizeKb_key, R.integer.preference_data_upload_chunkSizeKb_default);
     }
 
