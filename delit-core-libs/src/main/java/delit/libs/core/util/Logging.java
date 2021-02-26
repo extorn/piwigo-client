@@ -186,21 +186,45 @@ public class Logging {
     }
 
     public static void waitForExceptionToBeSent() {
-        boolean hasUnsentLogs = false;
-        long timeoutAt = 2000 + System.currentTimeMillis();
-        boolean timeout;
-        do {
-            Task<Boolean> task = FirebaseCrashlytics.getInstance().checkForUnsentReports();
+        // we start a thread for this as if it's on the main thread, it isn't happy.
+        // because it is a user thread, it should hold the JVM open for the logging data to be sent.
+        Thread t = new Thread(new WaitForCrashlyticsLogsToBeUploadedTask(2000));
+        t.setDaemon(false);
+        t.start();
+    }
+
+    private final static class WaitForCrashlyticsLogsToBeUploadedTask implements Runnable {
+
+        private final long maxWait;
+
+        protected WaitForCrashlyticsLogsToBeUploadedTask(long maxWaitMillis) {
+            this.maxWait = maxWaitMillis;
+        }
+
+        @Override
+        public void run() {
             try {
-                Tasks.await(task);
-                hasUnsentLogs = task.getResult();
-            } catch (ExecutionException | InterruptedException e) {
-                Logging.log(Log.WARN, TAG, "Exception waiting for Crashlytics to upload report");
+                boolean hasUnsentLogs = false;
+                long timeoutAt = maxWait + System.currentTimeMillis();
+                boolean timeout;
+                do {
+                    Task<Boolean> task = FirebaseCrashlytics.getInstance().checkForUnsentReports();
+                    try {
+                        Tasks.await(task);
+                        hasUnsentLogs = task.getResult();
+                    } catch (ExecutionException | InterruptedException e) {
+                        log(Log.WARN, TAG, "Exception waiting for Crashlytics to upload report");
+                    }
+                    timeout = System.currentTimeMillis() > timeoutAt;
+                } while (hasUnsentLogs && !timeout);
+                if (timeout) {
+                    logAnalyticEventIfPossible("CrashlyticsUploadTimeout");
+                }
+            } catch(RuntimeException e) {
+                log(Log.ERROR, TAG, "Exception waiting for Crashlytics to upload report");
+                recordException(e);
+                logAnalyticEventIfPossible("CrashlyticsUploadTimeoutException");
             }
-            timeout = System.currentTimeMillis() > timeoutAt;
-        } while(hasUnsentLogs && !timeout);
-        if(timeout) {
-            Logging.logAnalyticEventIfPossible("CrashlyticsUploadTimeout");
         }
     }
 }
