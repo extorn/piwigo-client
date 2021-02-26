@@ -212,7 +212,13 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
             setHasStableIds(true);
         }
 
-        @NonNull
+      @NonNull
+      @Override
+      public String toString() {
+          return "UriPermsListAdapter:"+super.toString();
+      }
+
+      @NonNull
         @Override
         public VH buildViewHolder(View view, int viewType) {
             return (VH) new UriPermissionsViewHolder(view);

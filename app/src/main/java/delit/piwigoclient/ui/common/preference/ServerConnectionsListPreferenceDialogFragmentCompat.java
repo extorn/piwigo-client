@@ -207,6 +207,12 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
             super(availableItems, adapterPrefs);
         }
 
+        @NonNull
+        @Override
+        public String toString() {
+            return "ServerConProfilesAdapter:"+super.toString();
+        }
+
         @Override
         public long getItemId(ServerConnectionsListPreference.ServerConnection item) {
             return getPosition(item);

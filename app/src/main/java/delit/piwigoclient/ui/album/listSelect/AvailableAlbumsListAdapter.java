@@ -46,6 +46,12 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<AlbumSel
         this.parentAlbum = parentAlbum;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "AvailAlbumsAdapter:"+super.toString();
+    }
+
     private static @IdRes
     int getTextFieldId(AlbumSelectionListAdapterPreferences prefs) {
         return R.id.actionable_list_item_text;
