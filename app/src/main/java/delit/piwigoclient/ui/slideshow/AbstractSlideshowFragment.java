@@ -70,7 +70,9 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     private static final String STATE_ARG_GALLERY_TYPE = "containerModelType";
     private static final String ARG_GALLERY_ID = "containerId";
     private static final String ARG_GALLERY_ITEM_DISPLAYED = "indexOfItemInContainerToDisplay";
+    private static final String STATE_FIRST_RESOURCE_IDX = "firstResourceIdx";
     private CustomViewPager viewPager;
+    private int firstResourceIdx;
     private ResourceContainer<T, GalleryItem> resourceContainer;
     private View progressIndicator;
     private Class<? extends ViewModelContainer> modelType;
@@ -92,6 +94,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         if (BuildConfig.DEBUG) {
             BundleUtils.logSize("SlideshowFragment", outState);
         }
+        outState.putInt(STATE_FIRST_RESOURCE_IDX, resourceContainer.getFirstResourceIdx());
         storeGalleryModelClassToBundle(outState, modelType);
     }
 
@@ -139,6 +142,11 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         try {
+            if(savedInstanceState != null) {
+                firstResourceIdx = savedInstanceState.getInt(STATE_FIRST_RESOURCE_IDX);
+            } else {
+                firstResourceIdx = -1;
+            }
             loadModelFromArguments();
             super.onCreate(savedInstanceState);
         } catch (ModelUnavailableException e) {
@@ -146,8 +154,9 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         }
     }
 
-    protected void closeSlideshowAsapIfNoResourceContainerContent() {
-        if (resourceContainer == null || resourceContainer.getItemCount() == 0) {
+    protected void closeSlideshowAsapIfResourceContainerContentUnusable() {
+        boolean resourceContainerEmpty = resourceContainer == null || resourceContainer.getItemCount() == 0;
+        if (resourceContainerEmpty || firstResourceIdx >= 0 && resourceContainer.getFirstResourceIdx() != firstResourceIdx) {
             // attempt to get back to a working fragment.
             try {
                 Logging.log(Log.INFO, TAG, "removing from activity immediately");
@@ -196,7 +205,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         ViewModelContainer viewModelContainer = obtainActivityViewModel(requireActivity(), "" + galleryModelId, galleryModelClass);
         resourceContainer = viewModelContainer.getModel();
 
-        closeSlideshowAsapIfNoResourceContainerContent();
+        closeSlideshowAsapIfResourceContainerContentUnusable();
     }
 
     @SuppressLint("ClickableViewAccessibility")
