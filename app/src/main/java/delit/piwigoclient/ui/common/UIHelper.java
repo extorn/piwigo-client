@@ -284,13 +284,13 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
 
     protected void showQueuedToastMsg() {
         synchronized(simpleMessageQueue) {
+            if (simpleMessageQueue.isEmpty()) {
+                return;
+            }
             View parentView = getParentView();
             if (parentView == null || !canShowDialog()) {
                 String parentId = Utils.getId(getParent());
                 Logging.log(Log.WARN, TAG, "Unable to show message, parent has no view. Parent : " + parentId);
-                return;
-            }
-            if (simpleMessageQueue.isEmpty()) {
                 return;
             }
 
