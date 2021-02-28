@@ -9,6 +9,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
@@ -61,6 +62,15 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
      * fragment (e.g. upon screen orientation changes).
      */
     public ViewOrphansFragment() {
+    }
+
+    protected void refreshEmptyAlbumText() {
+        refreshEmptyAlbumText(R.string.orphans_no_orphans_found_on_server);
+    }
+
+    protected void refreshEmptyAlbumText(@StringRes int emptyAlbumTextRes) {
+        Logging.log(Log.DEBUG, TAG, "Replacing empty album text");
+        super.refreshEmptyAlbumText(getString(R.string.orphans_no_orphans_found_on_server));
     }
 
     /**
@@ -156,6 +166,8 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     protected void onPiwigoResponseGetResources(final AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse response) {
         // this is so we can capture the event as being for the orphans page.
         super.onPiwigoResponseGetResources(response);
+        //FIXME why do I need this hack?
+
     }
 
     @Override
@@ -219,7 +231,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
                 // there are no true orphans on this server
                 loadAlbumResourcesPage(0);
             } else {
-                refreshEmptyAlbumText(R.string.orphans_no_orphans_found_on_server);
+                refreshEmptyAlbumText();
             }
         } else {
             if(!getGalleryModel().getContainerDetails().equals(StaticCategoryItem.ORPHANS_ROOT_ALBUM)) {
