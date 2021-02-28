@@ -50,8 +50,9 @@ import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
-import delit.piwigoclient.ui.slideshow.AbstractSlideshowItemFragment;
-import delit.piwigoclient.ui.slideshow.DownloadSelectionMultiItemDialog;
+import delit.piwigoclient.ui.slideshow.item.AbstractSlideshowItemFragment;
+import delit.piwigoclient.ui.slideshow.item.DownloadSelectionMultiItemDialog;
+import delit.piwigoclient.ui.slideshow.action.SelectionContainsUnsuitableFilesQuestionResult;
 
 public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends AbstractViewAlbumFragment<F,FUIH> {
     private static final String STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING = "tagMembershipChangesAction";
@@ -373,7 +374,7 @@ public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH 
         @Override
         public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
             if(filesUnavailableToDownload.size() > 0) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new AbstractSlideshowItemFragment.SelectionContainsUnsuitableFilesQuestionResult<F,FUIH,T>(getUiHelper(), items, selectedPiwigoFilesizeName));
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new SelectionContainsUnsuitableFilesQuestionResult<F,FUIH,T>(getUiHelper(), items, selectedPiwigoFilesizeName));
             } else {
                 new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, false);
             }
@@ -382,7 +383,7 @@ public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH 
         @Override
         public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
             if(filesUnavailableToDownload.size() > 0) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new AbstractSlideshowItemFragment.SelectionContainsUnsuitableFilesQuestionResult<F,FUIH,T>(getUiHelper(), items, selectedPiwigoFilesizeName));
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new SelectionContainsUnsuitableFilesQuestionResult<F,FUIH,T>(getUiHelper(), items, selectedPiwigoFilesizeName));
             } else {
                 new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, true);
             }

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -29,6 +30,8 @@ import delit.libs.util.Utils;
 public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, Parcelable {
 
     private static final String TAG = "PagedList";
+    public static final int CHANGE_ALL_ITEMS_REMOVED = 0;
+    public static final int CHANGE_SORT_ORDER = 1;
     protected static final int NOT_TRACKED_PAGE_ID = -2;
     public static int MISSING_ITEMS_PAGE = -1;
     private String itemType;
@@ -42,6 +45,8 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
     private ReentrantLock pageLoadLock;
     private boolean retrieveItemsInReverseOrder;
     private boolean isGrowingOrganically;
+    private Set<ChangeListener> changeListeners = new HashSet<>();
+    private int totalPages = -1;
 
     public PagedList(String itemType) {
         this(itemType, 10);
@@ -72,10 +77,26 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
             this.retrieveItemsInReverseOrder = retrieveItemsInReverseOrder;
             if (items.size() > 0) {
                 sortItems();
+                notifyListenersOfChange(CHANGE_SORT_ORDER);
                 return true;
             }
         }
         return false;
+    }
+
+    public void addChangeListener(ChangeListener l) {
+        changeListeners.add(l);
+    }
+
+    public void removeChangeListener(ChangeListener l) {
+        changeListeners.remove(l);
+    }
+
+
+    public void notifyListenersOfChange(int changeType) {
+        for(ChangeListener l : changeListeners) {
+            l.onChange(changeType);
+        }
     }
 
     protected void resetSortOrder() {
@@ -276,24 +297,35 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
 
     /**
      * This method is called internally. It make no sense to call it directly.
-     * @param page page just loaded
+     * @param pageIdx page just loaded
      * @param pageSize size of page loaded
      * @param itemsToAdd items in the page (some might have been filtered out prior to load, but this is the full list provided)
      * @return boolean if the list is fully loaded
      */
-    protected boolean internalIsFullyLoadedCheck(int page, int pageSize, List<T> itemsToAdd) {
+    protected boolean internalIsFullyLoadedCheck(int pageIdx, int pageSize, List<T> itemsToAdd) {
         if(isRetrieveItemsInReverseOrder()) {
-            if(page == 0 && getNextPageToReload() == null) {
-                // we're processing page 0 and no pages need reloaded
-                return true;
-            }
+            // we're processing page 0 and no pages need reloaded
+            return pageIdx == 0 && getNextPageToReload() == null;
         } else {
-            if(itemsToAdd.size() < pageSize && pagesLoadedIdxToSizeMap.size() == page + 1) {
-                // the current page contained less items than it could and all pages with a number less than this one are already loaded.
-                return true;
-            }
+            // all pages with a number less than this one are already loaded.
+            boolean loadingHighestPageIdxSoFar = pagesLoadedIdxToSizeMap.size() == pageIdx + 1;
+            // AND EITHER the totalPages field has been set and matches the current pageIdx -1
+            boolean loadingLastPage = pageIdx == getTotalPages() -1;
+            // OR the current page contained less items than it could
+            return loadingHighestPageIdxSoFar && (loadingLastPage || itemsToAdd.size() < pageSize);
         }
-        return false;
+    }
+
+    public int getTotalPages() {
+        return totalPages;
+    }
+
+    public void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
+    }
+
+    public void resetTotalPages() {
+        totalPages = -1;
     }
 
     protected void postPageInsert(ArrayList<T> sortedItems, List<T> newItems) {
@@ -321,6 +353,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         fullyLoaded = false;
         pagesLoadingPageIdxToLoadIdMap.clear();
         pagesFailedToLoad.clear();
+        notifyListenersOfChange(CHANGE_ALL_ITEMS_REMOVED);
     }
 
     /**
@@ -328,8 +361,8 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
      *
      * @return
      */
-    public long getMaxResourceCount() {
-        throw new UnsupportedOperationException("Implement this if needed");
+    public long getMaxItemCount() {
+        return -1;
     }
 
     @Override
@@ -651,5 +684,10 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         sb.append(", retrieveItemsInReverseOrder=").append(retrieveItemsInReverseOrder);
         sb.append('}');
         return sb.toString();
+    }
+
+    public interface ChangeListener {
+
+        void onChange(int changeType);
     }
 }

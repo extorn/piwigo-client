@@ -84,7 +84,7 @@ public class FileChunkUploaderThread extends Thread {
                     cancelUpload = true;
                 }
             } while(!cancelUpload && chunk == null);
-            if(!cancelUpload && chunk != null) {
+            if(!cancelUpload) {
                 UploadJob.PartialUploadData data = thisUploadJob.getChunksAlreadyUploadedData(chunk.getUploadJobItemKey());
                 if(data != null && data.hasUploadedChunk(chunk.getChunkId())) {
                     throw new IllegalStateException("Attempt made to upload chunk twice " + chunk);

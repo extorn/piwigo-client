@@ -18,6 +18,8 @@ import delit.libs.core.util.Logging;
 public abstract class ResourceContainer<S extends Identifiable&Parcelable, T extends Identifiable&Parcelable> extends IdentifiablePagedList<T> implements Identifiable, Parcelable {
 
     private static final String TAG = "ResourceContainer";
+    public static final int CHANGE_SORT_BY = 2;
+    public static final int CHANGE_RESOURCES_CLEARED = 3;
     private S containerDetails;
     private String resourceSortOrder;
 
@@ -97,6 +99,7 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
             Logging.log(Log.ERROR, TAG, toString());
             throw new IllegalStateException("If there are no resources, there should be no pages loaded");
         }
+        notifyListenersOfChange(CHANGE_RESOURCES_CLEARED);
     }
 
     @Override
@@ -119,10 +122,13 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
     public boolean setResourceSortOrder(String resourceSortOrder) {
         if(!Objects.equals(this.resourceSortOrder, resourceSortOrder)) {
             this.resourceSortOrder = resourceSortOrder;
+            notifyListenersOfChange(CHANGE_SORT_BY);
             return true;
         }
         return false;
     }
+
+
 
     public String getResourceSortOrder() {
         return resourceSortOrder;

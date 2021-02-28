@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.slideshow;
+package delit.piwigoclient.ui.slideshow.item;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,6 +17,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Locale;
 
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
@@ -134,6 +135,7 @@ public class AlbumItemNotLoadedFragment<F extends AlbumItemNotLoadedFragment<F,F
 
     @Override
     public void onPageSelected() {
+        Logging.logAnalyticEventIfPossible("AlbumItemNotLoadedFragShown");
         onUserActionClickRefreshContent();
     }
 

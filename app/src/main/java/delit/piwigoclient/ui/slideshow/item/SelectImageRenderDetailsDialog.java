@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.slideshow;
+package delit.piwigoclient.ui.slideshow.item;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,6 +16,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.ResourceItem;
+import delit.piwigoclient.ui.slideshow.DownloadItemsListAdapter;
 
 /**
  * Created by gareth on 29/10/17.

@@ -11,6 +11,7 @@ public class AlbumSortingCategoryComparator implements Comparator<GalleryItem>, 
     private static final long serialVersionUID = -4017716137940864728L;
     private boolean sortInReverseOrder;
     private int albumSortOrder;
+    private boolean flipOrder;
 
     public AlbumSortingCategoryComparator(int albumSortOrder) {
         this.albumSortOrder = albumSortOrder;
@@ -91,5 +92,13 @@ public class AlbumSortingCategoryComparator implements Comparator<GalleryItem>, 
         sb.append(", albumSortOrder=").append(albumSortOrder);
         sb.append('}');
         return sb.toString();
+    }
+
+    public boolean setFlipCategoryOrder(boolean flipOrder) {
+        if(this.flipOrder != flipOrder) {
+            this.flipOrder = flipOrder;
+            return !flipOrder; // return the old value
+        }
+        return flipOrder; // return the old value
     }
 }

@@ -101,7 +101,7 @@ import delit.piwigoclient.ui.permissions.users.UserFragment;
 import delit.piwigoclient.ui.permissions.users.UsernameRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsersListFragment;
-import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
+import delit.piwigoclient.ui.slideshow.item.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
 import delit.piwigoclient.ui.util.download.DownloadManager;
 import delit.piwigoclient.util.MyDocumentProvider;

@@ -155,4 +155,14 @@ public class PiwigoResourceUtil {
         }
         return count;
     }
+
+    public static ArrayList<GalleryItem> getListOfAllResourcesByIdx(PiwigoAlbum<CategoryItem, GalleryItem> album) {
+        ArrayList<GalleryItem> resources = new ArrayList<>();
+        int firstIdx = album.getFirstResourceIdx();
+        int lastIdx = firstIdx + album.getResourcesCount() - 1;
+        for(int i = firstIdx; i <= lastIdx; i++) {
+            resources.add(album.getItemByIdx(i));
+        }
+        return resources;
+    }
 }

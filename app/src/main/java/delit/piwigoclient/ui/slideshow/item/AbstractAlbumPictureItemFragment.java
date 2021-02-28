@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.slideshow;
+package delit.piwigoclient.ui.slideshow.item;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;

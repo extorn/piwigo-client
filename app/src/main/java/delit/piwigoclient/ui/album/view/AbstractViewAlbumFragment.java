@@ -3330,7 +3330,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             try {
                 itemType = galleryModel.getItemByIdx(position).getType();
             } catch(IndexOutOfBoundsException e) {
-                Logging.log(Log.WARN, TAG, "SpanSizeLookup gallery out of sync with the gallery being shown");
+                Logging.log(Log.WARN, TAG, "SpanSizeLookup gallery out of sync with the gallery being shown. Request for item at position %1$d, len=%2$d", position, galleryModel.getItems().size());
                 Logging.recordException(e);
             }
             switch (itemType) {

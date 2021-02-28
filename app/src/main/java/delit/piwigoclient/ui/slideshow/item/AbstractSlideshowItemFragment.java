@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.slideshow;
+package delit.piwigoclient.ui.slideshow.item;
 
 import android.app.Activity;
 import android.content.Context;
@@ -37,7 +37,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -64,13 +63,10 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumThumbnailUpdatedResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageAlterRatingResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
@@ -82,13 +78,18 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
-import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.model.ViewModelContainer;
+import delit.piwigoclient.ui.slideshow.AbstractSlideshowFragment;
+import delit.piwigoclient.ui.slideshow.ModelUnavailableException;
+import delit.piwigoclient.ui.slideshow.SlideshowPiwigoResponseListener;
+import delit.piwigoclient.ui.slideshow.action.OnDeleteItemAction;
+import delit.piwigoclient.ui.slideshow.action.UseAsAlbumThumbnailForParentAction;
+import delit.piwigoclient.ui.util.ViewVisibleControl;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -97,7 +98,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 14/04/18.
  */
 
-public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>,T extends ResourceItem> extends MyFragment<F,FUIH> implements MyFragmentRecyclerPagerAdapter.PagerItemView {
+public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>,T extends ResourceItem> extends MyFragment<F,FUIH> implements MyFragmentRecyclerPagerAdapter.PagerItemView, SlideshowItemView<T> {
 
     private static final String TAG = "SlideshowItemFragment";
     private static final String ARG_AND_STATE_CONTAINER_ID = "containerId";
@@ -709,7 +710,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         EventBus.getDefault().post(event);
     }
 
-    void onGetSubAlbumNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    public void onGetSubAlbumNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         Activity activity = getActivity();
         ArrayList<CategoryItemStub> albumNames = response.getAlbumNames();
         if (albumNames == null || albumNames.isEmpty()) {
@@ -746,50 +747,6 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         return tagsField;
     }
 
-    private static class UseAsAlbumThumbnailForParentAction<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>,T extends ResourceItem> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
-
-        public UseAsAlbumThumbnailForParentAction(FUIH uiHelper) {
-            super(uiHelper);
-        }
-
-        protected UseAsAlbumThumbnailForParentAction(Parcel in) {
-            super(in);
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<UseAsAlbumThumbnailForParentAction<?,?,?>> CREATOR = new Creator<UseAsAlbumThumbnailForParentAction<?,?,?>>() {
-            @Override
-            public UseAsAlbumThumbnailForParentAction<?,?,?> createFromParcel(Parcel in) {
-                return new UseAsAlbumThumbnailForParentAction<>(in);
-            }
-
-            @Override
-            public UseAsAlbumThumbnailForParentAction<?,?,?>[] newArray(int size) {
-                return new UseAsAlbumThumbnailForParentAction[size];
-            }
-        };
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-                F parent = getUiHelper().getParent();
-                ResourceItem model = parent.getModel();
-                long albumId = model.getParentId();
-                Long albumParentId = model.getParentageChain().size() > 1 ? model.getParentageChain().get(model.getParentageChain().size() - 2) : null;
-                getUiHelper().addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(albumId, albumParentId, model.getId()));
-            }
-        }
-    }
-
     public T getModel() {
         return model;
     }
@@ -801,7 +758,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
 
     @Override
     protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener<>();
+        return new SlideshowPiwigoResponseListener<>();
     }
 
     @Override
@@ -827,58 +784,6 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         }
     }
 
-    public static class ViewVisibleControl implements Runnable {
-
-        private static final long DEFAULT_DELAY_MILLIS = 2000;
-        private long delayMillis = DEFAULT_DELAY_MILLIS;
-        private final List<View> views;
-        private int visibilityOnRun = View.INVISIBLE;
-        private long timerStarted;
-
-        public ViewVisibleControl(View... views) {
-            this.views = new ArrayList<>(Arrays.asList(views));
-        }
-
-        public void setDelayMillis(long delayMillis) {
-            this.delayMillis = delayMillis;
-        }
-
-        public void setVisibilityOnRun(int visibility) {
-            this.visibilityOnRun = visibility;
-        }
-
-        private void setVisibility(int visibility) {
-            for (View v : views) {
-                if(v.getVisibility() != visibility) {
-                    v.setVisibility(visibility);
-                }
-            }
-        }
-
-        @Override
-        public synchronized void run() {
-            if (timerStarted + delayMillis - System.currentTimeMillis() > 0) {
-                // another trigger has been added.
-                return;
-            }
-            setVisibility(visibilityOnRun);
-        }
-
-        public synchronized void runWithDelay(View v) {
-            if (v != null) {
-                timerStarted = System.currentTimeMillis();
-                setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
-                v.postDelayed(this, delayMillis);
-            }
-        }
-
-        public synchronized void addView(View v) {
-            views.add(v);
-            v.setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
-        }
-
-    }
-
     private void setTitleBar() {
         /*ToolbarEvent event = new ToolbarEvent(getActivity());
         event.setTitle(model.getName());
@@ -900,16 +805,16 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         }
     }
 
-    void onAlbumThumbnailUpdated(AlbumThumbnailUpdatedResponseHandler.PiwigoAlbumThumbnailUpdatedResponse response) {
+    public void onAlbumThumbnailUpdated(AlbumThumbnailUpdatedResponseHandler.PiwigoAlbumThumbnailUpdatedResponse response) {
         EventBus.getDefault().post(new AlbumAlteredEvent(response.getAlbumParentIdAltered(), response.getAlbumIdAltered()));
     }
 
-    void onResourceInfoRetrieved(final BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<T> response) {
+    public void onResourceInfoRetrieved(final BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<T> response) {
         model = response.getResource();
         populateResourceExtraFields();
     }
 
-    void processModelRatings(ResourceItem resource) {
+    public void processModelRatings(ResourceItem resource) {
         if(resource == null) {
             Logging.log(Log.ERROR, TAG, "Resource Item unavailable to process model ratings from");
             return;
@@ -926,57 +831,12 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         DrawableCompat.setTint(myRatingForThisResourceBar.getProgressDrawable(), ContextCompat.getColor(requireContext(), R.color.app_secondary));
     }
 
-    protected void onImageDeleted(HashSet<? extends ResourceItem> deletedItems) {
+    public void onImageDeleted(HashSet<? extends ResourceItem> deletedItems) {
         List<Long> resourceItemParentChain = model.getParentageChain();
         EventBus.getDefault().post(new AlbumItemDeletedEvent<>(model, slideshowPageIdx, albumLoadedItemCount));
         for (int i = 0; i < resourceItemParentChain.size() - 1; i++) {
             // update all albums except the direct parent of the resource deleted
             EventBus.getDefault().post(new AlbumAlteredEvent(resourceItemParentChain.get(i), resourceItemParentChain.get(i+1)));
-        }
-    }
-
-    private static class OnDeleteItemAction<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
-
-        public OnDeleteItemAction(FUIH uiHelper) {
-            super(uiHelper);
-        }
-
-        protected OnDeleteItemAction(Parcel in) {
-            super(in);
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<OnDeleteItemAction<?,?,?>> CREATOR = new Creator<OnDeleteItemAction<?,?,?>>() {
-            @Override
-            public OnDeleteItemAction<?,?,?> createFromParcel(Parcel in) {
-                return new OnDeleteItemAction<>(in);
-            }
-
-            @Override
-            public OnDeleteItemAction<?,?,?>[] newArray(int size) {
-                return new OnDeleteItemAction[size];
-            }
-        };
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-                F fragment = getUiHelper().getParent();
-                ResourceItem model = fragment.getModel();
-                AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
-                getUiHelper().setTrackingRequest(event.getActionId());
-                EventBus.getDefault().post(event);
-                getUiHelper().addActiveServiceCall(R.string.progress_delete_resource, new ImageDeleteResponseHandler<>(model));
-            }
         }
     }
 
@@ -1024,7 +884,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         }
     }
 
-    protected void onResourceInfoAltered(final T resourceItem) {
+    public void onResourceInfoAltered(final T resourceItem) {
 
         getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.resource_details_updated_message));
 
@@ -1143,35 +1003,6 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), model));
     }
 
-    protected static class CustomPiwigoResponseListener<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends BasicPiwigoResponseListener<FUIH,F> {
-
-        @Override
-        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
-        }
-
-
-        @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-
-            if (response instanceof ImageAlterRatingResponseHandler.PiwigoRatingAlteredResponse) {
-                getParent().processModelRatings(((ImageAlterRatingResponseHandler.PiwigoRatingAlteredResponse) response).getPiwigoResource());
-            } else if (response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
-                getParent().onImageDeleted(((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response).getDeletedItems());
-            } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
-                getParent().onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<T>) response);
-            } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
-                BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<T> r = ((BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<T>) response);
-                getParent().onResourceInfoAltered(r.getPiwigoResource());
-            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                getParent().onGetSubAlbumNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
-            } else if (response instanceof AlbumThumbnailUpdatedResponseHandler.PiwigoAlbumThumbnailUpdatedResponse) {
-                getParent().onAlbumThumbnailUpdated((AlbumThumbnailUpdatedResponseHandler.PiwigoAlbumThumbnailUpdatedResponse) response);
-            }
-            getParent().onGalleryItemActionFinished();
-        }
-    }
-
     public static class BaseDownloadQuestionResult<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         public BaseDownloadQuestionResult(FUIH uiHelper) {
@@ -1226,23 +1057,6 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             if(items.size() == 1) {
                 EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), items.iterator().next()));
             }
-        }
-    }
-
-    public static class SelectionContainsUnsuitableFilesQuestionResult<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends BaseDownloadQuestionResult<F,FUIH,T> {
-
-        private final Set<ResourceItem> items;
-        private final String selectedPiwigoFilesizeName;
-
-        public SelectionContainsUnsuitableFilesQuestionResult(FUIH uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
-            super(uiHelper);
-            this.items = items;
-            this.selectedPiwigoFilesizeName = selectedPiwigoFilesizeName;
-        }
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            doDownloadAction(items, selectedPiwigoFilesizeName, false);
         }
     }
 

@@ -203,6 +203,9 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             Logging.log(Log.DEBUG, TAG, "First Resource idx %1$d beyond end of list %2$d. Resetting to -1", resourceIdx, getItemCount());
             resourceIdx = -1;
         }
+        if(hideAlbums && resourceIdx >= 0) {
+            resourceIdx -= childAlbumCount + spacerAlbums;
+        }
         return resourceIdx;
     }
 
@@ -229,11 +232,10 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         int wantedIdx = idx;
         try {
             if (hideAlbums) {
-                if (idx > 0) {
-                    wantedIdx += nonResourceItemsExcResourcesHeader();
-                    if(idx < getBannerCount()) {
-                        wantedIdx -= 1;
-                    }
+                int firstResourceAtIdx = getFirstResourceIdx();
+                if (firstResourceAtIdx > 0 && idx >= getFirstResourceIdx() -1) {
+                    // don't offset for the first item as it is ALWAYS a header of some sort
+                    wantedIdx += childAlbumCount + spacerAlbums;
                 }
             }
             return super.getItemByIdx(wantedIdx);

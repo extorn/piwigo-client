@@ -10,6 +10,7 @@ import java.util.Comparator;
 public class AlbumSortingResourceComparator implements Comparator<GalleryItem>, Serializable {
 
     private static final long serialVersionUID = -263036600717170733L;
+    private boolean flipOrder;
 
     @Override
     public int compare(GalleryItem o1, GalleryItem o2) {
@@ -19,20 +20,35 @@ public class AlbumSortingResourceComparator implements Comparator<GalleryItem>, 
     public int compareResources(GalleryItem o1, GalleryItem o2) {
         boolean firstIsCategory = o1 instanceof CategoryItem;
         boolean secondIsCategory = o2 instanceof CategoryItem;
-        if (!firstIsCategory && !secondIsCategory) {
-            if (o1 == GalleryItem.PICTURE_HEADING) {
-                return -1; // push pictures heading to the start of pictures
-            } else if (o2 == GalleryItem.PICTURE_HEADING) {
-                return 1; // push pictures heading to the start of pictures
+        if (!firstIsCategory) {
+            // first is not a category
+            if (secondIsCategory) {
+                // second is a category (move it ahead)
+                return 1; // push categories to the start
             } else {
-                return 0; // don't reorder pictures
+                // Neither are categories
+                if (o1 == GalleryItem.PICTURE_HEADING) {
+                    // the first should be moved ahead
+                    return -1; // push pictures heading to the start of pictures
+                } else if (o2 == GalleryItem.PICTURE_HEADING) {
+                    // the second should be moved ahead
+                    return 1; // push pictures heading to the start of pictures
+                } else {
+                    return 0; // don't reorder pictures
+                }
             }
-        } else if (firstIsCategory && !secondIsCategory) {
+        } else if (!secondIsCategory) {
+            // the first is a category but not the second
             return -1; // push categories to the start
-        } else if (!firstIsCategory && secondIsCategory) {
-            return 1; // push categories to the start
         }
-        return 0; // don't reorder resources
+        return 0; // don't reorder if both are categories
     }
 
+    public boolean setFlipResourceOrder(boolean flipOrder) {
+        if(this.flipOrder != flipOrder) {
+            this.flipOrder = flipOrder;
+            return !flipOrder; // return the old value
+        }
+        return flipOrder; // return the old value
+    }
 }

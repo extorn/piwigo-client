@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.slideshow;
+package delit.piwigoclient.ui.slideshow.item;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -73,6 +73,7 @@ import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.model.ViewModelContainer;
+import delit.piwigoclient.ui.slideshow.action.SelectionContainsUnsuitableFilesQuestionResult;
 
 public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends VideoResourceItem> extends SlideshowItemFragment<F,FUIH,T> {
 

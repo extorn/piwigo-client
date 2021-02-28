@@ -33,7 +33,6 @@ import delit.piwigoclient.model.piwigo.PiwigoTag;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
@@ -44,6 +43,8 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.SlideshowItemPageFinished;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.model.ViewModelContainer;
+import delit.piwigoclient.ui.slideshow.action.ReloadTagSlideshowModelAction;
+import delit.piwigoclient.ui.slideshow.action.SlideshowDriver;
 
 /**
  * Created by gareth on 14/05/17.
@@ -52,7 +53,7 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<F,FUIH,T> {
 
     private static final String TAG = "SlideshowFragment";
-    private SlideshowDriver currentSlideshowDriver = new SlideshowDriver();
+    private SlideshowDriver<F,FUIH> currentSlideshowDriver = new SlideshowDriver<>((F) this);
 
     public static <F extends SlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> F  newInstance(Class<ViewModelContainer> modelType, ResourceContainer<T, GalleryItem> gallery, GalleryItem currentGalleryItem) {
         F fragment = (F) new SlideshowFragment<>();
@@ -100,37 +101,6 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH exten
     @Override
     public String getLogTag() {
         return TAG;
-    }
-
-    private static class ReloadTagSlideshowModelAction<F extends SlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> extends UIHelper.Action<FUIH,F, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> {
-
-        @Override
-        public boolean onSuccess(FUIH uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
-            boolean updated = false;
-            F slideshowFragment = uiHelper.getParent();
-            for(Tag t : response.getTags()) {
-                if (t.getId() == slideshowFragment.getResourceContainer().getId()) {
-                    // tag has been located!
-                    slideshowFragment.setContainerDetails((ResourceContainer<T, GalleryItem>) new PiwigoTag(t));
-                    updated = true;
-                }
-            }
-            if(!updated) {
-                //Something wierd is going on - this should never happen
-                Logging.log(Log.ERROR, slideshowFragment.getLogTag(), "Closing tag slideshow - tag was not available after refreshing session");
-                slideshowFragment.getParentFragmentManager().popBackStack();
-                return false;
-            }
-            slideshowFragment.loadMoreGalleryResources();
-            return false;
-        }
-
-        @Override
-        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            Logging.log(Log.INFO, TAG, "removing from activity on piwigo failure");
-            uiHelper.getParent().getParentFragmentManager().popBackStack();
-            return false;
-        }
     }
 
     private void reloadTagSlideshowModel(Tag tag, String preferredAlbumThumbnailSize) {
@@ -208,41 +178,10 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH exten
                     }
                 } else {
 //                     create a blank driver for use on the next slide (cannot be certain the existing one isn't already scheduled to run)
-                    currentSlideshowDriver = new SlideshowDriver();
+                    currentSlideshowDriver = new SlideshowDriver<>((F) this);
                 }
             }
         }
     }
 
-    private class SlideshowDriver implements Runnable {
-
-        private int moveToPage;
-        private int cancelledPage = -1;
-
-        public SlideshowDriver() {
-        }
-
-        public void setMoveToPage(int moveToPage) {
-            this.moveToPage = moveToPage;
-            this.cancelledPage = -1;
-        }
-
-        @Override
-        public void run() {
-            if(cancelledPage < 0) {
-                if(BuildConfig.DEBUG) {
-                    Log.d(TAG, "Moving to slideshow page : " + moveToPage);
-                }
-                getViewPager().setCurrentItem(moveToPage);
-            }
-        }
-
-        public void cancel(int currentPage) {
-            cancelledPage = currentPage;
-        }
-
-        public boolean isActive(int currentPage) {
-            return cancelledPage != currentPage;
-        }
-    }
 }

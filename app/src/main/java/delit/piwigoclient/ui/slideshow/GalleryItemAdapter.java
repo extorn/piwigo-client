@@ -29,6 +29,12 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 import delit.piwigoclient.ui.model.ViewModelContainer;
+import delit.piwigoclient.ui.slideshow.item.AbstractAlbumVideoItemFragment;
+import delit.piwigoclient.ui.slideshow.item.AlbumGifPictureItemFragment;
+import delit.piwigoclient.ui.slideshow.item.AlbumItemNotLoadedFragment;
+import delit.piwigoclient.ui.slideshow.item.AlbumPictureItemFragment;
+import delit.piwigoclient.ui.slideshow.item.AlbumVideoItemFragment;
+import delit.piwigoclient.ui.slideshow.item.SlideshowItemView;
 
 public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends ViewPager, SIF extends MyFragment<SIF,FUIH> & SlideshowItemView<ResourceItem>,FUIH extends FragmentUIHelper<FUIH,SIF>> extends MyFragmentRecyclerPagerAdapter<SIF, VP> {
 
@@ -49,6 +55,19 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         buildResourcesIndexMap(firstGalleryIdxToImport, gallery.getResourcesCount(), showGalleryItemIdx); // use get items.size to ignore issues when hide
     }
 
+    public void onModelChange() {
+        int firstGalleryIdxToImport = gallery.getFirstResourceIdx();
+        int showGalleryItemIdx = -1;
+        if(!cachedItemIdToSlideshowPositionMap.isEmpty()) {
+            Long showGalleryItemId = cachedItemIdToSlideshowPositionMap.keySet().iterator().next();
+            GalleryItem showGalleryItem = gallery.getItemById(showGalleryItemId);
+            if(showGalleryItem != null) {
+                showGalleryItemIdx = gallery.getItemIdx(showGalleryItem);
+            }
+        }
+        buildResourcesIndexMap(firstGalleryIdxToImport, gallery.getResourcesCount(), showGalleryItemIdx); // use get items.size to ignore issues when hide
+    }
+
     private void buildResourcesIndexMap(int firstGalleryIdxToImport, int maxSlideshowItemCount, int selectedItemGalleryIdx) {
         int scanToRawIndex = gallery.getItemCount() - 1;
         if (firstGalleryIdxToImport == 0) {
@@ -60,7 +79,16 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
                 Logging.log(Log.DEBUG, TAG, "Not adding remaining resources. Slideshow size matches that desired (%1$d)", maxSlideshowItemCount);
                 break;
             }
-            GalleryItem currentItem = gallery.getItemByIdx(rawGalleryIdx);
+            GalleryItem currentItem = null;
+            try {
+                currentItem = gallery.getItemByIdx(rawGalleryIdx);
+            } catch(IndexOutOfBoundsException e) {
+                if(selectedItemGalleryIdx != 0) {
+                    Logging.log(Log.ERROR,TAG, "Gallery item not found at idx %1$d", rawGalleryIdx);
+                } else {
+                    Logging.log(Log.DEBUG,TAG, "Gallery item not found at idx %1$d. Likely caused by a sort operation", rawGalleryIdx);
+                }
+            }
             if (!(currentItem instanceof ResourceItem)) {
                 // skip any child albums and other non resource items
                 continue;
@@ -166,7 +194,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
             throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + Utils.getId(galleryItem) + ")");
         } catch(IndexOutOfBoundsException e) {
             Logging.log(Log.ERROR, TAG, "The gallery has %1$d items. Requested item that isn't present.", gallery.getItemCount());
-            return (Class<? extends SIF>)(Class)AlbumItemNotLoadedFragment.class;
+            return (Class<? extends SIF>)(Class) AlbumItemNotLoadedFragment.class;
         }
     }
 
@@ -295,6 +323,16 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
     }
 
     public void refreshItemAtSlideshowIdx(int slideshowPageIdx) {
-        throw new UnsupportedOperationException("Implement me");
+        SIF item = getActiveFragment(slideshowPageIdx);
+        getActiveFragments().remove(item);
+        onModelChange();
+    }
+
+    public int getGalleryItemPosition(GalleryItem item) {
+        int rawIdx = gallery.getItemIdx(item);
+        if(rawIdx < 0) {
+            return rawIdx;
+        }
+        return getSlideshowIndexUsingFullGalleryIdx(rawIdx);
     }
 }

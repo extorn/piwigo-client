@@ -42,6 +42,10 @@ public class AlbumSortingComparator implements Comparator<GalleryItem>, Serializ
         return categoryComparator.isSortInReverseOrder();
     }
 
+    public boolean setFlipResourceOrder(boolean flipOrder) {
+        return resourceComparator.setFlipResourceOrder(flipOrder);
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -50,5 +54,9 @@ public class AlbumSortingComparator implements Comparator<GalleryItem>, Serializ
         sb.append(", resourceComparator=").append(resourceComparator);
         sb.append('}');
         return sb.toString();
+    }
+
+    public boolean setFlipCategoryOrder(boolean flipOrder) {
+        return categoryComparator.setFlipCategoryOrder(flipOrder);
     }
 }
