@@ -70,7 +70,7 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
         super(layoutId);
     }
 
-    protected long addActiveServiceCall(@StringRes int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
+    public long addActiveServiceCall(@StringRes int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
         return addActiveServiceCall(getString(titleStringId), worker);
     }
 
@@ -200,7 +200,7 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
         return new ViewModelProvider(activity, factory).get(modelClass);
     }
 
-    protected final <T extends ViewModel> T obtainActivityViewModel(@NonNull FragmentActivity activity, String key, @NonNull Class<T> modelClass) {
+    public final <T extends ViewModel> T obtainActivityViewModel(@NonNull FragmentActivity activity, String key, @NonNull Class<T> modelClass) {
         ViewModelProvider.AndroidViewModelFactory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(activity.getApplication());
         return new ViewModelProvider(activity, factory).get(key, modelClass);
     }

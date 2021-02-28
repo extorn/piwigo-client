@@ -45,6 +45,7 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
+import delit.piwigoclient.ui.album.view.action.BulkResourceActionData;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
@@ -106,7 +107,7 @@ public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH 
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (event.areAllPermissionsGranted()) {
                 //Granted
-                AbstractViewAlbumFragment.BulkResourceActionData bulkActionData = getBulkResourceActionData();
+                BulkResourceActionData bulkActionData = getBulkResourceActionData();
 
                 if (!bulkActionData.getSelectedItems().isEmpty()) {
                     HashSet<ResourceItem> selectedItems = bulkActionData.getSelectedItems();
