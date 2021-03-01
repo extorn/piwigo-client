@@ -146,17 +146,25 @@
                 * Mogelijk een volledig herschrijven van het uploadproces, aangezien het zich niet leent om iteratief te worden verbeterd
                 * Mogelijk een volledige herschrijving van de app met de nadruk in eerste instantie op eenvoud voor algemene gebruikers"</item>
         
-        <item>1.4.0.128</item>
+        <item>1.4.0.129</item>
         <item>"Verandering:
                  - Onderzoek naar prestatieverbetering en hopelijk implementatie voor uploadsnelheid van gegevensoverdracht"</item>
-        <item>1.4.0.127</item>
+        <item>1.4.0.128</item>
         <item>"Bugfix:
-                 - implementeer de vernieuwingsknop op de pagina \'item niet geladen\' van de diavoorstelling"</item>
+                 - crash repareren als de gebruiker de sorteervolgorde omkeert tijdens het bekijken van een album, met foto\'s, en vervolgens de albuminhoud niet handmatig opnieuw laadt"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.127</item>
+        <item>"Bugfix:
+                 - alleen de eerste hoofdmap van een bepaalde naam was zichtbaar in de root-selector voor bestandsselectie
+                Verandering:
+                 - implementeer de vernieuwingsknop op de pagina \'item niet geladen\' van de diavoorstelling
+                 - implementeer de terugknop op albumselectie - keer om door broodkruimels
+                 - implementeer de terugknop bij het selecteren van mappen - keer om door broodkruimels"</item>
         <item>1.4.0.126</item>
         <item>"Bugfix:
-                 - Crash waarbij een verbindingsprofiel-ID geen legale bestandsnaam zou zijn"</item>
+                 - Crash waarbij een verbindingsprofiel-ID geen legale bestandsnaam zou zijn
+                 - Fix upload bevriezing aan het einde van meerdere chunk uploads"</item>
         <item>1.4.0.125</item>
         <item>"Bugfix:
                  - Zorg er bij het herstarten van een job voor dat de originele jobinstellingen worden gebruikt

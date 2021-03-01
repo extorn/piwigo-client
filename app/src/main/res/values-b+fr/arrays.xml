@@ -146,17 +146,25 @@
                 * Peut-être une réécriture complète du processus de téléchargement car il ne se prête pas à une amélioration itérative
                 * Peut-être une réécriture complète de l\'application avec un accent sur la simplicité pour la navigation générale des utilisateurs au départ"</item>
         
-        <item>1.4.0.128</item>
+        <item>1.4.0.129</item>
         <item>"Changement:
                  - Enquête d\'amélioration des performances et, espérons-le, mise en œuvre de la vitesse de transfert des données de téléchargement"</item>
-        <item>1.4.0.127</item>
+        <item>1.4.0.128</item>
         <item>"Correction d\'un bug:
-                 - implémenter le bouton d\'actualisation sur la page \'élément non chargé\' du diaporama"</item>
+                 - correction d\'un crash si l\'utilisateur inverse l\'ordre de tri lors de la visualisation d\'un album, avec des photos, puis ne recharge pas manuellement le contenu de l\'album"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.127</item>
+        <item>"Correction d\'un bug:
+                 - seul le premier dossier racine d\'un nom donné était visible dans le sélecteur de racines de sélection de fichiers
+                Changement:
+                 - implémenter le bouton d\'actualisation sur la page \'élément non chargé\' du diaporama
+                 - implémenter le bouton de retour sur la sélection de l\'album - inverser le fil d\'Ariane
+                 - implémenter le bouton de retour sur la sélection de dossier - inverser le fil d\'Ariane"</item>
         <item>1.4.0.126</item>
         <item>"Correction d\'un bug:
-                 - Crash où un identifiant de profil de connexion ne serait pas un nom de fichier légal"</item>
+                 - Crash où un identifiant de profil de connexion ne serait pas un nom de fichier légal
+                 - Correction du gel des téléchargements vers la fin de plusieurs téléchargements de morceaux"</item>
         <item>1.4.0.125</item>
         <item>"Correction d\'un bug:
                  - lors du redémarrage d\'une tâche, assurez-vous que les paramètres d\'origine de la tâche sont utilisés

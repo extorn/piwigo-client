@@ -1,48 +1,76 @@
 <en-GB>
 Bugfix:
-- Crash where a connection profile id would not be a legal filename
-- implemented the refresh button on the slideshow 'item not loaded' page (though shouldn't appear now)
+- only the first root folder of a given name was visible in the file selection roots selector
+Change:
+- implement the refresh button on the slideshow 'item not loaded' page
+- implement the back button on album select - reverse through breadcrumbs
+- implement the back button on folder select - reverse through breadcrumbs
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Selhání, kde by ID profilu připojení nebylo legálním názvem souboru
-- implementováno tlačítko pro obnovení na stránce slideshow \'item not loaded\' (položka se nenačte)
+- ve voliči kořenů pro výběr souboru byla viditelná pouze první kořenová složka daného jména
+Změna:
+- implementujte tlačítko pro obnovení na stránce slideshow \'item not loaded\'
+- implementovat tlačítko zpět na výběr alba - zpět přes strouhanku
+- implementovat tlačítko Zpět na výběr složky - zpět přes strouhanku
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Absturz, bei dem eine Verbindungsprofil-ID kein zulässiger Dateiname ist
-- Die Schaltfläche "Aktualisieren" auf der Diashow-Seite "Element nicht geladen" wurde implementiert (sollte jetzt jedoch nicht angezeigt werden.)
+- In der Stammauswahl der Dateiauswahl war nur der erste Stammordner eines bestimmten Namens sichtbar
+Veränderung:
+- Implementieren Sie die Schaltfläche "Aktualisieren" auf der Diashow-Seite "Element nicht geladen"
+- Implementieren Sie die Zurück-Taste bei der Albumauswahl. - Umkehren durch Breadcrumbs
+- Implementieren Sie die Schaltfläche "Zurück" bei der Ordnerauswahl. - Umkehren durch Breadcrumbs
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Fallo donde una identificación de perfil de conexión no sería un nombre de archivo legal
-- implementó el botón de actualización en la página \'elemento no cargado\' de la presentación de diapositivas (aunque no debería aparecer ahora)
+- solo la primera carpeta raíz de un nombre dado estaba visible en el selector de raíces de selección de archivos
+Cambio:
+- implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'
+- implementar el botón de retroceso en la selección de álbum - retroceder a través de migas de pan
+- implementar el botón de retroceso en la selección de carpeta - retroceder a través de migas de pan
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Crash où un identifiant de profil de connexion ne serait pas un nom de fichier légal
-- implémentation du bouton d\'actualisation sur la page `` élément non chargé \'\' du diaporama (mais ne devrait pas apparaître maintenant)
+- seul le premier dossier racine d\'un nom donné était visible dans le sélecteur de racines de sélection de fichiers
+Changement:
+- implémenter le bouton d\'actualisation sur la page \'élément non chargé\' du diaporama
+- implémenter le bouton de retour sur la sélection de l\'album - inverser le fil d\'Ariane
+- implémenter le bouton de retour sur la sélection de dossier - inverser le fil d\'Ariane
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Blocco in cui un ID profilo di connessione non sarebbe un nome file legale
-- implementato il pulsante di aggiornamento nella pagina "elemento non caricato" della presentazione (anche se non dovrebbe apparire ora)
+- solo la prima cartella principale di un dato nome era visibile nel selettore delle radici di selezione dei file
+Modificare:
+- implementare il pulsante di aggiornamento nella pagina "elemento non caricato" della presentazione
+- implementa il pulsante Indietro nella selezione dell\'album - inverti i breadcrumb
+- implementare il pulsante indietro nella selezione della cartella - invertire i breadcrumb
 </it-IT>
 <ja-JP>
 バグ修正：
--接続プロファイルIDが正当なファイル名ではない場合のクラッシュ
--スライドショーの「アイテムがロードされていません」ページに更新ボタンを実装しました（ただし、現在は表示されないはずです）
+-指定された名前の最初のルートフォルダーのみがファイル選択ルートセレクターに表示されました
+変化する：
+-スライドショーの「アイテムがロードされていません」ページに更新ボタンを実装します
+-アルバム選択に戻るボタンを実装します-パンくずリストを逆にします
+-フォルダ選択に戻るボタンを実装します-ブレッドクラムを逆にします
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Crash waarbij een verbindingsprofiel-ID geen legale bestandsnaam zou zijn
-- de vernieuwingsknop geïmplementeerd op de pagina \'item niet geladen\' van de diavoorstelling (maar zou nu niet moeten verschijnen)
+- alleen de eerste hoofdmap van een bepaalde naam was zichtbaar in de root-selector voor bestandsselectie
+Verandering:
+- implementeer de vernieuwingsknop op de pagina \'item niet geladen\' van de diavoorstelling
+- implementeer de terugknop op albumselectie - keer om door broodkruimels
+- implementeer de terugknop bij het selecteren van mappen - keer om door broodkruimels
 </nl-NL>
 <ru-RU>
-(хотя сейчас не должен появляться)
+- реализовать кнопку возврата при выборе альбома - перевернуть навигационные крошки
+- реализовать кнопку возврата при выборе папки - перевернуть навигационные крошки
 </ru-RU>
 <zh-CN>
 错误修正：
--当连接配置文件ID不是合法文件名时崩溃
--在幻灯片的“项目未加载”页面上实现了刷新按钮（尽管现在不应出现）
+-在文件选择根选择器中仅可见给定名称的第一个根文件夹
+改变：
+-在幻灯片“项目未加载”页面上实现刷新按钮
+-在专辑选择上实现“后退”按钮-通过面包屑反向
+-在文件夹选择上实现后退按钮-通过面包屑反向
 </zh-CN>

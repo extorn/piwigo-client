@@ -146,17 +146,25 @@
                 * Möglicherweise ein vollständiges Umschreiben des Upload-Prozesses, da er nicht iterativ verbessert werden kann
                 * Möglicherweise ein vollständiges Umschreiben der App mit dem Schwerpunkt auf Einfachheit für das allgemeine Surfen anfangs"</item>
         
-        <item>1.4.0.128</item>
+        <item>1.4.0.129</item>
         <item>"Veränderung:
                  - Untersuchung zur Leistungsverbesserung und hoffentlich Implementierung für die Geschwindigkeit der Upload-Datenübertragung"</item>
-        <item>1.4.0.127</item>
+        <item>1.4.0.128</item>
         <item>"Fehlerbehebung:
-                 - Implementieren Sie die Schaltfläche \"Aktualisieren\" auf der Diashow-Seite \"Element nicht geladen\""</item>
+                 - Absturz behoben, wenn der Benutzer die Sortierreihenfolge beim Anzeigen eines Albums mit Fotos umkehrt und den Albuminhalt dann nicht manuell neu lädt"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.127</item>
+        <item>"Fehlerbehebung:
+                 - In der Stammauswahl der Dateiauswahl war nur der erste Stammordner eines bestimmten Namens sichtbar
+                Veränderung:
+                 - Implementieren Sie die Schaltfläche \"Aktualisieren\" auf der Diashow-Seite \"Element nicht geladen\"
+                 - Implementieren Sie die Zurück-Taste bei der Albumauswahl. - Umkehren durch Breadcrumbs
+                 - Implementieren Sie die Schaltfläche \"Zurück\" bei der Ordnerauswahl. - Umkehren durch Breadcrumbs"</item>
         <item>1.4.0.126</item>
         <item>"Fehlerbehebung:
-                 - Absturz, bei dem eine Verbindungsprofil-ID kein zulässiger Dateiname ist"</item>
+                 - Absturz, bei dem eine Verbindungsprofil-ID kein zulässiger Dateiname ist
+                 - Das Einfrieren von Uploads gegen Ende mehrerer Chunk-Uploads wurde behoben"</item>
         <item>1.4.0.125</item>
         <item>"Fehlerbehebung:
                  - Stellen Sie beim Neustart eines Jobs sicher, dass die ursprünglichen Jobeinstellungen verwendet werden

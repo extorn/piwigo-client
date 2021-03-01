@@ -146,17 +146,25 @@
                 * Posiblemente una reescritura completa del proceso de carga, ya que no se presta a una mejora iterativa
                 * Posiblemente una reescritura completa de la aplicación con un enfoque en la simplicidad para la navegación general del usuario inicialmente"</item>
         
-        <item>1.4.0.128</item>
+        <item>1.4.0.129</item>
         <item>"Cambio:
                  - Investigación de mejora del rendimiento y, con suerte, implementación para la velocidad de transferencia de datos de carga"</item>
-        <item>1.4.0.127</item>
+        <item>1.4.0.128</item>
         <item>"Arreglo del fallo:
-                 - implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'"</item>
+                 - corrige el bloqueo si el usuario invierte el orden de clasificación mientras ve un álbum, con fotos, y luego no recarga manualmente el contenido del álbum"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.127</item>
+        <item>"Arreglo del fallo:
+                 - solo la primera carpeta raíz de un nombre dado estaba visible en el selector de raíces de selección de archivos
+                Cambio:
+                 - implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'
+                 - implementar el botón de retroceso en la selección de álbum - retroceder a través de migas de pan
+                 - implementar el botón de retroceso en la selección de carpeta - retroceder a través de migas de pan"</item>
         <item>1.4.0.126</item>
         <item>"Arreglo del fallo:
-                 - Fallo donde una identificación de perfil de conexión no sería un nombre de archivo legal"</item>
+                 - Fallo donde una identificación de perfil de conexión no sería un nombre de archivo legal
+                 - Se corrigió la congelación de la carga cerca del final de múltiples cargas de fragmentos"</item>
         <item>1.4.0.125</item>
         <item>"Arreglo del fallo:
                  - al reiniciar un trabajo, asegúrese de utilizar la configuración original del trabajo
