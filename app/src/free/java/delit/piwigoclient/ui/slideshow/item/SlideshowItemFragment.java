@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.slideshow;
+package delit.piwigoclient.ui.slideshow.item;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.ResourceItem;
