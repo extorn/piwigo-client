@@ -290,7 +290,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         } else {
             // pop the current fragment off, close app if it is the last one
             boolean blockDefaultBackOperation = false;
-            if (backstackCount == 1) {
+            if (backstackCount == 0) {
                 Fragment currentFragment = getActiveFragment();
                 if (currentFragment instanceof ViewAlbumFragment && currentAlbum != null && !currentAlbum.isRoot()) {
                     // get the next album to show

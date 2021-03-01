@@ -2,6 +2,7 @@ package delit.piwigoclient.test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -54,5 +55,9 @@ public class ItemLoadPage<T> {
 
     public void setItems(List<T> items) {
         this.items = items;
+    }
+
+    public void reverseContents() {
+        Collections.reverse(this.items);
     }
 }

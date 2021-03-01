@@ -261,7 +261,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
             }
             recordPageLoadSucceeded(page, newItems.size());
             isGrowingOrganically = calculateIfGrowingOrganically();
-            fullyLoaded = internalIsFullyLoadedCheck(page, pageSize, itemsToAdd);
+            fullyLoaded = calculateIsFullyLoadedCheck(page, pageSize, itemsToAdd);
         } catch(IllegalStateException e) {
             // page already loaded (can occur after resume...)
             Logging.log(Log.DEBUG, TAG, "ignoring page already loaded in %1$s", Utils.getId(this));
@@ -302,18 +302,20 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
      * @param itemsToAdd items in the page (some might have been filtered out prior to load, but this is the full list provided)
      * @return boolean if the list is fully loaded
      */
-    protected boolean internalIsFullyLoadedCheck(int pageIdx, int pageSize, List<T> itemsToAdd) {
+    protected boolean calculateIsFullyLoadedCheck(int pageIdx, int pageSize, List<T> itemsToAdd) {
+        boolean isFullyLoaded;
         if(isRetrieveItemsInReverseOrder()) {
             // we're processing page 0 and no pages need reloaded
-            return pageIdx == 0 && getNextPageToReload() == null;
+            isFullyLoaded = pageIdx == 0 && getNextPageToReload() == null;
         } else {
             // all pages with a number less than this one are already loaded.
             boolean loadingHighestPageIdxSoFar = pagesLoadedIdxToSizeMap.size() == pageIdx + 1;
             // AND EITHER the totalPages field has been set and matches the current pageIdx -1
             boolean loadingLastPage = pageIdx == getTotalPages() -1;
             // OR the current page contained less items than it could
-            return loadingHighestPageIdxSoFar && (loadingLastPage || itemsToAdd.size() < pageSize);
+            isFullyLoaded = loadingHighestPageIdxSoFar && (loadingLastPage || itemsToAdd.size() < pageSize);
         }
+        return isFullyLoaded;
     }
 
     public int getTotalPages() {

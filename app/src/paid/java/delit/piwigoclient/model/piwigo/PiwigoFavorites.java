@@ -20,18 +20,6 @@ public class PiwigoFavorites extends ResourceContainer<PiwigoFavorites.Favorites
         super(in);
     }
 
-    @Override
-    public boolean setRetrieveItemsInReverseOrder(boolean retrieveItemsInReverseOrder) {
-        Logging.log(Log.ERROR, TAG, "Unable to reverse the order of the items. Why is this being attempted?");
-//        throw new UnsupportedOperationException("cannot reverse the order");
-        return false;
-    }
-
-    @Override
-    protected void sortItems(List<GalleryItem> items) {
-        throw new UnsupportedOperationException("cannot sort the items");
-    }
-
     public void clear() {
         super.clear();
     }

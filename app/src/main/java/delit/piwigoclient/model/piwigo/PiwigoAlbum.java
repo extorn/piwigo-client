@@ -21,6 +21,7 @@ import delit.piwigoclient.BuildConfig;
  */
 public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends ResourceContainer<S, T> implements Parcelable {
 
+    private static final int CHANGE_ALBUMS_CLEARED = 4;
     public static final int ALBUM_SORT_ORDER_DEFAULT = 0;
     public static final int ALBUM_SORT_ORDER_NAME = 1;
     public static final int ALBUM_SORT_ORDER_DATE = 2;
@@ -41,7 +42,6 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     private int bannerCount;
     private boolean hideAlbums;
     private boolean retrieveAlbumsInReverseOrder;
-    private boolean albumsNeedReversing;
 
     public PiwigoAlbum(S albumDetails) {
         this(albumDetails, ALBUM_SORT_ORDER_DEFAULT);
@@ -49,7 +49,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     
     public PiwigoAlbum(S albumDetails, int albumSortOrder) {
         super(albumDetails, "GalleryItem", (int) (albumDetails.getPhotoCount() + albumDetails.getSubCategories()));
-        comparator = new AlbumSortingComparator(albumSortOrder);
+        comparator = new AlbumSortingComparator(albumSortOrder, getResourceComparator());
     }
     
     public PiwigoAlbum(Parcel in) {
@@ -57,7 +57,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         childAlbumCount = in.readInt();
         spacerAlbums = in.readInt();
         bannerCount = in.readInt();
-        comparator = new AlbumSortingComparator(in.readInt());
+        comparator = new AlbumSortingComparator(in.readInt(), getResourceComparator());
         hideAlbums = ParcelUtils.readBool(in);
         retrieveAlbumsInReverseOrder = ParcelUtils.readBool(in);
         comparator.setSortCategoriesInReverseOrder(retrieveAlbumsInReverseOrder);
@@ -154,11 +154,15 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
 
     @Override
     protected void sortItems(List<T> items) {
+
+        boolean flipAlbums = comparator.setFlipCategoryOrder(false);
+        boolean flipResources = resourceComparator.setFlipResourceOrder(false);
         Collections.sort(items, comparator);
-        if(albumsNeedReversing) {
-            // reverses just the albums.
-            albumsNeedReversing = false;
+        if(flipAlbums) {
             reverseTheAlbumOrder();
+        }
+        if(flipResources) {
+            reverseTheResourceOrder();
         }
     }
 
@@ -166,6 +170,20 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         int fromIdx = Math.max(0,getItemIdx((T)StaticCategoryItem.ALBUM_HEADING) + 1);
         int toIdx = fromIdx + childAlbumCount;
         Collections.reverse(getItems().subList(fromIdx, toIdx));
+    }
+
+    @Override
+    protected void reverseTheResourceOrder() {
+        int fromIdx = getFirstResourceIdx();
+        if(fromIdx < 0) {
+            // no resources to flip
+            return;
+        }
+        if(hideAlbums) {
+            fromIdx += childAlbumCount +spacerAlbums;
+        }
+        int toIdxExclusive = fromIdx + getResourcesCount();
+        Collections.reverse(getItems().subList(fromIdx, toIdxExclusive));
     }
 
     @Override
@@ -198,7 +216,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             return -1;
         }
         int resourceIdx = nonResourceItemsIncResourcesHeader();
-        if(resourceIdx >= getItemCount()) {
+        if(resourceIdx >= getItems().size()) {
             // this will occur in case of error, but might be just because there are other items in the list such as categories etc.
             Logging.log(Log.DEBUG, TAG, "First Resource idx %1$d beyond end of list %2$d. Resetting to -1", resourceIdx, getItemCount());
             resourceIdx = -1;
@@ -460,9 +478,9 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
             if (getItems().size() > 0) {
                 if(comparator.getAlbumSortOrder() == PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT
                         && childAlbumCount > 0) {
-                    albumsNeedReversing = true;
+                    comparator.setFlipCategoryOrder(true);
+                    sortItems();
                 }
-                sortItems();
                 return true;
             }
         }
@@ -511,5 +529,19 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
 
     protected int getSpacerAlbumCount() {
         return spacerAlbums;
+    }
+
+    public void removeAllAlbums() {
+        setSpacerAlbumCount(0);
+        if(getResourcesCount() == 0) {
+            clear();
+        } else {
+            int fromIdx = Math.max(0,getItemIdx((T)StaticCategoryItem.ALBUM_HEADING));
+            int toIdx = fromIdx + childAlbumCount;
+            for(int i = fromIdx; i < toIdx; i++) {
+                remove(i);
+            }
+        }
+        notifyListenersOfChange(CHANGE_ALBUMS_CLEARED);
     }
 }

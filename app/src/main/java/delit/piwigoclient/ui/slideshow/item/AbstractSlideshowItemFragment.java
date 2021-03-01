@@ -305,7 +305,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
                 errBundle.putBoolean("hidingAlbums", ((PiwigoAlbum<?,?>)modelStore).isHideAlbums());
                 errBundle.putInt("albumCount", ((PiwigoAlbum<?,?>)modelStore).getChildAlbumCount());
             }
-            errBundle.putInt("sortOrder", modelStore.isRetrieveItemsInReverseOrder() ? 1 : 0);
+            errBundle.putInt("sortOrder", modelStore.isRetrieveResourcesInReverseOrder() ? 1 : 0);
             Logging.logAnalyticEvent(requireContext(),"modelClassWrong", null);
             String errMsg = String.format(Locale.UK, "slideshow model is wrong type - %1$s(%2$d)\n%3$s", galleryModelClass.getName(), galleryModelId, errBundle.toString());
             Logging.log(Log.ERROR, TAG, errMsg);

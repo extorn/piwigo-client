@@ -22,8 +22,10 @@ public class PiwigoResourceUtil {
     //Adding this doesn't seem to help.  -Djava.util.logging.config.file=src/test/resources/logging.properties
     private static Logger logger = Logger.getLogger(PiwigoAlbumTest.class.getName());
 
-    public static ArrayList<ItemLoadPage<GalleryItem>> initialiseResourceItemLoadPages(ResourceItemFactory resourceItemFactory, int sortOrder, int pagesWanted, int pageSizeWanted) {
+    public static ArrayList<ItemLoadPage<GalleryItem>> initialiseResourceItemLoadPages(ResourceItemFactory resourceItemFactory, int sortOrder, int itemsWanted, int pageSizeWanted, boolean reverse) {
         ArrayList<ItemLoadPage<GalleryItem>> resourceItemLoadPages = new ArrayList<>();
+        int pagesWanted = itemsWanted / pageSizeWanted;
+        pagesWanted += itemsWanted % pagesWanted == 0 ? 0 : 1;
         for(int pageIdx = 0; pageIdx < pagesWanted; pageIdx++) {
             ItemLoadPage<GalleryItem> page = new ItemLoadPage<>();
             for(int pageSize = 0; pageSize < pageSizeWanted; pageSize++) {
@@ -40,6 +42,9 @@ public class PiwigoResourceUtil {
                 }
             }
             resourceItemLoadPages.add(page);
+        }
+        if(reverse) {
+            Collections.reverse(resourceItemLoadPages);
         }
         return resourceItemLoadPages;
     }
@@ -68,11 +73,13 @@ public class PiwigoResourceUtil {
             }
             if(toIdx != fromIdx) {
                 if(toIdx - fromIdx > 1) {
-                    boolean reverseExpected = true; // default is to assume we want to test against the reverse
-                    if(originalOrder.get(fromIdx-1) == StaticCategoryItem.ALBUM_HEADING) {
-                        reverseExpected = categoriesReversed;
-                    } else if(originalOrder.get(fromIdx-1) == CategoryItem.PICTURE_HEADING) {
-                        reverseExpected = false;//resourcesReversed;
+                    boolean reverseExpected = categoriesReversed || resourcesReversed; // default is in case there isn't a header
+                    if(fromIdx > 0) {
+                        if (originalOrder.get(fromIdx - 1) == StaticCategoryItem.ALBUM_HEADING) {
+                            reverseExpected = categoriesReversed;
+                        } else if (originalOrder.get(fromIdx - 1) == CategoryItem.PICTURE_HEADING) {
+                            reverseExpected = resourcesReversed;
+                        }
                     }
                     // there is an item to check is reversed
                     List<GalleryItem> originalArr = originalOrder.subList(fromIdx, toIdx);
@@ -104,14 +111,13 @@ public class PiwigoResourceUtil {
         while (reverseOrder != iterator.hasNext() || reverseOrder == iterator.hasPrevious()) {
             ItemLoadPage<GalleryItem> page = reverseOrder?iterator.previous():iterator.next();
             ArrayList<GalleryItem> pageOfItems = new ArrayList<>(page.getItems());
-            if (addHeader && pageOfItems.size() > 0 && !addedHeading) {
-                addedHeading = true;
-                expected.add(ResourceItem.PICTURE_HEADING);
-            }
-            if (reverseOrder) {
-                Collections.reverse(pageOfItems);
-            }
             expected.addAll(pageOfItems);
+        }
+        if (reverseOrder) {
+            Collections.reverse(expected);
+        }
+        if (!expected.isEmpty() && addHeader) {
+            expected.add(0, ResourceItem.PICTURE_HEADING);
         }
         return expected;
     }

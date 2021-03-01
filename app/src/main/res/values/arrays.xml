@@ -253,11 +253,13 @@
         <item>1.4.0.129</item>
         <item>"Change:
                 - Performance improvement investigation and hopefully implementation for upload data transfer speed"</item>
-        <item>1.4.0.128</item>
-        <item>"Bugfix:
-                - fix crash if user reverses sort order while viewing an album, with photos, and then doesn't manually reload album contents"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.128</item>
+        <item>"Bugfix:
+                - crash if user reverses sort order while viewing an album, with photos, and then doesn't manually reload album contents
+                - correct the hide and expand of albums (recently broken)
+                - thumbnails correctly redrawn toggling child albums heading repetitively"</item>
         <item>1.4.0.127</item>
         <item>"Bugfix:
                 - only the first root folder of a given name was visible in the file selection roots selector

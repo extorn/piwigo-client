@@ -671,18 +671,27 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     protected boolean updateAlbumSortOrder(PiwigoAlbum<CategoryItem, GalleryItem> galleryModel) {
+        // switch to a different sort order if wanted (will require reload from server so remove all albums)
         boolean sortOrderChanged;
         int newSortOrder = AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, requireContext());
         try {
             sortOrderChanged = galleryModel.setAlbumSortOrder(newSortOrder);
         } catch(IllegalStateException e) {
-            galleryModel.clear();
+            galleryModel.removeAllAlbums();
             sortOrderChanged = galleryModel.setAlbumSortOrder(newSortOrder);
         }
-        boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
-        sortOrderChanged |= galleryModel.setRetrieveItemsInReverseOrder(invertResourceSortOrder);
+        // flip the album order if wanted
         boolean invertChildAlbumSortOrder = AlbumViewPreferences.getAlbumChildAlbumSortOrderInverted(prefs, requireContext());
         sortOrderChanged |= galleryModel.setRetrieveChildAlbumsInReverseOrder(invertChildAlbumSortOrder);
+
+        // flip the resource order if wanted
+        boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
+        try {
+            sortOrderChanged |= galleryModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+        } catch(IllegalStateException e) {
+            galleryModel.removeAllResources();
+            sortOrderChanged = galleryModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+        }
         if(galleryModel.setResourceSortOrder(AlbumViewPreferences.getResourceSortOrder(prefs, requireContext()))) {
             galleryModel.removeAllResources();
             sortOrderChanged = true;
@@ -1136,9 +1145,14 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
     protected int getPageToActuallyLoad(int pageRequested, int pageSize) {
         boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
-        if (galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder)) {
-            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
-            DisplayUtils.runOnUiThread(()->galleryListView.invalidate());
+        try {
+            boolean reversed = galleryModel.setRetrieveResourcesInReverseOrder(invertSortOrder);
+        } catch(IllegalStateException e) {
+            Logging.logAnalyticEvent(requireContext(), "IllegalResourceReverseRequest");
+            Logging.log(Log.ERROR, TAG, "ignoring request to switch load order of resources");
+//            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
+//            DisplayUtils.runOnUiThread(()->galleryListView.invalidate());
+            //FIXME currently, reversing the sort order after some pages are loaded does nothing.
         }
         int pageToActuallyLoad = pageRequested;
         if (invertSortOrder) {
@@ -1326,6 +1340,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         updateAppResumeDetails();
 
         boolean resorted = updateAlbumSortOrder(galleryModel);
+
 
         if (albumIsDirty) {
             doServerActionReloadAlbumContent();

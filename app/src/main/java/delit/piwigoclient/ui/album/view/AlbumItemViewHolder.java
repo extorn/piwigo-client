@@ -88,6 +88,8 @@ public abstract class AlbumItemViewHolder<VH extends AlbumItemViewHolder<VH,LVA,
     }
 
     public void onRecycled() {
+        // need to reset the loader too because otherwise it will think the image is still loaded.
+        imageLoader.resetLoadState();
         UIHelper.recycleImageViewContent(mImageView);
     }
 

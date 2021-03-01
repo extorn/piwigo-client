@@ -11,9 +11,9 @@ public class AlbumSortingComparator implements Comparator<GalleryItem>, Serializ
     AlbumSortingCategoryComparator categoryComparator;
     AlbumSortingResourceComparator resourceComparator;
 
-    public AlbumSortingComparator(int albumSortOrder) {
+    public AlbumSortingComparator(int albumSortOrder, AlbumSortingResourceComparator resourceComparator) {
         categoryComparator = new AlbumSortingCategoryComparator(albumSortOrder);
-        resourceComparator = new AlbumSortingResourceComparator();
+        this.resourceComparator = resourceComparator;
     }
 
     @Override

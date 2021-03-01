@@ -11,6 +11,7 @@ public class AlbumSortingResourceComparator implements Comparator<GalleryItem>, 
 
     private static final long serialVersionUID = -263036600717170733L;
     private boolean flipOrder;
+    private String sortOrder;
 
     @Override
     public int compare(GalleryItem o1, GalleryItem o2) {
@@ -50,5 +51,21 @@ public class AlbumSortingResourceComparator implements Comparator<GalleryItem>, 
             return !flipOrder; // return the old value
         }
         return flipOrder; // return the old value
+    }
+
+    /**
+     * @param sortOrder
+     * @return true if changed
+     */
+    public boolean setSortOrder(String sortOrder) {
+        if(this.sortOrder != sortOrder) {
+            this.sortOrder = sortOrder;
+            return true;
+        }
+        return false;
+    }
+
+    public String getSortOrder() {
+        return sortOrder;
     }
 }

@@ -276,7 +276,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
             // presume that the parent gallery has also been updated and adjust all items down one.
             int fromIdx = adapterItemIdx;
             int toIdx = galleryResourceItemsFullGalleryIdx.size() -1;
-            if(gallery.isRetrieveItemsInReverseOrder()) {
+            if(gallery.isRetrieveResourcesInReverseOrder()) {
                 fromIdx = 0;
                 toIdx = adapterItemIdx-1;
             }

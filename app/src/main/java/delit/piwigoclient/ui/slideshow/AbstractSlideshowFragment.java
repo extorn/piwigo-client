@@ -519,13 +519,15 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     }
 
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
-        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
-        if(resourceContainer.setRetrieveItemsInReverseOrder(invertSortOrder)) {
-            // need to refresh this page as the sort order flipped.
-            //TODO
+        boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
+        try {
+            resourceContainer.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+        } catch(IllegalStateException e) {
+            resourceContainer.removeAllResources();
+            resourceContainer.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
         }
         int pageToActuallyLoad = pageRequested;
-        if (invertSortOrder) {
+        if (invertResourceSortOrder) {
             int pagesOfPhotos = resourceContainer.getContainerDetails().getPagesOfPhotos(pageSize);
             pageToActuallyLoad = pagesOfPhotos - pageRequested;
         }
