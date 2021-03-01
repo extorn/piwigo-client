@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,7 +40,9 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
+import delit.piwigoclient.ui.common.MyBackButtonCallback;
 import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.events.ToolbarEvent;
 
@@ -59,6 +62,7 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
     private String piwigoServerConnected;
     private @StyleRes int theme = 0; //Resources.ID_NULL; (needs 29+)
     private boolean coreComponentsInitialised;
+    private OnBackPressedCallback backPressedCallback;
 
     public MyFragment() {
     }
@@ -73,6 +77,7 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
     public long addActiveServiceCall(@StringRes int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
         return addActiveServiceCall(getString(titleStringId), worker);
     }
+
 
     protected long addNonBlockingActiveServiceCall(@StringRes int titleStringId, long messageId, String serviceDesc) {
         return uiHelper.addNonBlockingActiveServiceCall(getString(titleStringId), messageId, serviceDesc);
@@ -157,10 +162,34 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
     public void onAttach(Context context) {
         Logging.log(Log.VERBOSE,TAG, "onAttach : " + Utils.getId(this));
         prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         super.onAttach(context);
+        if(this instanceof BackButtonHandler) {
+            backPressedCallback = new MyBackButtonCallback((BackButtonHandler) this);
+            requireActivity().getOnBackPressedDispatcher().addCallback(backPressedCallback);
+        }
+    }
+
+    public void setBackButtonHandlerEnabled(boolean enabled) {
+        if(backPressedCallback != null) {
+            backPressedCallback.setEnabled(enabled);
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        if(backPressedCallback != null) {
+            backPressedCallback.remove();
+            backPressedCallback = null;
+        }
+        super.onDetach();
     }
 
     protected FUIH buildUIHelper(Context context, @NonNull View attachedView) {

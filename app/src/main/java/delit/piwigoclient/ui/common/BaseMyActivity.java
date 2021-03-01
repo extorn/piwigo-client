@@ -140,8 +140,12 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
     }
 
     @Override
-    public void onBackPressed() {
-        doDefaultBackOperation();
+    public final void onBackPressed() {
+        if(getOnBackPressedDispatcher().hasEnabledCallbacks()) {
+            super.onBackPressed();
+        } else {
+            doDefaultBackOperation();
+        }
     }
 
     protected void doDefaultBackOperation() {
@@ -607,8 +611,13 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         }
 
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.addToBackStack(f.getClass().getName());
-        tx.add(R.id.main_view, f, f.getClass().getName()); // don't use replace because that causes the view to be recreated each time from scratch
+        if(getSupportFragmentManager().getFragments().size() > 0) {
+            tx.addToBackStack(f.getClass().getName());
+            tx.add(R.id.main_view, f, f.getClass().getName()); // don't use replace because that causes the view to be recreated each time from scratch
+        } else {
+            tx.replace(R.id.main_view, f, f.getClass().getName());
+        }
+
         tx.commit();
 
         Logging.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + Utils.getId(f));

@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -270,6 +271,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             // scroll to the first item in the list.
             getList().scrollToPosition(0);
             buildBreadcrumbs(newFolder);
+            setBackButtonHandlerEnabled(folderPathView.getBreadcrumbCount() > 1);
             getListAdapter().setInitiallySelectedItems(getContext()); // adapter needs to be populated for this to work.
             updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
 
@@ -525,18 +527,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
 
     @Override
     public boolean onBackButton() {
-//        getListAdapter().cancelAnyActiveFolderMediaScan();
-        DocumentFile currentFolder = getListAdapter().getActiveFolder();
-        if(currentFolder == null) {
-            return false;
-        }
-        DocumentFile parent = currentFolder.getParentFile();
-        if (parent == null) {
-            return false;
-        } else {
-            getListAdapter().changeFolderViewed(requireContext(), parent);
-            return true;
-        }
+        return folderPathView.clickBreadcrumb(folderPathView.getBreadcrumbCount()-1);
     }
 
     private void applyNewRootsAdapter(DocumentFileArrayAdapter mappedArrayAdapter) {
@@ -686,7 +677,22 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             if ((isNeedWrite && perm.isWritePermission()) || perm.isReadPermission()) {
                 try {
                     DocumentFile documentFile = DocumentFile.fromTreeUri(requireContext(), perm.getUri());
-                    roots.put(documentFile == null ? "???" : IOUtils.getFilename(documentFile), documentFile);
+                    String rootName;
+                    if(documentFile == null) {
+                        Logging.log(Log.ERROR, TAG, "FileSelector Root added is null");
+                        Logging.logAnalyticEvent(requireContext(), "FileSelector Root added is null");
+                        rootName = "???";
+                    } else {
+                        rootName = IOUtils.getDocumentFilePath(requireContext(), documentFile);
+                    }
+                    if(roots.containsKey(rootName)) {
+                        Logging.log(Log.ERROR, TAG,"Non unique file root found");
+                        Logging.logAnalyticEvent(requireContext(), "Non unique file root found");
+                        do {
+                            rootName += ' ';
+                        }while(roots.containsKey(rootName));
+                    }
+                    roots.put(rootName, documentFile);
                 } catch (IllegalArgumentException e) {
                     // it's a file not a folder. Ignore the error.
                 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +23,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import delit.libs.R;
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 
 public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
 
+    private static final String TAG = "BreadcrumbView";
     private PathNavigator<T> pathNavigator;
     private NavigationListener<T> navigationListener;
     private @IdRes int pathItemTextViewResId;
     private @LayoutRes int breadcrumbLayoutResId;
     private @LayoutRes int breadcrumbDivisionLayoutResId;
+    private ArrayList<T> pathItems;
 
     public AbstractBreadcrumbsView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -95,9 +99,13 @@ public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
         this.navigationListener = navigationListener;
     }
 
+    public int getBreadcrumbCount() {
+        return pathItems.size();
+    }
+
     public void populate(@Nullable T item) {
         removeAllViews();
-        ArrayList<T> pathItems = new ArrayList<>();
+        pathItems = new ArrayList<>();
         if(item != null) {
             do {
                 pathItems.add(0, item);
@@ -115,7 +123,7 @@ public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
 
         for (final T pathItemFile : pathItems) {
             idx++;
-            addView(buildPathItem(pathItemFile, pathItemHorizontalPaddingPx, verticalPaddingPx));
+            addView(buildPathItem(idx, pathItemFile, pathItemHorizontalPaddingPx, verticalPaddingPx));
 
             if (idx < pathItems.size()) {
                 View pathSeparatorView = buildPathItemSeparator(pathSepHorizontalPaddingPx, verticalPaddingPx);
@@ -147,7 +155,7 @@ public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
         return pathItemSeparator;
     }
 
-    private View buildPathItem(final T pathItemFile, int horizontalPaddingPx, int verticalPaddingPx) {
+    private View buildPathItem(int idx, final T pathItemFile, int horizontalPaddingPx, int verticalPaddingPx) {
 
         View pathItem;
         if(breadcrumbLayoutResId != View.NO_ID) {
@@ -171,8 +179,19 @@ public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
 
 
 //        pathItem.setBackgroundColor(ContextCompat.getColor(getContext(), R.colors.app_primary));
+        pathItem.setTag("pathIdx_"+idx);
         pathItem.setOnClickListener(v -> navigationListener.onBreadcrumbClicked(pathItemFile));
         return pathItem;
+    }
+
+    public boolean clickBreadcrumb(int breadcrumbIdx) {
+        View v = findViewWithTag("pathIdx_"+breadcrumbIdx);
+        if(v != null) {
+            return v.callOnClick();
+        } else {
+            Logging.log(Log.ERROR, TAG, "Breadcrumb does not exist");
+        }
+        return false;
     }
 
     public interface NavigationListener<T> {

@@ -126,16 +126,16 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
 
         navListener = (oldCategory, newCategory) -> {
 
-            if(!newCategory.hasNonAdminCopyChildren() && oldCategory.getId() != newCategory.getId()) {
+            setBackButtonHandlerEnabled(!newCategory.isRoot());
+            if (!newCategory.hasNonAdminCopyChildren() && (oldCategory == null || oldCategory.getId() != newCategory.getId())) {
                 loadDataForAlbum(newCategory);
             }
-            if(oldCategory != null) {
+            if (oldCategory != null) {
                 listViewStates.put(oldCategory.getId(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
             }
             getList().scrollToPosition(0);
 
             buildBreadcrumbs(newCategory);
-
         };
 
         ExtendedFloatingActionButton newItemButton = getAddListItemButton();
@@ -246,12 +246,18 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
 
     @Override
     public boolean onBackButton() {
-        listViewStates.remove(getListAdapter().getActiveItem().getId());
-        CategoryItem parent = rootAlbum.findChild(getListAdapter().getActiveItem().getParentId());
+        CategoryItem activeItem = getListAdapter().getActiveItem();
+        listViewStates.remove(activeItem.getId());
+        if(activeItem.isRoot()) {
+            Logging.log(Log.ERROR, TAG, "Unable to handle back when root shown");
+            return false;
+        }
+        CategoryItem parent = rootAlbum.findChild(activeItem.getParentId());
         if (parent.getName().isEmpty()) {
             return false;
         } else {
             getListAdapter().setActiveItem(parent);
+            setBackButtonHandlerEnabled(!parent.isRoot());
             getList().getLayoutManager().onRestoreInstanceState(listViewStates.get(parent.getId()));
             return true;
         }
@@ -392,6 +398,7 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
                 //getListAdapter().rebuildContentView();
                 // DO nothing
             } else {
+                setBackButtonHandlerEnabled(!pathItem.isRoot());
                 boolean folderChanged = getListAdapter().setActiveItem(pathItem);
                 if(folderChanged && listViewStates != null) {
                     Iterator<Map.Entry<Long, Parcelable>> iter = listViewStates.entrySet().iterator();

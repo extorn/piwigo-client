@@ -291,8 +291,6 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
         return isAdminUser || hasCommunityPlugin;
     }
 
-
-
     void showUploadFragment(ConnectionPreferences.ProfilePreferences connectionPrefs) {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);

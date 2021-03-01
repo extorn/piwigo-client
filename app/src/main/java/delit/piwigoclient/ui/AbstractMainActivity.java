@@ -274,7 +274,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
     }
 
     @Override
-    public void onBackPressed() {
+    protected void doDefaultBackOperation() {
 
         int backstackCount = getSupportFragmentManager().getBackStackEntryCount();
 
@@ -305,7 +305,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
                 }
             }
             if (!blockDefaultBackOperation) {
-                doDefaultBackOperation();
+                super.doDefaultBackOperation();
             }
         }
     }

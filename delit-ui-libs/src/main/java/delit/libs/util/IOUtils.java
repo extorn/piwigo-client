@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -1431,5 +1432,40 @@ public class IOUtils {
             totalBytesRead = -1;
         }
         return totalBytesRead;
+    }
+
+    public static String getDocumentFilePath(@NonNull Context context, @NonNull DocumentFile documentFile) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            try {
+                List<String> path = DocumentsContract.findDocumentPath(context.getContentResolver(), documentFile.getUri()).getPath();
+                if(path.size() == 1) {
+                    return path.get(0);
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    for (Iterator<String> iterator = path.iterator(); iterator.hasNext(); ) {
+                        String pathItem = iterator.next();
+                        sb.append(pathItem);
+                        if(iterator.hasNext()) {
+                            sb.append('/');
+                        }
+                    }
+                    return sb.toString();
+                }
+            } catch (FileNotFoundException e) {
+                Logging.log(Log.WARN,TAG, "Unable to find file from uri %1$s", documentFile);
+            }
+        }
+        // do what we can manually.
+        List<String> pathSegments = documentFile.getUri().getPathSegments();
+        if(pathSegments.isEmpty()) {
+            return getDocumentFilePathFromName(documentFile.getName());
+        } else {
+            return pathSegments.get(pathSegments.size() - 1);
+        }
+    }
+
+    private static String getDocumentFilePathFromName(String name) {
+        //FIXME do something better.
+        return "?/"+name;
     }
 }
