@@ -1,76 +1,85 @@
 <en-GB>
-Bugfix:
-- only the first root folder of a given name was visible in the file selection roots selector
 Change:
-- implement the refresh button on the slideshow 'item not loaded' page
-- implement the back button on album select - reverse through breadcrumbs
-- implement the back button on folder select - reverse through breadcrumbs
+- If resource sort order is inverted, resources within a tag or favorite list will also appear in reverse order
+Bugfix:
+- crash if user reverses sort order while viewing an album, with photos, and then doesn't manually reload album contents
+- re-enabled navigation to root of gallery using the breadcrumb at the top of the album view
+- correct the hide and expand of albums (recently broken)
+- thumbnails correctly redrawn toggling child albums heading repetitively
 </en-GB>
 <cs-CZ>
-Oprava chyby:
-- ve voliči kořenů pro výběr souboru byla viditelná pouze první kořenová složka daného jména
 Změna:
-- implementujte tlačítko pro obnovení na stránce slideshow \'item not loaded\'
-- implementovat tlačítko zpět na výběr alba - zpět přes strouhanku
-- implementovat tlačítko Zpět na výběr složky - zpět přes strouhanku
+- Pokud je pořadí řazení prostředků invertováno, zdroje v rámci značky nebo seznamu oblíbených položek se také zobrazí v opačném pořadí
+Oprava chyby:
+- zhroucení, pokud uživatel při prohlížení alba, s fotografiemi obrátí pořadí řazení a poté znovu nenačte obsah alba ručně
+- znovu povolená navigace do kořenového adresáře galerie pomocí navigace v horní části zobrazení alba
+- oprava skrytí a rozbalení alb (nedávno rozbitých)
+- miniatury správně překresleny přepínání podřízených alb opak..."
 </cs-CZ>
 <de-DE>
-Fehlerbehebung:
-- In der Stammauswahl der Dateiauswahl war nur der erste Stammordner eines bestimmten Namens sichtbar
 Veränderung:
-- Implementieren Sie die Schaltfläche "Aktualisieren" auf der Diashow-Seite "Element nicht geladen"
-- Implementieren Sie die Zurück-Taste bei der Albumauswahl. - Umkehren durch Breadcrumbs
-- Implementieren Sie die Schaltfläche "Zurück" bei der Ordnerauswahl. - Umkehren durch Breadcrumbs
+- Wenn die Sortierreihenfolge der Ressourcen invertiert ist, werden die Ressourcen in einem Tag oder einer Favoritenliste auch in umgekehrter Reihenfolge angezeigt
+Fehlerbehebung:
+- Absturz, wenn der Benutzer die Sortierreihenfolge beim Anzeigen eines Albums mit Fotos umkehrt und den Albuminhalt dann nicht manuell neu lädt
+- Die Navigation zum Stammverzeichnis der Galerie mithilfe des Breadcrumb oben in der Albumansicht wurde wieder aktiviert
+- Korrigieren Sie das Ausblenden und..."
 </de-DE>
 <es-ES>
-Arreglo del fallo:
-- solo la primera carpeta raíz de un nombre dado estaba visible en el selector de raíces de selección de archivos
 Cambio:
-- implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'
-- implementar el botón de retroceso en la selección de álbum - retroceder a través de migas de pan
-- implementar el botón de retroceso en la selección de carpeta - retroceder a través de migas de pan
+- Si el orden de clasificación de los recursos está invertido, los recursos dentro de una etiqueta o lista de favoritos también aparecerán en orden inverso
+Arreglo del fallo:
+- falla si el usuario invierte el orden de clasificación mientras ve un álbum, con fotos, y luego no recarga manualmente el contenido del álbum
+- volvió a habilitar la navegación a la raíz de la galería usando la ruta de navegación en la parte superior de la vista del álbum
+- corregir la ocultación y expansión d..."
 </es-ES>
 <fr-FR>
-Correction d\'un bug:
-- seul le premier dossier racine d\'un nom donné était visible dans le sélecteur de racines de sélection de fichiers
 Changement:
-- implémenter le bouton d\'actualisation sur la page \'élément non chargé\' du diaporama
-- implémenter le bouton de retour sur la sélection de l\'album - inverser le fil d\'Ariane
-- implémenter le bouton de retour sur la sélection de dossier - inverser le fil d\'Ariane
+- Si l\'ordre de tri des ressources est inversé, les ressources d\'une balise ou d\'une liste de favoris apparaîtront également dans l\'ordre inverse
+Correction d\'un bug:
+- plantage si l\'utilisateur inverse l\'ordre de tri lors de la visualisation d\'un album, avec des photos, puis ne recharge pas manuellement le contenu de l\'album
+- navigation réactivée à la racine de la galerie en utilisant le fil d\'Ariane en haut de la vue de l\'album
+- corriger le cache et agrandir les al..."
 </fr-FR>
 <it-IT>
-Risoluzione del problema:
-- solo la prima cartella principale di un dato nome era visibile nel selettore delle radici di selezione dei file
 Modificare:
-- implementare il pulsante di aggiornamento nella pagina "elemento non caricato" della presentazione
-- implementa il pulsante Indietro nella selezione dell\'album - inverti i breadcrumb
-- implementare il pulsante indietro nella selezione della cartella - invertire i breadcrumb
+- Se l\'ordinamento delle risorse è invertito, anche le risorse all\'interno di un tag o di un elenco di preferiti verranno visualizzate in ordine inverso
+Risoluzione del problema:
+- arresto anomalo se l\'utente inverte l\'ordinamento durante la visualizzazione di un album, con le foto, e quindi non ricarica manualmente i contenuti dell\'album
+- riattivato la navigazione alla radice della galleria utilizzando il breadcrumb nella parte superiore della visualizzazione dell\'album
+-..."
 </it-IT>
 <ja-JP>
-バグ修正：
--指定された名前の最初のルートフォルダーのみがファイル選択ルートセレクターに表示されました
 変化する：
--スライドショーの「アイテムがロードされていません」ページに更新ボタンを実装します
--アルバム選択に戻るボタンを実装します-パンくずリストを逆にします
--フォルダ選択に戻るボタンを実装します-ブレッドクラムを逆にします
+-リソースの並べ替え順序を逆にすると、タグまたはお気に入りリスト内のリソースも逆の順序で表示されます
+バグ修正：
+-ユーザーが写真付きのアルバムを表示しているときに並べ替え順序を逆にして、アルバムのコンテンツを手動で再読み込みしないとクラッシュする
+-アルバムビューの上部にあるブレッドクラムを使用して、ギャラリーのルートへのナビゲーションを再度有効にしました
+-アルバムの非表示と展開を修正しました（最近壊れています）
+-サムネイルが正しく再描画され、子アルバムの見出しを繰り返し切り替えます
 </ja-JP>
 <nl-NL>
-Bugfix:
-- alleen de eerste hoofdmap van een bepaalde naam was zichtbaar in de root-selector voor bestandsselectie
 Verandering:
-- implementeer de vernieuwingsknop op de pagina \'item niet geladen\' van de diavoorstelling
-- implementeer de terugknop op albumselectie - keer om door broodkruimels
-- implementeer de terugknop bij het selecteren van mappen - keer om door broodkruimels
+- Als de sorteervolgorde van bronnen wordt omgekeerd, worden bronnen binnen een tag of favorietenlijst ook in omgekeerde volgorde weergegeven
+Bugfix:
+- crashen als de gebruiker de sorteervolgorde omkeert tijdens het bekijken van een album, met foto\'s, en vervolgens de albuminhoud niet handmatig opnieuw laadt
+- navigatie naar de root van de galerij opnieuw ingeschakeld met behulp van de broodkruimel bovenaan de albumweergave
+- corrigeer het verbergen en uitvouwen van albums (onl..."
 </nl-NL>
 <ru-RU>
-- реализовать кнопку возврата при выборе альбома - перевернуть навигационные крошки
-- реализовать кнопку возврата при выборе папки - перевернуть навигационные крошки
+Изменять:
+- Если порядок сортировки ресурсов инвертирован, ресурсы в теге или списке избранного также будут отображаться в обратном порядке.
+Исправлена ошибка:
+- сбой, если пользователь меняет порядок сортировки при просмотре альбома с фотографиями, а затем не перезагружает содержимое альбома вручную
+- повторно активирована навигация к корню галереи с помощью навигационной крошки в верхней части просмотра альбома
+- исправить скрытие и расширение альбомов (недавно сломанных)
+- миниатюры прави..."
 </ru-RU>
 <zh-CN>
-错误修正：
--在文件选择根选择器中仅可见给定名称的第一个根文件夹
 改变：
--在幻灯片“项目未加载”页面上实现刷新按钮
--在专辑选择上实现“后退”按钮-通过面包屑反向
--在文件夹选择上实现后退按钮-通过面包屑反向
+-如果资源排序顺序颠倒了，则标签或收藏夹列表中的资源也将以相反的顺序出现
+错误修正：
+-如果用户在查看带有照片的相册时颠倒排序顺序，则崩溃，然后没有手动重新加载相册内容
+-使用相册视图顶部的面包屑重新启用了到图库根目录的导航
+-纠正相册的隐藏和扩展（最近损坏）
+-缩略图正确地重新绘制以切换子相册的标题重复
 </zh-CN>
