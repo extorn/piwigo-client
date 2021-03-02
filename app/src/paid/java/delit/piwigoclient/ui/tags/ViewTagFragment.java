@@ -577,8 +577,8 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
 
 
                 long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new TagGetImagesResponseHandler(currentTag, sortOrder, pageToActuallyLoad, pageSize));
-                tagModel.recordPageBeingLoaded(loadingMessageId, pageToLoad);
-                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
+                tagModel.recordPageBeingLoaded(loadingMessageId, pageToActuallyLoad);
+                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToActuallyLoad));
             } finally {
                 tagModel.releasePageLoadLock();
             }
@@ -586,13 +586,20 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
     }
 
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
-//        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
-//        tagModel.setRetrieveItemsInReverseOrder(invertSortOrder);
+        boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+        boolean reversed;
+        try {
+            reversed = tagModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+            // need to refresh this page as the sort order was just flipped.
+        } catch(IllegalStateException e) {
+            tagModel.removeAllResources();
+            reversed = tagModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+        }
         int pageToActuallyLoad = pageRequested;
-//        if (invertSortOrder) {
-//            int pagesOfPhotos = tagModel.getContainerDetails().getPagesOfPhotos(pageSize);
-//            pageToActuallyLoad = pagesOfPhotos - pageRequested;
-//        }
+        if (invertResourceSortOrder) {
+            int lastPageId = tagModel.getContainerDetails().getPagesOfPhotos(pageSize) -1;
+            pageToActuallyLoad = lastPageId - pageRequested;
+        }
         return pageToActuallyLoad;
     }
 
@@ -671,10 +678,27 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
             return;
         }
 
+        adjustSortOrderAsNeeded();
+
         if (tagIsDirty) {
             reloadAlbumContent();
-        } else if(itemsToLoad.size() > 0) {
-            onReloadAlbum();
+        } else {
+            if(itemsToLoad.size() > 0) {
+                onReloadAlbum();
+            }
+        }
+    }
+
+    private void adjustSortOrderAsNeeded() {
+        boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+        boolean reversed;
+        try {
+            reversed = tagModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+            // need to refresh this page as the sort order was just flipped.
+        } catch(IllegalStateException e) {
+            tagModel.removeAllResources();
+            reversed = tagModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+            tagIsDirty = true;
         }
     }
 

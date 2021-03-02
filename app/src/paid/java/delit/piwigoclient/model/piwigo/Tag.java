@@ -111,9 +111,13 @@ public class Tag implements Identifiable, Parcelable, PhotoContainer {
         }
     };
 
+    /**
+     * @param pageSize max photo count to a page
+     * @return number of pages of photos available (remember pages are zero indexed)
+     */
     @Override
     public int getPagesOfPhotos(int pageSize) {
-        int pages = ((getUsageCount() / pageSize) + (getUsageCount() % pageSize > 0 ? 0 : -1));
+        int pages = ((getUsageCount() / pageSize) + (getUsageCount() % pageSize > 0 ? 1 : 0));
         return Math.max(pages, 0);
     }
 

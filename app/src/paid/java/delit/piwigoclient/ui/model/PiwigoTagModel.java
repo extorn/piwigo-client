@@ -26,13 +26,15 @@ public class PiwigoTagModel extends ViewModelContainer {
     public LiveData<PiwigoTag> getPiwigoTag(@NonNull Tag tag) {
         if (albumLiveData.getValue() == null) {
             albumLiveData.setValue(new PiwigoTag(tag));
+        } else {
+            albumLiveData.getValue().setContainerDetails(tag);
         }
         return albumLiveData;
     }
 
     @Override
-    public ResourceContainer getModel() {
-        return getPiwigoTag().getValue();
+    public <T extends ResourceContainer<?, ?>> T getModel() {
+        return (T) getPiwigoTag().getValue();
     }
 
 }
