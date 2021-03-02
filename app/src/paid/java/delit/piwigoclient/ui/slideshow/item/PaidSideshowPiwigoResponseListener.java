@@ -11,7 +11,6 @@ import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsLis
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.slideshow.SlideshowPiwigoResponseListener;
-import delit.piwigoclient.ui.slideshow.item.SlideshowItemFragment;
 
 public class PaidSideshowPiwigoResponseListener<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends SlideshowPiwigoResponseListener<F, FUIH,T> {
 

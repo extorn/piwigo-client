@@ -1,16 +1,9 @@
 package delit.piwigoclient.piwigoApi.upload.handlers;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import org.json.JSONException;
-
 import java.security.SecureRandom;
 
-import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
-import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
 
 public class UploadAlbumCreateResponseHandler extends AlbumCreateResponseHandler {

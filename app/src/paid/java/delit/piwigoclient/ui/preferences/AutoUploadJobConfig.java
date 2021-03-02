@@ -36,7 +36,6 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
-import delit.piwigoclient.ui.upgrade.PreferenceMigrator;
 
 public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable {
     private int jobId;

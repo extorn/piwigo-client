@@ -2,16 +2,13 @@ package delit.piwigoclient.picasso;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.core.content.MimeTypeFilter;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
-import com.squareup.picasso.RequestHandler;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;

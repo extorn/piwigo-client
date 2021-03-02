@@ -51,9 +51,9 @@ import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
+import delit.piwigoclient.ui.slideshow.action.SelectionContainsUnsuitableFilesQuestionResult;
 import delit.piwigoclient.ui.slideshow.item.AbstractSlideshowItemFragment;
 import delit.piwigoclient.ui.slideshow.item.DownloadSelectionMultiItemDialog;
-import delit.piwigoclient.ui.slideshow.action.SelectionContainsUnsuitableFilesQuestionResult;
 
 public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends AbstractViewAlbumFragment<F,FUIH> {
     private static final String STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING = "tagMembershipChangesAction";

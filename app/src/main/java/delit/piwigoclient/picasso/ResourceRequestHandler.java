@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.content.res.AppCompatResources;
 

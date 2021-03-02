@@ -17,8 +17,8 @@ import delit.piwigoclient.business.CustomImageDownloader;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.picasso.EnhancedPicassoListener;
 import delit.piwigoclient.picasso.PicassoErrorHandler;
-import delit.piwigoclient.picasso.ResourceRequestHandler;
 import delit.piwigoclient.picasso.PlayableMediaRequestHandler;
+import delit.piwigoclient.picasso.ResourceRequestHandler;
 
 /**
  * Created by gareth on 13/07/17.
