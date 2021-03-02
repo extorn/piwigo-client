@@ -386,7 +386,7 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
         }
     }
 
-    protected boolean isAppInReadOnlyMode() {
+    public boolean isAppInReadOnlyMode() {
         return prefs.getBoolean(requireContext().getString(R.string.preference_app_read_only_mode_key), false);
     }
 
