@@ -149,11 +149,16 @@
         <item>1.4.0.129</item>
         <item>"Verandering:
                  - Onderzoek naar prestatieverbetering en hopelijk implementatie voor uploadsnelheid van gegevensoverdracht"</item>
-        <item>1.4.0.128</item>
-        <item>"Bugfix:
-                 - crash repareren als de gebruiker de sorteervolgorde omkeert tijdens het bekijken van een album, met foto\'s, en vervolgens de albuminhoud niet handmatig opnieuw laadt"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.128</item>
+        <item>"Verandering:
+                 - Als de sorteervolgorde van bronnen wordt omgekeerd, worden bronnen binnen een tag of favorietenlijst ook in omgekeerde volgorde weergegeven
+                Bugfix:
+                 - crashen als de gebruiker de sorteervolgorde omkeert tijdens het bekijken van een album, met foto\'s, en vervolgens de albuminhoud niet handmatig opnieuw laadt
+                 - navigatie naar de root van de galerij opnieuw ingeschakeld met behulp van de broodkruimel bovenaan de albumweergave
+                 - corrigeer het verbergen en uitvouwen van albums (onlangs verbroken)
+                 - Miniaturen worden correct opnieuw getekend, waarbij de kop van de onderliggende albums herhaaldelijk wordt omgeschakeld"</item>
         <item>1.4.0.127</item>
         <item>"Bugfix:
                  - alleen de eerste hoofdmap van een bepaalde naam was zichtbaar in de root-selector voor bestandsselectie

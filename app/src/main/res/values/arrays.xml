@@ -256,8 +256,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.128</item>
-        <item>"Bugfix:
+        <item>"Change:
+                - If resource sort order is inverted, resources within a tag or favorite list will also appear in reverse order
+               Bugfix:
                 - crash if user reverses sort order while viewing an album, with photos, and then doesn't manually reload album contents
+                - re-enabled navigation to root of gallery using the breadcrumb at the top of the album view
                 - correct the hide and expand of albums (recently broken)
                 - thumbnails correctly redrawn toggling child albums heading repetitively"</item>
         <item>1.4.0.127</item>
