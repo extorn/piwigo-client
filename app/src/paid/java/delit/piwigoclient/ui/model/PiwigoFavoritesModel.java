@@ -18,13 +18,17 @@ public class PiwigoFavoritesModel extends ViewModelContainer {
     }
 
     public LiveData<PiwigoFavorites> getPiwigoFavorites(@NonNull PiwigoFavorites.FavoritesSummaryDetails favoritesSummaryDetails) {
-        albumLiveData.setValue(new PiwigoFavorites(favoritesSummaryDetails));
+        if (albumLiveData.getValue() == null) {
+            albumLiveData.setValue(new PiwigoFavorites(favoritesSummaryDetails));
+        } else {
+            albumLiveData.getValue().setContainerDetails(favoritesSummaryDetails);
+        }
         return albumLiveData;
     }
 
     @Override
-    public ResourceContainer getModel() {
-        return getPiwigoFavorites().getValue();
+    public <T extends ResourceContainer<?, ?>> T getModel() {
+        return (T)getPiwigoFavorites().getValue();
     }
 
 }

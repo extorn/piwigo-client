@@ -98,7 +98,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
     private RecyclerView favoritesListView;
     private TextView emptyFavoritesLabel;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
-    private boolean favoritesIsDirty;
+    private boolean favoritesIsDirty = true; // always reload favorite when reopening the fragment.
 
 
     public HashMap<Long, String> getLoadingMessageIds() {
@@ -231,8 +231,9 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(favoritesModel == null) {
             favoritesIsDirty = true;
-            favoritesModel = favoritesViewModel.getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
+            favoritesModel = favoritesViewModel.getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(-1)).getValue();
         }
+        favoritesIsDirty |= favoritesModel.getImgResourceCount() < 0;
 
         if (isSessionDetailsChanged()) {
 
@@ -304,16 +305,16 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
                 int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
                 int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
 
-                if (favoritesModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad) || favoritesModel.isFullyLoaded()) {
+                if (pageToActuallyLoad < 0 || favoritesModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad) || favoritesModel.isFullyLoaded()) {
                     Integer missingPage = favoritesModel.getAMissingPage();
                     if(missingPage != null) {
-                        pageToLoad = missingPage;
+                        pageToActuallyLoad = missingPage;
                     } else {
                         // already load this one by default so lets not double load it (or we've already loaded all items).
                         return;
                     }
                 }
-                loadAlbumResourcesPage(pageToLoad);
+                loadAlbumResourcesPage(pageToActuallyLoad);
             }
         };
         scrollListener.configure(favoritesModel.getPagesLoadedIdxToSizeMap(), favoritesModel.getItemCount());
@@ -513,6 +514,10 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
     }
 
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
+        if(favoritesModel.getImgResourceCount() < 0) {
+            //FIXME Have to load this to get the number of pages.
+            return 0;
+        }
         boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
         boolean reversed;
         try {
@@ -524,8 +529,14 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
         int pageToActuallyLoad = pageRequested;
         if (invertResourceSortOrder) {
-            int lastPageId = favoritesModel.getContainerDetails().getPagesOfPhotos(pageSize) -1;
-            pageToActuallyLoad = lastPageId - pageRequested;
+            int lastPageId = favoritesModel.getContainerDetails().getPagesOfPhotos(pageSize) - 1;
+            pageToActuallyLoad = lastPageId;
+            if (favoritesModel.getResourcesCount() > 0) {
+                pageToActuallyLoad -= pageRequested;
+            }
+            if(favoritesModel.isPageLoaded(pageToActuallyLoad)) {
+                pageToActuallyLoad = pageRequested;
+            }
         }
         return pageToActuallyLoad;
     }
@@ -620,6 +631,10 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
     }
 
     private void adjustSortOrderAsNeeded() {
+        if(favoritesModel.getImgResourceCount() < 0) {
+            // don't change the order - will force a reload of all pages in right order if needs inverting.
+            return;
+        }
         boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
         boolean reversed;
         try {
