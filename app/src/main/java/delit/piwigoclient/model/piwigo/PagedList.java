@@ -375,7 +375,13 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         }
         if(!isFullyLoaded() && isGrowingOrganically()) {
             int adjustedIdx = adjustIdxForWhatIsLoaded(wantedIdx);
-            return sortedItems.get(adjustedIdx);
+            try {
+                return sortedItems.get(adjustedIdx);
+            } catch(ArrayIndexOutOfBoundsException e) {
+                IndexOutOfBoundsException ioobe = new IndexOutOfBoundsException("Item position "+idx+" out of range");
+                ioobe.addSuppressed(e);
+                throw ioobe;
+            }
         }
         return sortedItems.get(wantedIdx);
     }

@@ -41,7 +41,6 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     private int spacerAlbums;
     private int bannerCount;
     private boolean hideAlbums;
-    private boolean retrieveAlbumsInReverseOrder;
 
     public PiwigoAlbum(S albumDetails) {
         this(albumDetails, ALBUM_SORT_ORDER_DEFAULT);
@@ -59,8 +58,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         bannerCount = in.readInt();
         comparator = new AlbumSortingComparator(in.readInt(), getResourceComparator());
         hideAlbums = ParcelUtils.readBool(in);
-        retrieveAlbumsInReverseOrder = ParcelUtils.readBool(in);
-        comparator.setSortCategoriesInReverseOrder(retrieveAlbumsInReverseOrder);
+        comparator.setSortCategoriesInReverseOrder(ParcelUtils.readBool(in));
     }
 
     @Override
@@ -76,7 +74,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         dest.writeInt(bannerCount);
         dest.writeInt(comparator.getAlbumSortOrder());
         ParcelUtils.writeBool(dest, hideAlbums);
-        ParcelUtils.writeBool(dest, retrieveAlbumsInReverseOrder);
+        ParcelUtils.writeBool(dest, comparator.isSortCategoriesInReverseOrder());
     }
 
     public boolean setAlbumSortOrder(int albumSortOrder) {
@@ -251,6 +249,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         try {
             if (hideAlbums) {
                 int firstResourceAtIdx = getFirstResourceIdx();
+                // if there are resources and this idx is asking for one or the resource header (always present if resources are).
                 if (firstResourceAtIdx > 0 && idx >= getFirstResourceIdx() -1) {
                     // don't offset for the first item as it is ALWAYS a header of some sort
                     wantedIdx += childAlbumCount + spacerAlbums;
@@ -265,26 +264,21 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
 
     @Override
     protected int adjustIdxForWhatIsLoaded(int wantedIdx) {
-        /*if (hideAlbums) {
-            if (wantedIdx < nonResourceItemsIncResourcesHeader()) {
-                return wantedIdx; // no adjustment for which pages may or may not be present.
-            }
-        } else {
-            if (wantedIdx < getItemCount() - getResourcesCount()) {
-                return wantedIdx; // no adjustment for which pages may or may not be present.
-            }
-        }*/
+        int listFirstResourceIdx = getFirstResourceIdx();
+        if (hideAlbums) {
+            listFirstResourceIdx += childAlbumCount + spacerAlbums;
+        }
         // this is simpler and should always be the case.
-        if (wantedIdx < getItemCount() - getResourcesCount()) {
+        if (wantedIdx < listFirstResourceIdx) {
             return wantedIdx; // no adjustment for which pages may or may not be present.
         }
-        int resourcePageIdxWanted = wantedIdx - getFirstResourceIdx();
+        int resourcePageIdxWanted = wantedIdx - listFirstResourceIdx;
         int adjustment = super.adjustIdxForWhatIsLoaded(resourcePageIdxWanted);
         if(adjustment < 0) {
             // item requested is not present in the list (yet)
             return -1;
         }
-        return getFirstResourceIdx() + adjustment;
+        return listFirstResourceIdx + adjustment;
     }
 
 
@@ -330,7 +324,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         sb.append(", bannerCount=").append(bannerCount);
         sb.append(", hideAlbums=").append(hideAlbums);
         sb.append(", itemType=").append(getItemType());
-        sb.append(", reverseOrder=").append(isRetrieveAlbumsInReverseOrder());
+        sb.append(", reverseOrder=").append(isRetrieveChildAlbumsInReverseOrder());
         sb.append(", super=").append(super.toString());
         sb.append('}');
         return sb.toString();
@@ -467,14 +461,14 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         return childAlbumCount;
     }
 
-    public boolean isRetrieveAlbumsInReverseOrder() {
-        return retrieveAlbumsInReverseOrder;
+    public boolean isRetrieveChildAlbumsInReverseOrder() {
+        return comparator.isSortCategoriesInReverseOrder();
     }
 
     public boolean setRetrieveChildAlbumsInReverseOrder(boolean retrieveAlbumsInReverseOrder) {
-        if(this.retrieveAlbumsInReverseOrder != retrieveAlbumsInReverseOrder) {
+
+        if(comparator.isSortCategoriesInReverseOrder() != retrieveAlbumsInReverseOrder) {
             comparator.setSortCategoriesInReverseOrder(retrieveAlbumsInReverseOrder);
-            this.retrieveAlbumsInReverseOrder = retrieveAlbumsInReverseOrder;
             if (getItems().size() > 0) {
                 if(comparator.getAlbumSortOrder() == PiwigoAlbum.ALBUM_SORT_ORDER_DEFAULT
                         && childAlbumCount > 0) {
