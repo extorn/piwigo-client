@@ -167,7 +167,6 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
         // this is so we can capture the event as being for the orphans page.
         super.onPiwigoResponseGetResources(response);
         //FIXME why do I need this hack?
-
     }
 
     @Override
@@ -320,7 +319,15 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     protected boolean updateAlbumSortOrder(PiwigoAlbum<CategoryItem, GalleryItem> galleryModel) {
         // support inverting the resources order only.
         boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
-        return galleryModel.setRetrieveItemsInReverseOrder(invertResourceSortOrder);
+        boolean reversed;
+        try {
+            reversed = galleryModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+            //FIXME reversed - I think we need to refresh this page as the sort order was just flipped.
+        } catch(IllegalStateException e) {
+            galleryModel.removeAllResources();
+            reversed = galleryModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+        }
+        return reversed;
     }
     @Override
     protected String buildPageHeading() {
@@ -360,26 +367,15 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
 
     protected void loadOrphanedResourceIdsPage(int pageToLoad) {
         synchronized (getLoadingMessageIds()) {
-//            PiwigoAlbum<CategoryItem, GalleryItem> galleryModel = getGalleryModel();
-//            galleryModel.acquirePageLoadLock();
-            try {
-                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
-                int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
-                if (pageToActuallyLoad < 0) {
-                    // the sort order is inverted so we know for a fact this page is invalid.
-                    return;
-                }
-
-//                if (galleryModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad)) {
-//                    return;
-//                }
-
-                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_orphan_ids, new ImagesListOrphansResponseHandler(pageToActuallyLoad, pageSize));
-//                galleryModel.recordPageBeingLoaded(loadingMessageId, pageToActuallyLoad);
-                getLoadingMessageIds().put(loadingMessageId, ORPHANS_PAGE_LOAD_PREFIX +pageToLoad);
-            } finally {
-//                galleryModel.releasePageLoadLock();
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
+            int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
+            if (pageToActuallyLoad < 0) {
+                // the sort order is inverted so we know for a fact this page is invalid.
+                return;
             }
+
+            long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_orphan_ids, new ImagesListOrphansResponseHandler(pageToActuallyLoad, pageSize));
+            getLoadingMessageIds().put(loadingMessageId, ORPHANS_PAGE_LOAD_PREFIX +pageToActuallyLoad);
         }
     }
     @Override
