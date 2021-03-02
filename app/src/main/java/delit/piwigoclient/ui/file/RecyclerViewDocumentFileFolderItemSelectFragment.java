@@ -1009,8 +1009,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     }
 
     protected void addRootFolder(@NonNull DocumentFile docFile) {
-        String filename = IOUtils.getFilename(docFile);
-        folderRootsAdapter.add(filename, docFile);
+        String rootPathStr = IOUtils.getDocumentFilePath(requireContext(), docFile);
+        folderRootsAdapter.add(rootPathStr, docFile);
         folderRootFolderSpinner.setSelection(folderRootsAdapter.getCount() - 1); // calls listener because it's a definite change.
 //        DisplayUtils.selectSpinnerItemAndCallItemSelectedListener(folderRootFolderSpinner, folderRootsAdapter.getCount() - 1);
     }
