@@ -107,4 +107,6 @@ public abstract class AlbumItemViewHolder<VH extends AlbumItemViewHolder<VH,LVA,
     public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
         mImageView.setBackgroundColor(ContextCompat.getColor(mImageView.getContext(), R.color.color_scrim_heavy));
     }
+
+    public abstract void onRebindOldData(T newItem);
 }

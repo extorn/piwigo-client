@@ -449,7 +449,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
     }
 
     @Override
-    public int getItemPosition(@NonNull T item) {
+    public int getItemPosition(@Nullable T item) {
         if (currentDisplayContent == null) {
             throw new IllegalStateException("Please set the initial folder and initialise the list before attempting to access the items in the list");
         }

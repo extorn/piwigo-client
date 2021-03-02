@@ -933,7 +933,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         public void onBackStackChanged() {
             List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
             if(!fragmentList.isEmpty()) {
-                ((MyFragment<?,?>)fragmentList.get(fragmentList.size()-1)).updatePageTitle();
+                ((MyFragment<?,?>)fragmentList.get(fragmentList.size()-1)).onReturnToFragment();
             }
         }
     }

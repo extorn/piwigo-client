@@ -318,6 +318,13 @@ public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHel
         this.theme = theme;
     }
 
+    /**
+     * Called when gets to the top of the backstack (all others popped off)
+     */
+    public void onReturnToFragment() {
+        updatePageTitle();
+    }
+
     private static class AdLoadErrorDialogListener<T extends MyFragment<T,FUIH>, FUIH extends FragmentUIHelper<FUIH,T>> extends QuestionResultAdapter<FUIH,T> implements Parcelable {
 
         private long shownAt;

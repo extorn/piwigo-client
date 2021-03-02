@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.HashSet;
@@ -105,7 +106,7 @@ public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListVi
      */
     @Override
     protected boolean isDirtyItemViewHolder(VH holder, T newItem) {
-        return holder.getItem() == null || holder.getItem().getId() != newItem.getId();
+        return holder.isDirty(newItem);
     }
 
     @Override
@@ -119,7 +120,7 @@ public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListVi
     }
 
     @Override
-    public int getItemPosition(@NonNull T item) {
+    public int getItemPosition(@Nullable T item) {
         try {
             return itemStore.getItemIdx(item);
         } catch(IndexOutOfBoundsException e) {

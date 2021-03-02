@@ -97,6 +97,11 @@ public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL
 //        UIHelper.recycleImageViewContent(mTypeIndicatorImg);
     }
 
+    @Override
+    public void onRebindOldData(T newItem) {
+        updateCheckableStatus();
+    }
+
 
     @Override
     public void setChecked(boolean checked) {

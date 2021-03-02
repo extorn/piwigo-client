@@ -128,14 +128,4 @@ public abstract class AlbumItemBaseRecyclerViewAdapter<LVA extends AlbumItemBase
 
     protected abstract void onRebindViewHolderWithSameData(@NonNull VH holder, int position, T newItem);
 
-    @Override
-    protected boolean isDirtyItemViewHolder(VH holder, T newItem) {
-        if(!super.isDirtyItemViewHolder(holder, newItem)) {
-            boolean catDirty = (holder.getItem() instanceof CategoryItem
-            && newItem instanceof CategoryItem
-            && ((CategoryItem) holder.getItem()).isAdminCopy() != ((CategoryItem) newItem).isAdminCopy());
-            return catDirty;
-        }
-        return true;
-    }
 }

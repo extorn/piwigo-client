@@ -3,9 +3,12 @@ package delit.piwigoclient.ui.album.view;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
+import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.StaticCategoryItem;
@@ -29,51 +32,60 @@ public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, M
     }
 
     @Override
+    public void onRebindOldData(T newItem) {
+    }
+
+    private void updateThumbnailImage(T item) {
+        if (StaticCategoryItem.BLANK.equals(item)) {
+            itemView.setVisibility(View.INVISIBLE);
+            imageLoader.resetAll();
+            return;
+        } else {
+            itemView.setVisibility(View.VISIBLE);
+        }
+        if (item.getThumbnailUrl() != null) {
+            configureLoadingBasicThumbnail(item);
+        } else {
+            configurePlaceholderThumbnail(item);
+        }
+        imageLoader.load();
+    }
+
+    @Override
     public void fillValues(T newItem, boolean allowItemDeletion) {
         try {
             super.fillValues(newItem, allowItemDeletion);
             updateRecentlyViewedMarker(newItem);
-
-            if (StaticCategoryItem.BLANK.equals(newItem)) {
-                itemView.setVisibility(View.INVISIBLE);
-                imageLoader.resetAll();
-                return;
-            } else {
-                itemView.setVisibility(View.VISIBLE);
-            }
-
-            if (newItem.getSubCategories() > 0) {
-                long totalPhotos = newItem.getTotalPhotos();
-                mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_subcategory_summary_text_pattern, newItem.getSubCategories(), totalPhotos));
-            } else {
-                mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_photos_summary_text_pattern, newItem.getPhotoCount()));
-                mPhotoCountView.setSingleLine();
-            }
-
-            if (!(newItem.getName() == null || newItem.getName().isEmpty())) {
-                mNameView.setVisibility(View.VISIBLE);
-                mNameView.setText(newItem.getName());
-            } else {
-                mNameView.setVisibility(INVISIBLE);
-            }
-
-            if (!(newItem.getDescription() == null || newItem.getDescription().isEmpty())) {
-                mDescView.setVisibility(View.VISIBLE);
-                // support for the extended description plugin.
-                String desc = PiwigoUtils.getResourceDescriptionOutsideAlbum(newItem.getDescription());
-                mDescView.setText(PiwigoUtils.getSpannedHtmlText(desc));
-            } else {
-                mDescView.setVisibility(INVISIBLE);
-            }
-
-            if (newItem.getThumbnailUrl() != null) {
-                configureLoadingBasicThumbnail(newItem);
-            } else {
-                configurePlaceholderThumbnail(newItem);
-            }
-            imageLoader.load();
+            updateTextFields(newItem);
+            updateThumbnailImage(newItem);
         } catch(RuntimeException e) {
             Logging.recordException(e);
+        }
+    }
+
+    private void updateTextFields(T newItem) {
+        if (newItem.getSubCategories() > 0) {
+            long totalPhotos = newItem.getTotalPhotos();
+            mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_subcategory_summary_text_pattern, newItem.getSubCategories(), totalPhotos));
+        } else {
+            mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_photos_summary_text_pattern, newItem.getPhotoCount()));
+            mPhotoCountView.setSingleLine();
+        }
+
+        if (!(newItem.getName() == null || newItem.getName().isEmpty())) {
+            mNameView.setVisibility(View.VISIBLE);
+            mNameView.setText(newItem.getName());
+        } else {
+            mNameView.setVisibility(INVISIBLE);
+        }
+
+        if (!(newItem.getDescription() == null || newItem.getDescription().isEmpty())) {
+            mDescView.setVisibility(View.VISIBLE);
+            // support for the extended description plugin.
+            String desc = PiwigoUtils.getResourceDescriptionOutsideAlbum(newItem.getDescription());
+            mDescView.setText(PiwigoUtils.getSpannedHtmlText(desc));
+        } else {
+            mDescView.setVisibility(INVISIBLE);
         }
     }
 
@@ -102,4 +114,12 @@ public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, M
         throw new UnsupportedOperationException("Shouldn't call this");
     }
 
+    @Override
+    public boolean isDirty(T newItem) {
+        if(!super.isDirty(newItem)) {
+            //return getItem() != null && newItem != null && getItem().isAdminCopy() != newItem.isAdminCopy();
+            return getItem() != newItem; //Deliberate reference equals
+        }
+        return true;
+    }
 }

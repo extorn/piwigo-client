@@ -105,9 +105,10 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
         switch (newItem.getType()) {
             case GalleryItem.VIDEO_RESOURCE_TYPE:
             case GalleryItem.PICTURE_RESOURCE_TYPE:
-                ((ResourceItemViewHolder) holder).updateCheckableStatus();
+                holder.onRebindOldData(newItem);
                 break;
             case GalleryItem.ALBUM_HEADING_TYPE:
+                holder.onRebindOldData(newItem);
                 break;
             default:
         }

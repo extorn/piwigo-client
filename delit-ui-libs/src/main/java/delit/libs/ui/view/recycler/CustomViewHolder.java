@@ -40,4 +40,8 @@ public abstract class CustomViewHolder<VH extends CustomViewHolder<VH, LVA, P,T,
 
     public void redisplayOldValues(T currentItem, boolean allowItemDeletion) {
     }
+
+    public boolean isDirty(T newItem) {
+        return getItem() == null || !getItem().equals(newItem);
+    }
 }

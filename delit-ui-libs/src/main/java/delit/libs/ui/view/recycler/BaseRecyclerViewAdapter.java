@@ -30,7 +30,7 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
 
     private static final String TAG = "BaseRecyclerViewAdapter";
     final MSL multiSelectStatusListener;
-    private P prefs;
+    private final P prefs;
     HashSet<Long> selectedResourceIds = new HashSet<>(0);
     private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
 
@@ -82,7 +82,7 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
      * @return true if this holder has never been used before (or is totally clean)
      */
     protected boolean isDirtyItemViewHolder(VH holder, T newItem) {
-        return holder.getItem() == null || !holder.getItem().equals(newItem);
+        return holder.isDirty(newItem);
     }
 
     @NonNull

@@ -61,6 +61,10 @@ public class AlbumHeadingViewHolder<VH extends AlbumHeadingViewHolder<VH,LVA, T,
     public void onRecycled() {
     }
 
+    @Override
+    public void onRebindOldData(T newItem) {
+    }
+
     @NonNull
     @Override
     public String toString() {

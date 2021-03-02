@@ -10,6 +10,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -481,6 +482,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
 
         cacheViewComponentReferences(view);
+        galleryListView.setHasFixedSize(true); // size does not vary depending on content.
 
         if (!isReopening) {
             populateViewFromModelEtc(view, savedInstanceState);
@@ -1254,6 +1256,16 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             // never want to load permissions for the root album (it's not legal to call this service with category id 0).
             addActiveServiceCall(R.string.progress_loading_album_permissions, new AlbumGetPermissionsResponseHandler(galleryModel.getContainerDetails()));
         }
+    }
+
+    @Override
+    public void onReturnToFragment() {
+        super.onReturnToFragment();
+        /*if(albumIsDirty) {
+            doServerActionReloadAlbumContent();
+        } else {
+            DisplayUtils.postOnUiThread(()->viewAdapter.notifyDataSetChanged());
+        }*/
     }
 
     @Override
@@ -2079,12 +2091,18 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         if (galleryModel.getContainerDetails().isRoot()) {
             galleryModel.updateMaxExpectedItemCount(response.getAlbums().size());
         }
-        if (response.getAlbums().size() > 1) {
+
+        long currentGalleryId = galleryModel.getContainerDetails().getId();
+        int actualChildAlbums = response.getAlbums().size();
+        if(actualChildAlbums > 0 && response.getAlbums().get(0).getId() == currentGalleryId) {
+            actualChildAlbums--;
+        }
+        if (actualChildAlbums > 0) {
+
             if (!galleryModel.containsItem(StaticCategoryItem.ALBUM_HEADING)) {
                 galleryModel.addItem(StaticCategoryItem.ALBUM_HEADING);
             }
         }
-        long currentGalleryId = galleryModel.getContainerDetails().getId();
         boolean itemsReplaced = false;
         boolean itemsAdded = false;
         boolean hasAlbumsAlready = galleryModel.getChildAlbumCount() > 0;
@@ -2367,8 +2385,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
         if (galleryModel != null && albumAlteredEvent.isRelevant(galleryModel.getContainerDetails().getId())) {
             albumIsDirty = true;
-            if (isResumed()) {
-                //TODO Do something more fine grained to avoid refreshing the entire album view!
+            //TODO Do something more fine grained to avoid refreshing the entire album view!
+            if (isVisible()) {
                 doServerActionReloadAlbumContent();
             }
             if (albumAlteredEvent.isCascadeToParents()) {
