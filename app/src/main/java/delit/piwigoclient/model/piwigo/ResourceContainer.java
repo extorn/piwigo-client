@@ -172,7 +172,7 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
 
     public void removeAllResources() {
         int idx = getFirstResourceIdx();
-        while(idx > 0) {
+        while(idx >= 0) {
             remove(idx);
             idx = getFirstResourceIdx();
         }
