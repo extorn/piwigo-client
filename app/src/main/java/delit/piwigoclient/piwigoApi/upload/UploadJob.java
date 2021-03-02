@@ -206,6 +206,11 @@ public class UploadJob implements Parcelable {
         return uploadToCategoryName;
     }
 
+    public void resetProgressTrackers() {
+        // will cause all to be rebuilt from the stored data.
+        allTaskTrackers.clear();
+    }
+
     public static class ProgressAdapterChain extends TaskProgressTracker.ProgressAdapter {
         private final UploadJob uploadJob;
         private final ProgressListener chained;

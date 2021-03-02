@@ -591,7 +591,16 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 return;
             }
             TaskProgressTracker overallJobProgressTracker = thisUploadJob.getProgressTrackerForJob(this);
-            overallJobProgressTracker.setWorkDone(0);// reset progress.
+            try {
+                overallJobProgressTracker.setWorkDone(0);
+            } catch(IllegalStateException e) {
+                // try this as an option until I can reproduce the error.
+                thisUploadJob.resetProgressTrackers();
+                Logging.log(Log.ERROR, TAG, "UploadJobProgressTrackerIllegalStateErr");
+                Logging.recordException(e);
+                Logging.logAnalyticEvent(this, "UploadJobProgressTrackerIllegalStateErr");
+            }
+
 
             int maxChunkUploadAutoRetries = UploadPreferences.getUploadChunkMaxRetries(this, prefs);
 
