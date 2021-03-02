@@ -137,10 +137,12 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
 
         boolean currentSortOrder = super.isRetrieveItemsInReverseOrder();
         if (currentSortOrder != retrieveItemsInReverseOrder) {
-            if(isFullyLoaded() || getResourcesCount() == 0) {
-                resourceComparator.setFlipResourceOrder(true);
-            } else {
-                throw new IllegalStateException("Reversing the resource order is not possible when only some resources are loaded");
+            if(getResourcesCount() > 0) {
+                if(isFullyLoaded()) {
+                    resourceComparator.setFlipResourceOrder(true);
+                } else {
+                    throw new IllegalStateException("Reversing the resource order is not possible when only some resources are loaded");
+                }
             }
         }
         return super.setRetrieveItemsInReverseOrder(retrieveItemsInReverseOrder);
