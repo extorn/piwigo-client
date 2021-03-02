@@ -54,8 +54,8 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
 
     public PagedList(String itemType, int maxExpectedItemCount) {
         this.itemType = itemType;
-        this.items = new ArrayList<>(maxExpectedItemCount);
-        this.sortedItems = new ArrayList<>(maxExpectedItemCount);
+        this.items = new ArrayList<>(Math.max(0,maxExpectedItemCount));
+        this.sortedItems = new ArrayList<>(Math.max(0,maxExpectedItemCount));
         this.pageLoadLock = new ReentrantLock();
     }
 
