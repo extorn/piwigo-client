@@ -250,15 +250,22 @@
         Could Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
         Background async loading of images in the slideshow, perhaps not to bitmap them, just caching - if local http caching enabled - ?impact on videos?
         -->
-        <item>1.4.0.129</item>
+        <item>1.4.0.130</item>
         <item>"Change:
                 - Performance improvement investigation and hopefully implementation for upload data transfer speed"</item>
+        <item>1.4.0.129</item>
+        <item>"Bugfix:
+                - Correct orphan locator and load code"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.128</item>
         <item>"Change:
                 - If resource sort order is inverted, resources within a tag or favorite list will also appear in reverse order
                Bugfix:
+                - immediately show path to folder after adding it as a root rather than initially showing just the folder name
+                - corrected paged loading of favorites and tagged items
+                - immediately update photo count on child folder shown after items are moved to a folder and then user navigates to parent
+                - immediately update thumbnail shown for folder after changing its representative image and then user navigates to parent
                 - crash if user reverses sort order while viewing an album, with photos, and then doesn't manually reload album contents
                 - re-enabled navigation to root of gallery using the breadcrumb at the top of the album view
                 - correct the hide and expand of albums (recently broken)
