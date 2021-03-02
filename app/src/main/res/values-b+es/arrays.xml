@@ -146,19 +146,26 @@
                 * Posiblemente una reescritura completa del proceso de carga, ya que no se presta a una mejora iterativa
                 * Posiblemente una reescritura completa de la aplicación con un enfoque en la simplicidad para la navegación general del usuario inicialmente"</item>
         
-        <item>1.4.0.129</item>
+        <item>1.4.0.130</item>
         <item>"Cambio:
                  - Investigación de mejora del rendimiento y, con suerte, implementación para la velocidad de transferencia de datos de carga"</item>
+        <item>1.4.0.129</item>
+        <item>"Arreglo del fallo:
+                 - Localizador de huérfanos y código de carga correctos"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.128</item>
         <item>"Cambio:
-                 - Si el orden de clasificación de los recursos está invertido, los recursos dentro de una etiqueta o lista de favoritos también aparecerán en orden inverso
-                Arreglo del fallo:
-                 - falla si el usuario invierte el orden de clasificación mientras ve un álbum, con fotos, y luego no recarga manualmente el contenido del álbum
-                 - volvió a habilitar la navegación a la raíz de la galería usando la ruta de navegación en la parte superior de la vista del álbum
-                 - corregir la ocultación y expansión de álbumes (recientemente roto)
-                 - miniaturas redibujadas correctamente alternando los títulos de los álbumes secundarios repetidamente"</item>
+                - Si el orden de clasificación de los recursos está invertido, los recursos dentro de una etiqueta o lista de favoritos también aparecerán en orden inverso
+               Arreglo del fallo:
+                - muestra inmediatamente la ruta a la carpeta después de agregarla como raíz en lugar de mostrar inicialmente solo el nombre de la carpeta
+                - Carga paginada corregida de favoritos y elementos etiquetados
+                - actualice inmediatamente el recuento de fotos en la carpeta secundaria que se muestra después de que los elementos se mueven a una carpeta y luego el usuario navega a la carpeta principal
+                - actualice inmediatamente la miniatura que se muestra para la carpeta después de cambiar su imagen representativa y luego el usuario navega a la carpeta principal
+                - falla si el usuario invierte el orden de clasificación mientras ve un álbum, con fotos, y luego no recarga manualmente el contenido del álbum
+                - volvió a habilitar la navegación a la raíz de la galería usando la ruta de navegación en la parte superior de la vista del álbum
+                - corregir la ocultación y expansión de álbumes (recientemente roto)
+                - miniaturas redibujadas correctamente alternando los títulos de los álbumes secundarios repetidamente"</item>
         <item>1.4.0.127</item>
         <item>"Arreglo del fallo:
                  - solo la primera carpeta raíz de un nombre dado estaba visible en el selector de raíces de selección de archivos

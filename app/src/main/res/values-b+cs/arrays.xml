@@ -146,19 +146,26 @@
                 * Možná úplné přepsání procesu nahrávání, protože se nehodlá iterativně vylepšovat
                 * Možná úplné přepsání aplikace se zaměřením na jednoduchost zpočátku pro běžné prohlížení uživatelů"</item>
         
-        <item>1.4.0.129</item>
+        <item>1.4.0.130</item>
         <item>"Změna:
                  - Vyšetřování zlepšení výkonu a snad implementace pro rychlost přenosu dat"</item>
+        <item>1.4.0.129</item>
+        <item>"Oprava chyby:
+                 - Opravte lokátor sirotků a načtěte kód"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.128</item>
         <item>"Změna:
-                 - Pokud je pořadí řazení prostředků invertováno, zdroje v rámci značky nebo seznamu oblíbených položek se také zobrazí v opačném pořadí
-                Oprava chyby:
-                 - zhroucení, pokud uživatel při prohlížení alba, s fotografiemi obrátí pořadí řazení a poté znovu nenačte obsah alba ručně
-                 - znovu povolená navigace do kořenového adresáře galerie pomocí navigace v horní části zobrazení alba
-                 - oprava skrytí a rozbalení alb (nedávno rozbitých)
-                 - miniatury správně překresleny přepínání podřízených alb opakovaně směřujících"</item>
+                - Pokud je pořadí řazení prostředků invertováno, zdroje v rámci značky nebo seznamu oblíbených položek se také zobrazí v opačném pořadí
+               Oprava chyby:
+                - okamžitě zobrazit cestu ke složce po přidání jako kořen, místo toho, aby se původně zobrazoval pouze název složky
+                - opraveno stránkované načítání oblíbených a označených položek
+                - okamžitě aktualizovat počet fotografií v podřízené složce zobrazený po přesunutí položek do složky a poté uživatel přejde do nadřazené složky
+                - okamžitě aktualizovat miniaturu zobrazenou pro složku po změně jejího reprezentativního obrázku a poté uživatel přejde na nadřazenou složku
+                - zhroucení, pokud uživatel při prohlížení alba, s fotografiemi obrátí pořadí řazení a poté znovu nenačte obsah alba ručně
+                - znovu povolená navigace do kořenového adresáře galerie pomocí navigace v horní části zobrazení alba
+                - opravit skrytí a rozbalení alb (nedávno rozbitých)
+                - miniatury správně překresleny přepínání podřízených alb opakovaně směřujících"</item>
         <item>1.4.0.127</item>
         <item>"Oprava chyby:
                  - ve voliči kořenů pro výběr souboru byla viditelná pouze první kořenová složka daného jména

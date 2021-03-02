@@ -146,19 +146,26 @@
                 * Möglicherweise ein vollständiges Umschreiben des Upload-Prozesses, da er nicht iterativ verbessert werden kann
                 * Möglicherweise ein vollständiges Umschreiben der App mit dem Schwerpunkt auf Einfachheit für das allgemeine Surfen anfangs"</item>
         
-        <item>1.4.0.129</item>
+        <item>1.4.0.130</item>
         <item>"Veränderung:
                  - Untersuchung zur Leistungsverbesserung und hoffentlich Implementierung für die Geschwindigkeit der Upload-Datenübertragung"</item>
+        <item>1.4.0.129</item>
+        <item>"Fehlerbehebung:
+                 - Korrigieren Sie den Orphan Locator und den Ladecode"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.128</item>
         <item>"Veränderung:
-                 - Wenn die Sortierreihenfolge der Ressourcen invertiert ist, werden die Ressourcen in einem Tag oder einer Favoritenliste auch in umgekehrter Reihenfolge angezeigt
-                Fehlerbehebung:
-                 - Absturz, wenn der Benutzer die Sortierreihenfolge beim Anzeigen eines Albums mit Fotos umkehrt und den Albuminhalt dann nicht manuell neu lädt
-                 - Die Navigation zum Stammverzeichnis der Galerie mithilfe des Breadcrumb oben in der Albumansicht wurde wieder aktiviert
-                 - Korrigieren Sie das Ausblenden und Erweitern von Alben (kürzlich beschädigt)
-                 - Miniaturansichten, die beim wiederholten Umschalten von untergeordneten Alben korrekt neu gezeichnet wurden"</item>
+                - Wenn die Sortierreihenfolge der Ressourcen invertiert ist, werden Ressourcen innerhalb eines Tags oder einer Favoritenliste auch in umgekehrter Reihenfolge angezeigt
+               Fehlerbehebung:
+                - Zeigen Sie den Pfad zum Ordner sofort an, nachdem Sie ihn als Stamm hinzugefügt haben, anstatt zunächst nur den Ordnernamen anzuzeigen
+                - Das seitliche Laden von Favoriten und markierten Elementen wurde korrigiert
+                - Aktualisieren Sie sofort die Anzahl der Fotos im untergeordneten Ordner, die angezeigt werden, nachdem Elemente in einen Ordner verschoben wurden und der Benutzer zum übergeordneten Ordner navigiert
+                - Aktualisieren Sie sofort die für den Ordner angezeigte Miniaturansicht, nachdem Sie das repräsentative Bild geändert haben, und navigieren Sie dann zum übergeordneten Ordner
+                - Absturz, wenn der Benutzer die Sortierreihenfolge beim Anzeigen eines Albums mit Fotos umkehrt und den Albuminhalt dann nicht manuell neu lädt
+                - Die Navigation zum Stammverzeichnis der Galerie mithilfe des Breadcrumb oben in der Albumansicht wurde wieder aktiviert
+                - Korrigieren Sie das Ausblenden und Erweitern von Alben (kürzlich beschädigt)
+                - Miniaturansichten, die beim wiederholten Umschalten von untergeordneten Alben korrekt neu gezeichnet wurden"</item>
         <item>1.4.0.127</item>
         <item>"Fehlerbehebung:
                  - In der Stammauswahl der Dateiauswahl war nur der erste Stammordner eines bestimmten Namens sichtbar

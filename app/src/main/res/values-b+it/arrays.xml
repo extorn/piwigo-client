@@ -146,19 +146,26 @@
                 * Forse una riscrittura completa del processo di caricamento in quanto non si presta a essere migliorato iterativamente
                 * Possibilmente una riscrittura completa dell\'app con un focus sulla semplicità per la navigazione utente generale inizialmente"</item>
         
-        <item>1.4.0.129</item>
+        <item>1.4.0.130</item>
         <item>"Modificare:
                  - Analisi del miglioramento delle prestazioni e, si spera, implementazione per la velocità di trasferimento dei dati di caricamento"</item>
+        <item>1.4.0.129</item>
+        <item>"Risoluzione del problema:
+                 - Correggere il localizzatore di orfani e caricare il codice"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.128</item>
         <item>"Modificare:
-                 - Se l\'ordinamento delle risorse è invertito, anche le risorse all\'interno di un tag o di un elenco di preferiti verranno visualizzate in ordine inverso
-                Risoluzione del problema:
-                 - arresto anomalo se l\'utente inverte l\'ordinamento durante la visualizzazione di un album, con le foto, e quindi non ricarica manualmente i contenuti dell\'album
-                 - riattivato la navigazione alla radice della galleria utilizzando il breadcrumb nella parte superiore della visualizzazione dell\'album
-                 - correggi il nascondiglio e l\'espansione degli album (rotto di recente)
-                 - miniature ridisegnate correttamente alternando ripetutamente l\'intestazione degli album secondari"</item>
+                - Se l\'ordinamento delle risorse è invertito, anche le risorse all\'interno di un tag o di un elenco di preferiti verranno visualizzate in ordine inverso
+               Risoluzione del problema:
+                - mostra immediatamente il percorso della cartella dopo averla aggiunta come root anziché mostrare inizialmente solo il nome della cartella
+                - corretto caricamento di pagine dei preferiti e degli elementi contrassegnati
+                - aggiorna immediatamente il conteggio delle foto sulla cartella figlio mostrato dopo che gli elementi sono stati spostati in una cartella e quindi l\'utente passa al genitore
+                - aggiorna immediatamente la miniatura mostrata per la cartella dopo aver cambiato la sua immagine rappresentativa e quindi l\'utente passa al genitore
+                - arresto anomalo se l\'utente inverte l\'ordinamento durante la visualizzazione di un album, con le foto, e quindi non ricarica manualmente i contenuti dell\'album
+                - riattivato la navigazione alla radice della galleria utilizzando il breadcrumb nella parte superiore della visualizzazione dell\'album
+                - correggi il nascondiglio e l\'espansione degli album (recentemente rotto)
+                - miniature ridisegnate correttamente alternando ripetutamente l\'intestazione degli album secondari"</item>
         <item>1.4.0.127</item>
         <item>"Risoluzione del problema:
                  - solo la prima cartella principale di un dato nome era visibile nel selettore delle radici di selezione dei file
