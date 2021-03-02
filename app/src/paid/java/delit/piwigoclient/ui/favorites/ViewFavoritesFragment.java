@@ -16,7 +16,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -63,7 +62,6 @@ import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.album.view.AlbumItemViewHolder;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
@@ -95,10 +93,8 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
     private PiwigoFavorites favoritesModel;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
-    private int colsOnScreen;
     private DeleteActionData deleteActionData;
     private long userGuid;
-    private AppCompatImageView actionIndicatorImg;
     private RecyclerView favoritesListView;
     private TextView emptyFavoritesLabel;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
@@ -132,7 +128,6 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        UIHelper.recycleImageViewContent(actionIndicatorImg);
     }
 
     @Override
@@ -157,7 +152,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
 
         boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, requireContext());
 
-
+        String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs, requireContext());
         boolean showResourceNames = AlbumViewPreferences.isShowResourceNames(prefs, requireContext());
 
         int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, requireContext());
@@ -169,13 +164,14 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
 
         viewPrefs.selectable(getMultiSelectionAllowed(), false);
         viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
+        viewPrefs.withPreferredThumbnailSize(preferredThumbnailSize);
         viewPrefs.withShowingResourceNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
 //        viewPrefs.withAlbumWidth(getScreenWidth() / albumsPerRow);
         viewPrefs.withRecentlyAlteredThresholdDate(recentlyAlteredThresholdDate);
     }
 
-    boolean getMultiSelectionAllowed() {
+    protected boolean getMultiSelectionAllowed() {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean captureActionClicks = sessionDetails != null && sessionDetails.isAdminUser();
         captureActionClicks |= (sessionDetails != null && sessionDetails.isFullyLoggedIn());
@@ -262,10 +258,6 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
 
         bulkActionsContainer = view.findViewById(R.id.favorites_actions_bulk_container);
 
-        int imagesOnScreen = AlbumViewPreferences.getImagesToDisplayPerRow(getActivity(), prefs);
-        colsOnScreen = imagesOnScreen;
-
-
 //        viewInOrientation = getResources().getConfiguration().orientation;
 
         // Set the adapter
@@ -278,9 +270,8 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
 
         // need to wait for the favorites model to be initialised.
-        GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
-        int colsPerImage = colsOnScreen / imagesOnScreen;
-        gridLayoutMan.setSpanSizeLookup(new SpanSizeLookup(favoritesModel, colsPerImage));
+        int imagesOnScreen = AlbumViewPreferences.getImagesToDisplayPerRow(getActivity(), prefs);
+        GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), imagesOnScreen);
 
         recyclerView.setLayoutManager(gridLayoutMan);
 
@@ -340,14 +331,14 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
             if(deleteActionData != null && selectedItemIds.equals(deleteActionData.getSelectedItemIds())) {
                 //continue with previous action
-                onDeleteResources(deleteActionData);
+                onUserActionDeleteResources(deleteActionData);
             } else if(selectedItemIds.size() > 0) {
                 HashSet<ResourceItem> selectedItems = viewAdapter.getSelectedItemsOfType(ResourceItem.class);
                 DeleteActionData deleteActionData = new DeleteActionData(selectedItemIds, selectedItems);
                 if(!deleteActionData.isResourceInfoAvailable()) {
                     this.deleteActionData = deleteActionData;
                 }
-                onDeleteResources(deleteActionData);
+                onUserActionDeleteResources(deleteActionData);
             }
         }
     }
@@ -473,7 +464,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
     }
     
-    private void onDeleteResources(final DeleteActionData deleteActionData) {
+    private void onUserActionDeleteResources(final DeleteActionData deleteActionData) {
 
         if (!deleteActionData.isResourceInfoAvailable()) {
 
@@ -522,13 +513,20 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
     }
 
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
-//        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
-//        favoritesModel.setRetrieveItemsInReverseOrder(invertSortOrder);
+        boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+        boolean reversed;
+        try {
+            reversed = favoritesModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+            //need to refresh this page as the sort order was just flipped.
+        } catch(IllegalStateException e) {
+            favoritesModel.removeAllResources();
+            reversed = favoritesModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+        }
         int pageToActuallyLoad = pageRequested;
-//        if (invertSortOrder) {
-//            int pagesOfPhotos = favoritesModel.getContainerDetails().getPagesOfPhotos(pageSize);
-//            pageToActuallyLoad = pagesOfPhotos - pageRequested;
-//        }
+        if (invertResourceSortOrder) {
+            int lastPageId = favoritesModel.getContainerDetails().getPagesOfPhotos(pageSize) -1;
+            pageToActuallyLoad = lastPageId - pageRequested;
+        }
         return pageToActuallyLoad;
     }
 
@@ -612,10 +610,25 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             return;
         }
 
+        adjustSortOrderAsNeeded();
+
         if (favoritesIsDirty) {
             reloadAlbumContent();
         } else if(itemsToLoad.size() > 0) {
             onReloadAlbum();
+        }
+    }
+
+    private void adjustSortOrderAsNeeded() {
+        boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+        boolean reversed;
+        try {
+            reversed = favoritesModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+            // need to refresh this page as the sort order was just flipped.
+        } catch(IllegalStateException e) {
+            favoritesModel.removeAllResources();
+            reversed = favoritesModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
+            favoritesIsDirty = true;
         }
     }
 
@@ -757,7 +770,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
                 } else if (response instanceof GetMethodsAvailableResponseHandler.PiwigoGetMethodsAvailableResponse) {
                     getParent().getViewPrefs().withAllowMultiSelect(getParent().getMultiSelectionAllowed());
                 } else {
-                    getParent().onLoadFavoritesFailure(response.getMessageId());
+                    getParent().withUnexpectedPiwigoResponse(response);
                 }
                 getParent().getLoadingMessageIds().remove(response.getMessageId());
             }
@@ -777,10 +790,10 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
     }
 
-    void onLoadFavoritesFailure(long messageId) {
-        String failedCall = loadingMessageIds.get(messageId);
+    protected void withUnexpectedPiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+        String failedCall = loadingMessageIds.get(response.getMessageId());
         synchronized (itemsToLoad) {
-            favoritesModel.recordPageLoadFailed(messageId);
+            favoritesModel.recordPageLoadFailed(response.getMessageId());
             itemsToLoad.add(failedCall);
             emptyFavoritesLabel.setText(R.string.favorites_content_load_failed_text);
             if (itemsToLoad.size() > 0) {
@@ -788,7 +801,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
                 retryActionButton.show();
                 favoritesModel.acquirePageLoadLock();
                 try {
-                    favoritesModel.recordPageLoadFailed(messageId);
+                    favoritesModel.recordPageLoadFailed(response.getMessageId());
                 } finally {
                     favoritesModel.releasePageLoadLock();
                 }
@@ -864,41 +877,11 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
     }
 
-    private class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
-
-        private final int colsPerImage;
-        private final PiwigoFavorites favoritesModel;
-
-        public SpanSizeLookup(PiwigoFavorites favoritesModel, int colsPerImage) {
-            this.colsPerImage = colsPerImage;
-            this.favoritesModel = favoritesModel;
-        }
-
-        @Override
-        public int getSpanSize(int position) {
-            // ensure that app cannot crash due to position being out of bounds.
-            //FIXME - why would position be outside model size? What happens next now it doesn't crash here?
-            if(position < 0 || favoritesModel.getItemCount() <= position) {
-                return 1;
-            }
-
-            int itemType = favoritesModel.getItemByIdx(position).getType();
-            switch(itemType) {
-                case GalleryItem.PICTURE_RESOURCE_TYPE:
-                    return colsPerImage;
-                case GalleryItem.VIDEO_RESOURCE_TYPE:
-                    return colsPerImage;
-                default:
-                    return colsOnScreen;
-            }
-        }
-    }
-
     void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?> response) {
         if(this.deleteActionData.isTrackingMessageId(response.getMessageId())) {
             this.deleteActionData.updateLinkedAlbums(response.getResource());
             if (this.deleteActionData.isResourceInfoAvailable()) {
-                onDeleteResources(deleteActionData);
+                onUserActionDeleteResources(deleteActionData);
             }
         }
     }
