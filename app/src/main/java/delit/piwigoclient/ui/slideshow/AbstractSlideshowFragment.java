@@ -528,8 +528,8 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         }
         int pageToActuallyLoad = pageRequested;
         if (invertResourceSortOrder) {
-            int pagesOfPhotos = resourceContainer.getContainerDetails().getPagesOfPhotos(pageSize);
-            pageToActuallyLoad = pagesOfPhotos - pageRequested;
+            int lastPageId = resourceContainer.getContainerDetails().getPagesOfPhotos(pageSize) -1;
+            pageToActuallyLoad = lastPageId - pageRequested;
         }
         return pageToActuallyLoad;
     }

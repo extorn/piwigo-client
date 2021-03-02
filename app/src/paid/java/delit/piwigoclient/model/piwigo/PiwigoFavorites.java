@@ -2,11 +2,6 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
-
-import java.util.List;
-
-import delit.libs.core.util.Logging;
 
 public class PiwigoFavorites extends ResourceContainer<PiwigoFavorites.FavoritesSummaryDetails, GalleryItem> implements Parcelable {
 
@@ -88,9 +83,13 @@ public class PiwigoFavorites extends ResourceContainer<PiwigoFavorites.Favorites
             return photoCount;
         }
 
+        /**
+         * @param pageSize max photo count to a page
+         * @return number of pages of photos available (remember pages are zero indexed)
+         */
         @Override
         public int getPagesOfPhotos(int pageSize) {
-            int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 0 : -1));
+            int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 1 : 0));
             return Math.max(pages, 0);
         }
     }

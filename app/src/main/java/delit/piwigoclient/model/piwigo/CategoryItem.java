@@ -451,9 +451,13 @@ public class CategoryItem extends GalleryItem implements PhotoContainer, Parcela
         return this;
     }
 
+    /**
+     * @param pageSize max photo count to a page
+     * @return number of pages of photos available (remember pages are zero indexed)
+     */
     @Override
     public int getPagesOfPhotos(int pageSize) {
-        int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 0 : -1));
+        int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 1 : 0));
         return Math.max(pages, 0);
     }
 

@@ -1132,11 +1132,9 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
                 String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
 
-
-
                 long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetImagesResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToActuallyLoad, pageSize));
                 galleryModel.recordPageBeingLoaded(loadingMessageId, pageToActuallyLoad);
-                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
+                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToActuallyLoad));
             } finally {
                 galleryModel.releasePageLoadLock();
             }
@@ -1156,8 +1154,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
         int pageToActuallyLoad = pageRequested;
         if (invertSortOrder) {
-            int pagesOfPhotos = galleryModel.getContainerDetails().getPagesOfPhotos(pageSize);
-            pageToActuallyLoad = pagesOfPhotos - pageRequested;
+            int lastPageId = galleryModel.getContainerDetails().getPagesOfPhotos(pageSize) -1;
+            pageToActuallyLoad = lastPageId - pageRequested;
         }
         return pageToActuallyLoad;
     }
@@ -2135,7 +2133,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             galleryModel.getContainerDetails().setPhotoCount(response.getTotalResourceCount());
             boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
             int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
-            int firstPage = invertSortOrder ? galleryModel.getContainerDetails().getPagesOfPhotos(pageSize) : 0;
+            int firstPage = invertSortOrder ? galleryModel.getContainerDetails().getPagesOfPhotos(pageSize) -1 : 0;
 
             if (response.getPage() == firstPage && response.getResources().size() > 0) {
                 if (!galleryModel.containsItem(StaticCategoryItem.PICTURE_HEADING)) {
