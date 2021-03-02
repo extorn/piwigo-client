@@ -112,6 +112,13 @@ public class TaskProgressTracker implements ProgressListener {
 //        }
     }
 
+    public synchronized void reset() {
+        this.workDone = 0;
+        subTasks.clear();
+        afterTaskProgress();
+        calculateProgressValue();
+    }
+
     /**
      * Not safe when sub divided - which is going to be the definitive value?
      * @param workDone

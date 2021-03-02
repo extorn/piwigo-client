@@ -134,4 +134,14 @@ public class TaskProgressTrackerTest {
         assertTrue(subTaskTracker.isComplete());
     }
 
+    @Test
+    public void testResetWhenSubDivided() {
+        TaskProgressTracker overallTracker = new TaskProgressTracker("overall task", 100, testProgressListener);
+        TaskProgressTracker subTask = overallTracker.addSubTask("subTask", 20, 10, 80);
+        overallTracker.reset();
+        assertEquals(0, overallTracker.getWorkDone());
+        assertEquals(100, overallTracker.getRemainingWork());
+        assertEquals(0, overallTracker.getTaskProgress(), EPSILON);
+    }
+
 }
