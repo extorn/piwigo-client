@@ -38,4 +38,5 @@
     <string name="orphans_no_orphans_found_on_server">Geen wezen gevonden</string>
     <string name="orphans_found_on_server_pattern">Wezen gevonden:%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Er zijn wezen aanwezig. Om deze te bekijken, moeten we een privémap maken die alleen toegankelijk is voor beheerders. U kunt het album daarna op elk moment verwijderen. Als u het niet eens bent, moet u deze zelf op de server verwerken.</string>
+    <string name="progress_rescuing_orphans">Wezen redden</string>
 </resources>

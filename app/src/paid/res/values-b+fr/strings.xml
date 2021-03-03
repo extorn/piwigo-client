@@ -38,4 +38,5 @@
     <string name="orphans_no_orphans_found_on_server">Aucun orphelin trouvé</string>
     <string name="orphans_found_on_server_pattern">Orphelins trouvés:%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Il y a des orphelins présents. Pour les visualiser, nous devons créer un dossier privé accessible uniquement aux administrateurs. Vous pouvez ensuite supprimer l\'album à tout moment. Si vous n\'êtes pas d\'accord, vous devrez les traiter vous-même sur le serveur.</string>
+    <string name="progress_rescuing_orphans">Sauver les orphelins</string>
 </resources>

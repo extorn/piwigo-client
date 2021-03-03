@@ -38,4 +38,5 @@
     <string name="orphans_no_orphans_found_on_server">找不到孤儿</string>
     <string name="orphans_found_on_server_pattern">找到的孤儿：%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">有孤儿在场。要查看这些内容，我们必须创建一个仅供管理员访问的专用文件夹。之后您可以随时删除相册。如果您不同意，则必须自己在服务器上进行处理。</string>
+    <string name="progress_rescuing_orphans">营救孤儿</string>
 </resources>

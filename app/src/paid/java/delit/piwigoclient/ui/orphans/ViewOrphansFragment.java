@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
+import delit.libs.util.progress.TaskProgressTracker;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -39,6 +40,7 @@ import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.orphans.action.CreateOrphansAlbumQuestionAction;
+import delit.piwigoclient.ui.util.UiUpdatingProgressListener;
 
 /**
  * A fragment representing a list of Items.
@@ -52,6 +54,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     private final Set<Long> orphanRescueCalls = new HashSet<>();
     private long orphanAlbumCreateActionId;
     private int nextOrphansListPageToLoad = -1;
+    private TaskProgressTracker orphanRescueTracker;
     private final Set<Long> orphanResourceIds = new HashSet<>();
 
     /**
@@ -303,12 +306,11 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     private boolean actionRescueOrphans() {
         boolean rescuingOrphans = false;
         synchronized (orphanResourceIds) {
-            int total = orphanResourceIds.size();
-            int i = 0;
+            orphanRescueTracker = new TaskProgressTracker("Rescue Orphans", orphanResourceIds.size(), new UiUpdatingProgressListener(getUiHelper().getProgressIndicator(), R.string.progress_rescuing_orphans));
             for (long orphanId : orphanResourceIds) {
-                i++;
                 synchronized (orphanRescueCalls) {
-                    orphanRescueCalls.add(addActiveServiceCall(getString(R.string.progress_rescuing_orphan_pattern, i, total), new ImageAddToAlbumResponseHandler<>(orphanId, getGalleryModel().getContainerDetails())));
+                    getUiHelper().showProgressIndicator(getString(R.string.progress_rescuing_orphans), 0);
+                    orphanRescueCalls.add(addActiveServiceCall(R.string.progress_rescuing_orphans, new ImageAddToAlbumResponseHandler<>(orphanId, getGalleryModel().getContainerDetails())));
                 }
                 rescuingOrphans = true;
             }
@@ -406,11 +408,13 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
             orphanRescueCalls.remove(response.getMessageId());
             synchronized (orphanResourceIds) {
                 orphanResourceIds.remove(response.getPiwigoResource().getId());
+                orphanRescueTracker.incrementWorkDone(1);
             }
             getGalleryModel().getContainerDetails().setPhotoCount(getGalleryModel().getContainerDetails().getPhotoCount() + 1);
             if (orphanRescueCalls.isEmpty() && !isOrphanListRetrievalRunning()) {
                 // now load the images
                 loadAlbumResourcesPage(0);
+                getUiHelper().hideProgressIndicator();
             }
         }
     }

@@ -38,4 +38,5 @@
     <string name="orphans_no_orphans_found_on_server">Keine Waisen gefunden</string>
     <string name="orphans_found_on_server_pattern">Gefundene Waisen:%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Es sind Waisenkinder anwesend. Um diese anzuzeigen, müssen wir einen privaten Ordner erstellen, auf den nur Administratoren zugreifen können. Sie können das Album danach jederzeit löschen. Wenn Sie nicht einverstanden sind, müssen Sie diese auf dem Server selbst verarbeiten.</string>
+    <string name="progress_rescuing_orphans">Waisen retten</string>
 </resources>

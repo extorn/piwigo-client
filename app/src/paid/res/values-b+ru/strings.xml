@@ -38,4 +38,5 @@
     <string name="orphans_no_orphans_found_on_server">Сирот не найдено</string>
     <string name="orphans_found_on_server_pattern">Найдено сирот:%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Есть сироты. Чтобы просмотреть их, мы должны создать личную папку, доступную только администраторам. Впоследствии вы можете удалить альбом в любое время. Если вы не согласны, вам придется обработать их на сервере самостоятельно.</string>
+    <string name="progress_rescuing_orphans">Спасение сирот</string>
 </resources>
