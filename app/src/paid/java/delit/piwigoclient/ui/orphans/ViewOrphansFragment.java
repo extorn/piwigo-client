@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
-import delit.libs.ui.util.BundleUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -34,7 +33,6 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetPermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumSetStatusResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageAddToAlbumResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImagesListOrphansResponseHandler;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
@@ -50,11 +48,11 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     private static final String TAG = "ViewOrphansFrag";
     public static final String RESUME_ACTION = "ORPHANS";
     public static final String CATEGORY_NAME_PIWIGO_CLIENT_ORPHANS = "PiwigoClient.Orphans";
-    public static final String STATE_ORPHAN_RESCUE_CALLS = "orphansView.orphanRescueCalls";
     public static final String ORPHANS_PAGE_LOAD_PREFIX = "orphans_";
     private final Set<Long> orphanRescueCalls = new HashSet<>();
     private long orphanAlbumCreateActionId;
-    private ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse orphansToBeRescuedResponse;
+    private int nextOrphansListPageToLoad = -1;
+    private final Set<Long> orphanResourceIds = new HashSet<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -103,14 +101,10 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        BundleUtils.putLongHashSet(outState, STATE_ORPHAN_RESCUE_CALLS, orphanRescueCalls);
     }
 
     @Override
     protected void populateViewFromModelEtc(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            BundleUtils.getLongHashSet(savedInstanceState, STATE_ORPHAN_RESCUE_CALLS, orphanRescueCalls);
-        }
         super.populateViewFromModelEtc(view, savedInstanceState);
     }
 
@@ -155,6 +149,11 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
 
         // Add the newly created album to the view model and switch to it.
         switchViewToShowContentsAndDetailsForAlbum(orphansAlbum);
+        //now the album is open, do we have any orphans to rescue into it? If so, rescue them
+        if(nextOrphansListPageToLoad < 0) {
+            actionLoadOrphanedResourceIdsPage(nextOrphansListPageToLoad);
+            nextOrphansListPageToLoad = -1;
+        }
     }
 
     private void switchViewToShowContentsAndDetailsForAlbum(CategoryItem orphansAlbum) {
@@ -164,10 +163,6 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
         replaceListViewAdapter(model, null);
         fillGalleryEditFields();
         loadAlbumPermissionsIfNeeded();
-
-        //now the album is open, do we have any orphans to rescue into it? If so, rescue them
-        actionRescueOrphansAndLookForMore(orphansToBeRescuedResponse);
-        orphansToBeRescuedResponse = null; // must clear this now otherwise it might get acted upon multiple times
     }
 
     @Override
@@ -213,7 +208,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
             }
         }
         // start loading any true orphans.
-        loadOrphanedResourceIdsPage(0);
+        actionLoadOrphanedResourceIdsPage(0);
     }
 
     /**
@@ -244,7 +239,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
             // wipe the model  so it is reloaded
             getGalleryModel().clear();
             // load any true orphans.
-            loadOrphanedResourceIdsPage(0);
+            actionLoadOrphanedResourceIdsPage(0);
         } else {
             super.onPiwigoResponseListOfAlbumsLoaded(response);
         }
@@ -261,30 +256,43 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
      * @param response PiwigoGetOrphansResponse true orphan resource ids
      */
     protected void onPiwigoResponseGetOrphanIds(ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse response) {
-
+        // totalCount is the total on the server.
+        // pageSize is max number on a page
         if(response.getTotalCount() == 0) {
-            // there are no orphans left to find.
+            // there are no orphans to find.
             if(isShowingRescuedOrphansFolderContents()) {
-                // we're in the rescued orphans folder (and none are being rescued), load the contents.
-                if(response.getPage() == 0) {
+                // invoke the rescue of the orphans we found (should be none since none available)
+                if(!actionRescueOrphans()) {
+                    // not waiting for orphans to be loaded
+                    // we're in the rescued orphans folder (and none are being rescued), load the contents.
+                    // there might be some left from a previous operation, load those if available
                     loadAlbumResourcesPage(0);
-                }
-            } else {
-                //NOTE if this isn't page 0, then nothing more to do.
-                if(response.getPage() == 0) {
-                    // the orphans folder does not exist, just show the user that we've no orphans (no need to create a folder).
-                    showEmptyAlbumText(0);
                 }
             }
         } else {
-            // there are orphans to rescue.
+            // there are orphans to rescue
+            // always record them.
+            actionRecordOrphanIds(response);
+            // if we're showing the rescued orphans album
             if(isShowingRescuedOrphansFolderContents()) {
-                // first move any orphans into our orphan folder
-                actionRescueOrphansAndLookForMore(response);
+                // load the next page of orphans (if the current loaded page had some)
+                if(response.getResources().size() > 0 && !isAllOrphansIdentified(response.getTotalCount())) {
+                    actionLoadOrphanedResourceIdsPage(response.getPage() + 1);
+                } else {
+                    // we've now loaded all the available orphan ids.
+                    actionRescueOrphans();
+                }
             } else {
+                // create the album
                 requestPermissionToCreateOrphansAlbum(response.getTotalCount());
-                orphansToBeRescuedResponse = response;
+                nextOrphansListPageToLoad = response.getPage() + 1;
             }
+        }
+    }
+
+    private boolean isAllOrphansIdentified(int totalCount) {
+        synchronized (orphanResourceIds) {
+            return orphanResourceIds.size() == totalCount;
         }
     }
 
@@ -292,22 +300,25 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_confirm_okay_to_create_orphans_album), View.NO_ID, R.string.button_cancel, R.string.button_ok, new CreateOrphansAlbumQuestionAction<>(getUiHelper(), orphanCount));
     }
 
-    private void actionRescueOrphansAndLookForMore(ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse response) {
-        if(response != null) {
-            for (Long resourceId : response.getResources()) {
-                actionStartRescueOfResource(resourceId);
-            }
-            // if there could be more orphans, check
-            if (response.getPageSize() == response.getTotalCount()) {
-                // load the next page (under the orphans album - possibly newly created)
-                loadOrphanedResourceIdsPage(response.getPage() + 1);
+    private boolean actionRescueOrphans() {
+        boolean rescuingOrphans = false;
+        synchronized (orphanResourceIds) {
+            int total = orphanResourceIds.size();
+            int i = 0;
+            for (long orphanId : orphanResourceIds) {
+                i++;
+                synchronized (orphanRescueCalls) {
+                    orphanRescueCalls.add(addActiveServiceCall(getString(R.string.progress_rescuing_orphan_pattern, i, total), new ImageAddToAlbumResponseHandler<>(orphanId, getGalleryModel().getContainerDetails())));
+                }
+                rescuingOrphans = true;
             }
         }
+        return rescuingOrphans;
     }
 
-    private void actionStartRescueOfResource(Long resourceId) {
-        synchronized (orphanRescueCalls) {
-            orphanRescueCalls.add(addActiveServiceCall(R.string.progress_resource_details_updating, new ImageAddToAlbumResponseHandler<>(resourceId, getGalleryModel().getContainerDetails())));
+    private void actionRecordOrphanIds(@NonNull ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse response) {
+        synchronized (orphanResourceIds) {
+            orphanResourceIds.addAll(response.getResources());
         }
     }
 
@@ -347,7 +358,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
             String orphanPageId = itemToLoad.replace(ORPHANS_PAGE_LOAD_PREFIX, "");
             try {
                 int pageId = Integer.parseInt(orphanPageId);
-                loadOrphanedResourceIdsPage(pageId);
+                actionLoadOrphanedResourceIdsPage(pageId);
             } catch(NumberFormatException e) {
                 Logging.log(Log.WARN, TAG, "Unable to reload unrecognised page number : %1$s", itemToLoad);
             }
@@ -360,11 +371,13 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
      * Retrieve a list of ids for resources that are presently orphans (not in ANY album)
      * @param pageToLoad will iterate from 0 - pagesOfOrphans
      */
-    protected void loadOrphanedResourceIdsPage(int pageToLoad) {
+    protected void actionLoadOrphanedResourceIdsPage(int pageToLoad) {
         synchronized (getLoadingMessageIds()) {
-            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
-            long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_orphan_ids, new ImagesListOrphansResponseHandler(pageToLoad, pageSize));
-            getLoadingMessageIds().put(loadingMessageId, ORPHANS_PAGE_LOAD_PREFIX +pageToLoad);
+            if(!getLoadingMessageIds().containsValue(ORPHANS_PAGE_LOAD_PREFIX +pageToLoad)) {
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
+                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_orphan_ids, new ImagesListOrphansResponseHandler(pageToLoad, pageSize));
+                getLoadingMessageIds().put(loadingMessageId, ORPHANS_PAGE_LOAD_PREFIX + pageToLoad);
+            }
         }
     }
     @Override
@@ -391,11 +404,25 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     protected void onPiwigoResponseOrphanRescued(ImageAddToAlbumResponseHandler.PiwigoUpdateAlbumContentResponse<?> response) {
         synchronized (orphanRescueCalls) {
             orphanRescueCalls.remove(response.getMessageId());
+            synchronized (orphanResourceIds) {
+                orphanResourceIds.remove(response.getPiwigoResource().getId());
+            }
             getGalleryModel().getContainerDetails().setPhotoCount(getGalleryModel().getContainerDetails().getPhotoCount() + 1);
-            if (orphanRescueCalls.isEmpty() && getLoadingMessageIds().isEmpty()) {
+            if (orphanRescueCalls.isEmpty() && !isOrphanListRetrievalRunning()) {
                 // now load the images
                 loadAlbumResourcesPage(0);
             }
         }
+    }
+
+    private boolean isOrphanListRetrievalRunning() {
+        synchronized (getLoadingMessageIds()) {
+            for(String loadName : getLoadingMessageIds().values()) {
+                if(loadName.startsWith(ORPHANS_PAGE_LOAD_PREFIX)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
