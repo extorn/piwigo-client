@@ -95,11 +95,19 @@ public class BundleUtils {
     }
 
     public static HashSet<Long> getLongHashSet(Bundle bundle, String key) {
+        return getLongHashSet(bundle, key, null);
+    }
+
+    public static <T extends Set<Long>> T getLongHashSet(Bundle bundle, String key, T dest) {
         try {
             Long[] data = ArrayUtils.wrap(bundle.getLongArray(key));
-            HashSet<Long> retVal = null;
+            T retVal = null;
             if (data != null) {
-                retVal = new HashSet<>(data.length);
+                if(retVal == null) {
+                    retVal = (T) new HashSet<Long>(data.length);
+                } else {
+                    retVal = dest;
+                }
                 Collections.addAll(retVal, data);
             }
             return retVal;
