@@ -149,11 +149,11 @@
         <item>1.4.0.130</item>
         <item>"Cambio:
                  - Investigación de mejora del rendimiento y, con suerte, implementación para la velocidad de transferencia de datos de carga"</item>
+    </string-array>
+    <string-array name="release_history" translatable="true">
         <item>1.4.0.129</item>
         <item>"Arreglo del fallo:
                  - Localizador de huérfanos y código de carga correctos"</item>
-    </string-array>
-    <string-array name="release_history" translatable="true">
         <item>1.4.0.128</item>
         <item>"Cambio:
                 - Si el orden de clasificación de los recursos está invertido, los recursos dentro de una etiqueta o lista de favoritos también aparecerán en orden inverso

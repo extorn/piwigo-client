@@ -149,11 +149,11 @@
         <item>1.4.0.130</item>
         <item>"変化する：
                  -パフォーマンス改善の調査と、できればアップロードデータ転送速度の実装"</item>
+    </string-array>
+    <string-array name="release_history" translatable="true">
         <item>1.4.0.129</item>
         <item>"バグ修正：
                  -孤立したロケーターとロードコードを修正する"</item>
-    </string-array>
-    <string-array name="release_history" translatable="true">
         <item>1.4.0.128</item>
         <item>"変化する：
                 -リソースの並べ替え順序を逆にすると、タグまたはお気に入りリスト内のリソースも逆の順序で表示されます

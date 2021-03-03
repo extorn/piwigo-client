@@ -1,92 +1,40 @@
 <en-GB>
-Change:
-- If resource sort order is inverted, resources within a tag or favorite list will also appear in reverse order
 Bugfix:
-- immediately show path to folder after adding it as a root rather than initially showing just the folder name
-- corrected paged loading of favorites and tagged items
-- immediately update photo count on child folder shown after items are moved to a folder and then user navigates to parent
-- immediately update thumbnail shown for folder after changing its representat..."
+- Correct orphan locator and load code
 </en-GB>
 <cs-CZ>
-Změna:
-- Pokud je pořadí řazení prostředků invertováno, zdroje v rámci značky nebo seznamu oblíbených položek se také zobrazí v opačném pořadí
 Oprava chyby:
-- okamžitě zobrazit cestu ke složce po přidání jako kořen, místo toho, aby se původně zobrazoval pouze název složky
-- opraveno stránkované načítání oblíbených a označených položek
-- okamžitě aktualizovat počet fotografií v podřízené složce zobrazený po přesunutí položek do složky a poté uživatel přejde do nadřazené složky
-- okamžitě aktu..."
+- Opravte lokátor sirotků a načtěte kód
 </cs-CZ>
 <de-DE>
-Veränderung:
-- Wenn die Sortierreihenfolge der Ressourcen invertiert ist, werden Ressourcen innerhalb eines Tags oder einer Favoritenliste auch in umgekehrter Reihenfolge angezeigt
 Fehlerbehebung:
-- Zeigen Sie den Pfad zum Ordner sofort an, nachdem Sie ihn als Stamm hinzugefügt haben, anstatt zunächst nur den Ordnernamen anzuzeigen
-- Das seitliche Laden von Favoriten und markierten Elementen wurde korrigiert
-- Aktualisieren Sie sofort die Anzahl der Fotos im untergeordneten Ordner, die angez..."
+- Korrigieren Sie den Orphan Locator und den Ladecode
 </de-DE>
 <es-ES>
-Cambio:
-- Si el orden de clasificación de los recursos está invertido, los recursos dentro de una etiqueta o lista de favoritos también aparecerán en orden inverso
 Arreglo del fallo:
-- muestra inmediatamente la ruta a la carpeta después de agregarla como raíz en lugar de mostrar inicialmente solo el nombre de la carpeta
-- Carga paginada corregida de favoritos y elementos etiquetados
-- actualice inmediatamente el recuento de fotos en la carpeta secundaria que se muestra después de que los ele..."
+- Localizador de huérfanos y código de carga correctos
 </es-ES>
 <fr-FR>
-Changement:
-- Si l\'ordre de tri des ressources est inversé, les ressources d\'une balise ou d\'une liste de favoris apparaîtront également dans l\'ordre inverse
 Correction d\'un bug:
-- afficher immédiatement le chemin du dossier après l\'avoir ajouté en tant que racine plutôt que d\'afficher initialement uniquement le nom du dossier
-- chargement paginé corrigé des favoris et des éléments marqués
-- mettre immédiatement à jour le nombre de photos sur le dossier enfant affiché après le déplace..."
+- Corriger le localisateur d\'orphelin et charger le code
 </fr-FR>
 <it-IT>
-Modificare:
-- Se l\'ordinamento delle risorse è invertito, anche le risorse all\'interno di un tag o di un elenco di preferiti verranno visualizzate in ordine inverso
 Risoluzione del problema:
-- mostra immediatamente il percorso della cartella dopo averla aggiunta come root anziché mostrare inizialmente solo il nome della cartella
-- corretto caricamento di pagine dei preferiti e degli elementi contrassegnati
-- aggiorna immediatamente il conteggio delle foto sulla cartella figlio mostrato dop..."
+- Correggere il localizzatore di orfani e caricare il codice
 </it-IT>
 <ja-JP>
-変化する：
--リソースの並べ替え順序を逆にすると、タグまたはお気に入りリスト内のリソースも逆の順序で表示されます
 バグ修正：
--最初にフォルダ名だけを表示するのではなく、ルートとして追加した直後にフォルダへのパスを表示します
--お気に入りとタグ付きアイテムのページ読み込みを修正しました
--アイテムがフォルダに移動さ​​れ、ユーザーが親に移動した後、表示される子フォルダの写真数をすぐに更新します
--代表的な画像を変更した後、フォルダに表示されているサムネイルをすぐに更新し、ユーザーが親に移動します
--ユーザーが写真付きのアルバムを表示しているときに並べ替え順序を逆にして、アルバムのコンテンツを手動で再読み込みしないとクラッシュする
--アルバムビューの上部にあるブレッドクラムを使用して、ギャラリーのルートへのナビゲーションを再度有効にしました
--アルバムの非表示と展開を修正しました（最近壊れています）
--サムネイルが正しく再描画され、子アルバムの見出しを繰り返し切り替えます
+-孤立したロケーターとロードコードを修正する
 </ja-JP>
 <nl-NL>
-Verandering:
-- Als de sorteervolgorde van bronnen wordt omgekeerd, worden bronnen binnen een tag of favorietenlijst ook in omgekeerde volgorde weergegeven
 Bugfix:
-- toon onmiddellijk het pad naar de map nadat u het als root hebt toegevoegd in plaats van in eerste instantie alleen de mapnaam te tonen
-- gepagineerd laden van favorieten en getagde items gecorrigeerd
-- update onmiddellijk het aantal foto\'s in de onderliggende map die wordt weergegeven nadat items naar een map zijn verplaatst en..."
+- Correcte weeszoeker en laadcode
 </nl-NL>
 <ru-RU>
-Изменять:
-- Если порядок сортировки ресурсов инвертирован, ресурсы в теге или списке избранного также будут отображаться в обратном порядке.
-Исправлена ​​ошибка:
-- сразу показывать путь к папке после добавления ее в качестве корня, а не показывать изначально только имя папки
-- исправлена ​​постраничная загрузка избранных и отмеченных элементов
-- немедленно обновлять количество фотографий в дочерней папке, отображаемой после того, как элементы перемещаются в папку, а затем пользователь перехо..."
+Исправлена ошибка:
+- Правильный локатор сирот и код загрузки
 </ru-RU>
 <zh-CN>
-改变：
--如果资源排序顺序颠倒了，则标签或收藏夹列表中的资源也将以相反的顺序出现
 错误修正：
--将其添加为根目录后立即显示文件夹的路径，而不是最初仅显示文件夹名称
--纠正了收藏夹和标签项的分页加载
--将项目移到文件夹后，用户立即导航到父文件夹，然后立即更新其上显示​​的子文件夹的照片计数
--更改其代表图像后立即更新为文件夹显示的缩略图，然后用户导航到父文件夹
--如果用户在查看带有照片的相册时颠倒排序顺序，则崩溃，然后没有手动重新加载相册内容
--使用相册视图顶部的面包屑重新启用了到图库根目录的导航
--纠正相册的隐藏和扩展（最近损坏）
--缩略图正确地重新绘制以切换子相册的标题重复
+-正确的孤立者定位器和加载代码
 </zh-CN>

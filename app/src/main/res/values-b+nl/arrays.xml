@@ -149,11 +149,11 @@
         <item>1.4.0.130</item>
         <item>"Verandering:
                  - Onderzoek naar prestatieverbetering en hopelijk implementatie voor uploadsnelheid van gegevensoverdracht"</item>
+    </string-array>
+    <string-array name="release_history" translatable="true">
         <item>1.4.0.129</item>
         <item>"Bugfix:
                  - Correcte weeszoeker en laadcode"</item>
-    </string-array>
-    <string-array name="release_history" translatable="true">
         <item>1.4.0.128</item>
         <item>"Verandering:
                 - Als de sorteervolgorde van bronnen wordt omgekeerd, worden bronnen binnen een tag of favorietenlijst ook in omgekeerde volgorde weergegeven

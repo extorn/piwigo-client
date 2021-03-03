@@ -149,11 +149,11 @@
         <item>1.4.0.130</item>
         <item>"Modificare:
                  - Analisi del miglioramento delle prestazioni e, si spera, implementazione per la velocità di trasferimento dei dati di caricamento"</item>
+    </string-array>
+    <string-array name="release_history" translatable="true">
         <item>1.4.0.129</item>
         <item>"Risoluzione del problema:
                  - Correggere il localizzatore di orfani e caricare il codice"</item>
-    </string-array>
-    <string-array name="release_history" translatable="true">
         <item>1.4.0.128</item>
         <item>"Modificare:
                 - Se l\'ordinamento delle risorse è invertito, anche le risorse all\'interno di un tag o di un elenco di preferiti verranno visualizzate in ordine inverso
