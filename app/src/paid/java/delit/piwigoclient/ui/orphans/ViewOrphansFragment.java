@@ -152,10 +152,12 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
 
         // Add the newly created album to the view model and switch to it.
         switchViewToShowContentsAndDetailsForAlbum(orphansAlbum);
-        //now the album is open, do we have any orphans to rescue into it? If so, rescue them
-        if(nextOrphansListPageToLoad < 0) {
+        //now the album is open, we should have another page to open (this might be empty, but it won't matter)
+        if(nextOrphansListPageToLoad > 0) {
             actionLoadOrphanedResourceIdsPage(nextOrphansListPageToLoad);
             nextOrphansListPageToLoad = -1;
+        } else {
+
         }
     }
 
@@ -306,13 +308,15 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     private boolean actionRescueOrphans() {
         boolean rescuingOrphans = false;
         synchronized (orphanResourceIds) {
-            orphanRescueTracker = new TaskProgressTracker("Rescue Orphans", orphanResourceIds.size(), new UiUpdatingProgressListener(getUiHelper().getProgressIndicator(), R.string.progress_rescuing_orphans));
-            for (long orphanId : orphanResourceIds) {
-                synchronized (orphanRescueCalls) {
-                    getUiHelper().showProgressIndicator(getString(R.string.progress_rescuing_orphans), 0);
-                    orphanRescueCalls.add(addActiveServiceCall(R.string.progress_rescuing_orphans, new ImageAddToAlbumResponseHandler<>(orphanId, getGalleryModel().getContainerDetails())));
+            if (orphanResourceIds.size() > 0) {
+                orphanRescueTracker = new TaskProgressTracker("Rescue Orphans Task", orphanResourceIds.size(), new UiUpdatingProgressListener(getUiHelper().getProgressIndicator(), R.string.progress_rescuing_orphans));
+                for (long orphanId : orphanResourceIds) {
+                    synchronized (orphanRescueCalls) {
+                        getUiHelper().showProgressIndicator(getString(R.string.progress_rescuing_orphans), 0);
+                        orphanRescueCalls.add(addActiveServiceCall(R.string.progress_rescuing_orphans, new ImageAddToAlbumResponseHandler<>(orphanId, getGalleryModel().getContainerDetails())));
+                    }
+                    rescuingOrphans = true;
                 }
-                rescuingOrphans = true;
             }
         }
         return rescuingOrphans;
