@@ -86,8 +86,6 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
             for (String inputVal : visibleFileExts) {
                 this.visibleFileTypes.add(inputVal.toLowerCase());
             }
-        } else {
-            this.visibleFileTypes = new TreeSet<>();
         }
         this.showFolderContents = true;
         this.fileSortOrder = fileSortOrder;
@@ -130,11 +128,8 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         columnsOfFolders = b.getInt("columnsOfFolders");
         columnsOfFiles = b.getInt("columnsOfFiles");
         showFilenames = b.getBoolean("showFilenames");
-        visibleFileTypes = BundleUtils.getStringSet(b, "visibleFileTypes", new TreeSet<>());
-        if (visibleFileTypes != null && visibleFileTypes.isEmpty()) {
-            visibleFileTypes = null;
-        }
-        visibleMimeTypes = BundleUtils.getStringSet(b, "visibleMimeTypes", new TreeSet<>());
+        visibleFileTypes = BundleUtils.getNullableStringSet(b, "visibleFileTypes", new TreeSet<>());
+        visibleMimeTypes = BundleUtils.getNullableStringSet(b, "visibleMimeTypes", new TreeSet<>());
         initialFolder = b.getParcelable("initialFolder");
         initialSelection = BundleUtils.readSortedSet(b, "initialSelection", new TreeSet<>());
         selectedUriPermissionsForConsumerId = Objects.requireNonNull(b.getString("selectedUriPermissionsForConsumerId"));
@@ -159,11 +154,11 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return fileSortOrder;
     }
 
-    public @NonNull SortedSet<String> getVisibleFileTypes() {
+    public @Nullable SortedSet<String> getVisibleFileTypes() {
         if(visibleFileTypes != null) {
             return new TreeSet<>(visibleFileTypes);
         } else {
-            return new TreeSet<>();
+            return null;//new TreeSet<>();
         }
     }
 
@@ -185,6 +180,8 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
                     wantedExts.add(extToMime.getKey());
                 }
             }
+        } else if(visibleFileTypes == null) {
+            wantedExts.addAll(extToMimeMap.keySet());
         }
         return wantedExts;
     }
@@ -255,7 +252,11 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
 
     public SortedSet<String> getVisibleFileTypesForFileExts(Set<String> keySet) {
         TreeSet<String> fileExts = new TreeSet<>(keySet);
-        fileExts.retainAll(getVisibleFileTypes());
+        SortedSet<String> wantedVisibleExts = getVisibleFileTypes();
+        if(wantedVisibleExts != null) {
+            // if null, we are opting not to filter
+            fileExts.retainAll(wantedVisibleExts);
+        }
         return fileExts;
     }
 }

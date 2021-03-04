@@ -89,16 +89,30 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
     }
 
     public void removeFileTypeToShow(String fileExt) {
-        currentFileTypesToShow.remove(fileExt);
+        if(currentFileTypesToShow != null) {
+            // will be null if no filtering desired
+            currentFileTypesToShow.remove(fileExt);
+        }
     }
 
     public void addFileTypeToShow(String fileExt) {
+        if(currentFileTypesToShow == null) {
+            // if no filtering was wanted before
+            currentFileTypesToShow = new HashSet<>();
+        }
         currentFileTypesToShow.add(fileExt);
     }
 
-    public void clearAndAddAllFileTypesToShow(SortedSet<String> visibleFileTypes) {
-        currentFileTypesToShow.clear();
-        currentFileTypesToShow.addAll(visibleFileTypes);
+    public void clearAndAddAllFileTypesToShow(@Nullable SortedSet<String> visibleFileTypes) {
+        if(currentFileTypesToShow != null) {
+            // filtering is happening
+            currentFileTypesToShow.clear();
+        } else {
+            currentFileTypesToShow = new HashSet<>();
+        }
+        if(visibleFileTypes != null) {
+            currentFileTypesToShow.addAll(visibleFileTypes);
+        }
     }
 
     public static class SavedState {
@@ -210,7 +224,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         List<FolderItem> filteredContent = new ArrayList<>(currentDisplayContent.size());
         //String[] visibleMimes = CollectionUtils.asStringArray(getAdapterPrefs().getVisibleMimeTypes());
         boolean showFolderContainedFiles = getAdapterPrefs().isShowFolderContent();
-        FolderItemFilter filter = new FolderItemFilter(showFolderContainedFiles, currentFileTypesToShow, null);
+        FolderItemFilter filter = new FolderItemFilter(showFolderContainedFiles, currentFileTypesToShow);
         for(int i = currentDisplayContent.size() - 1; i >= 0; i--) {
             FolderItem folderItem = currentDisplayContent.get(i);
             if(filter.accept(folderItem)) {
@@ -226,11 +240,15 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
     private static class FolderItemFilter {
 
         private static final String TAG = "FolderItemFilter";
-        private boolean showFolderContents;
-        private Set<String> visibleFileTypes;
-        private String[] visibleMimeTypes;
+        private final boolean showFolderContents;
+        private final Set<String> visibleFileTypes;
+        private final String[] visibleMimeTypes;
 
-        public FolderItemFilter(boolean showFolderContents, Set<String> visibleFileTypes, String[] visibleMimeTypes) {
+        public FolderItemFilter(boolean showFolderContents, @Nullable Set<String> visibleFileTypes) {
+            this(showFolderContents, visibleFileTypes, null);
+        }
+
+        public FolderItemFilter(boolean showFolderContents, @Nullable Set<String> visibleFileTypes, String[] visibleMimeTypes) {
             this.showFolderContents = showFolderContents;
             this.visibleFileTypes = visibleFileTypes;
             this.visibleMimeTypes = visibleMimeTypes;

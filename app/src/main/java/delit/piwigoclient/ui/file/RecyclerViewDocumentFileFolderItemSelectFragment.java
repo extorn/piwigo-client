@@ -50,6 +50,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
@@ -275,6 +276,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
 
             SortedSet<String> allFilters = getViewPrefs().getVisibleFileTypes();
+            if(allFilters == null) {
+                allFilters = new TreeSet<>();
+            }
             allFilters.addAll(getViewPrefs().getFileTypesForVisibleMimes());
             allFilters.addAll(getViewPrefs().getAcceptableFileExts(getListAdapter().getFileExtsAndMimesInCurrentFolder()));
 

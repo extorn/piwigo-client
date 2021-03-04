@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
@@ -41,10 +42,10 @@ public class FileSelectionNeededEvent extends TrackableRequestEvent implements P
         showFolderContents = ParcelUtils.readBool(in);
         allowFolderSelection = ParcelUtils.readBool(in);
         allowFileSelection = ParcelUtils.readBool(in);
-        visibleFileTypes = ParcelUtils.readStringSet(in);
+        visibleFileTypes = ParcelUtils.readNullableStringSet(in, new HashSet<>());
         fileSortOrder = in.readInt();
         initialSelection = ParcelUtils.readHashSet(in, Uri.class.getClassLoader());
-        visibleMimeTypes = ParcelUtils.readStringSet(in);
+        visibleMimeTypes = ParcelUtils.readNullableStringSet(in, new HashSet<>());
         selectedUriPermissionsForConsumerId = ParcelUtils.readString(in);
         selectedUriPermissionsForConsumerPurpose = ParcelUtils.readString(in);
         selectedUriPermissionsFlags = in.readInt();
