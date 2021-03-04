@@ -1285,7 +1285,7 @@ public class IOUtils {
         return DocumentFile.fromSingleUri(context, uri);
     }
 
-    public static Set<String> getMimeTypesFromFileExts(Set<String> mimeTypes, Set<String> fileExts) {
+    public static Set<String> getMimeTypesFromFileExts(Set<String> mimeTypes, @Nullable Set<String> fileExts) {
         MimeTypeMap map = MimeTypeMap.getSingleton();
         if(fileExts == null) {
             return mimeTypes;
