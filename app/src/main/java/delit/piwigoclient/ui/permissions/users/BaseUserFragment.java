@@ -1,10 +1,6 @@
 package delit.piwigoclient.ui.permissions.users;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -44,12 +40,10 @@ import java.util.Locale;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.SetUtils;
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -92,14 +86,14 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 21/06/17.
  */
 
-public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
+public abstract class BaseUserFragment<F extends BaseUserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
     private static final String CURRENT_GROUP_MEMBERSHIPS = "groupMemberships";
     private static final String CURRENT_DIRECT_ALBUM_PERMISSIONS = "currentDirectAlbumPermissions";
     private static final String CURRENT_INDIRECT_ALBUM_PERMISSIONS = "currentIndirectAlbumPermissions";
     private static final String NEW_DIRECT_ALBUM_PERMISSIONS = "newDirectAlbumPermissions";
     private static final String NEW_INDIRECT_ALBUM_PERMISSIONS = "newIndirectAlbumPermissions";
-    private static final String ARG_USER = "user";
+    protected static final String ARG_USER = "user";
     private static final String AVAILABLE_ALBUMS = "availableAlbums";
     private static final String NEW_USER = "newUser";
     private static final String STATE_FIELDS_EDITABLE = "fieldsAreEditable";
@@ -141,15 +135,6 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
     private HashSet<Group> newGroupMembership;
     private int selectGroupsActionId;
     private long userGetPermissionsCallId;
-
-    public static UserFragment<?,?> newInstance(User user) {
-        UserFragment<?,?> fragment = new UserFragment<>();
-        fragment.setTheme(R.style.Theme_App_EditPages);
-        Bundle args = new Bundle();
-        args.putParcelable(ARG_USER, user);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -414,36 +399,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         onClickMakeUserEditable(user.getId() < 0);
     }
 
-    public void generateDeepLinkEmail(Uri deepLinkUri) {
-        Context context = requireContext();
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain"); // send email as plain text
-        if(user.getEmail() != null) {
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{user.getEmail()});
-        }
-        intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
-        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.piwigo_deep_link_login_email_pattern, deepLinkUri.toString()));
-        context.startActivity(Intent.createChooser(intent, "Email Text"));
-    }
-
-    public void sendDeepLinkToAndroidNow(Uri deepLinkUri) {
-        startActivity(new Intent(Intent.ACTION_VIEW, deepLinkUri));
-    }
-
-    public void sendDeepLinkToClipboard(Uri deepLinkUri) {
-        Context context = requireContext();
-        // copy link
-        ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-        if(mgr != null) {
-            ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, "PiwigologinLink"), deepLinkUri);
-            mgr.setPrimaryClip(clipData);
-            getUiHelper().showShortMsg(R.string.copied_to_clipboard);
-        } else {
-            Logging.logAnalyticEvent(context,"NoClipMgr", null);
-        }
-    }
-
-    User getUser() {
+    protected User getUser() {
         return user;
     }
 
@@ -463,7 +419,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         return currentIndirectAlbumPermissions;
     }
 
-    private static class UserFragmentAction<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.Action<FUIH,F, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse> implements Parcelable {
+    private static class UserFragmentAction<F extends BaseUserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.Action<FUIH,F, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse> implements Parcelable {
 
         private static final String TAG = "UsrFrag";
 
@@ -483,15 +439,15 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
             return 0;
         }
 
-        public static final Creator<UserFragmentAction<?,?>> CREATOR = new Creator<UserFragmentAction<?,?>>() {
+        public static final Creator<UserFragmentAction<?,?>> CREATOR = new Creator<BaseUserFragment.UserFragmentAction<?,?>>() {
             @Override
-            public UserFragmentAction<?,?> createFromParcel(Parcel in) {
-                return new UserFragmentAction<>(in);
+            public BaseUserFragment.UserFragmentAction<?,?> createFromParcel(Parcel in) {
+                return new BaseUserFragment.UserFragmentAction<>(in);
             }
 
             @Override
-            public UserFragmentAction<?,?>[] newArray(int size) {
-                return new UserFragmentAction[size];
+            public BaseUserFragment.UserFragmentAction<?,?>[] newArray(int size) {
+                return new BaseUserFragment.UserFragmentAction[size];
             }
         };
 
@@ -533,12 +489,13 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         }
     }
 
+    protected void onBeforeSave(User newUser) {
+    }
+
     private void onClickSaveUserChanges() {
         newUser = setModelFromFields(new User());
         onClickMakeUserEditable(false);
-        if(BuildConfig.PAID_VERSION) {
-            actionSendDeepLinkToUserIfWanted(newUser);
-        }
+        onBeforeSave(newUser);
         if (newUser.getId() < 0) {
             saveActionIds.add(addActiveServiceCall(R.string.progress_adding_user, new UserAddResponseHandler<>(newUser)));
         } else {
@@ -546,25 +503,6 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
             saveUserPermissionsChangesIfRequired();
         }
 
-    }
-
-    private void actionSendDeepLinkToUserIfWanted(User newUser) {
-        String serverUri = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getServerUrl();
-        String username = newUser.getUserType().equals("guest") ? null : newUser.getUsername();
-        Uri deepLink = ConnectionPreferences.generateDeepLinkSettingsChange(requireContext(), serverUri, username, newUser.getPassword());
-        if(newUser.getPassword() != null) {
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.deep_link_warning_password),
-                    R.string.button_cancel, R.string.button_ok, new CreateDeepLinkWantedListener<>(getUiHelper(), deepLink));
-        } else {
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.deep_link_warning_no_password),
-                    R.string.button_cancel, R.string.button_ok, new CreateDeepLinkWantedListener<>(getUiHelper(), deepLink));
-        }
-    }
-
-    public void onRequestUserActionDeepLinkDestination(Uri deepLink) {
-        getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_information, getString(R.string.deep_link_explanation),
-                R.string.button_this_app, R.string.button_clipboard, R.string.button_email,
-                new DeepLinkQuestionListener<>(getUiHelper(), deepLink));
     }
 
     private HashSet<Group> getLatestGroupMembership() {
@@ -639,7 +577,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         }
     }
 
-    private static class OnDeleteUserAction<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
+    private static class OnDeleteUserAction<F extends BaseUserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
 
         private User user;
 
@@ -664,15 +602,15 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
             return 0;
         }
 
-        public static final Creator<OnDeleteUserAction<?,?>> CREATOR = new Creator<OnDeleteUserAction<?,?>>() {
+        public static final Creator<OnDeleteUserAction<?,?>> CREATOR = new Creator<BaseUserFragment.OnDeleteUserAction<?,?>>() {
             @Override
-            public OnDeleteUserAction<?,?> createFromParcel(Parcel in) {
-                return new OnDeleteUserAction<>(in);
+            public BaseUserFragment.OnDeleteUserAction<?,?> createFromParcel(Parcel in) {
+                return new BaseUserFragment.OnDeleteUserAction<>(in);
             }
 
             @Override
-            public OnDeleteUserAction<?,?>[] newArray(int size) {
-                return new OnDeleteUserAction[size];
+            public BaseUserFragment.OnDeleteUserAction<?,?>[] newArray(int size) {
+                return new BaseUserFragment.OnDeleteUserAction[size];
             }
         };
 
@@ -927,7 +865,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         }
     }
 
-    private static class CustomPiwigoResponseListener<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
+    private static class CustomPiwigoResponseListener<F extends BaseUserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (getParent().isVisible()) {
@@ -970,100 +908,4 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         }
     }
 
-    public static class DeepLinkQuestionListener<F extends UserFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends QuestionResultAdapter<FUIH,F> implements Parcelable {
-
-        private Uri deepLink;
-
-        public DeepLinkQuestionListener(FUIH uiHelper, Uri deepLink) {
-            super(uiHelper);
-            this.deepLink = deepLink;
-        }
-
-        protected DeepLinkQuestionListener(Parcel in) {
-            super(in);
-            deepLink = ParcelUtils.readParcelable(in, Uri.class);
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            ParcelUtils.writeParcelable(dest, deepLink);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        protected void onNegativeResult(AlertDialog dialog) {
-            // Test the link in this app
-            getParent().sendDeepLinkToAndroidNow(deepLink);
-        }
-
-        @Override
-        protected void onPositiveResult(AlertDialog dialog) {
-            getParent().generateDeepLinkEmail(deepLink);
-        }
-
-        @Override
-        protected void onNeutralResult(AlertDialog dialog) {
-            getParent().sendDeepLinkToClipboard(deepLink);
-        }
-
-        public static final Creator<DeepLinkQuestionListener<?,?>> CREATOR = new Creator<DeepLinkQuestionListener<?,?>>() {
-            @Override
-            public DeepLinkQuestionListener<?,?> createFromParcel(Parcel in) {
-                return new DeepLinkQuestionListener<>(in);
-            }
-
-            @Override
-            public DeepLinkQuestionListener<?,?>[] newArray(int size) {
-                return new DeepLinkQuestionListener[size];
-            }
-        };
-    }
-
-    private static class CreateDeepLinkWantedListener<F extends UserFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
-
-        private Uri deepLink;
-
-        public CreateDeepLinkWantedListener(FUIH uiHelper, Uri deepLink) {
-            super(uiHelper);
-            this.deepLink = deepLink;
-        }
-
-        protected CreateDeepLinkWantedListener(Parcel in) {
-            super(in);
-            deepLink = ParcelUtils.readParcelable(in, Uri.class);
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            ParcelUtils.writeParcelable(dest, deepLink);
-        }
-
-        @Override
-        protected void onPositiveResult(AlertDialog dialog) {
-            getParent().onRequestUserActionDeepLinkDestination(deepLink);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<CreateDeepLinkWantedListener<?,?>> CREATOR = new Creator<CreateDeepLinkWantedListener<?,?>>() {
-            @Override
-            public CreateDeepLinkWantedListener<?,?> createFromParcel(Parcel in) {
-                return new CreateDeepLinkWantedListener<>(in);
-            }
-
-            @Override
-            public CreateDeepLinkWantedListener<?,?>[] newArray(int size) {
-                return new CreateDeepLinkWantedListener[size];
-            }
-        };
-    }
 }
