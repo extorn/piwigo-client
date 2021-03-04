@@ -83,12 +83,22 @@ public class ConnectionPreferences {
     }
 
     public static ProfilePreferences getPreferences(String profile, SharedPreferences prefs, Context context) {
+        refreshProfileContentsIfNeeded(profile, prefs, context);
+        return new ProfilePreferences(profile);
+    }
+
+    private static void refreshProfileContentsIfNeeded(String profile, SharedPreferences prefs, Context context) {
         if(profile != null) {
-            if(profile.equals(getActiveConnectionProfileKey(prefs, context)) || getConnectionProfileList(prefs, context).size() == 1) {
+            if(ConnectionPreferences.isProfileActiveNow(profile, prefs, context)) {
                 ConnectionPreferences.clonePreferences(prefs, context, null, profile);
             }
         }
-        return new ProfilePreferences(profile);
+    }
+
+    private static boolean isProfileActiveNow(String profileKey, SharedPreferences prefs, Context context) {
+        String activeKey = getActiveConnectionProfileKey(prefs, context);
+        String trueActiveProfileKey = getActiveProfile().getAbsoluteProfileKey(prefs, context);
+        return profileKey.equals(activeKey) || trueActiveProfileKey.equals(profileKey) || getConnectionProfileList(prefs, context).size() == 1;
     }
 
     public static int getMaxCacheEntrySizeBytes(SharedPreferences prefs, Context context) {
