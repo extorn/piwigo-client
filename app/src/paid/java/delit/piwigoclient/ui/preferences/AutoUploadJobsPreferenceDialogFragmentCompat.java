@@ -65,7 +65,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
     }
 
     private void onDialogNegativeClick() {
-        getPreference().clearActiveState();
+        getPreference().onUserActionCancelChanges();
         // Clear changes from the active state.
     }
 
@@ -73,7 +73,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         if(getPreference().getActiveState().isJobConfigShowing()) {
             return;
         }
-        getPreference().persistActiveState();
+        getPreference().onUserActionSaveChanges();
     }
 
 

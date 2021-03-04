@@ -201,17 +201,16 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
         currentState = myState.activeState;
     }
 
-    public void persistActiveState() {
+    public void onUserActionSaveChanges() {
         String val = CollectionUtils.toCsvList(getActiveState().getUploadJobIds());
 
         if (callChangeListener(val)) {
             // persist any changes
             setValue(val, getActiveState().isJobsHaveChanged());
             // delete any deleted.
-            for(AutoUploadJobConfig deletedJob : getActiveState().deletedItems) {
-                deletedJob.deletePreferences(getContext());
-            }
-            getActiveState().deletedItems.clear();
+            deletePrefsFiles(getActiveState().deletedItems);
+            // this is used to track items added newly
+            getActiveState().addedItems.clear();
         } else {
             // revert the changes.
             getActiveState().undeleteAll();
@@ -219,8 +218,18 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
         EventBus.getDefault().unregister(this);
     }
 
-    public void clearActiveState() {
+    public void onUserActionCancelChanges() {
+        // delete any newly created job prefs files as we're reverting changes
+        deletePrefsFiles(getActiveState().addedItems);
+        // clear the state reference
         currentState = null;
+    }
+
+    private void deletePrefsFiles(ArrayList<AutoUploadJobConfig> addedItems) {
+        for (AutoUploadJobConfig addedJob : addedItems) {
+            addedJob.deletePreferences(getContext());
+        }
+        addedItems.clear();
     }
 
 
@@ -267,6 +276,7 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
         private TrackableEventManager trackableEventManager = new TrackableEventManager();
         private HashSet<AutoUploadJobConfig> currentItems = new HashSet<>();
         private ArrayList<AutoUploadJobConfig> deletedItems = new ArrayList<>();
+        private ArrayList<AutoUploadJobConfig> addedItems = new ArrayList<>();
         private String activeUploadJobConfigSummary;
 
         protected ActiveState(){}
@@ -275,6 +285,7 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
             jobsHaveChanged = in.readByte() != 0;
             currentItems = ParcelUtils.readHashSet(in, getClass().getClassLoader());
             deletedItems = in.createTypedArrayList(AutoUploadJobConfig.CREATOR);
+            addedItems = in.createTypedArrayList(AutoUploadJobConfig.CREATOR);
             activeUploadJobConfigSummary = in.readString();
         }
 
@@ -283,6 +294,7 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
             dest.writeByte((byte) (jobsHaveChanged ? 1 : 0));
             ParcelUtils.writeSet(dest, currentItems);
             dest.writeTypedList(deletedItems);
+            dest.writeTypedList(addedItems);
             dest.writeString(activeUploadJobConfigSummary);
         }
 
@@ -367,6 +379,7 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
 
         public void addJobCfg(AutoUploadJobConfig cfg) {
             currentItems.add(cfg);
+            addedItems.add(cfg);
         }
 
         public void undeleteAll() {
