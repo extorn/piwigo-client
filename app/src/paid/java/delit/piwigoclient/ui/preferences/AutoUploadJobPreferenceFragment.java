@@ -241,7 +241,14 @@ public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFr
     }
 
     protected void updateAvailableFileTypes(Set<String> allowedFileTypes) {
-        MultiSelectListPreference p = (MultiSelectListPreference) findPreference(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key);
+        MultiSelectListPreference p;
+        try {
+            p = (MultiSelectListPreference) findPreference(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key);
+        } catch(IllegalStateException e) {
+            Logging.recordException(e);
+            // this will occur if the user closes the page prematurely.
+            return;
+        }
         String[] availableOptions = allowedFileTypes == null ? new String[0] : allowedFileTypes.toArray(new String[0]);
 
         AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(jobConfigId);
