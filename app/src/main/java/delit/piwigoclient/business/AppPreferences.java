@@ -3,7 +3,9 @@ package delit.piwigoclient.business;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,12 +16,15 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 
+import delit.libs.core.util.Logging;
 import delit.libs.util.ArrayUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.R;
 
 public class AppPreferences {
+    private static final String TAG = "AppPrefs";
+
     public static boolean isAlwaysShowNavButtons(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_app_always_show_nav_buttons_key), context.getResources().getBoolean(R.bool.preference_app_always_show_nav_buttons_default));
     }
@@ -28,17 +33,26 @@ public class AppPreferences {
 
         String folder = prefs.getString(context.getString(R.string.preference_app_default_download_folder_key), null);
         if(folder != null) {
-            Uri uri = Uri.parse(folder);
-            DocumentFile docFile = null;
-            if(uri.getPath() != null) {
-                if ("file".equals(uri.getScheme())) {
-                    docFile = DocumentFile.fromFile(new File(uri.getPath()));
-                } else {
-                    docFile = DocumentFile.fromTreeUri(context, uri);
+            try {
+                Uri uri = Uri.parse(folder);
+                DocumentFile docFile = null;
+                if (uri.getPath() != null) {
+                    File f = new File(uri.getPath());
+                    if ("file".equals(uri.getScheme()) || (f.exists() && f.isDirectory())) {
+                        docFile = DocumentFile.fromFile(new File(uri.getPath()));
+                    } else {
+                        docFile = DocumentFile.fromTreeUri(context, uri);
+                    }
                 }
-            }
-            if(docFile != null && docFile.exists()) {
-                return docFile;
+                if (docFile != null && docFile.exists()) {
+                    return docFile;
+                }
+            } catch(IllegalArgumentException e) {
+                Logging.log(Log.ERROR,TAG, "Unsupported download folder %1$s. Using app default.", folder);
+                Bundle b = new Bundle();
+                b.putString("path", folder);
+                b.putSerializable("error", e);
+                Logging.logAnalyticEvent(context, "UnsupportedDownloadFolder", b);
             }
         }
         return getDefaultDownloadFolder(context);

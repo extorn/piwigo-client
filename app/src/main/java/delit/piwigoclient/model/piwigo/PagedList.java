@@ -146,6 +146,8 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
             ParcelUtils.readIntSet(in, pagesFailedToLoad);
             fullyLoaded = ParcelUtils.readBool(in);
             retrieveItemsInReverseOrder = ParcelUtils.readBool(in);
+            isGrowingOrganically = ParcelUtils.readBool(in);
+            totalPages = in.readInt();
 
             if (pageLoadLock == null) {
                 this.pageLoadLock = new ReentrantLock();
@@ -167,11 +169,15 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(itemType);
         ParcelUtils.writeMap(dest, pagesLoadedIdxToSizeMap);
-        ParcelUtils.writeArrayList(dest, items);
+        //NOTE: I've chosen to write the sorted items here. The basis being that this the order the user expects to see.
+        // technically, this may be right for the classes like piwigo album but not be so good for pagedlist as a standalone.
+        ParcelUtils.writeArrayList(dest, sortedItems);
         ParcelUtils.writeMap(dest, pagesLoadingPageIdxToLoadIdMap);
         ParcelUtils.writeIntSet(dest, pagesFailedToLoad);
         ParcelUtils.writeBool(dest, fullyLoaded);
         ParcelUtils.writeBool(dest, retrieveItemsInReverseOrder);
+        ParcelUtils.writeBool(dest, isGrowingOrganically);
+        dest.writeInt(totalPages);
     }
 
     public void updateMaxExpectedItemCount(int newCount) {

@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.album.drillDownSelect;
 
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.CustomClickListener;
@@ -30,6 +32,7 @@ public class CategoryItemRecyclerViewAdapter<LVA extends CategoryItemRecyclerVie
     private CategoryItem overallRoot;
     private CategoryItem activeItem;
     private NavigationListener navigationListener;
+    private static final String TAG = "CatItemRecViewAdapt";
 
     public CategoryItemRecyclerViewAdapter(CategoryItem root, NavigationListener navigationListener, MSL multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
         super(multiSelectStatusListener, viewPrefs);
@@ -212,7 +215,11 @@ public class CategoryItemRecyclerViewAdapter<LVA extends CategoryItemRecyclerVie
                 getDeleteButton().setVisibility(View.GONE);
             }
             getCheckBox().setVisibility(getAdapterPrefs().isAllowItemSelection() ? View.VISIBLE : View.GONE);
-            getCheckBox().setChecked(getSelectedItems().contains(newItem));
+            try {
+                getCheckBox().setChecked(getSelectedItems().contains(newItem));
+            } catch(IllegalStateException e) {
+                Logging.log(Log.ERROR, TAG, "Unable to select category - either not loaded, or has since been deleted");
+            }
             getCheckBox().setEnabled(isEnabled());
 
             if(newItem.getThumbnailUrl() != null) {
