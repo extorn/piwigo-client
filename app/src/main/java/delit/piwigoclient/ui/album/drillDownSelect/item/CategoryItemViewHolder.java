@@ -15,9 +15,7 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 
-//private static class UriPermissionsViewHolder<VH extends UriPermissionsViewHolder<VH,T,LVA,MSA>, T extends UriPermissionUse, LVA extends UriPermissionsListAdapter<LVA,MSA,VH,T>, MSA extends UriPermissionsListAdapter.UriPermissionsMultiSelectStatusAdapter<MSA,LVA,VH,T>> extends CustomViewHolder<VH, LVA, UriPermissionsAdapterPrefs, T,MSA> {
-//public static class GroupViewHolder<VH extends GroupViewHolder<VH, LVA,MSL>, LVA extends GroupRecyclerViewAdapter<LVA,VH,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,Group>> extends BaseViewHolder<VH, GroupViewAdapterPreferences, Group, LVA,MSL> {
-    public abstract class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH,LVA,MSL>, LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA, CategoryItemViewAdapterPreferences, CategoryItem,VH>> extends BaseViewHolder<VH,CategoryItemViewAdapterPreferences, CategoryItem, LVA,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
+public abstract class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH,LVA,MSL>, LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA, CategoryItemViewAdapterPreferences, CategoryItem,VH>> extends BaseViewHolder<VH,CategoryItemViewAdapterPreferences, CategoryItem, LVA,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
         private ImageView iconView;
         private ResizingPicassoLoader iconViewLoader;
 
@@ -31,6 +29,13 @@ import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPrefer
 
         public ResizingPicassoLoader geticonViewLoader() {
             return iconViewLoader;
+        }
+
+        @Override
+        public void redisplayOldValues(CategoryItem newItem, boolean allowItemDeletion) {
+            if (!iconViewLoader.isImageLoading() && !iconViewLoader.isImageLoaded()) {
+                iconViewLoader.load();
+            }
         }
 
         public abstract void fillValues(CategoryItem newItem, boolean allowItemDeletion);
@@ -67,4 +72,4 @@ import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPrefer
         }
         return true;
     }
-    }
+}
