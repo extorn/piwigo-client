@@ -41,6 +41,8 @@ import delit.piwigoclient.picasso.EnhancedPicassoListener;
 import delit.piwigoclient.ui.PicassoFactory;
 import pl.droidsonroids.gif.GifDrawable;
 
+import static delit.piwigoclient.business.AbstractBaseCustomImageDownloader.CONN_PROFILE_PARAM;
+
 /**
  * Created by gareth on 11/10/17.
  */
@@ -75,7 +77,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, EnhancedPic
     private final SparseIntArray errorDrawables = new SparseIntArray();
     private CustomResponseException lastResponseException;
     private PostProcessorTarget postProcessor;
-
+    private String piwigoConnectionProfileKey = null; // don't override use the default
 
     public PicassoLoader(T loadInto) {
         this(loadInto, null);
@@ -86,6 +88,11 @@ public class PicassoLoader<T extends ImageView> implements Callback, EnhancedPic
         this.listener = listener;
         addErrorDrawable(HttpStatus.SC_UNAUTHORIZED, R.drawable.ic_image_locked_black_240dp);
         addErrorDrawable(HttpStatus.SC_NOT_FOUND, R.drawable.ic_broken_image_black_240dp);
+    }
+
+    public PicassoLoader<T> withPrefsKey(String piwigoConnectionProfileKey) {
+        this.piwigoConnectionProfileKey = piwigoConnectionProfileKey;
+        return this;
     }
 
     public void setUsePlaceholderIfNothingToLoad(boolean usePlaceholderIfNothingToLoad) {
@@ -371,7 +378,12 @@ public class PicassoLoader<T extends ImageView> implements Callback, EnhancedPic
 
 
         if (uriToLoad != null) {
-            return picassoSingleton.load(uriToLoad);
+            if(piwigoConnectionProfileKey != null) {
+                Uri customUri = Uri.parse(uriToLoad).buildUpon().appendQueryParameter(CONN_PROFILE_PARAM, piwigoConnectionProfileKey).build();
+                return picassoSingleton.load(customUri);
+            } else {
+                return picassoSingleton.load(uriToLoad);
+            }
         } else if (fileToLoad != null) {
             return picassoSingleton.load(fileToLoad); // convert to uri to allow using MediaStore data (useful for video thumbnails)
         } else if (resourceToLoad != Integer.MIN_VALUE) {

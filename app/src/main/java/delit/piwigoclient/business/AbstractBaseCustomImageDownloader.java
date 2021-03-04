@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import cz.msebera.android.httpclient.HttpStatus;
@@ -45,6 +46,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
     private static final String TAG = "CustomImageDwnldr";
     public static final String EXIF_WANTED_URI_PARAM = "pwgCliEW";
     public static final String EXIF_WANTED_URI_FLAG = EXIF_WANTED_URI_PARAM + "=true";
+    public static final String CONN_PROFILE_PARAM = "pwgCliCP";
     private final @NonNull Context context;
 
     private final ConnectionPreferences.ProfilePreferences connectionPrefs;
@@ -61,9 +63,17 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
 
     @Override
     public Downloader.Response load(Uri uri, int networkPolicy) throws IOException {
+        String connectProfileKey = uri.getQueryParameter(CONN_PROFILE_PARAM);
+        ConnectionPreferences.ProfilePreferences connectionPrefsToUseThisCall = connectionPrefs;
+        if(connectProfileKey != null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+            if(!Objects.equals(connectionPrefsToUseThisCall.getAbsoluteProfileKey(preferences, context), connectProfileKey)) {
+                connectionPrefsToUseThisCall = ConnectionPreferences.getPreferences(connectProfileKey, preferences, context);
+            }
 
+        }
         ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriStringEncodingPathSegments(context, uri));
-        handler.setCallDetails(context, connectionPrefs, false);
+        handler.setCallDetails(context, connectionPrefsToUseThisCall, false);
         Looper currentLooper = Looper.myLooper();
         if (currentLooper == null || currentLooper.getThread() != Looper.getMainLooper().getThread()) {
             if (BuildConfig.DEBUG) {
@@ -159,12 +169,13 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         Uri.Builder builder = uri.buildUpon().encodedPath(null);
         Set<String> queryParamIds = new HashSet<>(uri.getQueryParameterNames());
 
-        if (queryParamIds.contains(EXIF_WANTED_URI_PARAM)) {
+        if (queryParamIds.contains(EXIF_WANTED_URI_PARAM) || queryParamIds.contains(CONN_PROFILE_PARAM)) {
             builder.clearQuery();
             queryParamIds.remove(EXIF_WANTED_URI_PARAM);
+            queryParamIds.remove(CONN_PROFILE_PARAM);
 
             if(queryParamIds.size() > 0) {
-                readdAnyQueryParameters(c, uri, builder, queryParamIds);
+                readAnyQueryParameters(c, uri, builder, queryParamIds);
             }
 
         }
@@ -175,7 +186,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         return builder.build().toString();
     }
 
-    private void readdAnyQueryParameters(Context c, Uri uri, Uri.Builder builder, Set<String> queryParamIds) {
+    private void readAnyQueryParameters(Context c, Uri uri, Uri.Builder builder, Set<String> queryParamIds) {
         boolean piwigoFragmentAdded = false;
         boolean paramAdded = false;
         for (String param : queryParamIds) {

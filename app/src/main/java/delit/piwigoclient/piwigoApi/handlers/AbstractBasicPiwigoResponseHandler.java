@@ -299,9 +299,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 rerunCall();
             } else if (allowSessionRefreshAttempt
                     && (statusCode == HttpStatus.SC_FORBIDDEN && !triedLoggingInAgain && (error == null || "Invalid security token".equalsIgnoreCase(error.getMessage())))
-                    || (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && (error == null || "Access denied".equalsIgnoreCase(error.getMessage())))) {
+                    || (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain)) {
                 // ensure we ignore this error (if it errors again, we'll capture that one)
                 tryingAgain = acquireNewSessionAndRetryCallIfAcquired();
+                allowSessionRefreshAttempt = false; // don't allow the refresh next time. (to stop loops after removing explicit error text matching - this was to prevent loops for client certificate failure I think).
             }
         }
         if (!tryingAgain) {

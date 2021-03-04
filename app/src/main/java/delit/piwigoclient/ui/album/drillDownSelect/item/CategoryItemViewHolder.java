@@ -48,6 +48,7 @@ public abstract class CategoryItemViewHolder<VH extends CategoryItemViewHolder<V
             iconView = itemView.findViewById(R.id.list_item_icon_thumbnail);
             iconView.setContentDescription("cat thumb");
             iconViewLoader = new ResizingPicassoLoader(getIconView(), this, 0, 0);
+            iconViewLoader.withPrefsKey(adapterPrefs.getConnectionProfileKey());
         }
 
         @Override

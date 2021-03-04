@@ -256,8 +256,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.130</item>
-        <item>"Change:
-                - Paid only: New deep link feature - option to send users a link that will add the uri,username, and password to their copy of the app when saving a user"</item>
+        <item>"Bugfix:
+                - Back button doesn't respond if no file root selected on file selection page
+                - Load of albums and thumbnail display in album selection dialog fixed for background upload jobs
+               Change:
+                - Paid only: New deep link feature - option to send users a link that will add the uri,username, and password to their copy of the app when saving a user
+                - Alteration in retry logic for a 401/403 server response - please let me know if you are notified of more 401/403 errors"</item>
         <item>1.4.0.129</item>
         <item>"Bugfix:
                 - Correct orphan locator and load code"</item>
