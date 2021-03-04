@@ -56,7 +56,8 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
     }
 
     private void initPreference(Context context, AttributeSet attrs) {
-        setPositiveButtonText(R.string.gallery_details_save_button);
+        setNegativeButtonText(R.string.button_cancel);
+        setPositiveButtonText(R.string.button_save);
         currentState = new ActiveState(); // init this to store all user progress.
     }
 

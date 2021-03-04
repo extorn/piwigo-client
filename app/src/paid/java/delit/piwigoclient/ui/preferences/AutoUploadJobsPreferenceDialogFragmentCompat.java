@@ -101,7 +101,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        builder.setNegativeButton(null, null); // remove the cancel button
+        //builder.setNegativeButton(null, null); // remove the cancel button
     }
 
     @NonNull
