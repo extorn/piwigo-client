@@ -212,17 +212,16 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
             // this is used to track items added newly
             getActiveState().addedItems.clear();
         } else {
-            // revert the changes.
-            getActiveState().undeleteAll();
+            onUserActionCancelChanges();
         }
         EventBus.getDefault().unregister(this);
     }
 
     public void onUserActionCancelChanges() {
+        // revert the changes.
+        getActiveState().undeleteAll();
         // delete any newly created job prefs files as we're reverting changes
         deletePrefsFiles(getActiveState().addedItems);
-        // clear the state reference
-        currentState = null;
     }
 
     private void deletePrefsFiles(ArrayList<AutoUploadJobConfig> addedItems) {
