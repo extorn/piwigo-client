@@ -176,7 +176,7 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
 
         Button cancelChangesButton = view.findViewById(R.id.list_action_cancel_button);
         cancelChangesButton.setVisibility(View.VISIBLE);
-        cancelChangesButton.setOnClickListener(v -> onCancelChanges());
+        cancelChangesButton.setOnClickListener(v -> onUserActionCancelFileSelection());
 
         toggleAllSelectionButton = view.findViewById(R.id.list_action_toggle_all_button);
         toggleAllSelectionButton.setVisibility(viewPrefs.isMultiSelectionEnabled() ? View.VISIBLE : View.GONE);
@@ -309,7 +309,7 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
 
     protected abstract void onSelectActionComplete(HashSet<Long> selectedIdsSet);
 
-    protected void onCancelChanges() {
+    protected void onUserActionCancelFileSelection() {
         if (isVisible()) {
             Logging.log(Log.INFO, TAG, "removing from activity immediately on cancel changes action");
             getParentFragmentManager().popBackStackImmediate();

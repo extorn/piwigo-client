@@ -209,7 +209,7 @@ public class GroupSelectFragment<F extends GroupSelectFragment<F,FUIH>,FUIH exte
     }
 
     @Override
-    protected void onCancelChanges() {
+    protected void onUserActionCancelFileSelection() {
         // reset the selection to default.
         getListAdapter().setSelectedItems(null);
         onSelectActionComplete(getListAdapter().getSelectedItemIds());

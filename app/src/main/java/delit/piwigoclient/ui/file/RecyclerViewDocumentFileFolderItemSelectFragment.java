@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,12 +20,10 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.FloatRange;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -53,7 +50,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import delit.libs.core.util.Logging;
-import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.AbstractBreadcrumbsView;
 import delit.libs.ui.view.DocumentFileBreadcrumbsView;
@@ -62,8 +58,6 @@ import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.SafeRunnable;
 import delit.libs.util.progress.ProgressListener;
-import delit.libs.util.progress.TaskProgressListener;
-import delit.libs.util.progress.TaskProgressTracker;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
@@ -71,12 +65,16 @@ import delit.piwigoclient.database.AppSettingsViewModel;
 import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.LongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
+import delit.piwigoclient.ui.file.action.FileExtFilterControlListener;
+import delit.piwigoclient.ui.file.action.FileSelectionCancelledMissingPermissionsListener;
+import delit.piwigoclient.ui.file.action.FolderItemSpanSizeLookup;
+import delit.piwigoclient.ui.file.action.FolderItemTaskListener;
+import delit.piwigoclient.ui.file.action.SharedFilesClonedIntentProcessingTask;
+import delit.piwigoclient.ui.file.action.SharedFilesIntentProcessingTask;
 
 import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
 import static android.view.View.GONE;
@@ -228,36 +226,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         super.onDestroyView();
     }
 
-    private static class FolderItemTaskListener implements TaskProgressListener {
-
-        private UIHelper uiHelper;
-
-        public FolderItemTaskListener(UIHelper uiHelper) {
-            this.uiHelper = uiHelper;
-        }
-
-        @Override
-        public void onProgress(@FloatRange(from = 0, to = 1) double percentageComplete) {
-            int intPerc = (int)Math.rint(percentageComplete * 100);
-            uiHelper.showProgressIndicator(uiHelper.getAppContext().getString(R.string.progress_loading_folder_content), intPerc);
-        }
-
-        @Override
-        public double getUpdateStep() {
-            return 0.01;//1%
-        }
-
-        @Override
-        public void onTaskStarted() {
-            uiHelper.showProgressIndicator(uiHelper.getAppContext().getString(R.string.progress_loading_folder_content), 0);
-        }
-
-        @Override
-        public void onTaskFinished() {
-            uiHelper.hideProgressIndicator();
-        }
-    }
-
     private class FolderItemNavigationListener implements FolderItemRecyclerViewAdapter.NavigationListener {
 
         @Override
@@ -397,7 +365,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         }
     }
 
-    protected void processOpenDocumentsWithoutPermissions(List<FolderItem> itemsShared) {
+    public void processOpenDocumentsWithoutPermissions(List<FolderItem> itemsShared) {
         if(BuildConfig.PAID_VERSION) {
             new SharedFilesClonedIntentProcessingTask(this).executeNow(itemsShared);
         } else {
@@ -407,7 +375,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     }
 
     @NonNull
-    protected List<FolderItem> processOpenDocuments(Intent resultData, ProgressListener listener) {
+    public List<FolderItem> processOpenDocuments(Intent resultData, ProgressListener listener) {
         ClipData clipData = resultData.getClipData();
         List<FolderItem> itemsShared = new ArrayList<>();
         boolean permissionsMissing = false;
@@ -475,7 +443,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         return !allUriFlagsAreSet;
     }
 
-    protected List<FolderItem> processOpenDocumentTree(Intent resultData, ProgressListener listener) {
+    public List<FolderItem> processOpenDocumentTree(Intent resultData, ProgressListener listener) {
         if (resultData.getData() == null) {
             if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
@@ -586,7 +554,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             colsOnScreen = getViewPrefs().getColumnsOfFiles() * getViewPrefs().getColumnsOfFolders();
         }
         GridLayoutManager layoutMan = new GridLayoutManager(getContext(), colsOnScreen);
-        layoutMan.setSpanSizeLookup(new SpanSizeLookup(getListAdapter(), colsOnScreen));
+        layoutMan.setSpanSizeLookup(new FolderItemSpanSizeLookup(getListAdapter(), colsOnScreen));
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(getListAdapter());
     }
@@ -677,7 +645,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         int requiredFolderPermissions = getNecessaryFolderPermissions();
         boolean isNeedWrite = IOUtils.needsWritePermission(requiredFolderPermissions);
         for (UriPermission perm : permissions) {
-            if ((isNeedWrite && perm.isWritePermission()) || perm.isReadPermission()) {
+            // don't show roots we don't yet have write permission for
+            if (perm.isWritePermission() || (!isNeedWrite && perm.isReadPermission())) {
                 try {
                     DocumentFile documentFile = DocumentFile.fromTreeUri(requireContext(), perm.getUri());
                     String rootName;
@@ -723,12 +692,27 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             }
         }
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFolderItems(new ArrayList<>(selectedItems)));
 
-        // now pop this screen off the stack.
-        if (isVisible()) {
-            Logging.log(Log.INFO, TAG, "removing from activity immediately");
-            getParentFragmentManager().popBackStackImmediate();
+        int removedCount = 0;
+        for (Iterator<FolderItem> iterator = selectedItems.iterator(); iterator.hasNext(); ) {
+            FolderItem selectedItem = iterator.next();
+            Uri uri = selectedItem.getContentUri();
+            if (!IOUtils.appHoldsAllUriPermissionsForUri(getContext(), uri, getViewPrefs().getSelectedUriPermissionFlags())) {
+                iterator.remove();
+                removedCount++;
+            }
+        }
+        if(removedCount > 0) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.selected_files_missing_permissions_warning_message_pattern), new FileSelectionCancelledMissingPermissionsListener<>(getUiHelper()));
+        } else {
+
+            EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFolderItems(new ArrayList<>(selectedItems)));
+
+            // now pop this screen off the stack.
+            if (isVisible()) {
+                Logging.log(Log.INFO, TAG, "removing from activity immediately");
+                getParentFragmentManager().popBackStackImmediate();
+            }
         }
     }
 
@@ -746,65 +730,11 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     protected void rerunRetrievalForFailedPages() {
     }
 
-    private static class FileExtFilterControlListener implements FilterControl.FilterListener {
-
-        private final FolderItemRecyclerViewAdapter<?,FolderItem,?,?> listAdapter;
-
-        public FileExtFilterControlListener(FolderItemRecyclerViewAdapter<?,FolderItem,?,?> adapter) {
-            this.listAdapter = adapter;
-        }
-
-        @Override
-        public void onFilterUnchecked(Context context, String fileExt) {
-            listAdapter.removeFileTypeToShow(fileExt);
-        }
-
-        @Override
-        public void onFilterChecked(Context context, String fileExt) {
-            listAdapter.addFileTypeToShow(fileExt);
-        }
-
-        @Override
-        public void onFiltersChanged(Context context, boolean filterHidden, boolean filterShown) {
-            listAdapter.refreshContentView(context);
-        }
-    }
-
     @Override
-    public void onCancelChanges() {
+    public void onUserActionCancelFileSelection() {
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFiles(getViewPrefs().getInitialSelection()));
-        super.onCancelChanges();
-    }
-
-    private static class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
-
-        private final int spanCount;
-        private final FolderItemRecyclerViewAdapter<?,FolderItem,?,?> viewAdapter;
-
-        public SpanSizeLookup(FolderItemRecyclerViewAdapter<?,FolderItem,?,?> viewAdapter, int spanCount) {
-            this.viewAdapter = viewAdapter;
-            this.spanCount = spanCount;
-        }
-
-        @Override
-        public int getSpanSize(int position) {
-            try {
-                int itemType = viewAdapter.getItemViewType(position);
-                switch (itemType) {
-                    case FolderItemRecyclerViewAdapter.VIEW_TYPE_FOLDER:
-                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFolders();
-                    case FolderItemRecyclerViewAdapter.VIEW_TYPE_FILE:
-                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFiles();
-                    default:
-                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFiles();
-                }
-            } catch (IndexOutOfBoundsException e) {
-                Logging.recordException(e);
-                //TODO why does this occur? How?
-                return 1;
-            }
-        }
+        super.onUserActionCancelFileSelection();
     }
 
     private class RootFolderSelectionListener implements AdapterView.OnItemSelectedListener {
@@ -857,163 +787,11 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         }
     }
 
-    private static class SharedFilesClonedIntentProcessingTask<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends OwnedSafeAsyncTask<F, List<FolderItem>, Integer, List<FolderItem>> implements ProgressListener {
-
-
-        public SharedFilesClonedIntentProcessingTask(F parent) {
-            super(parent);
-            withContext(parent.requireContext());
-        }
-
-        public AsyncTask<List<FolderItem>, Integer, List<FolderItem>> executeNow(List<FolderItem> param) {
-            return super.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, param);
-        }
-
-        @Override
-        protected void onPreExecuteSafely() {
-            super.onPreExecuteSafely();
-            getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),0);
-        }
-
-        @Override
-        public Context getContext() {
-            return getOwner().requireContext();
-        }
-
-        @Override
-        protected List<FolderItem> doInBackgroundSafely(List<FolderItem> ... params) {
-            List<FolderItem> itemsShared = params[0];
-            List<FolderItem> copiedItemsShared = new ArrayList<>(itemsShared.size());
-            TaskProgressTracker progressTracker = new TaskProgressTracker("files cloning",  100,this);
-            TaskProgressTracker copyProgressTracker = progressTracker.addSubTask("copying files", itemsShared.size(), 80);
-            for(FolderItem item : itemsShared) {
-                DocumentFile sharedFilesFolder = IOUtils.getSharedFilesFolder(getContext());
-
-                DocumentFile tmpFile = IOUtils.getTmpFile(sharedFilesFolder, IOUtils.getFileNameWithoutExt(item.getName()), item.getExt(), item.getMime());
-                try {
-                    Uri newUri = IOUtils.copyDocumentUriDataToUri(getContext(), item.getContentUri(), tmpFile.getUri());
-                    copiedItemsShared.add(new FolderItem(newUri));
-                } catch (IOException e) {
-                    Logging.log(Log.ERROR, TAG, "Error copying uris");
-                    Logging.recordException(e);
-                    e.printStackTrace();
-                } finally {
-                    copyProgressTracker.incrementWorkDone(1);
-                }
-            }
-            TaskProgressTracker cacheProgressTracker = progressTracker.addSubTask("caching files information", copiedItemsShared.size(), 20);
-            itemsShared.clear();
-            FolderItem.cacheDocumentInformation(getContext(), copiedItemsShared, cacheProgressTracker);
-            return copiedItemsShared;
-        }
-
-        @Override
-        protected void onProgressUpdateSafely(Integer... progress) {
-            super.onProgressUpdateSafely(progress);
-            try {
-                getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_copying_imported_files),progress[0]);
-            } catch(NullPointerException e) {
-                Logging.log(Log.ERROR, TAG, "Unable to report progress. Likely not attached");
-                Logging.recordException(e);
-            }
-
-        }
-
-        @Override
-        protected void onPostExecuteSafely(List<FolderItem> folderItems) {
-            if(folderItems != null) {
-                if (folderItems.size() == 1 && folderItems.get(0).isFolder()) {
-                    FolderItem item = folderItems.get(0);
-                    getOwner().addRootFolder(item.getDocumentFile());
-                } else {
-                    getOwner().getListAdapter().addItems(getOwner().requireContext(), folderItems);
-                    getOwner().selectAllItems();
-                }
-            }
-            getOwner().getUiHelper().hideProgressIndicator();
-            getOwner().getFileExtFilters().setEnabled(true);
-        }
-
-        @Override
-        public void onProgress(double percent) {
-            publishProgress((int)Math.rint(percent*100));
-        }
-
-        @Override
-        public double getUpdateStep() {
-            return 0.01;//1%
-        }
-    }
-
-    protected View getFileExtFilters() {
+    public View getFileExtFilters() {
         return fileExtFilters;
     }
 
-    private static class SharedFilesIntentProcessingTask<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends OwnedSafeAsyncTask<F, Void, Integer, List<FolderItem>> implements ProgressListener {
-
-
-        private final Intent intent;
-
-        public SharedFilesIntentProcessingTask(F parent, Intent intent) {
-             super(parent);
-             this.intent = intent;
-             withContext(parent.requireContext());
-        }
-
-        @Override
-        protected void onPreExecuteSafely() {
-            super.onPreExecuteSafely();
-            getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),0);
-        }
-
-        @Override
-        protected List<FolderItem> doInBackgroundSafely(Void... nothing) {
-            if (intent.getClipData() != null) {
-                return getOwner().processOpenDocuments(intent, this);
-            } else {
-                return getOwner().processOpenDocumentTree(intent, this);
-            }
-        }
-
-        @Override
-        protected void onProgressUpdateSafely(Integer... progress) {
-            super.onProgressUpdateSafely(progress);
-            try {
-                getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),progress[0]);
-            } catch(NullPointerException e) {
-                Logging.log(Log.ERROR, TAG, "Unable to report progress. Likely not attached");
-                Logging.recordException(e);
-            }
-
-        }
-
-        @Override
-        protected void onPostExecuteSafely(List<FolderItem> folderItems) {
-            if(folderItems != null) {
-                if (folderItems.size() == 1 && folderItems.get(0).isFolder()) {
-                    FolderItem item = folderItems.get(0);
-                    getOwner().addRootFolder(item.getDocumentFile());
-                } else if(folderItems.size() > 0) {
-                    getOwner().getListAdapter().addItems(getOwner().requireContext(), folderItems);
-                    getOwner().selectAllItems();
-                }
-            }
-            getOwner().getUiHelper().hideProgressIndicator();
-            getOwner().getFileExtFilters().setEnabled(true);
-        }
-
-        @Override
-        public void onProgress(@FloatRange(from = 0, to = 1) double percent) {
-            publishProgress((int) Math.rint(percent * 100));
-        }
-
-        @Override
-        public double getUpdateStep() {
-            return 0.01;//1%
-        }
-    }
-
-    protected void addRootFolder(@NonNull DocumentFile docFile) {
+    public void addRootFolder(@NonNull DocumentFile docFile) {
         String rootPathStr = IOUtils.getDocumentFilePath(requireContext(), docFile);
         folderRootsAdapter.add(rootPathStr, docFile);
         folderRootFolderSpinner.setSelection(folderRootsAdapter.getCount() - 1); // calls listener because it's a definite change.
@@ -1060,50 +838,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
                 }
             }
         }
-    }
-
-    private static class TakeCopyOfFilesActionListener<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
-        private final List<FolderItem> itemsShared;
-
-        public TakeCopyOfFilesActionListener(FUIH uiHelper, List<FolderItem> itemsShared) {
-            super(uiHelper);
-            this.itemsShared = itemsShared;
-        }
-
-        protected TakeCopyOfFilesActionListener(Parcel in) {
-            super(in);
-            itemsShared = null;// it isn't sensible to retain these items if there isn't persistent permissions
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<TakeCopyOfFilesActionListener> CREATOR = new Creator<TakeCopyOfFilesActionListener>() {
-            @Override
-            public TakeCopyOfFilesActionListener createFromParcel(Parcel in) {
-                return new TakeCopyOfFilesActionListener(in);
-            }
-
-            @Override
-            public TakeCopyOfFilesActionListener[] newArray(int size) {
-                return new TakeCopyOfFilesActionListener[size];
-            }
-        };
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-                getUiHelper().getParent().processOpenDocumentsWithoutPermissions(itemsShared);
-            }
-        }
-
     }
 
 }

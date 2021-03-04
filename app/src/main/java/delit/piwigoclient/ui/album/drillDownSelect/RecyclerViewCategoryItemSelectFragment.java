@@ -316,10 +316,10 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
     }
 
     @Override
-    public void onCancelChanges() {
+    public void onUserActionCancelFileSelection() {
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
         EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId()));
-        super.onCancelChanges();
+        super.onUserActionCancelFileSelection();
     }
 
     @Override

@@ -990,11 +990,12 @@ SOFTWARE.
     <string name="create_email_using_app">Create an Email using app</string>
     <string name="open_files">Open Files in app</string>
     <string name="files_unavailable_to_download_removed_pattern">Your selection contained files that could not be processed. These %1$d files have been ignored. To share a video file, it must be fully cached locally first.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"All one-time user hints will be shown again"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">All one-time user hints will be shown again</string>
     <string name="alert_server_uri_response_pattern" translatable="false">%1$s\n%2$s</string>
     <string name="delete_uploaded_files_title">Delete uploaded files</string>
     <string name="system_file_selector_label">system file selection</string>
     <string name="preference_uri_consumer_description_pattern">Preference: %1$s</string>
+    <string name="selected_files_missing_permissions_warning_message_pattern">Required permissions are no longer available for some of the files selected. File selection cancelled.</string>
     <string name="missing_permissions_warning_message_pattern">"Since the last time this app was opened, file permissions required by the following parts of the app have been removed\n\n%1$s\n\nPlease select new permissions for these settings to keep things working as expected."</string>
     <string name="folder_selection_title">Select Folder</string>
     <string name="files_selection_title">Select Files</string>
@@ -1097,4 +1098,5 @@ App Install UUID: %5$s
     <string name="button_this_app">This app</string>
     <string name="connection_profile_amended_with_new_details_pattern">The server connection profile\n %1$s\n has been created and or amended with new details</string>
     <string name="alert_create_or_update_server_connection_details">Would you like to create or update the app Piwigo server connection details?</string>
+    <string name="alert_error_unable_to_choose_folder_no_uri_permissions">The app cannot find necessary file permissions for the folder you selected. Please select another. If it is a root, please delete and re-add the root, then select again.</string>
 </resources>

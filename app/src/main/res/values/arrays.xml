@@ -259,7 +259,12 @@
         <item>"Bugfix:
                 - Back button doesn't respond if no file root selected on file selection page
                 - Load of albums and thumbnail display in album selection dialog fixed for background upload jobs
+                - old unsaved background upload job configuration details not deleted after user cancels creation
+                - only show roots we have write permission for if selecting a folder requiring it
                Change:
+                - path details shown for selected folder preferences
+                - If 'OK' clicked on folder selection with no folder selected, current folder presumed selected
+                - Show all child files when selecting a folder to make it easier to see location on the device
                 - Paid only: New deep link feature - option to send users a link that will add the uri,username, and password to their copy of the app when saving a user
                 - Alteration in retry logic for a 401/403 server response - please let me know if you are notified of more 401/403 errors"</item>
         <item>1.4.0.129</item>
