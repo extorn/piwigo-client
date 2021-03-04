@@ -146,11 +146,14 @@
                 * Forse una riscrittura completa del processo di caricamento in quanto non si presta a essere migliorato iterativamente
                 * Possibilmente una riscrittura completa dell\'app con un focus sulla semplicità per la navigazione utente generale inizialmente"</item>
         
-        <item>1.4.0.131</item>
+        <item>1.4.0.132</item>
         <item>"Modificare:
                  - Analisi del miglioramento delle prestazioni e, si spera, implementazione per la velocità di trasferimento dei dati di caricamento"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.131</item>
+        <item>"Risoluzione del problema:
+                 - Alcuni bug che gli utenti hanno sperimentato questo causato un incidente"</item>
         <item>1.4.0.130</item>
         <item>"Risoluzione del problema:
                 - Pulsante Indietro non risponde se nessuna root file selezionata sulla pagina Selezione file

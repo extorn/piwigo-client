@@ -146,11 +146,14 @@
                 * Posiblemente una reescritura completa del proceso de carga, ya que no se presta a una mejora iterativa
                 * Posiblemente una reescritura completa de la aplicación con un enfoque en la simplicidad para la navegación general del usuario inicialmente"</item>
         
-        <item>1.4.0.131</item>
+        <item>1.4.0.132</item>
         <item>"Cambio:
                  - Investigación de mejora del rendimiento y, con suerte, implementación para la velocidad de transferencia de datos de carga"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.131</item>
+        <item>"Arreglo del fallo:
+                 - Algunos usuarios los usuarios han experimentado que causó un choque"</item>
         <item>1.4.0.130</item>
         <item>"Arreglo del fallo:
                 - Botón Atrás no responde si no se selecciona ningún archivo Root seleccionado en la página de selección de archivos
