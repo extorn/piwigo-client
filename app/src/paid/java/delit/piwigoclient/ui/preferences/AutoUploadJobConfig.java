@@ -80,7 +80,7 @@ public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable
 
     public String getUploadFromFolderName(Context c) {
         DocumentFile uploadFromFolder = getLocalFolderToMonitor(c);
-        return uploadFromFolder == null ? "???" : uploadFromFolder.getName();
+        return uploadFromFolder == null ? "???" : IOUtils.getDocumentFilePath(c, uploadFromFolder);
     }
 
     public String getSummary(SharedPreferences appPrefs, Context c) {

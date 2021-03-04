@@ -664,6 +664,9 @@ public class IOUtils {
         List<String> itemPathSegments = itemUri.getPathSegments();
         String rootTree = getTreeBaseFromPathElements(rootPathSegments);
         String itemTree = getTreeBaseFromPathElements(itemPathSegments);
+        if(rootTree.equals(itemTree)) {
+            return rootedDocFile;
+        }
         String extraRoot = rootTree.replaceAll("^" + itemTree, "");
         if (rootTree.equals(extraRoot)) {
             // The item is from a more specific root or has different root entirely than that currently offered.
@@ -906,7 +909,7 @@ public class IOUtils {
      *
      * @param context
      * @param uri uri to check against our accessible roots
-     * @return @code{null} if there is no accessible root for this uri less specific than itself
+     * @return the uri or a parent uri if one is available
      */
     private static @Nullable Uri getRootUriForUri(@NonNull Context context, @Nullable Uri uri) {
         Uri rootUri = null;
@@ -915,10 +918,11 @@ public class IOUtils {
             if(accessibleRootFile != null) {
                 // the file is tied to a root we have access to.
                 DocumentFile accessibleRoot = IOUtils.getRootDocFile(accessibleRootFile);
-                if (accessibleRoot != null && !accessibleRoot.getUri().equals(uri)) {
-                    rootUri = Objects.requireNonNull(accessibleRoot).getUri();
-                    if (rootUri.equals(uri)) {
-                        rootUri = null;
+                if(accessibleRoot != null) {
+                    if(accessibleRoot.getUri().equals(uri)) {
+                        return uri;
+                    } else {
+                        rootUri = accessibleRoot.getUri();
                     }
                 }
             }
@@ -1434,10 +1438,20 @@ public class IOUtils {
         return totalBytesRead;
     }
 
-    public static String getDocumentFilePath(@NonNull Context context, @NonNull DocumentFile documentFile) {
+
+    public static @NonNull String getDocumentFilePath(@NonNull Context context, @NonNull DocumentFile documentFile) {
+        String val = getDocumentFilePath(context, documentFile.getUri());
+        if(val == null) {
+            //FIXME do something better.
+            return "?/"+documentFile.getName();
+        }
+        return val;
+    }
+
+    public static String getDocumentFilePath(@NonNull Context context, @NonNull Uri uri) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             try {
-                List<String> path = DocumentsContract.findDocumentPath(context.getContentResolver(), documentFile.getUri()).getPath();
+                List<String> path = DocumentsContract.findDocumentPath(context.getContentResolver(), uri).getPath();
                 if(path.size() == 1) {
                     return path.get(0);
                 } else {
@@ -1452,20 +1466,15 @@ public class IOUtils {
                     return sb.toString();
                 }
             } catch (FileNotFoundException e) {
-                Logging.log(Log.WARN,TAG, "Unable to find file from uri %1$s", documentFile);
+                Logging.log(Log.WARN,TAG, "Unable to find file from uri %1$s", uri);
             }
         }
         // do what we can manually.
-        List<String> pathSegments = documentFile.getUri().getPathSegments();
+        List<String> pathSegments = uri.getPathSegments();
         if(pathSegments.isEmpty()) {
-            return getDocumentFilePathFromName(documentFile.getName());
+            return null;
         } else {
             return pathSegments.get(pathSegments.size() - 1);
         }
-    }
-
-    private static String getDocumentFilePathFromName(String name) {
-        //FIXME do something better.
-        return "?/"+name;
     }
 }

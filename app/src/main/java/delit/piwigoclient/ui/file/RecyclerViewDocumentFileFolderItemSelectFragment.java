@@ -714,7 +714,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         LVA listAdapter = getListAdapter();
         HashSet<FolderItem> selectedItems = listAdapter.getSelectedItems();
-        if (selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
+        if (selectedItems.isEmpty() && (getViewPrefs().isAllowItemSelection() && getViewPrefs().isAllowFolderSelection()) && !getViewPrefs().isMultiSelectionEnabled()) {
             selectedItems = new HashSet<>(1);
             if(listAdapter.getActiveFolder() != null) {
                 FolderItem folderItem = new FolderItem(listAdapter.getActiveRootUri(), listAdapter.getActiveFolder());

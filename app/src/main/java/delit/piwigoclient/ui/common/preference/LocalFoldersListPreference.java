@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,10 +59,27 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
         if (summaryPattern == null) {
             return null;
         }
-        String albumUri = getValue();
-        if (albumUri != null) {
-
-            String albumName = IOUtils.getFilename(getContext(), Uri.parse(albumUri));
+        String albumUriStr = getValue();
+        if (albumUriStr != null) {
+            String albumName;
+            Uri albumUri = Uri.parse(albumUriStr);
+            if("file".equals(albumUri.getScheme())) {
+                String albumPath = albumUri.getPath();
+                File appFolder = getContext().getExternalFilesDir(null);
+                if(albumPath.startsWith(appFolder.getPath())) {
+                    albumName = albumPath.replaceFirst("^\\Q"+appFolder.getPath()+"\\E", ".");
+                } else {
+                    albumName = IOUtils.getFilename(getContext(), albumUri);
+                }
+            } else {
+                try {
+                    albumName = IOUtils.getDocumentFilePath(getContext(), albumUri);
+                } catch (IllegalArgumentException e) {
+                    Logging.log(Log.ERROR, TAG, "Unparseable file path %1$s", albumUri);
+                    Logging.recordException(e);
+                    albumName = IOUtils.getFilename(getContext(), albumUri);
+                }
+            }
             return String.format(super.getSummary().toString(), albumName);
         }
         return getContext().getString(R.string.local_folder_preference_summary_default);
@@ -98,6 +116,7 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
         if(albumUri != null && !hasPermissionForUri(Uri.parse(albumUri))) {
             // set a new value without triggering a total reload of the preference (it may be mid binding).
             persistString(null);
+            Logging.log(Log.ERROR, TAG, "Clearing album Uri we no longer have the correct permissions for: %1$s", albumUri);
             //TODO should I request a refresh of the summary ? Yes!
         }
         return getCurrentValue();
