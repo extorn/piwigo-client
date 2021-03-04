@@ -156,6 +156,17 @@ public class ParcelUtils {
             dest.writeStringList(new ArrayList<>(entries));
         }
     }
+    public static <T extends Set<String>> T readNullableStringSet(@NonNull Parcel in, @NonNull T dest) {
+        List<String> rawData = in.createStringArrayList();
+        dest.clear();
+        if(rawData == null) {
+            return null;
+        }
+        if (rawData != null && rawData.size() > 0) {
+            dest.addAll(rawData);
+        }
+        return dest;
+    }
 
     public static <T extends Set<String>> T readStringSet(@NonNull Parcel in, @NonNull T dest) {
         List<String> rawData = in.createStringArrayList();
