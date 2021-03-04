@@ -806,6 +806,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     private class RootFolderSelectionListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            setBackButtonHandlerEnabled(false); // will be re-enabled if needed once item select finishes.
             if(listViewStates != null) {
                 listViewStates.clear();
             }
