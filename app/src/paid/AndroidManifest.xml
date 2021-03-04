@@ -14,16 +14,14 @@
         <activity
             tools:node="merge"
             android:name=".ui.PreferencesActivity">
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:scheme="https"
                     android:host="api-8938561204297001672-604498.firebaseapp.com"
-                    android:pathPrefix="/config" />
+                    android:path="/config"/>
             </intent-filter>
         </activity>
         <activity

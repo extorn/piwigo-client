@@ -66,6 +66,7 @@
               android:name="firebase_performance_logcat_enabled"
               android:value="true" />
           -->
+
         <meta-data
             android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
             android:value="true" />

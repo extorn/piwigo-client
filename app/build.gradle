@@ -31,8 +31,8 @@ android {
 
     defaultConfig {
         //NB: non standard fields must be defined (def)
-        versionCode 378
-        versionName "1.4.0.129"
+        versionCode 379
+        versionName "1.4.0.130"
         applicationId "delit.piwigoclient"
 
         def latestPiwigoClientWsExtsPluginVersion = "1.0.17"
@@ -69,6 +69,7 @@ android {
         }
         debug {
             versionNameSuffix = "-DEBUG"
+            signingConfig signingConfigs.config
             /*
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
