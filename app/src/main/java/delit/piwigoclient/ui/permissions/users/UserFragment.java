@@ -49,6 +49,7 @@ import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.SetUtils;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -537,7 +538,9 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
     private void onClickSaveUserChanges() {
         newUser = setModelFromFields(new User());
         onClickMakeUserEditable(false);
-        actionSendDeepLinkToUserIfWanted(newUser);
+        if(BuildConfig.PAID_VERSION) {
+            actionSendDeepLinkToUserIfWanted(newUser);
+        }
         if (newUser.getId() < 0) {
             saveActionIds.add(addActiveServiceCall(R.string.progress_adding_user, new UserAddResponseHandler<>(newUser)));
         } else {
