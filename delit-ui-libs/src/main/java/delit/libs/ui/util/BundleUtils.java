@@ -56,21 +56,28 @@ public class BundleUtils {
      * @return T if dest is not null, HashSet if destination set is null and key is in the bundle, otherwise null
      */
     public static @Nullable
-    <T extends Set<String>> T getStringSet(Bundle bundle, String key, @Nullable T dest) {
+    <T extends Set<String>> T getNullableStringSet(Bundle bundle, String key, @Nullable T dest) {
         try {
             ArrayList<String> data = bundle.getStringArrayList(key);
-            Set<String> retVal = dest;
-            if (data != null) {
-                if (retVal == null) {
-                    retVal = new HashSet<>(data.size());
-                }
-                retVal.addAll(data);
+            if (data == null) {
+                return null;
             }
+            Set<String> retVal = dest;
+            if (retVal == null) {
+                retVal = new HashSet<>(data.size());
+            }
+            retVal.addAll(data);
             return (T) retVal;
         } catch (RuntimeException e) {
             Logging.recordException(e);
             return null;
         }
+    }
+
+    public static @NonNull
+    <T extends Set<String>> T getStringSet(Bundle bundle, String key, @Nullable T dest) {
+        getNullableStringSet(bundle, key, dest);
+        return dest;
     }
 
     public static void putStringSet(Bundle bundle, String key, Set<String> data) {
