@@ -39,4 +39,8 @@
     <string name="orphans_found_on_server_pattern">Wezen gevonden:%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Er zijn wezen aanwezig. Om deze te bekijken, moeten we een privémap maken die alleen toegankelijk is voor beheerders. U kunt het album daarna op elk moment verwijderen. Als u het niet eens bent, moet u deze zelf op de server verwerken.</string>
     <string name="progress_rescuing_orphans">Wezen redden</string>
+    <string name="piwigo_deep_link_login_email_pattern">Gebruik de onderstaande link om uw kopie van de PIWIGO-client-app te configureren met de server Uri, gebruikersnaam en het wachtwoord om u op weg te helpen.\n\n%1$s</string>
+    <string name="deep_link_explanation">Selecteer een bestemming voor de link.\n\n\'Deze app \' maakt een nieuw profiel in deze app met deze inloggegevens waarmee u de functie kunt testen</string>
+    <string name="deep_link_warning_password">Wilt u een diepe link maken die kan worden gebruikt om een kopie van deze app met de servergegevens te configureren?\n\nHet idee is om het gemakkelijker te maken voor iemand om aan de slag te gaan.\n\nDeze functie is niet beschikbaar in de gratis versie.</string>
+    <string name="deep_link_warning_no_password">De huidige diepe link heeft geen wachtwoord. Als u het wachtwoord wilt toevoegen, moet u een nieuw wachtwoord voor deze gebruiker instellen.\n\nMaak de diepe link zonder wachtwoord?</string>
 </resources>

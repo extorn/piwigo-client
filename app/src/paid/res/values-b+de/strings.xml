@@ -39,4 +39,8 @@
     <string name="orphans_found_on_server_pattern">Gefundene Waisen:%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Es sind Waisenkinder anwesend. Um diese anzuzeigen, müssen wir einen privaten Ordner erstellen, auf den nur Administratoren zugreifen können. Sie können das Album danach jederzeit löschen. Wenn Sie nicht einverstanden sind, müssen Sie diese auf dem Server selbst verarbeiten.</string>
     <string name="progress_rescuing_orphans">Waisen retten</string>
+    <string name="piwigo_deep_link_login_email_pattern">Bitte benutzen Sie den untenstehenden Link, um Ihre Kopie der Piwigo Client-App mit dem Server-URI, dem Benutzernamen und dem Kennwort zu konfigurieren, um Sie zu beginnen.\n\n%1$s</string>
+    <string name="deep_link_explanation">Bitte wählen Sie ein Ziel für den Link.\n\n\'Diese App \' erstellt in dieser App ein neues Profil mit diesen Anmeldeinformationen, mit denen Sie die Funktion testen können</string>
+    <string name="deep_link_warning_password">Möchten Sie einen tiefen Link erstellen, mit dem Sie eine Kopie dieser App mit den Serverdetails konfigurieren können?\n\nDie Idee ist, dass jemand den Einstieg erleichtert.\n\nDiese Funktion ist in der freien Version nicht verfügbar.</string>
+    <string name="deep_link_warning_no_password">Der aktuelle tiefe Link hat kein Passwort. Wenn Sie das Passwort hinzufügen möchten, müssen Sie ein neues Passwort für diesen Benutzer festlegen.\n\nErstellen Sie den tiefen Link ohne Passwort?</string>
 </resources>

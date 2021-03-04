@@ -422,7 +422,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{user.getEmail()});
         }
         intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
-        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.piwigo_deep_link_login_email_pattern, deepLinkUri));
+        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.piwigo_deep_link_login_email_pattern, deepLinkUri.toString()));
         context.startActivity(Intent.createChooser(intent, "Email Text"));
     }
 
@@ -432,16 +432,14 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
 
     public void sendDeepLinkToClipboard(Uri deepLinkUri) {
         Context context = requireContext();
-        if(user.getEmail() == null || user.getEmail().isEmpty()) {
-            // copy link
-            ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            if(mgr != null) {
-                ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, "PiwigologinLink"), deepLinkUri);
-                mgr.setPrimaryClip(clipData);
-                getUiHelper().showShortMsg(R.string.copied_to_clipboard);
-            } else {
-                Logging.logAnalyticEvent(context,"NoClipMgr", null);
-            }
+        // copy link
+        ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        if(mgr != null) {
+            ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, "PiwigologinLink"), deepLinkUri);
+            mgr.setPrimaryClip(clipData);
+            getUiHelper().showShortMsg(R.string.copied_to_clipboard);
+        } else {
+            Logging.logAnalyticEvent(context,"NoClipMgr", null);
         }
     }
 
@@ -555,10 +553,11 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         String username = newUser.getUserType().equals("guest") ? null : newUser.getUsername();
         Uri deepLink = ConnectionPreferences.generateDeepLinkSettingsChange(requireContext(), serverUri, username, newUser.getPassword());
         if(newUser.getPassword() != null) {
-            onRequestUserActionDeepLinkDestination(deepLink);
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.deep_link_warning_password),
+                    R.string.button_cancel, R.string.button_ok, new CreateDeepLinkWantedListener<>(getUiHelper(), deepLink));
         } else {
             getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.deep_link_warning_no_password),
-                    R.string.button_cancel, R.string.button_ok, new CreateDeepLinkWithoutPasswordListener<>(getUiHelper(), deepLink));
+                    R.string.button_cancel, R.string.button_ok, new CreateDeepLinkWantedListener<>(getUiHelper(), deepLink));
         }
     }
 
@@ -1025,16 +1024,16 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         };
     }
 
-    private static class CreateDeepLinkWithoutPasswordListener<F extends UserFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
+    private static class CreateDeepLinkWantedListener<F extends UserFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         private Uri deepLink;
 
-        public CreateDeepLinkWithoutPasswordListener(FUIH uiHelper, Uri deepLink) {
+        public CreateDeepLinkWantedListener(FUIH uiHelper, Uri deepLink) {
             super(uiHelper);
             this.deepLink = deepLink;
         }
 
-        protected CreateDeepLinkWithoutPasswordListener(Parcel in) {
+        protected CreateDeepLinkWantedListener(Parcel in) {
             super(in);
             deepLink = ParcelUtils.readParcelable(in, Uri.class);
         }
@@ -1055,15 +1054,15 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
             return 0;
         }
 
-        public static final Creator<CreateDeepLinkWithoutPasswordListener<?,?>> CREATOR = new Creator<CreateDeepLinkWithoutPasswordListener<?,?>>() {
+        public static final Creator<CreateDeepLinkWantedListener<?,?>> CREATOR = new Creator<CreateDeepLinkWantedListener<?,?>>() {
             @Override
-            public CreateDeepLinkWithoutPasswordListener<?,?> createFromParcel(Parcel in) {
-                return new CreateDeepLinkWithoutPasswordListener<>(in);
+            public CreateDeepLinkWantedListener<?,?> createFromParcel(Parcel in) {
+                return new CreateDeepLinkWantedListener<>(in);
             }
 
             @Override
-            public CreateDeepLinkWithoutPasswordListener<?,?>[] newArray(int size) {
-                return new CreateDeepLinkWithoutPasswordListener[size];
+            public CreateDeepLinkWantedListener<?,?>[] newArray(int size) {
+                return new CreateDeepLinkWantedListener[size];
             }
         };
     }

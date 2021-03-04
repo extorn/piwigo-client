@@ -712,11 +712,8 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="supported_file_types">Deze lijst met bestandstypen zijn de bestandstypen die deze server moet accepteren.\n\nHet kan worden gewijzigd in het lokale / config / config.inc.php-bestand.</string>
     <string name="deleting_tag">Tag verwijderen</string>
     <string name="compressed_progress_bar_message">Gecomprimeerd</string>
-    <string name="piwigo_deep_link_login_email_pattern">Gebruik de onderstaande link om uw kopie van de PIWIGO-client-app te configureren met de server Uri, gebruikersnaam en het wachtwoord om u op weg te helpen.\n\n%1$s</string>
-    <string name="deep_link_explanation">Wilt u een diepe link voor deze gebruiker genereren die ze kunnen gebruiken om de app in te stellen met hun inloggegevens?\n\n\'Deze app \' maakt een nieuw profiel in deze app met deze inloggegevens waarmee u de functie kunt testen</string>
     <string name="button_clipboard">Klembord</string>
     <string name="button_email">E-mail</string>
-    <string name="deep_link_warning_no_password">De huidige diepe link heeft geen wachtwoord. Als u het wachtwoord wilt toevoegen, moet u een nieuw wachtwoord voor deze gebruiker instellen.\n\nMaak de diepe link zonder wachtwoord?</string>
     <string name="button_this_app">Deze app</string>
     <string name="connection_profile_amended_with_new_details_pattern">Het serververbindingsprofiel\n  %1$s\n  is gemaakt en of gewijzigd met nieuwe details</string>
     <string name="alert_create_or_update_server_connection_details">Wilt u de APP PIWIGO Server-verbindingsdetails maken of bijwerken?</string>

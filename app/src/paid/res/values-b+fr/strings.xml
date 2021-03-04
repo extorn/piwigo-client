@@ -39,4 +39,8 @@
     <string name="orphans_found_on_server_pattern">Orphelins trouvés:%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Il y a des orphelins présents. Pour les visualiser, nous devons créer un dossier privé accessible uniquement aux administrateurs. Vous pouvez ensuite supprimer l\'album à tout moment. Si vous n\'êtes pas d\'accord, vous devrez les traiter vous-même sur le serveur.</string>
     <string name="progress_rescuing_orphans">Sauver les orphelins</string>
+    <string name="piwigo_deep_link_login_email_pattern">Veuillez utiliser le lien ci-dessous pour configurer votre copie de l\'application client PIWIGO avec l\'URI, le nom d\'utilisateur et le mot de passe du serveur pour vous aider à démarrer.\n\n%1$s</string>
+    <string name="deep_link_explanation">Veuillez sélectionner une destination pour le lien.\n\n\'Cette application \' créera un nouveau profil dans cette application avec ces informations d\'identification vous permettant de tester la fonctionnalité.</string>
+    <string name="deep_link_warning_password">Souhaitez-vous créer un lien profond qui peut être utilisé pour configurer une copie de cette application avec les détails du serveur?\n\nL\'idée est de faciliter la création de personnes.\n\nCette fonctionnalité n\'est pas disponible dans la version gratuite.</string>
+    <string name="deep_link_warning_no_password">Le lien profond actuel n\'aura pas de mot de passe. Si vous souhaitez ajouter le mot de passe, vous devez définir un nouveau mot de passe pour cet utilisateur.\n\nCréez le lien profond sans mot de passe?</string>
 </resources>

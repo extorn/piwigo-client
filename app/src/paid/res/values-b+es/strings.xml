@@ -39,4 +39,8 @@
     <string name="orphans_found_on_server_pattern">Huérfanos encontrados:%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Hay huérfanos presentes. Para verlos, debemos crear una carpeta privada a la que solo puedan acceder los administradores. Puede eliminar el álbum en cualquier momento después. Si no está de acuerdo, tendrá que procesarlos usted mismo en el servidor.</string>
     <string name="progress_rescuing_orphans">Rescatar huérfanos</string>
+    <string name="piwigo_deep_link_login_email_pattern">Utilice el siguiente enlace para configurar su copia de la aplicación PIWIGO Client con el servidor URI, nombre de usuario y contraseña para comenzar.\n\n%1$s</string>
+    <string name="deep_link_explanation">Por favor, seleccione un destino para el enlace.\n\n\'Esta aplicación creará un nuevo perfil en esta aplicación con estas credenciales que le permitirán probar la función</string>
+    <string name="deep_link_warning_password">¿Le gustaría crear un enlace profundo que se puede usar para configurar una copia de esta aplicación con los detalles del servidor?\n\nLa idea es facilitar que alguien comience.\n\nEsta característica no está disponible en la versión gratuita.</string>
+    <string name="deep_link_warning_no_password">El enlace profundo actual no tendrá una contraseña. Si desea agregar la contraseña, debe establecer una nueva contraseña para este usuario.\n\nCrea el enlace profundo sin una contraseña?</string>
 </resources>

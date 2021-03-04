@@ -712,11 +712,8 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="supported_file_types">このファイルタイプのリストは、このサーバーが受け入れるように構成されているものです。\n\nlocal / config /config.inc.phpファイルで変更できます。</string>
     <string name="deleting_tag">タグの削除</string>
     <string name="compressed_progress_bar_message">圧縮</string>
-    <string name="piwigo_deep_link_login_email_pattern">下のリンクを使用して、PIWIGOクライアントアプリのコピーをサーバーURI、ユーザー名、およびパスワードで設定して開始してください。\n\n％1 $ S</string>
-    <string name="deep_link_explanation">あなたは彼らが彼らの資格情報を使ってアプリを設定するために使用できるように、このユーザーのためのディープリンクを生成しますか？\n\n\'このApp \'は、このアプリでこのアプリで新しいプロファイルを作成し、これらの認証情報をテストできます。</string>
     <string name="button_clipboard">クリップボード</string>
     <string name="button_email">Eメール</string>
-    <string name="deep_link_warning_no_password">現在の深いリンクにはパスワードがありません。 パスワードを追加したい場合は、このユーザーに新しいパスワードを設定する必要があります。\n\nパスワードなしでディープリンクを作成しますか？</string>
     <string name="button_this_app">このアプリ</string>
     <string name="connection_profile_amended_with_new_details_pattern">サーバー接続プロファイル\n  ％1 $ S\n  新しい詳細を作成して修正しました</string>
     <string name="alert_create_or_update_server_connection_details">App Piwigo Server接続の詳細を作成または更新しますか？</string>

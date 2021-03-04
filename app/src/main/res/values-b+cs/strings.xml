@@ -712,11 +712,8 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="supported_file_types">Tento seznam typů souborů je takový, na který je tento server nakonfigurován.\n\nLze jej změnit v místním souboru / config / config.inc.php.</string>
     <string name="deleting_tag">Mazání značky</string>
     <string name="compressed_progress_bar_message">Stlačený</string>
-    <string name="piwigo_deep_link_login_email_pattern">Pomocí níže uvedeného odkazu nakonfigurujte kopii klientské aplikace PIWIGO se serverem URI, uživatelské jméno a heslo, abyste mohli začít.\n\n%1$s</string>
-    <string name="deep_link_explanation">Chtěli byste generovat hluboký odkaz pro tohoto uživatele, který mohou použít k nastavení aplikace s jejich pověřeními?\n\n\"Tato aplikace\" vytvoří nový profil v této aplikaci s těmito pověřeními, které vám umožní otestovat funkci</string>
     <string name="button_clipboard">Schránka</string>
     <string name="button_email">E-mailem</string>
-    <string name="deep_link_warning_no_password">Aktuální hluboký odkaz nebude mít heslo. Pokud chcete přidat heslo, musíte pro tento uživatel nastavit nové heslo.\n\nVytvořte hluboký odkaz bez hesla?</string>
     <string name="button_this_app">Tato aplikace</string>
     <string name="connection_profile_amended_with_new_details_pattern">Profil připojení serveru\n  %1$s\n  byl vytvořen a upraven novými údaji</string>
     <string name="alert_create_or_update_server_connection_details">Chcete vytvořit nebo aktualizovat podrobnosti připojení aplikace Piwigo Server?</string>

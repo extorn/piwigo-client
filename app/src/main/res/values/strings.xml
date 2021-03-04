@@ -1090,11 +1090,8 @@ App Install UUID: %5$s
     <string name="supported_file_types">This list of file types are those this server is configured to accept.\n\nIt can be altered in the  local/config/config.inc.php file.</string>
     <string name="deleting_tag">Deleting Tag</string>
     <string name="compressed_progress_bar_message">Compressed</string>
-    <string name="piwigo_deep_link_login_email_pattern">Please use the link below to configure your copy of the Piwigo Client app with the server Uri, username, and password to get you started.\n\n%1$s</string>
-    <string name="deep_link_explanation">Would you like to generate a deep link for this user that they can use to set up the app with their credentials?\n\n\'This app\' will create a new profile in this app with these credentials allowing you to test the feature</string>
     <string name="button_clipboard">Clipboard</string>
     <string name="button_email">Email</string>
-    <string name="deep_link_warning_no_password">The current deep link will not have a password. If you wish to add the password, you must set a new password for this user.\n\nCreate the deep link without a password?</string>
     <string name="button_this_app">This app</string>
     <string name="connection_profile_amended_with_new_details_pattern">The server connection profile\n %1$s\n has been created and or amended with new details</string>
     <string name="alert_create_or_update_server_connection_details">Would you like to create or update the app Piwigo server connection details?</string>

@@ -39,4 +39,8 @@
     <string name="orphans_found_on_server_pattern">孤児が見つかりました：%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">孤児がいます。これらを表示するには、管理者のみがアクセスできるプライベートフォルダを作成する必要があります。その後、いつでもアルバムを削除できます。同意しない場合は、サーバー上でこれらを自分で処理する必要があります。</string>
     <string name="progress_rescuing_orphans">孤児の救助</string>
+    <string name="piwigo_deep_link_login_email_pattern">下のリンクを使用して、PIWIGOクライアントアプリのコピーをサーバーURI、ユーザー名、およびパスワードで設定して開始してください。\n\n%1$s</string>
+    <string name="deep_link_explanation">リンクの宛先を選択してください。\n\n\'このApp \'は、このアプリでこのアプリで新しいプロファイルを作成し、これらの認証情報をテストできます。</string>
+    <string name="deep_link_warning_password">サーバーの詳細を使用してこのアプリのコピーを設定するために使用できるディープリンクを作成しますか？\n\nアイデアは誰かが始めるのをより簡単にすることです。\n\nこの機能は無料版では利用できません。</string>
+    <string name="deep_link_warning_no_password">現在の深いリンクにはパスワードがありません。 パスワードを追加したい場合は、このユーザーに新しいパスワードを設定する必要があります。\n\nパスワードなしでディープリンクを作成しますか？</string>
 </resources>

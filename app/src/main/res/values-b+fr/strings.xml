@@ -712,11 +712,8 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="supported_file_types">Cette liste de types de fichiers est celle que ce serveur est configuré pour accepter.\n\nIl peut être modifié dans le fichier local / config / config.inc.php.</string>
     <string name="deleting_tag">Suppression du tag</string>
     <string name="compressed_progress_bar_message">Comprimée</string>
-    <string name="piwigo_deep_link_login_email_pattern">Veuillez utiliser le lien ci-dessous pour configurer votre copie de l\'application client PIWIGO avec l\'URI, le nom d\'utilisateur et le mot de passe du serveur pour vous aider à démarrer.\n\n% 1 $ S</string>
-    <string name="deep_link_explanation">Souhaitez-vous générer un lien profond pour cet utilisateur qu\'ils peuvent utiliser pour configurer l\'application avec leurs informations d\'identification?\n\n\'Cette application \' créera un nouveau profil dans cette application avec ces informations d\'identification vous permettant de tester la fonctionnalité.</string>
     <string name="button_clipboard">Presse-plans</string>
     <string name="button_email">E-mail</string>
-    <string name="deep_link_warning_no_password">Le lien profond actuel n\'aura pas de mot de passe. Si vous souhaitez ajouter le mot de passe, vous devez définir un nouveau mot de passe pour cet utilisateur.\n\nCréez le lien profond sans mot de passe?</string>
     <string name="button_this_app">Cette application</string>
     <string name="connection_profile_amended_with_new_details_pattern">Le profil de connexion du serveur\n  % 1 $ S\n  a été créé et ou modifié avec de nouveaux détails</string>
     <string name="alert_create_or_update_server_connection_details">Souhaitez-vous créer ou mettre à jour les détails de la connexion de l\'application PIWIGO Server?</string>

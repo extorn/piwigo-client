@@ -712,11 +712,8 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="supported_file_types">Esta lista de tipos de archivos son aquellos que este servidor está configurado para aceptar.\n\nPuede modificarse en el archivo local / config / config.inc.php.</string>
     <string name="deleting_tag">Eliminar etiqueta</string>
     <string name="compressed_progress_bar_message">Comprimida</string>
-    <string name="piwigo_deep_link_login_email_pattern">Utilice el siguiente enlace para configurar su copia de la aplicación PIWIGO Client con el servidor URI, nombre de usuario y contraseña para comenzar.\n\n%1$s</string>
-    <string name="deep_link_explanation">¿Le gustaría generar un enlace profundo para este usuario que pueden usar para configurar la aplicación con sus credenciales?\n\n\'Esta aplicación creará un nuevo perfil en esta aplicación con estas credenciales que le permitirán probar la función</string>
     <string name="button_clipboard">Portapapeles</string>
     <string name="button_email">Correo electrónico</string>
-    <string name="deep_link_warning_no_password">El enlace profundo actual no tendrá una contraseña. Si desea agregar la contraseña, debe establecer una nueva contraseña para este usuario.\n\nCrea el enlace profundo sin una contraseña?</string>
     <string name="button_this_app">Esta aplicación</string>
     <string name="connection_profile_amended_with_new_details_pattern">El perfil de conexión del servidor\n  %1$s\n  Se ha creado y o modificado con nuevos detalles.</string>
     <string name="alert_create_or_update_server_connection_details">¿Le gustaría crear o actualizar los detalles de la conexión del servidor PIWIGO?</string>
