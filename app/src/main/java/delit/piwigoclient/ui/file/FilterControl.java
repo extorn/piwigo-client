@@ -146,6 +146,7 @@ public class FilterControl extends FrameLayout {
         if(selectedFilters == null) {
             selectedFilters = new HashSet<>();
         }
+        selectedFilters.clear();
         if(activeFilters == null) {
             activeFilters = new HashSet<>();
         }
