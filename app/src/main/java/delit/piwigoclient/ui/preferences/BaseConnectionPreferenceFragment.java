@@ -360,7 +360,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         return false;
     }
 
-    private void refreshSession(String loginAsProfileAfterLogout) {
+    protected void refreshSession(String loginAsProfileAfterLogout) {
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {

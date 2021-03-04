@@ -8,29 +8,33 @@
     <!--<uses-sdk tools:overrideLibrary="net.ypresto.androidtranscoder" />-->
     <!-- Required permission to stop CPU sleeping while uploading -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- required for monitoring wifi etc -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- needed to create a service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" tools:ignore="ScopedStorage" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage" />
     <!--<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/> googleplay doesn't yet support this (might not need it too!)-->
     <!-- Required permission to check licensing. -->
     <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
 
     <!-- seems to be needed on later versions of android -->
-    <uses-permission android:name="com.google.android.providers.gsf.permisson.READ_GSERVICES"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permisson.READ_GSERVICES" />
     <!-- lets hope this isn't needed
     <uses-permission android:name="com.google.android.providers.gsf.permission.WRITE_GSERVICES"/>
     -->
 
 
-    <supports-screens android:resizeable="true"
+    <supports-screens
+        android:resizeable="true"
         android:smallScreens="true"
         android:normalScreens="true"
         android:largeScreens="true"
-        android:xlargeScreens="true"/>
+        android:xlargeScreens="true" />
 
     <!-- This attribute is "false" by default on apps targeting
        Android 10 or higher. -->
@@ -46,7 +50,9 @@
         android:fullBackupContent="@xml/backup_descriptor"
         tools:ignore="UnusedAttribute">
 
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <!-- Disable crashlytics -->
         <!--
@@ -62,10 +68,10 @@
           -->
         <meta-data
             android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
-            android:value="true"/>
+            android:value="true" />
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-1408465472557768~4878187139"/>
+            android:value="ca-app-pub-1408465472557768~4878187139" />
 
         <activity
             android:launchMode="singleTop"
@@ -98,7 +104,7 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.App.EditPages"
             android:windowSoftInputMode="stateHidden|adjustResize"
-            android:parentActivityName="delit.piwigoclient.ui.MainActivity" >
+            android:parentActivityName="delit.piwigoclient.ui.MainActivity">
             <intent-filter>
                 <action android:name="delit.piwigoclient.PREFERENCES" />
                 <category android:name="android.intent.category.PREFERENCE" />
@@ -111,7 +117,7 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.App.EditPages"
             android:windowSoftInputMode="stateHidden|adjustResize"
-            android:parentActivityName="delit.piwigoclient.ui.MainActivity" >
+            android:parentActivityName="delit.piwigoclient.ui.MainActivity">
             <intent-filter>
                 <action android:name="delit.piwigoclient.MANUAL_UPLOAD" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -123,9 +129,11 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*"/>
-                <data android:mimeType="video/*"/>
+
+                <data android:mimeType="image/*" />
+                <data android:mimeType="video/*" />
                 <data android:mimeType="application/zip" />
                 <data android:mimeType="application/pdf" />
                 <data android:mimeType="*/*" />
@@ -138,18 +146,20 @@
             android:theme="@style/Theme.App.EditPages"
             android:configChanges="layoutDirection"
             android:windowSoftInputMode="stateHidden|adjustResize"
-            android:parentActivityName="delit.piwigoclient.ui.MainActivity" >
+            android:parentActivityName="delit.piwigoclient.ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.google.android.gms.ads.AdActivity"/>
+        <activity android:name="com.google.android.gms.ads.AdActivity" />
+
         <service
             android:name=".piwigoApi.upload.ForegroundPiwigoUploadService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:configChanges="layoutDirection"
-            android:exported="false"/>
+            android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${filesAuthority}"
@@ -157,7 +167,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
         <provider
             android:name=".util.MyDocumentProvider"

@@ -31,9 +31,11 @@ public class GetMethodsAvailableResponseHandler extends AbstractPiwigoWsResponse
     @Override
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         PiwigoSessionDetails currentCredentials = getPiwigoSessionDetails();
-        currentCredentials.setMethodsAvailable(parseMethodsAvailable(rsp));
-        PiwigoGetMethodsAvailableResponse r = new PiwigoGetMethodsAvailableResponse(getMessageId(), getPiwigoMethod(), isCached);
-        storeResponse(r);
+        if(currentCredentials != null) {
+            currentCredentials.setMethodsAvailable(parseMethodsAvailable(rsp));
+            PiwigoGetMethodsAvailableResponse r = new PiwigoGetMethodsAvailableResponse(getMessageId(), getPiwigoMethod(), isCached);
+            storeResponse(r);
+        }
     }
 
     private Set<String> parseMethodsAvailable(JsonElement rsp) {

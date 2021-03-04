@@ -1,0 +1,20 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "delit.piwigoclient",
+    "sha256_cert_fingerprints":
+    ["41:c1:ae:95:df:af:aa:0b:98:57:5b:96:1d:e4:fd:a6:35:92:2a:eb:35:c3:2f:6f:32:21:d6:13:67:1b:42:ef",
+     "95:e7:f9:45:6e:c6:c9:c5:8f:92:8a:a1:d7:68:cf:ce:a6:b0:82:ea:b7:2a:6d:5e:6c:8b:04:bf:0d:ce:5b:fd"]
+  }
+},
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "delit.piwigoclient.paid",
+      "sha256_cert_fingerprints":
+      ["41:c1:ae:95:df:af:aa:0b:98:57:5b:96:1d:e4:fd:a6:35:92:2a:eb:35:c3:2f:6f:32:21:d6:13:67:1b:42:ef",
+      "95:e7:f9:45:6e:c6:c9:c5:8f:92:8a:a1:d7:68:cf:ce:a6:b0:82:ea:b7:2a:6d:5e:6c:8b:04:bf:0d:ce:5b:fd"]
+    }
+  }]

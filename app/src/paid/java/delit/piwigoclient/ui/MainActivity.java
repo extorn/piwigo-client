@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Tag;
+import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.events.ServerUpdatesAvailableEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
@@ -40,7 +42,7 @@ import delit.piwigoclient.ui.upload.status.UploadJobStatusDetailsFragment;
  * Created by gareth on 07/04/18.
  */
 
-public class MainActivity extends AbstractMainActivity {
+public class MainActivity<AUIH extends ActivityUIHelper<AUIH, MainActivity<AUIH>>> extends AbstractMainActivity<MainActivity<AUIH>, AUIH> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

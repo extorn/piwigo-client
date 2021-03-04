@@ -39,6 +39,13 @@ public abstract class MyActivity<A extends MyActivity<A,AUIH>, AUIH extends Acti
     }
 
     @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        getUiHelper().showNextQueuedMessage();
+        getUiHelper().showQueuedToastMsg();
+    }
+
+    @Override
     protected void onPause() {
         Logging.log(Log.DEBUG, TAG, "Pausing activity %1$s", Utils.getId(this));
         super.onPause();

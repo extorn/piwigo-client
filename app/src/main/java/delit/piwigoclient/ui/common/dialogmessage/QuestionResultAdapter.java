@@ -81,14 +81,29 @@ public class QuestionResultAdapter<P extends UIHelper<P,T>,T> implements Questio
             chainedListener.onResult(dialog, positiveAnswer);
         }
     }
+
     @Override
     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+        if(null == positiveAnswer) {
+            onNeutralResult(dialog);
+        } else if(positiveAnswer) {
+            onPositiveResult(dialog);
+        } else {
+            onNegativeResult(dialog);
+        }
+    }
 
+    protected void onNeutralResult(AlertDialog dialog) {
+    }
+
+    protected void onNegativeResult(AlertDialog dialog) {
+    }
+
+    protected void onPositiveResult(AlertDialog dialog) {
     }
 
     @Override
     public void onDismiss(AlertDialog dialog) {
-
     }
 
     @Override

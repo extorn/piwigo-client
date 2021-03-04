@@ -1,6 +1,10 @@
 package delit.piwigoclient.ui.permissions.users;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -41,6 +44,7 @@ import java.util.Locale;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.util.CollectionUtils;
@@ -239,7 +243,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         return aUser;
     }
 
-    private void setFieldsEditable(boolean editable) {
+    private void onClickMakeUserEditable(boolean editable) {
 
         fieldsEditable = editable;
 
@@ -304,23 +308,15 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
             selectGroupsActionId = savedInstanceState.getInt(STATE_SELECT_GROUPS_ACTION_ID);
         }
 
-        RelativeLayout userEditControls = v.findViewById(R.id.user_edit_controls);
-
+        //RelativeLayout userEditControls = v.findViewById(R.id.user_edit_controls);
         editButton = v.findViewById(R.id.user_action_edit_button);
-        editButton.setOnClickListener(v14 -> setFieldsEditable(true));
+        editButton.setOnClickListener(v14 -> onClickMakeUserEditable(true));
         discardButton = v.findViewById(R.id.user_action_discard_button);
-        discardButton.setOnClickListener(v13 -> {
-            newGroupMembership = null;
-            newDirectAlbumPermissions = null;
-            newIndirectAlbumPermissions = null;
-            setFieldsFromModel(user);
-            populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
-            setFieldsEditable(user.getId() < 0);
-        });
+        discardButton.setOnClickListener(v13 -> onClickDiscardChangesToUser());
         saveButton = v.findViewById(R.id.user_action_save_button);
-        saveButton.setOnClickListener(v12 -> saveUserChanges());
+        saveButton.setOnClickListener(v12 -> onClickSaveUserChanges());
         deleteButton = v.findViewById(R.id.user_action_delete_button);
-        deleteButton.setOnClickListener(v1 -> deleteUser(user));
+        deleteButton.setOnClickListener(v1 -> onClickDeleteUser(user));
 
         usernameField = v.findViewById(R.id.user_username);
 
@@ -344,7 +340,6 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         lastVisitedFieldLabel = v.findViewById(R.id.user_lastvisit_label);
         lastVisitedField = v.findViewById(R.id.user_lastvisit);
 
-        TextView passwordFieldLabel = v.findViewById(R.id.user_password_label);
         passwordField = v.findViewById(R.id.user_password_field);
 
         CheckBox viewUnencryptedToggle = v.findViewById(R.id.toggle_visibility);
@@ -374,7 +369,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
             }
         });
 
-        setFieldsEditable(fieldsEditable);
+        onClickMakeUserEditable(fieldsEditable);
         if (newUser != null) {
             setFieldsFromModel(newUser);
         } else {
@@ -407,6 +402,46 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
 
 
         return v;
+    }
+
+    private void onClickDiscardChangesToUser() {
+        newGroupMembership = null;
+        newDirectAlbumPermissions = null;
+        newIndirectAlbumPermissions = null;
+        setFieldsFromModel(user);
+        populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
+        onClickMakeUserEditable(user.getId() < 0);
+    }
+
+    public void generateDeepLinkEmail(Uri deepLinkUri) {
+        Context context = requireContext();
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain"); // send email as plain text
+        if(user.getEmail() != null) {
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{user.getEmail()});
+        }
+        intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
+        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.piwigo_deep_link_login_email_pattern, deepLinkUri));
+        context.startActivity(Intent.createChooser(intent, "Email Text"));
+    }
+
+    public void sendDeepLinkToAndroidNow(Uri deepLinkUri) {
+        startActivity(new Intent(Intent.ACTION_VIEW, deepLinkUri));
+    }
+
+    public void sendDeepLinkToClipboard(Uri deepLinkUri) {
+        Context context = requireContext();
+        if(user.getEmail() == null || user.getEmail().isEmpty()) {
+            // copy link
+            ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            if(mgr != null) {
+                ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, "PiwigologinLink"), deepLinkUri);
+                mgr.setPrimaryClip(clipData);
+                getUiHelper().showShortMsg(R.string.copied_to_clipboard);
+            } else {
+                Logging.logAnalyticEvent(context,"NoClipMgr", null);
+            }
+        }
     }
 
     User getUser() {
@@ -499,9 +534,10 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         }
     }
 
-    private void saveUserChanges() {
+    private void onClickSaveUserChanges() {
         newUser = setModelFromFields(new User());
-        setFieldsEditable(false);
+        onClickMakeUserEditable(false);
+        actionSendDeepLinkToUserIfWanted(newUser);
         if (newUser.getId() < 0) {
             saveActionIds.add(addActiveServiceCall(R.string.progress_adding_user, new UserAddResponseHandler<>(newUser)));
         } else {
@@ -509,6 +545,24 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
             saveUserPermissionsChangesIfRequired();
         }
 
+    }
+
+    private void actionSendDeepLinkToUserIfWanted(User newUser) {
+        String serverUri = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getServerUrl();
+        String username = newUser.getUserType().equals("guest") ? null : newUser.getUsername();
+        Uri deepLink = ConnectionPreferences.generateDeepLinkSettingsChange(requireContext(), serverUri, username, newUser.getPassword());
+        if(newUser.getPassword() != null) {
+            onRequestUserActionDeepLinkDestination(deepLink);
+        } else {
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.deep_link_warning_no_password),
+                    R.string.button_cancel, R.string.button_ok, new CreateDeepLinkWithoutPasswordListener<>(getUiHelper(), deepLink));
+        }
+    }
+
+    public void onRequestUserActionDeepLinkDestination(Uri deepLink) {
+        getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_information, getString(R.string.deep_link_explanation),
+                R.string.button_this_app, R.string.button_clipboard, R.string.button_email,
+                new DeepLinkQuestionListener<>(getUiHelper(), deepLink));
     }
 
     private HashSet<Group> getLatestGroupMembership() {
@@ -572,7 +626,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         EventBus.getDefault().post(groupSelectionNeededEvent);
     }
 
-    private void deleteUser(final User user) {
+    private void onClickDeleteUser(final User user) {
         String currentUser = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getUsername();
         if (currentUser.equals(user.getUsername())) {
             getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_delete_yourself_pattern, currentUser));
@@ -912,5 +966,102 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
                 v.removeOnLayoutChangeListener(this);
             }
         }
+    }
+
+    public static class DeepLinkQuestionListener<F extends UserFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends QuestionResultAdapter<FUIH,F> implements Parcelable {
+
+        private Uri deepLink;
+
+        public DeepLinkQuestionListener(FUIH uiHelper, Uri deepLink) {
+            super(uiHelper);
+            this.deepLink = deepLink;
+        }
+
+        protected DeepLinkQuestionListener(Parcel in) {
+            super(in);
+            deepLink = ParcelUtils.readParcelable(in, Uri.class);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            ParcelUtils.writeParcelable(dest, deepLink);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        protected void onNegativeResult(AlertDialog dialog) {
+            // Test the link in this app
+            getParent().sendDeepLinkToAndroidNow(deepLink);
+        }
+
+        @Override
+        protected void onPositiveResult(AlertDialog dialog) {
+            getParent().generateDeepLinkEmail(deepLink);
+        }
+
+        @Override
+        protected void onNeutralResult(AlertDialog dialog) {
+            getParent().sendDeepLinkToClipboard(deepLink);
+        }
+
+        public static final Creator<DeepLinkQuestionListener<?,?>> CREATOR = new Creator<DeepLinkQuestionListener<?,?>>() {
+            @Override
+            public DeepLinkQuestionListener<?,?> createFromParcel(Parcel in) {
+                return new DeepLinkQuestionListener<>(in);
+            }
+
+            @Override
+            public DeepLinkQuestionListener<?,?>[] newArray(int size) {
+                return new DeepLinkQuestionListener[size];
+            }
+        };
+    }
+
+    private static class CreateDeepLinkWithoutPasswordListener<F extends UserFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
+
+        private Uri deepLink;
+
+        public CreateDeepLinkWithoutPasswordListener(FUIH uiHelper, Uri deepLink) {
+            super(uiHelper);
+            this.deepLink = deepLink;
+        }
+
+        protected CreateDeepLinkWithoutPasswordListener(Parcel in) {
+            super(in);
+            deepLink = ParcelUtils.readParcelable(in, Uri.class);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            ParcelUtils.writeParcelable(dest, deepLink);
+        }
+
+        @Override
+        protected void onPositiveResult(AlertDialog dialog) {
+            getParent().onRequestUserActionDeepLinkDestination(deepLink);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<CreateDeepLinkWithoutPasswordListener<?,?>> CREATOR = new Creator<CreateDeepLinkWithoutPasswordListener<?,?>>() {
+            @Override
+            public CreateDeepLinkWithoutPasswordListener<?,?> createFromParcel(Parcel in) {
+                return new CreateDeepLinkWithoutPasswordListener<>(in);
+            }
+
+            @Override
+            public CreateDeepLinkWithoutPasswordListener<?,?>[] newArray(int size) {
+                return new CreateDeepLinkWithoutPasswordListener[size];
+            }
+        };
     }
 }

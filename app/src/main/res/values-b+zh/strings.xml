@@ -711,4 +711,12 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="supported_file_types">此文件类型列表是此服务器配置为接受的文件类型。\n\n可以在local / config / config.inc.php文件中更改它。</string>
     <string name="deleting_tag">删除标签</string>
     <string name="compressed_progress_bar_message">压缩的</string>
+    <string name="piwigo_deep_link_login_email_pattern">请使用下面的链接与服务器URI，用户名和密码一起配置Piwigo Client应用程序的副本以使您开始。\n\n%1$s</string>
+    <string name="deep_link_explanation">您想为此用户生成深度链接，他们可以用来使用凭据设置应用程序吗？\n\n\“此应用程序”将在此应用程序中创建一个新配置文件，这些凭据允许您测试该功能</string>
+    <string name="button_clipboard">剪贴板</string>
+    <string name="button_email">电子邮件</string>
+    <string name="deep_link_warning_no_password">当前的深链接不会有密码。 如果要添加密码，则必须为此用户设置新密码。\n\n在没有密码的情况下创建深链接？</string>
+    <string name="button_this_app">这个应用程序</string>
+    <string name="connection_profile_amended_with_new_details_pattern">服务器连接配置文件\n  %1$s\n  已创建和或修改新细节</string>
+    <string name="alert_create_or_update_server_connection_details">您想创建或更新App Piwigo Server连接详细信息吗？</string>
 </resources>

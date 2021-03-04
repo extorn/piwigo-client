@@ -711,4 +711,12 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="supported_file_types">Diese Liste der Dateitypen ist die, für deren Annahme dieser Server konfiguriert ist.\n\nSie kann in der lokalen Datei / config / config.inc.php geändert werden.</string>
     <string name="deleting_tag">Tag löschen</string>
     <string name="compressed_progress_bar_message">Komprimiert</string>
+    <string name="piwigo_deep_link_login_email_pattern">Bitte benutzen Sie den untenstehenden Link, um Ihre Kopie der Piwigo Client-App mit dem Server-URI, dem Benutzernamen und dem Kennwort zu konfigurieren, um Sie zu beginnen.\n\n%1$s</string>
+    <string name="deep_link_explanation">Möchten Sie einen tiefen Link für diesen Benutzer erstellen, mit dem sie die App mit ihren Anmeldeinformationen einrichten können?\n\n\'Diese App \' erstellt in dieser App ein neues Profil mit diesen Anmeldeinformationen, mit denen Sie die Funktion testen können</string>
+    <string name="button_clipboard">Zwischenablage</string>
+    <string name="button_email">Email</string>
+    <string name="deep_link_warning_no_password">Der aktuelle tiefe Link hat kein Passwort. Wenn Sie das Passwort hinzufügen möchten, müssen Sie ein neues Passwort für diesen Benutzer festlegen.\n\nErstellen Sie den tiefen Link ohne Passwort?</string>
+    <string name="button_this_app">Diese App</string>
+    <string name="connection_profile_amended_with_new_details_pattern">Das Serververbindungsprofil\n  %1$s\n  wurde mit neuen Details erstellt und geändert</string>
+    <string name="alert_create_or_update_server_connection_details">Möchten Sie die Anwendungsdetails der App Piwigo Server-Verbindung erstellen oder aktualisieren?</string>
 </resources>

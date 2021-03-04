@@ -108,7 +108,7 @@
 
     
     <string name="preference_piwigo_connection_profile_title">接続プロファイルを選択します</string>
-    <string name="preference_piwigo_connection_profile_summary">アクティブな接続プロファイル（%1$s）</string>
+    <string name="preference_piwigo_connection_profile_summary">%1$s</string>
 
     
     

@@ -108,7 +108,7 @@
 
     
     <string name="preference_piwigo_connection_profile_title">选择连接配置文件</string>
-    <string name="preference_piwigo_connection_profile_summary">活动的连接配置文件（%1$s）</string>
+    <string name="preference_piwigo_connection_profile_summary">%1$s</string>
 
     
     

@@ -16,3 +16,6 @@ firebase login
 # to upload the files to the website
 firebase deploy
 
+# If you get a permission error (login again and retry deploy)
+firebase logout
+firebase login

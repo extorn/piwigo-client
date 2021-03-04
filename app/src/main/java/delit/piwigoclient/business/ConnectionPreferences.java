@@ -2,6 +2,7 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -31,10 +32,25 @@ import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 public class ConnectionPreferences {
 
+    private static final String TAG = "ConnectPrefs";
     private static ProfilePreferences activeProfile;
 
-    public static String getActiveConnectionProfile(SharedPreferences prefs, Context context) {
+    public static String getActiveConnectionProfileKey(SharedPreferences prefs, Context context) {
         return prefs.getString(context.getString(R.string.preference_piwigo_connection_profile_key), "");
+    }
+
+    public static void setActiveConnectionProfile(SharedPreferences prefs, Context context, String profileId) {
+        SharedPreferences.Editor editor = prefs.edit();
+        setActiveConnectionProfile(editor, context, profileId);
+        editor.apply();
+    }
+
+    public static void setActiveConnectionProfile(SharedPreferences.Editor editor, Context context, String profileId) {
+        editor.putString(context.getString(R.string.preference_piwigo_connection_profile_key), profileId);
+    }
+
+    public static void setConnectionProfileList(SharedPreferences prefs, Context context, Set<String> profiles) {
+        prefs.edit().putStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), new HashSet<>(profiles)).apply();
     }
 
     public static Set<String> getConnectionProfileList(SharedPreferences prefs, Context context) {
@@ -68,7 +84,7 @@ public class ConnectionPreferences {
 
     public static ProfilePreferences getPreferences(String profile, SharedPreferences prefs, Context context) {
         if(profile != null) {
-            if(profile.equals(getActiveConnectionProfile(prefs, context)) || getConnectionProfileList(prefs, context).size() == 1) {
+            if(profile.equals(getActiveConnectionProfileKey(prefs, context)) || getConnectionProfileList(prefs, context).size() == 1) {
                 ConnectionPreferences.clonePreferences(prefs, context, null, profile);
             }
         }
@@ -93,6 +109,85 @@ public class ConnectionPreferences {
         actor.with(preferenceKey);
         actor.with(SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID));
         return actor;
+    }
+
+    public static Uri generateDeepLinkSettingsChange(Context context, String serverUri, String username, String password) {
+        //i.putExtra("pid", serverUri);
+        // i.putExtra("id", "auto");
+        Uri.Builder linkUriBuilder = Uri.parse("https://api-8938561204297001672-604498.firebaseapp.com/config").buildUpon();
+        linkUriBuilder.appendQueryParameter("s",serverUri);
+        if(username != null) {
+            linkUriBuilder.appendQueryParameter("u", username);
+        }
+        if(password != null) {
+            linkUriBuilder.appendQueryParameter("p", password);
+        }
+        return linkUriBuilder.build();
+    }
+
+    public static String parseDeepLinkSettingsChange(@NonNull Uri data, @NonNull Context context, boolean makeProfileActive) {
+        if(data.getPathSegments().isEmpty() || !"config".equals(data.getPathSegments().get(0))) {
+            throw new IllegalArgumentException("Unable to process link");
+        }
+        String id = data.getQueryParameter("id"); // id defaults to auto
+        String profileId = data.getQueryParameter("pid"); // id defaults to auto
+        String serverUri = data.getQueryParameter("s");
+        String username =  data.getQueryParameter("u");
+        String password =  data.getQueryParameter("p");
+        if(profileId == null) {
+            Uri uri = Uri.parse(serverUri);
+            profileId = (username != null ? username : "guest") + "@" + uri.getHost() + uri.getPath();
+            if(id != null) {
+                profileId += "_" + id;
+            }
+        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        // create a new  or retrieve the profile to edit.
+        // context default profile name exists, create a new one based on context link
+        ProfilePreferences prefs = ConnectionPreferences.getPreferences(profileId, sharedPreferences, context);
+        saveDataToConnectionProfile(prefs, context, serverUri, username, password);
+
+        // record this profile as existing so the user can see it in the list
+        Set<String> currentProfiles = getConnectionProfileList(sharedPreferences, context);
+        currentProfiles.add(profileId);
+        setConnectionProfileList(sharedPreferences, context, currentProfiles);
+
+        if(makeProfileActive) {
+            ConnectionPreferences.switchToProfile(sharedPreferences, context, profileId);
+        }
+        return profileId;
+    }
+
+    /**
+     * Atomic switch of the active profile ID and copying the profile to the correct place.
+     * The current active profile will be saved so it can be restored at a later date
+     * @param sharedPreferences
+     * @param context
+     * @param switchToProfileKey
+     */
+    private static void switchToProfile(SharedPreferences sharedPreferences, Context context, String switchToProfileKey) {
+        // set context new or updated profile active
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        String activeProfileKey = getActiveConnectionProfileKey(sharedPreferences, context);
+        if(!switchToProfileKey.equals(activeProfileKey)) {
+            // copy the current active profile to its store
+            new ProfilePreferences(activeProfileKey).copyFrom(sharedPreferences, editor, context, getActiveProfile());
+        }
+        // load the new active profile from its store
+        getActiveProfile().copyFrom(sharedPreferences, editor, context, new ProfilePreferences(switchToProfileKey));
+
+        ConnectionPreferences.setActiveConnectionProfile(editor, context, switchToProfileKey);
+//            editor.apply();
+        editor.commit();
+    }
+
+    private static void saveDataToConnectionProfile(@NonNull ConnectionPreferences.ProfilePreferences prefs, @NonNull Context context, String serverUri, String username, String password) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.setPiwigoServerAddress(sharedPreferences, context, serverUri);
+        prefs.setPiwigoUsername(sharedPreferences, context, username);
+        prefs.setPiwigoPassword(sharedPreferences, context, password);
     }
 
     public static class ProfilePreferences implements Parcelable, Comparable<ProfilePreferences> {
@@ -201,6 +296,11 @@ public class ConnectionPreferences {
             }
         }
 
+
+        public void setPiwigoServerAddress(SharedPreferences prefs, Context context, String serverUri) {
+            getPrefActor().with(R.string.preference_piwigo_server_address_key).writeString(prefs, context, serverUri);
+        }
+
         public String getPiwigoServerAddress(SharedPreferences prefs, Context context) {
             return getPrefActor().with(R.string.preference_piwigo_server_address_key).readString(prefs, context, null);
         }
@@ -236,11 +336,23 @@ public class ConnectionPreferences {
             return getPrefActor().with(R.string.preference_pre_user_notified_certificates_key).readStringSet(prefs, context, defaultValue);
         }
 
+        public void setPiwigoUsername(SharedPreferences prefs, Context context, String username) {
+            if(username != null) {
+                getPrefActor().with(R.string.preference_piwigo_server_username_key).writeStringEncrypted(prefs, context, username);
+            } else {
+                getPrefActor().with(R.string.preference_piwigo_server_username_key).remove(prefs, context);
+            }
+        }
+
         public String getPiwigoUsername(SharedPreferences prefs, Context context) {
             if (asGuest) {
                 return null;
             }
             return getPrefActor().with(R.string.preference_piwigo_server_username_key).readStringEncrypted(prefs, context, null);
+        }
+
+        public void setPiwigoPassword(SharedPreferences prefs, Context context, String password) {
+            getPrefActor().with(R.string.preference_piwigo_server_password_key).writeStringEncrypted(prefs, context, password);
         }
 
         public String getPiwigoPassword(SharedPreferences prefs, Context context) {
@@ -351,8 +463,13 @@ public class ConnectionPreferences {
         }
 
         public void copyFrom(SharedPreferences prefs, Context context, ProfilePreferences fromPrefs) {
-
             SharedPreferences.Editor editor = prefs.edit();
+            copyFrom(prefs, editor, context, fromPrefs);
+//            editor.apply();
+            editor.commit();
+        }
+
+        public void copyFrom(SharedPreferences prefs, SharedPreferences.Editor editor, Context context, ProfilePreferences fromPrefs) {
 
             getPrefActor().with(SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID));
             
@@ -395,9 +512,6 @@ public class ConnectionPreferences {
             getPrefActor().with(R.string.preference_server_use_basic_auth_key).writeBoolean(editor, context, fromPrefs.getUseBasicAuthentication(prefs, context));
             getPrefActor().with(R.string.preference_server_basic_auth_username_key).writeStringEncrypted(editor, context, fromPrefs.getBasicAuthenticationUsername(prefs, context));
             getPrefActor().with(R.string.preference_server_basic_auth_password_key).writeStringEncrypted(editor, context, fromPrefs.getBasicAuthenticationPassword(prefs, context));
-
-//            editor.apply();
-            editor.commit();
         }
 
 
@@ -568,6 +682,12 @@ public class ConnectionPreferences {
             }
             securePrefUtil.writeSecurePreference(editor, getPrefKeyInProfile(context, prefKey), value);
             return editor;
+        }
+
+        public void writeStringEncrypted(SharedPreferences prefs, Context context, String value) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeStringEncrypted(editor, context, value);
+            editor.apply();
         }
 
         public Set<String> readStringSet(SharedPreferences prefs, Context context, Set<String> defaultVal) {

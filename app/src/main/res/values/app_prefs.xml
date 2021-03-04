@@ -108,7 +108,7 @@
 
     <string name="preference_piwigo_connection_profile_key" translatable="false">preference_piwigo_connection_profile</string>
     <string name="preference_piwigo_connection_profile_title">Select Connection Profile</string>
-    <string name="preference_piwigo_connection_profile_summary">Active connection profile (%1$s)</string>
+    <string name="preference_piwigo_connection_profile_summary">%1$s</string>
 
     <!-- list of connection profiles to select from -->
     <string name="preference_piwigo_connection_profile_list_key" translatable="false">preference_select_piwigo_connection_profile</string>

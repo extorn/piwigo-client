@@ -12,6 +12,21 @@
         tools:ignore="UnusedAttribute">
 
         <activity
+            tools:node="merge"
+            android:name=".ui.PreferencesActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="api-8938561204297001672-604498.firebaseapp.com"
+                    android:pathPrefix="/config" />
+            </intent-filter>
+        </activity>
+        <activity
             tools:node="replace"
             android:launchMode="singleTop"
             android:name=".ui.FileSelectActivity"

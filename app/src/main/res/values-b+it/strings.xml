@@ -711,4 +711,12 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="supported_file_types">Questo elenco di tipi di file sono quelli che questo server è configurato per accettare.\n\nPuò essere modificato nel file local / config / config.inc.php.</string>
     <string name="deleting_tag">Eliminazione del tag</string>
     <string name="compressed_progress_bar_message">Compressa</string>
+    <string name="piwigo_deep_link_login_email_pattern">Si prega di utilizzare il link sottostante per configurare la copia dell\'app client PIWIGO con URI del server, nome utente e password per iniziare.\n\n%1$s</string>
+    <string name="deep_link_explanation">Volete generare un link profondo per questo utente che possono utilizzare per configurare l\'app con le loro credenziali?\n\n\'Questa app \' creerà un nuovo profilo in questa app con queste credenziali che consente di testare la funzione</string>
+    <string name="button_clipboard">Appunti</string>
+    <string name="button_email">E-mail</string>
+    <string name="deep_link_warning_no_password">L\'attuale link Deep non avrà una password. Se desideri aggiungere la password, è necessario impostare una nuova password per questo utente.\n\nCrea il link profondo senza password?</string>
+    <string name="button_this_app">Questa app</string>
+    <string name="connection_profile_amended_with_new_details_pattern">Il profilo del profilo del server\n  %1$s\n  è stato creato e modificato con nuovi dettagli</string>
+    <string name="alert_create_or_update_server_connection_details">Volete creare o aggiornare i dettagli della connessione del server PIWIGO APP?</string>
 </resources>

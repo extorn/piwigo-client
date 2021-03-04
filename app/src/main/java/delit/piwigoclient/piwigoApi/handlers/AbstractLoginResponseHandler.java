@@ -89,7 +89,9 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
 
         loginResponse.setNewSessionDetails(PiwigoSessionDetails.getInstance(connectionPrefs));
 
-        loadMethodsAvailable();
+        if(canContinue) {
+            loadMethodsAvailable();
+        }
 
         ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 5, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         if(canContinue) {

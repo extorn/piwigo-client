@@ -108,7 +108,7 @@
 
     
     <string name="preference_piwigo_connection_profile_title">Seleziona il profilo di connessione</string>
-    <string name="preference_piwigo_connection_profile_summary">Profilo di connessione attivo (%1$s)</string>
+    <string name="preference_piwigo_connection_profile_summary">%1$s</string>
 
     
     

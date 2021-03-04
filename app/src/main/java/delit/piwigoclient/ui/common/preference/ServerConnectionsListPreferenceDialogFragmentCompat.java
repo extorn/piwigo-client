@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.preference.DialogPreference;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceManager;
 
@@ -169,8 +170,8 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
     }
 
     @Override
-    public androidx.preference.Preference findPreference(@NonNull CharSequence key) {
-        return getPreference();
+    public <T extends Preference> T findPreference(@NonNull CharSequence key) {
+        return (T)getPreference();
     }
 
     public static ServerConnectionsListPreferenceDialogFragmentCompat newInstance(String key) {
