@@ -981,6 +981,8 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         deleteFilesAfterUploadCheckbox.setEnabled(noJobIsYetConfigured || jobIsFinished && !filesStillToBeUploaded);
 
+        fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished && !filesStillToBeUploaded);
+
         updateActiveJobActionButtonsStatus(requireContext(), uploadJob);
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         selectedGalleryTextView.setEnabled(noJobIsYetConfigured || (jobIsFinished && !filesStillToBeUploaded));
