@@ -110,6 +110,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:defaultValue="@bool/preference_data_upload_automatic_job_allow_upload_of_incompressible_videos_default"
+                android:dependency="@string/preference_data_upload_automatic_job_compress_videos_key"
                 android:key="@string/preference_data_upload_automatic_job_allow_upload_of_incompressible_videos_key"
                 android:summary="@string/preference_data_upload_automatic_job_allow_upload_of_incompressible_videos_summary"
                 android:title="@string/preference_data_upload_automatic_job_allow_upload_of_incompressible_videos_title" />
@@ -129,6 +130,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:defaultValue="@integer/preference_data_upload_automatic_job_compress_videos_audio_bitrate_default"
+                android:dependency="@string/preference_data_upload_automatic_job_compress_videos_key"
                 android:key="@string/preference_data_upload_automatic_job_compress_videos_audio_bitrate_key"
                 android:summary="@string/preference_data_upload_automatic_job_compress_videos_audio_bitrate_summary"
                 android:title="@string/preference_data_upload_automatic_job_compress_videos_audio_bitrate_title"
