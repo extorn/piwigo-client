@@ -327,21 +327,25 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
         return new CustomPiwigoResponseListener<>();
     }
 
-    void onPiwigoResponseAlbumsLoaded(final ArrayList<CategoryItem> albums, boolean isAdminList) {
+    void onPiwigoResponseAlbumsLoaded(CategoryItem parentAlbum, final ArrayList<CategoryItem> albums, boolean isAdminList) {
 
         adminDataLoaded |= isAdminList;
 
         getUiHelper().hideProgressIndicator();
-        CategoryItem currentAlbum = getActiveAlbum();
-        if(currentAlbum.getChildAlbumCount() == 0) {
-            currentAlbum.setChildAlbums(albums);
+        if(rootAlbum == null) {
+            rootAlbum = StaticCategoryItem.ROOT_ALBUM.toInstance();
+        }
+        CategoryItem localCopyOfAlbum = rootAlbum.findChild(parentAlbum.getId());
+
+        if(localCopyOfAlbum.getChildAlbumCount() == 0) {
+            localCopyOfAlbum.setChildAlbums(albums);
         } else {
-            if(albums.size() == 1 && currentAlbum.getId() == albums.get(0).getId()) {
+            if(albums.size() == 1 && localCopyOfAlbum.getId() == albums.get(0).getId()) {
                 // merge the children.
-                currentAlbum.mergeChildrenWith(albums.get(0).getChildAlbums(), isAdminList);
+                localCopyOfAlbum.mergeChildrenWith(albums.get(0).getChildAlbums(), isAdminList);
             } else {
                 // presume this is just a list of the children.
-                currentAlbum.mergeChildrenWith(albums, isAdminList);
+                localCopyOfAlbum.mergeChildrenWith(albums, isAdminList);
             }
 
         }
@@ -373,14 +377,14 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
-                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums(), false);
+                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getParentAlbum(), ((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums(), false);
             } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums(), true);
+                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getParentAlbum(), ((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums(), true);
             } else if(response instanceof CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
 
                 ArrayList<CategoryItemStub> albumNames = ((CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) response).getAlbumNames();
                 ArrayList<CategoryItem> albums = CategoryItem.newListFromStubs(albumNames);
-                getParent().onPiwigoResponseAlbumsLoaded(albums, false);
+                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getParentAlbum(), albums, false);
             }
         }
     }
