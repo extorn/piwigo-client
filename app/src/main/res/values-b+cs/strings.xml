@@ -639,6 +639,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="delete_uploaded_files_title">Odstraňte nahrané soubory</string>
     <string name="system_file_selector_label">výběr systémových souborů</string>
     <string name="preference_uri_consumer_description_pattern">Předvolba:%1$s</string>
+    <string name="selected_files_missing_permissions_warning_message_pattern">Požadovaná oprávnění již nejsou k dispozici pro některé vybrané soubory. Volba souboru zrušeno.</string>
     <string name="missing_permissions_warning_message_pattern">"Od posledního otevření této aplikace byla odebrána oprávnění k souborům vyžadovaná následujícími částmi aplikace\n\n%1$s\n\nVyberte prosím nová oprávnění pro tato nastavení, aby věci fungovaly podle očekávání."</string>
     <string name="folder_selection_title">Vybrat složku</string>
     <string name="files_selection_title">Vyberte soubory</string>
@@ -719,4 +720,5 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="button_this_app">Tato aplikace</string>
     <string name="connection_profile_amended_with_new_details_pattern">Profil připojení serveru\n  %1$s\n  byl vytvořen a upraven novými údaji</string>
     <string name="alert_create_or_update_server_connection_details">Chcete vytvořit nebo aktualizovat podrobnosti připojení aplikace Piwigo Server?</string>
+    <string name="alert_error_unable_to_choose_folder_no_uri_permissions">Aplikace nemůže najít potřebná oprávnění k souborům pro vybranou složku. Vyberte prosím další. Pokud se jedná o kořen, odstraňte a znovu přidejte kořen a znovu vyberte znovu.</string>
 </resources>

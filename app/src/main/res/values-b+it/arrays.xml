@@ -146,11 +146,23 @@
                 * Forse una riscrittura completa del processo di caricamento in quanto non si presta a essere migliorato iterativamente
                 * Possibilmente una riscrittura completa dell\'app con un focus sulla semplicità per la navigazione utente generale inizialmente"</item>
         
-        <item>1.4.0.130</item>
+        <item>1.4.0.131</item>
         <item>"Modificare:
                  - Analisi del miglioramento delle prestazioni e, si spera, implementazione per la velocità di trasferimento dei dati di caricamento"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.130</item>
+        <item>"Risoluzione del problema:
+                - Pulsante Indietro non risponde se nessuna root file selezionata sulla pagina Selezione file
+                - Carica di album e display anteprima nella finestra di dialogo Selezione dell\'album fissati per i lavori di caricamento dello sfondo
+                - Vecchia sfondo non salvate Caricare i dettagli di configurazione del lavoro non cancellati dopo l\'utente Cancels Creation
+                - Mostra solo le radici che abbiamo il permesso di scrittura per se selezionare una cartella che richiede
+               Modificare:
+                - Dettagli del percorso mostrati per le preferenze di cartelle selezionate
+                - Se \'OK\' cliccato sulla selezione della cartella senza cartella selezionata, la cartella corrente presunta selezionata
+                - Mostra tutti i file figlio Quando si seleziona una cartella per semplificare la visione del dispositivo sul dispositivo
+                - Solo pagata: nuova funzionalità Deep Link - Opzione per inviare agli utenti un collegamento che aggiungerà l\'URI, il nome utente e la password alla loro copia dell\'app durante il salvataggio di un utente
+                - Alterazione nella logica di riproduzione per una risposta del server 401/403 - per favore fatemelo sapere se si è avvisati di più errori 401/403"</item>
         <item>1.4.0.129</item>
         <item>"Risoluzione del problema:
                  - Correggere il localizzatore di orfani e caricare il codice"</item>

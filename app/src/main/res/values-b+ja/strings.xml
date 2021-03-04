@@ -639,6 +639,7 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="delete_uploaded_files_title">アップロードしたファイルを削除する</string>
     <string name="system_file_selector_label">システムファイルの選択</string>
     <string name="preference_uri_consumer_description_pattern">設定：%1$s</string>
+    <string name="selected_files_missing_permissions_warning_message_pattern">選択されたファイルの中には、必要な権限は使用できなくなりました。 ファイル選択がキャンセルされました。</string>
     <string name="missing_permissions_warning_message_pattern">"このアプリを最後に開いたときから、アプリの次の部分に必要なファイルのアクセス許可が削除されました\n\n%1$s\n\n期待どおりに機能するように、これらの設定に新しい権限を選択してください。"</string>
     <string name="folder_selection_title">フォルダーを選択</string>
     <string name="files_selection_title">ファイルを選択</string>
@@ -719,4 +720,5 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="button_this_app">このアプリ</string>
     <string name="connection_profile_amended_with_new_details_pattern">サーバー接続プロファイル\n  ％1 $ S\n  新しい詳細を作成して修正しました</string>
     <string name="alert_create_or_update_server_connection_details">App Piwigo Server接続の詳細を作成または更新しますか？</string>
+    <string name="alert_error_unable_to_choose_folder_no_uri_permissions">アプリは、選択したフォルダに対して必要なファイル権限を見つけることができません。 別のものを選択してください。 rootであれば、ルートを削除して再追加してから、もう一度選択してください。</string>
 </resources>

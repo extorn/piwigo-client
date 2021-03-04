@@ -146,11 +146,23 @@
                 * Möglicherweise ein vollständiges Umschreiben des Upload-Prozesses, da er nicht iterativ verbessert werden kann
                 * Möglicherweise ein vollständiges Umschreiben der App mit dem Schwerpunkt auf Einfachheit für das allgemeine Surfen anfangs"</item>
         
-        <item>1.4.0.130</item>
+        <item>1.4.0.131</item>
         <item>"Veränderung:
                  - Untersuchung zur Leistungsverbesserung und hoffentlich Implementierung für die Geschwindigkeit der Upload-Datenübertragung"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.130</item>
+        <item>"Fehlerbehebung:
+                - Zurück-Taste antwortet nicht, wenn keine Dateirotung auf Dateiauswahlseite ausgewählt wurde
+                - Belastung von Alben und Miniaturansicht im Album-Auswahldialog, der für Hintergrund-Upload-Jobs behoben wurde
+                - Alter nicht gespeicherter Hintergrund-Upload-Job-Konfigurationsdetails, die nach dem Benutzer nicht gelöscht wurden, storniert die Erstellung
+                - Nur Roots anzeigen Wir haben eine Schreibberechtigung, wenn Sie einen Ordner auswählen, der sie erfordert
+               Veränderung:
+                - Pfaddetails, die für ausgewählte Ordnereinstellungen angezeigt werden
+                - Wenn \'OK\' auf Ordnerauswahl geklickt wird, ohne den Ordner ausgewählt, wird der aktuelle Ordner ausgewählt
+                - Zeigen Sie alle untergeordneten Dateien an, wenn Sie einen Ordner auswählen, um den Speicherort auf dem Gerät einfacher zu erkennen
+                - Nur bezahlt: Neue Deep-Link-Funktion - Option zum Senden von Benutzern einen Link, der URI, Benutzername und Kennwort an ihre Kopie der App hinzufügt, wenn Sie einen Benutzer speichern
+                - Änderung der Wiederholungslogik für eine 401/403-Server-Antwort - bitte lassen Sie mich wissen, ob Sie über 401/403 Fehler informiert sind"</item>
         <item>1.4.0.129</item>
         <item>"Fehlerbehebung:
                  - Korrigieren Sie den Orphan Locator und den Ladecode"</item>

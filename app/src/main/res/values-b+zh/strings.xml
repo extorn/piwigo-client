@@ -639,6 +639,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="delete_uploaded_files_title">删除上传的文件</string>
     <string name="system_file_selector_label">系统文件选择</string>
     <string name="preference_uri_consumer_description_pattern">首选项：%1$s</string>
+    <string name="selected_files_missing_permissions_warning_message_pattern">所选某些文件不再可用所需的权限。 文件选择已取消。</string>
     <string name="missing_permissions_warning_message_pattern">"自上次打开此应用以来，该应用以下各部分所需的文件权限已被删除\n\n%1$s\n\n请为这些设置选择新的权限，以确保一切正常。"</string>
     <string name="folder_selection_title">选择文件夹</string>
     <string name="files_selection_title">选择文件</string>
@@ -719,4 +720,5 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="button_this_app">这个应用程序</string>
     <string name="connection_profile_amended_with_new_details_pattern">服务器连接配置文件\n  %1$s\n  已创建和或修改新细节</string>
     <string name="alert_create_or_update_server_connection_details">您想创建或更新App Piwigo Server连接详细信息吗？</string>
+    <string name="alert_error_unable_to_choose_folder_no_uri_permissions">该应用程序无法找到所选文件夹的必要文件权限。 请选择另一个。 如果它是根，请删除并重新添加root，然后再次选择。</string>
 </resources>

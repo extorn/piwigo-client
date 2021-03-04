@@ -146,11 +146,23 @@
                 * Posiblemente una reescritura completa del proceso de carga, ya que no se presta a una mejora iterativa
                 * Posiblemente una reescritura completa de la aplicación con un enfoque en la simplicidad para la navegación general del usuario inicialmente"</item>
         
-        <item>1.4.0.130</item>
+        <item>1.4.0.131</item>
         <item>"Cambio:
                  - Investigación de mejora del rendimiento y, con suerte, implementación para la velocidad de transferencia de datos de carga"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.130</item>
+        <item>"Arreglo del fallo:
+                - Botón Atrás no responde si no se selecciona ningún archivo Root seleccionado en la página de selección de archivos
+                - Carga de álbumes y pantalla en miniatura en el cuadro de diálogo de selección de álbumes corregido para trabajos de segundo plano.
+                - Antiguo fondo no guardado Subir Detalles de configuración del trabajo No se elimina después de que el usuario cancela la creación
+                - SOLO Mostrar raíces Tenemos permiso para escribir si selecciona una carpeta que lo requiere
+               Cambio:
+                - Detalles de la ruta mostrados para las preferencias de carpeta seleccionadas
+                - Si \'OK\' hizo clic en la selección de carpetas sin carpeta seleccionada, se presume la carpeta actual seleccionada
+                - Muestre todos los archivos secundarios al seleccionar una carpeta para que sea más fácil ver la ubicación en el dispositivo
+                - Solo pagado: nueva función de enlace profundo: opción para enviar a los usuarios un enlace que agregará el URI, Nombre de usuario y contraseña a su copia de la aplicación al guardar un usuario
+                - alteración en la lógica de reintento para una respuesta 401/403 Server, hágamelo saber si se le notifica más 401/403 errores"</item>
         <item>1.4.0.129</item>
         <item>"Arreglo del fallo:
                  - Localizador de huérfanos y código de carga correctos"</item>

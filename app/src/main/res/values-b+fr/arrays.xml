@@ -146,11 +146,23 @@
                 * Peut-être une réécriture complète du processus de téléchargement car il ne se prête pas à une amélioration itérative
                 * Peut-être une réécriture complète de l\'application avec un accent sur la simplicité pour la navigation générale des utilisateurs au départ"</item>
         
-        <item>1.4.0.130</item>
+        <item>1.4.0.131</item>
         <item>"Changement:
                  - Enquête d\'amélioration des performances et, espérons-le, mise en œuvre de la vitesse de transfert des données de téléchargement"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.130</item>
+        <item>"Correction d\'un bug:
+                - Bouton Back ne répond pas si aucune racine de fichier sélectionnée sur la page de sélection de fichier
+                - Charge d\'albums et d\'affichage de la vignette dans la boîte de dialogue Sélection de l\'album Fixe for arrière-plan upload emplois
+                - Old non favorisé Contexte de téléchargement Détails de la configuration du travail Non supprimé après la création d\'annulation de l\'utilisateur
+                - Seulement montrer des racines que nous avons la permission d\'écriture pour si la sélection d\'un dossier nécessitant
+               Changement:
+                - Détails du chemin affiché pour les préférences de dossier sélectionné
+                - Si \"OK\" a cliqué sur la sélection du dossier sans dossier sélectionné, le dossier actuel présumé sélectionné
+                - Afficher tous les fichiers enfants lors de la sélection d\'un dossier pour faciliter la vue de l\'emplacement sur l\'appareil.
+                - Payé uniquement: nouvelle fonctionnalité de link profond - Option d\'envoi d\'utilisateurs un lien ajoutera l\'URI, le nom d\'utilisateur et le mot de passe à leur copie de l\'application lors de la sauvegarde d\'un utilisateur.
+                - modification de la logique de réessayer pour une réponse de serveur 401/403 - laissez-moi savoir si vous êtes informé de plus 401/403 erreurs"</item>
         <item>1.4.0.129</item>
         <item>"Correction d\'un bug:
                  - Corriger le localisateur d\'orphelin et charger le code"</item>

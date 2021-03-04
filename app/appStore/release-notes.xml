@@ -1,40 +1,97 @@
 <en-GB>
 Bugfix:
-- Correct orphan locator and load code
+- Back button doesn't respond if no file root selected on file selection page
+- Load of albums and thumbnail display in album selection dialog fixed for background upload jobs
+- old unsaved background upload job configuration details not deleted after user cancels creation
+- only show roots we have write permission for if selecting a folder requiring it
+Change:
+- path details shown for selected folder preferences
+- If 'OK' clicked on folder selection with no folder selected, current ..."
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Opravte lokátor sirotků a načtěte kód
+- Tlačítko Zpět neodpovídá, pokud žádný soubor souborů není vybrán na stránce výběru souboru
+- Načíst alba a zobrazení miniatur v dialogu pro výběr alb Fixed pro úlohy na pozadí
+- staré neuložené pozadí Upload úlohy konfigurace úlohy nejsou vymazány po zrušení uživatele
+- ukázat pouze kořeny, které máme povolení k zápisu, pokud vyberete složku, která vyžaduje
+Změna:
+- Podrobnosti o cestách zobrazeny pro vybrané předvolby složky
+- Pokud \'OK\' kliknete na výběr složky bez vybran..."
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Korrigieren Sie den Orphan Locator und den Ladecode
+- Zurück-Taste antwortet nicht, wenn keine Dateirotung auf Dateiauswahlseite ausgewählt wurde
+- Belastung von Alben und Miniaturansicht im Album-Auswahldialog, der für Hintergrund-Upload-Jobs behoben wurde
+- Alter nicht gespeicherter Hintergrund-Upload-Job-Konfigurationsdetails, die nach dem Benutzer nicht gelöscht wurden, storniert die Erstellung
+- Nur Roots anzeigen Wir haben eine Schreibberechtigung, wenn Sie einen Ordner auswählen, der sie erfordert
+Veränderung:
+- Pfaddet..."
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Localizador de huérfanos y código de carga correctos
+- Botón Atrás no responde si no se selecciona ningún archivo Root seleccionado en la página de selección de archivos
+- Carga de álbumes y pantalla en miniatura en el cuadro de diálogo de selección de álbumes corregido para trabajos de segundo plano.
+- Antiguo fondo no guardado Subir Detalles de configuración del trabajo No se elimina después de que el usuario cancela la creación
+- SOLO Mostrar raíces Tenemos permiso para escribir si selecciona una carpeta que lo requiere
+C..."
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Corriger le localisateur d\'orphelin et charger le code
+- Bouton Back ne répond pas si aucune racine de fichier sélectionnée sur la page de sélection de fichier
+- Charge d\'albums et d\'affichage de la vignette dans la boîte de dialogue Sélection de l\'album Fixe for arrière-plan upload emplois
+- Old non favorisé Contexte de téléchargement Détails de la configuration du travail Non supprimé après la création d\'annulation de l\'utilisateur
+- Seulement montrer des racines que nous avons la permission d\'écriture pour si la sé..."
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Correggere il localizzatore di orfani e caricare il codice
+- Pulsante Indietro non risponde se nessuna root file selezionata sulla pagina Selezione file
+- Carica di album e display anteprima nella finestra di dialogo Selezione dell\'album fissati per i lavori di caricamento dello sfondo
+- Vecchia sfondo non salvate Caricare i dettagli di configurazione del lavoro non cancellati dopo l\'utente Cancels Creation
+- Mostra solo le radici che abbiamo il permesso di scrittura per se selezionare una cartella che richiede
+Modificare..."
 </it-IT>
 <ja-JP>
 バグ修正：
--孤立したロケーターとロードコードを修正する
+- ファイル選択ページでファイルルートが選択されていない場合は、戻るボタンが応答しません
+- バックグラウンドアップロードジョブのためのアルバム選択ダイアログのアルバムとサムネイル表示のロード
+- 古い未保存のバックグラウンドのアップロードジョブ構成の詳細が削除されない作成者が作成された後に削除されません
+- ルーツのみを表示するための書き込み権限がある場合は、それを必要とするフォルダを選択した場合
+変化する：
+- 選択したフォルダ設定に表示されるパス詳細
+- フォルダが選択されていないフォルダ選択の「OK」をクリックした場合は、選択したフォルダが選択されました。
+- デバイス上の場所を見やすくするためのフォルダを選択するときにすべての子ファイルを表示する
+- 有料のみ：New Deep Link機能 - ユーザーを保存するときにアプリのコピーにURI、ユーザー名、およびパスワードを追加するリンクをユーザーに送信するオプション
+-  401/403サーバーの応答のための再試行ロジックの変更 - あなたがより多くの401/403のエラーの通知されているかどうか私に知ら..."
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Correcte weeszoeker en laadcode
+- Back-knop reageert niet als er geen bestandsoets is geselecteerd op de pagina Bestandselectie
+- Lading van albums en miniatuurweergave in het dialoogvenster Album Selectie opgelost voor achtergrond Upload taken
+- Oude niet-opgeslagen achtergrond Upload taakconfiguratie-details niet verwijderd na het maken van gebruikers annuleert creatie
+- Toon alleen de wortels waarvoor we toestemming hebben voor het selecteren van een map die het vereist
+Verandering:
+- Paddetails weergegeven voor..."
 </nl-NL>
 <ru-RU>
-Исправлена ошибка:
-- Правильный локатор сирот и код загрузки
+Исправлена ​​ошибка:
+- Назад кнопка не отвечает, если файл файлов не выбран на странице выбора файла
+- Загрузка альбомов и дисплея миниатюр в диалоговом окне выбора альбома, установленного для фона Загрузить работу
+- подробности конфигурации задания загрузки загрузки старых несогласованных фонов не удаляются после создания
+- Только показать корни, которые у нас есть разрешение на запись, если выбрать папку, требующую ее
+Изменять:
+- Подробности пути показаны для выбранных предпочтений папок
+-..."
 </ru-RU>
 <zh-CN>
 错误修正：
--正确的孤立者定位器和加载代码
+- 如果在文件选择页面上没有选择文件根，则返回按钮不会响应
+- 在Album选择对话框中加载相册和缩略图显示，用于背景上传作业
+- 旧未保存的背景上传在用户取消创建后未删除的作业配置详细信息
+- 仅显示ROOTS，我们有写权限，如果选择需要它的文件夹
+改变：
+- 为所选文件夹首选项显示的路径详细信息
+- 如果\'确定\'单击文件夹选择，则没有选择文件夹，所选的当前文件夹
+- 选择文件夹时显示所有子文件，以便更容易查看设备上的位置
+- 仅支付：新的Deep Link功能 - 选项要发送用户将在保存用户时将URI，用户名和密码添加到应用程序的副本中的链接
+-  401/403服务器响应重试逻辑的更改 - 如果您通知更多401/403错误，请告诉我
 </zh-CN>

@@ -639,6 +639,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="delete_uploaded_files_title">Verwijder geüploade bestanden</string>
     <string name="system_file_selector_label">systeembestand selectie</string>
     <string name="preference_uri_consumer_description_pattern">Voorkeur:%1$s</string>
+    <string name="selected_files_missing_permissions_warning_message_pattern">Vereiste machtigingen zijn niet langer beschikbaar voor sommige van de geselecteerde bestanden. Bestandselectie geannuleerd.</string>
     <string name="missing_permissions_warning_message_pattern">"Sinds de laatste keer dat deze app is geopend, zijn de bestandsrechten die vereist zijn voor de volgende delen van de app verwijderd\n\n%1$s\n\nSelecteer nieuwe machtigingen voor deze instellingen om ervoor te zorgen dat alles werkt zoals verwacht."</string>
     <string name="folder_selection_title">Selecteer map</string>
     <string name="files_selection_title">Selecteer bestand</string>
@@ -719,4 +720,5 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="button_this_app">Deze app</string>
     <string name="connection_profile_amended_with_new_details_pattern">Het serververbindingsprofiel\n  %1$s\n  is gemaakt en of gewijzigd met nieuwe details</string>
     <string name="alert_create_or_update_server_connection_details">Wilt u de APP PIWIGO Server-verbindingsdetails maken of bijwerken?</string>
+    <string name="alert_error_unable_to_choose_folder_no_uri_permissions">De app kan geen benodigde bestandsmachtigingen vinden voor de map die u hebt geselecteerd. Selecteer een andere. Als het een root is, verwijdert u en voegt u de root opnieuw toe en selecteert u opnieuw.</string>
 </resources>

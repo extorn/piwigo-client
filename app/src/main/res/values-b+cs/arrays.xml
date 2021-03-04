@@ -146,11 +146,23 @@
                 * Možná úplné přepsání procesu nahrávání, protože se nehodlá iterativně vylepšovat
                 * Možná úplné přepsání aplikace se zaměřením na jednoduchost zpočátku pro běžné prohlížení uživatelů"</item>
         
-        <item>1.4.0.130</item>
+        <item>1.4.0.131</item>
         <item>"Změna:
                  - Vyšetřování zlepšení výkonu a snad implementace pro rychlost přenosu dat"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.130</item>
+        <item>"Oprava chyby:
+                - Tlačítko Zpět neodpovídá, pokud žádný soubor souborů není vybrán na stránce výběru souboru
+                - Načíst alba a zobrazení miniatur v dialogu pro výběr alb Fixed pro úlohy na pozadí
+                - staré neuložené pozadí Upload úlohy konfigurace úlohy nejsou vymazány po zrušení uživatele
+                - ukázat pouze kořeny, které máme povolení k zápisu, pokud vyberete složku, která vyžaduje
+               Změna:
+                - Podrobnosti o cestách zobrazeny pro vybrané předvolby složky
+                - Pokud \'OK\' kliknete na výběr složky bez vybrané složky, předpokládaná aktuální složka
+                - zobrazit všechny podřízené soubory při výběru složky, aby bylo snadnější vidět umístění v zařízení
+                - Zaplacené pouze: nová funkce Deep Link - možnost odeslat uživatelům odkaz, který přidá URI, uživatelské jméno a heslo k jejich kopii aplikace při ukládání uživatele
+                - změna v opakování logiky pro odezvu 401/403 serverů - dejte mi prosím vědět, pokud jste informováni o chybách 401/403"</item>
         <item>1.4.0.129</item>
         <item>"Oprava chyby:
                  - Opravte lokátor sirotků a načtěte kód"</item>

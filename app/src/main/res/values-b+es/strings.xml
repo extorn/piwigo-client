@@ -639,6 +639,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="delete_uploaded_files_title">Eliminar archivos cargados</string>
     <string name="system_file_selector_label">selección de archivos del sistema</string>
     <string name="preference_uri_consumer_description_pattern">Preferencia:%1$s</string>
+    <string name="selected_files_missing_permissions_warning_message_pattern">Los permisos requeridos ya no están disponibles para algunos de los archivos seleccionados. Selección de archivos cancelada.</string>
     <string name="missing_permissions_warning_message_pattern">"Desde la última vez que se abrió esta aplicación, se han eliminado los permisos de archivo requeridos por las siguientes partes de la aplicación\n\n%1$s\n\nSeleccione nuevos permisos para esta configuración para que todo funcione como se esperaba."</string>
     <string name="folder_selection_title">Seleccione la carpeta</string>
     <string name="files_selection_title">Selecciona archivos</string>
@@ -719,4 +720,5 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="button_this_app">Esta aplicación</string>
     <string name="connection_profile_amended_with_new_details_pattern">El perfil de conexión del servidor\n  %1$s\n  Se ha creado y o modificado con nuevos detalles.</string>
     <string name="alert_create_or_update_server_connection_details">¿Le gustaría crear o actualizar los detalles de la conexión del servidor PIWIGO?</string>
+    <string name="alert_error_unable_to_choose_folder_no_uri_permissions">La aplicación no puede encontrar los permisos de archivos necesarios para la carpeta que seleccionó. Por favor, seleccione otro. Si es una raíz, elimine y vuelva a agregar la raíz, luego seleccione nuevamente.</string>
 </resources>

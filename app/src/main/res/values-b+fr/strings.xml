@@ -639,6 +639,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="delete_uploaded_files_title">Supprimer les fichiers téléchargés</string>
     <string name="system_file_selector_label">sélection de fichiers système</string>
     <string name="preference_uri_consumer_description_pattern">Préférence:%1$s</string>
+    <string name="selected_files_missing_permissions_warning_message_pattern">Les autorisations requises ne sont plus disponibles pour certains des fichiers sélectionnés. Sélection de fichier annulée.</string>
     <string name="missing_permissions_warning_message_pattern">"Depuis la dernière ouverture de cette application, les autorisations de fichier requises par les parties suivantes de l\'application ont été supprimées\n\n%1$s\n\nVeuillez sélectionner de nouvelles autorisations pour ces paramètres afin que tout fonctionne comme prévu."</string>
     <string name="folder_selection_title">Sélectionner le dossier</string>
     <string name="files_selection_title">Sélectionnez les fichiers</string>
@@ -719,4 +720,5 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="button_this_app">Cette application</string>
     <string name="connection_profile_amended_with_new_details_pattern">Le profil de connexion du serveur\n  % 1 $ S\n  a été créé et ou modifié avec de nouveaux détails</string>
     <string name="alert_create_or_update_server_connection_details">Souhaitez-vous créer ou mettre à jour les détails de la connexion de l\'application PIWIGO Server?</string>
+    <string name="alert_error_unable_to_choose_folder_no_uri_permissions">L\'application ne trouve pas les autorisations de fichier nécessaires pour le dossier sélectionné. Veuillez sélectionner un autre. S\'il s\'agit d\'une racine, veuillez supprimer et ré-ajouter la racine, puis sélectionnez à nouveau.</string>
 </resources>

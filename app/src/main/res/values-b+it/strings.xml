@@ -639,6 +639,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="delete_uploaded_files_title">Elimina i file caricati</string>
     <string name="system_file_selector_label">selezione del file di sistema</string>
     <string name="preference_uri_consumer_description_pattern">Preferenza:%1$s</string>
+    <string name="selected_files_missing_permissions_warning_message_pattern">Le autorizzazioni richieste non sono più disponibili per alcuni dei file selezionati. Selezione file annullata.</string>
     <string name="missing_permissions_warning_message_pattern">"Dall\'ultima volta che questa app è stata aperta, le autorizzazioni dei file richieste dalle seguenti parti dell\'app sono state rimosse\n\n%1$s\n\nSeleziona nuove autorizzazioni per queste impostazioni per far funzionare le cose come previsto."</string>
     <string name="folder_selection_title">Seleziona cartella</string>
     <string name="files_selection_title">Seleziona i file</string>
@@ -719,4 +720,5 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="button_this_app">Questa app</string>
     <string name="connection_profile_amended_with_new_details_pattern">Il profilo del profilo del server\n  %1$s\n  è stato creato e modificato con nuovi dettagli</string>
     <string name="alert_create_or_update_server_connection_details">Volete creare o aggiornare i dettagli della connessione del server PIWIGO APP?</string>
+    <string name="alert_error_unable_to_choose_folder_no_uri_permissions">L\'app non riesce a trovare le autorizzazioni dei file necessari per la cartella selezionata. Si prega di selezionare un altro. Se è una radice, si prega di eliminare e riaggiungere la radice, quindi selezionare nuovamente.</string>
 </resources>

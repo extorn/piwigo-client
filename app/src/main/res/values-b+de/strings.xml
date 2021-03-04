@@ -639,6 +639,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="delete_uploaded_files_title">Hochgeladene Dateien löschen</string>
     <string name="system_file_selector_label">Auswahl der Systemdatei</string>
     <string name="preference_uri_consumer_description_pattern">Präferenz:%1$s</string>
+    <string name="selected_files_missing_permissions_warning_message_pattern">Erforderliche Berechtigungen sind für einige der ausgewählten Dateien nicht mehr verfügbar. Dateiauswahl storniert.</string>
     <string name="missing_permissions_warning_message_pattern">"Seitdem letzten Öffnen dieser App wurden die für die folgenden Teile der App erforderlichen Dateiberechtigungen entfernt\n\n%1$s\n\nBitte wählen Sie neue Berechtigungen für diese Einstellungen aus, damit die Dinge wie erwartet funktionieren."</string>
     <string name="folder_selection_title">Ordner auswählen</string>
     <string name="files_selection_title">Dateien auswählen</string>
@@ -719,4 +720,5 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="button_this_app">Diese App</string>
     <string name="connection_profile_amended_with_new_details_pattern">Das Serververbindungsprofil\n  %1$s\n  wurde mit neuen Details erstellt und geändert</string>
     <string name="alert_create_or_update_server_connection_details">Möchten Sie die Anwendungsdetails der App Piwigo Server-Verbindung erstellen oder aktualisieren?</string>
+    <string name="alert_error_unable_to_choose_folder_no_uri_permissions">Die App kann keine erforderlichen Dateiberechtigungen für den von Ihnen ausgewählten Ordner finden. Bitte wählen Sie einen anderen. Wenn es sich um eine Stamm handelt, löschen Sie bitte das Root und fügen Sie das Root, und wählen Sie sie erneut aus.</string>
 </resources>

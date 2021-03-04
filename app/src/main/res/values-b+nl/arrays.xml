@@ -146,11 +146,23 @@
                 * Mogelijk een volledig herschrijven van het uploadproces, aangezien het zich niet leent om iteratief te worden verbeterd
                 * Mogelijk een volledige herschrijving van de app met de nadruk in eerste instantie op eenvoud voor algemene gebruikers"</item>
         
-        <item>1.4.0.130</item>
+        <item>1.4.0.131</item>
         <item>"Verandering:
                  - Onderzoek naar prestatieverbetering en hopelijk implementatie voor uploadsnelheid van gegevensoverdracht"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.130</item>
+        <item>"Bugfix:
+                - Back-knop reageert niet als er geen bestandsoets is geselecteerd op de pagina Bestandselectie
+                - Lading van albums en miniatuurweergave in het dialoogvenster Album Selectie opgelost voor achtergrond Upload taken
+                - Oude niet-opgeslagen achtergrond Upload taakconfiguratie-details niet verwijderd na het maken van gebruikers annuleert creatie
+                - Toon alleen de wortels waarvoor we toestemming hebben voor het selecteren van een map die het vereist
+               Verandering:
+                - Paddetails weergegeven voor de geselecteerde mapvoorkeuren
+                - Als \'OK\' op Folder-selectie klikt zonder geselecteerde map, veronderstelde de huidige map geselecteerd
+                - Toon alle kinderbestanden bij het selecteren van een map om het gemakkelijker te maken om de locatie op het apparaat te zien
+                - Alleen betaald: Nieuwe Deep Link-functie - Optie om gebruikers een link te verzenden die de URI, gebruikersnaam en het wachtwoord toevoegen aan hun kopie van de app bij het opslaan van een gebruiker
+                - wijziging in het opnieuw proberen Logica voor een reactie van 401/403 - laat het me weten als u op de hoogte bent van meer 401/403-fouten"</item>
         <item>1.4.0.129</item>
         <item>"Bugfix:
                  - Correcte weeszoeker en laadcode"</item>
