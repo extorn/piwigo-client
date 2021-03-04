@@ -69,7 +69,6 @@ android {
         }
         debug {
             versionNameSuffix = "-DEBUG"
-            signingConfig signingConfigs.config
             /*
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
