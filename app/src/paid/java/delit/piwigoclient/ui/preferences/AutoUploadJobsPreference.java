@@ -151,7 +151,7 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
         if(hasChanged(cfg) || !getActiveState().hasUploadJobId(cfg.getJobId())) {
             getActiveState().setJobsHaveChanged(true);
         }
-        addAutoUploadJobConfigToListIfNew(cfg);
+        onUserActionAddAutoUploadJobConfigToListIfNew(cfg);
         onClick();
     }
 
@@ -168,7 +168,7 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
         super.onClick();
     }
 
-    private void addAutoUploadJobConfigToListIfNew(AutoUploadJobConfig cfg) {
+    private void onUserActionAddAutoUploadJobConfigToListIfNew(AutoUploadJobConfig cfg) {
         if(cfg.exists(getContext())) {
             getActiveState().addJobCfg(cfg);
         }
@@ -225,11 +225,11 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
         deletePrefsFiles(getActiveState().addedItems);
     }
 
-    private void deletePrefsFiles(ArrayList<AutoUploadJobConfig> addedItems) {
-        for (AutoUploadJobConfig addedJob : addedItems) {
-            addedJob.deletePreferences(getContext());
+    private void deletePrefsFiles(ArrayList<AutoUploadJobConfig> items) {
+        for (AutoUploadJobConfig itemToRemove : items) {
+            itemToRemove.deletePreferences(getContext());
         }
-        addedItems.clear();
+        items.clear();
     }
 
 
@@ -378,8 +378,9 @@ public class AutoUploadJobsPreference extends MyDialogPreference {
         }
 
         public void addJobCfg(AutoUploadJobConfig cfg) {
-            currentItems.add(cfg);
-            addedItems.add(cfg);
+            if(currentItems.add(cfg)) {
+                addedItems.add(cfg);
+            }
         }
 
         public void undeleteAll() {
