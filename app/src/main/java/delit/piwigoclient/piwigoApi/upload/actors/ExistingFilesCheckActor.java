@@ -153,12 +153,14 @@ public class ExistingFilesCheckActor extends UploadActor {
                 item.setFileChecksum(uniqueIdsSet.get(entry.getKey()));
                 item.setLinkedAlbums(new HashSet<>(1));
                 fud.setServerResource(item);
+                fud.setStatusVerified();
             } else {
                 ImageGetInfoResponseHandler<ResourceItem> getImageInfoHandler = new ImageGetInfoResponseHandler<>(new ResourceItem(imageId, null, null, null, null, null));
                 getServerCaller().invokeWithRetries(thisUploadJob, getImageInfoHandler, 2);
                 if (getImageInfoHandler.isSuccess()) {
                     BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?> rsp = (BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?>) getImageInfoHandler.getResponse();
                     fud.setServerResource(rsp.getResource());
+                    fud.setStatusVerified();
                 } else if (getImageInfoHandler.getResponse() instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
                     if(sessionDetails.isUseCommunityPlugin()) {
                         PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse rsp = (PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) getImageInfoHandler.getResponse();
@@ -172,6 +174,7 @@ public class ExistingFilesCheckActor extends UploadActor {
                         Logging.log(Log.WARN, TAG,"Repair made to get around issue with missing server resource for uploaded file");
                         ResourceItem blankResource = new ResourceItem(imageId, fud.getFilename(getContext()), null, null, null, null);
                         fud.setServerResource(blankResource);
+                        fud.setStatusVerified();
                         getListener().notifyListenersOfCustomErrorUploadingFile(getUploadJob(), fud.getFileUri(), false, getContext().getString(R.string.upload_error_server_resource_not_retrieved_repaired));
                     }
                 }
