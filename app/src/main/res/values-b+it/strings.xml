@@ -718,4 +718,8 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="connection_profile_amended_with_new_details_pattern">Il profilo del profilo del server\n  %1$s\n  è stato creato e modificato con nuovi dettagli</string>
     <string name="alert_create_or_update_server_connection_details">Volete creare o aggiornare i dettagli della connessione del server PIWIGO APP?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">L\'app non riesce a trovare le autorizzazioni dei file necessari per la cartella selezionata. Si prega di selezionare un altro. Se è una radice, si prega di eliminare e riaggiungere la radice, quindi selezionare nuovamente.</string>
+    <string name="upload_job_stopped_by_user">Carica interrotto dall\'utente</string>
+    <string name="upload_error_server_resource_not_yet_retrieved">La risorsa PIWIGO non è stata ancora recuperata. Impossibile configurarlo con dettagli come nome, autorizzazioni, abbonamento dell\'album</string>
+    <string name="upload_error_server_resource_not_retrieved_repaired">La risorsa del server non è stata recuperata correttamente dopo che il contenuto del file è stato caricato. È stato fatto un tentativo di gestire questo problema, ma potrebbe non funzionare.</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">L\'ultimo blocco di dati dei file è stato caricato per il file, ma il server non è riuscito a fornire un identificatore di risorse. Potrebbe essere recuperato.</string>
 </resources>

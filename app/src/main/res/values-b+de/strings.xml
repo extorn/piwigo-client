@@ -718,4 +718,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="connection_profile_amended_with_new_details_pattern">Das Serververbindungsprofil\n  %1$s\n  wurde mit neuen Details erstellt und geändert</string>
     <string name="alert_create_or_update_server_connection_details">Möchten Sie die Anwendungsdetails der App Piwigo Server-Verbindung erstellen oder aktualisieren?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">Die App kann keine erforderlichen Dateiberechtigungen für den von Ihnen ausgewählten Ordner finden. Bitte wählen Sie einen anderen. Wenn es sich um eine Stamm handelt, löschen Sie bitte das Root und fügen Sie das Root, und wählen Sie sie erneut aus.</string>
+    <string name="upload_job_stopped_by_user">Upload wird vom Benutzer gestoppt</string>
+    <string name="upload_error_server_resource_not_yet_retrieved">Piwigo-Ressource wurde noch nicht abgerufen. Es kann nicht mit Details wie Name, Berechtigungen, Albummitgliedschaft konfiguriert werden</string>
+    <string name="upload_error_server_resource_not_retrieved_repaired">Die Serverressource wurde nach dem Hochladen der Dateiinhalte nicht korrekt abgerufen. Es wurde ein Versuch unternommen, mit diesem Problem umzugehen, aber es funktioniert möglicherweise nicht.</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Der letzte Teil der Dateidaten wurde für die Datei hochgeladen, der Server konnte jedoch keine Ressourcenkennung bereitgestellt. Es könnte abgerufen werden.</string>
 </resources>

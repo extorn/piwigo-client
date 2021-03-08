@@ -718,4 +718,8 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="connection_profile_amended_with_new_details_pattern">服务器连接配置文件\n  %1$s\n  已创建和或修改新细节</string>
     <string name="alert_create_or_update_server_connection_details">您想创建或更新App Piwigo Server连接详细信息吗？</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">该应用程序无法找到所选文件夹的必要文件权限。 请选择另一个。 如果它是根，请删除并重新添加root，然后再次选择。</string>
+    <string name="upload_job_stopped_by_user">上传用户停止</string>
+    <string name="upload_error_server_resource_not_yet_retrieved">piwigo资源尚未检索。 无法使用姓名，权限，相册成员资格等详细信息配置</string>
+    <string name="upload_error_server_resource_not_retrieved_repaired">上载文件内容后未正确检索服务器资源。 已经尝试处理这个问题，但它可能无法正常工作。</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">文件数据的最后一块块为文件上载，但服务器无法提供资源标识符。 它可能是可索取的。</string>
 </resources>

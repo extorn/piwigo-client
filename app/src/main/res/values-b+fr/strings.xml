@@ -718,4 +718,8 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="connection_profile_amended_with_new_details_pattern">Le profil de connexion du serveur\n  % 1 $ S\n  a été créé et ou modifié avec de nouveaux détails</string>
     <string name="alert_create_or_update_server_connection_details">Souhaitez-vous créer ou mettre à jour les détails de la connexion de l\'application PIWIGO Server?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">L\'application ne trouve pas les autorisations de fichier nécessaires pour le dossier sélectionné. Veuillez sélectionner un autre. S\'il s\'agit d\'une racine, veuillez supprimer et ré-ajouter la racine, puis sélectionnez à nouveau.</string>
+    <string name="upload_job_stopped_by_user">Télécharger arrêté par l\'utilisateur</string>
+    <string name="upload_error_server_resource_not_yet_retrieved">La ressource de Piwigo n\'a pas encore été récupérée. Impossible de la configurer avec des détails tels que le nom, les autorisations, l\'adhésion de l\'album</string>
+    <string name="upload_error_server_resource_not_retrieved_repaired">La ressource de serveur n\'a pas été récupérée correctement après que le contenu du fichier a été téléchargé. Une tentative a été faite pour faire face à cette question, mais cela peut ne pas fonctionner.</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Le dernier morceau de données de fichier a été téléchargé pour le fichier, mais le serveur n\'a pas pu fournir un identifiant de ressource. Cela pourrait être récupérable.</string>
 </resources>

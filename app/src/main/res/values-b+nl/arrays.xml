@@ -146,11 +146,21 @@
                 * Mogelijk een volledig herschrijven van het uploadproces, aangezien het zich niet leent om iteratief te worden verbeterd
                 * Mogelijk een volledige herschrijving van de app met de nadruk in eerste instantie op eenvoud voor algemene gebruikers"</item>
         
-        <item>1.4.0.132</item>
+        <item>1.4.0.134</item>
         <item>"Verandering:
                  - Onderzoek naar prestatieverbetering en hopelijk implementatie voor uploadsnelheid van gegevensoverdracht"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.133</item>
+        <item>"Verandering:
+                 - Sterk adviseren om deze update te krijgen als u uploadt met de app.
+                 - Herschrijven van de uploadcode (meestal door de gebruiker onzichtbaar). Leestingen CodeBase voor prestatieverbetering
+                Bugfix:
+                 - Fixeert irritante bug in recente releases
+                 - eigenzinnige bugs in de upload ui"</item>
+        <item>1.4.0.132</item>
+        <item>"Verandering:
+                 - Sta er niet aan om een diepe link voor een gebruiker op te maken"</item>
         <item>1.4.0.131</item>
         <item>"Bugfix:
                  - Een paar bugs-gebruikers hebben ervaren dat veroorzaakte een crash"</item>

@@ -718,4 +718,8 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="connection_profile_amended_with_new_details_pattern">Het serververbindingsprofiel\n  %1$s\n  is gemaakt en of gewijzigd met nieuwe details</string>
     <string name="alert_create_or_update_server_connection_details">Wilt u de APP PIWIGO Server-verbindingsdetails maken of bijwerken?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">De app kan geen benodigde bestandsmachtigingen vinden voor de map die u hebt geselecteerd. Selecteer een andere. Als het een root is, verwijdert u en voegt u de root opnieuw toe en selecteert u opnieuw.</string>
+    <string name="upload_job_stopped_by_user">Upload gestopt door gebruiker</string>
+    <string name="upload_error_server_resource_not_yet_retrieved">Piwigo Resource is nog niet opgehaald. Kan het niet configureren met details zoals naam, machtigingen, albumlidmaatschap</string>
+    <string name="upload_error_server_resource_not_retrieved_repaired">De serverresource is niet correct opgehaald nadat de inhoud van het bestand is geüpload. Er is een poging gedaan om met dit probleem aan te pakken, maar het werkt misschien niet.</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Het laatste deel van bestandsgegevens werd geüpload voor het bestand, maar de server kan een resource-identifier niet bieden. Het kan ophalen.</string>
 </resources>

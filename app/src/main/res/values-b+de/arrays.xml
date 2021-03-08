@@ -146,11 +146,21 @@
                 * Möglicherweise ein vollständiges Umschreiben des Upload-Prozesses, da er nicht iterativ verbessert werden kann
                 * Möglicherweise ein vollständiges Umschreiben der App mit dem Schwerpunkt auf Einfachheit für das allgemeine Surfen anfangs"</item>
         
-        <item>1.4.0.132</item>
+        <item>1.4.0.134</item>
         <item>"Veränderung:
                  - Untersuchung zur Leistungsverbesserung und hoffentlich Implementierung für die Geschwindigkeit der Upload-Datenübertragung"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.133</item>
+        <item>"Veränderung:
+                 - Beratung dieses Updates, wenn Sie mit der App hochladen.
+                 - Umschreiben des Upload-Codes (meistens Benutzer unsichtbar). Ladies Codebase für die Leistungssteigerung
+                Fehlerbehebung:
+                 - Fixiert ärgerlicher Fehler in den letzten Releases
+                 - schrullige Fehler im Upload-UI"</item>
+        <item>1.4.0.132</item>
+        <item>"Veränderung:
+                 - Bestehen Sie nicht darauf, einen tiefen Link für einen Benutzer auf Speichern zu erstellen"</item>
         <item>1.4.0.131</item>
         <item>"Fehlerbehebung:
                  - Ein paar Fehlerbenutzer haben erfahren, was einen Absturz verursacht hat"</item>

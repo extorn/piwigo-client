@@ -718,4 +718,8 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="connection_profile_amended_with_new_details_pattern">サーバー接続プロファイル\n  ％1 $ S\n  新しい詳細を作成して修正しました</string>
     <string name="alert_create_or_update_server_connection_details">App Piwigo Server接続の詳細を作成または更新しますか？</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">アプリは、選択したフォルダに対して必要なファイル権限を見つけることができません。 別のものを選択してください。 rootであれば、ルートを削除して再追加してから、もう一度選択してください。</string>
+    <string name="upload_job_stopped_by_user">アップロードはユーザーによって停止しました</string>
+    <string name="upload_error_server_resource_not_yet_retrieved">Piwigoリソースはまだ取得されていません。 名前、権限、アルバムメンバーシップなどの詳細で構成できません</string>
+    <string name="upload_error_server_resource_not_retrieved_repaired">ファイルの内容がアップロードされた後、サーバーリソースが正しく取得されませんでした。 この問題に対処するための試みがなされましたが、それは機能しないかもしれません。</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">ファイルデータの最後のチャンクがファイルにアップロードされましたが、サーバーはリソース識別子を提供できませんでした。 それは取得可能かもしれません。</string>
 </resources>

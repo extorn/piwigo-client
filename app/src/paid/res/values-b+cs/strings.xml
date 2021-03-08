@@ -39,7 +39,7 @@
     <string name="orphans_found_on_server_pattern">Nalezeny sirotky:%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Jsou zde sirotci. Abychom je mohli zobrazit, musíme vytvořit soukromou složku přístupnou pouze pro správce. Poté můžete album kdykoli smazat. Pokud nesouhlasíte, budete je muset zpracovat na serveru sami.</string>
     <string name="progress_rescuing_orphans">Záchrana sirotků</string>
-    <string name="piwigo_deep_link_login_email_pattern">Pomocí níže uvedeného odkazu nakonfigurujte kopii klientské aplikace PIWIGO se serverem URI, uživatelské jméno a heslo, abyste mohli začít.\n\n%1$s</string>
+    <string name="piwigo_deep_link_login_email_pattern">Pomocí níže uvedeného odkazu nakonfigurujte kopii klientské aplikace PIWIGO se serverem URI, uživatelské jméno a heslo, abyste mohli začít.\n\n  %1$s</string>
     <string name="deep_link_explanation">Vyberte cíl pro odkaz.\n\n\"Tato aplikace\" vytvoří nový profil v této aplikaci s těmito pověřeními, které vám umožní otestovat funkci</string>
     <string name="deep_link_warning_password">Chcete vytvořit hluboký odkaz, který lze použít ke konfiguraci kopie této aplikace s podrobnostmi serveru?\n\nMyšlenka je snazší, aby někdo začít.\n\nTato funkce není dostupná ve volné verzi.</string>
     <string name="deep_link_warning_no_password">Aktuální hluboký odkaz nebude mít heslo. Pokud chcete přidat heslo, musíte pro tento uživatel nastavit nové heslo.\n\nVytvořte hluboký odkaz bez hesla?</string>

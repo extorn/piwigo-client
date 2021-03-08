@@ -146,11 +146,21 @@
                 * Posiblemente una reescritura completa del proceso de carga, ya que no se presta a una mejora iterativa
                 * Posiblemente una reescritura completa de la aplicación con un enfoque en la simplicidad para la navegación general del usuario inicialmente"</item>
         
-        <item>1.4.0.132</item>
+        <item>1.4.0.134</item>
         <item>"Cambio:
                  - Investigación de mejora del rendimiento y, con suerte, implementación para la velocidad de transferencia de datos de carga"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.133</item>
+        <item>"Cambio:
+                 - Conseje fuertemente Obtenga esta actualización si carga usando la aplicación.
+                 - Reescribir el código de carga (en su mayoría de usuario invisible). Readies CodeBase para mejorar el rendimiento
+                Arreglo del fallo:
+                 - Corrige un error molesto en lanzamientos recientes.
+                 - Bugs peculiares en la UI Subir"</item>
+        <item>1.4.0.132</item>
+        <item>"Cambio:
+                 - No insista en crear un enlace profundo para un usuario en Guardar"</item>
         <item>1.4.0.131</item>
         <item>"Arreglo del fallo:
                  - Algunos usuarios los usuarios han experimentado que causó un choque"</item>

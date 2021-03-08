@@ -39,7 +39,7 @@
     <string name="orphans_found_on_server_pattern">Orfani trovati:%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Sono presenti orfani. Per visualizzarli, dobbiamo creare una cartella privata accessibile solo agli amministratori. Puoi eliminare l\'album in qualsiasi momento in seguito. Se non sei d\'accordo, dovrai elaborarli tu stesso sul server.</string>
     <string name="progress_rescuing_orphans">Salvataggio di orfani</string>
-    <string name="piwigo_deep_link_login_email_pattern">Si prega di utilizzare il link sottostante per configurare la copia dell\'app client PIWIGO con URI del server, nome utente e password per iniziare.\n\n%1$s</string>
+    <string name="piwigo_deep_link_login_email_pattern">Si prega di utilizzare il link sottostante per configurare la copia dell\'app client PIWIGO con URI del server, nome utente e password per iniziare.\n\n  %1$s</string>
     <string name="deep_link_explanation">Si prega di selezionare una destinazione per il collegamento.\n\n\'Questa app \' creerà un nuovo profilo in questa app con queste credenziali che consente di testare la funzione</string>
     <string name="deep_link_warning_password">Volete creare un link profondo che può essere utilizzato per configurare una copia di questa app con i dettagli del server?\n\nL\'idea è quella di rendere più facile per far iniziare qualcuno.\n\nQuesta funzione non è disponibile nella versione gratuita.</string>
     <string name="deep_link_warning_no_password">L\'attuale link Deep non avrà una password. Se desideri aggiungere la password, è necessario impostare una nuova password per questo utente.\n\nCrea il link profondo senza password?</string>

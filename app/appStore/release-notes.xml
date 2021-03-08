@@ -1,40 +1,80 @@
 <en-GB>
+Change:
+- Strongly advise getting this update if you upload using the app.
+- Rewrite of the upload code (mostly user invisible). Readies codebase for performance enhancement
 Bugfix:
-- A few bugs users have experienced that caused a crash
+- Fixes annoying bug in recent releases
+- quirky bugs in the upload UI
 </en-GB>
 <cs-CZ>
+Změna:
+- Silně doporučuje dostat tuto aktualizaci, pokud nahrát pomocí aplikace.
+- Přepsat kód nahrávání (většinou uživatel invisible). Opraveno Codebase pro vylepšení výkonu
 Oprava chyby:
-- Několik uživatelů chyb zaznamenaly, že způsobil havárii
+- opravuje otravnou chybu v nedávných verzích
+- Quirky Bugs v nahrávání UI
 </cs-CZ>
 <de-DE>
+Veränderung:
+- Beratung dieses Updates, wenn Sie mit der App hochladen.
+- Umschreiben des Upload-Codes (meistens Benutzer unsichtbar). Ladies Codebase für die Leistungssteigerung
 Fehlerbehebung:
-- Ein paar Fehlerbenutzer haben erfahren, was einen Absturz verursacht hat
+- Fixiert ärgerlicher Fehler in den letzten Releases
+- schrullige Fehler im Upload-UI
 </de-DE>
 <es-ES>
+Cambio:
+- Conseje fuertemente Obtenga esta actualización si carga usando la aplicación.
+- Reescribir el código de carga (en su mayoría de usuario invisible). Readies CodeBase para mejorar el rendimiento
 Arreglo del fallo:
-- Algunos usuarios los usuarios han experimentado que causó un choque
+- Corrige un error molesto en lanzamientos recientes.
+- Bugs peculiares en la UI Subir
 </es-ES>
 <fr-FR>
+Changement:
+- conseiller fortement à obtenir cette mise à jour si vous téléchargez à l\'aide de l\'application.
+- Réécrire du code de téléchargement (principalement utilisateur invisible). Lisibles CodeBase pour l\'amélioration de la performance
 Correction d\'un bug:
-- Quelques bugs utilisateurs ont vécu cela causé un crash
+- corrige un bogue ennuyeux dans les dernières versions
+- Bugs bizarres dans le téléchargement UI
 </fr-FR>
 <it-IT>
+Modificare:
+- Consiglia vivamente di ottenere questo aggiornamento se carichi utilizzando l\'app.
+- Riscrivi il codice di caricamento (per lo più invisibile per lo più invisibile). Letture CodeBase per il miglioramento delle prestazioni
 Risoluzione del problema:
-- Alcuni bug che gli utenti hanno sperimentato questo causato un incidente
+- Corregge fastidiosi bug nelle uscite recenti
+- Bug quirky nell\'utente ui
 </it-IT>
 <ja-JP>
+変化する：
+- アプリを使用してアップロードした場合は、このアップデートを受信することを強くお勧めします。
+- アップロードコードの書き換え（主に目に見えない）。 Performance EnhancementのためにCodeBaseを読みます
 バグ修正：
-- クラッシュを引き起こした経験豊富なユーザーがいくつかのバグ
+- 最近のリリースで迷惑なバグを修正しました
+- アップロードUIのクォリキーバグ
 </ja-JP>
 <nl-NL>
+Verandering:
+- Sterk adviseren om deze update te krijgen als u uploadt met de app.
+- Herschrijven van de uploadcode (meestal door de gebruiker onzichtbaar). Leestingen CodeBase voor prestatieverbetering
 Bugfix:
-- Een paar bugs-gebruikers hebben ervaren dat veroorzaakte een crash
+- Fixeert irritante bug in recente releases
+- eigenzinnige bugs in de upload ui
 </nl-NL>
 <ru-RU>
+Изменять:
+- Настоятельно рекомендую получить это обновление, если вы загрузите с помощью приложения.
+- Переписывайте код загрузки (в основном пользователь невидимый). Headies CodeBase для улучшения производительности
 Исправлена ошибка:
-- несколько пользователей ошибок испытали, что вызвало сбой
+- исправления раздражающей ошибки в последние релизы
+- причудливые ошибки в UI загрузки
 </ru-RU>
 <zh-CN>
+改变：
+- 如果使用应用程序上传，强烈建议获取此更新。
+- 重写上传代码（主要是用户不可见）。 receies用于性能增强的CodeBase
 错误修正：
-- 一些用户遇到了崩溃的错误
+- 在最近的版本中修复恼人的错误
+- 上传UI中的古怪错误
 </zh-CN>

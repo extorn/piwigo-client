@@ -718,4 +718,8 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="connection_profile_amended_with_new_details_pattern">El perfil de conexión del servidor\n  %1$s\n  Se ha creado y o modificado con nuevos detalles.</string>
     <string name="alert_create_or_update_server_connection_details">¿Le gustaría crear o actualizar los detalles de la conexión del servidor PIWIGO?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">La aplicación no puede encontrar los permisos de archivos necesarios para la carpeta que seleccionó. Por favor, seleccione otro. Si es una raíz, elimine y vuelva a agregar la raíz, luego seleccione nuevamente.</string>
+    <string name="upload_job_stopped_by_user">Subir detenido por el usuario</string>
+    <string name="upload_error_server_resource_not_yet_retrieved">El recurso de PIWIGO aún no se ha recuperado. No se puede configurar con detalles como nombre, permisos, membresía del álbum</string>
+    <string name="upload_error_server_resource_not_retrieved_repaired">El recurso del servidor no se recuperó correctamente después de cargar el contenido del archivo. Se ha intentado tratarse con este problema, pero puede que no funcione.</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">El último trozo de datos de archivos se cargó para el archivo, pero el servidor no pudo proporcionar un identificador de recursos. Puede ser recuperable.</string>
 </resources>

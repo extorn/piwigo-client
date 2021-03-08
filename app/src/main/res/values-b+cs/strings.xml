@@ -718,4 +718,8 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="connection_profile_amended_with_new_details_pattern">Profil připojení serveru\n  %1$s\n  byl vytvořen a upraven novými údaji</string>
     <string name="alert_create_or_update_server_connection_details">Chcete vytvořit nebo aktualizovat podrobnosti připojení aplikace Piwigo Server?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">Aplikace nemůže najít potřebná oprávnění k souborům pro vybranou složku. Vyberte prosím další. Pokud se jedná o kořen, odstraňte a znovu přidejte kořen a znovu vyberte znovu.</string>
+    <string name="upload_job_stopped_by_user">Upload zastavil uživatelem</string>
+    <string name="upload_error_server_resource_not_yet_retrieved">Zdroj PIWIGO dosud nebyl načten. Nelze jej nakonfigurovat s podrobnostmi, jako je název, oprávnění, členství Album</string>
+    <string name="upload_error_server_resource_not_retrieved_repaired">Zdroj serveru nebyl po nahráni obsah souboru správně načten. Byl učiněn pokus o řešení tohoto problému, ale nemusí fungovat.</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Poslední kus dat souborů byla nahrána pro soubor, ale server se nepodařilo poskytnout identifikátor zdroje. Mohlo by to být načtené.</string>
 </resources>

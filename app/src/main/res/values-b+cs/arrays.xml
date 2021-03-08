@@ -146,11 +146,21 @@
                 * Možná úplné přepsání procesu nahrávání, protože se nehodlá iterativně vylepšovat
                 * Možná úplné přepsání aplikace se zaměřením na jednoduchost zpočátku pro běžné prohlížení uživatelů"</item>
         
-        <item>1.4.0.132</item>
+        <item>1.4.0.134</item>
         <item>"Změna:
                  - Vyšetřování zlepšení výkonu a snad implementace pro rychlost přenosu dat"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.133</item>
+        <item>"Změna:
+                 - Silně doporučuje dostat tuto aktualizaci, pokud nahrát pomocí aplikace.
+                 - Přepsat kód nahrávání (většinou uživatel invisible). Opraveno Codebase pro vylepšení výkonu
+                Oprava chyby:
+                 - opravuje otravnou chybu v nedávných verzích
+                 - Quirky Bugs v nahrávání UI"</item>
+        <item>1.4.0.132</item>
+        <item>"Změna:
+                 - Neproužívejte na vytvoření hlubokého odkazu pro uživatele na uložení"</item>
         <item>1.4.0.131</item>
         <item>"Oprava chyby:
                  - Několik uživatelů chyb zaznamenaly, že způsobil havárii"</item>

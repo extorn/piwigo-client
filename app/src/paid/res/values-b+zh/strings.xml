@@ -39,7 +39,7 @@
     <string name="orphans_found_on_server_pattern">找到的孤儿：%1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">有孤儿在场。要查看这些内容，我们必须创建一个仅供管理员访问的专用文件夹。之后您可以随时删除相册。如果您不同意，则必须自己在服务器上进行处理。</string>
     <string name="progress_rescuing_orphans">营救孤儿</string>
-    <string name="piwigo_deep_link_login_email_pattern">请使用下面的链接与服务器URI，用户名和密码一起配置Piwigo Client应用程序的副本以使您开始。\n\n%1$s</string>
+    <string name="piwigo_deep_link_login_email_pattern">请使用下面的链接与服务器URI，用户名和密码一起配置Piwigo Client应用程序的副本以使您开始。\n\n  %1$s</string>
     <string name="deep_link_explanation">请选择链接的目的地。\n\n\“此应用程序”将在此应用程序中创建一个新配置文件，这些凭据允许您测试该功能</string>
     <string name="deep_link_warning_password">您想要创建一个深度链接，可用于使用服务器详细信息配置此应用程序的副本吗？\n\n这个想法是让某人开始更容易开始。\n\n免费版本不可用此功能。</string>
     <string name="deep_link_warning_no_password">当前的深链接不会有密码。 如果要添加密码，则必须为此用户设置新密码。\n\n在没有密码的情况下创建深链接？</string>

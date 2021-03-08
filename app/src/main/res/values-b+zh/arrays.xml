@@ -146,11 +146,21 @@
                 *可能完全重写了上载过程，因为它不适合进行迭代式改进
                 *可能会完全重写应用程序，并着重于简单性，以便一般用户最初浏览"</item>
         
-        <item>1.4.0.132</item>
+        <item>1.4.0.134</item>
         <item>"改变：
                  -性能改进调查，并有望实现上传数据传输速度"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.133</item>
+        <item>"改变：
+                  - 如果使用应用程序上传，强烈建议获取此更新。
+                  - 重写上传代码（主要是用户不可见）。 receies用于性能增强的CodeBase
+                错误修正：
+                  - 在最近的版本中修复恼人的错误
+                  - 上传UI中的古怪错误"</item>
+        <item>1.4.0.132</item>
+        <item>"改变：
+                  - 不要坚持在保存上创建用户的深度链接"</item>
         <item>1.4.0.131</item>
         <item>"错误修正：
                   - 一些用户遇到了崩溃的错误"</item>
