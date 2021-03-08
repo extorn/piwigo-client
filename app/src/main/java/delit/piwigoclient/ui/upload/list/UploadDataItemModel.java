@@ -19,7 +19,6 @@ import java.util.Set;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.IOUtils;
-import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
 public class UploadDataItemModel implements Parcelable {
 
@@ -34,6 +33,7 @@ public class UploadDataItemModel implements Parcelable {
         }
     };
     private static final String TAG = "UploadDataItemModel";
+
     private final ArrayList<UploadDataItem> uploadDataItems;
 
     public UploadDataItemModel(Parcel p) {
@@ -212,7 +212,7 @@ public class UploadDataItemModel implements Parcelable {
                 }
             }
             if (progress != null) {
-                progress.setUploadStatus(percentageComplete < 100 ? UploadJob.UPLOADING : UploadJob.UPLOADED);
+                progress.setUploadStatus(percentageComplete < 100 ? UploadDataItem.STATUS_UPLOADING : UploadDataItem.STATUS_UPLOADED);
             }
         }
         return uploadDataItem;

@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="delit.piwigoclient">
 
-    <!--ignore error as manifest is merged with the main one which is indexable -->
+    <!--ignore errors for missing permissions etc (manifest is merged with the main one which is indexable) - its a bug in android studio (rebuild) -->
+
 
     <application
         android:name="delit.piwigoclient.ui.MyApplication"

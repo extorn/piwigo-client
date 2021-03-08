@@ -20,14 +20,14 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
-public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class AlbumGetChildAlbumsResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetSubGalleriesRspHdlr";
     private final CategoryItem parentAlbum;
     private final boolean recursive;
     private final String thumbnailSize;
 
-    public AlbumGetSubAlbumsResponseHandler(CategoryItem parentAlbum, String thumbnailSize, boolean recursive) {
+    public AlbumGetChildAlbumsResponseHandler(CategoryItem parentAlbum, String thumbnailSize, boolean recursive) {
         super("pwg.categories.getList", TAG);
         this.parentAlbum = parentAlbum;
         this.recursive = recursive;

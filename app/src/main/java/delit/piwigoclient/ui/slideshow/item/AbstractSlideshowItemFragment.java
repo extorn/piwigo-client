@@ -63,7 +63,7 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumThumbnailUpdatedResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageAlterRatingResponseHandler;
@@ -458,7 +458,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
 
     private boolean onUseAsAlbumThumbnailSelectAlbum() {
         // Invoke call to retrieve all album names (will show a dialog once this is done).
-        addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), true));
+        addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetChildAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), true));
         return true;
     }
 
@@ -710,7 +710,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         EventBus.getDefault().post(event);
     }
 
-    public void onGetSubAlbumNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    public void onGetSubAlbumNames(AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         Activity activity = getActivity();
         ArrayList<CategoryItemStub> albumNames = response.getAlbumNames();
         if (albumNames == null || albumNames.isEmpty()) {

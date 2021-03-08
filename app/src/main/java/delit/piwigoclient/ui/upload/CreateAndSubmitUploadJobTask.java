@@ -23,8 +23,8 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.UploadPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.piwigoApi.upload.actors.ForegroundJobLoadActor;
 
 public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUploadFragment, Void, Integer, UploadJob> {
     private final Map<Uri,Long> filesToUploadAndSize;
@@ -56,7 +56,7 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
         UploadJob activeJob = null;
         Long uploadJobId = getOwner().getUploadJobId();
         if (uploadJobId != null) {
-            activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
+            activeJob = new ForegroundJobLoadActor(getContext()).getActiveForegroundJob(uploadJobId);
         }
 
         if (activeJob == null) {
@@ -81,7 +81,7 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
         }
 
         if (activeJob == null) {
-            activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesToUploadAndSize, uploadToAlbum, privacyWanted, piwigoListenerId, deleteUploadedFiles);
+            activeJob = new ForegroundJobLoadActor(getContext()).createUploadJob(ConnectionPreferences.getActiveProfile(), filesToUploadAndSize, uploadToAlbum, privacyWanted, piwigoListenerId, deleteUploadedFiles);
             UploadJob.VideoCompressionParams vidCompParams = getOwner().buildVideoCompressionParams();
             UploadJob.ImageCompressionParams imageCompParams = getOwner().buildImageCompressionParams();
             if (vidCompParams != null) {

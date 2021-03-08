@@ -1,7 +1,6 @@
 package delit.libs.util;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -24,6 +23,10 @@ public class Utils {
         if (!expression) {
             throw new AssertionError(failedMessage);
         }
+    }
+
+    public static boolean doubleEquals(double a, double b, double epsilon) {
+        return Math.abs(a - b) < epsilon;
     }
 
     /**

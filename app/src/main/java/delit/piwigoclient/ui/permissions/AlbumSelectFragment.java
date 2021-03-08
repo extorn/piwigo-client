@@ -24,7 +24,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.ListViewLongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteEvent;
@@ -129,7 +129,7 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH ext
     protected void rerunRetrievalForFailedPages() {
         if (availableItems == null) {
             //TODO FEATURE: Support albums list paging (load page size from settings)
-            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), !getViewPrefs().isFlattenAlbumHierarchy()));
+            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetChildAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), !getViewPrefs().isFlattenAlbumHierarchy()));
         } else if (getListAdapter() == null) {
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableItems, indirectSelection, getViewPrefs());
             ListView listView = getList();
@@ -171,7 +171,7 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH ext
         return new CustomPiwigoResponseListener<>();
     }
 
-    protected void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    protected void onSubGalleriesLoaded(final AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         getUiHelper().hideProgressIndicator();
 //        if (response.getItemsOnPage() == response.getPageSize()) {
 //            //TODO FEATURE: Support groups paging
@@ -184,8 +184,8 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH ext
     private static class CustomPiwigoResponseListener<F extends AlbumSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                getParent().onSubGalleriesLoaded((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
+            if (response instanceof AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                getParent().onSubGalleriesLoaded((AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else {
                 getParent().onListItemLoadFailed();
             }

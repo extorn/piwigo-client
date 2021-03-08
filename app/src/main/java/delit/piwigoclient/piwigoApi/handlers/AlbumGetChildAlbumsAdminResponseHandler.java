@@ -16,11 +16,11 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
-public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class AlbumGetChildAlbumsAdminResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetSubAlbumsAdminRspHdlr";
 
-    public AlbumGetSubAlbumsAdminResponseHandler() {
+    public AlbumGetChildAlbumsAdminResponseHandler() {
         super("pwg.categories.getAdminList", TAG);
     }
 

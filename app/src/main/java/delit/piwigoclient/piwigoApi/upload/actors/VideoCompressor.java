@@ -16,6 +16,7 @@ import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.business.video.compression.ExoPlayerCompression;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.piwigoApi.upload.FileUploadDetails;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileLocalErrorResponse;
 
@@ -43,7 +44,8 @@ public class VideoCompressor extends Thread {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public void compressVideo(UploadJob uploadJob, Uri rawVideo, VideoCompressorListener listener){
+    public boolean compressVideo(UploadJob uploadJob, Uri rawVideo, VideoCompressorListener listener){
+        FileUploadDetails fud = uploadJob.getFileUploadDetails(rawVideo);
 
         ExoPlayerCompression compressor = new ExoPlayerCompression();
         ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
@@ -64,13 +66,13 @@ public class VideoCompressor extends Thread {
                 Bundle b = new Bundle();
                 b.putString("file_ext", IOUtils.getFileExt(rawVideo.toString()));
                 Logging.logAnalyticEvent(context, "incompressible_video_encountered", b);
-                uploadJob.markFileAsCompressed(rawVideo);
+                fud.setCompressionNeeded(false);// will allow the raw file to be uploaded
                 outputVideo = IOUtils.getSingleDocFile(context, rawVideo);
             } else {
                 String msg = "Unable to find acceptable file extension for compressed video amongst " + serverAcceptedFileExts;
                 Logging.log(Log.ERROR, TAG, msg);
                 // cancel the upload of this file
-                uploadJob.setErrorFlag(rawVideo);
+                fud.setProcessingFailed();
                 // notify listeners that this file encountered an error
                 listener.notifyUsersOfError(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, new Exception(msg)));
                 outputVideo = null;
@@ -85,9 +87,9 @@ public class VideoCompressor extends Thread {
                 try {
                     synchronized (this) {
                         wait(1000);
-                        if (uploadJob.isCancelUploadAsap() || !uploadJob.isFileUploadStillWanted(rawVideo)) {
+                        if (uploadJob.isCancelUploadAsap() || fud.isUploadCancelled()) {
                             compressor.cancel();
-                            return;
+                            return false;
                         }
                     }
                 } catch (InterruptedException e) {
@@ -95,7 +97,7 @@ public class VideoCompressor extends Thread {
                     // either spurious wakeup or the upload job wished to be cancelled.
                 }
             }
-            if (listener.getCompressionError() != null && uploadJob.isFileUploadStillWanted(rawVideo)) {
+            if (listener.getCompressionError() != null && !fud.isUploadCancelled()) {
                 if (outputVideo.exists()) {
                     if (!outputVideo.delete()) {
                         Logging.log(Log.ERROR, TAG, "Unable to delete corrupt compressed file.");
@@ -107,24 +109,25 @@ public class VideoCompressor extends Thread {
                     Bundle b = new Bundle();
                     b.putString("file_ext", IOUtils.getFileExt(rawVideo.toString()));
                     Logging.logAnalyticEvent(context, "incompressible_video_encountered", b);
-                    uploadJob.markFileAsCompressed(rawVideo);
+                    fud.setCompressionNeeded(false);// will allow the raw file to be uploaded
                     outputVideo = IOUtils.getSingleDocFile(context, rawVideo);
                 } else {
                     Logging.recordException(e);
                     // mark the upload for this file as cancelled
-                    uploadJob.setErrorFlag(rawVideo);
+                    fud.setProcessingFailed();
                     // notify the listener of the error
                     listener.notifyUsersOfError(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, e));
                 }
             } else {
                 if (outputVideo.exists()) {
-                    uploadJob.addCompressedFile(rawVideo, outputVideo);
+                    fud.setCompressedFileUri(outputVideo.getUri());
                 } else {
                     outputVideo = null;
                 }
             }
         }
         listener.onCompressionSuccess(rawVideo, outputVideo);
+        return (outputVideo != null);
     }
 
 }

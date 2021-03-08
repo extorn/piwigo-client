@@ -17,7 +17,7 @@ public class BackgroundUploadStartedEvent extends SingleUseEvent {
     }
 
     public boolean isEventValid() {
-        return !uploadJob.isFinished();
+        return !uploadJob.isStatusFinished();
     }
 
     public boolean isJobBeingRerun() {

@@ -6,6 +6,7 @@ import android.net.Uri;
 import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.upload.actor.BackgroundJobLoadActor;
 import delit.piwigoclient.piwigoApi.upload.messages.MessageForUserResponse;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoCleanupPostUploadFailedResponse;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoPrepareUploadFailedResponse;
@@ -78,12 +79,12 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     private void onFileUploadComplete(Context context, final PiwigoUploadProgressUpdateResponse response) {
-        UploadJob uploadJob = BackgroundPiwigoUploadService.getActiveBackgroundJobByJobId(context, response.getJobId());
+        UploadJob uploadJob = BackgroundJobLoadActor.getActiveBackgroundJobByJobId(context, response.getJobId());
         if (uploadJob != null) {
-            for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
+            for (Long albumParent : uploadJob.getUploadToCategory().getParentageChain()) {
                 EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
             }
-            EventBus.getDefault().post(new AlbumAlteredEvent(uploadJob.getUploadToCategory()));
+            EventBus.getDefault().post(new AlbumAlteredEvent(uploadJob.getUploadToCategory().getId()));
         }
     }
 
@@ -100,9 +101,9 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     @Override
     protected void onUploadComplete(Context context, UploadJob job) {
         // update the album view(s) if relevant.
-        for (Long albumParent : job.getUploadToCategoryParentage()) {
+        for (Long albumParent : job.getUploadToCategory().getParentageChain()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
         }
-        EventBus.getDefault().post(new AlbumAlteredEvent(job.getUploadToCategory()));
+        EventBus.getDefault().post(new AlbumAlteredEvent(job.getUploadToCategory().getId()));
     }
 }

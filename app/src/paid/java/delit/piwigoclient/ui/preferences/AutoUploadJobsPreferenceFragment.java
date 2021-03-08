@@ -67,7 +67,7 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
             }
             if(BackgroundPiwigoUploadService.isStarted(requireContext())) {
                 // ensure the service knows the change occurred.
-                BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(requireContext());
+                BackgroundPiwigoUploadService.resumeUploadService(requireContext());
             }
         }
 
@@ -90,7 +90,7 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
 
             if (BackgroundPiwigoUploadService.isStarted(requireContext())) {
                 // ensure the service knows the change occurred.
-                BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(requireContext());
+                BackgroundPiwigoUploadService.resumeUploadService(requireContext());
             } else {
                 getUiHelper().showDetailedMsg(R.string.alert_warning, R.string.alert_warning_auto_upload_service_stopped);
             }

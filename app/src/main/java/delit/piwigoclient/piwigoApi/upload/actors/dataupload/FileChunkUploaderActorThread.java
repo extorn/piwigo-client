@@ -1,4 +1,4 @@
-package delit.piwigoclient.piwigoApi.upload.actors;
+package delit.piwigoclient.piwigoApi.upload.actors.dataupload;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,13 +12,18 @@ import java.util.concurrent.TimeUnit;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
+import delit.piwigoclient.R;
 import delit.piwigoclient.model.UploadFileChunk;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.upload.FileUploadDataTxInfo;
+import delit.piwigoclient.piwigoApi.upload.FileUploadDetails;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.piwigoApi.upload.actors.StatelessErrorRecordingServerCaller;
 import delit.piwigoclient.piwigoApi.upload.handlers.NewImageUploadFileChunkResponseHandler;
 
-public class FileChunkUploaderThread extends Thread {
+public class FileChunkUploaderActorThread extends Thread {
     private static final String TAG = "FileChunkUploader";
     private final ChunkUploadListener chunkUploadListener;
     private final UploadJob thisUploadJob;
@@ -30,8 +35,9 @@ public class FileChunkUploaderThread extends Thread {
     private final LinkedHashMap<Long,Integer> chunkUploadHistory = new LinkedHashMap<>();
     private boolean isFinished;
     private boolean completedSuccessfully;
+    private Context context;
 
-    public FileChunkUploaderThread(UploadJob thisUploadJob, int maxChunkUploadAutoRetries, ChunkUploadListener chunkUploadListener) {
+    public FileChunkUploaderActorThread(UploadJob thisUploadJob, int maxChunkUploadAutoRetries, ChunkUploadListener chunkUploadListener) {
         this.thisUploadJob = thisUploadJob;
         this.maxChunkUploadAutoRetries = maxChunkUploadAutoRetries;
         this.chunkUploadListener = chunkUploadListener;
@@ -39,6 +45,7 @@ public class FileChunkUploaderThread extends Thread {
 
     public void startConsuming(@NonNull Context context, BlockingQueue<UploadFileChunk> chunkQueue) {
         this.chunkQueue = chunkQueue;
+        this.context = context;
         this.serverCaller = new StatelessErrorRecordingServerCaller(context);
         completedSuccessfully = false;
         isFinished = false;
@@ -85,7 +92,8 @@ public class FileChunkUploaderThread extends Thread {
                 }
             } while(!cancelUpload && chunk == null);
             if(!cancelUpload) {
-                UploadJob.PartialUploadData data = thisUploadJob.getChunksAlreadyUploadedData(chunk.getUploadJobItemKey());
+                FileUploadDetails fud = thisUploadJob.getFileUploadDetails(chunk.getUploadJobItemKey());
+                FileUploadDataTxInfo data = fud.getChunksAlreadyUploadedData();
                 if(data != null && data.hasUploadedChunk(chunk.getChunkId())) {
                     throw new IllegalStateException("Attempt made to upload chunk twice " + chunk);
                 }
@@ -93,7 +101,7 @@ public class FileChunkUploaderThread extends Thread {
                     Logging.log(Log.ERROR,TAG, "Chunk received for upload that has no data. Ignoring. " + chunk);
                     continue;
                 }
-                if(thisUploadJob.isFileUploadStillWanted(chunk.getUploadJobItemKey())) {
+                if(!fud.isUploadCancelled()) {
                     setName("FileChunkConsumer: " + chunk.getFileBeingUploaded());
                     boolean chunkUploadedOk = uploadStreamChunk(thisUploadJob, chunk, maxChunkUploadAutoRetries);
 
@@ -133,7 +141,8 @@ public class FileChunkUploaderThread extends Thread {
 
         // Attempt to upload this chunk of the file
         NewImageUploadFileChunkResponseHandler imageChunkUploadHandler = new NewImageUploadFileChunkResponseHandler(currentUploadFileChunk);
-        serverCaller.invokeWithRetries(thisUploadJob, currentUploadFileChunk.getUploadJobItemKey(), imageChunkUploadHandler, maxChunkUploadAutoRetries);
+        FileUploadDetails fud = thisUploadJob.getFileUploadDetails(currentUploadFileChunk.getUploadJobItemKey());
+        serverCaller.invokeWithRetries(thisUploadJob, fud, imageChunkUploadHandler, maxChunkUploadAutoRetries);
 
         ResourceItem uploadedResource = null;
         boolean uploadComplete = false;
@@ -145,10 +154,20 @@ public class FileChunkUploaderThread extends Thread {
             chunkUploadListener.onChunkUploadFailed(thisUploadJob, currentUploadFileChunk, imageChunkUploadHandler.getResponse());
         }
 
-        if(imageChunkUploadHandler.isSuccess() && uploadedResource != null) {
-            thisUploadJob.addFileUploaded(currentUploadFileChunk.getUploadJobItemKey(), uploadedResource);
+        if(imageChunkUploadHandler.isSuccess() && fud.getChunksAlreadyUploadedData().getChunksUploaded() == fud.getChunksAlreadyUploadedData().getChunksToUpload()) {
+            if(uploadedResource != null) {
+                fud.setServerResource(uploadedResource);
+                fud.setStatusUploaded();
+            } else {
+                Logging.log(Log.ERROR,TAG,"Server did not correctly provide a server resource after the final chunk upload");
+                chunkUploadListener.onChunkUploadFailed(thisUploadJob, currentUploadFileChunk, new PiwigoResponseBufferingHandler.CustomErrorResponse(-1, context.getString(R.string.upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided)));
+            }
         }
         return uploadComplete;
+    }
+
+    private boolean isUsingCommunityPlugin(UploadJob thisUploadJob) {
+        return PiwigoSessionDetails.isUseCommunityPlugin(thisUploadJob.getConnectionPrefs());
     }
 
     private String getUploadHistory() {

@@ -37,10 +37,10 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumsAdminResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.CommunityGetChildAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -319,13 +319,13 @@ public class AlbumSelectExpandableFragment<F extends AlbumSelectExpandableFragme
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
 
             if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
-                addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler());
+                addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetChildAlbumsAdminResponseHandler());
             } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
                 final boolean recursive = true;
-                addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
+                addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetChildAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
             } else {
                 final boolean recursive = true;
-                addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
+                addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetChildAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
             }
         } else if (getListAdapter() == null) {
             CategoryItem rootItem = StaticCategoryItem.ROOT_ALBUM.toInstance();
@@ -400,10 +400,10 @@ public class AlbumSelectExpandableFragment<F extends AlbumSelectExpandableFragme
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
-                getParent().onAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums());
-            } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                getParent().onAlbumsLoaded(((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums());
+            if (response instanceof AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
+                getParent().onAlbumsLoaded(((AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums());
+            } else if (response instanceof AlbumGetChildAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
+                getParent().onAlbumsLoaded(((AlbumGetChildAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums());
             }
         }
     }

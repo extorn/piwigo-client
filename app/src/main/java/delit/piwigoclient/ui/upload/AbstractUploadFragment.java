@@ -57,7 +57,7 @@ import delit.libs.ui.view.list.BiArrayAdapter;
 import delit.libs.util.ArrayUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
-import delit.libs.util.progress.TaskProgressTracker;
+import delit.libs.util.progress.BasicProgressTracker;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -71,12 +71,12 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumsGetFirstAvailableAlbumResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
-import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.piwigoApi.upload.actors.ForegroundJobLoadActor;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
@@ -98,7 +98,7 @@ import delit.piwigoclient.ui.upload.actions.DeleteAllFilesSelectedAction;
 import delit.piwigoclient.ui.upload.actions.FileSizeExceededAction;
 import delit.piwigoclient.ui.upload.actions.LoadAlbumTreeAction;
 import delit.piwigoclient.ui.upload.actions.OnDeleteJobQuestionAction;
-import delit.piwigoclient.ui.upload.actions.OnGetSubAlbumNamesAction;
+import delit.piwigoclient.ui.upload.actions.OnGetChildAlbumNamesAction;
 import delit.piwigoclient.ui.upload.actions.OnLoginAction;
 import delit.piwigoclient.ui.upload.actions.PartialUploadFileAction;
 import delit.piwigoclient.ui.upload.actions.UnacceptableFilesAction;
@@ -201,10 +201,10 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
                 Long uploadJobId = getUploadJobId();
                 UploadJob activeJob = null;
                 if(uploadJobId != null) {
-                    activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
+                    activeJob = new ForegroundJobLoadActor(requireContext()).getActiveForegroundJob(uploadJobId);
                 }
-                if(activeJob != null && !activeJob.isFinished()) {
-                    if(!activeJob.isRunningNow()) {
+                if(activeJob != null && !activeJob.isStatusFinished()) {
+                    if(!activeJob.isStatusRunningNow()) {
                         submitUploadJob(activeJob);
                         getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_add_files_previous_job_unfinished);
                         Logging.log(Log.INFO, TAG, "Resubmitted previously failed job as user attempted to add new files");
@@ -337,7 +337,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 // Apply the filesToUploadAdapter to the spinner
         privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
         int defaultPrivacyLevelGroup = UploadPreferences.getDefaultPrivacyLevel(getContext(), getPrefs());
-        privacyLevelSpinner.setSelection(((BiArrayAdapter) privacyLevelSpinner.getAdapter()).getPosition(defaultPrivacyLevelGroup));
+        setPrivacyLevelSpinnerSelection(defaultPrivacyLevelGroup);
 
         deleteUploadJobButton = view.findViewById(R.id.delete_upload_job_button);
         deleteUploadJobButton.setOnClickListener(v -> {
@@ -346,9 +346,6 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         uploadJobStatusButton = view.findViewById(R.id.view_detailed_upload_status_button);
         uploadJobStatusButton.setOnClickListener(v -> onClickUploadJobStatusButton());
-
-
-        updateActiveJobActionButtonsStatus();
 
         overallUploadProgressBar = view.findViewById(R.id.overall_upload_progress_bar);
 
@@ -482,6 +479,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         filesForUploadView.setAdapter(filesToUploadAdapter);
 
+        updateActiveJobActionButtonsStatus(); //TODO this might be covered off in the line below, but can't hurt.
         updateUiUploadStatusFromJobIfRun(container.getContext());
 
         if (BuildConfig.DEBUG && ENABLE_COMPRESSION_BUTTON && ExoPlayerCompression.isSupported()) {
@@ -681,9 +679,9 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             uploadableFilesView.setText(fileTypesStr);
         }
         setUploadJobId(uploadJob.getJobId());
-        uploadToAlbum = new CategoryItemStub("???", uploadJob.getUploadToCategory());
-        AlbumGetSubAlbumNamesResponseHandler hndler = new AlbumGetSubAlbumNamesResponseHandler(uploadJob.getUploadToCategory(), false);
-        getUiHelper().addActionOnResponse(getUiHelper().addActiveServiceCall(hndler), new OnGetSubAlbumNamesAction<>());
+        uploadToAlbum = new CategoryItemStub(uploadJob.getUploadToCategory().getName(), uploadJob.getUploadToCategory().getId());
+        AlbumGetChildAlbumNamesResponseHandler getChildAlbumNamesHandler = new AlbumGetChildAlbumNamesResponseHandler(uploadJob.getUploadToCategory().getId(), false);
+        getUiHelper().addActionOnResponse(getUiHelper().addActiveServiceCall(getChildAlbumNamesHandler), new OnGetChildAlbumNamesAction<>());
         selectedGalleryTextView.setText(uploadToAlbum.getName());
 
         byte privacyLevelWanted = uploadJob.getPrivacyLevelWanted();
@@ -750,7 +748,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         UploadJob job = null;
         Context ctx = requireContext();
         if (uploadJobId != null) {
-            job = ForegroundPiwigoUploadService.getActiveForegroundJob(ctx, uploadJobId);
+            job = new ForegroundJobLoadActor(ctx).getActiveForegroundJob(uploadJobId);
 
         }
         allowUserUploadConfiguration(job);
@@ -765,7 +763,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     private void purgeAnyUnwantedSharedFiles() {
         DocumentFile sharedFilesFolder = IOUtils.getSharedFilesFolder(requireContext());
         int deleted = 0;
-        if(sharedFilesFolder.listFiles().length > 0 && BasePiwigoUploadService.getFirstActiveForegroundJob(requireContext()) == null) {
+        if(sharedFilesFolder.listFiles().length > 0 && new ForegroundJobLoadActor(requireContext()).getFirstActiveForegroundJob() == null) {
             for(DocumentFile oldFile : sharedFilesFolder.listFiles()) {
                 if(!filesToUploadAdapter.contains(oldFile.getUri())) {
                     oldFile.delete();
@@ -807,7 +805,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
                     // need to use the context in the UIHelper because this fragment may yet not be attached itself.
                     getUiHelper().showDetailedShortMsg(R.string.alert_information, getUiHelper().getAppContext().getString(R.string.duplicates_ignored_pattern, filesAlreadyPresent));
                 }
-                uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
+
                 try {
                     updateActiveJobActionButtonsStatus();
                 } catch(IllegalStateException e) {
@@ -913,12 +911,12 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     public void onUserActionDeleteFileFromUpload(final FilesToUploadRecyclerViewAdapter adapter, final Uri itemToRemove, boolean longClick) {
         final UploadJob activeJob = getActiveJob(getContext());
         if (activeJob != null) {
-            if (!activeJob.isRunningNow()) {
+            if (!activeJob.isStatusRunningNow()) {
                 activeJob.cancelFileUpload(itemToRemove);
                 adapter.remove(itemToRemove);
                 releaseUriPermissionsForUploadItem(itemToRemove);
-                ForegroundPiwigoUploadService.saveStateToDisk(requireContext(), activeJob);
-                if (activeJob.uploadItemRequiresAction(itemToRemove)) {
+                new ForegroundJobLoadActor(requireContext()).saveStateToDisk(activeJob);
+                if (activeJob.getFileUploadDetails(itemToRemove).isFilePartiallyUploaded()) {
                     // job stopped, the upload of this file has been started
                     String message = getString(R.string.alert_message_remove_file_server_state_incorrect);
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_information, message, new PartialUploadFileAction<>(getUiHelper(), itemToRemove));
@@ -934,7 +932,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
                 }
                 EventBus.getDefault().post(new CancelFileUploadEvent(activeJob.getJobId(), itemToRemove));
             }
-            if (!activeJob.isRunningNow() && activeJob.getFilesAwaitingUpload().size() == 0) {
+            if (!activeJob.isStatusRunningNow() && activeJob.getFilesAwaitingUpload().size() == 0) {
                 // no files left to upload. Lets switch the button from upload to finish
                 uploadFilesNowButton.setText(R.string.upload_files_finish_job_button_title);
             }
@@ -944,7 +942,6 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             } else {
                 adapter.remove(itemToRemove);
                 releaseUriPermissionsForUploadItem(itemToRemove);
-                uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
                 updateActiveJobActionButtonsStatus();
             }
         }
@@ -955,12 +952,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         filesToUploadAdapter = getFilesForUploadViewAdapter();
         boolean filesStillToBeUploaded = filesToUploadAdapter.getItemCount() > 0;
         boolean noJobIsYetConfigured = uploadJob == null;
-        boolean jobIsFinished = uploadJob != null && uploadJob.isFinished();
-        boolean jobIsRunningNow = uploadJob != null && uploadJob.isRunningNow();
-        boolean jobIsSubmitted = uploadJob != null && uploadJob.isSubmitted();
-
-        boolean jobYetToFinishUploadingFiles = filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !(jobIsSubmitted || jobIsRunningNow));
-        boolean jobYetToCompleteAfterUploadingFiles = !noJobIsYetConfigured && !filesStillToBeUploaded && !jobIsFinished && !jobIsRunningNow; // crashed job just loaded basically
+        boolean jobIsFinished = uploadJob != null && uploadJob.isStatusFinished();
 
         if(uploadJob == null) {
             filesToUploadAdapter.clearUploadProgress();
@@ -968,10 +960,6 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         } else {
             uploadFilesNowButton.setText(R.string.upload_files_finish_job_button_title);
         }
-
-        boolean allowJobSubmission = !(jobIsSubmitted || jobIsRunningNow);
-        allowJobSubmission &= (jobYetToFinishUploadingFiles || jobYetToCompleteAfterUploadingFiles);
-        uploadFilesNowButton.setEnabled(allowJobSubmission); // Allow restart of the job.
 
         compressVideosCheckbox.setEnabled((noJobIsYetConfigured || jobIsFinished) && isPlayableMediaFilesWaitingForUpload());
         compressVideosCheckbox.callOnClick(); // set relevant fields to enabled / disabled
@@ -983,30 +971,32 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished && !filesStillToBeUploaded);
 
-        updateActiveJobActionButtonsStatus(requireContext(), uploadJob);
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         selectedGalleryTextView.setEnabled(noJobIsYetConfigured || (jobIsFinished && !filesStillToBeUploaded));
         privacyLevelSpinner.setEnabled(noJobIsYetConfigured || jobIsFinished);
+
+        updateActiveJobActionButtonsStatus(requireContext(), uploadJob);
     }
 
     private void updateActiveJobActionButtonsStatus() {
         UploadJob job = null;
         Context ctx = requireContext();
         if (uploadJobId != null) {
-            job = ForegroundPiwigoUploadService.getActiveForegroundJob(ctx, uploadJobId);
-
+            job = new ForegroundJobLoadActor(ctx).getActiveForegroundJob(uploadJobId);
         }
         updateActiveJobActionButtonsStatus(ctx, job);
     }
 
     private void updateActiveJobActionButtonsStatus(@NonNull Context context, @Nullable UploadJob job) {
-        boolean essentiallyRunning = job != null && (job.isSubmitted() || job.isRunningNow());
+        boolean essentiallyRunning = job != null && (job.isStatusSubmitted() || job.isStatusRunningNow());
         if (job != null && !essentiallyRunning && !job.hasJobCompletedAllActionsSuccessfully()) {
             uploadJobStatusButton.setVisibility(VISIBLE);
-            boolean canForceDeleteJob = job.hasBeenRunBefore();
+            boolean canForceDeleteJob = job.isHasRunBefore();
             deleteUploadJobButton.setVisibility(canForceDeleteJob ? VISIBLE : GONE);
-            uploadFilesNowButton.setEnabled(canForceDeleteJob || uploadFilesNowButton.isEnabled());
+            uploadFilesNowButton.setEnabled(canForceDeleteJob);
         } else {
+            boolean canStartNewJob = job == null && filesToUploadAdapter.getItemCount() > 0 && !uploadToAlbum.isRoot();
+            uploadFilesNowButton.setEnabled(canStartNewJob);
             uploadJobStatusButton.setVisibility(GONE);
             deleteUploadJobButton.setVisibility(GONE);
         }
@@ -1018,7 +1008,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             //listenerDetached
             getUiHelper().getPiwigoResponseListener().withUiHelper((F) this, getUiHelper());
             UploadJob job = getActiveJob(requireContext());
-            ((ForegroundPiwigoFileUploadResponseListener)getUiHelper().getPiwigoResponseListener()).onUploadComplete(requireContext(), job);
+            ((ForegroundPiwigoFileUploadResponseListener<F,FUIH>)getUiHelper().getPiwigoResponseListener()).onUploadComplete(requireContext(), job);
         }
     }
 
@@ -1045,7 +1035,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     private void submitUploadJobWithPermissions() {
-        UploadJob activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(requireContext(), uploadJobId);
+        UploadJob activeJob = new ForegroundJobLoadActor(requireContext()).getActiveForegroundJob(uploadJobId);
         //ensure the handler is actively listening before the job starts.
         getUiHelper().addBackgroundServiceCall(uploadJobId);
         ForegroundPiwigoUploadService.startActionRunOrReRunUploadJob(requireContext(), activeJob);
@@ -1121,9 +1111,9 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     public UploadJob getActiveJob(Context context) {
         UploadJob uploadJob;
         if (uploadJobId == null) {
-            uploadJob = ForegroundPiwigoUploadService.getFirstActiveForegroundJob(context);
+            uploadJob = new ForegroundJobLoadActor(context).getFirstActiveForegroundJob();
         } else {
-            uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, uploadJobId);
+            uploadJob = new ForegroundJobLoadActor(context).getActiveForegroundJob(uploadJobId);
         }
         return uploadJob;
     }
@@ -1157,7 +1147,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         } else {
             getSelectedGalleryTextView().setText(uploadToAlbum.getName());
         }
-
+        updateActiveJobActionButtonsStatus();
     }
 
     private TextView getSelectedGalleryTextView() {
@@ -1173,12 +1163,11 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         Set<Uri> uris = filesAndSizes.keySet();
 
         UiUpdatingProgressListener progressListener = new UiUpdatingProgressListener(overallUploadProgressBar, R.string.removing_files_from_job);
-        TaskProgressTracker tracker = new TaskProgressTracker("removing files from upload", 2, progressListener);
+        BasicProgressTracker tracker = new BasicProgressTracker("removing files from upload", 2, progressListener);
         releaseUriPermissionsForUploadItems(uris);
         tracker.incrementWorkDone(1);
         getFilesForUploadViewAdapter().removeAll(uris);
         tracker.incrementWorkDone(2);
-        uploadFilesNowButton.setEnabled(getFilesForUploadViewAdapter().getItemCount() > 0);
         updateActiveJobActionButtonsStatus();
         overallUploadProgressBar.hideProgressIndicator();
     }
@@ -1230,17 +1219,31 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     public void onUserActionDeleteUploadJob(@NonNull UploadJob job) {
-        if (job.getTemporaryUploadAlbum() > 0) {
-            AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(job.getTemporaryUploadAlbum(), false);
+        if (job.getTemporaryUploadAlbumId() > 0) {
+            AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(job.getTemporaryUploadAlbumId(), false);
             getUiHelper().addNonBlockingActiveServiceCall(getString(R.string.alert_deleting_temporary_upload_album), albumDelHandler.invokeAsync(getContext(), job.getConnectionPrefs()), albumDelHandler.getTag());
         }
         IOUtils.deleteAllFilesSharedWithThisApp(requireContext());
-        ForegroundPiwigoUploadService.removeJob(job);
-        ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), job, true);
+        ForegroundJobLoadActor.removeJob(job);
+        new ForegroundJobLoadActor(getContext()).deleteStateFromDisk(job, true);
         job.deleteAnyCompressedFiles(requireContext());
         filesToUploadAdapter.clear();
         uploadJobId = null;
         allowUserUploadConfiguration(null);
+    }
+
+    public void populateUiFromJob(UploadJob uploadJob) {
+        setUploadToAlbum(uploadJob.getUploadToCategory());
+        compressImagesCheckbox.setChecked(uploadJob.isCompressPhotosBeforeUpload());
+        compressVideosCheckbox.setChecked(uploadJob.isCompressPlayableMediaBeforeUpload());
+        setPrivacyLevelSpinnerSelection(uploadJob.getPrivacyLevelWanted());
+        deleteFilesAfterUploadCheckbox.setChecked(uploadJob.isDeleteFilesAfterUpload());
+        //FIXME populate the remaining fields. (can be removed from the job status tab then).
+        allowUserUploadConfiguration(uploadJob);
+    }
+
+    private void setPrivacyLevelSpinnerSelection(int groupPermission) {
+        privacyLevelSpinner.setSelection(((BiArrayAdapter) privacyLevelSpinner.getAdapter()).getPosition(groupPermission));
     }
 
     private static class OnUploadJobFailureQuestionListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
@@ -1294,19 +1297,19 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
     protected void onUserActionRemoveFailedUploadsAndFinish() {
         UploadJob uploadJob = getActiveJob(requireContext());
-        getFilesForUploadViewAdapter().removeAll(uploadJob.getFilesWithStatus(UploadJob.ERROR));
+        getFilesForUploadViewAdapter().removeAll(uploadJob.getFilesRequiringRetry());
         uploadJob.cancelAllFailedUploads();
-        ForegroundPiwigoUploadService.saveStateToDisk(requireContext(), uploadJob);
+        new ForegroundJobLoadActor(getContext()).saveStateToDisk(uploadJob);
         submitUploadJob(uploadJob);
     }
 
     protected void onUserActionClearUploadErrorsAndRetry() {
         UploadJob uploadJob = getActiveJob(requireContext());
-        for(Uri file : uploadJob.getFilesWithStatus(UploadJob.ERROR)) {
+        for(Uri file : uploadJob.getFilesRequiringRetry()) {
             getFilesForUploadViewAdapter().updateUploadStatus(file, null);
         }
         uploadJob.clearUploadErrors();
-        ForegroundPiwigoUploadService.saveStateToDisk(requireContext(), uploadJob);
+        new ForegroundJobLoadActor(getContext()).saveStateToDisk(uploadJob);
         submitUploadJob(uploadJob);
     }
 

@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.MimeTypeFilter;
@@ -19,7 +18,8 @@ import java.util.HashMap;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.util.IOUtils;
-import delit.libs.util.progress.TaskProgressTracker;
+import delit.libs.util.progress.BasicProgressTracker;
+import delit.libs.util.progress.SimpleProgressListener;
 import delit.piwigoclient.R;
 import delit.piwigoclient.database.AppSettingsViewModel;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
@@ -151,7 +151,7 @@ public class SharedFilesIntentProcessingTask<A extends MyActivity<A,AUIH>,AUIH e
         SentFilesResult result;// process clip data
         result = new SentFilesResult(clipData.getItemCount());
 //            String mimeType = clipData.getDescription().getMimeTypeCount() == 1 ? clipData.getDescription().getMimeType(0) : null;
-        TaskProgressTracker fileImportTracker = new TaskProgressTracker("overall file import", clipData.getItemCount(), new ProgressListener());
+        BasicProgressTracker fileImportTracker = new BasicProgressTracker("overall file import", clipData.getItemCount(), new ProgressPublisher());
         boolean canTakePermission = IOUtils.allUriFlagsAreSet(intent.getFlags(), IOUtils.URI_PERMISSION_READ);
         for(int i = 0; i < clipData.getItemCount(); i++) {
             try {
@@ -186,7 +186,7 @@ public class SharedFilesIntentProcessingTask<A extends MyActivity<A,AUIH>,AUIH e
         }
         if (imageUris != null) {
             result = new SentFilesResult(imageUris.size());
-            TaskProgressTracker fileImportTracker = new TaskProgressTracker("single file import", imageUris.size(), new ProgressListener());
+            BasicProgressTracker fileImportTracker = new BasicProgressTracker("single file import", imageUris.size(), new ProgressPublisher());
             int i = 0;
             for (Uri imageUri : imageUris) {
                 try {
@@ -217,7 +217,7 @@ public class SharedFilesIntentProcessingTask<A extends MyActivity<A,AUIH>,AUIH e
         Uri sharedUri = intent.getData();
         if(sharedUri != null) {
             boolean canTakePermission = IOUtils.allUriFlagsAreSet(intent.getFlags(), IOUtils.URI_PERMISSION_READ);
-            TaskProgressTracker fileImportTracker = new TaskProgressTracker("single file import", 1, new ProgressListener());
+            BasicProgressTracker fileImportTracker = new BasicProgressTracker("single file import", 1, new ProgressPublisher());
             result = new SentFilesResult(1);
             handleSentImage(sharedUri, mimeType, result);
             if(canTakePermission) {
@@ -272,15 +272,16 @@ public class SharedFilesIntentProcessingTask<A extends MyActivity<A,AUIH>,AUIH e
         }
     }
 
-    protected class ProgressListener implements delit.libs.util.progress.ProgressListener {
-        @Override
-        public void onProgress(@FloatRange(from = 0, to = 1) double percent) {
-            publishProgress((int) Math.rint(percent * 100));
+    protected class ProgressPublisher extends SimpleProgressListener {
+
+        public ProgressPublisher() {
+            super(0.01);
         }
 
         @Override
-        public double getUpdateStep() {
-            return 0.01;//1%
+        protected void onNotifiableProgress(double percent) {
+            super.onNotifiableProgress(percent);
+            publishProgress((int) Math.rint(percent * 100));
         }
     }
 }

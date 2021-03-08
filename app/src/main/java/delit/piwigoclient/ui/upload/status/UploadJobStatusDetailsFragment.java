@@ -11,15 +11,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.libs.ui.view.list.CustomExpandableListView;
 import delit.piwigoclient.R;
-import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.piwigoApi.upload.actors.ForegroundJobLoadActor;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
@@ -59,11 +58,11 @@ public class UploadJobStatusDetailsFragment<F extends UploadJobStatusDetailsFrag
 
         if(getArguments() != null) {
             long uploadJobId = getArguments().getLong(STATE_UPLOAD_JOB_ID);
-            uploadJob = BasePiwigoUploadService.getActiveForegroundJob(requireContext(), uploadJobId);
+            uploadJob = new ForegroundJobLoadActor(requireContext()).getActiveForegroundJob(uploadJobId);
         }
         if(savedInstanceState != null) {
             long uploadJobId = savedInstanceState.getLong(STATE_UPLOAD_JOB_ID);
-            uploadJob = BasePiwigoUploadService.getActiveForegroundJob(requireContext(), uploadJobId);
+            uploadJob = new ForegroundJobLoadActor(requireContext()).getActiveForegroundJob(uploadJobId);
         }
 
         if(uploadJob == null) {
@@ -72,13 +71,13 @@ public class UploadJobStatusDetailsFragment<F extends UploadJobStatusDetailsFrag
             return;
         }
 
-        ArrayList<Uri> filesAwaitingUpload = uploadJob.getFilesAwaitingUpload();
-        HashSet<Uri> filesMidTransfer = uploadJob.getFilesWithStatus(UploadJob.UPLOADING);
-        HashSet<Uri> filesAwaitingVerification = uploadJob.getFilesWithStatus(UploadJob.UPLOADED);
-        HashSet<Uri> filesAwaitingConfiguration = uploadJob.getFilesWithStatus(UploadJob.VERIFIED);
-        HashSet<Uri> filesFinishedWith = uploadJob.getFilesWithStatus(UploadJob.CONFIGURED);
-        HashSet<Uri> filesNeedDeletingFromServer = uploadJob.getFilesWithStatus(UploadJob.REQUIRES_DELETE);
-        boolean tempAlbumNeedsDelete = uploadJob.getTemporaryUploadAlbum() > 0;
+        HashSet<Uri> filesAwaitingUpload = uploadJob.getFilesAwaitingUpload();
+        HashSet<Uri> filesMidTransfer = uploadJob.getFilesMidTransfer();
+        HashSet<Uri> filesAwaitingVerification = uploadJob.getFilesAwaitingVerification();
+        HashSet<Uri> filesAwaitingConfiguration = uploadJob.getFilesAwaitingConfiguration();
+        HashSet<Uri> filesFinishedWith = uploadJob.getFilesWithoutFurtherActionNeeded();
+        HashSet<Uri> filesNeedDeletingFromServer = uploadJob.getFilesRequiringDelete();
+        boolean tempAlbumNeedsDelete = uploadJob.getTemporaryUploadAlbumId() > 0;
 
         TextView textView = view.findViewById(R.id.files_awaiting_transfer);
         textView.setText(getString(R.string.file_count_pattern, filesAwaitingUpload.size()));

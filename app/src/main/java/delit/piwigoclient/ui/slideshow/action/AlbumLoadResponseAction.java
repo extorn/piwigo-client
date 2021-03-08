@@ -9,17 +9,17 @@ import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.PhotoContainer;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumsResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.slideshow.AbstractSlideshowFragment;
 
-public class AlbumLoadResponseAction<F extends AbstractSlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> extends UIHelper.Action<FUIH, F, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
+public class AlbumLoadResponseAction<F extends AbstractSlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> extends UIHelper.Action<FUIH, F, AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
 
     private static final String TAG = "AlbumLoadResponseAction";
 
     @Override
-    public boolean onSuccess(FUIH uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+    public boolean onSuccess(FUIH uiHelper, AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
         F fragment = getActionParent(uiHelper);
         if (response.getAlbums().isEmpty()) {
             // will occur if the album no longer exists.

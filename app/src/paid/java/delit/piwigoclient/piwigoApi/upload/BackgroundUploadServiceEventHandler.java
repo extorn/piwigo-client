@@ -67,10 +67,10 @@ public class BackgroundUploadServiceEventHandler {
             return;
         }
         String uploadingToServer = event.getUploadJob().getConnectionPrefs().getPiwigoServerAddress(uihelper.getPrefs(), uihelper.getAppContext());
-        if(event.getUploadJob().isFinished()) {
+        if(event.getUploadJob().isStatusFinished()) {
             uihelper.showDetailedShortMsg(R.string.alert_information, uihelper.getString(R.string.alert_auto_upload_service_job_finished_success, uploadingToServer));
         } else {
-            if(event.getUploadJob().getFilesNotYetUploaded().size() < event.getUploadJob().getFilesForUpload().size()) {
+            if(event.getUploadJob().getFilesWithoutFurtherActionNeeded().size() < event.getUploadJob().getFilesForUpload().size()) {
                 uihelper.showDetailedMsg(R.string.alert_information, uihelper.getString(R.string.alert_auto_upload_service_job_finished_partial_success, uploadingToServer));
             } else {
                 uihelper.showDetailedMsg(R.string.alert_information, uihelper.getString(R.string.alert_auto_upload_service_job_finished_failure, uploadingToServer));

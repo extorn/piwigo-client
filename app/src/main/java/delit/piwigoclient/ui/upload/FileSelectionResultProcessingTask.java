@@ -14,7 +14,8 @@ import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
-import delit.libs.util.progress.TaskProgressTracker;
+import delit.libs.util.progress.DividableProgressTracker;
+import delit.libs.util.progress.TrackerUpdatingProgressListener;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -40,10 +41,60 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
 
     @Override
     protected List<UploadDataItem> doInBackgroundSafely(FileSelectionCompleteEvent... objects) {
-        UiUpdatingProgressListener progressListener = new UiUpdatingProgressListener(getOwner().getOverallUploadProgressIndicator(), R.string.calculating_file_checksums);
-        TaskProgressTracker fileSelectionProgress = new TaskProgressTracker("Overall file selection", 100, progressListener);
+        UiUpdatingProgressListener progressViewUpdater = new UiUpdatingProgressListener(getOwner().getOverallUploadProgressIndicator(), R.string.calculating_file_checksums);
+        DividableProgressTracker overallTaskProgressTracker = new DividableProgressTracker("Overall file selection", 100, progressViewUpdater);
         FileSelectionCompleteEvent event = objects[0];
-        int itemCount = event.getSelectedFolderItems().size();
+
+        //Phase 1.
+        loadAndPerformSimpleChecksOnFiles(overallTaskProgressTracker, event.getSelectedFolderItems());
+
+
+        // At this point, overallChecksumCalcTask is initialised (15% -100% or 0% - 100% as appropriate - same number of files to process)
+        long totalImportedFileBytes = getTotalImportedFileBytes(event.getSelectedFolderItems());
+        DividableProgressTracker overallChecksumCalcTask = overallTaskProgressTracker.addChildTask("overall files checksum calculation", totalImportedFileBytes, overallTaskProgressTracker.getRemainingWork());
+
+        // this will store the acceptable imported files
+        ArrayList<UploadDataItem> uploadDataItems = new ArrayList<>(event.getSelectedFolderItems().size());
+
+        for (FolderItem f : event.getSelectedFolderItems()) {
+            Log.e(TAG,"Overall File selection progress : " + overallTaskProgressTracker.getProgressPercentage());
+            calculateChecksumOnFile(overallChecksumCalcTask, uploadDataItems, f);
+        }
+        overallChecksumCalcTask.markComplete();
+        overallTaskProgressTracker.markComplete();
+        getOwner().updateLastOpenedFolderPref(getContext(), event.getSelectedFolderItems());
+        return uploadDataItems;
+    }
+
+    private void calculateChecksumOnFile(DividableProgressTracker overallChecksumCalcTask, ArrayList<UploadDataItem> uploadDataItems, FolderItem f) {
+        if(BuildConfig.DEBUG) {
+            Log.w(TAG, "Upload Fragment Passed URI: " + f.getContentUri());
+        }
+        UploadDataItem item = new UploadDataItem(f.getContentUri(), f.getName(), f.getMime(), f.getFileLength());
+        DividableProgressTracker fileChecksumTracker = overallChecksumCalcTask.addChildTask("file checksum calculation", f.getFileLength(), f.getFileLength());
+        try {
+            item.calculateDataHashCode(getContext(), new TrackerUpdatingProgressListener(fileChecksumTracker));
+            uploadDataItems.add(item);
+        } catch (Md5SumUtils.Md5SumException e) {
+            Logging.recordException(e);
+        } catch(SecurityException secException) {
+            DisplayUtils.runOnUiThread(() -> getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions)));
+        } finally {
+            fileChecksumTracker.markComplete();
+        }
+    }
+
+    private long getTotalImportedFileBytes(ArrayList<FolderItem> selectedFolderItems) {
+        long totalImportedFileBytes = 0;
+        for (FolderItem item : selectedFolderItems) {
+            totalImportedFileBytes += item.getFileLength();
+        }
+        return totalImportedFileBytes;
+    }
+
+    private void loadAndPerformSimpleChecksOnFiles(DividableProgressTracker fileSelectionProgress, ArrayList<FolderItem> selectedFolderItems) {
+
+        int itemCount = selectedFolderItems.size();
 
         ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
         if (PiwigoSessionDetails.getInstance(activeProfile) != null) {
@@ -54,14 +105,16 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
 
 
             // Initialise phase 1 (0% -15% - split between number of files to process)
-            TaskProgressTracker cachingProgressTracker = fileSelectionProgress.addSubTask("caching files information", itemCount, 15);
+            DividableProgressTracker cachingProgressTracker = fileSelectionProgress.addChildTask("caching files information", itemCount, 15);
             try {
-                FolderItem.cacheDocumentInformation(getContext(), event.getSelectedFolderItems(), cachingProgressTracker);
+                FolderItem.cacheDocumentInformation(getContext(), selectedFolderItems, new TrackerUpdatingProgressListener(cachingProgressTracker));
             } finally {
                 cachingProgressTracker.markComplete();
             }
-            Logging.log(Log.DEBUG, TAG, "Doc Field Caching Progress : %1$.0f (complete? %2$b)", 100 * cachingProgressTracker.getTaskProgress(), cachingProgressTracker.isComplete());
-            Iterator<FolderItem> iter = event.getSelectedFolderItems().iterator();
+            Logging.log(Log.DEBUG, TAG, "Doc Field Caching Progress : %1$.0f (complete? %2$b)", 100 * cachingProgressTracker.getProgressPercentage(), cachingProgressTracker.isComplete());
+
+            // Phase 1.2 (0%) check for appropriate Uri Permissions
+            Iterator<FolderItem> iter = selectedFolderItems.iterator();
             int missingPermissions = 0;
             while (iter.hasNext()) {
                 FolderItem f = iter.next();
@@ -76,6 +129,8 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
                     missingPermissions++;
                 }
             }
+
+            // Phase 1.3 (0%) notify user of any issues found so far
             if (!unsupportedExts.isEmpty()) {
                 String msg = getOwner().getString(R.string.alert_error_unsupported_file_extensions_pattern, CollectionUtils.toCsvList(unsupportedExts));
                 DisplayUtils.postOnUiThread(() ->getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg));
@@ -85,39 +140,6 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
                 DisplayUtils.postOnUiThread(() ->getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, msg));
             }
         }
-
-        long totalImportedFileBytes = 0;
-        for (FolderItem item : event.getSelectedFolderItems()) {
-            totalImportedFileBytes += item.getFileLength();
-        }
-
-        // At this point, firstMainTaskProgressListener is initialise phase 2 (15% -100% or 0% - 100% as appropriate - same number of files to process)
-        TaskProgressTracker overallChecksumCalcTask = fileSelectionProgress.addSubTask("overall files checksum calculation", totalImportedFileBytes, fileSelectionProgress.getRemainingWork());
-
-        ArrayList<UploadDataItem> uploadDataItems = new ArrayList<>(event.getSelectedFolderItems().size());
-
-        for (FolderItem f : event.getSelectedFolderItems()) {
-
-            if(BuildConfig.DEBUG) {
-                Log.w(TAG, "Upload Fragment Passed URI: " + f.getContentUri());
-            }
-            UploadDataItem item = new UploadDataItem(f.getContentUri(), f.getName(), f.getMime(), f.getFileLength());
-            TaskProgressTracker fileChecksumTracker = overallChecksumCalcTask.addSubTask("file checksum calculation", f.getFileLength(), f.getFileLength());
-            try {
-                item.calculateDataHashCode(getContext(), fileChecksumTracker);
-                uploadDataItems.add(item);
-            } catch (Md5SumUtils.Md5SumException e) {
-                Logging.recordException(e);
-            } catch(SecurityException secException) {
-                DisplayUtils.runOnUiThread(() -> getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions)));
-            } finally {
-                fileChecksumTracker.markComplete();
-            }
-        }
-        overallChecksumCalcTask.markComplete();
-        fileSelectionProgress.markComplete();
-        getOwner().updateLastOpenedFolderPref(getContext(), event.getSelectedFolderItems());
-        return uploadDataItems;
     }
 
     @Override

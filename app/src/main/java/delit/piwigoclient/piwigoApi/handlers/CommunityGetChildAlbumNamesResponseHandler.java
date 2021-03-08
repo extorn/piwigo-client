@@ -17,13 +17,13 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 
-public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class CommunityGetChildAlbumNamesResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "CommunityAlbLstRspHdlr";
     private final long parentAlbumId;
     private final boolean recursive;
 
-    public CommunityGetSubAlbumNamesResponseHandler(long parentAlbumId, boolean recursive) {
+    public CommunityGetChildAlbumNamesResponseHandler(long parentAlbumId, boolean recursive) {
         super("community.categories.getList", TAG);
         this.parentAlbumId = parentAlbumId;
         this.recursive = recursive;
@@ -110,7 +110,7 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
         return albumsParsed.get(Long.parseLong(parentageArr[parentageArr.length - 2]));
     }
 
-    public static class PiwigoCommunityGetSubAlbumNamesResponse extends AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse {
+    public static class PiwigoCommunityGetSubAlbumNamesResponse extends AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse {
 
         public PiwigoCommunityGetSubAlbumNamesResponse(long messageId, String piwigoMethod, ArrayList<CategoryItemStub> albumNames, boolean isCached) {
             super(messageId, piwigoMethod, albumNames, isCached);

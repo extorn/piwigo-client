@@ -24,8 +24,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
+import delit.libs.util.progress.BasicProgressTracker;
 import delit.libs.util.progress.ProgressListener;
-import delit.libs.util.progress.TaskProgressTracker;
 
 public class FolderItem implements Parcelable {
     private static final AtomicLong uidGen = new AtomicLong();
@@ -287,17 +287,23 @@ public class FolderItem implements Parcelable {
         }
         ThreadPoolExecutor executor = new ThreadPoolExecutor(4, 32, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(items.size()));
 
-        TaskProgressTracker cachingTracker = new TaskProgressTracker("overall file field caching", items.size(), taskListener);
+        BasicProgressTracker cachingTracker = new BasicProgressTracker("overall file field caching", items.size(), taskListener);
         for(FolderItem item : items) {
             executor.execute(() -> {
+                String name = Thread.currentThread().getName();
+                Thread.currentThread().setName("FolderItem Fields Caching");
                 try {
                     if(!item.isFieldsCached()) {
                         if (!item.cacheFields(context)) {
                             Logging.log(Log.ERROR, TAG, "Unable to cache fields for URI : " + item.getContentUri());
                         }
                     }
+                } catch(RuntimeException e) {
+                    Logging.log(Log.ERROR,TAG, "Unexpected error caching file fields");
+                    Logging.recordException(e);
                 } finally {
                     cachingTracker.incrementWorkDone(1);
+                    Thread.currentThread().setName(name);
                 }
             });
         }
@@ -309,7 +315,8 @@ public class FolderItem implements Parcelable {
             while (!cancelled && !cachingTracker.isComplete()) {
                 try {
                     synchronized (cachingTracker) {
-                        cachingTracker.wait();
+                        // timeout every 0.5secs (might not get notified correctly)
+                        cachingTracker.wait(500);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();

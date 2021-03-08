@@ -42,7 +42,7 @@ import delit.libs.ui.view.recycler.CustomClickListener;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.ObjectUtils;
-import delit.libs.util.progress.TaskProgressListener;
+import delit.libs.util.progress.ProgressListener;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
@@ -63,7 +63,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
     Uri activeRootUri;
     boolean isBusy;
     private SafeAsyncTask activeTask;
-    TaskProgressListener taskListener;
+    ProgressListener taskListener;
     Set<String> currentFileTypesToShow = new HashSet<>();
 
     public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MSL multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
@@ -173,7 +173,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
     }
 
-    public void setTaskListener(TaskProgressListener taskListener) {
+    public void setTaskListener(ProgressListener taskListener) {
         this.taskListener = taskListener;
     }
 
@@ -844,7 +844,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         protected void onPreExecuteSafely() {
             super.onPreExecuteSafely();
             if(getOwner().taskListener != null) {
-                getOwner().taskListener.onTaskStarted();
+                getOwner().taskListener.onStarted();
             }
             getOwner().isBusy = true;
             if(getOwner().activeRootUri == null) {
@@ -897,7 +897,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
                 }
                 getOwner().isBusy = false;
                 if (getOwner().taskListener != null) {
-                    getOwner().taskListener.onTaskFinished();
+                    getOwner().taskListener.onComplete();
                 }
                 if (!refreshingExistingFolder) {
                     getOwner().navigationListener.onPostFolderOpened(oldFolder, newContent);
@@ -910,7 +910,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
             super.onCancelledSafely();
             getOwner().isBusy = false;
             if (getOwner().taskListener != null) {
-                getOwner().taskListener.onTaskFinished();
+                getOwner().taskListener.onComplete();
             }
             Logging.log(Log.WARN, TAG, "Async Task cancelled");
         }

@@ -42,7 +42,7 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumsResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -357,7 +357,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
 
     private void reloadAlbumSlideshowModel(CategoryItem album, String preferredAlbumThumbnailSize) {
         AlbumLoadResponseAction<F,FUIH,?> action = new AlbumLoadResponseAction<>();
-        getUiHelper().invokeActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, false), action);
+        getUiHelper().invokeActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetChildAlbumsResponseHandler(album, preferredAlbumThumbnailSize, false), action);
     }
 
     private void hideProgressIndicator() {

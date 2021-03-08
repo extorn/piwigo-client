@@ -4,16 +4,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class OnGetSubAlbumNamesAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.Action<FUIH,F, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> implements Parcelable {
+public class OnGetChildAlbumNamesAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.Action<FUIH,F, AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> implements Parcelable {
 
-    public OnGetSubAlbumNamesAction(){}
+    public OnGetChildAlbumNamesAction(){}
 
-    protected OnGetSubAlbumNamesAction(Parcel in) {
+    protected OnGetChildAlbumNamesAction(Parcel in) {
         super(in);
     }
 
@@ -27,20 +27,20 @@ public class OnGetSubAlbumNamesAction<F extends AbstractUploadFragment<F,FUIH>,F
         return 0;
     }
 
-    public static final Creator<OnGetSubAlbumNamesAction<?,?>> CREATOR = new Creator<OnGetSubAlbumNamesAction<?,?>>() {
+    public static final Creator<OnGetChildAlbumNamesAction<?,?>> CREATOR = new Creator<OnGetChildAlbumNamesAction<?,?>>() {
         @Override
-        public OnGetSubAlbumNamesAction<?,?> createFromParcel(Parcel in) {
-            return new OnGetSubAlbumNamesAction<>(in);
+        public OnGetChildAlbumNamesAction<?,?> createFromParcel(Parcel in) {
+            return new OnGetChildAlbumNamesAction<>(in);
         }
 
         @Override
-        public OnGetSubAlbumNamesAction<?,?>[] newArray(int size) {
-            return new OnGetSubAlbumNamesAction<?,?>[size];
+        public OnGetChildAlbumNamesAction<?,?>[] newArray(int size) {
+            return new OnGetChildAlbumNamesAction<?,?>[size];
         }
     };
 
     @Override
-    public boolean onSuccess(FUIH uiHelper, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    public boolean onSuccess(FUIH uiHelper, AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         if (response.getAlbumNames().size() > 0) {
             F fragment = uiHelper.getParent();
             CategoryItemStub uploadToAlbum = fragment.getUploadToAlbum();

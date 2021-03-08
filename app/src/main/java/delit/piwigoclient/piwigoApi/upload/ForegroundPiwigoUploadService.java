@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,9 @@ import delit.libs.core.util.Logging;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.upload.actors.ActorListener;
+import delit.piwigoclient.piwigoApi.upload.actors.ForegroundJobLoadActor;
+import delit.piwigoclient.piwigoApi.upload.actors.UploadNotificationManager;
 import delit.piwigoclient.ui.UploadActivity;
 import delit.piwigoclient.ui.events.ForegroundUploadFinishedEvent;
 
@@ -54,13 +58,13 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
         Intent intent = new Intent(appContext, ForegroundPiwigoUploadService.class);
         intent.setAction(ACTION_UPLOAD_FILES);
         intent.putExtra(INTENT_ARG_JOB_ID, uploadJob.getJobId());
-        uploadJob.setSubmitted(true);
+        uploadJob.setStatusSubmitted();
         try {
             enqueueWork(appContext, ForegroundPiwigoUploadService.class, JOB_ID, intent);
         } catch(RuntimeException e) {
             Logging.log(Log.ERROR,TAG, "Unexpected error starting upload service");
             Logging.recordException(e);
-            uploadJob.setSubmitted(false);
+            uploadJob.setStatusStopped();
         }
         return uploadJob.getJobId();
     }
@@ -77,6 +81,12 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
             if(BuildConfig.DEBUG) {
                 Log.d(TAG, "Foreground upload service about to end nicely");
             }
+        } catch(RuntimeException e) {
+            Bundle b = new Bundle();
+            b.putSerializable("error", e);
+            b.putString("service", TAG);
+            Logging.logAnalyticEvent(this,"UploadServiceCrash", b);
+            Logging.recordException(e);
         } finally {
             if(BuildConfig.DEBUG) {
                 Log.d(TAG, "Foreground upload service ending");
@@ -90,27 +100,32 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     }
 
     @Override
-    protected NotificationCompat.Builder buildNotification(String text) {
-        NotificationCompat.Builder builder = super.buildNotification(text);
-        Intent contentIntent = new Intent(this, UploadActivity.class);
-        Intent cancelIntent = new Intent();
-        cancelIntent.setAction(ForegroundPiwigoUploadService.ACTION_STOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        // add a cancel button to cancel the upload if clicked
-        builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel_black, getString(R.string.button_cancel), pendingIntent));
-        // open the upload activity if notification clicked
-        builder.setContentIntent(PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
-        return builder;
-    }
+    protected UploadNotificationManager buildUploadNotificationManager() {
+        return new UploadNotificationManager(this) {
+            @Override
+            public int getNotificationId() {
+                return FOREGROUND_UPLOAD_NOTIFICATION_ID;
+            }
 
-    @Override
-    protected int getNotificationId() {
-        return FOREGROUND_UPLOAD_NOTIFICATION_ID;
-    }
+            @Override
+            protected String getNotificationTitle() {
+                return getString(R.string.notification_title_foreground_upload_service);
+            }
 
-    @Override
-    protected String getNotificationTitle() {
-        return getString(R.string.notification_title_foreground_upload_service);
+            @Override
+            protected NotificationCompat.Builder buildNotification(String text) {
+                NotificationCompat.Builder builder = super.buildNotification(text);
+                Intent contentIntent = new Intent(getContext(), UploadActivity.class);
+                Intent cancelIntent = new Intent();
+                cancelIntent.setAction(ForegroundPiwigoUploadService.ACTION_STOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                // add a cancel button to cancel the upload if clicked
+                builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel_black, getString(R.string.button_cancel), pendingIntent));
+                // open the upload activity if notification clicked
+                builder.setContentIntent(PendingIntent.getActivity(getContext(), 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                return builder;
+            }
+        };
     }
 
     @Override
@@ -119,16 +134,31 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
         runJob(jobId);
     }
 
+
+    protected final void runJob(long jobId) {
+        try {
+            EventBus.getDefault().register(this);
+            ForegroundJobLoadActor jobLoadActor = new ForegroundJobLoadActor(this);
+            UploadJob thisUploadJob = jobLoadActor.getActiveForegroundJob(jobId);
+            runJob(jobLoadActor, thisUploadJob, null, true);
+        } finally {
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
     @Override
     protected void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<Uri, String> uploadedFileChecksums) {
         //TODO add the files checksums to a list that can then be used by the file selection for upload fragment perhaps to show those files that have been uploaded subtly.
     }
 
     @Override
-    public void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response) {
-        PiwigoResponseBufferingHandler.getDefault().preRegisterResponseHandlerForNewMessage(jobId, response.getMessageId());
-        PiwigoResponseBufferingHandler.getDefault().processResponse(response);
+    protected ActorListener buildUploadActorListener(UploadJob uploadJob, UploadNotificationManager notificationManager) {
+        return new ActorListener(uploadJob, notificationManager) {
+            @Override
+            public void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response) {
+                PiwigoResponseBufferingHandler.getDefault().preRegisterResponseHandlerForNewMessage(jobId, response.getMessageId());
+                PiwigoResponseBufferingHandler.getDefault().processResponse(response);
+            }
+        };
     }
-
-
 }

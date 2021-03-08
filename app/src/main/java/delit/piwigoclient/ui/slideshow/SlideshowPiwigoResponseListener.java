@@ -7,7 +7,7 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumThumbnailUpdatedResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
@@ -37,8 +37,8 @@ public class SlideshowPiwigoResponseListener<F extends AbstractSlideshowItemFrag
         } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
             BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<T> r = ((BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<T>) response);
             getParent().onResourceInfoAltered(r.getPiwigoResource());
-        } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-            getParent().onGetSubAlbumNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
+        } else if (response instanceof AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+            getParent().onGetSubAlbumNames((AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
         } else if (response instanceof AlbumThumbnailUpdatedResponseHandler.PiwigoAlbumThumbnailUpdatedResponse) {
             getParent().onAlbumThumbnailUpdated((AlbumThumbnailUpdatedResponseHandler.PiwigoAlbumThumbnailUpdatedResponse) response);
         }

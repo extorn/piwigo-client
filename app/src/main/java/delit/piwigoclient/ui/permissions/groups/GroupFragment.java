@@ -45,7 +45,7 @@ import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupAddMembersResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupDeleteResponseHandler;
@@ -406,7 +406,7 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
         }
 
         if (availableGalleries == null) {
-            addActiveServiceCall(R.string.progress_loading_group_details, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), true));
+            addActiveServiceCall(R.string.progress_loading_group_details, new AlbumGetChildAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), true));
         }
 
         if (currentAccessibleAlbumIds == null) {
@@ -635,7 +635,7 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
 
     }
 
-    protected void onGetSubGalleries(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    protected void onGetSubGalleries(AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         this.availableGalleries = response.getAlbumNames();
         if (currentAccessibleAlbumIds != null) {
             populateAlbumPermissionsList();
@@ -731,8 +731,8 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
                 getParent().onGroupDeleted((GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) response);
             } else if (response instanceof GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) {
                 getParent().onGroupPermissionsRetrieved((GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) response);
-            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                getParent().onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
+            } else if (response instanceof AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                getParent().onGetSubGalleries((AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof GroupUpdateInfoResponseHandler.PiwigoGroupUpdateInfoResponse) {
                 getParent().onGroupInfoUpdated((GroupUpdateInfoResponseHandler.PiwigoGroupUpdateInfoResponse) response);
             } else if (response instanceof GroupAddResponseHandler.PiwigoAddGroupResponse) {

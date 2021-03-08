@@ -407,6 +407,9 @@ public class CategoryItem extends GalleryItem implements PhotoContainer, Parcela
         if(newAlbums == null) {
             return;
         }
+        if(childAlbums == null) {
+            childAlbums = new ArrayList<>(newAlbums.size());
+        }
         Map<Long,Integer> idMap = new HashMap<>(childAlbums.size());
         for (int i = 0; i < childAlbums.size(); i++) {
             CategoryItem existingChildAlbum = childAlbums.get(i);

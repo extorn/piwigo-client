@@ -10,7 +10,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -84,11 +83,11 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumAddPermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumsAdminResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetPermissionsResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumRemovePermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumSetStatusResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumThumbnailUpdatedResponseHandler;
@@ -876,7 +875,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     protected void loadAdminListOfAlbums() {
-        long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsAdminResponseHandler());
+        long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetChildAlbumsAdminResponseHandler());
         loadingMessageIds.put(loadingMessageId, SERVER_CALL_ID_ADMIN_LIST_ALBUMS);
     }
 
@@ -1184,7 +1183,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 //            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
 //                connPrefs = ConnectionPreferences.getActiveProfile().asGuest();
 //            }
-            loadingMessageIds.put(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsResponseHandler(album, viewPrefs.getPreferredAlbumThumbnailSize(), false)), SERVER_CALL_ID_SUB_CATEGORIES);
+            loadingMessageIds.put(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetChildAlbumsResponseHandler(album, viewPrefs.getPreferredAlbumThumbnailSize(), false)), SERVER_CALL_ID_SUB_CATEGORIES);
         }
     }
 
@@ -1890,7 +1889,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         onPiwigoResponseResourceUpdateProcessed(response);
     }
 
-    protected synchronized void onPiwigoResponseAdminListOfAlbumsLoaded(AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
+    protected synchronized void onPiwigoResponseAdminListOfAlbumsLoaded(AlbumGetChildAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
         adminOnlyServerCategoriesTree = response.getAdminList();
         try {
             adminOnlyChildCategories = adminOnlyServerCategoriesTree.getDirectChildrenOfAlbum(galleryModel.getContainerDetails().getParentageChain(), galleryModel.getContainerDetails().getId());
@@ -2086,7 +2085,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
     }
 
-    protected synchronized void onPiwigoResponseListOfAlbumsLoaded(final AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+    protected synchronized void onPiwigoResponseListOfAlbumsLoaded(final AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
 
         if (galleryModel.getContainerDetails().isRoot()) {
             galleryModel.updateMaxExpectedItemCount(response.getAlbums().size());
@@ -2578,8 +2577,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         protected void processAlbumPiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
                 getParent().onPiwigoResponseResourcesDeleted((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response);
-            } else if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
-                getParent().onPiwigoResponseListOfAlbumsLoaded((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response);
+            } else if (response instanceof AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
+                getParent().onPiwigoResponseListOfAlbumsLoaded((AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response);
             } else if (response instanceof AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) {
                 getParent().onPiwigoResponseGetResources((AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) response);
             } else if (response instanceof AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) {
@@ -2588,8 +2587,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 getParent().onPiwigoResponseAlbumPermissionsRetrieved((AlbumGetPermissionsResponseHandler.PiwigoAlbumPermissionsRetrievedResponse) response);
             } else if (response instanceof AlbumUpdateInfoResponseHandler.PiwigoUpdateAlbumInfoResponse) {
                 getParent().onPiwigoResponseAlbumInfoAltered((AlbumUpdateInfoResponseHandler.PiwigoUpdateAlbumInfoResponse) response);
-            } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                getParent().onPiwigoResponseAdminListOfAlbumsLoaded((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response);
+            } else if (response instanceof AlbumGetChildAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
+                getParent().onPiwigoResponseAdminListOfAlbumsLoaded((AlbumGetChildAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response);
             } else if (response instanceof ImageCopyToAlbumResponseHandler.PiwigoUpdateAlbumContentResponse) {
                 getParent().onPiwigoResponseAlbumContentAltered((ImageCopyToAlbumResponseHandler.PiwigoUpdateAlbumContentResponse<?>) response);
             } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {

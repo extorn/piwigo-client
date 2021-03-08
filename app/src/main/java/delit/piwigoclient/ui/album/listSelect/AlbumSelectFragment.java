@@ -24,7 +24,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.ListViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
@@ -107,7 +107,7 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>,FUIH exte
     @Override
     protected void rerunRetrievalForFailedPages() {
         if (availableAlbums == null) {
-            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), true));
+            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetChildAlbumNamesResponseHandler(StaticCategoryItem.ROOT_ALBUM.getId(), true));
         } else if (getListAdapter() == null) {
             synchronized (this) {
                 AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(getViewPrefs(), StaticCategoryItem.ROOT_ALBUM, requireContext());
@@ -180,7 +180,7 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>,FUIH exte
         return new CustomPiwigoResponseListener<>();
     }
 
-    void onAlbumsLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    void onAlbumsLoaded(final AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         getUiHelper().hideProgressIndicator();
         availableAlbums = response.getAlbumNames();
         rerunRetrievalForFailedPages();
@@ -191,8 +191,8 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>,FUIH exte
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                getParent().onAlbumsLoaded((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
+            if (response instanceof AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                getParent().onAlbumsLoaded((AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else {
                 getParent().onListItemLoadFailed();
             }

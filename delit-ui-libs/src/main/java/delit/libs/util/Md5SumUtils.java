@@ -17,8 +17,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import delit.libs.core.util.Logging;
+import delit.libs.util.progress.BasicProgressTracker;
+import delit.libs.util.progress.DividableProgressTracker;
 import delit.libs.util.progress.ProgressListener;
-import delit.libs.util.progress.TaskProgressTracker;
+import delit.libs.util.progress.SimpleProgressListener;
 
 /**
  * Created by gareth on 17/05/17.
@@ -30,12 +32,12 @@ public class Md5SumUtils {
 
     public static String calculateMD5(ContentResolver contentResolver, Uri uri) throws RuntimeException, Md5SumException {
         // send in a no-op listener
-        return calculateMD5(contentResolver, uri, new TaskProgressTracker.ProgressAdapter());
+        return calculateMD5(contentResolver, uri, new SimpleProgressListener(1.0));
     }
 
     public static String calculateMD5(@NonNull ContentResolver contentResolver, @NonNull Uri uri, @NonNull ProgressListener progressListener) throws RuntimeException, Md5SumException {
         MessageDigest digest;
-        progressListener.onProgress(0);
+        progressListener.onProgress(0, true);
         try {
             digest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
@@ -50,14 +52,11 @@ public class Md5SumUtils {
                 throw new FileNotFoundException("File descriptor unavailable (file likely doesn't exist) : " + uri);
             }
             long totalBytes = pfd.getStatSize();
-            int reportEveryBytes = 512 * 1024; // report progress once 512Kb as a maximum frequency
-            TaskProgressTracker taskProgressTracker = new TaskProgressTracker("overall md5 calculation", 100, progressListener); // percent
-            TaskProgressTracker fileReaderTask = taskProgressTracker.addSubTask("reading data", totalBytes,75);
-            fileReaderTask.setMinimumWorkReportingInterval(reportEveryBytes);
+            DividableProgressTracker taskProgressTracker = new DividableProgressTracker("overall md5 calculation", 100, progressListener); // percent
+            BasicProgressTracker fileReaderTask = taskProgressTracker.addChildTask("reading data", totalBytes,75);
 
             try(FileChannel channel = new FileInputStream(pfd.getFileDescriptor()).getChannel()) {
                 ByteBuffer bb = ByteBuffer.allocateDirect(65536);//64Kb
-                double onePercentOfBytes = ((double)totalBytes)/100;
                 while (channel.read(bb) >= 0) {
                     bb.flip(); // ready buffer for reading
                     fileReaderTask.incrementWorkDone(bb.remaining());

@@ -41,9 +41,9 @@ import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumsAdminResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.CommunityGetChildAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.album.CategoryBreadcrumbsView;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
@@ -223,22 +223,22 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
 
             if (PiwigoSessionDetails.isAdminUser(connectionPrefs) && !adminDataLoaded) {
                 // trigger admin category load
-                AbstractPiwigoWsResponseHandler handler = new AlbumGetSubAlbumsAdminResponseHandler();
+                AbstractPiwigoWsResponseHandler handler = new AlbumGetChildAlbumsAdminResponseHandler();
                 handler.withConnectionPreferences(connectionPrefs);
                 addActiveServiceCall(R.string.progress_loading_albums, handler);
             }
             // trigger non admin category load
             String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
-            AlbumGetSubAlbumsResponseHandler handler = new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, true);
+            AlbumGetChildAlbumsResponseHandler handler = new AlbumGetChildAlbumsResponseHandler(album, preferredAlbumThumbnailSize, true);
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);
         } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
-            CommunityGetSubAlbumNamesResponseHandler handler = new CommunityGetSubAlbumNamesResponseHandler(album.getId(), true);
+            CommunityGetChildAlbumNamesResponseHandler handler = new CommunityGetChildAlbumNamesResponseHandler(album.getId(), true);
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);
         } else {
             String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
-            AlbumGetSubAlbumsResponseHandler handler = new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, true);
+            AlbumGetChildAlbumsResponseHandler handler = new AlbumGetChildAlbumsResponseHandler(album, preferredAlbumThumbnailSize, true);
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);
         }
@@ -376,15 +376,15 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
-                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getParentAlbum(), ((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums(), false);
-            } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getParentAlbum(), ((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums(), true);
-            } else if(response instanceof CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
+            if (response instanceof AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
+                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getParentAlbum(), ((AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums(), false);
+            } else if (response instanceof AlbumGetChildAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
+                getParent().onPiwigoResponseAlbumsLoaded(StaticCategoryItem.ROOT_ALBUM, ((AlbumGetChildAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums(), true);
+            } else if(response instanceof CommunityGetChildAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
 
-                ArrayList<CategoryItemStub> albumNames = ((CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) response).getAlbumNames();
+                ArrayList<CategoryItemStub> albumNames = ((CommunityGetChildAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) response).getAlbumNames();
                 ArrayList<CategoryItem> albums = CategoryItem.newListFromStubs(albumNames);
-                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getParentAlbum(), albums, false);
+                getParent().onPiwigoResponseAlbumsLoaded(((AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getParentAlbum(), albums, false);
             }
         }
     }

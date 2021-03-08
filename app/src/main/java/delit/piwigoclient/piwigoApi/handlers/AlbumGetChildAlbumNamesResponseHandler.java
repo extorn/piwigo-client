@@ -17,13 +17,13 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.StaticCategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
-public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class AlbumGetChildAlbumNamesResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetSubGalleryNamesRspHdlr";
     private final long parentAlbumId;
     private final boolean recursive;
 
-    public AlbumGetSubAlbumNamesResponseHandler(long parentAlbumId, boolean recursive) {
+    public AlbumGetChildAlbumNamesResponseHandler(long parentAlbumId, boolean recursive) {
         super("pwg.categories.getList", TAG);
         this.parentAlbumId = parentAlbumId;
         this.recursive = recursive;

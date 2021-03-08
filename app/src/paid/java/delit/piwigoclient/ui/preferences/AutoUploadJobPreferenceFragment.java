@@ -37,10 +37,10 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
-import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.piwigoApi.upload.actor.BackgroundJobLoadActor;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.preference.LocalFoldersListPreference;
@@ -84,7 +84,7 @@ public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFr
         setPreferencesFromResource(R.xml.pref_auto_upload_job, rootKey);
 
         Preference viewUploadStatus = findPreference(R.string.preference_data_upload_automatic_job_view_status_key);
-        viewUploadStatus.setEnabled(BackgroundPiwigoUploadService.getActiveBackgroundJobByJobConfigId(requireContext(), jobConfigId) != null);
+        viewUploadStatus.setEnabled(BackgroundJobLoadActor.getActiveBackgroundJobByJobConfigId(requireContext(), jobConfigId) != null);
         viewUploadStatus.setOnPreferenceClickListener(preference -> {
             onUploadJobStatusButtonClick();
             return true;
@@ -118,7 +118,7 @@ public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFr
     }
 
     private void onUploadJobStatusButtonClick() {
-        UploadJob uploadJob = BackgroundPiwigoUploadService.getActiveBackgroundJobByJobConfigId(requireContext(), jobConfigId);
+        UploadJob uploadJob = BackgroundJobLoadActor.getActiveBackgroundJobByJobConfigId(requireContext(), jobConfigId);
         if (uploadJob != null) {
             EventBus.getDefault().post(new ViewJobStatusDetailsEvent(uploadJob));
         } else {
@@ -281,7 +281,7 @@ public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFr
                 if (CategoryItem.isRoot(albumId)) {
                     finishPreferenceValuesValidation(Collections.singletonList(CategoryItemStub.ROOT_GALLERY));
                 } else {
-                    AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
+                    AlbumGetChildAlbumNamesResponseHandler albumHandler = new AlbumGetChildAlbumNamesResponseHandler(albumId, false);
                     albumHandler.withConnectionPreferences(profilePrefs);
                     albumHandler.forceLogin();
                     callServer(R.string.progress_loading_albums, albumHandler);
@@ -424,8 +424,8 @@ public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFr
         @Override
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
             super.onAfterHandlePiwigoResponse(response);
-            if(response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                getParent().finishPreferenceValuesValidation(((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+            if(response instanceof AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                getParent().finishPreferenceValuesValidation(((AlbumGetChildAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
             }
         }
     }

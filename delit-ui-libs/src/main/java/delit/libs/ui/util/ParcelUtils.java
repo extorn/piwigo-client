@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +26,10 @@ import delit.libs.util.Utils;
 public class ParcelUtils {
 
     private static final String TAG = "ParcelUtils";
+
+    public static <T extends Parcelable> ArrayList<T> readArrayListOf(@NonNull Parcel in, Class<T> item) {
+        return readArrayList(in, item.getClassLoader());
+    }
 
     public static <T extends Parcelable> ArrayList<T> readArrayList(@NonNull Parcel in, ClassLoader loader) {
         ArrayList<T> store = readValue(in, loader, ArrayList.class);
@@ -68,6 +71,10 @@ public class ParcelUtils {
         writeIntArrayList(dest, dataWrapper);
     }
 
+
+    public static <T> T readValue(@NonNull Parcel in, @NonNull Class<T> expectedType) {
+        return readValue(in, expectedType.getClassLoader(), expectedType);
+    }
     public static <T> T readValue(@NonNull Parcel in, ClassLoader loader, Class<T> expectedType) {
         Class<T> valueType = expectedType;
         Object o = null;

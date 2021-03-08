@@ -605,6 +605,19 @@ public class IOUtils {
      * @return DocumentFile which is chained together all the way from the itemUri to the rootUri allowing traversal
      */
     public static DocumentFile getTreeLinkedDocFile(@NonNull Context context, @NonNull Uri rootUri, @NonNull Uri itemUri) {
+        return getTreeLinkedDocFile(context, rootUri, itemUri, false);
+    }
+
+    /**
+     * Get a document file for an item Uri where getParent works to the provided root Uri
+     * @param context
+     * @param rootUri a known root Uri
+     * @param itemUri the item Uri
+     * @param quiet - if true, simply returns null if no link possible (no IllegalStateException)
+     * @throws IllegalStateException if it was not possible for any reason.
+     * @return DocumentFile which is chained together all the way from the itemUri to the rootUri allowing traversal
+     */
+    public static @Nullable DocumentFile getTreeLinkedDocFile(@NonNull Context context, @NonNull Uri rootUri, @NonNull Uri itemUri, boolean quiet) {
         if(itemUri.getScheme() == null || itemUri.getAuthority() == null || !(itemUri.getScheme().equals(rootUri.getScheme()) && itemUri.getAuthority().equals(rootUri.getAuthority()))) {
             Logging.log(Log.WARN, TAG, "Something went badly wrong here! Uri not child of Uri:\n%1$s\n%2$s", itemUri, rootUri);
             throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
@@ -613,9 +626,9 @@ public class IOUtils {
             return DocumentFile.fromFile(new File(Objects.requireNonNull(itemUri.getPath())));
         }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            return getTreeLinkedDocFileO(context, rootUri, itemUri);
+            return getTreeLinkedDocFileO(context, rootUri, itemUri, quiet);
         } else {
-            return getTreeLinkedDocFilePreO(context, rootUri, itemUri);
+            return getTreeLinkedDocFilePreO(context, rootUri, itemUri, quiet);
         }
     }
 
@@ -647,6 +660,19 @@ public class IOUtils {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static @NonNull DocumentFile getTreeLinkedDocFileO(Context context, Uri rootUri, Uri itemUri) {
+        return getTreeLinkedDocFile(context, rootUri, itemUri, false);
+    }
+
+    /**
+     *
+     * @param context
+     * @param rootUri
+     * @param itemUri
+     * @param quiet
+     * @return null if quiet and no link possible.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private static @Nullable DocumentFile getTreeLinkedDocFileO(Context context, Uri rootUri, Uri itemUri, boolean quiet) {
         // this works really well - but its android O and above only. :-(
         /*
                 tree
@@ -671,6 +697,9 @@ public class IOUtils {
         if (rootTree.equals(extraRoot)) {
             // The item is from a more specific root or has different root entirely than that currently offered.
             if(!itemTree.startsWith(rootTree)) {
+                if(quiet) {
+                    return null;
+                }
                 // The path is not a match.
                 Logging.log(Log.WARN, TAG, "Incompatible Paths could not be relinked, root: %1$s <- item: %2$s", rootUri, itemUri);
                 throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
@@ -690,6 +719,9 @@ public class IOUtils {
                     }
                     rootedDocFile = rootedDocFile.findFile(pe);
                     if (rootedDocFile == null) {
+                        if(quiet) {
+                            return null;
+                        }
                         //NOTE this is likely because the child has been deleted.
                         Logging.log(Log.WARN, TAG, "Unable to find item within new root: %1$s <- itemPath: %2$s", rootUri, adjustedItemPath);
                         throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
@@ -703,6 +735,9 @@ public class IOUtils {
             String itemPath = getTreePathFromPathElements(itemPathSegments);
             String adjustedItemPath = itemPath.replaceAll("^" + pathBase, "");
             if (pathBase.length() > 0 && itemPath.equals(adjustedItemPath)) {
+                if(quiet) {
+                    return null;
+                }
                 // The path is not a match.
                 Logging.log(Log.WARN, TAG, "Incompatible Paths could not be relinked, root: %1$s <- item: %2$s", rootUri, itemUri);
                 throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
@@ -717,6 +752,9 @@ public class IOUtils {
                     }
                     rootedDocFile = rootedDocFile.findFile(pe);
                     if (rootedDocFile == null) {
+                        if(quiet) {
+                            return null;
+                        }
                         //NOTE this is likely because the child has been deleted.
                         Logging.log(Log.WARN, TAG, "Unable to find item within new root: %1$s <- itemPath: %2$s", rootUri, newItemPath);
                         throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
@@ -727,17 +765,27 @@ public class IOUtils {
         }
     }
 
+    public static @NonNull DocumentFile getTreeLinkedDocFilePreO(Context context, Uri rootUri, Uri itemUri) {
+        return Objects.requireNonNull(getTreeLinkedDocFilePreO(context, rootUri, itemUri, false));
+    }
+
     //FIXME This is not likely to be working!
-    public static DocumentFile getTreeLinkedDocFilePreO(Context context, Uri rootUri, Uri itemUri) {
+    public static @Nullable DocumentFile getTreeLinkedDocFilePreO(Context context, Uri rootUri, Uri itemUri, boolean quiet) {
 
         Uri treeUri = getTreeUri(rootUri);
         List<String> treePath = treeUri.getPathSegments();
         List<String> itemPath = itemUri.getPathSegments();
         if(itemPath.size() < treePath.size()) {
+            if(quiet) {
+                return null;
+            }
             throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
         }
         for(int i = 0; i < treePath.size(); i++) {
             if(!treePath.get(i).equals(itemPath.get(i))) {
+                if(quiet) {
+                    return null;
+                }
                 throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
             }
         }
@@ -968,19 +1016,20 @@ public class IOUtils {
         for(UriPermission perm : persistedPermissions) {
             try {
                 DocumentFile file = DocumentFile.fromTreeUri(context, perm.getUri());
-//                DocumentFile file = DocumentFile.fromSingleUri(context, perm.getUri());
+    //                DocumentFile file = DocumentFile.fromSingleUri(context, perm.getUri());
                 if(file != null && file.isDirectory()) {
-                    DocumentFile item = IOUtils.getTreeLinkedDocFile(context, perm.getUri(), initialFolder);
-                    int thisTreeDepth = getTreeDepth(item);
-                    if (thisTreeDepth < matchTreeDepth || item.getUri().equals(initialFolder)) {
-                        match = item;
-                        matchTreeDepth = getTreeDepth(match);
+                    DocumentFile item = IOUtils.getTreeLinkedDocFile(context, perm.getUri(), initialFolder, true);
+                    if(item != null) {
+                        int thisTreeDepth = getTreeDepth(item);
+                        if (thisTreeDepth < matchTreeDepth || item.getUri().equals(initialFolder)) {
+                            match = item;
+                            matchTreeDepth = getTreeDepth(match);
+                        }
                     }
                 }
-            } catch(IllegalStateException | IllegalArgumentException e) {
+            } catch(IllegalArgumentException e) {
                 Logging.log(Log.WARN,TAG,"sinking exception : %1$s", e.getMessage());
                 // Illegal argument is when the item is a file not folder
-                // Illegal state is thrown in getTreeLinkedDocFile
                 //ignore - this isn't the right root. We'll try the next.
             }
         }
@@ -1475,6 +1524,28 @@ public class IOUtils {
             return null;
         } else {
             return pathSegments.get(pathSegments.size() - 1);
+        }
+    }
+
+    public static ArrayList<Uri> getListOfFilesNoLongerUnavailable(@NonNull Context context, ArrayList<Uri> files) {
+        ArrayList<Uri> unavailableFiles = new ArrayList<>();
+        for (Uri f : files) {
+            IOUtils.getSingleDocFile(context, f);
+            DocumentFile docFile = IOUtils.getSingleDocFile(context, f);
+            if (docFile != null && (docFile.isDirectory() || !docFile.exists())) {
+                unavailableFiles.add(f);
+            }
+        }
+        return unavailableFiles;
+    }
+
+    public static void onFileDeleteFailed(@NonNull String tag, @NonNull DocumentFile f, @NonNull String fileDesc) {
+        if (f.exists()) {
+            if (BuildConfig.DEBUG) {
+                Log.e(tag, "Unable to delete " + fileDesc + " : " + f.getUri());
+            } else {
+                Logging.log(Log.WARN, tag, "\"Unable to delete " + fileDesc);
+            }
         }
     }
 }

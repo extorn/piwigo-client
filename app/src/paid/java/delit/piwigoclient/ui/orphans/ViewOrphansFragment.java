@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
-import delit.libs.util.progress.TaskProgressTracker;
+import delit.libs.util.progress.BasicProgressTracker;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -30,10 +30,10 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumsAdminResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetPermissionsResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageAddToAlbumResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImagesListOrphansResponseHandler;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
@@ -54,7 +54,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     private final Set<Long> orphanRescueCalls = new HashSet<>();
     private long orphanAlbumCreateActionId;
     private int nextOrphansListPageToLoad = -1;
-    private TaskProgressTracker orphanRescueTracker;
+    private BasicProgressTracker orphanRescueTracker;
     private final Set<Long> orphanResourceIds = new HashSet<>();
 
     /**
@@ -200,7 +200,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     }
 
     @Override
-    protected synchronized void onPiwigoResponseAdminListOfAlbumsLoaded(AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
+    protected synchronized void onPiwigoResponseAdminListOfAlbumsLoaded(AlbumGetChildAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
         // don't do the normal (inject into the list)
         List<CategoryItem> rootLevelAlbums = response.getAdminList().getDirectChildrenOfAlbum(getGalleryModel().getContainerDetails());
         for(CategoryItem cat : rootLevelAlbums) {
@@ -233,7 +233,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
      * @param response
      */
     @Override
-    protected synchronized void onPiwigoResponseListOfAlbumsLoaded(AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+    protected synchronized void onPiwigoResponseListOfAlbumsLoaded(AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
         // don't do the normal (inject into the list)
         if(response.getParentAlbum().equals(StaticCategoryItem.ROOT_ALBUM)) {
             for (CategoryItem cat : response.getAlbums()) {
@@ -309,7 +309,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
         boolean rescuingOrphans = false;
         synchronized (orphanResourceIds) {
             if (orphanResourceIds.size() > 0) {
-                orphanRescueTracker = new TaskProgressTracker("Rescue Orphans Task", orphanResourceIds.size(), new UiUpdatingProgressListener(getUiHelper().getProgressIndicator(), R.string.progress_rescuing_orphans));
+                orphanRescueTracker = new BasicProgressTracker("Rescue Orphans Task", orphanResourceIds.size(), new UiUpdatingProgressListener(getUiHelper().getProgressIndicator(), R.string.progress_rescuing_orphans));
                 for (long orphanId : orphanResourceIds) {
                     synchronized (orphanRescueCalls) {
                         getUiHelper().showProgressIndicator(getString(R.string.progress_rescuing_orphans), 0);

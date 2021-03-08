@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.piwigoApi.upload.ProcessErrors;
 
 class UploadJobErrorsListAdapter extends SimpleExpandableListAdapter {
 
@@ -108,7 +108,7 @@ class UploadJobErrorsListAdapter extends SimpleExpandableListAdapter {
         }
     }
 
-    public static UploadJobErrorsListAdapter newAdapter(Context context, LinkedHashMap<String, UploadJob.AreaErrors> errors) {
+    public static UploadJobErrorsListAdapter newAdapter(Context context, LinkedHashMap<String, ProcessErrors> errors) {
         SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         final String GROUP_NAME = "NAME";
 
@@ -118,9 +118,9 @@ class UploadJobErrorsListAdapter extends SimpleExpandableListAdapter {
         List<Map<String, ChildData>> groupChildren;
         if(errors != null && !errors.isEmpty()) {
 
-            for (Map.Entry<String,UploadJob.AreaErrors> errorAreaErrorsMap : errors.entrySet()) {
+            for (Map.Entry<String, ProcessErrors> errorAreaErrorsMap : errors.entrySet()) {
                 groupChildren = new ArrayList<>();
-                UploadJob.AreaErrors areaErrors = errorAreaErrorsMap.getValue();
+                ProcessErrors areaErrors = errorAreaErrorsMap.getValue();
                 ChildData childData = new ChildData();
                 for (Map.Entry<Date,String> areaError : areaErrors.getEntrySet()) {
                     childData.addDataItem(0, piwigoDateFormat.format(areaError.getKey()), areaError.getValue());

@@ -1096,4 +1096,8 @@ App Install UUID: %5$s
     <string name="connection_profile_amended_with_new_details_pattern">The server connection profile\n %1$s\n has been created and or amended with new details</string>
     <string name="alert_create_or_update_server_connection_details">Would you like to create or update the app Piwigo server connection details?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">The app cannot find necessary file permissions for the folder you selected. Please select another. If it is a root, please delete and re-add the root, then select again.</string>
+    <string name="upload_job_stopped_by_user">Upload stopped by user</string>
+    <string name="upload_error_server_resource_not_yet_retrieved">Piwigo resource has not yet been retrieved. Unable to configure it with details such as name, permissions, album membership</string>
+    <string name="upload_error_server_resource_not_retrieved_repaired">The server resource was not retrieved correctly after the file contents was uploaded. An attempt has been made to deal with this issue, but it may not work.</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">The last chunk of file data was uploaded for the file, but the server failed to provide a resource identifier. It might be retrieveable.</string>
 </resources>

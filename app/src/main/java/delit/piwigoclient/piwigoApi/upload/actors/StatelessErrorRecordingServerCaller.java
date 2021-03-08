@@ -1,9 +1,10 @@
 package delit.piwigoclient.piwigoApi.upload.actors;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+
+import java.util.Date;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.Utils;
@@ -11,6 +12,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
+import delit.piwigoclient.piwigoApi.upload.FileUploadDetails;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
 public class StatelessErrorRecordingServerCaller {
@@ -26,7 +28,7 @@ public class StatelessErrorRecordingServerCaller {
         invokeWithRetries(thisUploadJob, null, handler, maxRetries);
     }
 
-    public void invokeWithRetries(UploadJob thisUploadJob, Uri fileLinkedToAction, AbstractPiwigoWsResponseHandler handler, int maxRetries) {
+    public void invokeWithRetries(UploadJob thisUploadJob, FileUploadDetails fud, AbstractPiwigoWsResponseHandler handler, int maxRetries) {
         int allowedAttempts = maxRetries;
         while (!handler.isSuccess() && allowedAttempts > 0 && !thisUploadJob.isCancelUploadAsap()) {
             allowedAttempts--;
@@ -34,8 +36,8 @@ public class StatelessErrorRecordingServerCaller {
             handler.invokeAndWait(context, thisUploadJob.getConnectionPrefs());
         }
         if (!handler.isSuccess()) {
-            if (fileLinkedToAction != null) {
-                thisUploadJob.recordErrorLinkedToFile(fileLinkedToAction, buildPiwigoServerCallErrorMessage(handler));
+            if (fud != null) {
+                fud.addError( buildPiwigoServerCallErrorMessage(handler));
             } else {
                 thisUploadJob.recordError(buildPiwigoServerCallErrorMessage(handler));
             }

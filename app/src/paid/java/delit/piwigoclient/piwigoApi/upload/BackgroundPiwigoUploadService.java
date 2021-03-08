@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.ContentObserver;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -15,40 +14,35 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.FileObserver;
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import delit.libs.core.util.Logging;
-import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.upload.actor.BackgroundJobLoadActor;
+import delit.piwigoclient.piwigoApi.upload.actors.ActorListener;
+import delit.piwigoclient.piwigoApi.upload.actors.JobLoadActor;
+import delit.piwigoclient.piwigoApi.upload.actors.UploadNotificationManager;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadCheckingForTasksEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadTerminatedEvent;
-import delit.piwigoclient.ui.file.DocumentFileFilter;
-import delit.piwigoclient.ui.file.SimpleDocumentFileFilter;
 import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
 import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
 
@@ -68,7 +62,6 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
     private static volatile boolean terminateUploadServiceThreadAsap = false;
     private BroadcastEventsListener networkStatusChangeListener;
-    private ActionsBroadcastReceiver actionsBroadcastReceiver;
     private static boolean starting;
     private long pauseThreadUntilSysTime;
     private static final int BACKGROUND_UPLOAD_NOTIFICATION_ID = 2;
@@ -97,6 +90,21 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         wakeIfPaused();
     }
 
+    @Override
+    protected UploadNotificationManager buildUploadNotificationManager() {
+        return new UploadNotificationManager(this) {
+            @Override
+            public int getNotificationId() {
+                return BACKGROUND_UPLOAD_NOTIFICATION_ID;
+            }
+
+            @Override
+            protected String getNotificationTitle() {
+                return getString(R.string.notification_title_background_upload_service);
+            }
+        };
+    }
+
     public static void sendActionKillService(Context context) {
         Intent intent = new Intent();
         intent.setAction(ACTION_STOP);
@@ -107,6 +115,24 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     protected ActionsBroadcastReceiver buildActionBroadcastReceiver() {
         // adds a few extra commands (pause resume - used for WIFI / non wifi)
         return new BackgroundActionsBroadcastReceiver();
+    }
+
+    @Override
+    protected ActorListener buildUploadActorListener(UploadJob uploadJob, UploadNotificationManager notificationManager) {
+        return new ActorListener(uploadJob, notificationManager) {
+            @Override
+            public void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response) {
+                //TODO do something useful with the messages... build a log file?
+
+//                  PiwigoResponseBufferingHandler.getDefault().preRegisterResponseHandlerForNewMessage(jobId, response.getMessageId());
+//                  PiwigoResponseBufferingHandler.getDefault().processResponse(response);
+            }
+
+            @Override
+            public void updateNotificationProgressText(int uploadProgress) {
+                getUploadNotificationManager().updateNotificationText(R.string.notification_text_background_upload_running, uploadProgress);
+            }
+        };
     }
 
     public synchronized static void startService(@NonNull Context context) {
@@ -121,30 +147,35 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         enqueueWork(appContext, BackgroundPiwigoUploadService.class, JOB_ID, intent);
     }
 
-    public static void sendActionWakeServiceIfSleeping(Context context) {
+    public static void resumeUploadService(@NonNull Context context) {
         Intent intent = new Intent();
         intent.setAction(ACTION_WAKE);
         context.getApplicationContext().sendBroadcast(intent);
     }
 
-    private static void pauseAnyRunningUpload(Context context) {
+    /**
+     * Call from e.g. a notification to pause the upload.
+     * @param context
+     */
+    public static void pauseUploadService(@NonNull Context context) {
         Intent intent = new Intent();
         intent.setAction(ACTION_PAUSE);
         context.getApplicationContext().sendBroadcast(intent);
     }
 
-    public static boolean isStarted(Context context) {
+    /**
+     * This will cancel any upload currently running. Note that the upload job can be resumed
+     * at a later point. The reason the job wants cancelling is that it will tidy state and then save it.
+     */
+    private void cancelAnyRunningUploadJob() {
+        UploadJob uploadJob = BackgroundJobLoadActor.getActiveBackgroundJob(this);
+        if(uploadJob != null && !uploadJob.isStatusFinished()) {
+            uploadJob.cancelUploadAsap();
+        }
+    }
+
+    public static boolean isStarted(@NonNull Context context) {
         return isMyServiceRunning(context.getApplicationContext(), BackgroundPiwigoUploadService.class);
-    }
-
-    @Override
-    protected int getNotificationId() {
-        return BACKGROUND_UPLOAD_NOTIFICATION_ID;
-    }
-
-    @Override
-    protected String getNotificationTitle() {
-        return getString(R.string.notification_title_background_upload_service);
     }
 
     @Override
@@ -153,14 +184,15 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         try {
             doBeforeWork(intent);
             doWork(intent);
+        } catch(RuntimeException e) {
+            Bundle b = new Bundle();
+            b.putSerializable("error", e);
+            b.putString("service", TAG);
+            Logging.logAnalyticEvent(this,"UploadServiceCrash", b);
+            Logging.recordException(e);
         } finally {
             stopForeground(true);
         }
-    }
-
-    @Override
-    public void updateNotificationProgressText(int uploadProgress) {
-        updateNotificationText(getString(R.string.notification_text_background_upload_running), uploadProgress);
     }
 
     @Override
@@ -203,31 +235,33 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     }
 
     private void pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(Context context, AutoUploadJobsConfig jobs, Map<Uri, UriWatcher> runningObservers, BackgroundPiwigoFileUploadResponseListener jobListener) {
-        updateNotificationText(getString(R.string.notification_text_background_upload_polling), true);
+        getUploadNotificationManager().updateNotificationText(R.string.notification_text_background_upload_polling, true);
         UploadJob unfinishedJob;
+
         do {
             // if there's an old incomplete job, try and finish that first.
-            unfinishedJob = getActiveBackgroundJob(context);
+            unfinishedJob = BackgroundJobLoadActor.getActiveBackgroundJob(context);
             if (unfinishedJob != null) {
                 ConnectionPreferences.ProfilePreferences jobConnProfilePrefs = unfinishedJob.getConnectionPrefs();
                 boolean jobIsValid = jobConnProfilePrefs != null && jobConnProfilePrefs.isValid(getPrefs(), getApplicationContext());
                 if(!jobIsValid) {
                     new AutoUploadJobConfig(unfinishedJob.getJobConfigId()).setJobValid(this, false);
                 }
-                if (!unfinishedJob.isFinished() && jobIsValid) {
-                    if(!unfinishedJob.hasFilesForUpload()) {
+                if (!unfinishedJob.isStatusFinished() && jobIsValid) {
+                    if(!unfinishedJob.hasProcessableFiles()) {
                         // ALL Files are in error state. Cancel them all so the server will be cleaned of any partial uploads
                         unfinishedJob.cancelAllFailedUploads();
-                        saveStateToDisk(unfinishedJob);
+                        new JobLoadActor(this).saveStateToDisk(unfinishedJob);
                     }
-                    runJob(unfinishedJob, this, true);
+                    BackgroundJobLoadActor jobLoadActor = new BackgroundJobLoadActor(this, new BackgroundJobConfigurationErrorListener(this));
+                    runJob(jobLoadActor, unfinishedJob, this, true);
                     if (unfinishedJob.hasJobCompletedAllActionsSuccessfully()) {
-                        removeJob(unfinishedJob);
+                        JobLoadActor.removeJob(unfinishedJob);
                     }
                 } else {
                     // no longer valid (connection doesn't exist any longer).
-                    deleteStateFromDisk(getApplicationContext(), unfinishedJob, true);
-                    removeJob(unfinishedJob);
+                    new JobLoadActor(this).deleteStateFromDisk(unfinishedJob, true);
+                    JobLoadActor.removeJob(unfinishedJob);
                 }
             }
         } while (unfinishedJob != null && !terminateUploadServiceThreadAsap);
@@ -241,13 +275,13 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 for (AutoUploadJobConfig jobConfig : jobConfigList) {
                     DocumentFile monitoringFolder = jobConfig.getLocalFolderToMonitor(context);
 
-                    if (monitoringFolder != null && !runningObservers.containsKey(monitoringFolder)) {
+                    if (monitoringFolder != null && !runningObservers.containsKey(monitoringFolder.getUri())) {
                         // TODO get rid of the event processor thread and use the handler instead to minimise potential thread generation!
                         UriWatcher observer;
                         if("file".equals(monitoringFolder.getUri().getScheme())) {
-                            observer = new CustomFileObserver(this, new File(monitoringFolder.getUri().getPath()));
+                            observer = new BackgroundUploadInvokingFolderChangeObserver(this, new File(monitoringFolder.getUri().getPath()));
                         } else {
-                            observer = new CustomContentObserver(null, this, monitoringFolder.getUri());
+                            observer = new BackgroundUploadInvokingUriContentObserver(null, this, monitoringFolder.getUri());
                         }
 
 
@@ -255,9 +289,10 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                         observer.startWatching();
                     }
                     if (!terminateUploadServiceThreadAsap && jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
-                        UploadJob uploadJob = getUploadJob(context, jobConfig, jobListener);
+                        BackgroundJobLoadActor jobLoaderActor = new BackgroundJobLoadActor(this, new BackgroundJobConfigurationErrorListener(this));
+                        UploadJob uploadJob = jobLoaderActor.getUploadJob(jobConfig, jobListener);
                         if (uploadJob != null) {
-                            runJob(uploadJob, this, false);
+                            runJob(jobLoaderActor, uploadJob, this, false);
                             if (!uploadJob.isCancelUploadAsap()) {
                                 // stop running jobs if we had a cancel request.
                                 break;
@@ -276,7 +311,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             Date wakeAt = new Date(pauseThreadUntilSysTime);
             while (System.currentTimeMillis() < pauseThreadUntilSysTime && !terminateUploadServiceThreadAsap) {
                 try {
-                    updateNotificationText(getString(R.string.notification_text_background_upload_sleeping, wakeAt), false);
+                    getUploadNotificationManager().updateNotificationText(getString(R.string.notification_text_background_upload_sleeping, wakeAt), false);
                     wait(pollDurationMillis);
                 } catch (InterruptedException e) {
                     Log.d(TAG, "Ignoring interrupt");
@@ -296,12 +331,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     }
 
     @Override
-    protected void runJob(@NonNull UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
+    protected void runJob(@NonNull JobLoadActor jobLoaderActor, @NonNull UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
         try {
-            updateNotificationText(getString(R.string.notification_text_background_upload_running), thisUploadJob.getOverallUploadProgressInt());
+            getUploadNotificationManager().updateNotificationText(R.string.notification_text_background_upload_running, thisUploadJob.getOverallUploadProgressInt());
             boolean connectionDetailsValid = thisUploadJob.getConnectionPrefs().isValid(this);
             if(connectionDetailsValid) {
-                super.runJob(thisUploadJob, listener, deleteJobConfigFileOnSuccess);
+                super.runJob(jobLoaderActor, thisUploadJob, listener, deleteJobConfigFileOnSuccess);
             } else {
                 // update the job validity status
                 AutoUploadJobConfig config = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
@@ -340,11 +375,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     @Override
     public void onJobReadyToUpload(Context c, UploadJob thisUploadJob) {
         AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
+        //FIXME this isn't scalable. Needs storing in a database and querying on a file by file basis as needed
         AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(c);
         thisUploadJob.filterPreviouslyUploadedFiles(priorUploads.getFileUrisAndHashcodes());
         // technically this is called after the job has already started, but the user doesn't need to know that.
-        if(thisUploadJob.hasFilesForUpload()) {
-            EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob, thisUploadJob.hasBeenRunBefore()));
+        if(thisUploadJob.hasProcessableFiles()) {
+            EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob, thisUploadJob.isHasRunBefore()));
         }
     }
 
@@ -359,7 +395,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         @Override
         public void onReceive(Context context, Intent intent) {
             if(Intent.ACTION_USER_PRESENT.equals(intent.getAction())) {
-                handleDeviceUnlocked(context);
+                handleDeviceUnlocked();
             } else if(ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
                 handleNetworkStatusChanged(intent);
             } else if(WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
@@ -385,7 +421,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             listener.onNetworkChange(hasInternet, hasWifi);
         }
 
-        private void handleDeviceUnlocked(Context context) {
+        private void handleDeviceUnlocked() {
             listener.onDeviceUnlocked();
         }
 
@@ -413,15 +449,6 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         synchronized(this) {
             pauseThreadUntilSysTime = System.currentTimeMillis() - 1;
             notifyAll();
-        }
-    }
-
-
-
-    private void pauseAnyRunningUpload() {
-        UploadJob uploadJob = getActiveBackgroundJob(getApplicationContext());
-        if(uploadJob != null && !uploadJob.isFinished()) {
-            uploadJob.cancelUploadAsap();
         }
     }
 
@@ -454,258 +481,6 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         return false;
     }
 
-    private UploadJob getUploadJob(@NonNull Context context, @NonNull AutoUploadJobConfig jobConfig, @NonNull BackgroundPiwigoFileUploadResponseListener jobListener) {
-        DocumentFile localFolderToMonitor = jobConfig.getLocalFolderToMonitor(context);
-        if(localFolderToMonitor == null || !localFolderToMonitor.exists()) {
-            postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(), getString(R.string.ignoring_job_local_folder_not_found)));
-            return null;
-        }
-        boolean compressVideos = jobConfig.isCompressVideosBeforeUpload(context);
-        Set<String> fileExtsToUpload = jobConfig.getFileExtsToUpload(context);
-        int maxFileSizeMb = jobConfig.getMaxUploadSize(context);
-        if (fileExtsToUpload == null) {
-            Bundle b = new Bundle();
-            b.putString("message", "No File extensions selected for upload - nothing can be uploaded. Ignoring job");
-            Logging.logAnalyticEvent(context,"uploadError", b);
-            postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(), getString(R.string.ignoring_job_no_file_types_selected_for_upload)));
-            return null;
-        }
-        SimpleDocumentFileFilter filter = new SimpleDocumentFileFilter() {
-            @Override
-            protected boolean nonAcceptOverride(DocumentFile f) {
-                return compressVideos && IOUtils.isPlayableMedia(f.getType());
-            }
-        }.withFileExtIn(fileExtsToUpload).withMaxSizeBytes(maxFileSizeMb * 1024 * 1024);
-        List<DocumentFile> matchingFiles = DocumentFileFilter.filterDocumentFiles(localFolderToMonitor.listFiles(), filter);
-        if (matchingFiles.isEmpty()) {
-            return null;
-        }
-        matchingFiles = IOUtils.getFilesNotBeingWritten(matchingFiles, 5000); // wait 5 seconds before double checking the file size etc (if its in use, it will have altered)
-        if(matchingFiles.isEmpty()) {
-            return null;
-        }
-        Map<Uri,Long> filesToUpload = new HashMap<>(matchingFiles.size());
-        for (DocumentFile matchingFile : matchingFiles) {
-            filesToUpload.put(matchingFile.getUri(), matchingFile.length());
-        }
-
-        CategoryItemStub category = jobConfig.getUploadToAlbum(context);
-        UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(context, getPrefs()), filesToUpload, category,
-                jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId(), jobConfig.isDeleteFilesAfterUpload(context));
-
-        uploadJob.setToRunInBackground();
-        uploadJob.setJobConfigId(jobConfig.getJobId());
-        if (uploadJob.getConnectionPrefs().isOfflineMode(getPrefs(), context)) {
-            postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(), getString(R.string.ignoring_job_connection_profile_set_for_offline_access)));
-            return null;
-        }
-
-        uploadJob.setPlayableMediaCompressionParams(jobConfig.getVideoCompressionParams(context));
-        uploadJob.setImageCompressionParams(jobConfig.getImageCompressionParams(context));
-        return uploadJob;
-    }
-
-    @Override
-    public void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response) {
-        //TODO do something useful with the messages... build a log file?
-
-//        PiwigoResponseBufferingHandler.getDefault().preRegisterResponseHandlerForNewMessage(jobId, response.getMessageId());
-//        PiwigoResponseBufferingHandler.getDefault().processResponse(response);
-    }
-
-    private static class CustomFileObserver extends FileObserver implements UriWatcher {
-        private final File watchedFile;
-        private FileEventProcessor eventProcessor;
-        private Context context;
-
-        CustomFileObserver(Context context, File f) {
-            super(f.getAbsolutePath(), FileObserver.CREATE ^ FileObserver.MOVED_TO);
-            this.context = context;
-            this.watchedFile = f;
-        }
-
-        @Override
-        public void onEvent(int event, @Nullable String path) {
-            switch(event) {
-                case FileObserver.CLOSE_WRITE:
-                case FileObserver.MOVED_TO:
-                case FileObserver.CREATE:
-                case FileObserver.MODIFY:
-                case FileObserver.ATTRIB:
-                    if(eventProcessor == null) {
-                        eventProcessor = new FileEventProcessor();
-                    }
-                    eventProcessor.execute(new File(watchedFile, path));
-                    break;
-                default:
-                    // do nothing for other events.
-            }
-        }
-
-        @Override
-        public Uri getWatchedUri() {
-            return null;
-        }
-
-        private class FileEventProcessor extends Thread {
-
-            private File eventSourceFile;
-            private int lastEventId;
-            private boolean running;
-
-            @Override
-            public void run() {
-                while(!processEvent(eventSourceFile, lastEventId)){} // do until processed.
-                lastEventId = 0;
-            }
-
-            public void execute(File eventSourceFile) {
-                lastEventId++;
-                if(lastEventId <= 0) {
-                    lastEventId = 1;
-                }
-                this.eventSourceFile = eventSourceFile;
-                synchronized (this) {
-                    if (!running) {
-                        running = true;
-                        start();
-                    }
-                }
-            }
-
-            private boolean processEvent(File eventSourceFile, int eventId) {
-                long len = eventSourceFile.length();
-                long lastMod = eventSourceFile.lastModified();
-                try {
-                    Thread.sleep(5000); // wait 5 seconds before double checking the file size etc (if its in use, it will have altered)
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if(eventId == lastEventId && len == eventSourceFile.length() && lastMod == eventSourceFile.lastModified()) {
-                    BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(context);
-                    return true;
-                }
-                return false;
-            }
-        }
-    }
-
-    private interface UriWatcher {
-
-        void startWatching();
-
-        void stopWatching();
-
-        Uri getWatchedUri();
-    }
-
-    private static class CustomContentObserver extends ContentObserver implements UriWatcher {
-
-        private final Uri watchedUri;
-        private final Context context;
-        private EventProcessor eventProcessor;
-
-        /**
-         * Creates a content observer.
-         *
-         * @param handler The handler to run {@link #onChange} on, or null if none.
-         */
-        public CustomContentObserver(Handler handler, Context context, Uri watchedUri) {
-            super(handler);
-            this.context = context;
-            this.watchedUri = watchedUri;
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            onChange(selfChange, null);
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            if(eventProcessor == null) {
-                eventProcessor = new EventProcessor();
-            }
-            eventProcessor.execute(context, watchedUri, uri);
-        }
-
-        @Override
-        public void startWatching() {
-            try {
-                context.getContentResolver().registerContentObserver(watchedUri, false, this);
-            } catch(SecurityException e) {
-                Logging.log(Log.ERROR, TAG, "Unable to watch uri : " + watchedUri);
-                Logging.recordException(e);
-            }
-        }
-
-        @Override
-        public void stopWatching() {
-            context.getContentResolver().unregisterContentObserver(this);
-        }
-
-        @Override
-        public Uri getWatchedUri() {
-            return watchedUri;
-        }
-
-        private class EventProcessor extends Thread {
-
-            private WeakReference<Context> contextRef;
-            private Uri eventSourceUri;
-            private int lastEventId;
-            private boolean running;
-
-            @Override
-            public void run() {
-                boolean processed;
-                do {
-                    processed = processEvent(watchedUri, eventSourceUri, lastEventId);
-                } while(!processed); // do until processed.
-                lastEventId = 0;
-            }
-
-            public void execute(Context context, Uri watchedUri, Uri eventSourceUri) {
-                contextRef = new WeakReference<>(context);
-                lastEventId++;
-                if (lastEventId <= 0) {
-                    lastEventId = 1;
-                }
-                this.eventSourceUri = eventSourceUri;
-                synchronized (this) {
-                    if (!running) {
-                        running = true;
-                        start();
-                    }
-                }
-            }
-
-            private @NonNull Context getContext() {
-                return Objects.requireNonNull(contextRef.get());
-            }
-
-            private boolean processEvent(Uri watchedUri, Uri eventSourceUri, int eventId) {
-                DocumentFile file = IOUtils.getSingleDocFile(getContext(), eventSourceUri);
-                if(file == null) {
-                    Logging.log(Log.ERROR, TAG, "Unable to retrieve DocumentFile for uri " + eventSourceUri);
-                    return false;
-                }
-                long len = file.length();
-                long lastMod = file.lastModified();
-                try {
-                    Thread.sleep(5000); // wait 5 seconds before double checking the file size etc (if its in use, it will have altered)
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (eventId == lastEventId && len == file.length() && lastMod == file.lastModified()) {
-                    BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(context);
-                    return true;
-                }
-                return false;
-            }
-        }
-    }
-
     private interface MyBroadcastEventListener {
         void onNetworkChange(boolean internetAccess, boolean unmeteredNet);
 
@@ -715,7 +490,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private static class MyNetworkCallback extends ConnectivityManager.NetworkCallback {
 
-        private MyBroadcastEventListener listener;
+        private final MyBroadcastEventListener listener;
 
         public MyNetworkCallback(MyBroadcastEventListener listener) {
             this.listener = listener;
@@ -740,7 +515,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             if (ACTION_WAKE.equals(intent.getAction())) {
                 wakeIfPaused();
             } else if (ACTION_PAUSE.equals(intent.getAction())) {
-                pauseAnyRunningUpload();
+                cancelAnyRunningUploadJob();
             } else {
                 super.onReceive(context, intent);
             }
@@ -773,7 +548,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 wakeIfPaused();
             } else {
 //                BackgroundPiwigoUploadService.sendActionPauseAnyRunningUpload(context);
-                pauseAnyRunningUpload();
+                cancelAnyRunningUploadJob();
             }
         }
 

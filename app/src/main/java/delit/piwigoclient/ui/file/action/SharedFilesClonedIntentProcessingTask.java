@@ -14,8 +14,10 @@ import java.util.List;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.util.IOUtils;
+import delit.libs.util.progress.BasicProgressTracker;
+import delit.libs.util.progress.DividableProgressTracker;
 import delit.libs.util.progress.ProgressListener;
-import delit.libs.util.progress.TaskProgressTracker;
+import delit.libs.util.progress.TrackerUpdatingProgressListener;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.file.FolderItem;
@@ -51,8 +53,8 @@ public class SharedFilesClonedIntentProcessingTask<F extends RecyclerViewDocumen
     protected List<FolderItem> doInBackgroundSafely(List<FolderItem> ... params) {
         List<FolderItem> itemsShared = params[0];
         List<FolderItem> copiedItemsShared = new ArrayList<>(itemsShared.size());
-        TaskProgressTracker progressTracker = new TaskProgressTracker("files cloning",  100,this);
-        TaskProgressTracker copyProgressTracker = progressTracker.addSubTask("copying files", itemsShared.size(), 80);
+        DividableProgressTracker progressTracker = new DividableProgressTracker("files cloning",  100,this);
+        BasicProgressTracker copyProgressTracker = progressTracker.addChildTask("copying files", itemsShared.size(), 80);
         for(FolderItem item : itemsShared) {
             DocumentFile sharedFilesFolder = IOUtils.getSharedFilesFolder(getContext());
 
@@ -68,9 +70,9 @@ public class SharedFilesClonedIntentProcessingTask<F extends RecyclerViewDocumen
                 copyProgressTracker.incrementWorkDone(1);
             }
         }
-        TaskProgressTracker cacheProgressTracker = progressTracker.addSubTask("caching files information", copiedItemsShared.size(), 20);
+        DividableProgressTracker cacheProgressTracker = progressTracker.addChildTask("caching files information", copiedItemsShared.size(), 20);
         itemsShared.clear();
-        FolderItem.cacheDocumentInformation(getContext(), copiedItemsShared, cacheProgressTracker);
+        FolderItem.cacheDocumentInformation(getContext(), copiedItemsShared, new TrackerUpdatingProgressListener(cacheProgressTracker));
         return copiedItemsShared;
     }
 
@@ -102,12 +104,27 @@ public class SharedFilesClonedIntentProcessingTask<F extends RecyclerViewDocumen
     }
 
     @Override
-    public void onProgress(double percent) {
+    public void onProgress(double percent, boolean forceNotification) {
         publishProgress((int)Math.rint(percent*100));
     }
 
     @Override
-    public double getUpdateStep() {
+    public void onStarted() {
+        onProgress(0, true);
+    }
+
+    @Override
+    public void onComplete() {
+        onProgress(1, true);
+    }
+
+    @Override
+    public double getMinimumProgressToNotifyFor() {
         return 0.01;//1%
+    }
+
+    @Override
+    public void onProgress(double percent) {
+        onProgress(percent, false);
     }
 }

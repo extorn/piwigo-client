@@ -47,14 +47,14 @@ public class AlbumsGetFirstAvailableAlbumResponseHandler extends AbstractPiwigoW
                 if (albumId.equals(StaticCategoryItem.ROOT_ALBUM.getId())) {
                     continue;
                 }
-                AlbumGetSubAlbumsResponseHandler albumListLoadHandler = new AlbumGetSubAlbumsResponseHandler(currentAlbumItem, preferredThumbnailSize, false);
+                AlbumGetChildAlbumsResponseHandler albumListLoadHandler = new AlbumGetChildAlbumsResponseHandler(currentAlbumItem, preferredThumbnailSize, false);
                 albumListLoadHandler.invokeAndWait(getContext(), getConnectionPrefs());
                 if (!albumListLoadHandler.isSuccess()) {
                     // presume the desired child album no longer exists.
                     reportNestedFailure(albumListLoadHandler);
                     break;
                 } else {
-                    AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response = (AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) albumListLoadHandler.getResponse();
+                    AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response = (AlbumGetChildAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) albumListLoadHandler.getResponse();
                     currentAlbumItem.setChildAlbums(response.getAlbums());
                     boolean found = false;
                     Iterator<CategoryItem> iter = response.getAlbums().iterator();

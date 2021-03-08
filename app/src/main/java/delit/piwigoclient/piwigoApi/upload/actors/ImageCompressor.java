@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 
 import delit.libs.core.util.Logging;
-import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileLocalErrorResponse;
 import id.zelory.compressor.tweak.Compressor;
@@ -126,13 +126,10 @@ public class ImageCompressor {
                 }
                 newExifData.saveAttributes();
             }
-
-            uploadJob.addCompressedFile(rawImage, outputPhoto);
-
         } catch (IOException e) {
             if (outputPhoto != null && outputPhoto.exists()) {
                 if (!outputPhoto.delete()) {
-                    BasePiwigoUploadService.onFileDeleteFailed(TAG, outputPhoto, "compressed image - post compression");
+                    IOUtils.onFileDeleteFailed(TAG, outputPhoto, "compressed image - post compression");
                 }
             }
             Logging.recordException(e);

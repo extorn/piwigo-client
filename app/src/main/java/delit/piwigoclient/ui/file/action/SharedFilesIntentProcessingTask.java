@@ -71,12 +71,27 @@ public class SharedFilesIntentProcessingTask<F extends RecyclerViewDocumentFileF
     }
 
     @Override
-    public void onProgress(@FloatRange(from = 0, to = 1) double percent) {
+    public void onProgress(@FloatRange(from = 0, to = 1) double percent, boolean forceNotification) {
         publishProgress((int) Math.rint(percent * 100));
     }
 
     @Override
-    public double getUpdateStep() {
+    public void onProgress(double percent) {
+        onProgress(percent, false);
+    }
+
+    @Override
+    public void onComplete() {
+        onProgress(1.0,true);
+    }
+
+    @Override
+    public void onStarted() {
+        onProgress(0,true);
+    }
+
+    @Override
+    public double getMinimumProgressToNotifyFor() {
         return 0.01;//1%
     }
 }

@@ -1,7 +1,8 @@
-package delit.piwigoclient.piwigoApi.upload.actors;
+package delit.piwigoclient.piwigoApi.upload.actors.dataupload;
 
 import android.net.Uri;
 
+import delit.piwigoclient.piwigoApi.upload.FileUploadDetails;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
 public abstract class FileUploadCancelMonitorThread extends Thread {
@@ -24,7 +25,8 @@ public abstract class FileUploadCancelMonitorThread extends Thread {
                     thisUploadJob.wait();
                 }
             } catch (InterruptedException e) {
-                if(!thisUploadJob.isFileUploadStillWanted(uploadJobKey)) {
+                FileUploadDetails fud = thisUploadJob.getFileUploadDetails(uploadJobKey);
+                if(fud.isUploadCancelled()) {
                     done = true;
                     onFileUploadCancelled(uploadJobKey);
                 }

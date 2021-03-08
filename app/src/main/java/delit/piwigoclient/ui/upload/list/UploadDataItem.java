@@ -13,7 +13,6 @@ import java.util.Objects;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.libs.util.progress.ProgressListener;
-import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
 public class UploadDataItem implements Parcelable {
 
@@ -36,6 +35,10 @@ public class UploadDataItem implements Parcelable {
     private String dataHashcode = null;
     private long dataLength = -1;
     private String filename;
+    public static final Integer STATUS_COMPRESSED = 1;
+    public static final Integer STATUS_ERROR = -1;
+    public static final Integer STATUS_UPLOADING = 2;
+    public static final Integer STATUS_UPLOADED = 3;
 
     public UploadDataItem(Uri uri, String filename, String mimeType, long dataLength) {
         this.uri = uri;
@@ -213,7 +216,7 @@ public class UploadDataItem implements Parcelable {
         };
 
         public boolean isUploadFailed() {
-            return Objects.equals(uploadStatus, UploadJob.ERROR);
+            return Objects.equals(uploadStatus, STATUS_ERROR);
         }
 
         public void setUploadStatus(Integer uploadStatus) {
