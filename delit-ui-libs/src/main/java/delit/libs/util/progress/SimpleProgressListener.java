@@ -1,12 +1,16 @@
 package delit.libs.util.progress;
 
+import android.util.Log;
+
 import androidx.annotation.FloatRange;
 
+import delit.libs.core.util.Logging;
 import delit.libs.util.Utils;
 
 public class SimpleProgressListener implements ProgressListener {
 
-    private final double notifyOnProgress;
+    private static final String TAG = "SimpleProgressListener";
+    private double notifyOnProgress;
     private double lastNotifiedAt;
 
     /**
@@ -17,6 +21,14 @@ public class SimpleProgressListener implements ProgressListener {
     }
 
     public SimpleProgressListener(@FloatRange(from = 0, to = 1) double notifyOnProgress) {
+        this.notifyOnProgress = notifyOnProgress;
+        if(notifyOnProgress > 1) {
+            Logging.log(Log.WARN, TAG, "NotifyOnProgress should never be beyond 100% (1). It is %1$.02f", notifyOnProgress);
+        }
+    }
+
+    @Override
+    public void setMinimumProgressToNotifyFor(double notifyOnProgress) {
         this.notifyOnProgress = notifyOnProgress;
     }
 

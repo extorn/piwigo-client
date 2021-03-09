@@ -1001,7 +1001,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             deleteUploadJobButton.setVisibility(GONE);
         }
     }
-
+/* This shouldn't be needed. The listener should capture this.
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ForegroundUploadFinishedEvent event) {
         if(getUiHelper().getPiwigoResponseListener().getParent() == null) {
@@ -1010,7 +1010,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             UploadJob job = getActiveJob(requireContext());
             ((ForegroundPiwigoFileUploadResponseListener<F,FUIH>)getUiHelper().getPiwigoResponseListener()).onUploadComplete(requireContext(), job);
         }
-    }
+    }*/
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumCreatedEvent event) {

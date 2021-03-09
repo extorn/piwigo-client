@@ -119,6 +119,11 @@ public class SharedFilesClonedIntentProcessingTask<F extends RecyclerViewDocumen
     }
 
     @Override
+    public void setMinimumProgressToNotifyFor(double notifyOnProgress) {
+        throw new UnsupportedOperationException(); // illogical
+    }
+
+    @Override
     public double getMinimumProgressToNotifyFor() {
         return 0.01;//1%
     }

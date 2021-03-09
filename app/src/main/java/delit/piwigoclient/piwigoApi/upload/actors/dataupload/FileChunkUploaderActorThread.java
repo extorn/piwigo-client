@@ -107,6 +107,7 @@ public class FileChunkUploaderActorThread extends Thread {
                 } else {
                     stopAsap();
                 }
+                isUploadComplete = fud.isStatusAllChunksUploaded();
             }
         } while(!isUploadComplete && !cancelUpload);
         if(cancelUpload) {

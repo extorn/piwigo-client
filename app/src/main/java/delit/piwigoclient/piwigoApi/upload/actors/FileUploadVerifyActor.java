@@ -53,7 +53,7 @@ public class FileUploadVerifyActor extends UploadActor {
                     // the file verification failed - this file is corrupt (needs delete but then re-upload).
                     fud.setStatusCorrupt();
                     // reduce the overall progress again.
-                    thisUploadJob.getTaskProgressTrackerForOverallCompressionAndUploadOfData(getContext()).decrementWorkDone(thisUploadJob.getUploadUploadProgressTicksForFile(fud.getFileUri()));
+                    thisUploadJob.buildTaskProgressTrackerForOverallCompressionAndUploadOfData(getContext()).decrementWorkDone(thisUploadJob.getUploadUploadProgressTicksForFile(fud.getFileUri()));
                 }
             } catch(RuntimeException e) {
                 Logging.recordException(e);

@@ -32,9 +32,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 public class UploadJob implements Parcelable {
-
-
-    //Total of this work must equal TOTAL WORK. I'm trying to keep this around 100 so its roughly percentages. N.b. this isn't accurate as job size changes.
+    //Total of this work must equal TOTAL WORK. I'm trying to keep this around 100 so its roughly percentages of time user waits. N.b. this isn't accurate as job size changes.
     public static final long WORK_DIVISION_CHECKSUM_PERC = 5;
     public static final long WORK_DIVISION_POST_CHECKED_FOR_EXISTING_FILES = 2;
     public static final long WORK_DIVISION_COMPRESS_AND_UPLOAD_PERC = 87;
@@ -44,7 +42,7 @@ public class UploadJob implements Parcelable {
     public static final String CHECKSUMS_CALCULATION_TASK = "Checksums calculation";
     public static final String FILES_CHUNKS_UPLOAD_TASK = "Files Chunks Upload";
     public static final String SINGLE_FILE_COMPRESSION_TASK = "file compression";
-    public static final String SINGLE_FILE_CHECKSUM = "file checksum";
+
     public static final Creator<UploadJob> CREATOR = new Creator<UploadJob>() {
         @Override
         public UploadJob createFromParcel(Parcel in) {
@@ -81,7 +79,6 @@ public class UploadJob implements Parcelable {
     private volatile boolean cancelUploadAsap;
     private DocumentFile loadedFromFile;
     private boolean wasLastRunCancelled;
-    private double overallUploadProgress;
     private DividableProgressTracker overallProgressTracker;
     private int runAttempts;
 
@@ -111,7 +108,6 @@ public class UploadJob implements Parcelable {
         imageCompressionParams = ParcelUtils.readParcelable(in, UploadJob.ImageCompressionParams.class);
         allowUploadOfRawVideosIfIncompressible = ParcelUtils.readBool(in);
         isDeleteFilesAfterUpload = ParcelUtils.readBool(in);
-        overallUploadProgress = in.readDouble();
         overallProgressTracker = ParcelUtils.readValue(in, DividableProgressTracker.class);
         runAttempts = in.readInt();
     }
@@ -222,18 +218,25 @@ public class UploadJob implements Parcelable {
         return false;
     }
 
+    public double getOverallUploadProgress() {
+        if(overallProgressTracker == null) {
+            return 0;
+        }
+        return overallProgressTracker.getProgressPercentage();
+    }
+
     public int getOverallUploadProgressInt() {
-        return (int) Math.rint(100 * overallUploadProgress);
+        return (int) Math.rint(100 * getOverallUploadProgress());
     }
 
     public DividableProgressTracker getProgressTrackerForJob() {
         if (overallProgressTracker == null) {
-            overallProgressTracker = new DividableProgressTracker(OVERALL_JOB_TASK, TOTAL_WORK);
+            overallProgressTracker = new DividableProgressTracker(OVERALL_JOB_TASK, TOTAL_WORK/*, new SimpleProgressListener(0.01)*/);
         }
         return overallProgressTracker;
     }
 
-    public DividableProgressTracker getTaskProgressTrackerForOverallCompressionAndUploadOfData(Context context) {
+    public DividableProgressTracker buildTaskProgressTrackerForOverallCompressionAndUploadOfData(Context context) {
         long totalUploadProgressTicksInJob = calculateTotalCompressionAndUploadingWork(context);
         DividableProgressTracker task = overallProgressTracker.getChildTask(OVERALL_DATA_UPLOAD_TASK);
         if (task == null) {
@@ -245,7 +248,7 @@ public class UploadJob implements Parcelable {
     public DividableProgressTracker getTaskProgressTrackerForSingleFileChunkParsing(Uri uri, long totalBytes) {
         DividableProgressTracker parentTracker = overallProgressTracker.getChildTask(OVERALL_DATA_UPLOAD_TASK);
         if (parentTracker == null) {
-            throw new IllegalStateException("Unable to find data upload task tracker");
+            throw new IllegalStateException("Unable to find data upload task tracker - must be created in service due to need for context");
         }
         DividableProgressTracker tracker = parentTracker.getChildTask(FILES_CHUNKS_UPLOAD_TASK + "_" + uri.getPath());
         if(tracker == null) {
@@ -620,7 +623,6 @@ public class UploadJob implements Parcelable {
         ParcelUtils.writeParcelable(dest, imageCompressionParams);
         ParcelUtils.writeBool(dest, allowUploadOfRawVideosIfIncompressible);
         ParcelUtils.writeBool(dest, isDeleteFilesAfterUpload);
-        dest.writeDouble(overallUploadProgress);
         ParcelUtils.writeParcelable(dest, overallProgressTracker);
         dest.writeInt(runAttempts);
     }

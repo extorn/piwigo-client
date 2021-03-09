@@ -245,9 +245,27 @@ public class DividableProgressTracker extends BasicProgressTracker implements Pa
         setListener(buildLinkProgressListener(parentTracker));
     }
 
+    @Override
+    public void setListener(@NonNull ProgressListener listener) {
+        super.setListener(listener);
+        if(!activeChildTasks.isEmpty()) {
+            for (DividableProgressTracker activeChildTask : activeChildTasks) {
+                activeChildTask.updateListenerNotificationFrequency(getFastestUpdateNeeded());
+            }
+        }
+    }
+
+    private void updateListenerNotificationFrequency(double fastedUpdateNeeded) {
+        getListener().setMinimumProgressToNotifyFor(fastedUpdateNeeded);
+    }
+
+    private double getListenerNeededUpdateNotification(double fastestUpdateNeededByParent) {
+        double percentProgressAsOnePercentOfMainProgress = Math.min(1,fastestUpdateNeededByParent * (1/progressScalar));
+        return percentProgressAsOnePercentOfMainProgress;
+    }
+
     protected DividableLinkProgressListener buildLinkProgressListener(@NonNull DividableProgressTracker parentTracker) {
-        double percentProgressAsOnePercentOfMainProgress = parentTracker.getFastestUpdateNeeded() /  progressScalar;
-        return new DividableLinkProgressListener(percentProgressAsOnePercentOfMainProgress, parentTracker);
+        return new DividableLinkProgressListener(getListenerNeededUpdateNotification(parentTracker.getFastestUpdateNeeded()), parentTracker);
     }
 
     @NonNull

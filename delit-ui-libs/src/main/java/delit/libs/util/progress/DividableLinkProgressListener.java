@@ -1,10 +1,12 @@
 package delit.libs.util.progress;
 
+import androidx.annotation.FloatRange;
+
 public class DividableLinkProgressListener extends SimpleProgressListener implements DividableProgressTracker.ChildProgressListener {
 
     private final DividableProgressTracker parentTask;
 
-    public DividableLinkProgressListener(double notifyOnProgress, DividableProgressTracker parentTask) {
+    public DividableLinkProgressListener(@FloatRange(from = 0, to = 1) double notifyOnProgress, DividableProgressTracker parentTask) {
         super(notifyOnProgress);
         this.parentTask = parentTask;
     }

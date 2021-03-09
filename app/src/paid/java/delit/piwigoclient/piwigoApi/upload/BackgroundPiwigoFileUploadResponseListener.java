@@ -81,6 +81,7 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     private void onFileUploadComplete(Context context, final PiwigoUploadProgressUpdateResponse response) {
         UploadJob uploadJob = BackgroundJobLoadActor.getActiveBackgroundJobByJobId(context, response.getJobId());
         if (uploadJob != null) {
+            //TODO too much updating?
             for (Long albumParent : uploadJob.getUploadToCategory().getParentageChain()) {
                 EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
             }

@@ -418,6 +418,10 @@ public class FileUploadDetails implements Parcelable {
         status = UPLOADED;
     }
 
+    public boolean isStatusAllChunksUploaded() {
+        return status == UPLOADED;
+    }
+
     public boolean isUploadStarted() {
         return status != NOT_STARTED;
     }

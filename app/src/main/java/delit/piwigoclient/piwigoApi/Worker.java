@@ -136,9 +136,16 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 
     }
 
-    public void afterCallInBackgroundThread(boolean success) {
+    /**
+     * @param success null if the handler is still running.
+     */
+    public void afterCallInBackgroundThread(Boolean success) {
         recordExcutionFinished();
-        Logging.log(Log.DEBUG, tag, "Worker "+getTaskName()+" terminated, handler success : " + success);
+        if(success != null) {
+            Logging.log(Log.DEBUG, tag, "Worker "+getTaskName()+" terminated, handler success : " + success);
+        } else {
+            Logging.log(Log.DEBUG, tag, "Worker "+getTaskName()+" terminated, handler still running");
+        }
     }
 
     @Override
@@ -242,7 +249,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
                 handler.sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_unable_to_acquire_valid_session)));
             }
 
-            afterCallInBackgroundThread(handler.isSuccess());
+            afterCallInBackgroundThread(handler.isRunning() ? null : handler.isSuccess());
 
         } catch(RuntimeException e) {
             Logging.log(Log.ERROR,TAG, "Unexpected error in execute");
@@ -283,8 +290,8 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
     }
 
     @Override
-    protected void onPostExecuteSafely(Boolean aBoolean) {
-        Logging.log(Log.DEBUG, tag, "Worker "+getTaskName()+" terminated: " + aBoolean);
+    protected void onPostExecuteSafely(Boolean successful) {
+        Logging.log(Log.DEBUG, tag, "Worker "+getTaskName()+" terminated: " + successful);
     }
 
     public long start(long messageId) {

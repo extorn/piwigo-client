@@ -167,8 +167,10 @@ public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUpload
     @Override
     protected void onFileUploadProgressUpdate(@NonNull Context context, final PiwigoUploadProgressUpdateResponse response) {
         if (getParent() != null && getParent().isAdded()) {
-            FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
-            adapter.updateUploadProgress(response.getFileForUpload(), response.getProgress());
+            if(response.getFileForUpload() != null) {
+                FilesToUploadRecyclerViewAdapter<?, ?, ?> adapter = getParent().getFilesForUploadViewAdapter();
+                adapter.updateUploadProgress(response.getFileForUpload(), response.getProgress());
+            }
             UploadJob activeJob = getParent().getActiveJob(context);
             if (activeJob != null) {
                 updateOverallUploadProgress(activeJob.getOverallUploadProgressInt());

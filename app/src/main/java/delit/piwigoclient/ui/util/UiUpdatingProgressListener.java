@@ -28,9 +28,9 @@ public class UiUpdatingProgressListener extends SimpleProgressListener {
     @Override
     public void onProgress(double percent, boolean forceNotification) {
         if(!thesholdGate.thresholdMet() && !forceNotification) {
-            if(BuildConfig.DEBUG) {
+           /* if(BuildConfig.DEBUG) {
                 Log.d(TAG,"Skipping UI progress view update (beyond refresh rate): " + percent);
-            }
+            }*/
             return;
         }
         super.onProgress(percent, forceNotification);

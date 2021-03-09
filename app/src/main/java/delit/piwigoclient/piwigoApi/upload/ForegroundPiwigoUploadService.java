@@ -92,7 +92,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
                 Log.d(TAG, "Foreground upload service ending");
             }
             stopForeground(true);
-            EventBus.getDefault().post(new ForegroundUploadFinishedEvent());
+//            EventBus.getDefault().post(new ForegroundUploadFinishedEvent());
         }
         if(BuildConfig.DEBUG) {
             Log.d(TAG, "Foreground upload service really ended nicely");

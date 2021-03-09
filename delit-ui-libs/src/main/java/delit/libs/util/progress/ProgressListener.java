@@ -3,6 +3,8 @@ package delit.libs.util.progress;
 import androidx.annotation.FloatRange;
 
 public interface ProgressListener {
+    void setMinimumProgressToNotifyFor(double notifyOnProgress);
+
     double getMinimumProgressToNotifyFor();
 
     void onProgress(double percent);

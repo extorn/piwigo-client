@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
-import delit.libs.util.progress.BasicProgressTracker;
 import delit.libs.util.progress.DividableProgressTracker;
+import delit.libs.util.progress.SimpleProgressListener;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.UploadPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -46,9 +46,9 @@ import delit.piwigoclient.piwigoApi.upload.actors.TemporaryUploadAlbumActor;
 import delit.piwigoclient.piwigoApi.upload.actors.UploadNotificationManager;
 import delit.piwigoclient.piwigoApi.upload.actors.dataupload.FileDataUploaderActor;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileJobCompleteResponse;
+import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadProgressUpdateResponse;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadUnexpectedLocalErrorResponse;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
-import delit.piwigoclient.ui.events.AlbumDeletedEvent;
 import delit.piwigoclient.ui.events.CancelFileUploadEvent;
 
 import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler.getNextMessageId;
@@ -128,18 +128,19 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     }
 
     protected void runJob(@NonNull JobLoadActor jobLoadActor, @NonNull UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
-
         ActorListener actorListener = buildUploadActorListener(thisUploadJob, uploadNotificationManager);
+
         try {
             setRunningUploadJob(thisUploadJob);
 
-            if (thisUploadJob == null) {
-                Logging.log(Log.WARN, tag, "Upload job could not be located immediately after creating it - weird!");
-                return;
-            }
-
-            BasicProgressTracker overallJobProgressTracker = thisUploadJob.getProgressTrackerForJob();
-            overallJobProgressTracker.setWorkDone(0);
+            DividableProgressTracker overallJobProgressTracker = thisUploadJob.getProgressTrackerForJob();
+            overallJobProgressTracker.setListener(new SimpleProgressListener(0.01) {
+                @Override
+                protected void onNotifiableProgress(double percent) {
+                    actorListener.recordAndPostNewResponse(thisUploadJob, new PiwigoUploadProgressUpdateResponse(getNextMessageId(), null, thisUploadJob.getOverallUploadProgressInt()));
+                }
+            });
+            overallJobProgressTracker.setWorkDone(0); // this does not clear any child progress tracker allocated work still in progress.
 
             thisUploadJob.setStatusRunning();
 
@@ -191,19 +192,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
                 if (!thisUploadJob.isCancelUploadAsap()) {
                     if (thisUploadJob.hasProcessableFiles()) {
-                        BasicProgressTracker overallDataCompressAndUploadTracker = thisUploadJob.getTaskProgressTrackerForOverallCompressionAndUploadOfData(this);
-                        try {
-                            // loop over all files uploading.
-                            doUploadFilesInJob(jobLoadActor, thisUploadJob, availableAlbumsOnServer, actorListener);
-                        } finally {
-//                            try {
-//                                overallDataCompressAndUploadTracker.markComplete();
-//                            } catch (IllegalStateException e) {
-//                                // Will occur if the upload chunks task didn't complete.
-//                                actorListener.recordAndPostNewResponse(thisUploadJob, new PiwigoUploadUnexpectedLocalErrorResponse(thisUploadJob.getJobId(), new Exception("Upload of all chunks for file did not complete successfully")));
-//                                Logging.recordException(e);
-//                            }
-                        }
+                        // loop over all files uploading.
+                        doUploadFilesInJob(jobLoadActor, thisUploadJob, availableAlbumsOnServer, actorListener);
                     }
                 }
 
@@ -295,6 +285,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     protected abstract ActionsBroadcastReceiver buildActionBroadcastReceiver();
 
     private void doUploadFilesInJob(JobLoadActor jobLoadActor, UploadJob thisUploadJob, ArrayList<CategoryItemStub> availableAlbumsOnServer, ActorListener listener) throws JobUnableToContinueException {
+        thisUploadJob.buildTaskProgressTrackerForOverallCompressionAndUploadOfData(this);
         for (FileUploadDetails fud : thisUploadJob.getFilesForUpload()) {
             runAllFileUploadTasksForFile(jobLoadActor, fud, thisUploadJob, availableAlbumsOnServer, listener);
         }

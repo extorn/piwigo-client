@@ -9,6 +9,11 @@ public class TrackerUpdatingProgressListener implements ProgressListener {
     }
 
     @Override
+    public void setMinimumProgressToNotifyFor(double notifyOnProgress) {
+        // Do nothing. always updates in any case.
+    }
+
+    @Override
     public double getMinimumProgressToNotifyFor() {
         return 0;
     }

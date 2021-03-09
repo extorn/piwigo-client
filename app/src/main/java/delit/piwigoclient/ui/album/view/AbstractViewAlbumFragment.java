@@ -1415,6 +1415,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 //TODO be cleverer - check the time the call was invoked and queue another if needed.
                 return;
             }
+            Logging.log(Log.DEBUG,TAG,"Clearing album content to force reload of all");
             galleryModel.clear();
             galleryListViewScrollListener.resetState();
             cellSpanLookup.replaceGalleryModel(galleryModel);
