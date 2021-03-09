@@ -191,25 +191,18 @@ public class UploadDataItemModel implements Parcelable {
         return uploadDataItem;
     }
 
-    public UploadDataItem updateUploadProgress(Uri fileBeingUploaded, int percentageComplete) {
-        UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileBeingUploaded);
+    public UploadDataItem updateUploadProgress(Uri fileUploadItemKey, int percentageComplete) {
+        UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileUploadItemKey);
         if (uploadDataItem == null) {
-            String filename = fileBeingUploaded == null ? null : fileBeingUploaded.toString();
+            String filename = fileUploadItemKey == null ? null : fileUploadItemKey.toString();
             Logging.log(Log.ERROR, TAG, "Update Upload Progress (no data item) : Unable to locate upload progress object for file : %1$s %2$d%%", filename, percentageComplete);
         } else {
             UploadDataItem.UploadProgressInfo progress = uploadDataItem.uploadProgress;
             if (progress != null) {
                 progress.setUploadProgress(percentageComplete);
             } else {
-                // we're uploading a compressed file
-                uploadDataItem = Objects.requireNonNull(getUploadDataItemForFileBeingUploaded(fileBeingUploaded));
-                progress = uploadDataItem.uploadProgress;
-                if (progress != null) {
-                    progress.setUploadProgress(percentageComplete);
-                } else {
-                    String filename = fileBeingUploaded == null ? null : fileBeingUploaded.toString();
-                    Logging.log(Log.ERROR, TAG, "Update Upload Progress : Unable to locate upload progress object for file : " + filename);
-                }
+                String filename = fileUploadItemKey == null ? null : fileUploadItemKey.toString();
+                Logging.log(Log.ERROR, TAG, "Update Upload Progress : Unable to locate upload progress object for file : " + filename);
             }
             if (progress != null) {
                 progress.setUploadStatus(percentageComplete < 100 ? UploadDataItem.STATUS_UPLOADING : UploadDataItem.STATUS_UPLOADED);

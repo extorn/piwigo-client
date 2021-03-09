@@ -112,10 +112,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 case CANCEL_MESSAGE:
                 case FINISH_MESSAGE:
                     postCall(isSuccess);
-                    if (rerunningCall) {
-                        rerunningCall = false;
-                    }
                     isRunning = message.what != FINISH_MESSAGE;
+                    if (rerunningCall) {
+                        rerunningCall = isRunning; // set to false once not running
+                    }
                 default:
                     if (BuildConfig.DEBUG) {
                         Log.v(tag, "rx message type : " + message.what);

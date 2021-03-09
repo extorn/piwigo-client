@@ -48,7 +48,7 @@ public class FileUploadConfigureActor extends UploadActor {
 
                 } else {
                     fud.setStatusConfigured();
-                    getListener().recordAndPostNewResponse(thisUploadJob, new PiwigoUploadProgressUpdateResponse(getNextMessageId(), fileForUpload, thisUploadJob.getFileUploadDetails(fileForUpload).getOverallUploadProgress()));
+                    getListener().recordAndPostNewResponse(thisUploadJob, new PiwigoUploadProgressUpdateResponse(getNextMessageId(), fud.getFileUri(), thisUploadJob.getFileUploadDetails(fud.getFileUri()).getOverallUploadProgress()));
                 }
             } else {
                 fud.setProcessingFailed();

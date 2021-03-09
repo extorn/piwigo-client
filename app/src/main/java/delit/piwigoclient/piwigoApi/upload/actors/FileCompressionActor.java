@@ -39,10 +39,6 @@ public class FileCompressionActor extends UploadActor {
         }
         if(fileUploadDetails.isCompressionWanted()) {
             compressedFile = fileUploadDetails.getCompressedFileUri();
-            if(!FileUploadDetails.isFileAvailable(getContext(), compressedFile)) {
-                Logging.log(Log.ERROR,TAG,"Compressed file recorded but file not found %1$s", compressedFile);
-                compressedFile = null;
-            }
             if (compressedFile == null) {
                 if(fileUploadDetails.isUploadProcessStarted()) {
                     fileUploadDetails.resetStatus();

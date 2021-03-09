@@ -101,8 +101,11 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
                 }
                 // change the shown file name and size to be that of the compressed file
                 try {
-                    fileNameField.setText(uploadDataItem.getFilename(itemView.getContext()));
-                    itemHeading.setText(uploadDataItem.getFileSizeStr(itemView.getContext()));
+                    //only refresh these if the size changes - realistically this is a solid test.
+                    if(!itemHeading.getText().equals(uploadDataItem.getFileSizeStr(itemView.getContext()))) {
+                        fileNameField.setText(uploadDataItem.getFilename(itemView.getContext()));
+                        itemHeading.setText(uploadDataItem.getFileSizeStr(itemView.getContext()));
+                    }
                 } catch (IllegalStateException e) {
                     // don't care - this happens due to file being deleted post upload
                 }
