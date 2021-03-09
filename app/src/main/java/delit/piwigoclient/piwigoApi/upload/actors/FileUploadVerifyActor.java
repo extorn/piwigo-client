@@ -43,6 +43,7 @@ public class FileUploadVerifyActor extends UploadActor {
                     getListener().notifyListenersOfCustomErrorUploadingFile(thisUploadJob, fud.getFileUri(), false, errorMsg);
                     // this file isn't on the server at all, so just clear the upload progress to allow retry.
                     fud.resetStatus();
+                    getListener().recordAndPostNewResponse(thisUploadJob, new PiwigoUploadProgressUpdateResponse(getNextMessageId(), fud.getFileUri(), fud.getOverallUploadProgress()));
                 } else if (verifiedUploadedFile) {
                     //TODO send AJAX request to generate all derivatives. Need Custom method in piwigo client plugin. - method will be sent id of image and the server will invoke a get on all derivative urls (obtained using a ws call to pwg.getDerivatives).
 

@@ -118,6 +118,7 @@ public class ExistingFilesCheckActor extends UploadActor {
                     }
                     if (fud.needsVerification()) {
                         fud.setStatusVerified();
+                        getListener().recordAndPostNewResponse(thisUploadJob, new PiwigoUploadProgressUpdateResponse(getNextMessageId(), fud.getFileUri(), fud.getOverallUploadProgress()));
                     }
                     if (fud.isReadyForConfiguration()) {
                         resourcesToRetrieve.put(fileFoundOnServer, serverResourceId);
@@ -126,6 +127,7 @@ public class ExistingFilesCheckActor extends UploadActor {
                         fud.setStatusVerified();
                         filesExistingOnServerAlready.add(fileFoundOnServer);
                         resourcesToRetrieve.put(fileFoundOnServer, serverResourceId);
+                        getListener().recordAndPostNewResponse(thisUploadJob, new PiwigoUploadProgressUpdateResponse(getNextMessageId(), fud.getFileUri(), fud.getOverallUploadProgress()));
                     }
                 }
             } else {
