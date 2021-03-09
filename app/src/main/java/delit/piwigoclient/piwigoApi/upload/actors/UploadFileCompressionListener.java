@@ -29,7 +29,8 @@ public class UploadFileCompressionListener extends UploadActor implements VideoC
 
     @Override
     public void onCompressionStarted(Uri inputFile, Uri outputFile) {
-        singleFileCompressionProgressTracker = getUploadJob().getTaskProgressTrackerForSingleFileCompression(inputFile);
+        // 95% of the compression is compressing the data. 5% is used later to calc a checksum. (search for use of getTaskProgressTrackerForSingleFileCompression)
+        singleFileCompressionProgressTracker = getUploadJob().getTaskProgressTrackerForSingleFileCompression(inputFile).addChildTask("compression", 100, 95);
     }
 
     @Override

@@ -215,7 +215,7 @@ public class UploadJob implements Parcelable {
 
     public boolean hasNeedOfTemporaryFolder() {
         for (FileUploadDetails fud : fileUploadDetails.values()) {
-            if (!(fud.isAlreadyUploadedAndConfigured() || fud.isUploadCancelled())) {
+            if (!(fud.isAlreadyUploadedAndConfigured() || fud.isReadyForConfiguration() || fud.isUploadCancelled())) {
                 return true;
             }
         }
@@ -237,17 +237,21 @@ public class UploadJob implements Parcelable {
         long totalUploadProgressTicksInJob = calculateTotalCompressionAndUploadingWork(context);
         DividableProgressTracker task = overallProgressTracker.getChildTask(OVERALL_DATA_UPLOAD_TASK);
         if (task == null) {
-            return overallProgressTracker.addChildTask(OVERALL_DATA_UPLOAD_TASK, totalUploadProgressTicksInJob, WORK_DIVISION_COMPRESS_AND_UPLOAD_PERC);
+            task = overallProgressTracker.addChildTask(OVERALL_DATA_UPLOAD_TASK, totalUploadProgressTicksInJob, WORK_DIVISION_COMPRESS_AND_UPLOAD_PERC);
         }
         return task;
     }
 
     public DividableProgressTracker getTaskProgressTrackerForSingleFileChunkParsing(Uri uri, long totalBytes) {
-        DividableProgressTracker tracker = overallProgressTracker.getChildTask(OVERALL_DATA_UPLOAD_TASK);
-        if (tracker == null) {
+        DividableProgressTracker parentTracker = overallProgressTracker.getChildTask(OVERALL_DATA_UPLOAD_TASK);
+        if (parentTracker == null) {
             throw new IllegalStateException("Unable to find data upload task tracker");
         }
-        return tracker.addChildTask(FILES_CHUNKS_UPLOAD_TASK + "_" + uri.getPath(), totalBytes, getCompressionUploadProgressTicksForFile(uri));
+        DividableProgressTracker tracker = parentTracker.getChildTask(FILES_CHUNKS_UPLOAD_TASK + "_" + uri.getPath());
+        if(tracker == null) {
+            tracker = parentTracker.addChildTask(FILES_CHUNKS_UPLOAD_TASK + "_" + uri.getPath(), totalBytes, getCompressionUploadProgressTicksForFile(uri));
+        }
+        return tracker;
     }
 
     public DividableProgressTracker getTaskProgressTrackerForAllChecksumCalculation() {

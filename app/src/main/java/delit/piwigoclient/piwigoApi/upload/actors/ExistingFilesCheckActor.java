@@ -118,7 +118,8 @@ public class ExistingFilesCheckActor extends UploadActor {
                     }
                     if (fud.needsVerification()) {
                         fud.setStatusVerified();
-                    } else if (fud.isReadyForConfiguration()) {
+                    }
+                    if (fud.isReadyForConfiguration()) {
                         resourcesToRetrieve.put(fileFoundOnServer, serverResourceId);
                     } else {
                         // mark this file as needing configuration (probably uploaded by ?someone else? or a different upload mechanism anyway)
@@ -129,7 +130,7 @@ public class ExistingFilesCheckActor extends UploadActor {
                 }
             } else {
                 FileUploadDetails fud = thisUploadJob.getFileUploadDetails(fileCheckSumEntry.getKey());
-                if(fud.getChunksAlreadyUploadedData() == null && !fud.isUploadCancelled()) {
+                if(fud.isUploadStarted() && fud.getChunksAlreadyUploadedData() == null && !fud.isUploadCancelled()) {
                     // this isn't repairable. force re-upload
                     fud.resetStatus();
                     Logging.log(Log.WARN, TAG, "reset upload status for file. Status would infer it should be uploaded, but no data available. %1$s:%2$s", fud.getFileUri(), fud.getChecksumOfFileToUpload());

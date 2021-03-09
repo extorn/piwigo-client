@@ -211,18 +211,17 @@ public class FileUploadDetails implements Parcelable {
 
     public int getOverallUploadProgress() {
         int progress;
-        if(getServerResource() != null) {
+        if(isSuccessfullyUploaded()) {
             progress = 100;
-        } else if (uploadData == null) {
-            progress = 0;
+        } else if(isVerified()) {
+            progress = 95;
+        } else if(status == UPLOADED) {
+            progress = 90;
         } else {
-            progress = Math.round((float) (((double) uploadData.getBytesUploaded()) / uploadData.getTotalBytesToUpload() * 90));
-            if(isSuccessfullyUploaded()) {
-                progress = 100;
-            } else if(isVerified()) {
-                progress = 95;
-            } else if(status == UPLOADED) {
-                progress = 90;
+            if (uploadData == null) {
+                progress = 0;
+            } else {
+                progress = Math.round((float) (((double) uploadData.getBytesUploaded()) / uploadData.getTotalBytesToUpload() * 90));
             }
         }
         return progress;
@@ -258,6 +257,8 @@ public class FileUploadDetails implements Parcelable {
     public void resetStatus() {
         status = NOT_STARTED;
         compressedFileUri = null;
+        uploadedResource = null;
+        uploadData = null;
     }
 
     public void setChecksum(Uri fileForChecksumCalc, String checksum) {
@@ -385,7 +386,7 @@ public class FileUploadDetails implements Parcelable {
     }
 
     public void recordChunkUploaded(String fileChecksum, int chunkSizeBytes, long chunkId) {
-        uploadData.setUploadStatus(fileChecksum, chunkSizeBytes, chunkId);
+        uploadData.addUploadedChunk(fileChecksum, chunkSizeBytes, chunkId);
     }
 
     public void recordChunkUploaded(String filenameOnServer, String fileChecksum, long fileSizeBytes, int chunkSizeBytes, long chunkId, int maxChunkSize) {
@@ -415,5 +416,9 @@ public class FileUploadDetails implements Parcelable {
 
     public void setStatusUploaded() {
         status = UPLOADED;
+    }
+
+    public boolean isUploadStarted() {
+        return status != NOT_STARTED;
     }
 }

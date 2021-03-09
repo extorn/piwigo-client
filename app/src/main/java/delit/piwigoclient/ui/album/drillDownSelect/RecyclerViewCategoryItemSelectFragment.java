@@ -246,6 +246,10 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
 
     @Override
     public boolean onBackButton() {
+        if(getListAdapter() == null) {
+            // might occur if the list isn't set up yet
+            return false;
+        }
         CategoryItem activeItem = getListAdapter().getActiveItem();
         listViewStates.remove(activeItem.getId());
         if(activeItem.isRoot()) {

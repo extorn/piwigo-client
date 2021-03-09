@@ -88,7 +88,7 @@ public class FileDataUploaderActor extends UploadActor {
     private void uploadFileInChunks(UploadJob thisUploadJob, Uri uploadItemKey, String uploadName, int maxChunkUploadAutoRetries) {
 
         // Have at most one chunk queued ready for upload
-        BlockingQueue<UploadFileChunk> chunkQueue = new ArrayBlockingQueue<>(2);
+        BlockingQueue<UploadFileChunk> chunkQueue = new ArrayBlockingQueue<>(10);
         FileUploadDetails fud = thisUploadJob.getFileUploadDetails(uploadItemKey);
         FileChunkerActorThread chunkProducer = new FileChunkerActorThread(thisUploadJob, fud, uploadName, filenamesAreUnique, getMaxChunkUploadSizeBytes());
         FileChunkUploaderActorThread chunkConsumer = new FileChunkUploaderActorThread(thisUploadJob, maxChunkUploadAutoRetries, new MyChunkUploadListener(getContext(), chunkProducer, getListener(), filenamesAreUnique));

@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.exoplayer2.source.chunk.Chunk;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -121,11 +123,10 @@ public class FileChunkerActorThread extends Thread {
     public void produceChunks(@NonNull Context context, BlockingQueue<UploadFileChunk> chunkQueue) throws IOException {
         setName("FileChunkProducer: " + fud.getFileToBeUploaded());
         long totalBytesInFile = IOUtils.getFilesize(context, fud.getFileToBeUploaded());
-        long fileBytesUploaded = 0;
         long chunkId = 0;
         int bytesOfDataInChunk;
         long totalChunkCount = 0;
-        long maxChunkSize = defaultMaxChunkSize;
+        long maxChunkSize = -1;
 
         if (totalBytesInFile < 0) {
             throw new IOException("Unable to ascertain file size - essential to upload");
@@ -133,7 +134,7 @@ public class FileChunkerActorThread extends Thread {
 
         String newChecksum = fud.getChecksumOfFileToUpload();
         if (filenameIsUniqueKey) {
-            newChecksum = IOUtils.getFilename(context, fud.getFileUri());
+            newChecksum = fud.getFilename(context);
         }
         // pre-set the upload progress through file to where we got to last time.
         FileUploadDataTxInfo skipChunksData = fud.getChunksAlreadyUploadedData();
@@ -141,23 +142,30 @@ public class FileChunkerActorThread extends Thread {
 //            thisUploadJob.deleteChunksAlreadyUploadedData(uploadItemKey);
             if (ObjectUtils.areEqual(skipChunksData.getFileChecksum(), newChecksum)) {
                 // If the checksums still match (file to upload hasn't been altered)
-                fileBytesUploaded = skipChunksData.getBytesUploaded();
+//                fileBytesUploaded = skipChunksData.getBytesUploaded();
                 uploadName = skipChunksData.getUploadName();
                 // ensure we keep uploading chunks the same size.
                 maxChunkSize = skipChunksData.getMaxUploadChunkSizeBytes();
-                totalChunkCount = skipChunksData.getChunksToUpload();
+                totalChunkCount = skipChunksData.getTotalChunksToUpload();
+            } else {
+                //FIXME this probably needs to reset the load and start over (deleting the semi uploaded else new chunk will get merged into garbage)
+                Logging.log(Log.WARN,TAG,"Checksum of file has changed since the upload of chunks was started");
             }
-        } else {
+        }
+        if(maxChunkSize < 0) {
             // chunk count is chunks in part of file left plus uploaded chunk count.
+            maxChunkSize = defaultMaxChunkSize;
             totalChunkCount = (long) Math.ceil(((double) totalBytesInFile) / maxChunkSize);
         }
 
-
         String fileMimeType = null; // MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileForUpload.getName()));
-        //FIXME get the fileMimeType from somewhere - why?!
+        //FIXME get the fileMimeType from somewhere - maybe?
 
         long currentFilePos = 0;
         try (InputStream is = context.getContentResolver().openInputStream(fud.getFileToBeUploaded())) {
+            if (is == null) {
+                throw new IOException("Unable to open input stream for file " + fud.getFileToBeUploaded());
+            }
             try (BufferedInputStream bis = new BufferedInputStream(is)) {
                 do {
                     if(skipChunksData == null) {
@@ -167,15 +175,11 @@ public class FileChunkerActorThread extends Thread {
                         // this is okay (even though some are waiting for upload) because this loop always tries the next sequential chunk id.
                         chunkId = skipChunksData.getFirstMissingChunk(chunkId);
                     }
-                    if(chunkId >= 0 && chunkId < totalChunkCount) {
+                    if(chunkId >= 0 && chunkId < totalChunkCount) { // chunks 0,1,2,3,4 for 5 chunk  file.
+
                         //we're not yet finished
 
                         long skipBytes = (chunkId * maxChunkSize) - currentFilePos;
-
-                        if (is == null) {
-                            throw new IOException("Unable to open input stream for file " + fud.getFileToBeUploaded());
-                        }
-
                         if (skipBytes > 0) {
                             if (skipBytes != bis.skip(skipBytes)) {
                                 throw new IOException("Unable to skip through previously uploaded bytes in file. File has likely been altered");
@@ -183,54 +187,30 @@ public class FileChunkerActorThread extends Thread {
                             currentFilePos += skipBytes;
                         }
 
-                        bytesOfDataInChunk = -1;
-                        if (!thisUploadJob.isCancelUploadAsap() && !fud.isUploadCancelled()) {
-
-                            int maxChunkSizeInt = (int) Math.min(Integer.MAX_VALUE, maxChunkSize);
-                            if (maxChunkSize > Integer.MAX_VALUE) {
-                                Logging.log(Log.WARN, TAG, "Reducing chunk size to Integer.MAX_VALUE so can use a max length byte[]");
-                            }
-                            byte[] uploadChunkBuffer = new byte[maxChunkSizeInt];
-                            bytesOfDataInChunk = IOUtils.fillBufferFromStream(bis, uploadChunkBuffer);
-
-                            if (bytesOfDataInChunk > 0) {
-                                currentFilePos += bytesOfDataInChunk;
-
-                                UploadFileChunk chunk;
-                                try {
-                                    chunk = reusableChunks.remove();
-                                    chunk.withData(uploadChunkBuffer, bytesOfDataInChunk, chunkId);
-                                } catch (NoSuchElementException e) {
-                                    chunk = new UploadFileChunk(thisUploadJob.getJobId(), fud.getFileUri(), fud.getFileToBeUploaded(), totalBytesInFile, uploadName, uploadToAlbumId(), uploadChunkBuffer,
-                                            bytesOfDataInChunk, chunkId, totalChunkCount, fileMimeType, maxChunkSizeInt);
-                                }
-                                boolean queued = false;
-                                do {
-                                    try {
-                                        queueChunk(chunk);
-                                        queued = true;
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
+                        if(currentFilePos != totalBytesInFile) {
+                            if (!thisUploadJob.isCancelUploadAsap() && !fud.isUploadCancelled()) {
+                                UploadFileChunk chunk = buildChunk(chunkId, bis, fileMimeType, totalBytesInFile, maxChunkSize, totalChunkCount);
+                                if(chunk != null) {
+                                    queueChunk(chunk);
+                                    // move to the next chunk
+                                    currentFilePos += chunk.getChunkSizeBytes();
+                                    chunkId++;
+                                } else {
+                                    chunkDataErrorCount++;
+                                    Logging.log(Log.ERROR, TAG, "Chunk %1$d was unexpectedly empty %2$d. Retrying", chunkId, chunkDataErrorCount);
+                                    if (chunkDataErrorCount >= 3) {
+                                        stopAsap();
                                     }
-                                } while (!cancelChunking && !queued);
+                                }
                             }
                         }
+
                         if (fud.isUploadCancelled()) {
                             flushChunksFromQueueMatching(fud.getFileUri());
-                        }
-                        if (bytesOfDataInChunk >= 0) {
-                            // move to the next chunk
-                            chunkId++;
-                        } else {
-                            chunkDataErrorCount++;
-                            Logging.log(Log.ERROR, TAG, "Chunk %1$d was unexpectedly empty %2$d. Retrying", chunkId, chunkDataErrorCount);
-                            if (chunkDataErrorCount >= 3) {
-                                stopAsap();
-                            }
-
+                            stopAsap(); //TODO is this call needed or a duplicate?
                         }
                     }
-                } while (/*bytesOfDataInChunk >= 0*/ (chunkId + 1 < totalChunkCount) && !cancelChunking);
+                } while ((chunkId >= 0) && (chunkId < totalChunkCount) && !cancelChunking);
                 if(chunkId + 1 == totalChunkCount) {
                     Logging.log(Log.DEBUG, TAG, "All chunks have now been produced. Producer ending");
                 }
@@ -239,6 +219,30 @@ public class FileChunkerActorThread extends Thread {
         synchronized (thisUploadJob) {
             thisUploadJob.notifyAll();
         }
+    }
+
+    private UploadFileChunk buildChunk(long chunkId, BufferedInputStream bis, String fileMimeType, long totalBytesInFile, long maxChunkSize, long totalChunkCount) throws IOException {
+        int bytesOfDataInChunk;
+        int maxChunkSizeInt = (int) Math.min(Integer.MAX_VALUE, maxChunkSize);
+        if (maxChunkSize > Integer.MAX_VALUE) {
+            Logging.log(Log.WARN, TAG, "Reducing chunk size to Integer.MAX_VALUE so can use a max length byte[]");
+        }
+        byte[] uploadChunkBuffer = new byte[maxChunkSizeInt];
+        bytesOfDataInChunk = IOUtils.fillBufferFromStream(bis, uploadChunkBuffer);
+
+        UploadFileChunk chunk = null;
+        if (bytesOfDataInChunk > 0) {
+            try {
+                chunk = reusableChunks.remove();
+                chunk.withData(uploadChunkBuffer, bytesOfDataInChunk, chunkId);
+            } catch (NoSuchElementException e) {
+                chunk = new UploadFileChunk(thisUploadJob.getJobId(), fud.getFileUri(), fud.getFileToBeUploaded(), totalBytesInFile, uploadName, uploadToAlbumId(), uploadChunkBuffer,
+                        bytesOfDataInChunk, chunkId, totalChunkCount, fileMimeType, maxChunkSizeInt);
+            }
+        } else {
+            Logging.log(Log.WARN, TAG, "Unable to create chunk - no bytes available");
+        }
+        return chunk;
     }
 
     private String getProductionHistory() {
@@ -252,9 +256,17 @@ public class FileChunkerActorThread extends Thread {
         return sb.toString();
     }
 
-    private void queueChunk(UploadFileChunk chunk) throws InterruptedException {
-        chunkQueue.put(chunk);
-        chunkProductionHistory.put(chunk.getChunkId(), chunk.getChunkSizeBytes());
+    private void queueChunk(UploadFileChunk chunk) {
+        boolean queued = false;
+        do {
+            try {
+                chunkQueue.put(chunk);
+                chunkProductionHistory.put(chunk.getChunkId(), chunk.getChunkSizeBytes());
+                queued = true;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } while (!cancelChunking && !queued);
     }
 
     private void flushChunksFromQueueMatching(Uri uploadItemKey) {

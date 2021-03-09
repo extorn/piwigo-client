@@ -147,4 +147,9 @@ public class UploadFileChunk {
         sb.append('}');
         return sb.toString();
     }
+
+    public long getServerChunkId() {
+        // index from 0.
+        return chunkId;
+    }
 }

@@ -94,7 +94,7 @@ public class FileChunkUploaderActorThread extends Thread {
             if(!cancelUpload) {
                 FileUploadDetails fud = thisUploadJob.getFileUploadDetails(chunk.getUploadJobItemKey());
                 FileUploadDataTxInfo data = fud.getChunksAlreadyUploadedData();
-                if(data != null && data.hasUploadedChunk(chunk.getChunkId())) {
+                if(data != null && data.isHasUploadedChunk(chunk.getChunkId())) {
                     throw new IllegalStateException("Attempt made to upload chunk twice " + chunk);
                 }
                 if(chunk.getChunkId() < 0 || chunk.getChunkDataStream() == null) {
@@ -103,11 +103,7 @@ public class FileChunkUploaderActorThread extends Thread {
                 }
                 if(!fud.isUploadCancelled()) {
                     setName("FileChunkConsumer: " + chunk.getFileBeingUploaded());
-                    boolean chunkUploadedOk = uploadStreamChunk(thisUploadJob, chunk, maxChunkUploadAutoRetries);
-
-                    if (chunkUploadedOk) {
-                        isUploadComplete = chunkUploadListener.onChunkUploadSuccess(thisUploadJob, chunk);
-                    }
+                    uploadStreamChunk(thisUploadJob, chunk, maxChunkUploadAutoRetries);
                 } else {
                     stopAsap();
                 }
@@ -150,19 +146,24 @@ public class FileChunkUploaderActorThread extends Thread {
         if (imageChunkUploadHandler.isSuccess()) {
             uploadedResource = ((NewImageUploadFileChunkResponseHandler.PiwigoUploadFileChunkResponse) imageChunkUploadHandler.getResponse()).getUploadedResource();
             uploadComplete = chunkUploadListener.onChunkUploadSuccess(thisUploadJob, currentUploadFileChunk);
+            if(fud.getChunksAlreadyUploadedData().isUploadFinished()) {
+                fud.setStatusUploaded();
+                if(uploadedResource != null) {
+                    fud.setServerResource(uploadedResource);
+                } else {
+                    Logging.log(Log.ERROR,TAG,"Server did not correctly provide a server resource after the final chunk upload");
+                    chunkUploadListener.onChunkUploadFailed(thisUploadJob, currentUploadFileChunk, new PiwigoResponseBufferingHandler.CustomErrorResponse(-1, context.getString(R.string.upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided)));
+                }
+            } else if(uploadedResource != null) {
+                //should never happen
+                fud.setServerResource(uploadedResource);
+                Logging.log(Log.ERROR,TAG, "Somehow a resource was returned from the server though not all bytes uploaded! - very likely corrupted upload");
+            }
         } else {
             chunkUploadListener.onChunkUploadFailed(thisUploadJob, currentUploadFileChunk, imageChunkUploadHandler.getResponse());
         }
 
-        if(imageChunkUploadHandler.isSuccess() && fud.getChunksAlreadyUploadedData().getChunksUploaded() == fud.getChunksAlreadyUploadedData().getChunksToUpload()) {
-            if(uploadedResource != null) {
-                fud.setServerResource(uploadedResource);
-                fud.setStatusUploaded();
-            } else {
-                Logging.log(Log.ERROR,TAG,"Server did not correctly provide a server resource after the final chunk upload");
-                chunkUploadListener.onChunkUploadFailed(thisUploadJob, currentUploadFileChunk, new PiwigoResponseBufferingHandler.CustomErrorResponse(-1, context.getString(R.string.upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided)));
-            }
-        }
+
         return uploadComplete;
     }
 

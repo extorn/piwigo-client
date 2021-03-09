@@ -4,9 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import delit.libs.ui.util.ParcelUtils;
-import delit.piwigoclient.model.piwigo.ResourceItem;
 
 public class FileUploadDataTxInfo implements Parcelable {
 
@@ -58,7 +58,7 @@ public class FileUploadDataTxInfo implements Parcelable {
         return bytesUploaded;
     }
 
-    public int getChunksUploaded() {
+    public int getChunksUploadedCount() {
         synchronized (chunksUploaded) {
             return chunksUploaded.size();
         }
@@ -66,25 +66,34 @@ public class FileUploadDataTxInfo implements Parcelable {
 
 
     /**
+     * NOTE: caveat to this is that the chunks are always iterated through in numerically increasing order.
+     *
      * @param defaultChunkId first possible missing chunkId
-     * @return returns the parameter if that's the first missing.
+     * @return returns the parameter if that's the first missing. -1 if none missing
      */
     public long getFirstMissingChunk(long defaultChunkId) {
         synchronized (chunksUploaded) {
+            if(chunksUploaded.size() == getTotalChunksToUpload()) {
+                // if all chunks uploaded, return -1
+                return -1;
+            }
             int startIdx = chunksUploaded.indexOf(defaultChunkId);
             if(startIdx < 0) {
+                // if the chunk we look for is missing, return that
                 return defaultChunkId;
             }
 
             long lastChunkId = defaultChunkId;
             for (int i = startIdx; i < chunksUploaded.size(); i++) {
                 long chunkId = chunksUploaded.get(i);
-
+                // if there is a gap between the last known uploaded chunk and this uploaded chunk, return the first chunk in the gap
                 if (chunkId > lastChunkId + 1) {
                     return lastChunkId + 1;
                 }
+                // otherwise, set the last known uploaded chunk to this one
                 lastChunkId = chunkId;
             }
+            // finally, return the next chunk
             return lastChunkId + 1;
         }
     }
@@ -97,9 +106,11 @@ public class FileUploadDataTxInfo implements Parcelable {
         return fileChecksum;
     }
 
-    public void setUploadStatus(String fileChecksum, long bytesUploaded, long chunkUploaded) {
-        this.fileChecksum = fileChecksum;
-        this.bytesUploaded = bytesUploaded;
+    public void addUploadedChunk(String fileChecksum, long bytesUploaded, long chunkUploaded) {
+        if(!Objects.equals(this.fileChecksum, fileChecksum)) {
+            throw new IllegalStateException("Attempting to add chunk with different filechecksum");
+        }
+        this.bytesUploaded += bytesUploaded;
         synchronized (chunksUploaded) {
             this.chunksUploaded.add(chunkUploaded);
         }
@@ -124,11 +135,15 @@ public class FileUploadDataTxInfo implements Parcelable {
         return maxUploadChunkSizeBytes;
     }
 
-    public boolean hasUploadedChunk(long chunkId) {
+    public boolean isUploadFinished() {
+        return totalBytesToUpload == bytesUploaded;
+    }
+
+    public boolean isHasUploadedChunk(long chunkId) {
         return chunksUploaded.contains(chunkId);
     }
 
-    public long getChunksToUpload() {
+    public long getTotalChunksToUpload() {
         return (long) Math.ceil(((double) totalBytesToUpload) / maxUploadChunkSizeBytes);
     }
 }

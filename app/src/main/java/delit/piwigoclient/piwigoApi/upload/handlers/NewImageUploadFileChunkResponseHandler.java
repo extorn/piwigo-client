@@ -40,7 +40,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
         params.setContentEncoding("form-data");
         params.setForceMultipartEntityContentType(true);
         params.put("method", getPiwigoMethod());
-        params.put("chunk", String.valueOf(fileChunk.getChunkId()));
+        params.put("chunk", String.valueOf(fileChunk.getServerChunkId()));
         params.put("chunks", String.valueOf(fileChunk.getChunkCount()));
         params.put("category", fileChunk.getUploadToAlbumId());
         params.put("file", fileChunk.getChunkDataStream(), null, fileChunk.getMimeType(), true);

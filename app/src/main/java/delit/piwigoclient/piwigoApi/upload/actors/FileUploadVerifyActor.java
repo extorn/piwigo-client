@@ -66,8 +66,16 @@ public class FileUploadVerifyActor extends UploadActor {
         }
     }
 
+    /**
+     *
+     * @param fileUploadDetail
+     * @return true, false or null if unable to verify due to e.g. missing ResourceItem
+     */
     private Boolean verifyFileNotCorrupted(FileUploadDetails fileUploadDetail) {
         ResourceItem uploadedResource = fileUploadDetail.getServerResource();
+        if(uploadedResource == null) {
+            return null; //Unable to verify.
+        }
         if (uploadedResource.getFileChecksum() == null) {
             return Boolean.FALSE; // cannot verify it as don't have a local checksum for some reason. Will have to assume it is corrupt.
         }

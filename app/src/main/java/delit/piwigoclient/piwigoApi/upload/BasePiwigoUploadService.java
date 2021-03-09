@@ -196,13 +196,13 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                             // loop over all files uploading.
                             doUploadFilesInJob(jobLoadActor, thisUploadJob, availableAlbumsOnServer, actorListener);
                         } finally {
-                            try {
-                                overallDataCompressAndUploadTracker.markComplete();
-                            } catch (IllegalStateException e) {
-                                // Will occur if the upload chunks task didn't complete.
-                                actorListener.recordAndPostNewResponse(thisUploadJob, new PiwigoUploadUnexpectedLocalErrorResponse(thisUploadJob.getJobId(), new Exception("Upload of all chunks for file did not complete successfully")));
-                                Logging.recordException(e);
-                            }
+//                            try {
+//                                overallDataCompressAndUploadTracker.markComplete();
+//                            } catch (IllegalStateException e) {
+//                                // Will occur if the upload chunks task didn't complete.
+//                                actorListener.recordAndPostNewResponse(thisUploadJob, new PiwigoUploadUnexpectedLocalErrorResponse(thisUploadJob.getJobId(), new Exception("Upload of all chunks for file did not complete successfully")));
+//                                Logging.recordException(e);
+//                            }
                         }
                     }
                 }
@@ -319,7 +319,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             if(fca.isFileWasCompressed()) {
                 // file was compressed. It will need a checksum calculation running
                 //TODO track this progress in the job put inside the compression actor perhaps?
-                DividableProgressTracker tracker = new DividableProgressTracker("compressed checksum", 100);
+                DividableProgressTracker tracker = thisUploadJob.getTaskProgressTrackerForSingleFileCompression(fud.getFileUri());
+                tracker = tracker.addChildTask("compressed checksum", 100, 5);
                 new ChecksumCalculationActor(this, thisUploadJob, listener).calculateChecksum(this, fud, tracker);
             }
         }

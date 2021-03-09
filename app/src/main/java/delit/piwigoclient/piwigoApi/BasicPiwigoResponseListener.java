@@ -236,8 +236,10 @@ public class BasicPiwigoResponseListener<P extends UIHelper<P,T>, T> implements 
 
     private void handleUrlErrorResponse(PiwigoResponseBufferingHandler.UrlErrorResponse msg) {
         if (msg.getStatusCode() < 0) {
+            Logging.log(Log.WARN,TAG,msg.getErrorMessage() + " " + msg.getErrorDetail());
             showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_talking_to_server, msg.getErrorMessage(), Utils.safeToString(msg.getResponseBody()));
         } else if (msg.getStatusCode() == 0) {
+            Logging.log(Log.WARN,TAG,msg.getErrorMessage() + " " + msg.getErrorDetail());
             showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage(), Utils.safeToString(msg.getResponseBody()));
         } else {
             if (!(msg.getStatusCode() == HttpStatus.SC_GATEWAY_TIMEOUT && PiwigoSessionDetails.isCached(ConnectionPreferences.getActiveProfile()))) {
@@ -256,8 +258,10 @@ public class BasicPiwigoResponseListener<P extends UIHelper<P,T>, T> implements 
 
     protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
         if (msg.getStatusCode() < 0) {
+            Logging.log(Log.WARN,TAG,msg.getErrorMessage() + " " + msg.getErrorDetail());
             showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_talking_to_server, msg.getErrorMessage(), msg.getErrorDetail() + msg.getResponse());
         } else if (msg.getStatusCode() == 0) {
+            Logging.log(Log.WARN,TAG,msg.getErrorMessage() + " " + msg.getErrorDetail());
             showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage(), msg.getErrorDetail() + msg.getResponse());
         } else {
             if (!(msg.getStatusCode() == HttpStatus.SC_GATEWAY_TIMEOUT && PiwigoSessionDetails.isCached(ConnectionPreferences.getActiveProfile()))) {
