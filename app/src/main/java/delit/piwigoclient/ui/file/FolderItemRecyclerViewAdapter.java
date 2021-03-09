@@ -36,6 +36,7 @@ import java.util.TreeSet;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.SafeAsyncTask;
+import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
@@ -764,12 +765,27 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
             typeIndicatorView = itemView.findViewById(delit.libs.R.id.type_indicator);
             iconView = itemView.findViewById(delit.libs.R.id.list_item_icon_thumbnail);
             iconView.setContentDescription("folder item thumb");
-            iconView.setOnClickListener(v -> ((View)v.getParent()).performClick());
-            iconView.setOnLongClickListener(v -> {
-                iconViewLoader.cancelImageLoadIfRunning();
-                iconViewLoader.loadFromServer();
-                return true;
+            //ignore accessibility. They won't care that they can't see the image
+            iconView.setOnTouchListener(new CustomClickTouchListener(iconView) {
+                @Override
+                public boolean onClick() {
+                    return super.onClick();
+                }
+
+                @Override
+                public void onLongClick() {
+                    super.onLongClick();
+                    iconViewLoader.cancelImageLoadIfRunning();
+                    iconViewLoader.loadFromServer();
+                }
             });
+//            iconView.setOnClickListener(v -> ((View)v.getParent()).performClick());
+            iconView.setClickable(false);
+//            iconView.setOnLongClickListener(v -> {
+//                iconViewLoader.cancelImageLoadIfRunning();
+//                iconViewLoader.loadFromServer();
+//                return true;
+//            });
             iconViewLoader = new ResizingPicassoLoader<>(getIconView(), this, 0, 0);
         }
 

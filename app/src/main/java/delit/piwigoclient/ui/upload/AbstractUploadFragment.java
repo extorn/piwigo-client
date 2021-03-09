@@ -84,7 +84,6 @@ import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.CancelFileUploadEvent;
-import delit.piwigoclient.ui.events.ForegroundUploadFinishedEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
@@ -908,7 +907,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         AdsManager.getInstance(getContext()).showFileToUploadAdvertIfAppropriate(getContext());
     }
 
-    public void onUserActionDeleteFileFromUpload(final FilesToUploadRecyclerViewAdapter adapter, final Uri itemToRemove, boolean longClick) {
+    public void onUserActionDeleteFileFromUpload(@NonNull final FilesToUploadRecyclerViewAdapter adapter, @NonNull final Uri itemToRemove, boolean longClick) {
         final UploadJob activeJob = getActiveJob(getContext());
         if (activeJob != null) {
             if (!activeJob.isStatusRunningNow()) {
@@ -1185,7 +1184,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         }
     }
 
-    protected void releaseUriPermissionsForUploadItem(Uri fileForUploadUri) {
+    protected void releaseUriPermissionsForUploadItem(@NonNull Uri fileForUploadUri) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             appSettingsViewModel.releasePersistableUriPermission(requireContext(), fileForUploadUri, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, false);
         }

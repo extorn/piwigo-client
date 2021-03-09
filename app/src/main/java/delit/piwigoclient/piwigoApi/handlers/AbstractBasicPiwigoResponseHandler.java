@@ -115,7 +115,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     if (rerunningCall) {
                         rerunningCall = false;
                     }
-                    isRunning = false;
+                    isRunning = message.what != FINISH_MESSAGE;
                 default:
                     if (BuildConfig.DEBUG) {
                         Log.v(tag, "rx message type : " + message.what);

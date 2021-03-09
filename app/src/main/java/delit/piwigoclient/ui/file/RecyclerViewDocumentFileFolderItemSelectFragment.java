@@ -72,9 +72,9 @@ import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.file.action.FileExtFilterControlListener;
 import delit.piwigoclient.ui.file.action.FileSelectionCancelledMissingPermissionsListener;
 import delit.piwigoclient.ui.file.action.FolderItemSpanSizeLookup;
-import delit.piwigoclient.ui.file.action.FolderItemTaskListener;
 import delit.piwigoclient.ui.file.action.SharedFilesClonedIntentProcessingTask;
 import delit.piwigoclient.ui.file.action.SharedFilesIntentProcessingTask;
+import delit.piwigoclient.ui.util.UiUpdatingProgressListener;
 
 import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
 import static android.view.View.GONE;
@@ -512,7 +512,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             applyNewRootsAdapter(buildFolderRootsAdapter());
 
             final LVA viewAdapter = (LVA) new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter(), getViewPrefs());
-            viewAdapter.setTaskListener(new FolderItemTaskListener(getUiHelper()));
+            viewAdapter.setTaskListener(new UiUpdatingProgressListener(getUiHelper().getProgressIndicator(), R.string.progress_loading_folder_content));
 
             if (!viewAdapter.isItemSelectionAllowed()) {
                 viewAdapter.toggleItemSelection();

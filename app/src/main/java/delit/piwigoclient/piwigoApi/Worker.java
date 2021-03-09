@@ -196,6 +196,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
             if (!handler.isPerformingLogin()) {
                 synchronized (Worker.class) {
                     if (PiwigoSessionDetails.getInstance(profilePrefs) == null) {
+                        Logging.log(Log.WARN, TAG, "No active session. Attempting login");
                         haveValidSession = handler.getNewLogin();
                     }
                 }
@@ -246,6 +247,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
                     }
                 }
             } else {
+                Logging.log(Log.WARN, TAG, "No active session after attempting login.");
                 handler.sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_unable_to_acquire_valid_session)));
             }
 

@@ -108,6 +108,7 @@ public class BackgroundJobLoadActor extends JobLoadActor {
 
         uploadJob.setPlayableMediaCompressionParams(jobConfig.getVideoCompressionParams(getContext()));
         uploadJob.setImageCompressionParams(jobConfig.getImageCompressionParams(getContext()));
+        pushJobConfigurationToFiles(uploadJob);
         return uploadJob;
     }
 

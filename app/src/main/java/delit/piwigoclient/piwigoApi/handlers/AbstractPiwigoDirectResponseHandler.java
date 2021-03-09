@@ -88,7 +88,9 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
 
     @Override
     public boolean isSuccess() {
-        return super.isSuccess() && !isResponseError() && response != null;
+        // response isn't stored for async use.
+        boolean responseValid = !getUseSynchronousMode() && publishResponses || response != null;
+        return super.isSuccess() && !isResponseError() && responseValid;
     }
 
     public PiwigoResponseBufferingHandler.BaseResponse getResponse() {

@@ -81,7 +81,8 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
         }
 
         if (activeJob == null) {
-            activeJob = new ForegroundJobLoadActor(getContext()).createUploadJob(ConnectionPreferences.getActiveProfile(), filesToUploadAndSize, uploadToAlbum, privacyWanted, piwigoListenerId, deleteUploadedFiles);
+            ForegroundJobLoadActor jobLoadActor = new ForegroundJobLoadActor(getContext());
+            activeJob = jobLoadActor.createUploadJob(ConnectionPreferences.getActiveProfile(), filesToUploadAndSize, uploadToAlbum, privacyWanted, piwigoListenerId, deleteUploadedFiles);
             UploadJob.VideoCompressionParams vidCompParams = getOwner().buildVideoCompressionParams();
             UploadJob.ImageCompressionParams imageCompParams = getOwner().buildImageCompressionParams();
             if (vidCompParams != null) {
@@ -96,6 +97,7 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
             if (imageCompParams != null) {
                 activeJob.setImageCompressionParams(imageCompParams);
             }
+            jobLoadActor.pushJobConfigurationToFiles(activeJob);
         }
         return activeJob;
     }

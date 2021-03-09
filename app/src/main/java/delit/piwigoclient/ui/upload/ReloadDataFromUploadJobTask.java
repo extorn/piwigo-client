@@ -8,19 +8,20 @@ import java.util.List;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
-import delit.libs.ui.util.DisplayUtils;
+import delit.libs.util.progress.DividableProgressTracker;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.FileUploadDetails;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.piwigoApi.upload.actors.JobLoadActor;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.upload.list.UploadDataItem;
-import delit.piwigoclient.ui.util.TimerThreshold;
+import delit.piwigoclient.ui.util.UiUpdatingProgressListener;
 
 class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends OwnedSafeAsyncTask<F, Void, Object, List<UploadDataItem>> {
 
     private final UploadJob uploadJob;
     private static final String TAG = "ReloadDataFromUploadJobTask";
+    private DividableProgressTracker tracker;
 
     ReloadDataFromUploadJobTask(F parent, UploadJob job) {
         super(parent);
@@ -35,6 +36,7 @@ class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH 
     @Override
     protected void onPreExecuteSafely() {
         super.onPreExecuteSafely();
+        tracker = new DividableProgressTracker("Parse UploadJob Details", 100, new UiUpdatingProgressListener(getOwner().getOverallUploadProgressIndicator(),R.string.loading_please_wait));
         getOwner().onBeforeReloadDataFromUploadTask(uploadJob);
     }
 
@@ -42,17 +44,17 @@ class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH 
     protected List<UploadDataItem> doInBackgroundSafely(Void... nothing) {
         int itemCount = uploadJob.getFilesNotYetUploaded().size();
         List<UploadDataItem> itemsToBeUploaded = new ArrayList<>(itemCount);
-        int currentItem = 0;
-        TimerThreshold thesholdGate = new TimerThreshold(1000); // max update the ui once per second
-        for(FileUploadDetails fud : uploadJob.getFilesForUpload()) {
-            if(fud.hasNoActionToTake()) {
-                continue;
-            }
-            currentItem++;
-            itemsToBeUploaded.add(new UploadDataItem(fud.getFileUri(), null, null, -1));
-            int currentProgress = (int)Math.round((((double)currentItem) / itemCount) * 100);
-            if(thesholdGate.thresholdMet()) {
-                DisplayUtils.runOnUiThread(() -> getOwner().showOverallUploadProgressIndicator(R.string.loading_please_wait, currentProgress));
+        if(itemCount > 0) {
+            tracker.addChildTask("parse files", itemCount, 80);
+            for (FileUploadDetails fud : uploadJob.getFilesForUpload()) {
+                try {
+                    if (fud.hasNoActionToTake()) {
+                        continue;
+                    }
+                    itemsToBeUploaded.add(new UploadDataItem(fud.getFileUri(), null, null, -1));
+                } finally {
+                    tracker.incrementWorkDone(1);
+                }
             }
         }
         if(itemsToBeUploaded.size() > 0) {
@@ -66,18 +68,23 @@ class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH 
 
     @Override
     protected void onPostExecuteSafely(List<UploadDataItem> itemsToBeUploaded) {
+        DividableProgressTracker uiUpdateTracker = tracker.addChildTask("Updating UI", itemsToBeUploaded.size(), tracker.getRemainingWork());
         FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getOwner().getFilesForUploadViewAdapter();
         adapter.clear();
         adapter.addAll(itemsToBeUploaded);
 
         for (Uri f : adapter.getFilesAndSizes().keySet()) {
-            FileUploadDetails fud = uploadJob.getFileUploadDetails(f);
-            int progress = fud.getOverallUploadProgress();
-            if (fud.hasCompressedFile()) {
-                Uri compressedFile = fud.getCompressedFileUri();
-                adapter.updateCompressionProgress(f, compressedFile, 100);
+            try {
+                FileUploadDetails fud = uploadJob.getFileUploadDetails(f);
+                int progress = fud.getOverallUploadProgress();
+                if (fud.hasCompressedFile()) {
+                    Uri compressedFile = fud.getCompressedFileUri();
+                    adapter.updateCompressionProgress(f, compressedFile, 100);
+                }
+                adapter.updateUploadProgress(f, progress);
+            } finally {
+                uiUpdateTracker.incrementWorkDone(1);
             }
-            adapter.updateUploadProgress(f, progress);
         }
 
         boolean jobIsComplete = uploadJob.isStatusFinished();
@@ -92,6 +99,6 @@ class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH 
             getOwner().setUploadJobId(null);
         }
 
-        getOwner().hideOverallUploadProgressIndicator();
+        tracker.markComplete();
     }
 }

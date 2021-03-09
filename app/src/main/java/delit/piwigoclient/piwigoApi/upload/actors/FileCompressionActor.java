@@ -31,7 +31,7 @@ public class FileCompressionActor extends UploadActor {
     }
 
     private void doAnyCompressionNeeded(FileUploadDetails fileUploadDetails) {
-        Uri fileForUploadUri = fileUploadDetails.getFileUri();
+
         Uri compressedFile = null;
         if(fileUploadDetails.isVerified()) {
             // nothing to do here

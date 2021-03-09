@@ -2,6 +2,8 @@ package delit.piwigoclient.piwigoApi.upload.messages;
 
 import android.net.Uri;
 
+import com.drew.lang.annotations.Nullable;
+
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
 public class PiwigoUploadProgressUpdateResponse extends PiwigoResponseBufferingHandler.BaseResponse {
@@ -9,13 +11,13 @@ public class PiwigoUploadProgressUpdateResponse extends PiwigoResponseBufferingH
     private final int progress;
     private final Uri fileForUpload;
 
-    public PiwigoUploadProgressUpdateResponse(long jobId, Uri fileForUpload, int progress) {
+    public PiwigoUploadProgressUpdateResponse(long jobId, @Nullable Uri fileForUpload, int progress) {
         super(jobId, false);
         this.progress = progress;
         this.fileForUpload = fileForUpload;
     }
 
-    public Uri getFileForUpload() {
+    public @Nullable Uri getFileForUpload() {
         return fileForUpload;
     }
 

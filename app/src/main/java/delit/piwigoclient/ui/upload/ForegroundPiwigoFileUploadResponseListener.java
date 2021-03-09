@@ -52,7 +52,7 @@ public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUpload
     }
 
     @Override
-    protected void onRequestedFileUploadCancelComplete(@NonNull Context context, Uri cancelledFile) {
+    protected void onRequestedFileUploadCancelComplete(@NonNull Context context, @NonNull Uri cancelledFile) {
         if (getParent() != null && getParent().isAdded()) {
             FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
             adapter.remove(cancelledFile);
@@ -219,7 +219,7 @@ public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUpload
 
         }
 
-        if (getParent() != null && getParent().isAdded()) {
+        if (getParent() != null && getParent().isAdded() && response.getFileForUpload() != null) {
             // somehow upload job can be null... hopefully this copes with that scenario.
             FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
             adapter.remove(response.getFileForUpload());

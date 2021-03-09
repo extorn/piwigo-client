@@ -41,8 +41,13 @@ public class JobLoadActor extends LocalUploadActor {
     public @NonNull UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, Map<Uri, Long> filesForUploadAndBytes, CategoryItemStub category, byte uploadedFilePrivacyLevel, long responseHandlerId, boolean isDeleteFilesAfterUpload) {
         long jobId = getNextMessageId();
         UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, filesForUploadAndBytes, category, uploadedFilePrivacyLevel, isDeleteFilesAfterUpload);
+        synchronized (activeUploadJobs) {
+            activeUploadJobs.add(uploadJob);
+        }
+        return uploadJob;
+    }
 
-
+    public @Nullable UploadJob pushJobConfigurationToFiles(@NonNull UploadJob uploadJob) {
         for(FileUploadDetails fud : uploadJob.getFilesForUpload()) {
             if(uploadJob.isDeleteFilesAfterUpload()) {
                 fud.setDeleteAfterUpload(true);
@@ -52,10 +57,6 @@ public class JobLoadActor extends LocalUploadActor {
             } else {
                 fud.setCompressionNeeded(uploadJob.isCompressPhotosBeforeUpload());
             }
-        }
-
-        synchronized (activeUploadJobs) {
-            activeUploadJobs.add(uploadJob);
         }
         return uploadJob;
     }
