@@ -13,8 +13,8 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Automatisches Hochladen</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Verwenden Sie Auto Upload nur für drahtlose Netzwerke</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Nur über WLAN</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Verwenden Sie nur AUTO-Upload auf dem nicht dosierten Netzwerk</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Nur nicht dosiert</string>
     
     
 

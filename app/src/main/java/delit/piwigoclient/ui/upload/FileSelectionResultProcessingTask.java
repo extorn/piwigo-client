@@ -45,7 +45,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
         DividableProgressTracker overallTaskProgressTracker = new DividableProgressTracker("Overall file selection", 100, progressViewUpdater);
         FileSelectionCompleteEvent event = objects[0];
 
-        //Phase 1.
+        //Phase 1. (15%) (note this might remove items from the list in the event)
         loadAndPerformSimpleChecksOnFiles(overallTaskProgressTracker, event.getSelectedFolderItems());
 
 
@@ -57,7 +57,9 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
         ArrayList<UploadDataItem> uploadDataItems = new ArrayList<>(event.getSelectedFolderItems().size());
 
         for (FolderItem f : event.getSelectedFolderItems()) {
-            Log.e(TAG,"Overall File selection progress : " + overallTaskProgressTracker.getProgressPercentage());
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG,"Overall File selection progress : " + overallTaskProgressTracker.getProgressPercentage());
+            }
             calculateChecksumOnFile(overallChecksumCalcTask, uploadDataItems, f);
         }
         overallChecksumCalcTask.markComplete();
@@ -105,7 +107,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
 
 
             // Initialise phase 1 (0% -15% - split between number of files to process)
-            DividableProgressTracker cachingProgressTracker = fileSelectionProgress.addChildTask("caching files information", itemCount, 15);
+            DividableProgressTracker cachingProgressTracker = fileSelectionProgress.addChildTask("caching files information", itemCount, 6);
             try {
                 FolderItem.cacheDocumentInformation(getContext(), selectedFolderItems, new TrackerUpdatingProgressListener(cachingProgressTracker));
             } finally {
@@ -113,6 +115,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
             }
             Logging.log(Log.DEBUG, TAG, "Doc Field Caching Progress : %1$.0f (complete? %2$b)", 100 * cachingProgressTracker.getProgressPercentage(), cachingProgressTracker.isComplete());
 
+            DividableProgressTracker uriPermissionsProgressTracker = fileSelectionProgress.addChildTask("Checking file type and uri permissions", itemCount, 9);
             // Phase 1.2 (0%) check for appropriate Uri Permissions
             Iterator<FolderItem> iter = selectedFolderItems.iterator();
             int missingPermissions = 0;
@@ -128,6 +131,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
                 if(!IOUtils.appHoldsAllUriPermissionsForUri(getContext(), f.getContentUri(), IOUtils.URI_PERMISSION_READ)) {
                     missingPermissions++;
                 }
+                uriPermissionsProgressTracker.incrementWorkDone(1);
             }
 
             // Phase 1.3 (0%) notify user of any issues found so far

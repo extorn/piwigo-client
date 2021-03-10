@@ -13,8 +13,8 @@
     <string name="preference_data_upload_automatic_upload_enable_title">自动上传</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">仅使用无线自动上传</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">仅通过无线</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">仅在非计量网络上使用自动上传</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">仅限非计量</string>
     
     
 

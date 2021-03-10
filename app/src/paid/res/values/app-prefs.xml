@@ -13,8 +13,8 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Automatic Uploads</string>
     <bool name="preference_data_upload_automatic_upload_enabled_default">false</bool>
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Only use Auto Upload on Un-metered Network</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Over Un-metered Only</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Only use Auto Upload on non-metered Network</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Over non-metered Only</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_key" translatable="false">preference_data_upload_automatic_upload_wireless_only</string>
     <bool name="preference_data_upload_automatic_upload_wireless_only_default">true</bool>
 

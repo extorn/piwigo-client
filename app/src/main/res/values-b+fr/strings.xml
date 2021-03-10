@@ -722,4 +722,5 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="upload_error_server_resource_not_yet_retrieved">La ressource de Piwigo n\'a pas encore été récupérée. Impossible de la configurer avec des détails tels que le nom, les autorisations, l\'adhésion de l\'album</string>
     <string name="upload_error_server_resource_not_retrieved_repaired">La ressource de serveur n\'a pas été récupérée correctement après que le contenu du fichier a été téléchargé. Une tentative a été faite pour faire face à cette question, mais cela peut ne pas fonctionner.</string>
     <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Le dernier morceau de données de fichier a été téléchargé pour le fichier, mais le serveur n\'a pas pu fournir un identifiant de ressource. Cela pourrait être récupérable.</string>
+    <string name="checking_uri_permissions">Mise à jour des enregistrements des autorisations de fichier tenues</string>
 </resources>

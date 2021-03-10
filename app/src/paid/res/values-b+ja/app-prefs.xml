@@ -13,8 +13,8 @@
     <string name="preference_data_upload_automatic_upload_enable_title">自動アップロード</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">ワイヤレスでのみ自動アップロードを使用する</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">無線のみ</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">非メータネットワーク上の自動アップロードのみを使用してください</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">メーター以外のみ</string>
     
     
 

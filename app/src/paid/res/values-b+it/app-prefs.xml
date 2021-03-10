@@ -13,8 +13,8 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Caricamenti automatici</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utilizzare solo caricamento automatico su wireless</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Solo tramite wireless</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utilizzare solo il caricamento automatico sulla rete non misurata</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Solo su non misurato</string>
     
     
 

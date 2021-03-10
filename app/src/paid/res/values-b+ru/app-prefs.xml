@@ -13,8 +13,8 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Автоматическая загрузка</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Используйте автоматическую загрузку только в беспроводной сети</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Только по беспроводной сети</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Используйте автоматическую загрузку на нетерируемой сети</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Только без измерений только</string>
     
     
 

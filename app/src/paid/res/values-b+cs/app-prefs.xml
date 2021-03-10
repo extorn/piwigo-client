@@ -13,8 +13,8 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Automatické nahrávání</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Automatické nahrávání používejte pouze na bezdrátových zařízeních</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Pouze přes bezdrátové připojení</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Používejte pouze AUTO Upload na non-měřená síť</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Pouze nad měřítkem</string>
     
     
 

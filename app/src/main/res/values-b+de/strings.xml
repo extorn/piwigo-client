@@ -722,4 +722,5 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_error_server_resource_not_yet_retrieved">Piwigo-Ressource wurde noch nicht abgerufen. Es kann nicht mit Details wie Name, Berechtigungen, Albummitgliedschaft konfiguriert werden</string>
     <string name="upload_error_server_resource_not_retrieved_repaired">Die Serverressource wurde nach dem Hochladen der Dateiinhalte nicht korrekt abgerufen. Es wurde ein Versuch unternommen, mit diesem Problem umzugehen, aber es funktioniert möglicherweise nicht.</string>
     <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Der letzte Teil der Dateidaten wurde für die Datei hochgeladen, der Server konnte jedoch keine Ressourcenkennung bereitgestellt. Es könnte abgerufen werden.</string>
+    <string name="checking_uri_permissions">Aktualisieren von Datensätzen von Dateiberechtigungen</string>
 </resources>

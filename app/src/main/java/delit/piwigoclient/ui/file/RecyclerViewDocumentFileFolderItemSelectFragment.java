@@ -72,6 +72,7 @@ import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.file.action.FileExtFilterControlListener;
 import delit.piwigoclient.ui.file.action.FileSelectionCancelledMissingPermissionsListener;
 import delit.piwigoclient.ui.file.action.FolderItemSpanSizeLookup;
+import delit.piwigoclient.ui.file.action.SelectedFilesUriCheckTask;
 import delit.piwigoclient.ui.file.action.SharedFilesClonedIntentProcessingTask;
 import delit.piwigoclient.ui.file.action.SharedFilesIntentProcessingTask;
 import delit.piwigoclient.ui.util.UiUpdatingProgressListener;
@@ -678,40 +679,36 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         return roots;
     }
 
-
-    @Override
-    protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
-        LVA listAdapter = getListAdapter();
-        HashSet<FolderItem> selectedItems = listAdapter.getSelectedItems();
-        if (selectedItems.isEmpty() && (getViewPrefs().isAllowItemSelection() && getViewPrefs().isAllowFolderSelection()) && !getViewPrefs().isMultiSelectionEnabled()) {
-            selectedItems = new HashSet<>(1);
-            if(listAdapter.getActiveFolder() != null) {
-                FolderItem folderItem = new FolderItem(listAdapter.getActiveRootUri(), listAdapter.getActiveFolder());
-                folderItem.cacheFields(getContext());
-                selectedItems.add(folderItem);
-            }
-        }
-        long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-
-        int removedCount = 0;
-        for (Iterator<FolderItem> iterator = selectedItems.iterator(); iterator.hasNext(); ) {
-            FolderItem selectedItem = iterator.next();
-            Uri uri = selectedItem.getContentUri();
-            if (!IOUtils.appHoldsAllUriPermissionsForUri(getContext(), uri, getViewPrefs().getSelectedUriPermissionFlags())) {
-                iterator.remove();
-                removedCount++;
-            }
-        }
-        if(removedCount > 0) {
+    public void onActionFilesReadyToShareWithRequester(HashSet<FolderItem> selectedItems, boolean somePermissionsMissing) {
+        if(somePermissionsMissing) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.selected_files_missing_permissions_warning_message_pattern), new FileSelectionCancelledMissingPermissionsListener<>(getUiHelper()));
         } else {
-
+            long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
             EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFolderItems(new ArrayList<>(selectedItems)));
 
             // now pop this screen off the stack.
             if (isVisible()) {
                 Logging.log(Log.INFO, TAG, "removing from activity immediately");
                 getParentFragmentManager().popBackStackImmediate();
+            }
+        }
+    }
+
+    @Override
+    protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
+        LVA listAdapter = getListAdapter();
+        HashSet<FolderItem> selectedItems = listAdapter.getSelectedItems();
+        addCurrentFolderToListIfEmptyAndFolderSelectionOkay(selectedItems);
+        new SelectedFilesUriCheckTask<>((F)this, selectedItems).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void addCurrentFolderToListIfEmptyAndFolderSelectionOkay(HashSet<FolderItem> selectedItems) {
+        LVA listAdapter = getListAdapter();
+        if (selectedItems.isEmpty() && (getViewPrefs().isAllowItemSelection() && getViewPrefs().isAllowFolderSelection()) && !getViewPrefs().isMultiSelectionEnabled()) {
+            if(listAdapter.getActiveFolder() != null) {
+                FolderItem folderItem = new FolderItem(listAdapter.getActiveRootUri(), listAdapter.getActiveFolder());
+
+                selectedItems.add(folderItem);
             }
         }
     }

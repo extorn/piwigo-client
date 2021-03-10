@@ -13,8 +13,8 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Transferts automatiques</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utiliser uniquement le téléchargement automatique sur le sans fil</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Sur sans fil uniquement</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utilisez uniquement le téléchargement automatique sur un réseau non compteur</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Sur des non-dosés seulement</string>
     
     
 

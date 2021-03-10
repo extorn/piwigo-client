@@ -722,4 +722,5 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="upload_error_server_resource_not_yet_retrieved">Piwigoリソースはまだ取得されていません。 名前、権限、アルバムメンバーシップなどの詳細で構成できません</string>
     <string name="upload_error_server_resource_not_retrieved_repaired">ファイルの内容がアップロードされた後、サーバーリソースが正しく取得されませんでした。 この問題に対処するための試みがなされましたが、それは機能しないかもしれません。</string>
     <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">ファイルデータの最後のチャンクがファイルにアップロードされましたが、サーバーはリソース識別子を提供できませんでした。 それは取得可能かもしれません。</string>
+    <string name="checking_uri_permissions">ファイル権限のレコードを更新します</string>
 </resources>

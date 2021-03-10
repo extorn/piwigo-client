@@ -13,8 +13,8 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Automatische uploads</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Gebruik alleen automatisch uploaden op draadloos</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Alleen via draadloos</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Gebruik alleen automatische upload op niet-gemeten netwerk</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Alleen over niet-gemeten</string>
     
     
 
