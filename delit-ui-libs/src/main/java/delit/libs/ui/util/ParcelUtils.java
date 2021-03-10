@@ -233,9 +233,9 @@ public class ParcelUtils {
         if(data != null) {
             keys = new ArrayList<>(data.size());
             values = new ArrayList<>(data.size());
-            if (BuildConfig.DEBUG && data.size() > 0 && !(data.values().iterator().next() instanceof Number)) {
-                Logging.log(Log.VERBOSE, TAG, String.format("Start writing map to parcel with keys : %1$s", data.keySet()));
-            }
+//            if (BuildConfig.DEBUG && data.size() > 0 && !(data.values().iterator().next() instanceof Number)) {
+//                Logging.log(Log.VERBOSE, TAG, String.format("Start writing map to parcel with keys : %1$s", data.keySet()));
+//            }
             for (Map.Entry<S, T> entry : data.entrySet()) {
                 keys.add(entry.getKey());
                 T value = entry.getValue();
@@ -247,9 +247,9 @@ public class ParcelUtils {
         }
         p.writeValue(keys);
         p.writeValue(values);
-        if (BuildConfig.DEBUG) {
-            Logging.log(Log.VERBOSE, TAG, String.format("Finished writing map to parcel with keys : %1$s", keys));
-        }
+//        if (BuildConfig.DEBUG) {
+//            Logging.log(Log.VERBOSE, TAG, String.format("Finished writing map to parcel with keys : %1$s", keys));
+//        }
     }
 
     public static <Object> void logSize(Object id, Object value) {

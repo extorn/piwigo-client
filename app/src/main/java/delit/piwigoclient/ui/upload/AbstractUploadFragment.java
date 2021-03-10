@@ -478,8 +478,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         filesForUploadView.setAdapter(filesToUploadAdapter);
 
-        updateActiveJobActionButtonsStatus(); //TODO this might be covered off in the line below, but can't hurt.
-        updateUiUploadStatusFromJobIfRun(container.getContext());
+        updateActiveJobActionButtonsStatus();
 
         if (BuildConfig.DEBUG && ENABLE_COMPRESSION_BUTTON && ExoPlayerCompression.isSupported()) {
             injectCompressionControlsIntoView();
@@ -701,8 +700,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         return overallUploadProgressBar;
     }
 
-    private void updateUiUploadStatusFromJobIfRun(Context context) {
-        UploadJob uploadJob = getActiveJob(context);
+    private void updateUiUploadStatusFromJobIfRun(@Nullable UploadJob uploadJob) {
         if (uploadJob != null) {
             new ReloadDataFromUploadJobTask<>((F)this, uploadJob).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
@@ -750,7 +748,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             job = new ForegroundJobLoadActor(ctx).getActiveForegroundJob(uploadJobId);
 
         }
-        allowUserUploadConfiguration(job);
+        updateUiUploadStatusFromJobIfRun(job);
     }
 
     @Override

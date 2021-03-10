@@ -13,12 +13,20 @@ import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.gms.common.util.concurrent.NamedThreadFactory;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.progress.DividableProgressTracker;
@@ -135,8 +143,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             thisUploadJob.setStatusRunning();
 
             thisUploadJob.resetProcessingErrors();
-            //TODO should we wipe the errors thus far recorded? Maybe not for background jobs...
-            //thisUploadJob.clearUploadErrors();
+
+            if(!thisUploadJob.isRunInBackground()) {
+                thisUploadJob.clearUploadErrors();
+            }
 
             try {
                 saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, actorListener);
@@ -163,7 +173,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 // is name or md5sum used for uniqueness on this server?
                 boolean filenamesUnique = isUseFilenamesOverMd5ChecksumForUniqueness(thisUploadJob);
 
-                if (thisUploadJob.hasProcessableFiles()) {
+                if (thisUploadJob.getActionableFilesCount() > 0) {
 
                     new ExistingFilesCheckActor(this, thisUploadJob, actorListener, filenamesUnique).run();
 
@@ -181,7 +191,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, actorListener);
 
                 if (!thisUploadJob.isCancelUploadAsap()) {
-                    if (thisUploadJob.hasProcessableFiles()) {
+                    if (thisUploadJob.getActionableFilesCount() > 0) {
                         // loop over all files uploading.
                         doUploadFilesInJob(jobLoadActor, thisUploadJob, availableAlbumsOnServer, actorListener);
                     }
@@ -195,7 +205,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
                 if (!thisUploadJob.isCancelUploadAsap()) {
                     for(FileUploadDetails fud : thisUploadJob.getFilesForUpload()) {
-                        if(!fud.hasNoActionToTake() && !fud.isPossibleToUpload(this)) {
+                        if(!fud.isHasNoActionToTake() && !fud.isPossibleToUpload(this)) {
                             fud.setStatusUnavailable();
                         }
                     }
@@ -276,13 +286,44 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     private void doUploadFilesInJob(JobLoadActor jobLoadActor, UploadJob thisUploadJob, ArrayList<CategoryItemStub> availableAlbumsOnServer, ActorListener listener) throws JobUnableToContinueException {
         thisUploadJob.buildTaskProgressTrackerForOverallCompressionAndUploadOfData(this);
-        for (FileUploadDetails fud : thisUploadJob.getFilesForUpload()) {
-            runAllFileUploadTasksForFile(jobLoadActor, fud, thisUploadJob, availableAlbumsOnServer, listener);
+        List<FileUploadDetails> filesBeingWorked = Collections.synchronizedList(new ArrayList<>());
+        ThreadPoolExecutor compressionTPE = new ThreadPoolExecutor(1, 1, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
+        compressionTPE.setThreadFactory(new NamedThreadFactory("compression task"));
+        ThreadPoolExecutor uploadTPE = new ThreadPoolExecutor(2, 10, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
+        uploadTPE.setThreadFactory(new NamedThreadFactory("upload task"));
+        while(!thisUploadJob.isCancelUploadAsap()) {
+            for (FileUploadDetails fud : thisUploadJob.getFilesForUpload()) {
+                if(!filesBeingWorked.contains(fud)) {
+                    runAllFileUploadTasksForFile(jobLoadActor, fud, thisUploadJob, availableAlbumsOnServer, listener, compressionTPE, uploadTPE, filesBeingWorked);
+                }
+                boolean allItemsBeingWorked = false;
+                while ((!compressionTPE.getQueue().isEmpty() && !uploadTPE.getQueue().isEmpty() && !thisUploadJob.isCancelUploadAsap()) || allItemsBeingWorked) {
+                    allItemsBeingWorked = filesBeingWorked.size() == thisUploadJob.getActionableFilesCount();
+                    try {
+                        thisUploadJob.waitUntilNotified();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if(filesBeingWorked.isEmpty()) {
+                // if it has no files that are not finished and still processable
+                // cancel the upload.
+                if(thisUploadJob.getActionableFilesCount() == 0) {
+                    thisUploadJob.cancelUploadAsap();
+                }
+            }
         }
+        compressionTPE.shutdownNow();
+        uploadTPE.shutdownNow();
     }
 
-    protected void runAllFileUploadTasksForFile(JobLoadActor jobLoadActor, FileUploadDetails fud, UploadJob thisUploadJob, ArrayList<CategoryItemStub> availableAlbumsOnServer, ActorListener listener) throws JobUnableToContinueException {
+    protected void runAllFileUploadTasksForFile(JobLoadActor jobLoadActor, FileUploadDetails fud, UploadJob thisUploadJob, ArrayList<CategoryItemStub> availableAlbumsOnServer, ActorListener listener, ThreadPoolExecutor compressionTpe, ThreadPoolExecutor uploadTpe, List<FileUploadDetails> filesBeingWorked) throws JobUnableToContinueException {
         int maxChunkUploadAutoRetries = UploadPreferences.getUploadChunkMaxRetries(this, prefs);
+
+        if(fud.isProcessingFailed()) {
+            return;
+        }
 
         if(fud.isUploadCancelled()) {
             listener.doHandleUserCancelledUpload(thisUploadJob, fud.getFileUri());
@@ -294,48 +335,74 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             new LocalFileNotHereCheckActor(this, thisUploadJob, listener).runCheck(fud);
         }
 
+        // invokes the compression if needed
         if (!fud.isProcessingFailed() && fud.isCompressionNeeded()) {
-            FileCompressionActor fca = new FileCompressionActor(this, thisUploadJob, listener);
-            fca.run(fud);
+            filesBeingWorked.add(fud);
+            try {
+                compressionTpe.execute(() -> {
+                    thisUploadJob.wakeAnyWaitingThreads();
+                        try {
+                            FileCompressionActor fca = new FileCompressionActor(this, thisUploadJob, listener);
+                            fca.run(fud);
+                            saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, listener);
+                        } catch (JobUnableToContinueException e) {
+                            // can't do anything with this here.
+                        } finally {
+                            filesBeingWorked.remove(fud);
+                        }
+                    });
+                } catch (RejectedExecutionException e) {
+                    filesBeingWorked.remove(fud);
+                }
+            // its either been submitted or not. If not, try the next file.
+            return;
         }
 
-        saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, listener);
-
+        // otherwise invokes the upload of chunks if needed
         if (!fud.isProcessingFailed() && fud.needsUpload()) {
-            FileDataUploaderActor fdua = new FileDataUploaderActor(this, thisUploadJob, listener, isUseFilenamesOverMd5ChecksumForUniqueness(thisUploadJob));
-            fdua.doUploadFileData(thisUploadJob, fud, maxChunkUploadAutoRetries);
+            filesBeingWorked.add(fud);
+            try {
+                uploadTpe.execute(() -> {
+                    try {
+                        thisUploadJob.wakeAnyWaitingThreads();
+                        FileDataUploaderActor fdua = new FileDataUploaderActor(this, thisUploadJob, listener, isUseFilenamesOverMd5ChecksumForUniqueness(thisUploadJob));
+                        fdua.doUploadFileData(thisUploadJob, fud, maxChunkUploadAutoRetries);
+                        saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, listener);
+                    } catch (JobUnableToContinueException e) {
+                        // can't do anything with this here.
+                    } finally {
+                        filesBeingWorked.remove(fud);
+                    }
+                });
+            } catch (RejectedExecutionException e) {
+                filesBeingWorked.remove(fud);
+            }
+            // its either been submitted or not. If not, try the next file.
+            return;
         }
 
-        saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, listener);
 
+        // otherwise invokes the verification of uploaded data if needed
         if (!fud.isProcessingFailed() && fud.needsVerification()) {
             new FileUploadVerifyActor(this, thisUploadJob, listener).run(fud);
+            saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, listener);
         }
 
-        saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, listener);
-
+        // the invokes the configuration of uploaded data if needed
         if (!fud.isProcessingFailed() && fud.needsConfiguration()) {
             Set<Long> allServerAlbumIds = PiwigoUtils.toSetOfIds(availableAlbumsOnServer);
             new FileUploadConfigureActor(this, thisUploadJob, listener).run(fud, allServerAlbumIds);
+            saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, listener);
         }
 
-        saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, listener);
-
-        // Once added to album its too late the cancel the upload.
-//            if (!thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
-//                thisUploadJob.markFileAsNeedsDelete(fileForUpload);
-//            }
-
+        // finally, checks if it needs deleting from the server
         // No !fud.isProcessingFailed() && check because we should always tidy the server if there was an issue.
         if (fud.needsDeleteFromServer() || fud.isFileUploadCorrupt()) {
             DeleteFromServerActor deleteActor = new DeleteFromServerActor(this, thisUploadJob, listener);
             // we allow retry of corrupt uploads, if its set to delete, the user cancelled and thus server needs cleaning.
             deleteActor.run(fud, fud.isFileUploadCorrupt());
+            saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, listener);
         }
-
-        saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, listener);
-
-        listener.updateNotificationProgressText(thisUploadJob.getOverallUploadProgressInt());
     }
 
     private void saveStatusAndStopJobIfRequested(JobLoadActor jobLoadActor, UploadJob thisUploadJob, ActorListener listener) throws JobUnableToContinueException {
@@ -343,6 +410,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         if (thisUploadJob.isCancelUploadAsap()) {
             listener.reportForUser(getString(R.string.upload_job_stopped_by_user));
             throw new JobUnableToContinueException();
+        } else {
+            // update the overall progress of the job.
+            listener.updateNotificationProgressText(thisUploadJob.getOverallUploadProgressInt());
         }
     }
 

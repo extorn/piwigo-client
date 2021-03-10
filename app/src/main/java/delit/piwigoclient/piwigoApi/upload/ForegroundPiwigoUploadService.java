@@ -70,7 +70,8 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-
+        String oldThreadName = Thread.currentThread().getName();
+        Thread.currentThread().setName("Foreground Upload Service");
         try {
             if(BuildConfig.DEBUG) {
                 Log.d(TAG, "Foreground upload service looking for work");
@@ -92,6 +93,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
             }
             stopForeground(true);
 //            EventBus.getDefault().post(new ForegroundUploadFinishedEvent());
+            Thread.currentThread().setName(oldThreadName);
         }
         if(BuildConfig.DEBUG) {
             Log.d(TAG, "Foreground upload service really ended nicely");

@@ -108,7 +108,7 @@ public class UploadJobStatusDetailsFragment<F extends UploadJobStatusDetailsFrag
         if(uploadJob.hasErrors()) {
             textView.setVisibility(View.VISIBLE);
             errorsEncounteredList.setVisibility(View.VISIBLE);
-            errorsEncounteredList.setAdapter(UploadJobErrorsListAdapter.newAdapter(getContext(), uploadJob.getErrors()));
+            errorsEncounteredList.setAdapter(UploadJobErrorsListAdapter.newAdapter(getContext(), uploadJob.getCopyOfErrors()));
         } else {
             textView.setVisibility(View.GONE);
             errorsEncounteredList.setVisibility(View.GONE);

@@ -9,7 +9,7 @@ public abstract class FileUploadCancelMonitorThread extends Thread {
     private static final String TAG = "FileUploadCancelMoni";
     private final Uri uploadJobKey;
     private final UploadJob thisUploadJob;
-    private boolean done;
+    private boolean isNoLongerNeeded;
 
     public FileUploadCancelMonitorThread(UploadJob thisUploadJob, Uri uploadJobKey) {
         this.thisUploadJob = thisUploadJob;
@@ -25,18 +25,22 @@ public abstract class FileUploadCancelMonitorThread extends Thread {
             } catch (InterruptedException e) {
                 FileUploadDetails fud = thisUploadJob.getFileUploadDetails(uploadJobKey);
                 if(fud.isUploadCancelled()) {
-                    done = true;
+                    isNoLongerNeeded = true;
                     onFileUploadCancelled(uploadJobKey);
                 }
             }
-        } while(!done);
+        } while(!isNoLongerNeeded);
     }
 
     public abstract void onFileUploadCancelled(Uri uploadJobKey);
 
 
     public void markDone() {
-        done = true;
-        interrupt();
+        isNoLongerNeeded = true;
+        thisUploadJob.wakeAnyWaitingThreads();
+    }
+
+    public boolean isNoLongerNeeded() {
+        return isNoLongerNeeded;
     }
 }

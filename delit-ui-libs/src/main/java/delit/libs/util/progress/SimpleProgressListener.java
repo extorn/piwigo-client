@@ -12,6 +12,7 @@ public class SimpleProgressListener implements ProgressListener {
     private static final String TAG = "SimpleProgressListener";
     private double notifyOnProgress;
     private double lastNotifiedAt;
+    private boolean complete;
 
     /**
      * Notify only when complete.
@@ -48,6 +49,14 @@ public class SimpleProgressListener implements ProgressListener {
 
     @Override
     public void onProgress(double percent, boolean forceNotification) {
+        if(complete) {
+            if(percent < (2*notifyOnProgress)) {
+                Logging.log(Log.DEBUG, TAG, "Presuming tracker restarted. Calling '.onStarted()'");
+                onStarted();
+            } else {
+                return; // do nothing. This listener already knows it's complete - a final notification to process.
+            }
+        }
         // note force notification won't force refresh of last updated percentage.
         if ((forceNotification && Utils.doubleEquals(lastNotifiedAt,percent, 0.001)) || lastNotifiedAt + notifyOnProgress < percent || percent < lastNotifiedAt) {
             onNotifiableProgress(percent);
@@ -57,12 +66,16 @@ public class SimpleProgressListener implements ProgressListener {
 
     @Override
     public void onStarted() {
+        complete = false;
     }
 
     @Override
     public void onComplete() {
-        onNotifiableProgress(1.0);
-        lastNotifiedAt = 1.0;
+        if(!complete) {
+            complete = true;
+            onNotifiableProgress(1.0);
+            lastNotifiedAt = 1.0;
+        }
     }
 
     protected void onNotifiableProgress(double percent) {

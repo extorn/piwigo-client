@@ -144,6 +144,10 @@ public class FileUploadDetails implements Parcelable {
         status = UPLOADING;
     }
 
+    public void setStatusCompressing() {
+        status = COMPRESSING;
+    }
+
     public void setStatusCompressed() {
         status = COMPRESSED;
     }
@@ -181,7 +185,7 @@ public class FileUploadDetails implements Parcelable {
         return false;
     }
 
-    public boolean hasNoActionToTake() {
+    public boolean isHasNoActionToTake() {
         return isStatusIn(PENDING_APPROVAL, CONFIGURED, CANCELLED);
     }
 
@@ -257,6 +261,7 @@ public class FileUploadDetails implements Parcelable {
     public void resetStatus() {
         status = NOT_STARTED;
         compressedFileUri = null;
+        compressedFileChecksum = null;
         uploadedResource = null;
         uploadData = null;
     }
@@ -361,7 +366,7 @@ public class FileUploadDetails implements Parcelable {
     }
 
     public boolean isDoneWithLocalFiles() {
-        return isStatusIn(VERIFIED) || hasNoActionToTake();
+        return isStatusIn(VERIFIED) || isHasNoActionToTake();
     }
 
     /**
@@ -418,11 +423,19 @@ public class FileUploadDetails implements Parcelable {
         status = UPLOADED;
     }
 
+    public boolean isStatusUnverifiedDataOnServer() {
+        return isStatusIn(UPLOADING, UPLOADED);
+    }
+
     public boolean isStatusAllChunksUploaded() {
         return status == UPLOADED;
     }
 
     public boolean isUploadStarted() {
         return status != NOT_STARTED;
+    }
+
+    public String getFileToUploadMimeType(Context context) {
+        return IOUtils.getMimeType(context, getFileToBeUploaded());
     }
 }

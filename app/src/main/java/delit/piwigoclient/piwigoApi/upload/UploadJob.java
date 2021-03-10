@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,15 +157,6 @@ public class UploadJob implements Parcelable {
             }
         }
         return false;
-    }
-
-    public long getFileSize(@NonNull Uri toUpload) {
-        FileUploadDetails fud = fileUploadDetails.get(toUpload);
-        if (fud == null) {
-            Logging.log(Log.ERROR, TAG, "getFilesize requested for Uri not present in job");
-            throw new IllegalStateException("UploadJob does not contain uri");
-        }
-        return fud.getFileSize();
     }
 
     public void cancelAllFailedUploads() {
@@ -313,10 +305,10 @@ public class UploadJob implements Parcelable {
         this.jobConfigId = jobConfigId;
     }
 
-    private HashSet<Uri> getFilesProcessedToEnd() {
+    public HashSet<Uri> getFilesProcessedToEnd() {
         HashSet<Uri> matches = new HashSet<>();
         for (FileUploadDetails fud : fileUploadDetails.values()) {
-            if (fud.hasNoActionToTake()) {
+            if (fud.isHasNoActionToTake()) {
                 matches.add(fud.getFileUri());
             }
         }
@@ -387,7 +379,7 @@ public class UploadJob implements Parcelable {
     public Map<Uri, String> getFileChecksumsForServerCheck(@NonNull Context context, boolean useFilenamesAsChecksum) {
         Map<Uri, String> filenamesToUpload = new HashMap<>();
         for (FileUploadDetails fud : fileUploadDetails.values()) {
-            if (!fud.hasNoActionToTake() && fud.getServerResource() == null) {
+            if (!fud.isHasNoActionToTake() && fud.getServerResource() == null) {
                 if(useFilenamesAsChecksum) {
                     filenamesToUpload.put(fud.getFileUri(), fud.getFilename(context));
                 } else {
@@ -408,7 +400,7 @@ public class UploadJob implements Parcelable {
 
     public boolean hasJobCompletedAllActionsSuccessfully() {
         for (FileUploadDetails fud : fileUploadDetails.values()) {
-            if (!fud.hasNoActionToTake()) {
+            if (!fud.isHasNoActionToTake()) {
                 return false;
             }
         }
@@ -472,10 +464,8 @@ public class UploadJob implements Parcelable {
     }
 
     public boolean hasErrors() {
-        synchronized (generalErrors) {
-            if (!generalErrors.isEmpty()) {
-                return true;
-            }
+        if (!generalErrors.isEmpty()) {
+            return true;
         }
         for (FileUploadDetails fud : fileUploadDetails.values()) {
             if (fud.hasErrors()) {
@@ -488,17 +478,15 @@ public class UploadJob implements Parcelable {
     /**
      * @return A copy of the errors.
      */
-    public LinkedHashMap<String, ProcessErrors> getErrors() {
-        synchronized (generalErrors) {
-            LinkedHashMap<String, ProcessErrors> allErrors = new LinkedHashMap<>();
-            allErrors.put("other", generalErrors);
-            for (FileUploadDetails fud : fileUploadDetails.values()) {
-                if (fud.hasErrors()) {
-                    allErrors.put(fud.getFileUri().getPath(), fud.getErrors());
-                }
+    public LinkedHashMap<String, ProcessErrors> getCopyOfErrors() {
+        LinkedHashMap<String, ProcessErrors> allErrors = new LinkedHashMap<>();
+        allErrors.put("other", new ProcessErrors(generalErrors));
+        for (FileUploadDetails fud : fileUploadDetails.values()) {
+            if (fud.hasErrors()) {
+                allErrors.put(fud.getFileUri().getPath(), new ProcessErrors(Objects.requireNonNull(fud.getErrors())));
             }
-            return allErrors;
         }
+        return allErrors;
     }
 
     public boolean isPlayableMedia(@NonNull Context context, @NonNull Uri file) {
@@ -614,9 +602,7 @@ public class UploadJob implements Parcelable {
         ParcelUtils.writeParcelable(dest, connectionPrefs);
         dest.writeInt(jobStatus);
         dest.writeLong(temporaryUploadAlbumId);
-        synchronized (generalErrors) {
-            ParcelUtils.writeParcelable(dest, generalErrors);
-        }
+        ParcelUtils.writeParcelable(dest, generalErrors);
         ParcelUtils.writeParcelable(dest, playableMediaCompressionParams);
         ParcelUtils.writeParcelable(dest, imageCompressionParams);
         ParcelUtils.writeBool(dest, allowUploadOfRawVideosIfIncompressible);
@@ -654,7 +640,7 @@ public class UploadJob implements Parcelable {
     public HashSet<Uri> getFilesWithoutFurtherActionNeeded() {
         HashSet<Uri> matches = new HashSet<>();
         for (FileUploadDetails fud : fileUploadDetails.values()) {
-            if (fud.hasNoActionToTake()) {
+            if (fud.isHasNoActionToTake()) {
                 matches.add(fud.getFileUri());
             }
         }
@@ -697,6 +683,28 @@ public class UploadJob implements Parcelable {
         synchronized (this) {
             this.notifyAll();
         }
+    }
+
+    public int getActionableFilesCount() {
+        HashSet<Uri> matches = new HashSet<>();
+        for (FileUploadDetails fud : fileUploadDetails.values()) {
+            if (!fud.isHasNoActionToTake() && !fud.isProcessingFailed()) {
+                matches.add(fud.getFileUri());
+            }
+        }
+        return matches.size();
+    }
+
+    public Set<FileUploadDetails> getFilesRequiringProcessing() {
+        Set<FileUploadDetails> filesNeedingProcessing = new HashSet<>(getFilesForUpload());
+        for (Iterator<FileUploadDetails> iterator = filesNeedingProcessing.iterator(); iterator.hasNext(); ) {
+            FileUploadDetails uploadDetails = iterator.next();
+            if(uploadDetails.isHasNoActionToTake()) {
+                iterator.remove();
+            }
+        }
+        return filesNeedingProcessing;
+
     }
 
     public static class ImageCompressionParams implements Parcelable {

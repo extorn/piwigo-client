@@ -13,12 +13,30 @@ import java.util.Set;
 import delit.libs.ui.util.ParcelUtils;
 
 public class ProcessErrors implements Parcelable {
-    private final LinkedHashMap<Date,String> errorsRecorded = new LinkedHashMap<>();
+    public static final Creator<ProcessErrors> CREATOR = new Creator<ProcessErrors>() {
+        @Override
+        public ProcessErrors createFromParcel(Parcel in) {
+            return new ProcessErrors(in);
+        }
 
-    protected ProcessErrors() {}
+        @Override
+        public ProcessErrors[] newArray(int size) {
+            return new ProcessErrors[size];
+        }
+    };
+    private final LinkedHashMap<Date, String> errorsRecorded = new LinkedHashMap<>();
+
+    protected ProcessErrors() {
+    }
 
     protected ProcessErrors(Parcel in) {
         ParcelUtils.readMap(in, errorsRecorded);
+    }
+
+    public ProcessErrors(ProcessErrors errors) {
+        synchronized (errors.errorsRecorded) {
+            this.errorsRecorded.putAll(errors.errorsRecorded);
+        }
     }
 
     public void addError(@NonNull Date time, @NonNull String error) {
@@ -28,7 +46,9 @@ public class ProcessErrors implements Parcelable {
     }
 
     public boolean isEmpty() {
-        return errorsRecorded.isEmpty();
+        synchronized (errorsRecorded) {
+            return errorsRecorded.isEmpty();
+        }
     }
 
     /**
@@ -52,19 +72,9 @@ public class ProcessErrors implements Parcelable {
         return 0;
     }
 
-    public static final Creator<ProcessErrors> CREATOR = new Creator<ProcessErrors>() {
-        @Override
-        public ProcessErrors createFromParcel(Parcel in) {
-            return new ProcessErrors(in);
-        }
-
-        @Override
-        public ProcessErrors[] newArray(int size) {
-            return new ProcessErrors[size];
-        }
-    };
-
     public void clear() {
-        errorsRecorded.clear();
+        synchronized (errorsRecorded) {
+            errorsRecorded.clear();
+        }
     }
 }

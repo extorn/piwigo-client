@@ -76,6 +76,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.piwigoApi.ErrorRetryQuestionResultHandler;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.dialogmessage.NewUnTrustedCaCertificateReceivedAction;
@@ -793,6 +794,18 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         }
         synchronized (dialogMessageQueue) {
             if (!dialogMessageQueue.contains(message)) {
+                if(message.getListener() instanceof ErrorRetryQuestionResultHandler) {
+                    // this is needed because the detail will likely be the same (for connection failed) but the message different due to different server method being called.
+                    for (QueuedDialogMessage<UIH, OWNER> queuedDialogMessage : dialogMessageQueue) {
+                        QuestionResultListener<UIH, OWNER> queuedDialogMessageListener = queuedDialogMessage.getListener();
+                        if (queuedDialogMessageListener instanceof ErrorRetryQuestionResultHandler) {
+                            if(Objects.equals(queuedDialogMessage.getDetail(), message.getDetail())){
+                                queuedDialogMessageListener.chainResult(message.getListener());
+                                Logging.log(Log.INFO,TAG, "Chained retry of %1$s and %2$s", message, queuedDialogMessage);
+                            }
+                        }
+                    }
+                }
                 if (isDialogShowing()) {
                     dismissListener.setDialogClosingForUrgentMessage(true);
                     alertDialog.dismiss();

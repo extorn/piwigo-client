@@ -21,6 +21,12 @@ public abstract class CustomClickTouchListener implements View.OnTouchListener {
         GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener() {
 
             @Override
+            public boolean onDown(MotionEvent e) {
+                // triggers first for both single tap and long press
+                return true; // needed otherwise long click triggered for every touch.
+            }
+
+            @Override
             public final boolean onSingleTapUp(MotionEvent e) {
                 return onClick();
             }
@@ -64,6 +70,7 @@ public abstract class CustomClickTouchListener implements View.OnTouchListener {
             }
         };
         detector = new GestureDetectorCompat(linkedView.getContext(), listener);
+        detector.setIsLongpressEnabled(true);
     }
 
     public static void callClickOnTouch(View field) {
@@ -99,7 +106,7 @@ public abstract class CustomClickTouchListener implements View.OnTouchListener {
             }
             return onTouchNonClick(v, event);
         }
-        return false;
+        return true;
     }
 
     public boolean onTouchNonClick(View v, MotionEvent event) {

@@ -48,11 +48,11 @@ public class UiUpdatingProgressListener extends SimpleProgressListener {
                 synchronized (progressIndicator) {
                     progressIndicator.notifyAll();
                 }
-            });
+            }, true);
             synchronized (progressIndicator) {
                 try {
                     // pause thread until the progress bar has been updated
-                    progressIndicator.wait(100);
+                    progressIndicator.wait(250);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

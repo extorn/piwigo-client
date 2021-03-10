@@ -235,8 +235,8 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                     new AutoUploadJobConfig(unfinishedJob.getJobConfigId()).setJobValid(this, false);
                 }
                 if (!unfinishedJob.isStatusFinished() && jobIsValid) {
-                    if(!unfinishedJob.hasProcessableFiles()) {
-                        // ALL Files are in error state. Cancel them all so the server will be cleaned of any partial uploads
+                    if(0 == unfinishedJob.getActionableFilesCount()) {
+                        // ALL Files not uploaded are in error state. Cancel them all so the server will be cleaned of any partial uploads
                         unfinishedJob.cancelAllFailedUploads();
                         new JobLoadActor(this).saveStateToDisk(unfinishedJob);
                     }
@@ -349,7 +349,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(c);
         thisUploadJob.filterPreviouslyUploadedFiles(priorUploads.getFileUrisAndHashcodes());
         // technically this is called after the job has already started, but the user doesn't need to know that.
-        if(thisUploadJob.hasProcessableFiles()) {
+        if(thisUploadJob.getActionableFilesCount() > 0) {
             EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob, thisUploadJob.isHasRunBefore()));
         }
     }

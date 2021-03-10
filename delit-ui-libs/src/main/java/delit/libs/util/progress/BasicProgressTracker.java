@@ -74,10 +74,15 @@ public class BasicProgressTracker implements Parcelable {
         if(decrementBy < 0) {
             throw new IllegalStateException("Unable to decrement by a negative value. Use increment instead");
         }
+        if(workComplete == 0) {
+            Logging.log(Log.ERROR, TAG, "Task tracker already at 0 progress when attempting to decrement %1$s %2$d", getTaskName(), decrementBy);
+            return;
+        }
         if(decrementBy > workComplete) {
             Logging.log(Log.ERROR, TAG, "Decrementing workDone beyond 0 in tracker %1$s.", getTaskName());
         }
         workComplete -= decrementBy;
+        workComplete = Math.max(workComplete, 0);// make sure we don't mess anything up visually
         onProgressChange();
     }
 
@@ -85,19 +90,25 @@ public class BasicProgressTracker implements Parcelable {
         long delta = newWorkDone - workComplete;
         if(delta > 0) {
             incrementWorkDone(delta);
-        } else {
+        } else if(delta < 0) {
             decrementWorkDone(-delta);
         }
+        // if not incrementing or decrementing, nothing to do.
     }
 
     public synchronized void incrementWorkDone(@IntRange(from=0) long incrementBy) {
         if(incrementBy < 0) {
             throw new IllegalStateException("Unable to increment by a negative value. Use decrement instead");
         }
+        if(workComplete == totalWork) {
+            Logging.log(Log.ERROR, TAG, "Task tracker already complete when attempting to increment %1$s %2$d", getTaskName(), incrementBy);
+            return;
+        }
         if(incrementBy > getUnallocatedAndIncompleteWork()) {
             Logging.log(Log.ERROR, TAG, "Incrementing workDone already accounted for in tracker %1$s.", getTaskName());
         }
         workComplete += incrementBy;
+        workComplete = Math.min(workComplete, totalWork);// make sure we don't mess anything up visually
         onProgressChange();
     }
 

@@ -13,7 +13,7 @@ import delit.libs.util.CollectionUtils;
 
 public class AppSettingsRepository {
     private static AppSettingsRepository instance;
-    private UriPermissionUseDao uriPermissionUseDao;
+    private final UriPermissionUseDao uriPermissionUseDao;
 
     AppSettingsRepository(AppSettingsDatabase database) {
         this.uriPermissionUseDao = database.uriPermissionUseDao();

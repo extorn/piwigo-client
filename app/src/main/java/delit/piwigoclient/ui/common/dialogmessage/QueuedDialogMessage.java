@@ -10,11 +10,13 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.Utils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.UIHelper;
 
@@ -28,6 +30,20 @@ public class QueuedDialogMessage<P extends UIHelper<P,T>,T> implements Parcelabl
     private final String detail;
     private final QuestionResultListener<P,T> listener;
     private final boolean hasListener;
+
+    @NonNull
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("QueuedDialogMessage{");
+        sb.append("id=").append(id);
+        sb.append(", titleId=").append(titleId);
+        sb.append(", message='").append(message).append('\'');
+        sb.append(", detail='").append(detail).append('\'');
+        sb.append(", listener=").append(Utils.getId(listener));
+        sb.append(", hasListener=").append(hasListener);
+        sb.append('}');
+        return sb.toString();
+    }
 
     public QueuedDialogMessage(Parcel in) {
         id = in.readInt();

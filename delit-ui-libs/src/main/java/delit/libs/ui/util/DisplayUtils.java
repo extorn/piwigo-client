@@ -316,13 +316,22 @@ public class DisplayUtils {
         h.postDelayed(runnable, delay);
     }
 
-    public static void runOnUiThread(Runnable runnable) {
+    public static void runOnUiThread(Runnable runnable, boolean frontOfTheQueue) {
         if (isRunningOnUIThread()) {
             runnable.run();
         } else {
             Handler h = new Handler(Looper.getMainLooper());
-            h.post(new SafeRunnable(runnable));
+            Runnable r = new SafeRunnable(runnable);
+            if(frontOfTheQueue) {
+                h.postAtFrontOfQueue(r);
+            } else {
+                h.post(r);
+            }
         }
+    }
+
+    public static void runOnUiThread(Runnable runnable) {
+        runOnUiThread(runnable, false);
     }
 
     public static void setUiFlags(FragmentActivity activity, boolean showNavButtons, boolean showStatusBar) {

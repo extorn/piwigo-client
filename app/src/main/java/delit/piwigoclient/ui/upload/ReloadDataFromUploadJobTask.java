@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
@@ -42,19 +43,13 @@ class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH 
 
     @Override
     protected List<UploadDataItem> doInBackgroundSafely(Void... nothing) {
-        int itemCount = uploadJob.getFilesNotYetUploaded().size();
-        List<UploadDataItem> itemsToBeUploaded = new ArrayList<>(itemCount);
-        if(itemCount > 0) {
-            tracker.addChildTask("parse files", itemCount, 80);
-            for (FileUploadDetails fud : uploadJob.getFilesForUpload()) {
-                try {
-                    if (fud.hasNoActionToTake()) {
-                        continue;
-                    }
-                    itemsToBeUploaded.add(new UploadDataItem(fud.getFileUri(), null, null, -1));
-                } finally {
-                    tracker.incrementWorkDone(1);
-                }
+        Set<FileUploadDetails> filesToProcess = uploadJob.getFilesRequiringProcessing();
+        List<UploadDataItem> itemsToBeUploaded = new ArrayList<>(filesToProcess.size());
+        if(!filesToProcess.isEmpty()) {
+            DividableProgressTracker fileParser = tracker.addChildTask("parse files", filesToProcess.size(), 80);
+            for (FileUploadDetails fud : filesToProcess) {
+                itemsToBeUploaded.add(new UploadDataItem(fud.getFileUri(), fud.getFilename(getContext()), fud.getFileToUploadMimeType(getContext()), fud.getFileSize()));
+                fileParser.incrementWorkDone(1);
             }
         }
         if(itemsToBeUploaded.size() > 0) {
@@ -72,7 +67,7 @@ class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH 
         FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getOwner().getFilesForUploadViewAdapter();
         adapter.clear();
         adapter.addAll(itemsToBeUploaded);
-
+        //FIXME why is this needed?!
         for (Uri f : adapter.getFilesAndSizes().keySet()) {
             try {
                 FileUploadDetails fud = uploadJob.getFileUploadDetails(f);

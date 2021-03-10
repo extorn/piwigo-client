@@ -92,6 +92,7 @@ public class FileDataUploaderActor extends UploadActor {
         FileUploadDetails fud = thisUploadJob.getFileUploadDetails(uploadItemKey);
         FileChunkerActorThread chunkProducer = new FileChunkerActorThread(thisUploadJob, fud, uploadName, filenamesAreUnique, getMaxChunkUploadSizeBytes());
         FileChunkUploaderActorThread chunkConsumer = new FileChunkUploaderActorThread(thisUploadJob, maxChunkUploadAutoRetries, new MyChunkUploadListener(getContext(), chunkProducer, getListener(), filenamesAreUnique));
+        chunkProducer.setConsumerId(chunkConsumer.getChunkUploaderId());
 
         // start the upload
         FileUploadCancelMonitorThread watchThread = new FileUploadCancelMonitorThread(thisUploadJob, uploadItemKey) {
@@ -133,11 +134,17 @@ public class FileDataUploaderActor extends UploadActor {
                 }
             }
         } while (!thisUploadJob.isCancelUploadAsap() && !chunkConsumer.isUploadComplete() && !chunkConsumer.isFinished());
+        if(!chunkConsumer.isUploadComplete()) {
+            fud.setProcessingFailed();
+        }
         if(!chunkProducer.isFinished()) {
             chunkProducer.stopAsap();
         }
         if(!chunkConsumer.isFinished()) {
             chunkConsumer.stopAsap();
+        }
+        if(!watchThread.isNoLongerNeeded()) {
+            watchThread.markDone();
         }
     }
 

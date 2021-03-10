@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
@@ -36,6 +37,12 @@ public class FileChunkUploaderActorThread extends Thread {
     private boolean isFinished;
     private boolean completedSuccessfully;
     private Context context;
+    private AtomicInteger idGen = new AtomicInteger();
+    private int chunkUploaderId = idGen.getAndAdd(1);
+
+    public int getChunkUploaderId() {
+        return chunkUploaderId;
+    }
 
     public FileChunkUploaderActorThread(UploadJob thisUploadJob, int maxChunkUploadAutoRetries, ChunkUploadListener chunkUploadListener) {
         this.thisUploadJob = thisUploadJob;
@@ -77,13 +84,13 @@ public class FileChunkUploaderActorThread extends Thread {
         setName("FileChunkConsumer: ");
         do {
             UploadFileChunk chunk = null;
-            long timeoutAt = System.currentTimeMillis() + 5000;
+            long timeoutAt = System.currentTimeMillis() + 5000; // 5 sec (more than long enough)
             boolean timedOut;
             do {
                 try {
-                    chunk = chunkQueue.poll(5, TimeUnit.SECONDS);
+                    chunk = chunkQueue.poll(1, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
-                    Logging.log(Log.DEBUG, TAG, "poll interrupted");
+                    Logging.log(Log.DEBUG, TAG, "poll of chunk queue interrupted");
                 }
                 timedOut = System.currentTimeMillis() > timeoutAt;
                 if(timedOut) {
@@ -181,12 +188,6 @@ public class FileChunkUploaderActorThread extends Thread {
             sb.append("\n");
         }
         return sb.toString();
-    }
-
-    public void waitForever() throws InterruptedException {
-        synchronized(this) {
-            wait();
-        }
     }
 
     public boolean isFinished() {

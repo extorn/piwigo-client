@@ -40,6 +40,7 @@ public class FileChunkerActorThread extends Thread {
     private boolean isFinished;
     private int chunkDataErrorCount;
     private boolean completedSuccessfully;
+    private int consumerId;
 
     //filenameIsUniqueKey = isUseFilenamesOverMd5ChecksumForUniqueness(thisUploadJob)
     public FileChunkerActorThread(UploadJob thisUploadJob, FileUploadDetails fud, String uploadName, boolean filenameIsUniqueKey, int defaultMaxChunkSize) {
@@ -79,7 +80,7 @@ public class FileChunkerActorThread extends Thread {
     @Override
     public void run() {
         try {
-            produceChunks(context, chunkQueue);
+            produceChunks(context);
             completedSuccessfully = !cancelChunking;
         } catch (IOException e) {
             Logging.recordException(e);
@@ -105,24 +106,15 @@ public class FileChunkerActorThread extends Thread {
         return isFinished;
     }
 
-    public void waitForever() throws InterruptedException {
-        synchronized(this) {
-            wait();
-        }
-    }
-
     /**
      * Will generate chunks and add them to the queue. This code is blocking. It waits if no space on the queue.
      * @param context an active context
-     * @param chunkQueue queue to add items to
      * @throws IOException if the file could not be read
-     * @throws InterruptedException if the operation to add to queue was interrupted.
      */
-    public void produceChunks(@NonNull Context context, BlockingQueue<UploadFileChunk> chunkQueue) throws IOException {
+    public void produceChunks(@NonNull Context context) throws IOException {
         setName("FileChunkProducer: " + fud.getFileToBeUploaded());
         long totalBytesInFile = IOUtils.getFilesize(context, fud.getFileToBeUploaded());
         long chunkId = 0;
-        int bytesOfDataInChunk;
         long totalChunkCount = 0;
         long maxChunkSize = -1;
 
@@ -146,10 +138,15 @@ public class FileChunkerActorThread extends Thread {
                 maxChunkSize = skipChunksData.getMaxUploadChunkSizeBytes();
                 totalChunkCount = skipChunksData.getTotalChunksToUpload();
             } else {
-                //FIXME this probably needs to reset the load and start over (deleting the semi uploaded else new chunk will get merged into garbage)
-                Logging.log(Log.WARN,TAG,"Checksum of file has changed since the upload of chunks was started");
+                Logging.log(Log.ERROR,TAG,"Checksum of file has changed since the upload of chunks was started. Upload of file aborted for now");
+                fud.setStatusCorrupt();
+                stopAsap();
             }
         }
+        if(cancelChunking) {
+            return;
+        }
+
         if(maxChunkSize < 0) {
             // chunk count is chunks in part of file left plus uploaded chunk count.
             maxChunkSize = defaultMaxChunkSize;
@@ -200,10 +197,13 @@ public class FileChunkerActorThread extends Thread {
                                         stopAsap();
                                     }
                                 }
+                            } else {
+                                Logging.log(Log.ERROR, TAG, "Chunk build stopped. Either file or job upload no longer wanted.");
                             }
                         }
 
-                        if (fud.isUploadCancelled()) {
+                        if (fud.isUploadCancelled() || thisUploadJob.isCancelUploadAsap()) {
+                            Logging.log(Log.DEBUG, TAG, "Upload of file or job cancelled.");
                             flushChunksFromQueueMatching(fud.getFileUri());
                             stopAsap(); //TODO is this call needed or a duplicate?
                         }
@@ -211,6 +211,8 @@ public class FileChunkerActorThread extends Thread {
                 } while ((chunkId >= 0) && (chunkId < totalChunkCount) && !cancelChunking);
                 if(chunkId + 1 == totalChunkCount) {
                     Logging.log(Log.DEBUG, TAG, "All chunks have now been produced. Producer ending");
+                } else {
+                    Logging.log(Log.WARN, TAG, "Producer ending before fully chunking file");
                 }
             }
         }
@@ -258,14 +260,16 @@ public class FileChunkerActorThread extends Thread {
             try {
                 chunkQueue.put(chunk);
                 chunkProductionHistory.put(chunk.getChunkId(), chunk.getChunkSizeBytes());
+                Logging.log(Log.DEBUG,TAG, "Chunk queued %1$d [%2$s/%3$d]", consumerId, chunk.getChunkId(), chunk.getChunkCount());
                 queued = true;
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Logging.log(Log.DEBUG,TAG, "ChunkProducer is waiting for room on the chunk queue %1$d", consumerId);
             }
         } while (!cancelChunking && !queued);
     }
 
     private void flushChunksFromQueueMatching(Uri uploadItemKey) {
+        Logging.log(Log.DEBUG, TAG, "Flushing chunks queue");
         for (Iterator<UploadFileChunk> iterator = chunkQueue.iterator(); iterator.hasNext(); ) {
             UploadFileChunk uploadFileChunk = iterator.next();
             if(uploadFileChunk.getUploadJobItemKey().equals(uploadItemKey)) {
@@ -280,5 +284,9 @@ public class FileChunkerActorThread extends Thread {
         synchronized (this) {
             interrupt();
         }
+    }
+
+    public void setConsumerId(int chunkUploaderId) {
+        this.consumerId = chunkUploaderId;
     }
 }

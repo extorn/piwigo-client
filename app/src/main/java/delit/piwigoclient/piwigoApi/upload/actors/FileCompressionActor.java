@@ -66,6 +66,7 @@ public class FileCompressionActor extends UploadActor {
     private void compressPhoto(FileUploadDetails fileUploadDetails, DividableProgressTracker progressTracker) {
         // need to compress this file
         ImageCompressor imageCompressor = new ImageCompressor(getContext());
+        fileUploadDetails.setStatusCompressing();
         imageCompressor.compressImage(getUploadJob(), fileUploadDetails.getFileUri(), new ImageCompressor.ImageCompressorListener() {
             @Override
             public void onError(long jobId, PiwigoUploadFileLocalErrorResponse piwigoUploadFileLocalErrorResponse) {
@@ -75,20 +76,19 @@ public class FileCompressionActor extends UploadActor {
 
             @Override
             public void onCompressionSuccess(DocumentFile compressedFile) {
-                updateJobWithCompressedFile(fileUploadDetails.getFileUri(), compressedFile);
+                fileUploadDetails.setStatusCompressed();
+                fileWasCompressed = true;
+                calculateChecksum(fileUploadDetails);
                 progressTracker.markComplete();
             }
         });
     }
 
-    public void updateJobWithCompressedFile(Uri fileForUploadUri, DocumentFile compressedFile) {
+    public void calculateChecksum(FileUploadDetails fud) {
         // we use this checksum to check the file was uploaded successfully
-        FileUploadDetails fileUploadDetails = getUploadJob().getFileUploadDetails(fileForUploadUri);
-        fileUploadDetails.setStatusCompressed();
-        fileWasCompressed = true;
-        DividableProgressTracker tracker = getUploadJob().getTaskProgressTrackerForSingleFileCompression(fileUploadDetails.getFileUri());
+        DividableProgressTracker tracker = getUploadJob().getTaskProgressTrackerForSingleFileCompression(fud.getFileUri());
         tracker = tracker.addChildTask("compressed checksum", 100, 5);
-        new ChecksumCalculationActor(getContext(), getUploadJob(), getListener()).calculateChecksum(getContext(), fileUploadDetails, tracker);
+        new ChecksumCalculationActor(getContext(), getUploadJob(), getListener()).calculateChecksum(getContext(), fud, tracker);
     }
 
     private void compressPlayableMedia(FileUploadDetails fileUploadDetails, DividableProgressTracker progressTracker) {
@@ -97,6 +97,7 @@ public class FileCompressionActor extends UploadActor {
         VideoCompressor videoCompressor = new VideoCompressor(getContext());
         if(videoCompressor.compressVideo(getUploadJob(), fileUploadDetails.getFileUri(), listener)) {
             fileWasCompressed = true;
+            calculateChecksum(fileUploadDetails);
         }
     }
 }

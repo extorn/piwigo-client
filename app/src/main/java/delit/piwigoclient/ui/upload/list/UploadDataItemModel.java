@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
@@ -162,7 +163,7 @@ public class UploadDataItemModel implements Parcelable {
                 progress.setCompressionProgress(percentageComplete);
                 progress.setFileBeingUploaded(compressedFile);
             }
-            if(percentageComplete == 100) {
+            if(percentageComplete == 100 && !Objects.equals(fileBeingCompressed,compressedFile)) {
                 // reset the data length - this will be re-calculated on next ui update.
                 uploadDataItem.resetFilenameAndLength();
 

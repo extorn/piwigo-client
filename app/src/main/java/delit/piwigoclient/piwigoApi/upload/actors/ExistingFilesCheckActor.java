@@ -132,10 +132,11 @@ public class ExistingFilesCheckActor extends UploadActor {
                 }
             } else {
                 FileUploadDetails fud = thisUploadJob.getFileUploadDetails(fileCheckSumEntry.getKey());
-                if(fud.isUploadStarted() && fud.getChunksAlreadyUploadedData() == null && !fud.isUploadCancelled()) {
-                    // this isn't repairable. force re-upload
-                    fud.resetStatus();
-                    Logging.log(Log.WARN, TAG, "reset upload status for file. Status would infer it should be uploaded, but no data available. %1$s:%2$s", fud.getFileUri(), fud.getChecksumOfFileToUpload());
+                //This is a logic check of the upload job. the reset here should NEVER be invoked in the wild.
+                if(fud.isStatusUnverifiedDataOnServer() && fud.getChunksAlreadyUploadedData() == null) {
+                    // this isn't repairable. force clean of the server and the re-upload
+                    fud.setStatusCorrupt();
+                    Logging.log(Log.WARN, TAG, "Mark uploaded data corrupt. Status would infer it should be uploading or uploaded, but no chunk data available. %1$s:%2$s", fud.getFileUri(), fud.getChecksumOfFileToUpload());
                 }
             }
         }

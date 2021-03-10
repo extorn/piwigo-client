@@ -1,0 +1,93 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "78f761bf8a78814a68bb5839a6265e0e",
+    "entities": [
+      {
+        "tableName": "PriorUpload",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`parentUri` TEXT, `uri` TEXT NOT NULL, `checksum` TEXT, PRIMARY KEY(`uri`))",
+        "fields": [
+          {
+            "fieldPath": "parentUri",
+            "columnName": "parentUri",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "uri",
+            "columnName": "uri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "checksum",
+            "columnName": "checksum",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uri"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "UploadDestination",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uploadToKey` TEXT NOT NULL, PRIMARY KEY(`uploadToKey`))",
+        "fields": [
+          {
+            "fieldPath": "uploadToKey",
+            "columnName": "uploadToKey",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uploadToKey"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "UploadDestinationPriorUploadCrossRef",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uri` TEXT NOT NULL, `uploadToKey` TEXT NOT NULL, PRIMARY KEY(`uri`, `uploadToKey`))",
+        "fields": [
+          {
+            "fieldPath": "uri",
+            "columnName": "uri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uploadToKey",
+            "columnName": "uploadToKey",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uri",
+            "uploadToKey"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '78f761bf8a78814a68bb5839a6265e0e')"
+    ]
+  }
+}

@@ -65,9 +65,17 @@ public class DividableProgressTracker extends BasicProgressTracker implements Pa
     }
 
     public void onProgressChange(boolean force) {
-        //TODO add option of making this progress report notifiable - just because.
-        boolean forceNotification = alwaysNotifyOnChildComplete && processAnyCompleteChildTasks();
-        super.onProgressChange(force || forceNotification);
+        // this ensures that we tidy up any child tasks if we have to.
+        boolean forceNotification = (force || alwaysNotifyOnChildComplete) && processAnyCompleteChildTasks();
+        super.onProgressChange(forceNotification);
+        if(isComplete()) {
+            ProgressListener listener = getListener();
+            if(listener != null) {
+                if(listener instanceof DividableProgressTracker.ChildProgressListener) {
+                    ((DividableProgressTracker.ChildProgressListener)listener).onComplete(this);
+                }
+            }
+        }
     }
 
     /**

@@ -38,6 +38,8 @@ public class ChecksumCalculationActor extends UploadActor {
                 if(fud.isChecksumNeeded()) {
                     DividableProgressTracker fileChecksumProgressTracker = overallChecksumProgressTracker.addChildTask("checksum calc : "+fud.getFileUri(), 100, 1); // tick one file off. Each file has 0 - 100% completion
                     calculateChecksum(context, fud, fileChecksumProgressTracker);
+                } else {
+                    overallChecksumProgressTracker.incrementWorkDone(1);
                 }
             }
         } finally {
