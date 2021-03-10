@@ -6,8 +6,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.exoplayer2.source.chunk.Chunk;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;

@@ -2,8 +2,6 @@ package delit.piwigoclient.piwigoApi.upload.actors;
 
 import android.net.Uri;
 
-import java.util.Date;
-
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.upload.FileUploadDetails;

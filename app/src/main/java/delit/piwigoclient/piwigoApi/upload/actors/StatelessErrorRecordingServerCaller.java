@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.util.Date;
-
 import delit.libs.core.util.Logging;
 import delit.libs.util.Utils;
 import delit.piwigoclient.business.ConnectionPreferences;

@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.CustomViewHolder;
-import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;

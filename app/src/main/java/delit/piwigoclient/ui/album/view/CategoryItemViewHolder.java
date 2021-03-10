@@ -3,12 +3,9 @@ package delit.piwigoclient.ui.album.view;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.Objects;
-
 import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.StaticCategoryItem;
