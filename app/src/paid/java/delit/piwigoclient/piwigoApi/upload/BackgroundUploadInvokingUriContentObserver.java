@@ -116,7 +116,7 @@ public class BackgroundUploadInvokingUriContentObserver extends ContentObserver 
                 e.printStackTrace();
             }
             if (eventId == lastEventId && len == file.length() && lastMod == file.lastModified()) {
-                BackgroundPiwigoUploadService.resumeUploadService(context);
+                BackgroundPiwigoUploadService.sendActionResume(context);
                 return true;
             }
             return false;

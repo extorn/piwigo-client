@@ -77,7 +77,7 @@ class BackgroundUploadInvokingFolderChangeObserver extends FileObserver implemen
                 e.printStackTrace();
             }
             if(eventId == lastEventId && len == eventSourceFile.length() && lastMod == eventSourceFile.lastModified()) {
-                BackgroundPiwigoUploadService.resumeUploadService(context);
+                BackgroundPiwigoUploadService.sendActionResume(context);
                 return true;
             }
             return false;

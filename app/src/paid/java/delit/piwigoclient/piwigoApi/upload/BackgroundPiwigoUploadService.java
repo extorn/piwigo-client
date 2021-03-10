@@ -137,7 +137,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         enqueueWork(appContext, BackgroundPiwigoUploadService.class, JOB_ID, intent);
     }
 
-    public static void resumeUploadService(@NonNull Context context) {
+    public static void sendActionResume(@NonNull Context context) {
         Intent intent = new Intent();
         intent.setAction(ACTION_WAKE);
         context.getApplicationContext().sendBroadcast(intent);
@@ -147,7 +147,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
      * Call from e.g. a notification to pause the upload.
      * @param context an active context.
      */
-    public static void pauseUploadService(@NonNull Context context) {
+    public static void sendActionPauseUpload(@NonNull Context context) {
         Intent intent = new Intent();
         intent.setAction(ACTION_PAUSE);
         context.getApplicationContext().sendBroadcast(intent);
@@ -207,8 +207,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             while (!terminateUploadServiceThreadAsap) {
 
                 EventBus.getDefault().post(new BackgroundUploadThreadCheckingForTasksEvent());
-                boolean canUpload = networkManager.isOkayToUpload();
-                if(canUpload) {
+                if(networkManager.isOkayToUpload()) {
                     pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(context, autoUploadJobsConfig, runningObservers, jobListener);
                 }
                 sendServiceToSleep();
@@ -373,9 +372,8 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 wakeIfPaused();
             } else if (ACTION_PAUSE.equals(intent.getAction())) {
                 cancelAnyRunningUploadJob();
-            } else {
-                super.onReceive(context, intent);
             }
+            super.onReceive(context, intent);
         }
 
         @Override

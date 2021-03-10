@@ -22,15 +22,15 @@ public class UploadServiceNetworkListener implements MyBroadcastEventListener {
         hasInternetAccess = internetAccess;
         isOnUnMeteredNetwork = unMeteredNet;
         if (hasInternetAccess && (!autoUploadJobsConfig.isUploadOnUnMeteredNetworkOnly(context) || isOnUnMeteredNetwork)) {
-            BackgroundPiwigoUploadService.resumeUploadService(context);
+            BackgroundPiwigoUploadService.sendActionResume(context);
         } else {
-            BackgroundPiwigoUploadService.pauseUploadService(context);
+            BackgroundPiwigoUploadService.sendActionPauseUpload(context);
         }
     }
 
     @Override
     public void onDeviceUnlocked() {
-        BackgroundPiwigoUploadService.resumeUploadService(context);
+        BackgroundPiwigoUploadService.sendActionResume(context);
     }
 
     @Override
