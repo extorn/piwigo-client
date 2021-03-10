@@ -289,9 +289,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         List<FileUploadDetails> filesBeingWorked = Collections.synchronizedList(new ArrayList<>());
         ThreadPoolExecutor compressionTPE = new ThreadPoolExecutor(1, 1, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
         compressionTPE.setThreadFactory(new NamedThreadFactory("compression task"));
-        ThreadPoolExecutor uploadTPE = new ThreadPoolExecutor(2, 10, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
+        ThreadPoolExecutor uploadTPE = new ThreadPoolExecutor(2, 20, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
         uploadTPE.setThreadFactory(new NamedThreadFactory("upload task"));
-        while(!thisUploadJob.isCancelUploadAsap()) {
+        boolean finished = false;
+        while(!thisUploadJob.isCancelUploadAsap() && !finished) {
             for (FileUploadDetails fud : thisUploadJob.getFilesForUpload()) {
                 if(!filesBeingWorked.contains(fud)) {
                     runAllFileUploadTasksForFile(jobLoadActor, fud, thisUploadJob, availableAlbumsOnServer, listener, compressionTPE, uploadTPE, filesBeingWorked);
@@ -310,7 +311,11 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 // if it has no files that are not finished and still processable
                 // cancel the upload.
                 if(thisUploadJob.getActionableFilesCount() == 0) {
-                    thisUploadJob.cancelUploadAsap();
+                    if(0 == thisUploadJob.getFilesRequiringProcessing().size()) {
+                        finished = true;
+                    } else {
+                        thisUploadJob.cancelUploadAsap();
+                    }
                 }
             }
         }
