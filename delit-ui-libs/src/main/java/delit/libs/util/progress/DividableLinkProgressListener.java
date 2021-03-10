@@ -18,12 +18,17 @@ public class DividableLinkProgressListener extends SimpleProgressListener implem
 
     @Override
     public void onRollback(DividableProgressTracker childTask) {
-        parentTask.onChildTaskEventRollback(childTask);
+        childTask.onChildTaskEventRollback(childTask);
     }
 
     @Override
     public void onComplete(DividableProgressTracker childTask) {
         parentTask.onChildTaskEventComplete(childTask);
+    }
+
+    @Override
+    public void onReleaseParent(DividableProgressTracker dividableProgressTracker) {
+        parentTask.removeChildTask(dividableProgressTracker);
     }
 
     @Override

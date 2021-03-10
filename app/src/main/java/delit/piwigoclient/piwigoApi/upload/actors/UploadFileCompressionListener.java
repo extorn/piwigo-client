@@ -9,7 +9,7 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 
-import delit.libs.util.progress.BasicProgressTracker;
+import delit.libs.util.progress.DividableProgressTracker;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileLocalErrorResponse;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoVideoCompressionProgressUpdateResponse;
@@ -20,17 +20,17 @@ public class UploadFileCompressionListener extends UploadActor implements VideoC
 
     private boolean compressionComplete;
     private Exception compressionError;
-    private BasicProgressTracker singleFileCompressionProgressTracker;
+    private DividableProgressTracker singleFileCompressionProgressTracker;
 
-    public UploadFileCompressionListener(@NonNull Context context, @NonNull UploadJob uploadJob, @NonNull ActorListener listener) {
+    public UploadFileCompressionListener(@NonNull Context context, @NonNull UploadJob uploadJob, @NonNull ActorListener listener, @NonNull DividableProgressTracker singleFileCompressionProgressTracker) {
         super(context, uploadJob, listener);
+        this.singleFileCompressionProgressTracker = singleFileCompressionProgressTracker;
     }
+
 
 
     @Override
     public void onCompressionStarted(Uri inputFile, Uri outputFile) {
-        // 95% of the compression is compressing the data. 5% is used later to calc a checksum. (search for use of getTaskProgressTrackerForSingleFileCompression)
-        singleFileCompressionProgressTracker = getUploadJob().getTaskProgressTrackerForSingleFileCompression(inputFile).addChildTask("compression", 100, 95);
     }
 
     @Override
@@ -64,7 +64,12 @@ public class UploadFileCompressionListener extends UploadActor implements VideoC
 
     @Override
     public void onCompressionError(Uri inputFile, Uri outputFile, Exception e) {
-        singleFileCompressionProgressTracker.markComplete();
+        if(getUploadJob().isAllowUploadOfRawVideosIfIncompressible()) {
+            //This is correct if can upload regardless because if rollback called, overall job progress will never meet 100%
+            singleFileCompressionProgressTracker.markComplete();
+        } else {
+            singleFileCompressionProgressTracker.releaseParent();
+        }
         compressionError = e;
         // wake the main upload thread.
         synchronized (this) {

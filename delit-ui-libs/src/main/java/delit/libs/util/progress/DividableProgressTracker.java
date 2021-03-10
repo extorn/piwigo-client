@@ -299,10 +299,27 @@ public class DividableProgressTracker extends BasicProgressTracker implements Pa
         return null;
     }
 
+    public void releaseParent() {
+        ProgressListener progressListener = getListener();
+        if(progressListener != null) {
+            if(progressListener instanceof ChildProgressListener) {
+                ((ChildProgressListener)progressListener).onReleaseParent(this);
+            }
+        } else {
+            Logging.log(Log.WARN, TAG, "rollback called on detached child task progress tracker: %1$s", getTaskName());
+        }
+    }
+
+    public void onChildTaskEventRollback(DividableProgressTracker basicProgressTracker) {
+        basicProgressTracker.onProgressChange();
+    }
+
     public interface ChildProgressListener extends ProgressListener {
 
         void onRollback(DividableProgressTracker childTask);
 
         void onComplete(DividableProgressTracker childTask);
+
+        void onReleaseParent(DividableProgressTracker dividableProgressTracker);
     }
 }

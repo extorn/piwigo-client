@@ -23,7 +23,7 @@ import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponse
 
 public class MyChunkUploadListener implements FileChunkUploaderActorThread.ChunkUploadListener {
 
-        private final FileChunkerActorThread chunkProducer;
+    private final FileChunkerActorThread chunkProducer;
     private final ActorListener listener;
     private final boolean filenamesAreUnique;
     private Map<Uri, BasicProgressTracker> chunkProgressTrackers;

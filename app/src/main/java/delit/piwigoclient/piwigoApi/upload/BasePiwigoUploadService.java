@@ -294,16 +294,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             new LocalFileNotHereCheckActor(this, thisUploadJob, listener).runCheck(fud);
         }
 
-        if (!fud.isProcessingFailed() && fud.needsUpload()) {
+        if (!fud.isProcessingFailed() && fud.isCompressionNeeded()) {
             FileCompressionActor fca = new FileCompressionActor(this, thisUploadJob, listener);
             fca.run(fud);
-            if(fca.isFileWasCompressed()) {
-                // file was compressed. It will need a checksum calculation running
-                //TODO track this progress in the job put inside the compression actor perhaps?
-                DividableProgressTracker tracker = thisUploadJob.getTaskProgressTrackerForSingleFileCompression(fud.getFileUri());
-                tracker = tracker.addChildTask("compressed checksum", 100, 5);
-                new ChecksumCalculationActor(this, thisUploadJob, listener).calculateChecksum(this, fud, tracker);
-            }
         }
 
         saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, listener);

@@ -30,6 +30,8 @@ public class ImageCompressor {
 
     public interface ImageCompressorListener {
         void onError(long jobId, PiwigoUploadFileLocalErrorResponse piwigoUploadFileLocalErrorResponse);
+
+        void onCompressionSuccess(DocumentFile compressedFile);
     }
 
     public ImageCompressor(Context context) {
@@ -137,6 +139,7 @@ public class ImageCompressor {
             listener.onError(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawImage, false, e));
             return null;
         }
+        listener.onCompressionSuccess(outputPhoto);
         return outputPhoto;
     }
 }

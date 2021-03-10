@@ -105,7 +105,7 @@ public class BasicProgressTracker implements Parcelable {
         return progressPercentage;
     }
 
-    private void onProgressChange() {
+    protected void onProgressChange() {
         onProgressChange(false);
     }
 
@@ -149,10 +149,6 @@ public class BasicProgressTracker implements Parcelable {
 
     public ProgressListener getListener() {
         return listener;
-    }
-
-    public void onChildTaskEventRollback(@NonNull DividableProgressTracker childTask) {
-        onProgressChange();
     }
 
     public void markComplete() {

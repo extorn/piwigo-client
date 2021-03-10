@@ -205,7 +205,7 @@ public class FileUploadDetails implements Parcelable {
         if (!compressFileBeforeUpload) {
             return false;
         } else {
-            return isStatusIn(NOT_STARTED, COMPRESSING);
+            return isStatusIn(NOT_STARTED, COMPRESSING) || compressedFileUri == null; //TODO this last null check is likely not needed
         }
     }
 
