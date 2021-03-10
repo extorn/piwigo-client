@@ -21,9 +21,7 @@ public abstract class FileUploadCancelMonitorThread extends Thread {
         setName("FileUploadCancelWatch");
         do {
             try {
-                synchronized (thisUploadJob) {
-                    thisUploadJob.wait();
-                }
+                thisUploadJob.waitUntilNotified();
             } catch (InterruptedException e) {
                 FileUploadDetails fud = thisUploadJob.getFileUploadDetails(uploadJobKey);
                 if(fud.isUploadCancelled()) {

@@ -216,9 +216,7 @@ public class FileChunkerActorThread extends Thread {
                 }
             }
         }
-        synchronized (thisUploadJob) {
-            thisUploadJob.notifyAll();
-        }
+        thisUploadJob.wakeAnyWaitingThreads();
     }
 
     private UploadFileChunk buildChunk(long chunkId, BufferedInputStream bis, String fileMimeType, long totalBytesInFile, long maxChunkSize, long totalChunkCount) throws IOException {

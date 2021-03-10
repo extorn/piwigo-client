@@ -23,7 +23,6 @@ import delit.piwigoclient.piwigoApi.upload.actors.ActorListener;
 import delit.piwigoclient.piwigoApi.upload.actors.ForegroundJobLoadActor;
 import delit.piwigoclient.piwigoApi.upload.actors.UploadNotificationManager;
 import delit.piwigoclient.ui.UploadActivity;
-import delit.piwigoclient.ui.events.ForegroundUploadFinishedEvent;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -40,7 +39,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     private static final String ACTION_STOP = "delit.piwigoclient.foregroundUpload.action.STOP";
 
     public ForegroundPiwigoUploadService() {
-        super(TAG);
+        super();
     }
 
     protected ActionsBroadcastReceiver buildActionBroadcastReceiver() {

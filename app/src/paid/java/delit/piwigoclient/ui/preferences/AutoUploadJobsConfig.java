@@ -61,7 +61,7 @@ public class AutoUploadJobsConfig {
         return getBooleanValue(c, R.string.preference_data_upload_automatic_upload_enabled_key, c.getResources().getBoolean(R.bool.preference_data_upload_automatic_upload_enabled_default));
     }
 
-    public boolean isUploadOnWirelessOnly(Context c) {
+    public boolean isUploadOnUnMeteredNetworkOnly(Context c) {
         return getBooleanValue(c, R.string.preference_data_upload_automatic_upload_wireless_only_key, c.getResources().getBoolean(R.bool.preference_data_upload_automatic_upload_wireless_only_default));
     }
 

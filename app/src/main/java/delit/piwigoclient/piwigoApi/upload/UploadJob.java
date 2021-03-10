@@ -345,10 +345,8 @@ public class UploadJob implements Parcelable {
         FileUploadDetails fud = getFileUploadDetails(f);
         boolean immediateCancelPossible = fud.isUploadProcessStarted();
         fud.setStatusUserCancelled();
-        synchronized (this) {
-            // any other threads waiting (watching the job should now wake and check for changes)
-            this.notifyAll();
-        }
+        // any other threads waiting (watching the job should now wake and check for changes)
+        wakeAnyWaitingThreads();
         return immediateCancelPossible;
     }
 
@@ -687,6 +685,18 @@ public class UploadJob implements Parcelable {
 
     public boolean isHasRunBefore() {
         return runAttempts > 0;
+    }
+
+    public void waitUntilNotified() throws InterruptedException {
+        synchronized (this) {
+            this.wait();
+        }
+    }
+
+    public void wakeAnyWaitingThreads() {
+        synchronized (this) {
+            this.notifyAll();
+        }
     }
 
     public static class ImageCompressionParams implements Parcelable {

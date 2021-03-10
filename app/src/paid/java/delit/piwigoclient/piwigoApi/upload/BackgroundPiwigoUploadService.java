@@ -2,22 +2,14 @@ package delit.piwigoclient.piwigoApi.upload;
 
 import android.app.ActivityManager;
 import android.app.IntentService;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
 import org.greenrobot.eventbus.EventBus;
@@ -38,6 +30,7 @@ import delit.piwigoclient.piwigoApi.upload.actor.BackgroundJobLoadActor;
 import delit.piwigoclient.piwigoApi.upload.actors.ActorListener;
 import delit.piwigoclient.piwigoApi.upload.actors.JobLoadActor;
 import delit.piwigoclient.piwigoApi.upload.actors.UploadNotificationManager;
+import delit.piwigoclient.piwigoApi.upload.network.NetworkUtils;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadCheckingForTasksEvent;
@@ -61,15 +54,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     private static final int JOB_ID = 10;
 
     private static volatile boolean terminateUploadServiceThreadAsap = false;
-    private BroadcastEventsListener networkStatusChangeListener;
     private static boolean starting;
     private long pauseThreadUntilSysTime;
     private static final int BACKGROUND_UPLOAD_NOTIFICATION_ID = 2;
-    private boolean hasInternetAccess;
-    private boolean isOnUnmeteredNetwork;
 
     public BackgroundPiwigoUploadService() {
-        super(TAG);
+        super();
         starting = false;
     }
 
@@ -155,7 +145,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
     /**
      * Call from e.g. a notification to pause the upload.
-     * @param context
+     * @param context an active context.
      */
     public static void pauseUploadService(@NonNull Context context) {
         Intent intent = new Intent();
@@ -200,14 +190,13 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
         Context context = getApplicationContext();
 
-        isOnUnmeteredNetwork = isConnectedToWireless(context);
-        hasInternetAccess = hasNetworkConnection(context);
+        NetworkUtils networkManager = new NetworkUtils();
 
         EventBus.getDefault().post(new BackgroundUploadThreadStartedEvent());
 
-        AutoUploadJobsConfig jobs = new AutoUploadJobsConfig(context);
+        AutoUploadJobsConfig autoUploadJobsConfig = new AutoUploadJobsConfig(context);
 
-        registerBroadcastReceiver(context, jobs);
+        networkManager.registerBroadcastReceiver(context, new UploadServiceNetworkListener(context, autoUploadJobsConfig));
 
         Map<Uri, UriWatcher> runningObservers = new HashMap<>();
 
@@ -218,10 +207,9 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             while (!terminateUploadServiceThreadAsap) {
 
                 EventBus.getDefault().post(new BackgroundUploadThreadCheckingForTasksEvent());
-
-                boolean canUpload = hasInternetAccess && (!jobs.isUploadOnWirelessOnly(context) || isOnUnmeteredNetwork);
+                boolean canUpload = networkManager.isOkayToUpload();
                 if(canUpload) {
-                    pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(context, jobs, runningObservers, jobListener);
+                    pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(context, autoUploadJobsConfig, runningObservers, jobListener);
                 }
                 sendServiceToSleep();
             }
@@ -229,7 +217,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             // unable to remove from keyset iterator hence the temporary list.
             removeAllContentObservers(runningObservers);
 
-            unregisterBroadcastReceiver(context);
+            networkManager.unregisterBroadcastReceiver(context);
             EventBus.getDefault().post(new BackgroundUploadThreadTerminatedEvent());
         }
     }
@@ -278,12 +266,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                     if (monitoringFolder != null && !runningObservers.containsKey(monitoringFolder.getUri())) {
                         // TODO get rid of the event processor thread and use the handler instead to minimise potential thread generation!
                         UriWatcher observer;
-                        if("file".equals(monitoringFolder.getUri().getScheme())) {
-                            observer = new BackgroundUploadInvokingFolderChangeObserver(this, new File(monitoringFolder.getUri().getPath()));
+                        Uri monitoredUri  = monitoringFolder.getUri();
+                        if("file".equals(monitoredUri.getScheme())) {
+                            observer = new BackgroundUploadInvokingFolderChangeObserver(this, new File(Objects.requireNonNull(monitoredUri.getPath())));
                         } else {
                             observer = new BackgroundUploadInvokingUriContentObserver(null, this, monitoringFolder.getUri());
                         }
-
 
                         runningObservers.put(observer.getWatchedUri(), observer);
                         observer.startWatching();
@@ -355,23 +343,6 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         jobConfig.saveFilesPreviouslyUploaded(getApplicationContext(), priorUploads);
     }
 
-    private void unregisterBroadcastReceiver(Context context) {
-        if(networkStatusChangeListener != null) {
-            context.unregisterReceiver(networkStatusChangeListener);
-        }
-    }
-
-    private void registerBroadcastReceiver(Context context, AutoUploadJobsConfig autoUploadJobsConfig) {
-
-        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            cm.registerDefaultNetworkCallback(new MyNetworkCallback(new MyNetworkListener(context, autoUploadJobsConfig)));
-        } else {
-            networkStatusChangeListener = new BroadcastEventsListener(new MyNetworkListener(context, autoUploadJobsConfig));
-            context.registerReceiver(networkStatusChangeListener, networkStatusChangeListener.getIntentFilter());
-        }
-    }
-
     @Override
     public void onJobReadyToUpload(Context c, UploadJob thisUploadJob) {
         AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
@@ -384,124 +355,10 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
     }
 
-    private static class BroadcastEventsListener extends BroadcastReceiver {
-
-        private final MyBroadcastEventListener listener;
-
-        public BroadcastEventsListener(MyBroadcastEventListener listener) {
-            this.listener = listener;
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(Intent.ACTION_USER_PRESENT.equals(intent.getAction())) {
-                handleDeviceUnlocked();
-            } else if(ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
-                handleNetworkStatusChanged(intent);
-            } else if(WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
-                handleWifiEvent(context, intent);
-            }
-        }
-
-        private void handleWifiEvent(Context context, Intent intent) {
-            boolean hasWifi = false;
-            boolean hasInternet = false;
-            NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-            if(networkInfo != null && networkInfo.isConnected()) {
-                // Wifi is connected
-                hasWifi = true;
-            }
-            final ConnectivityManager connMgr = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-            if(connMgr != null) {
-                networkInfo = connMgr.getActiveNetworkInfo();
-                hasInternet = networkInfo != null && networkInfo.isConnected();
-            }
-
-            listener.onNetworkChange(hasInternet, hasWifi);
-        }
-
-        private void handleDeviceUnlocked() {
-            listener.onDeviceUnlocked();
-        }
-
-        private void handleNetworkStatusChanged(Intent intent) {
-            boolean hasWifi = false;
-            boolean hasInternet;
-            NetworkInfo networkInfo =
-                    intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-            if(networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-                hasWifi = networkInfo.isConnected();
-            }
-            hasInternet = networkInfo != null && networkInfo.isConnected();
-            listener.onNetworkChange(hasInternet, hasWifi);
-        }
-
-        public IntentFilter getIntentFilter() {
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-            intentFilter.addAction("android.intent.action.USER_PRESENT");
-            return intentFilter;
-        }
-    }
-
     private void wakeIfPaused() {
         synchronized(this) {
             pauseThreadUntilSysTime = System.currentTimeMillis() - 1;
             notifyAll();
-        }
-    }
-
-    private boolean hasNetworkConnection(Context context) {
-        ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Network activeNetwork = Objects.requireNonNull(cm).getActiveNetwork();
-            networkInfo = cm.getNetworkInfo(activeNetwork);
-        } else {
-            networkInfo = Objects.requireNonNull(cm).getActiveNetworkInfo();
-        }
-        return networkInfo != null && networkInfo.isConnected();
-    }
-
-    private boolean isConnectedToWireless(Context context) {
-        ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Network activeNetwork = Objects.requireNonNull(cm).getActiveNetwork();
-            networkInfo = cm.getNetworkInfo(activeNetwork);
-        } else {
-            networkInfo = Objects.requireNonNull(cm).getActiveNetworkInfo();
-        }
-        if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-            return networkInfo.isConnected();
-        }
-        return false;
-    }
-
-    private interface MyBroadcastEventListener {
-        void onNetworkChange(boolean internetAccess, boolean unmeteredNet);
-
-        void onDeviceUnlocked();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private static class MyNetworkCallback extends ConnectivityManager.NetworkCallback {
-
-        private final MyBroadcastEventListener listener;
-
-        public MyNetworkCallback(MyBroadcastEventListener listener) {
-            this.listener = listener;
-        }
-
-        @Override
-        public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities networkCapabilities) {
-            super.onCapabilitiesChanged(network, networkCapabilities);
-            boolean unmeteredNet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED);
-            boolean internetAccess = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
-            listener.onNetworkChange(internetAccess, unmeteredNet);
         }
     }
 
@@ -530,32 +387,4 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
     }
 
-    private class MyNetworkListener implements MyBroadcastEventListener {
-        private final Context context;
-        private final AutoUploadJobsConfig autoUploadJobsConfig;
-
-        public MyNetworkListener(Context context, AutoUploadJobsConfig autoUploadJobsConfig) {
-            this.context = context;
-            this.autoUploadJobsConfig = autoUploadJobsConfig;
-        }
-
-        @Override
-        public void onNetworkChange(boolean internetAccess, boolean unmeteredNet) {
-            hasInternetAccess = internetAccess;
-            isOnUnmeteredNetwork = unmeteredNet;
-            if (hasInternetAccess && (!autoUploadJobsConfig.isUploadOnWirelessOnly(context) || isOnUnmeteredNetwork)) {
-//                BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(context);
-                wakeIfPaused();
-            } else {
-//                BackgroundPiwigoUploadService.sendActionPauseAnyRunningUpload(context);
-                cancelAnyRunningUploadJob();
-            }
-        }
-
-        @Override
-        public void onDeviceUnlocked() {
-//            BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(context);
-            wakeIfPaused();
-        }
-    }
 }

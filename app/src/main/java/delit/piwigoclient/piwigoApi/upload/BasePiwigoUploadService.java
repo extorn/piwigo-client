@@ -63,23 +63,13 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     private static final String TAG = "BaseUpldSvc";
     private UploadJob runningUploadJob = null;
-    private final String tag;
     private SharedPreferences prefs;
     private ActionsBroadcastReceiver actionsBroadcastReceiver;
     private UploadNotificationManager uploadNotificationManager;
 
-    public BasePiwigoUploadService(String tag) {
-        super(/*tag*/);
-        this.tag = tag;
-    }
-
     public UploadNotificationManager getUploadNotificationManager() {
         return uploadNotificationManager;
     }
-
-    
-
-    
 
     protected void actionKillService() {
         if (runningUploadJob != null) {
@@ -366,9 +356,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     @Subscribe(threadMode = ASYNC)
     public void onEvent(CancelFileUploadEvent event) {
         if(runningUploadJob.getJobId() == event.getJobId()) {
-            synchronized (runningUploadJob) {
-                runningUploadJob.notifyAll();
-            }
+            runningUploadJob.wakeAnyWaitingThreads();
         }
     }
 
