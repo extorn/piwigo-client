@@ -658,6 +658,19 @@ public class IOUtils {
         return "";
     }
 
+    private static String getDocumentPathFromPathElements(List<String> pathSegments) {
+        boolean capture = false;
+        for(String segment : pathSegments) {
+            if(capture) {
+                return segment;
+            }
+            if(segment.equals("document")) {
+                capture = true;
+            }
+        }
+        return "";
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static @NonNull DocumentFile getTreeLinkedDocFileO(Context context, Uri rootUri, Uri itemUri) {
         return getTreeLinkedDocFile(context, rootUri, itemUri, false);
@@ -691,7 +704,22 @@ public class IOUtils {
         String rootTree = getTreeBaseFromPathElements(rootPathSegments);
         String itemTree = getTreeBaseFromPathElements(itemPathSegments);
         if(rootTree.equals(itemTree)) {
-            return rootedDocFile;
+            try {
+                String document = getDocumentPathFromPathElements(itemPathSegments);
+                String[] path = document.replaceFirst(itemTree, "").split("/");
+                DocumentFile current = Objects.requireNonNull(rootedDocFile);
+                for (String filename : path) {
+                    DocumentFile found = current.findFile(filename);
+                    if (found != null) {
+                        current = found;
+                    }
+                }
+                return current;
+            } catch(RuntimeException e) {
+                Logging.log(Log.ERROR,TAG, "Another unexpected issue with Uris");
+                Logging.recordException(e);
+                return rootedDocFile;
+            }
         }
         String extraRoot = rootTree.replaceAll("^" + itemTree, "");
         if (rootTree.equals(extraRoot)) {
