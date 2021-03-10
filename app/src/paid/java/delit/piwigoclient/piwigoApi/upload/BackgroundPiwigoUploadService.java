@@ -26,6 +26,7 @@ import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.upload.action.BackgroundUploadNotificationManager;
 import delit.piwigoclient.piwigoApi.upload.actor.BackgroundJobLoadActor;
 import delit.piwigoclient.piwigoApi.upload.actors.ActorListener;
 import delit.piwigoclient.piwigoApi.upload.actors.JobLoadActor;
@@ -56,7 +57,6 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     private static volatile boolean terminateUploadServiceThreadAsap = false;
     private static boolean starting;
     private long pauseThreadUntilSysTime;
-    private static final int BACKGROUND_UPLOAD_NOTIFICATION_ID = 2;
 
     public BackgroundPiwigoUploadService() {
         super();
@@ -82,29 +82,19 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
     @Override
     protected UploadNotificationManager buildUploadNotificationManager() {
-        return new UploadNotificationManager(this) {
-            @Override
-            public int getNotificationId() {
-                return BACKGROUND_UPLOAD_NOTIFICATION_ID;
-            }
-
-            @Override
-            protected String getNotificationTitle() {
-                return getString(R.string.notification_title_background_upload_service);
-            }
-        };
+        return new BackgroundUploadNotificationManager(this);
     }
 
     public static void sendActionKillService(Context context) {
-        Intent intent = new Intent();
-        intent.setAction(ACTION_STOP);
+        Intent intent = new Intent(ACTION_STOP);
+        intent.setPackage(context.getPackageName());
         context.sendBroadcast(intent);
     }
 
     @Override
-    protected ActionsBroadcastReceiver buildActionBroadcastReceiver() {
+    protected UploadActionsBroadcastReceiver<?> buildActionBroadcastReceiver() {
         // adds a few extra commands (pause resume - used for WIFI / non wifi)
-        return new BackgroundActionsBroadcastReceiver();
+        return new BackgroundActionsBroadcastReceiver(this);
     }
 
     @Override
@@ -138,8 +128,8 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     }
 
     public static void sendActionResume(@NonNull Context context) {
-        Intent intent = new Intent();
-        intent.setAction(ACTION_WAKE);
+        Intent intent = new Intent(ACTION_WAKE);
+        intent.setPackage(context.getPackageName());
         context.getApplicationContext().sendBroadcast(intent);
     }
 
@@ -148,8 +138,8 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
      * @param context an active context.
      */
     public static void sendActionPauseUpload(@NonNull Context context) {
-        Intent intent = new Intent();
-        intent.setAction(ACTION_PAUSE);
+        Intent intent = new Intent(ACTION_PAUSE);
+        intent.setPackage(context.getPackageName());
         context.getApplicationContext().sendBroadcast(intent);
     }
 
@@ -361,17 +351,17 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
     }
 
-    private class BackgroundActionsBroadcastReceiver extends ActionsBroadcastReceiver {
-        public BackgroundActionsBroadcastReceiver() {
-            super(ACTION_STOP);
+    public static class BackgroundActionsBroadcastReceiver extends UploadActionsBroadcastReceiver<BackgroundPiwigoUploadService> {
+        public BackgroundActionsBroadcastReceiver(BackgroundPiwigoUploadService service) {
+            super(service, ACTION_STOP);
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
             if (ACTION_WAKE.equals(intent.getAction())) {
-                wakeIfPaused();
+                getService().wakeIfPaused();
             } else if (ACTION_PAUSE.equals(intent.getAction())) {
-                cancelAnyRunningUploadJob();
+                getService().cancelAnyRunningUploadJob();
             }
             super.onReceive(context, intent);
         }

@@ -146,18 +146,17 @@
                 * Forse una riscrittura completa del processo di caricamento in quanto non si presta a essere migliorato iterativamente
                 * Possibilmente una riscrittura completa dell\'app con un focus sulla semplicità per la navigazione utente generale inizialmente"</item>
         
-        <item>1.4.0.134</item>
-        <item>"Modificare:
-                 - Analisi del miglioramento delle prestazioni e, si spera, implementazione per la velocità di trasferimento dei dati di caricamento"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.133</item>
         <item>"Modificare:
-                 - Consiglia vivamente di ottenere questo aggiornamento se carichi utilizzando l\'app.
+                 - Consiglia vivamente di ottenere questo aggiornamento, certamente se carichi i file utilizzando l\'app.
                  - Riscrivi il codice di caricamento (per lo più invisibile per lo più invisibile). Letture CodeBase per il miglioramento delle prestazioni
+                 - Implementazione del miglioramento delle prestazioni per vasta boost di trasferimento dei dati di upload
                 Risoluzione del problema:
                  - Corregge fastidiosi bug nelle uscite recenti
-                 - Bug quirky nell\'utente ui"</item>
+                 - Bug quirky nell\'utente ui
+                 - Altri bug assortiti"</item>
         <item>1.4.0.132</item>
         <item>"Modificare:
                  - Non insistere sulla creazione di un link profondo per un utente in salvataggio"</item>

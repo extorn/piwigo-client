@@ -1,7 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload;
 
 import android.app.IntentService;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -17,12 +15,11 @@ import java.util.HashMap;
 
 import delit.libs.core.util.Logging;
 import delit.piwigoclient.BuildConfig;
-import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.upload.action.ForegroundUploadNotificationManager;
 import delit.piwigoclient.piwigoApi.upload.actors.ActorListener;
 import delit.piwigoclient.piwigoApi.upload.actors.ForegroundJobLoadActor;
 import delit.piwigoclient.piwigoApi.upload.actors.UploadNotificationManager;
-import delit.piwigoclient.ui.UploadActivity;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -34,16 +31,22 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     public static final String INTENT_ARG_JOB_ID = "jobId";
     private static final String TAG = "PwgCli:FgUpldSvc";
     private static final String ACTION_UPLOAD_FILES = "delit.piwigoclient.foregroundUpload.action.ACTION_UPLOAD_FILES";
-    private static final int FOREGROUND_UPLOAD_NOTIFICATION_ID = 3;
     private static final int JOB_ID = 20;
-    private static final String ACTION_STOP = "delit.piwigoclient.foregroundUpload.action.STOP";
+    public static final String ACTION_STOP = "delit.piwigoclient.foregroundUpload.action.STOP";
 
     public ForegroundPiwigoUploadService() {
         super();
     }
 
-    protected ActionsBroadcastReceiver buildActionBroadcastReceiver() {
-        return new ActionsBroadcastReceiver(ACTION_STOP);
+    protected UploadActionsBroadcastReceiver<?> buildActionBroadcastReceiver() {
+        return new ForegroundUploadActionsBroadcastReceiver(this);
+    }
+
+    public static class ForegroundUploadActionsBroadcastReceiver extends UploadActionsBroadcastReceiver<ForegroundPiwigoUploadService> {
+
+        public ForegroundUploadActionsBroadcastReceiver(@NonNull ForegroundPiwigoUploadService service) {
+            super(service, ACTION_STOP);
+        }
     }
 
     /**
@@ -102,31 +105,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
 
     @Override
     protected UploadNotificationManager buildUploadNotificationManager() {
-        return new UploadNotificationManager(this) {
-            @Override
-            public int getNotificationId() {
-                return FOREGROUND_UPLOAD_NOTIFICATION_ID;
-            }
-
-            @Override
-            protected String getNotificationTitle() {
-                return getString(R.string.notification_title_foreground_upload_service);
-            }
-
-            @Override
-            protected NotificationCompat.Builder buildNotification(String text) {
-                NotificationCompat.Builder builder = super.buildNotification(text);
-                Intent contentIntent = new Intent(getContext(), UploadActivity.class);
-                Intent cancelIntent = new Intent();
-                cancelIntent.setAction(ForegroundPiwigoUploadService.ACTION_STOP);
-                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                // add a cancel button to cancel the upload if clicked
-                builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel_black, getString(R.string.button_cancel), pendingIntent));
-                // open the upload activity if notification clicked
-                builder.setContentIntent(PendingIntent.getActivity(getContext(), 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
-                return builder;
-            }
-        };
+        return new ForegroundUploadNotificationManager(this);
     }
 
     @Override
@@ -162,4 +141,5 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
             }
         };
     }
+
 }

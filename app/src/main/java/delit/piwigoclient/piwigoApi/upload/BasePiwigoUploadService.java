@@ -72,7 +72,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     private static final String TAG = "BaseUpldSvc";
     private UploadJob runningUploadJob = null;
     private SharedPreferences prefs;
-    private ActionsBroadcastReceiver actionsBroadcastReceiver;
+    private UploadActionsBroadcastReceiver actionsBroadcastReceiver;
     private UploadNotificationManager uploadNotificationManager;
 
     public UploadNotificationManager getUploadNotificationManager() {
@@ -282,7 +282,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         super.onDestroy();
     }
 
-    protected abstract ActionsBroadcastReceiver buildActionBroadcastReceiver();
+    protected abstract UploadActionsBroadcastReceiver<?> buildActionBroadcastReceiver();
 
     private void doUploadFilesInJob(JobLoadActor jobLoadActor, UploadJob thisUploadJob, ArrayList<CategoryItemStub> availableAlbumsOnServer, ActorListener listener) throws JobUnableToContinueException {
         thisUploadJob.buildTaskProgressTrackerForOverallCompressionAndUploadOfData(this);
@@ -441,18 +441,24 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         void onJobReadyToUpload(Context c, UploadJob thisUploadJob);
     }
 
-    protected class ActionsBroadcastReceiver extends BroadcastReceiver {
+    public static class UploadActionsBroadcastReceiver<T extends BasePiwigoUploadService> extends BroadcastReceiver {
 
         private final String stopAction;
+        private final T service;
 
-        public ActionsBroadcastReceiver(@NonNull String stopAction) {
+        public UploadActionsBroadcastReceiver(@NonNull T service, @NonNull String stopAction) {
             this.stopAction = stopAction;
+            this.service = service;
+        }
+
+        public T getService() {
+            return service;
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
             if (stopAction.equals(intent.getAction())) {
-                actionKillService();
+                service.actionKillService();
             }
         }
 
