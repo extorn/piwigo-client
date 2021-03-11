@@ -549,8 +549,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="connection_reset_warning_pattern">Der Server hat die Verbindung%1$d Mal in den letzten%2$d Minuten geschlossen. Dies könnte auf ein Problem mit Ihrer Serverkonfiguration hinweisen.</string>
     <string name="content_description_icon">Symbol</string>
     <string name="duplicates_ignored_pattern">%1$d Duplikate wurden ignoriert.</string>
-    <string name="alert_msg_using_fallback_piwigo_method_pattern">Die Piwigo WS-Methode%1$s ist auf diesem Server nicht mehr verfügbar, und der Fallback%2$s wurde verwendet. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
-    <string name="alert_msg_piwigo_method_not_available_pattern">Die Piwigo WS-Methode%1$s ist auf diesem Server nicht mehr verfügbar. Deaktivieren der betroffenen Funktionalität in der App. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">Das PIWIGO WS-Verfahren%1$s ist auf diesem Server nicht mehr verfügbar, und die Fallback%2$s wurden verwendet. Haben Sie ein Server-Plugin gerade deaktiviert oder gelöscht?</string>
+    <string name="alert_msg_piwigo_method_not_available_pattern">Das PIWIGO WS-Verfahren%1$s ist auf diesem Server nicht mehr verfügbar. Deaktivieren der betroffenen Funktionalität in der App. Haben Sie ein Server-Plugin gerade deaktiviert oder gelöscht?</string>
     <string name="removing_favorite">Favorit entfernen</string>
     <string name="adding_favorite">Favorit hinzufügen</string>
     <string name="alert_error_unsupported_features_pattern">Einige Funktionen, die diese App unterstützt, sind auf Ihrem Server nicht verfügbar. Ermöglichen:\n1. Installieren Sie das PiwigoClientWsExts-Plugin.\n2.Loggen Sie sich in dieser App aus und wieder ein.\n\nSie werden in einer Woche daran erinnert.</string>
@@ -722,6 +722,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_job_stopped_by_user">Upload wird vom Benutzer gestoppt</string>
     <string name="upload_error_server_resource_not_yet_retrieved">Piwigo-Ressource wurde noch nicht abgerufen. Es kann nicht mit Details wie Name, Berechtigungen, Albummitgliedschaft konfiguriert werden</string>
     <string name="upload_error_server_resource_not_retrieved_repaired">Die Serverressource wurde nach dem Hochladen der Dateiinhalte nicht korrekt abgerufen. Es wurde ein Versuch unternommen, mit diesem Problem umzugehen, aber es funktioniert möglicherweise nicht.</string>
-    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Der letzte Teil der Dateidaten wurde für die Datei hochgeladen, der Server konnte jedoch keine Ressourcenkennung bereitgestellt. Es könnte abgerufen werden.</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Der letzte Teil der Dateidaten wurde für die Datei hochgeladen, der Server konnte jedoch keine Ressourcenkennung bereitgestellt. Es könnte abrufbar sein.</string>
     <string name="checking_uri_permissions">Aktualisieren von Datensätzen von Dateiberechtigungen</string>
 </resources>

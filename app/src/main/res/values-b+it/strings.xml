@@ -549,8 +549,8 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="connection_reset_warning_pattern">Il server ha chiuso la connessione%1$d volte negli ultimi%2$d minuti. Ciò potrebbe indicare un problema con la configurazione del server.</string>
     <string name="content_description_icon">icona</string>
     <string name="duplicates_ignored_pattern">%1$d duplicati sono stati ignorati.</string>
-    <string name="alert_msg_using_fallback_piwigo_method_pattern">Il metodo Piwigo WS%1$s non è più disponibile su questo server ed è stato utilizzato il fallback%2$s. Hai appena disattivato o eliminato un plug-in del server?</string>
-    <string name="alert_msg_piwigo_method_not_available_pattern">Il metodo Piwigo WS%1$s non è più disponibile su questo server. Disattivazione della funzionalità interessata nell\'app. Hai appena disattivato o eliminato un plug-in del server?</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">Il metodo Piwigo WS%1$s non è più disponibile su questo server e il fallback%2$s è stato utilizzato. Hai appena disattivato o cancellato un plug-in server?</string>
+    <string name="alert_msg_piwigo_method_not_available_pattern">Il metodo PIWIGO WS%1$s non è più disponibile su questo server. Disabilitazione della funzionalità interessata nell\'app. Hai appena disattivato o cancellato un plug-in server?</string>
     <string name="removing_favorite">Rimozione dei preferiti</string>
     <string name="adding_favorite">Aggiunta di preferiti</string>
     <string name="alert_error_unsupported_features_pattern">Alcune funzionalità supportate da questa app non sono disponibili sul tuo server. Abilitare:\n1. Installa il plugin PiwigoClientWsExts.\n2. Esci e accedi nuovamente a questa app.\n\nTi verrà ricordato tra una settimana.</string>
@@ -722,6 +722,6 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="upload_job_stopped_by_user">Carica interrotto dall\'utente</string>
     <string name="upload_error_server_resource_not_yet_retrieved">La risorsa PIWIGO non è stata ancora recuperata. Impossibile configurarlo con dettagli come nome, autorizzazioni, abbonamento dell\'album</string>
     <string name="upload_error_server_resource_not_retrieved_repaired">La risorsa del server non è stata recuperata correttamente dopo che il contenuto del file è stato caricato. È stato fatto un tentativo di gestire questo problema, ma potrebbe non funzionare.</string>
-    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">L\'ultimo blocco di dati dei file è stato caricato per il file, ma il server non è riuscito a fornire un identificatore di risorse. Potrebbe essere recuperato.</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">L\'ultimo blocco di dati dei file è stato caricato per il file, ma il server non è riuscito a fornire un identificatore di risorse. Potrebbe essere recuperabile.</string>
     <string name="checking_uri_permissions">Aggiornamento dei record delle autorizzazioni dei file</string>
 </resources>

@@ -549,8 +549,8 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="connection_reset_warning_pattern">服务器在过去%2$d分钟内已关闭连接%1$d次。这可能表明您的服务器配置有问题。</string>
     <string name="content_description_icon">图标</string>
     <string name="duplicates_ignored_pattern">已忽略%1$d个重复项。</string>
-    <string name="alert_msg_using_fallback_piwigo_method_pattern">Piwigo WS方法%1$s在此服务器上不再可用，并且已使用后备%2$s。您刚刚停用或删除了服务器插件吗？</string>
-    <string name="alert_msg_piwigo_method_not_available_pattern">Piwigo WS方法%1$s在此服务器上不再可用。在应用程序中禁用受影响的功能。您刚刚停用或删除了服务器插件吗？</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">PIWIGO WS方法%1$S在此服务器上不再可用，并使用了倒退%2$s。 您是否刚刚停用或删除了服务器插件？</string>
+    <string name="alert_msg_piwigo_method_not_available_pattern">PIWIGO WS方法%1$S在此服务器上不再可用。 在应用程序中禁用受影响的功能。 您是否刚刚停用或删除了服务器插件？</string>
     <string name="removing_favorite">删除收藏夹</string>
     <string name="adding_favorite">加入收藏</string>
     <string name="alert_error_unsupported_features_pattern">此应用程序支持的某些功能在您的服务器上不可用。 启用：\n1.安装PiwigoClientWsExts插件。\n2.注销并重新登录此应用程序。\n\n我们会在一周内提醒您。</string>
@@ -722,6 +722,6 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="upload_job_stopped_by_user">上传用户停止</string>
     <string name="upload_error_server_resource_not_yet_retrieved">piwigo资源尚未检索。 无法使用姓名，权限，相册成员资格等详细信息配置</string>
     <string name="upload_error_server_resource_not_retrieved_repaired">上载文件内容后未正确检索服务器资源。 已经尝试处理这个问题，但它可能无法正常工作。</string>
-    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">文件数据的最后一块块为文件上载，但服务器无法提供资源标识符。 它可能是可索取的。</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">文件数据的最后一块块为文件上载，但服务器无法提供资源标识符。 它可能是可检索的。</string>
     <string name="checking_uri_permissions">更新文件权限的记录</string>
 </resources>

@@ -549,8 +549,8 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="connection_reset_warning_pattern">サーバーは、過去%2$d分間に接続を%1$d回閉じました。これは、サーバー構成に問題があることを示している可能性があります。</string>
     <string name="content_description_icon">アイコン</string>
     <string name="duplicates_ignored_pattern">%1$dの重複は無視されました。</string>
-    <string name="alert_msg_using_fallback_piwigo_method_pattern">Piwigo WSメソッド%1$sはこのサーバーでは使用できなくなり、フォールバック%2$sが使用されました。サーバープラグインを非アクティブ化または削除しましたか？</string>
-    <string name="alert_msg_piwigo_method_not_available_pattern">Piwigo WSメソッド%1$sは、このサーバーでは使用できなくなりました。アプリの影響を受ける機能を無効にします。サーバープラグインを非アクティブ化または削除しましたか？</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">Piwigo WSメソッド%1$Sはこのサーバーでは利用できなくなり、フォールバック%2$Sが使用されています。 サーバープラグインを無効にしたり削除しただけですか？</string>
+    <string name="alert_msg_piwigo_method_not_available_pattern">Piwigo WSメソッド%1$Sはこのサーバーでは利用できなくなりました。 アプリ内の影響を受ける機能を無効にします。 サーバープラグインを無効にしたり削除しただけですか？</string>
     <string name="removing_favorite">お気に入りを削除する</string>
     <string name="adding_favorite">お気に入りの追加</string>
     <string name="alert_error_unsupported_features_pattern">このアプリがサポートする一部の機能は、サーバーでは利用できません。 有効にする：\n1.PiwigoClientWsExtsプラグインをインストールします。\n2.このアプリからログアウトして再度ログインします。\n\n1週間以内に通知されます。</string>

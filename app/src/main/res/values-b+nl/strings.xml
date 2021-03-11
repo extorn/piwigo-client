@@ -549,8 +549,8 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="connection_reset_warning_pattern">De server heeft de verbinding%1$d keer verbroken in de afgelopen%2$d minuten. Dit kan duiden op een probleem met uw serverconfiguratie.</string>
     <string name="content_description_icon">icoon</string>
     <string name="duplicates_ignored_pattern">%1$d duplicaten zijn genegeerd.</string>
-    <string name="alert_msg_using_fallback_piwigo_method_pattern">De Piwigo WS-methode%1$s is niet langer beschikbaar op deze server en de fallback%2$s is gebruikt. Heeft u zojuist een server-plug-in uitgeschakeld of verwijderd?</string>
-    <string name="alert_msg_piwigo_method_not_available_pattern">De Piwigo WS-methode%1$s is niet langer beschikbaar op deze server. Betrokken functionaliteit in de app uitschakelen. Heeft u zojuist een server-plug-in uitgeschakeld of verwijderd?</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">De PIWIGO WS-methode%1$s is niet langer beschikbaar op deze server en de fallback%2$s is gebruikt. Heb je net een server-plug-in gedeactiveerd of verwijderd?</string>
+    <string name="alert_msg_piwigo_method_not_available_pattern">De PIWIGO WS-methode%1$S is niet langer beschikbaar op deze server. Het uitschakelen van de getroffen functionaliteit in de app. Heb je net een server-plug-in gedeactiveerd of verwijderd?</string>
     <string name="removing_favorite">Favoriet verwijderen</string>
     <string name="adding_favorite">Favoriet toevoegen</string>
     <string name="alert_error_unsupported_features_pattern">Sommige functies die deze app ondersteunt, zijn niet beschikbaar op uw server. In staat te stellen:\n1. Installeer de PiwigoClientWsExts-plug-in.\n2. Log uit en weer in op deze app.\n\nBinnen een week wordt u eraan herinnerd.</string>
@@ -722,6 +722,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="upload_job_stopped_by_user">Upload gestopt door gebruiker</string>
     <string name="upload_error_server_resource_not_yet_retrieved">Piwigo Resource is nog niet opgehaald. Kan het niet configureren met details zoals naam, machtigingen, albumlidmaatschap</string>
     <string name="upload_error_server_resource_not_retrieved_repaired">De serverresource is niet correct opgehaald nadat de inhoud van het bestand is geüpload. Er is een poging gedaan om met dit probleem aan te pakken, maar het werkt misschien niet.</string>
-    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Het laatste deel van bestandsgegevens werd geüpload voor het bestand, maar de server kan een resource-identifier niet bieden. Het kan ophalen.</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Het laatste deel van bestandsgegevens werd geüpload voor het bestand, maar de server kan een resource-identifier niet bieden. Het kan worden teruggevorderd.</string>
     <string name="checking_uri_permissions">Het bijwerken van records van vastgehouden bestandsmachtigingen</string>
 </resources>
