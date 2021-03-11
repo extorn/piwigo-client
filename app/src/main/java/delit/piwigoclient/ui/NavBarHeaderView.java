@@ -127,16 +127,24 @@ public class NavBarHeaderView<V extends NavBarHeaderView<V,VUIH>, VUIH extends V
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        if(isInEditMode()) {
+            // android studio preview
+            return;
+        }
         configureUiHelper();
         updateServerConnectionDetails();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if(uiHelper != null) {
-            uiHelper.deregisterFromActiveServiceCalls();
+        if(!isInEditMode()) {
+            // NOT in android studio preview
+
+            if (uiHelper != null) {
+                uiHelper.deregisterFromActiveServiceCalls();
+            }
+            EventBus.getDefault().unregister(this);
         }
-        EventBus.getDefault().unregister(this);
         super.onDetachedFromWindow();
     }
 

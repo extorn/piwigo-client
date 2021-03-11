@@ -56,6 +56,9 @@ public class MainActivityDrawerNavigationView extends BaseActivityDrawerNavigati
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if(isInEditMode()) {
+            return false;
+        }
         int itemId = item.getItemId();
         if (itemId == R.id.nav_lock) {
             showLockDialog();
@@ -74,14 +77,18 @@ public class MainActivityDrawerNavigationView extends BaseActivityDrawerNavigati
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
+        if(!isInEditMode()) {
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
         }
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        EventBus.getDefault().unregister(this);
+        if(!isInEditMode()) {
+            EventBus.getDefault().unregister(this);
+        }
         super.onDetachedFromWindow();
     }
 
