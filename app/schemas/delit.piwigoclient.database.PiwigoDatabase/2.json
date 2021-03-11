@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "78f761bf8a78814a68bb5839a6265e0e",
+    "identityHash": "58b052eeb4fb5799f5e09dbdf4838e34",
     "entities": [
       {
         "tableName": "PriorUpload",
@@ -80,14 +80,31 @@
           ],
           "autoGenerate": false
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_UploadDestinationPriorUploadCrossRef_uri",
+            "unique": false,
+            "columnNames": [
+              "uri"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_UploadDestinationPriorUploadCrossRef_uri` ON `${TABLE_NAME}` (`uri`)"
+          },
+          {
+            "name": "index_UploadDestinationPriorUploadCrossRef_uploadToKey",
+            "unique": false,
+            "columnNames": [
+              "uploadToKey"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_UploadDestinationPriorUploadCrossRef_uploadToKey` ON `${TABLE_NAME}` (`uploadToKey`)"
+          }
+        ],
         "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '78f761bf8a78814a68bb5839a6265e0e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '58b052eeb4fb5799f5e09dbdf4838e34')"
     ]
   }
 }
