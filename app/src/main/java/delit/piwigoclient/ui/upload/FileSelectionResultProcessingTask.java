@@ -118,7 +118,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
             DividableProgressTracker uriPermissionsProgressTracker = fileSelectionProgress.addChildTask("Checking file type and uri permissions", itemCount, 9);
             // Phase 1.2 (0%) check for appropriate Uri Permissions
             Iterator<FolderItem> iter = selectedFolderItems.iterator();
-            int missingPermissions = 0;
+            int filesMissingPermissionsCount = 0;
             while (iter.hasNext()) {
                 FolderItem f = iter.next();
                 if (f.getExt() == null || (!allowedFileTypes.contains(f.getExt()) && !allowedFileTypes.contains(f.getExt().toLowerCase()))) {
@@ -129,7 +129,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
                     }
                 }
                 if(!IOUtils.appHoldsAllUriPermissionsForUri(getContext(), f.getContentUri(), IOUtils.URI_PERMISSION_READ)) {
-                    missingPermissions++;
+                    filesMissingPermissionsCount++;
                 }
                 uriPermissionsProgressTracker.incrementWorkDone(1);
             }
@@ -140,8 +140,13 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
                 String msg = getOwner().getString(R.string.alert_error_unsupported_file_extensions_pattern, CollectionUtils.toCsvList(unsupportedExts));
                 DisplayUtils.postOnUiThread(() ->getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg));
             }
-            if (missingPermissions > 0) {
-                String msg = getContext().getString(R.string.alert_error_files_without_permissions_pattern, missingPermissions);
+            if (filesMissingPermissionsCount > 0) {
+                String msg;
+                if(filesMissingPermissionsCount == selectedFolderItems.size()) {
+                    msg = getContext().getString(R.string.alert_error_files_without_permissions);
+                } else {
+                    msg = getContext().getString(R.string.alert_error_files_without_permissions_pattern, filesMissingPermissionsCount);
+                }
                 DisplayUtils.postOnUiThread(() ->getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, msg));
             }
         }

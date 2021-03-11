@@ -267,7 +267,7 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
         v.setFitsSystemWindows(!hasFocus);
 
         if (hasFocus) {
-            DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
+            boolean changed = DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
             Logging.log(Log.ERROR, TAG, "hiding status bar!");
         } else {
             Logging.log(Log.ERROR, TAG, "showing status bar!");

@@ -222,6 +222,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 overallJobProgressTracker.incrementWorkDone(UploadJob.WORK_DIVISION_DELETE_TEMP_FOLDER);
 
                 if(thisUploadJob.getFilesWithoutFurtherActionNeeded().size() == thisUploadJob.getFilesForUpload().size()) {
+                    // nothing more to do.
                     thisUploadJob.setStatusFinished();
                     EventBus.getDefault().post(new AlbumAlteredEvent(thisUploadJob.getUploadToCategory().getId()));
                 }
@@ -244,6 +245,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     jobLoadActor.saveStateToDisk(thisUploadJob);
                 } else {
                     jobLoadActor.deleteStateFromDisk(thisUploadJob, deleteJobConfigFileOnSuccess);
+                    if(!deleteJobConfigFileOnSuccess) {
+                        jobLoadActor.saveStateToDisk(thisUploadJob);
+                    }
                 }
             }
 

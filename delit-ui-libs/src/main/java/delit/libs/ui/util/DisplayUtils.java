@@ -334,11 +334,11 @@ public class DisplayUtils {
         runOnUiThread(runnable, false);
     }
 
-    public static void setUiFlags(FragmentActivity activity, boolean showNavButtons, boolean showStatusBar) {
+    public static boolean setUiFlags(FragmentActivity activity, boolean showNavButtons, boolean showStatusBar) {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             Logging.log(Log.DEBUG, TAG, "Unable to go fullscreen on old versions of android");
-            return;
+            return false;
         }
         if (activity.hasWindowFocus()) {
             // Enables regular immersive mode.
@@ -371,11 +371,12 @@ public class DisplayUtils {
             }
             if(currentFlags != uiFlags) {
                 decorView.setSystemUiVisibility(uiFlags);
+                return true;
             }
 //            decorView.setOnSystemUiVisibilityChangeListener(new SystemUiVisibilityChangeListener(decorView, uiFlags));
         }
 
-
+        return false;
     }
 
     public static Context updateContext(Context context, Locale locale) {

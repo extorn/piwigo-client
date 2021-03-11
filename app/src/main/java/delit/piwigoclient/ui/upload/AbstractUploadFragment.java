@@ -739,6 +739,11 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         }
 
         UploadJob job = getActiveJob(requireContext());
+        if(job != null && job.hasJobCompletedAllActionsSuccessfully()) {
+            Logging.log(Log.WARN, TAG, "Removing Foreground job. Incorrectly hasn't been deleted after success");
+            new ForegroundJobLoadActor(requireContext()).removeJob(job, true);
+            job = null;
+        }
         updateUiUploadStatusFromJobIfRun(job);
     }
 

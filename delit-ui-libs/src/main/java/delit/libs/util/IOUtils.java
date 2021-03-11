@@ -619,6 +619,9 @@ public class IOUtils {
      */
     public static @Nullable DocumentFile getTreeLinkedDocFile(@NonNull Context context, @NonNull Uri rootUri, @NonNull Uri itemUri, boolean quiet) {
         if(itemUri.getScheme() == null || itemUri.getAuthority() == null || !(itemUri.getScheme().equals(rootUri.getScheme()) && itemUri.getAuthority().equals(rootUri.getAuthority()))) {
+            if(quiet) {
+                return null;
+            }
             Logging.log(Log.WARN, TAG, "Something went badly wrong here! Uri not child of Uri:\n%1$s\n%2$s", itemUri, rootUri);
             throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
         }

@@ -119,18 +119,20 @@ public class FileSelectActivity<A extends FileSelectActivity<A, AUIH>, AUIH exte
             return; // don't mess with the status bar
         }
 
-        View v = getWindow().getDecorView();
-        v.setFitsSystemWindows(!hasFocus);
-
+        boolean changed = false;
         if (hasFocus) {
-            DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
+            changed = DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
             Logging.log(Log.ERROR, TAG, "hiding status bar!");
+            View v = getWindow().getDecorView();
+            v.setFitsSystemWindows(AppPreferences.isAlwaysShowNavButtons(prefs, this) && AppPreferences.isAlwaysShowStatusBar(prefs, this));
+            v.requestApplyInsets();
         } else {
             Logging.log(Log.ERROR, TAG, "showing status bar!");
         }
 
-        v.requestApplyInsets();
-        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
+        if(changed) {
+            EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
+        }
     }
 
     private void showFileSelectFragment() {
