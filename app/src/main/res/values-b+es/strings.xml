@@ -680,7 +680,8 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="downloads_menu_title">Descargas</string>
     <string name="view_exported_files">Ver archivos exportados</string>
     <string name="generating_upload_job">Configuración de Cargar trabajo con su selección</string>
-    <string name="alert_error_files_without_permissions_pattern">No se proporcionaron permisos Uri para todos los archivos. Aquellos que no lo tengan no se cargarán si el trabajo se detiene y luego se reanuda (por ejemplo, mediante la administración de energía de Android). Para evitar este problema, seleccione los archivos para cargar desde esta aplicación si es posible. Archivos afectados:%1$d.</string>
+    <string name="alert_error_files_without_permissions">Los permisos de URI no se proporcionaron para los archivos por la aplicación que compartió. La carga puede continuar, pero si el trabajo está en pausa y luego se reanudó (por ejemplo, por administración de energía de Android), estos archivos ya no serán adquiridos. Para evitar este problema, seleccione Archivos para cargar usando esta aplicación si es posible.</string>
+    <string name="alert_error_files_without_permissions_pattern">Los permisos de URI no se proporcionaron para todos los archivos. Aquellos sin que no se cargarán si el trabajo se detiene y luego se reanudó (por ejemplo, por la administración de energía de Android). Para evitar este problema, seleccione Archivos para cargar usando esta aplicación si es posible. Archivos afectados:%1$d.</string>
     <string name="button_compress">Comprimir</string>
     <string name="unable_to_compress_without_data">No se puede comprimir sin la configuración</string>
     <string name="video_compression_settings_invalid">La configuración de compresión de video no es válida. Por favor revisa e intenta de nuevo.</string>

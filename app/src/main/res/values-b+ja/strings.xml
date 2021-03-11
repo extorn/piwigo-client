@@ -680,7 +680,8 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="downloads_menu_title">ダウンロード</string>
     <string name="view_exported_files">エクスポートされたファイルを表示する</string>
     <string name="generating_upload_job">選択したアップロードジョブの構成</string>
-    <string name="alert_error_files_without_permissions_pattern">Uri権限がすべてのファイルに提供されたわけではありません。ジョブが一時停止され、後で再開された場合（Androidの電源管理など）、アップロードされないものはアップロードされません。この問題を回避するには、可能であれば、このアプリの使用からアップロードするファイルを選択してください。影響を受けるファイル：%1$d。</string>
+    <string name="alert_error_files_without_permissions">あなたが共有したアプリによってファイルにURI権限が提供されていませんでした。 アップロードは続行できますが、ジョブが一時停止され、後で再開されている場合（たとえば、Android Power Managementによって）これらのファイルはアップロードできなくなります。 この問題を回避するには、可能であれば、このアプリを使用してアップロードするファイルを選択します。</string>
+    <string name="alert_error_files_without_permissions_pattern">URI権限はすべてのファイルに対して提供されていません。 ジョブが一時停止され、後で再開された場合（たとえば、Android電源管理など）。 この問題を回避するには、可能であれば、このアプリを使用してアップロードするファイルを選択します。 影響を受けるファイル：%1$d。</string>
     <string name="button_compress">圧縮</string>
     <string name="unable_to_compress_without_data">設定なしでは圧縮できません</string>
     <string name="video_compression_settings_invalid">ビデオ圧縮設定が無効です。確認して、もう一度お試しください。</string>
@@ -715,7 +716,7 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="button_clipboard">クリップボード</string>
     <string name="button_email">Eメール</string>
     <string name="button_this_app">このアプリ</string>
-    <string name="connection_profile_amended_with_new_details_pattern">サーバー接続プロファイル\n  ％1 $ S\n  新しい詳細を作成して修正しました</string>
+    <string name="connection_profile_amended_with_new_details_pattern">サーバー接続プロファイル\n  %1$S\n  新しい詳細を作成して修正しました</string>
     <string name="alert_create_or_update_server_connection_details">App Piwigo Server接続の詳細を作成または更新しますか？</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">アプリは、選択したフォルダに対して必要なファイル権限を見つけることができません。 別のものを選択してください。 rootであれば、ルートを削除して再追加してから、もう一度選択してください。</string>
     <string name="upload_job_stopped_by_user">アップロードはユーザーによって停止しました</string>

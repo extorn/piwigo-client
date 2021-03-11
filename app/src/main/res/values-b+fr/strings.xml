@@ -680,7 +680,8 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="downloads_menu_title">Téléchargements</string>
     <string name="view_exported_files">Afficher les fichiers exportés</string>
     <string name="generating_upload_job">Configuration de la tâche de téléchargement avec votre sélection</string>
-    <string name="alert_error_files_without_permissions_pattern">Les autorisations Uri n\'étaient pas fournies pour tous les fichiers. Ceux qui n\'en ont pas ne seront pas téléchargés si le travail est mis en pause puis repris (par exemple par la gestion de l\'alimentation Android). Pour éviter ce problème, sélectionnez les fichiers à télécharger à partir de cette application si possible. Fichiers concernés:%1$d.</string>
+    <string name="alert_error_files_without_permissions">Les autorisations URI n\'ont pas été fournies pour les fichiers par l\'application que vous avez partagés. Le téléchargement peut continuer, mais si le travail est en pause et a repris par exemple (par exemple par la gestion de l\'alimentation Android), ces fichiers ne seront plus téléchargés. Pour éviter ce problème, sélectionnez Fichiers à télécharger à l\'aide de cette application si possible.</string>
+    <string name="alert_error_files_without_permissions_pattern">Les autorisations URI n\'ont pas été fournies pour tous les fichiers. Ceux sans ne pas télécharger si le travail est mis en pause et repris par exemple (par exemple par la gestion de l\'alimentation Android). Pour éviter ce problème, sélectionnez Fichiers à télécharger à l\'aide de cette application si possible. Fichiers affectés:%1$D.</string>
     <string name="button_compress">Compresse</string>
     <string name="unable_to_compress_without_data">Impossible de compresser sans les paramètres</string>
     <string name="video_compression_settings_invalid">Les paramètres de compression vidéo ne sont pas valides. S\'il vous plaît, vérifiez et essayez à nouveau.</string>
@@ -715,7 +716,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="button_clipboard">Presse-plans</string>
     <string name="button_email">E-mail</string>
     <string name="button_this_app">Cette application</string>
-    <string name="connection_profile_amended_with_new_details_pattern">Le profil de connexion du serveur\n  % 1 $ S\n  a été créé et ou modifié avec de nouveaux détails</string>
+    <string name="connection_profile_amended_with_new_details_pattern">Le profil de connexion du serveur\n  %1$S\n  a été créé et ou modifié avec de nouveaux détails</string>
     <string name="alert_create_or_update_server_connection_details">Souhaitez-vous créer ou mettre à jour les détails de la connexion de l\'application PIWIGO Server?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">L\'application ne trouve pas les autorisations de fichier nécessaires pour le dossier sélectionné. Veuillez sélectionner un autre. S\'il s\'agit d\'une racine, veuillez supprimer et ré-ajouter la racine, puis sélectionnez à nouveau.</string>
     <string name="upload_job_stopped_by_user">Télécharger arrêté par l\'utilisateur</string>

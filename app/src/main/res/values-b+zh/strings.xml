@@ -680,7 +680,8 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="downloads_menu_title">资料下载</string>
     <string name="view_exported_files">查看导出的文件</string>
     <string name="generating_upload_job">根据您的选择配置上传作业</string>
-    <string name="alert_error_files_without_permissions_pattern">没有为所有文件提供Uri权限。如果作业暂停并稍后恢复（例如，通过Android电源管理），则没有上传内容的用户将不会上传。为避免此问题，请尽可能选择要使用此应用上传的文件。受影响的文件：%1$d。</string>
+    <string name="alert_error_files_without_permissions">从您共享的应用程序未提供URI权限。 上传可以继续，但如果作业暂停，稍后恢复（例如通过Android电源管理）这些文件将不再上载。 要避免此问题，请选择要使用此应用上传的文件，如果可能的话。</string>
+    <string name="alert_error_files_without_permissions_pattern">所有文件都没有提供URI权限。 如果作业暂停，稍后恢复，则不会上传那些情况（例如Android电源管理）。 要避免此问题，请选择要使用此应用上传的文件，如果可能的话。 受影响的文件：%1$d。</string>
     <string name="button_compress">压缩</string>
     <string name="unable_to_compress_without_data">没有设置就无法压缩</string>
     <string name="video_compression_settings_invalid">视频压缩设置无效。请检查并重试。</string>

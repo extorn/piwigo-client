@@ -680,7 +680,8 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="downloads_menu_title">Download</string>
     <string name="view_exported_files">Visualizza file esportati</string>
     <string name="generating_upload_job">Configurazione di Carica lavoro con la tua selezione</string>
-    <string name="alert_error_files_without_permissions_pattern">Le autorizzazioni Uri non sono state fornite per tutti i file. Quelli senza non caricheranno se il lavoro viene messo in pausa e successivamente ripreso (ad esempio dalla gestione dell\'alimentazione di Android). Per evitare questo problema, seleziona i file da caricare utilizzando questa app, se possibile. File interessati:%1$d.</string>
+    <string name="alert_error_files_without_permissions">Le autorizzazioni URI non sono state fornite per i file dall\'app che hai condiviso. Il caricamento può continuare, ma se il lavoro è in pausa e in seguito ripreso (ad esempio da Android Power Management) Questi file non saranno più caricabili. Per evitare questo problema, selezionare i file da caricare utilizzando questa app se possibile.</string>
+    <string name="alert_error_files_without_permissions_pattern">Le autorizzazioni URI non sono state fornite per tutti i file. Quelli senza non verranno caricati se il lavoro è in pausa e in seguito ripreso (ad esempio da Android Power Management). Per evitare questo problema, selezionare i file da caricare utilizzando questa app se possibile. File interessati:%1$D.</string>
     <string name="button_compress">Comprimere</string>
     <string name="unable_to_compress_without_data">Impossibile comprimere senza le impostazioni</string>
     <string name="video_compression_settings_invalid">Le impostazioni di compressione video non sono valide. Si prega di verificare e riprovare.</string>
