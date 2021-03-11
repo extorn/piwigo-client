@@ -576,7 +576,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="upload_error_orphaned_file_retrieval_unavailable">无法检查是否存在孤立图像。推荐安装PiwigoClientWsExts服务器插件</string>
     <string name="x_of_y">%1$s /%2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">您的PiwigoClientWsExts版本已过期。请优先更新。</string>
-    <string name="subalbum_detail_txt_pattern">%1$d个儿童相册</string>
+    <string name="child_album_detail_txt_pattern">%1$d个儿童相册</string>
     <string name="please_read_and_agree_with_eula_first">请先阅读并确认同意EULA的条款</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">未授予所需的权限。动作已取消。</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">未授予所需的权限。动作已取消。作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>

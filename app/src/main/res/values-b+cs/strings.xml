@@ -576,7 +576,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="upload_error_orphaned_file_retrieval_unavailable">Nelze zkontrolovat přítomnost osiřelých obrázků. Doporučte instalaci pluginu serveru PiwigoClientWsExts</string>
     <string name="x_of_y">%1$s /%2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Vaše verze PiwigoClientWsExts je zastaralá. Aktualizujte jej prosím jako prioritu.</string>
-    <string name="subalbum_detail_txt_pattern">%1$d podřízených alb</string>
+    <string name="child_album_detail_txt_pattern">%1$d podřízených alb</string>
     <string name="please_read_and_agree_with_eula_first">Nejprve si přečtěte a potvrďte souhlas s podmínkami smlouvy EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Požadovaná oprávnění nebyla udělena. Akce zrušena.</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Požadovaná oprávnění nebyla udělena. Akce zrušena. Jako alternativu k celosystémovým oprávněním znovu vyberte složku, kterou chcete použít v předvolbách aplikace.</string>

@@ -576,7 +576,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="upload_error_orphaned_file_retrieval_unavailable">Impossibile controllare la presenza di immagini orfane. Consiglia di installare il plugin del server PiwigoClientWsExts</string>
     <string name="x_of_y">%1$s /%2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">La tua versione di PiwigoClientWsExts è obsoleta. Aggiornalo come priorità.</string>
-    <string name="subalbum_detail_txt_pattern">%1$d album secondari</string>
+    <string name="child_album_detail_txt_pattern">%1$d album secondari</string>
     <string name="please_read_and_agree_with_eula_first">Si prega di leggere e confermare prima l\'accordo con i termini dell\'EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Le autorizzazioni richieste non sono state concesse. Azione annullata.</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Le autorizzazioni richieste non sono state concesse. Azione annullata. In alternativa alle autorizzazioni a livello di sistema, riselezionare la cartella da utilizzare nelle preferenze dell\'app.</string>

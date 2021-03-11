@@ -576,7 +576,7 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="upload_error_orphaned_file_retrieval_unavailable">孤立した画像の存在を確認できません。 PiwigoClientWsExtsサーバープラグインのインストールをお勧めします</string>
     <string name="x_of_y">%1$s /%2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">お使いのバージョンのPiwigoClientWsExtsは古くなっています。優先的に更新してください。</string>
-    <string name="subalbum_detail_txt_pattern">%1$dの子アルバム</string>
+    <string name="child_album_detail_txt_pattern">%1$dの子アルバム</string>
     <string name="please_read_and_agree_with_eula_first">最初にEULAの条件を読んで同意を確認してください</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">必要な権限が付与されていません。アクションはキャンセルされました。</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">必要な権限が付与されていません。アクションはキャンセルされました。システム全体の権限の代わりに、アプリの設定で使用するフォルダーを再選択します。</string>

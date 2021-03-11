@@ -864,7 +864,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
                 break;
             }
 
-            sb.append(appContext.getString(R.string.certificate_chain_seperator));
+            sb.append(appContext.getString(R.string.certificate_chain_separator));
 
             subjectName = cert.getSubjectX500Principal().getName();
             validFrom = cert.getNotBefore();

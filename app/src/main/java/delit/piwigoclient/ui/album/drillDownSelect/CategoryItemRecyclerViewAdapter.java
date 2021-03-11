@@ -207,7 +207,7 @@ public class CategoryItemRecyclerViewAdapter<LVA extends CategoryItemRecyclerVie
             getTxtTitle().setText(newItem.getName());
             getDetailsTitle().setVisibility(View.GONE);
             if(newItem.getChildAlbumCount() > 0) {
-                getDetailsTitle().setText(itemView.getContext().getString(R.string.subalbum_detail_txt_pattern, newItem.getChildAlbumCount()));
+                getDetailsTitle().setText(itemView.getContext().getString(R.string.child_album_detail_txt_pattern, newItem.getChildAlbumCount()));
                 getDetailsTitle().setVisibility(View.VISIBLE);
             }
 

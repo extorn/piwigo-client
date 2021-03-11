@@ -576,7 +576,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_error_orphaned_file_retrieval_unavailable">Das Vorhandensein verwaister Bilder kann nicht überprüft werden. Empfehlen Sie die Installation des PiwigoClientWsExts-Server-Plugins</string>
     <string name="x_of_y">%1$s /%2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Ihre Version von PiwigoClientWsExts ist veraltet. Bitte aktualisieren Sie es als Priorität.</string>
-    <string name="subalbum_detail_txt_pattern">%1$d untergeordnete Alben</string>
+    <string name="child_album_detail_txt_pattern">%1$d untergeordnete Alben</string>
     <string name="please_read_and_agree_with_eula_first">Bitte lesen und bestätigen Sie zuerst die Zustimmung zu den Bestimmungen der EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Erforderliche Berechtigungen wurden nicht erteilt. Aktion abgebrochen.</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Erforderliche Berechtigungen wurden nicht erteilt. Aktion abgebrochen. Wählen Sie als Alternative zu systemweiten Berechtigungen den Ordner erneut aus, der in den App-Einstellungen verwendet werden soll.</string>

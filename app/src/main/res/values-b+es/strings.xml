@@ -576,7 +576,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="upload_error_orphaned_file_retrieval_unavailable">No se puede comprobar la presencia de imágenes huérfanas. Recomendar la instalación del complemento de servidor PiwigoClientWsExts</string>
     <string name="x_of_y">%1$s /%2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Su versión de PiwigoClientWsExts está desactualizada. Actualícelo como una prioridad.</string>
-    <string name="subalbum_detail_txt_pattern">%1$d álbumes secundarios</string>
+    <string name="child_album_detail_txt_pattern">%1$d álbumes secundarios</string>
     <string name="please_read_and_agree_with_eula_first">Primero lea y confirme el acuerdo con los términos del EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">No se concedieron los permisos necesarios. Acción cancelada.</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">No se concedieron los permisos necesarios. Acción cancelada. Como alternativa a los permisos de todo el sistema, vuelva a seleccionar la carpeta para usar en las preferencias de la aplicación.</string>

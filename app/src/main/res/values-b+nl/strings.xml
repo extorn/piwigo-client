@@ -576,7 +576,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="upload_error_orphaned_file_retrieval_unavailable">Kan de aanwezigheid van verweesde afbeeldingen niet controleren. Beveel aan om de PiwigoClientWsExts-serverplug-in te installeren</string>
     <string name="x_of_y">%1$s /%2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Uw versie van PiwigoClientWsExts is verouderd. Werk het als een prioriteit bij.</string>
-    <string name="subalbum_detail_txt_pattern">%1$d onderliggende albums</string>
+    <string name="child_album_detail_txt_pattern">%1$d onderliggende albums</string>
     <string name="please_read_and_agree_with_eula_first">Lees en bevestig eerst de voorwaarden van de EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Vereiste machtigingen zijn niet verleend. Actie geannuleerd.</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Vereiste machtigingen zijn niet verleend. Actie geannuleerd. Als alternatief voor systeembrede machtigingen, selecteert u de map die u wilt gebruiken in de app-voorkeuren opnieuw.</string>

@@ -576,7 +576,7 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="upload_error_orphaned_file_retrieval_unavailable">Невозможно проверить наличие бесхозных изображений. Рекомендуем установить серверный плагин PiwigoClientWsExts</string>
     <string name="x_of_y">%1$s /%2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Ваша версия PiwigoClientWsExts устарела. Пожалуйста, обновите его в приоритетном порядке.</string>
-    <string name="subalbum_detail_txt_pattern">%1$d дочерних альбомов</string>
+    <string name="child_album_detail_txt_pattern">%1$d дочерних альбомов</string>
     <string name="please_read_and_agree_with_eula_first">Пожалуйста, сначала прочтите и подтвердите согласие с условиями EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Требуемые разрешения не были предоставлены. Действие отменено.</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Требуемые разрешения не были предоставлены. Действие отменено. В качестве альтернативы общесистемным разрешениям повторно выберите папку для использования в настройках приложения.</string>

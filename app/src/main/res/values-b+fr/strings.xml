@@ -576,7 +576,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="upload_error_orphaned_file_retrieval_unavailable">Impossible de vérifier la présence d\'images orphelines. Recommander l\'installation du plugin serveur PiwigoClientWsExts</string>
     <string name="x_of_y">%1$s /%2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Votre version de PiwigoClientWsExts est obsolète. Veuillez le mettre à jour en priorité.</string>
-    <string name="subalbum_detail_txt_pattern">%1$d albums enfants</string>
+    <string name="child_album_detail_txt_pattern">%1$d albums enfants</string>
     <string name="please_read_and_agree_with_eula_first">Veuillez d\'abord lire et confirmer l\'accord avec les termes du CLUF</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Les autorisations requises n\'ont pas été accordées. Action annulée.</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Les autorisations requises n\'ont pas été accordées. Action annulée. Au lieu des autorisations à l\'échelle du système, sélectionnez à nouveau le dossier à utiliser dans les préférences de l\'application.</string>
