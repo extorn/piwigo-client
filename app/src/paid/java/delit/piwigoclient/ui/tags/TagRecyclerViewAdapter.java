@@ -67,7 +67,7 @@ public class TagRecyclerViewAdapter<LVA extends TagRecyclerViewAdapter<LVA, MSL,
         public void fillValues(Tag newItem, boolean allowItemDeletion) {
             setItem(newItem);
             getTxtTitle().setText(newItem.getName());
-            getDetailsTitle().setText(String.format(itemView.getContext().getString(R.string.tag_usage_count_pattern), newItem.getUsageCount()));
+            getDetailsTitle().setText(String.format(itemView.getContext().getString(R.string.tag_usage_count_pattern), newItem.getPhotoCount()));
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }

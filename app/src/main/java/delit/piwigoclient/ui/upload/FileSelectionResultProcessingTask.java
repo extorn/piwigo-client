@@ -121,6 +121,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
             int filesMissingPermissionsCount = 0;
             while (iter.hasNext()) {
                 FolderItem f = iter.next();
+                //FIXME move this code into the UI. Mark them red and suggest they are compressed (as a group perhaps?)
                 if (f.getExt() == null || (!allowedFileTypes.contains(f.getExt()) && !allowedFileTypes.contains(f.getExt().toLowerCase()))) {
                     String mimeType = f.getMime();
                     if (mimeType == null && !IOUtils.isPlayableMedia(mimeType)) {

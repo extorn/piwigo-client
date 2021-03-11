@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -30,6 +29,7 @@ import java.util.Set;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.CustomClickTouchListener;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -187,14 +187,7 @@ public class AlbumSelectExpandableFragment<F extends AlbumSelectExpandableFragme
         saveChangesButton.setOnClickListener(v -> onSaveChanges());
 
         reloadListButton = view.findViewById(R.id.list_retryAction_actionButton);
-        reloadListButton.setOnTouchListener((v, event) -> {
-            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                reloadListButton.hide();
-                setupListContentLoadingIfNeeded();
-            }
-            return true;
-        });
-
+        CustomClickTouchListener.callClickOnTouch(reloadListButton, (rlb)->onClickReloadListButton());
         return view;
     }
 
@@ -392,6 +385,11 @@ public class AlbumSelectExpandableFragment<F extends AlbumSelectExpandableFragme
     void onAlbumsLoaded(final ArrayList<CategoryItem> albums) {
         getUiHelper().hideProgressIndicator();
         availableAlbums = albums;
+        setupListContentLoadingIfNeeded();
+    }
+
+    private void onClickReloadListButton() {
+        reloadListButton.hide();
         setupListContentLoadingIfNeeded();
     }
 

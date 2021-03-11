@@ -2,20 +2,16 @@ package delit.piwigoclient.ui.favorites;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,11 +25,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Objects;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
@@ -44,7 +41,6 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoFavorites;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
@@ -54,15 +50,16 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesRemoveImageResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.ui.MainActivity;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.album.view.AlbumItemSpacingDecoration;
 import delit.piwigoclient.ui.album.view.AlbumItemViewHolder;
+import delit.piwigoclient.ui.album.view.BulkActionResourceProvider;
+import delit.piwigoclient.ui.album.view.action.BulkResourceActionData;
+import delit.piwigoclient.ui.album.view.action.DeleteResourcesForeverAction;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -76,7 +73,7 @@ import static android.view.View.VISIBLE;
 /**
  * A fragment representing a list of Items.
  */
-public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
+public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> implements BulkActionResourceProvider {
 
     private static final String STATE_FAVORITES_ACTIVE_LOAD_THREADS = "activeLoadingThreads";
     private static final String STATE_FAVORITES_LOADS_TO_RETRY = "retryLoadList";
@@ -87,14 +84,16 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
 
     private AlbumItemRecyclerViewAdapter<?,ResourceItem,?,?,?> viewAdapter;
     private ExtendedFloatingActionButton retryActionButton;
-    private RelativeLayout bulkActionsContainer;
+    private ConstraintLayout bulkActionsContainer;
     private ExtendedFloatingActionButton bulkActionButtonDelete;
+    private ExtendedFloatingActionButton bulkActionButtonUnFavorite;
     // Start fields maintained in saved session state.
     private PiwigoFavorites favoritesModel;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
-    private DeleteActionData deleteActionData;
+    private BulkResourceActionData bulkResourceActionData;
     private long userGuid;
+    private View basketView;
     private RecyclerView favoritesListView;
     private TextView emptyFavoritesLabel;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
@@ -119,12 +118,6 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         return fragment;
     }
 
-    private float getScreenWidth() {
-        DisplayMetrics dm = new DisplayMetrics();
-        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float)dm.widthPixels / dm.xdpi;
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -143,7 +136,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
         BundleUtils.writeMap(outState, STATE_FAVORITES_ACTIVE_LOAD_THREADS, loadingMessageIds);
         outState.putStringArrayList(STATE_FAVORITES_LOADS_TO_RETRY, itemsToLoad);
-        outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
+        outState.putParcelable(STATE_DELETE_ACTION_DATA, bulkResourceActionData);
     }
 
     private void createOrUpdateViewPrefs() {
@@ -208,10 +201,10 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             loadingMessageIds.clear();
             BundleUtils.readMap(savedInstanceState, STATE_FAVORITES_ACTIVE_LOAD_THREADS, loadingMessageIds, null);
             CollectionUtils.addToCollectionNullSafe(itemsToLoad, savedInstanceState.getStringArrayList(STATE_FAVORITES_LOADS_TO_RETRY));
-            if(deleteActionData != null && deleteActionData.isEmpty()) {
-                deleteActionData = null;
+            if (bulkResourceActionData != null && bulkResourceActionData.isEmpty()) {
+                bulkResourceActionData = null;
             } else {
-                deleteActionData = savedInstanceState.getParcelable(STATE_DELETE_ACTION_DATA);
+                bulkResourceActionData = savedInstanceState.getParcelable(STATE_DELETE_ACTION_DATA);
             }
         }
 
@@ -233,7 +226,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             favoritesIsDirty = true;
             favoritesModel = favoritesViewModel.getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(-1)).getValue();
         }
-        favoritesIsDirty |= favoritesModel.getImgResourceCount() < 0;
+        favoritesIsDirty |= Objects.requireNonNull(favoritesModel).getImgResourceCount() < 0;
 
         if (isSessionDetailsChanged()) {
 
@@ -273,26 +266,11 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         // need to wait for the favorites model to be initialised.
         int imagesOnScreen = AlbumViewPreferences.getImagesToDisplayPerRow(getActivity(), prefs);
         GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), imagesOnScreen);
-
         recyclerView.setLayoutManager(gridLayoutMan);
+        recyclerView.addItemDecoration(new AlbumItemSpacingDecoration(DisplayUtils.dpToPx(requireContext(), 1), DisplayUtils.dpToPx(requireContext(), 16)));
 
 
         viewAdapter = new AlbumItemRecyclerViewAdapter(requireContext(), PiwigoFavoritesModel.class, favoritesModel, new AlbumViewAdapterListener(), viewPrefs);
-
-        bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
-
-        bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.favorites_action_delete_bulk);
-        if(viewAdapter.isItemSelectionAllowed()) {
-            bulkActionButtonDelete.show();
-        } else {
-            bulkActionButtonDelete.hide();
-        }
-        bulkActionButtonDelete.setOnTouchListener((v, event) -> {
-            if(event.getActionMasked() == MotionEvent.ACTION_UP) {
-                onBulkActionDeleteButtonPressed();
-            }
-            return true; // consume the event
-        });
 
         recyclerView.setAdapter(viewAdapter);
 
@@ -300,10 +278,8 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = page;
-
                 int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
-                int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
+                int pageToActuallyLoad = getPageToActuallyLoad(page, pageSize);
 
                 if (pageToActuallyLoad < 0 || favoritesModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad) || favoritesModel.isFullyLoaded()) {
                     Integer missingPage = favoritesModel.getAMissingPage();
@@ -319,6 +295,47 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         };
         scrollListener.configure(favoritesModel.getPagesLoadedIdxToSizeMap(), favoritesModel.getItemCount());
         recyclerView.addOnScrollListener(scrollListener);
+
+        // basket depends on then adapter being available
+        Basket basket = getBasket();
+        initialiseBasketView(view);
+        setupBulkActionsControls(basket);
+        updateBasketDisplay(basket);
+    }
+
+    private boolean showBulkActionsContainer(Basket basket) {
+        return viewAdapter != null && (viewAdapter.isItemSelectionAllowed() || !getBasket().isEmpty());
+    }
+
+    private void initialiseBasketView(View v) {
+        basketView = v.findViewById(R.id.basket);
+
+        basketView.setOnTouchListener((v12, event) -> {
+            // sink events without action.
+            return true;
+        });
+
+//        AppCompatImageView basketImage = basketView.findViewById(R.id.basket_image);
+
+        AppCompatImageView clearButton = basketView.findViewById(R.id.basket_clear_button);
+        //NOTE this touch listener is needed because we use a touch listener in the images below and they'll pick up the clicks if we don't
+        CustomClickTouchListener.callClickOnTouch(clearButton, (cb)->onClickClearBasketButton());
+    }
+
+    private void onClickClearBasketButton() {
+        Basket basket = getBasket();
+        basket.clear();
+        updateBasketDisplay(basket);
+    }
+
+    protected void setupBulkActionsControls(Basket basket) {
+
+        bulkActionsContainer.setVisibility(showBulkActionsContainer(basket) ? VISIBLE : GONE);
+        bulkActionButtonUnFavorite = bulkActionsContainer.findViewById(R.id.favorites_action_unfavorite_bulk);
+        bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.favorites_action_delete_bulk);
+        //NOTE this touch listener is needed because we use a touch listener in the images below and they'll pick up the clicks if we don't
+        CustomClickTouchListener.callClickOnTouch(bulkActionButtonUnFavorite, (v)->onClickBulkActionUnFavoriteButton());
+        CustomClickTouchListener.callClickOnTouch(bulkActionButtonDelete, (v)->onClickBulkActionDeleteButton());
     }
 
     private void reloadFavoritesModel() {
@@ -327,163 +344,40 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         loadAlbumResourcesPage(0);
     }
 
-    private void onBulkActionDeleteButtonPressed() {
-        if(!isAppInReadOnlyMode()) {
+    private void onClickBulkActionButton(int action, @NonNull BulkResourceActionData.Caller actionCode) {
+        boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
+        if (bulkActionsAllowed) {
             HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
-            if(deleteActionData != null && selectedItemIds.equals(deleteActionData.getSelectedItemIds())) {
+            if (bulkResourceActionData != null && selectedItemIds.equals(bulkResourceActionData.getSelectedItemIds())) {
                 //continue with previous action
-                onUserActionDeleteResources(deleteActionData);
-            } else if(selectedItemIds.size() > 0) {
+                actionCode.run(bulkResourceActionData);
+            } else if (selectedItemIds.size() > 0) {
                 HashSet<ResourceItem> selectedItems = viewAdapter.getSelectedItemsOfType(ResourceItem.class);
-                DeleteActionData deleteActionData = new DeleteActionData(selectedItemIds, selectedItems);
-                if(!deleteActionData.isResourceInfoAvailable()) {
-                    this.deleteActionData = deleteActionData;
+                BulkResourceActionData bulkActionData = new BulkResourceActionData(selectedItemIds, selectedItems, action);
+                if (!bulkActionData.isResourceInfoAvailable()) {
+                    this.bulkResourceActionData = bulkActionData;
                 }
-                onUserActionDeleteResources(deleteActionData);
+                actionCode.run(bulkActionData);
             }
         }
+    }
+
+    private void onClickBulkActionUnFavoriteButton() {
+        onClickBulkActionButton(BulkResourceActionData.ACTION_UNTAG, this::onDeFavoriteResources);
+    }
+
+    private void onClickBulkActionDeleteButton() {
+        onClickBulkActionButton(BulkResourceActionData.ACTION_DELETE, this::onDeleteResources);
     }
 
     private Basket getBasket() {
-        MainActivity activity = (MainActivity)requireActivity();
+        MainActivity<?> activity = (MainActivity<?>)requireActivity();
         return activity.getBasket();
     }
 
-    private static class DeleteActionData implements Parcelable {
-        final HashSet<Long> selectedItemIds;
-        final HashSet<Long> itemsUpdated;
-        final HashSet<ResourceItem> selectedItems;
-        boolean resourceInfoAvailable;
-        private ArrayList<Long> trackedMessageIds = new ArrayList<>();
-
-        public DeleteActionData(HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
-            this.selectedItemIds = selectedItemIds;
-            this.selectedItems = selectedItems;
-            this.resourceInfoAvailable = false; //FIXME when Piwigo provides this info as standard, this can be removed and the method simplified.
-            itemsUpdated = new HashSet<>(selectedItemIds.size());
-        }
-
-        public DeleteActionData(Parcel in) {
-            selectedItemIds = ParcelUtils.readLongSet(in);
-            itemsUpdated = ParcelUtils.readLongSet(in);
-            selectedItems = ParcelUtils.readHashSet(in, getClass().getClassLoader());
-            resourceInfoAvailable = ParcelUtils.readBool(in);
-            trackedMessageIds = ParcelUtils.readLongArrayList(in);
-        }
-
-        public static final Creator<DeleteActionData> CREATOR = new Creator<ViewFavoritesFragment.DeleteActionData>() {
-            @Override
-            public ViewFavoritesFragment.DeleteActionData createFromParcel(Parcel in) {
-                return new ViewFavoritesFragment.DeleteActionData(in);
-            }
-
-            @Override
-            public ViewFavoritesFragment.DeleteActionData[] newArray(int size) {
-                return new ViewFavoritesFragment.DeleteActionData[size];
-            }
-        };
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            ParcelUtils.writeLongSet(dest, selectedItemIds);
-            ParcelUtils.writeLongSet(dest, itemsUpdated);
-            ParcelUtils.writeSet(dest, selectedItems);
-            ParcelUtils.writeBool(dest, resourceInfoAvailable);
-            ParcelUtils.writeLongArrayList(dest, trackedMessageIds);
-        }
-
-        public void updateLinkedAlbums(ResourceItem item) {
-            itemsUpdated.add(item.getId());
-            if (itemsUpdated.size() == selectedItemIds.size()) {
-                resourceInfoAvailable = true;
-            }
-            selectedItems.add(item); // will replace the previous with this one.
-        }
-
-        public boolean isResourceInfoAvailable() {
-            return resourceInfoAvailable;
-        }
-
-        public HashSet<Long> getSelectedItemIds() {
-            return selectedItemIds;
-        }
-
-        public HashSet<ResourceItem> getSelectedItems() {
-            return selectedItems;
-        }
-
-        public void clear() {
-            selectedItemIds.clear();
-            selectedItems.clear();
-            itemsUpdated.clear();
-        }
-
-        public Set<ResourceItem> getItemsWithoutLinkedAlbumData() {
-            if (itemsUpdated.size() == 0) {
-                return selectedItems;
-            }
-            Set<ResourceItem> itemsWithoutLinkedAlbumData = new HashSet<>();
-            for (ResourceItem r : selectedItems) {
-                if (!itemsUpdated.contains(r.getId())) {
-                    itemsWithoutLinkedAlbumData.add(r);
-                }
-            }
-            return itemsWithoutLinkedAlbumData;
-        }
-
-        public boolean removeProcessedResource(ResourceItem resource) {
-            selectedItemIds.remove(resource.getId());
-            selectedItems.remove(resource);
-            itemsUpdated.remove(resource.getId());
-            return selectedItemIds.size() == 0;
-        }
-
-        public boolean removeProcessedResources(HashSet<Long> deletedItemIds) {
-            for (Long deletedResourceId : deletedItemIds) {
-                selectedItemIds.remove(deletedResourceId);
-                itemsUpdated.remove(deletedResourceId);
-            }
-            PiwigoUtils.removeAll(selectedItems, deletedItemIds);
-            return selectedItemIds.size() == 0;
-        }
-
-        public boolean isEmpty() {
-            return selectedItemIds.isEmpty();
-        }
-
-        public void trackMessageId(long messageId) {
-            trackedMessageIds.add(messageId);
-        }
-
-        public boolean isTrackingMessageId(long messageId) {
-            return trackedMessageIds.remove(messageId);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-    }
-    
-    private void onUserActionDeleteResources(final DeleteActionData deleteActionData) {
-
-        if (!deleteActionData.isResourceInfoAvailable()) {
-
-            for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
-                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler<>(item)));
-            }
-            return;
-        }
-
-        OnDeleteFavoritesAction<F,FUIH> dialogListener = new OnDeleteFavoritesAction<>(getUiHelper(), deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
-
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        boolean isFavoritesAlterationSupported = sessionDetails != null && sessionDetails.isPiwigoClientPluginInstalled();
-
-        if(isFavoritesAlterationSupported) {
-            String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern, deleteActionData.getSelectedItemIds().size());
-            getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_confirm_title, msg, View.NO_ID, R.string.button_unfavorite, R.string.button_cancel, R.string.button_delete, dialogListener);
-        }
+    @Override
+    public BulkResourceActionData getBulkResourceActionData() {
+        return bulkResourceActionData;
     }
 
     private void loadAlbumResourcesPage(int pageToLoad) {
@@ -506,7 +400,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
 
                 long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new FavoritesGetImagesResponseHandler(sortOrder, pageToActuallyLoad, pageSize));
                 favoritesModel.recordPageBeingLoaded(loadingMessageId, pageToActuallyLoad);
-                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
+                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToActuallyLoad));
             } finally {
                 favoritesModel.releasePageLoadLock();
             }
@@ -518,7 +412,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             //FIXME Have to load this to get the number of pages.
             return 0;
         }
-        boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+        boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
         boolean reversed;
         try {
             reversed = favoritesModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
@@ -529,8 +423,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
         int pageToActuallyLoad = pageRequested;
         if (invertResourceSortOrder) {
-            int lastPageId = favoritesModel.getContainerDetails().getPagesOfPhotos(pageSize) - 1;
-            pageToActuallyLoad = lastPageId;
+            pageToActuallyLoad = favoritesModel.getContainerDetails().getPagesOfPhotos(pageSize) - 1;
             if (favoritesModel.getResourcesCount() > 0) {
                 pageToActuallyLoad -= pageRequested;
             }
@@ -547,69 +440,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
 
     protected void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteFavoritesForeverAction<>(getUiHelper(), selectedItemIds, selectedItems));
-    }
-
-    private static class OnDeleteFavoritesAction<F extends ViewFavoritesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
-        private final HashSet<Long> selectedItemIds;
-        private final HashSet<ResourceItem> selectedItems;
-
-        public OnDeleteFavoritesAction(FUIH uiHelper, HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
-            super(uiHelper);
-            this.selectedItemIds = selectedItemIds;
-            this.selectedItems = selectedItems;
-        }
-
-        protected OnDeleteFavoritesAction(Parcel in) {
-            super(in);
-            selectedItemIds = ParcelUtils.readLongSet(in);
-            selectedItems = ParcelUtils.readHashSet(in, getClass().getClassLoader());
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            ParcelUtils.writeLongSet(dest, selectedItemIds);
-            ParcelUtils.writeSet(dest, selectedItems);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<OnDeleteFavoritesAction<?,?>> CREATOR = new Creator<OnDeleteFavoritesAction<?,?>>() {
-            @Override
-            public OnDeleteFavoritesAction<?,?> createFromParcel(Parcel in) {
-                return new OnDeleteFavoritesAction<>(in);
-            }
-
-            @Override
-            public OnDeleteFavoritesAction<?,?>[] newArray(int size) {
-                return new OnDeleteFavoritesAction[size];
-            }
-        };
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            F fragment = getUiHelper().getParent();
-            fragment.getViewAdapter().toggleItemSelection();
-            if (Boolean.TRUE == positiveAnswer) {
-                HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(selectedItemIds);
-                HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(selectedItems);
-                fragment.deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
-            } else if (Boolean.FALSE == positiveAnswer) { // Negative answer
-                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                boolean allowFavoritesEdit = !fragment.isAppInReadOnlyMode() && sessionDetails != null;
-                for (ResourceItem item : selectedItems) {
-                    if (allowFavoritesEdit) {
-                        getUiHelper().addActiveServiceCall(R.string.progress_remove_favorite_resources, new FavoritesRemoveImageResponseHandler(item));
-                    }
-                }
-            } /*else {
-                // Neutral (cancel button) - do nothing
-            }*/
-        }
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new DeleteResourcesForeverAction<>(getUiHelper(), selectedItemIds, selectedItems));
     }
 
     @Override
@@ -635,7 +466,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             // don't change the order - will force a reload of all pages in right order if needs inverting.
             return;
         }
-        boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+        boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
         boolean reversed;
         try {
             reversed = favoritesModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
@@ -662,63 +493,42 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
     }
 
-    private static class OnDeleteFavoritesForeverAction<F extends ViewFavoritesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
-
-        private final HashSet<Long> selectedItemIds;
-        private final HashSet<? extends ResourceItem> selectedItems;
-
-        public OnDeleteFavoritesForeverAction(FUIH uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
-            super(uiHelper);
-            this.selectedItemIds = selectedItemIds;
-            this.selectedItems = selectedItems;
-        }
-
-        protected OnDeleteFavoritesForeverAction(Parcel in) {
-            super(in);
-            selectedItemIds = ParcelUtils.readLongSet(in);
-            selectedItems = ParcelUtils.readHashSet(in, ResourceItem.class.getClassLoader());
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            ParcelUtils.writeLongSet(dest, selectedItemIds);
-            ParcelUtils.writeSet(dest, selectedItems);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<OnDeleteFavoritesForeverAction<?,?>> CREATOR = new Creator<OnDeleteFavoritesForeverAction<?,?>>() {
-            @Override
-            public OnDeleteFavoritesForeverAction<?,?> createFromParcel(Parcel in) {
-                return new OnDeleteFavoritesForeverAction<>(in);
-            }
-
-            @Override
-            public OnDeleteFavoritesForeverAction<?,?>[] newArray(int size) {
-                return new OnDeleteFavoritesForeverAction[size];
-            }
-        };
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler<>(selectedItemIds, selectedItems));
-            }
-        }
-    }
-
     private void displayControlsBasedOnSessionState() {
     }
 
+    protected boolean isPreventItemSelection() {
+        if (isAppInReadOnlyMode() || !PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+            return true;
+        }
+        return false;
+    }
+
     private void updateBasketDisplay(Basket basket) {
+        if (viewAdapter != null && viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
+            viewPrefs.withAllowMultiSelect(false);
+            viewPrefs.setAllowItemSelection(false);
+            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged()); //TODO check this works (refresh the whole list, redrawing all with/without select box as appropriate)
+        }
+
+        int basketItemCount = basket.getItemCount();
+        if (basketItemCount == 0) {
+            basketView.setVisibility(GONE);
+        } else {
+            basketView.setVisibility(VISIBLE);
+        }
+
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean isFavoritesAlterationSupported = sessionDetails != null && sessionDetails.isPiwigoClientPluginInstalled();
         if(viewPrefs.isAllowItemSelection()) {
             bulkActionButtonDelete.show();
+            if(isFavoritesAlterationSupported) {
+                bulkActionButtonUnFavorite.show();
+            } else {
+                bulkActionButtonUnFavorite.hide();
+            }
         } else {
             bulkActionButtonDelete.hide();
+            bulkActionButtonUnFavorite.hide();
         }
     }
 
@@ -743,9 +553,9 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         return new CustomPiwigoResponseListener<>();
     }
 
-    void onFavoritesUpdateResponse(FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse rsp) {
+    void onPiwigoResponseFavoritesUpdateResponse(FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse rsp) {
         ResourceItem r = rsp.getPiwigoResource();
-        onItemRemovedFromFavorites(r);
+        onPiwigoResponseItemRemovedFromFavorites(r);
         /*if(rsp.hasError()) {
             String errorMsg = getString(R.string.error_updating_favorites_pattern, rsp.getPiwigoResource().getName(), rsp.getError());
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, errorMsg);
@@ -770,36 +580,28 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             synchronized (getParent().getLoadingMessageIds()) {
                 if (response instanceof AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) {
-                    getParent().onGetResources((AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) response);
+                    getParent().onPiwigoResponseGetResources((AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) response);
                 } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
-                    getParent().onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?>) response);
+                    getParent().onPiwigoResponseResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?>) response);
                 } else if(response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
                     for(ResourceItem r : ((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response).getDeletedItems()) {
-                        getParent().onItemRemovedFromServer(r);
+                        getParent().onPiwigoResponseItemRemovedFromServer(r);
                     }
                 } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
                     ResourceItem r = ((BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<?>) response).getPiwigoResource();
-                    getParent().onItemRemovedFromFavorites(r);
+                    getParent().onPiwigoResponseItemRemovedFromFavorites(r);
                 } else if (response instanceof FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse) {
-                    getParent().onFavoritesUpdateResponse(((FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse) response));
-                } else if (response instanceof GetMethodsAvailableResponseHandler.PiwigoGetMethodsAvailableResponse) {
-                    getParent().getViewPrefs().withAllowMultiSelect(getParent().getMultiSelectionAllowed());
+                    getParent().onPiwigoResponseFavoritesUpdateResponse(((FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse) response));
                 } else {
                     getParent().withUnexpectedPiwigoResponse(response);
                 }
                 getParent().getLoadingMessageIds().remove(response.getMessageId());
             }
         }
-
-
     }
 
-    AlbumItemRecyclerViewAdapterPreferences getViewPrefs() {
-        return viewPrefs;
-    }
-
-    void onItemRemovedFromServer(ResourceItem r) {
-        onItemRemovedFromFavorites(r);
+    void onPiwigoResponseItemRemovedFromServer(ResourceItem r) {
+        onPiwigoResponseItemRemovedFromFavorites(r);
         for(Long albumId : r.getLinkedAlbums()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(albumId, r.getId(), true));
         }
@@ -824,12 +626,12 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
     }
 
-    void onItemRemovedFromFavorites(ResourceItem r) {
+    protected void onPiwigoResponseItemRemovedFromFavorites(ResourceItem r) {
         int itemIdx = favoritesModel.getItemIdx(r);
         favoritesModel.remove(itemIdx);
         viewAdapter.notifyItemRemoved(itemIdx);
-        if(deleteActionData.removeProcessedResource(r)) {
-            deleteActionData = null;
+        if(bulkResourceActionData.removeProcessedResource(r)) {
+            bulkResourceActionData = null;
         }
         for(Long albumId : r.getLinkedAlbums()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(albumId, r.getId(), true));
@@ -845,9 +647,9 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
                 if(itemToLoad != null) {
 //                    switch (itemToLoad) {
 //                        default:
-                        int page = Integer.parseInt(itemToLoad);
-                        loadAlbumResourcesPage(page);
-//                        break;
+                            int page = Integer.parseInt(itemToLoad);
+                            loadAlbumResourcesPage(page);
+//                          break;
 //                    }
                 } else {
                     Logging.log(Log.ERROR, getTag(), "User told favorites page failed to load, but nothing to retry loading!");
@@ -856,7 +658,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
     }
 
-    void onGetResources(final AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse response) {
+    void onPiwigoResponseGetResources(final AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
             favoritesModel.getContainerDetails().setPhotoCount(response.getTotalResourceCount());
             favoritesModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
@@ -892,11 +694,35 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
     }
 
-    void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?> response) {
-        if(this.deleteActionData.isTrackingMessageId(response.getMessageId())) {
-            this.deleteActionData.updateLinkedAlbums(response.getResource());
-            if (this.deleteActionData.isResourceInfoAvailable()) {
-                onUserActionDeleteResources(deleteActionData);
+    private void onDeFavoriteResources(final BulkResourceActionData bulkActionData) {
+        for (ResourceItem selectedItem : bulkActionData.getSelectedItems()) {
+//            getUiHelper().showDetailedShortMsg(R.string.alert_information, "removing favorite " + selectedItem.getName());
+            getUiHelper().addActiveServiceCall(R.string.progress_remove_favorite_resources, new FavoritesRemoveImageResponseHandler(selectedItem));
+        }
+    }
+
+    private void onDeleteResources(final BulkResourceActionData bulkActionData) {
+        deleteResourcesFromServerForever(bulkActionData.getSelectedItemIds(), bulkActionData.getSelectedItems());
+    }
+
+    protected void onPiwigoResponseResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?> response) {
+        if (bulkResourceActionData != null && bulkResourceActionData.isTrackingMessageId(response.getMessageId())) {
+            this.bulkResourceActionData.updateLinkedAlbums(response.getResource());
+            if (this.bulkResourceActionData.isResourceInfoAvailable()) {
+                switch (bulkResourceActionData.getAction()) {
+                    case BulkResourceActionData.ACTION_DELETE:
+                        onDeleteResources(bulkResourceActionData);/*
+                        break;
+                    case BulkResourceActionData.ACTION_UPDATE_PERMISSIONS:
+                        onUserActionUpdateImagePermissions(bulkResourceActionData);*/
+                        break;
+                    case BulkResourceActionData.ACTION_UNFAVORITE:
+                        onDeFavoriteResources(bulkResourceActionData);
+                }
+
+            } else {
+                // this will load the next batch of resource infos...
+                bulkResourceActionData.getResourcesInfoIfNeeded(this);
             }
         }
     }

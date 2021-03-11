@@ -13,7 +13,7 @@ public class PiwigoTag extends ResourceContainer<Tag, GalleryItem> {
     private static final String TAG = "PwgTag";
 
     public PiwigoTag(Tag tag) {
-        super(tag, "ResourceItem", tag.getUsageCount());
+        super(tag, "ResourceItem", tag.getPhotoCount());
     }
 
     public PiwigoTag(Parcel in) {
@@ -22,7 +22,7 @@ public class PiwigoTag extends ResourceContainer<Tag, GalleryItem> {
 
     @Override
     public int getImgResourceCount() {
-        return getContainerDetails().getUsageCount();
+        return getContainerDetails().getPhotoCount();
     }
 
     @Override

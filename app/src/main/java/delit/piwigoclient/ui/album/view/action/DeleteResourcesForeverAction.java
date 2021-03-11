@@ -11,33 +11,34 @@ import delit.libs.ui.util.ParcelUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
-import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
+import delit.piwigoclient.ui.album.view.BulkActionResourceProvider;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 
-public class DeleteResourceForeverAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
+public class DeleteResourcesForeverAction<F extends MyFragment<F,FUIH> & BulkActionResourceProvider,FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-    public static final Creator<DeleteResourceForeverAction<?,?,?>> CREATOR = new Creator<DeleteResourceForeverAction<?,?,?>>() {
+    public static final Creator<DeleteResourcesForeverAction<?,?,?>> CREATOR = new Creator<DeleteResourcesForeverAction<?,?,?>>() {
         @Override
-        public DeleteResourceForeverAction<?,?,?> createFromParcel(Parcel in) {
-            return new DeleteResourceForeverAction<>(in);
+        public DeleteResourcesForeverAction<?,?,?> createFromParcel(Parcel in) {
+            return new DeleteResourcesForeverAction<>(in);
         }
 
         @Override
-        public DeleteResourceForeverAction<?,?,?>[] newArray(int size) {
-            return new DeleteResourceForeverAction[size];
+        public DeleteResourcesForeverAction<?,?,?>[] newArray(int size) {
+            return new DeleteResourcesForeverAction[size];
         }
     };
     private final HashSet<Long> selectedItemIds;
     private final HashSet<T> selectedItems;
 
-    public DeleteResourceForeverAction(FUIH uiHelper, HashSet<Long> selectedItemIds, HashSet<T> selectedItems) {
+    public DeleteResourcesForeverAction(FUIH uiHelper, HashSet<Long> selectedItemIds, HashSet<T> selectedItems) {
         super(uiHelper);
         this.selectedItemIds = selectedItemIds;
         this.selectedItems = selectedItems;
     }
 
-    protected DeleteResourceForeverAction(Parcel in) {
+    protected DeleteResourcesForeverAction(Parcel in) {
         super(in);
         selectedItemIds = ParcelUtils.readLongSet(in);
         selectedItems = ParcelUtils.readHashSet(in, ResourceItem.class.getClassLoader());

@@ -1,85 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/favorites_empty_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:textAppearance="?textAppearanceHeadline5"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guideline_margin_top"
+        tools:text="A Reason that there are no favorites, or which calls need repeating"
+        tools:visibility="visible" />
 
-       <!-- <RelativeLayout
-            android:id="@+id/favorites_header_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@colors/accent">
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/favorites_retryAction_actionButton"
+        style="?extendedFloatingActionButtonStyle"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:fabSize="mini"
+        app:icon="@drawable/ic_refresh_black_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/favorites_list" />
 
-            <TextView
-                android:id="@+id/favorites_details_name_header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Tag name"
-                android:layout_alignParentStart="true"
-                android:layout_margin="5dp"
-                android:textAppearance="?textAppearanceBody2"/>
 
-        </RelativeLayout>-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favorites_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignWithParentIfMissing="true"
+        app:layout_constraintBottom_toTopOf="@id/guideline_margin_bottom"
+        app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+        app:layout_constraintTop_toBottomOf="@id/favorites_empty_content" />
+
+    <include
+        layout="@layout/layout_basket_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/favorites_list" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/favorites_actions_bulk_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/basket"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="30dp">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/favorites_retryAction_actionButton"
-            android:layout_alignTop="@+id/favorites_list"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="10dp"
-            android:clickable="true"
-            app:fabSize="mini"
-            android:focusable="true"
-            app:icon="@drawable/ic_refresh_black_24dp"
-            style="?extendedFloatingActionButtonStyle"/>
+            android:id="@+id/favorites_action_unfavorite_bulk"
+            style="?extendedFloatingActionButtonStyle"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:icon="@drawable/ic_favorite_border_black_24px"
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/favorites_action_delete_bulk"
+            style="?extendedFloatingActionButtonStyle"
+            android:layout_marginStart="40dp"
+            app:layout_goneMarginStart="20dp"
+            app:layout_constraintStart_toEndOf="@+id/favorites_action_unfavorite_bulk"
+            app:layout_constraintTop_toTopOf="parent"
+            app:icon="@drawable/ic_delete_black_24px" />
 
-        <TextView
-            android:id="@+id/favorites_empty_content"
-            android:visibility="visible"
-            android:textAppearance="?textAppearanceHeadline5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            tools:text="A Reason that this tag is empty or which calls need repeating"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/favorites_list"
-            android:layout_below="@id/favorites_empty_content"
-            android:name="delit.piwigoclient.TagFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            tools:context=".ui.album.view.ViewTagFragment"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_album_header_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".4"/>
 
-        <RelativeLayout
-            android:id="@+id/favorites_actions_bulk_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="30dp"
-            android:layout_gravity="end|bottom" >
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_top"
+        />
 
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:id="@+id/favorites_action_delete_bulk"
-                android:layout_alignParentStart="true"
-                android:layout_marginEnd="10dp"
-                app:icon="@drawable/ic_delete_black_24px"
-                style="?extendedFloatingActionButtonStyle"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/fragment_margin_bottom"
+        />
 
-        </RelativeLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_start"
+        />
 
-    </RelativeLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/fragment_margin_end"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 

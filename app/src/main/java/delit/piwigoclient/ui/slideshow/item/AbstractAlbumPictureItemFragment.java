@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.slideshow.item;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -11,7 +12,9 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GestureDetectorCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.ortiz.touchview.TouchImageView;
@@ -64,7 +68,7 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
     private static final String STATE_CURRENT_IMAGE_URL = "currentImageUrl";
     private static final String TAG = "AbPicItemFrag";
     private String currentImageUrlDisplayed;
-    private PicassoLoader loader;
+    private PicassoLoader<?> loader;
     private ImageView imageView;
     private ImageView imageLoadErrorView;
     private String fileSizeToShow;
@@ -90,7 +94,7 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
         outState.putString(STATE_CURRENT_IMAGE_URL, currentImageUrlDisplayed);
     }
 
-    protected PicassoLoader getPicassoImageLoader() {
+    protected PicassoLoader<?> getPicassoImageLoader() {
         return loader;
     }
 
@@ -153,13 +157,39 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
         //TODO allow zooming in on the image.... or scrap all of this and load the gif into the ExoPlayer as a movie (probably better!)
 //        imageView.setScaleType(ImageView.ScaleType.MATRIX);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-
-        imageView.setOnTouchListener((v, event) -> {
-            getOverlaysVisibilityControl().runWithDelay(imageView);
-            return false;
-        });
-
+        new OnTouchInterceptListener(requireContext(), () -> getOverlaysVisibilityControl().runWithDelay(imageView)).attach(imageView);
+        //CustomClickTouchListener.callClickOnTouch(imageView, (v) -> getOverlaysVisibilityControl().runWithDelay(imageView));
         return imageView;
+    }
+
+    /**
+     * This passes all events down. it notes but does not sink them.
+     */
+    private static class OnTouchInterceptListener implements View.OnTouchListener {
+        private final GestureDetectorCompat detector;
+
+        public OnTouchInterceptListener(Context context, Runnable action) {
+            GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    action.run();
+                    return false;
+                }
+            };
+            detector = new GestureDetectorCompat(context, listener);
+            detector.setIsLongpressEnabled(false);
+        }
+
+        public void attach(View v) {
+            v.setOnTouchListener(this);
+        }
+
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            detector.onTouchEvent(event);
+            return false;
+        }
     }
 
     @Override
@@ -290,7 +320,7 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
             loader.setUriToLoad(uriToLoad);
         } else {
             StringBuilder availableFilesSb = new StringBuilder();
-            for (Iterator<AbstractBaseResourceItem.ResourceFile> iterator = model.getAvailableFiles().iterator(); iterator.hasNext(); ) {
+            for (Iterator<AbstractBaseResourceItem.ResourceFile> iterator = Objects.requireNonNull(model).getAvailableFiles().iterator(); iterator.hasNext(); ) {
                 ResourceItem.ResourceFile rf = iterator.next();
                 availableFilesSb.append(rf.getName());
                 if(iterator.hasNext()) {
@@ -380,7 +410,7 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
         @Override
         public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
             if(filesUnavailableToDownload.size() > 0) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter<>((FUIH)getUiHelper(), items, selectedPiwigoFilesizeName));
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter<>(getUiHelper(), items, selectedPiwigoFilesizeName));
             } else {
                 doDownloadAction(items, selectedPiwigoFilesizeName, true);
             }
@@ -436,14 +466,14 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
             return 0;
         }
 
-        public static final Creator<UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter> CREATOR = new Creator<UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter>() {
+        public static final Creator<UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter<?,?,?>> CREATOR = new Creator<UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter<?,?,?>>() {
             @Override
-            public UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter createFromParcel(Parcel in) {
-                return new UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter(in);
+            public UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter<?,?,?> createFromParcel(Parcel in) {
+                return new UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter<>(in);
             }
 
             @Override
-            public UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter[] newArray(int size) {
+            public UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter<?,?,?>[] newArray(int size) {
                 return new UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter[size];
             }
         };
@@ -482,14 +512,14 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
             return 0;
         }
 
-        public static final Creator<MyFilesUnavailableQuestionResultAdapter> CREATOR = new Creator<MyFilesUnavailableQuestionResultAdapter>() {
+        public static final Creator<MyFilesUnavailableQuestionResultAdapter<?,?,?>> CREATOR = new Creator<MyFilesUnavailableQuestionResultAdapter<?,?,?>>() {
             @Override
-            public MyFilesUnavailableQuestionResultAdapter createFromParcel(Parcel in) {
-                return new MyFilesUnavailableQuestionResultAdapter(in);
+            public MyFilesUnavailableQuestionResultAdapter<?,?,?> createFromParcel(Parcel in) {
+                return new MyFilesUnavailableQuestionResultAdapter<>(in);
             }
 
             @Override
-            public MyFilesUnavailableQuestionResultAdapter[] newArray(int size) {
+            public MyFilesUnavailableQuestionResultAdapter<?,?,?>[] newArray(int size) {
                 return new MyFilesUnavailableQuestionResultAdapter[size];
             }
         };

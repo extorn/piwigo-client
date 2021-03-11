@@ -105,6 +105,7 @@ import delit.piwigoclient.ui.upload.list.UploadDataItem;
 import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
 import delit.piwigoclient.ui.upload.list.UploadDataItemViewHolder;
 import delit.piwigoclient.ui.upload.list.UploadItemMultiSelectStatusAdapter;
+import delit.piwigoclient.ui.util.ItemSpacingDecoration;
 import delit.piwigoclient.ui.util.UiUpdatingProgressListener;
 
 import static android.view.View.GONE;
@@ -292,9 +293,8 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         viewPrefs.setFlattenAlbumHierarchy(true);
 
         selectedGalleryTextView = view.findViewById(R.id.selected_gallery);
-        selectedGalleryTextView.setOnClickListener(v -> onClickSelectedGalleryTextView());
         // can't just use a std click listener as it first focuses the field :-(
-        CustomClickTouchListener.callClickOnTouch(selectedGalleryTextView);
+        CustomClickTouchListener.callClickOnTouch(selectedGalleryTextView, (sgtf)->onClickSelectedGalleryTextView());
 
         fileSelectButton = view.findViewById(R.id.select_files_for_upload_button);
         fileSelectButton.setOnClickListener(v -> onClickFileSelectionWanted());
@@ -471,6 +471,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), columnsToShow);
         filesForUploadView.setLayoutManager(gridLayoutMan);
+        filesForUploadView.addItemDecoration(new ItemSpacingDecoration(DisplayUtils.dpToPx(requireContext(), 1)));
 
         filesForUploadView.setAdapter(filesToUploadAdapter);
 

@@ -132,10 +132,10 @@ public class PiwigoTags<T extends Tag> extends IdentifiablePagedList<T> {
         @Override
         public int compare(Tag o1, Tag o2) {
             // bubble tags with images to the top.
-            if (o1.getUsageCount() == 0 && o2.getUsageCount() != 0) {
+            if (o1.getPhotoCount() == 0 && o2.getPhotoCount() != 0) {
                 return 1;
             }
-            if (o1.getUsageCount() != 0 && o2.getUsageCount() == 0) {
+            if (o1.getPhotoCount() != 0 && o2.getPhotoCount() == 0) {
                 return -1;
             }
             // sort all tags into name order

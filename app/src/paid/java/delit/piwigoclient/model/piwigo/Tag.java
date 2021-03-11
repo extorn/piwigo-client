@@ -13,7 +13,7 @@ import delit.libs.ui.util.ParcelUtils;
 public class Tag implements Identifiable, Parcelable, PhotoContainer {
     private long id = -1;
     private String name;
-    private int usageCount;
+    private int photoCount;
     private Date lastModified;
     private boolean isAdminCopy;
 
@@ -29,14 +29,14 @@ public class Tag implements Identifiable, Parcelable, PhotoContainer {
     public Tag(long id, String name, int usageCount, Date lastModified) {
         this.id = id;
         this.name = name;
-        this.usageCount = usageCount;
+        this.photoCount = usageCount;
         this.lastModified = lastModified;
     }
 
     public Tag(Parcel in) {
         id = in.readLong();
         name = in.readString();
-        usageCount = in.readInt();
+        photoCount = in.readInt();
         lastModified = ParcelUtils.readDate(in);
         isAdminCopy = ParcelUtils.readBool(in);
     }
@@ -45,7 +45,7 @@ public class Tag implements Identifiable, Parcelable, PhotoContainer {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
-        dest.writeInt(usageCount);
+        dest.writeInt(photoCount);
         ParcelUtils.writeDate(dest, lastModified);
         ParcelUtils.writeBool(dest, isAdminCopy);
     }
@@ -62,12 +62,12 @@ public class Tag implements Identifiable, Parcelable, PhotoContainer {
         this.name = name;
     }
 
-    public int getUsageCount() {
-        return usageCount;
+    public int getPhotoCount() {
+        return photoCount;
     }
 
-    public void setUsageCount(int usageCount) {
-        this.usageCount = usageCount;
+    public void setPhotoCount(int usageCount) {
+        this.photoCount = usageCount;
     }
 
     public Date getLastModified() {
@@ -117,7 +117,7 @@ public class Tag implements Identifiable, Parcelable, PhotoContainer {
      */
     @Override
     public int getPagesOfPhotos(int pageSize) {
-        int pages = ((getUsageCount() / pageSize) + (getUsageCount() % pageSize > 0 ? 1 : 0));
+        int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 1 : 0));
         return Math.max(pages, 0);
     }
 

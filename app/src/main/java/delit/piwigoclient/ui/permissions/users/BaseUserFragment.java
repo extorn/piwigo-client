@@ -342,18 +342,11 @@ public abstract class BaseUserFragment<F extends BaseUserFragment<F,FUIH>, FUIH 
         highDefinitionEnabled = v.findViewById(R.id.user_high_definition_field);
 
         userGroupsField = v.findViewById(R.id.user_groups);
-        userGroupsField.setOnClickListener(v15 -> selectGroupMembership());
         // can't just use a std click listener as it first focuses the field :-(
-        CustomClickTouchListener.callClickOnTouch(userGroupsField);
+        CustomClickTouchListener.callClickOnTouch(userGroupsField, (sgm)->selectGroupMembership());
 
         albumPermissionsField = v.findViewById(R.id.user_access_rights);
-        albumPermissionsField.setOnTouchListener(new CustomClickTouchListener(albumPermissionsField) {
-            @Override
-            public boolean onClick() {
-                onExpandPermissions();
-                return true;
-            }
-        });
+        CustomClickTouchListener.callClickOnTouch(albumPermissionsField, (apf)->onExpandPermissions());
 
         onClickMakeUserEditable(fieldsEditable);
         if (newUser != null) {

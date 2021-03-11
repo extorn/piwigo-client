@@ -207,19 +207,13 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
 
         groupNameField = v.findViewById(R.id.group_name);
         membersField = v.findViewById(R.id.group_members);
-        membersField.setOnClickListener(v1 -> selectGroupMembers());
         // can't just use a std click listener as it first focuses the field :-(
-        CustomClickTouchListener.callClickOnTouch(membersField);
+        CustomClickTouchListener.callClickOnTouch(membersField, (mf)->selectGroupMembers());
+
         isDefaultField = v.findViewById(R.id.group_is_default);
 
         albumAccessRightsField = v.findViewById(R.id.group_access_rights);
-        albumAccessRightsField.setOnTouchListener(new CustomClickTouchListener(albumAccessRightsField) {
-            @Override
-            public boolean onClick() {
-                onExpandPermissions();
-                return true;
-            }
-        });
+        CustomClickTouchListener.callClickOnTouch(albumAccessRightsField, (aarf)->onExpandPermissions());
 
         editButton = v.findViewById(R.id.group_action_edit_button);
         editButton.setOnClickListener(v15 -> setFieldsEditable(true));

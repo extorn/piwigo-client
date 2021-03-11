@@ -464,7 +464,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(TagContentAlteredEvent event) {
         Tag item = viewAdapter.getItemById(event.getId());
-        Objects.requireNonNull(item).setUsageCount(item.getUsageCount() + event.getContentChange());
+        Objects.requireNonNull(item).setPhotoCount(item.getPhotoCount() + event.getContentChange());
         viewAdapter.notifyItemChanged(viewAdapter.getItemPosition(item));
     }
 

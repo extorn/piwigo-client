@@ -11,7 +11,6 @@ import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -57,6 +56,7 @@ import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.libs.util.ArrayUtils;
@@ -111,7 +111,7 @@ import delit.piwigoclient.ui.album.view.action.BadRequestRedirectionAction;
 import delit.piwigoclient.ui.album.view.action.BasketAction;
 import delit.piwigoclient.ui.album.view.action.BulkResourceActionData;
 import delit.piwigoclient.ui.album.view.action.DeleteAlbumAction;
-import delit.piwigoclient.ui.album.view.action.DeleteResourceForeverAction;
+import delit.piwigoclient.ui.album.view.action.DeleteResourcesForeverAction;
 import delit.piwigoclient.ui.album.view.action.DeleteSharedResourcesAction;
 import delit.piwigoclient.ui.album.view.action.DeleteWithOrphansAlbumAction;
 import delit.piwigoclient.ui.album.view.action.LoadAlbumTreeAction;
@@ -147,7 +147,7 @@ import static android.widget.AdapterView.INVALID_POSITION;
 /**
  * A fragment representing a list of Items.
  */
-public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
+public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> implements BulkActionResourceProvider {
 
     public static final String TAG = "AbsViewAlbumFrag";
     public static final String RESUME_ACTION = "ALBUM";
@@ -255,7 +255,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
     public static <F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  void deleteResourcesFromServerForever(FUIH uiHelper, final HashSet<Long> selectedItemIds, final HashSet<ResourceItem> selectedItems) {
         String msg = uiHelper.getAppContext().getString(R.string.alert_confirm_really_delete_items_from_server);
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new DeleteResourceForeverAction<>(uiHelper, selectedItemIds, selectedItems));
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new DeleteResourcesForeverAction<>(uiHelper, selectedItemIds, selectedItems));
     }
 
     public static <UIH extends UIHelper<UIH,?>> boolean canHandleReopenAction(UIH uiHelper) {
@@ -616,6 +616,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         cellSpanLookup = new AlbumViewItemSpanSizeLookup(galleryModel, totalSpans, colsSpannedByAlbum, colsSpannedByImage);
         gridLayoutMan.setSpanSizeLookup(cellSpanLookup);
         galleryListView.setLayoutManager(gridLayoutMan);
+        galleryListView.addItemDecoration(new AlbumItemSpacingDecoration(DisplayUtils.dpToPx(requireContext(), 1), DisplayUtils.dpToPx(requireContext(), 16)));
 
         galleryListViewScrollListener = new AlbumScrollListener(this, galleryListView.getLayoutManager());
         galleryListView.addOnScrollListener(galleryListViewScrollListener);
@@ -784,55 +785,13 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
         bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
         bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
-
-        bulkActionButtonPermissions.setOnTouchListener((v, event) -> {
-            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                onClickBulkActionPermissionsButton();
-            }
-            return true; // consume the event
-        });
-        bulkActionButtonDownload.setOnTouchListener((v, event) -> {
-            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                onClickBulkActionDownloadButton();
-            }
-            return true; // consume the event
-        });
-        bulkActionButtonDelete.setOnTouchListener((v, event) -> {
-            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                onClickBulkActionDeleteButton();
-            }
-            return true; // consume the event
-        });
-        bulkActionButtonCopy.setOnTouchListener((v, event) -> {
-            boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
-            if (bulkActionsAllowed && event.getActionMasked() == MotionEvent.ACTION_UP) {
-                onUserActionAddSelectedItemsToBasket(Basket.ACTION_COPY);
-            }
-            return true; // consume the event
-        });
-        bulkActionButtonCut.setOnTouchListener((v, event) -> {
-            boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
-            if (bulkActionsAllowed && event.getActionMasked() == MotionEvent.ACTION_UP) {
-                onUserActionAddSelectedItemsToBasket(Basket.ACTION_CUT);
-            }
-            return true; // consume the event
-        });
-
-        bulkActionButtonPaste.setOnTouchListener((v, event) -> {
-            boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
-            if (bulkActionsAllowed && event.getActionMasked() == MotionEvent.ACTION_UP) {
-                final Basket basket1 = getBasket();
-                int msgPatternId = -1;
-                if (basket1.getAction() == Basket.ACTION_COPY) {
-                    msgPatternId = R.string.alert_confirm_copy_items_here_pattern;
-                } else if (basket1.getAction() == Basket.ACTION_CUT) {
-                    msgPatternId = R.string.alert_confirm_move_items_here_pattern;
-                }
-                String message = getString(msgPatternId, basket1.getItemCount(), galleryModel.getContainerDetails().getName());
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new BasketAction<>(getUiHelper()));
-            }
-            return true; // consume the event
-        });
+        //NOTE this touch listener is needed because we use a touch listener in the images below and they'll pick up the clicks if we don't
+        CustomClickTouchListener.callClickOnTouch(bulkActionButtonPermissions, (v)->onClickBulkActionPermissionsButton());
+        CustomClickTouchListener.callClickOnTouch(bulkActionButtonDownload, (v)->onClickBulkActionDownloadButton());
+        CustomClickTouchListener.callClickOnTouch(bulkActionButtonDelete, (v)->onClickBulkActionDeleteButton());
+        CustomClickTouchListener.callClickOnTouch(bulkActionButtonCopy, (v)->onUserActionAddSelectedItemsToBasket(Basket.ACTION_COPY));
+        CustomClickTouchListener.callClickOnTouch(bulkActionButtonCut, (v)->onUserActionAddSelectedItemsToBasket(Basket.ACTION_CUT));
+        CustomClickTouchListener.callClickOnTouch(bulkActionButtonPaste, (v)->onUserActionPasteItemsFromBasket());
 
         if (!isReopening && showBulkPermissionsAction(basket)) {
             bulkActionButtonPermissions.show();
@@ -872,6 +831,18 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 bulkActionButtonPaste.hide();
             }
         }
+    }
+
+    private void onUserActionPasteItemsFromBasket() {
+        final Basket basket1 = getBasket();
+        int msgPatternId = -1;
+        if (basket1.getAction() == Basket.ACTION_COPY) {
+            msgPatternId = R.string.alert_confirm_copy_items_here_pattern;
+        } else if (basket1.getAction() == Basket.ACTION_CUT) {
+            msgPatternId = R.string.alert_confirm_move_items_here_pattern;
+        }
+        String message = getString(msgPatternId, basket1.getItemCount(), galleryModel.getContainerDetails().getName());
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new BasketAction<>(getUiHelper()));
     }
 
     protected void loadAdminListOfAlbums() {
@@ -1013,21 +984,21 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             return true;
         });
 
-        AppCompatImageView basketImage = basketView.findViewById(R.id.basket_image);
+//        AppCompatImageView basketImage = basketView.findViewById(R.id.basket_image);
 
         AppCompatImageView clearButton = basketView.findViewById(R.id.basket_clear_button);
-        clearButton.setOnTouchListener((v1, event) -> {
-            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                Basket basket = getBasket();
-                basket.clear();
-                updateBasketDisplay(basket);
-            }
-            return true;
-        });
+        //NOTE this touch listener is needed because we use a touch listener in the images below and they'll pick up the clicks if we don't
+        CustomClickTouchListener.callClickOnTouch(clearButton, (cb)->onClickClearBasketButton());
+    }
+
+    private void onClickClearBasketButton() {
+        Basket basket = getBasket();
+        basket.clear();
+        updateBasketDisplay(basket);
     }
 
     public Basket getBasket() {
-        MainActivity activity = (MainActivity) requireActivity();
+        MainActivity<?> activity = (MainActivity<?>) requireActivity();
         return activity.getBasket();
     }
 
@@ -1061,10 +1032,10 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
 
         int basketItemCount = basket.getItemCount();
-        if (basketItemCount == 0) {
-            basketView.setVisibility(GONE);
-        } else {
-            basketView.setVisibility(VISIBLE);
+            if (basketItemCount == 0) {
+                basketView.setVisibility(GONE);
+            } else {
+                basketView.setVisibility(VISIBLE);
             AppCompatTextView basketItemCountField = basketView.findViewById(R.id.basket_item_count);
             basketItemCountField.setText(String.valueOf(basketItemCount));
 

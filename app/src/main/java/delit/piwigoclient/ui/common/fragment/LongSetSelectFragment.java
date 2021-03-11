@@ -27,6 +27,7 @@ import java.util.Set;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.Enableable;
 import delit.libs.ui.view.list.SelectableItemsAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
@@ -189,16 +190,15 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
 
         reloadListButton = view.findViewById(R.id.list_retryAction_actionButton);
         if(reloadListButton != null) {
-            reloadListButton.setOnTouchListener((v, event) -> {
-                if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    reloadListButton.hide();
-                    rerunRetrievalForFailedPages();
-                }
-                return true;
-            });
+            CustomClickTouchListener.callClickOnTouch(reloadListButton, (v)->onClickReloadListButton());
         }
 
         return view;
+    }
+
+    protected void onClickReloadListButton() {
+        reloadListButton.hide();
+        rerunRetrievalForFailedPages();
     }
 
     @Override

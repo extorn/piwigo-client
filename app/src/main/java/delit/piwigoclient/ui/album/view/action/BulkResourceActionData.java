@@ -15,7 +15,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
-import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 
 public class BulkResourceActionData implements Parcelable {
     public static final Creator<BulkResourceActionData> CREATOR = new Creator<BulkResourceActionData>() {
@@ -32,6 +32,8 @@ public class BulkResourceActionData implements Parcelable {
     public final static int ACTION_DELETE = 1;
     public final static int ACTION_UPDATE_PERMISSIONS = 2;
     public final static int ACTION_DOWNLOAD_ALL = 3;
+    public final static int ACTION_UNFAVORITE = 4;
+    public static final int ACTION_UNTAG = 5;
     private final static int maxHttpRequestsQueued = 20;
     final HashSet<Long> selectedItemIds;
     final HashSet<Long> itemsUpdated;
@@ -157,7 +159,7 @@ public class BulkResourceActionData implements Parcelable {
         return trackedMessageIds.size();
     }
 
-    public void getResourcesInfoIfNeeded(AbstractViewAlbumFragment<?, ?> fragment) {
+    public void getResourcesInfoIfNeeded(MyFragment<?, ?> fragment) {
         int simultaneousCalls = trackedMessageIds.size();
         if (maxHttpRequestsQueued > simultaneousCalls) {
             for (ResourceItem item : getItemsWithoutLinkedAlbumData()) {
@@ -168,5 +170,9 @@ public class BulkResourceActionData implements Parcelable {
                 }
             }
         }
+    }
+
+    public interface Caller {
+        void run(BulkResourceActionData data);
     }
 }

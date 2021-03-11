@@ -1,11 +1,15 @@
 package delit.libs.ui.view;
 
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ScrollView;
 
 import androidx.core.view.GestureDetectorCompat;
+
+import delit.libs.core.util.Logging;
 
 /**
  * Created by gareth on 04/07/17.
@@ -13,6 +17,7 @@ import androidx.core.view.GestureDetectorCompat;
 
 public abstract class CustomClickTouchListener implements View.OnTouchListener {
 
+    private static final String TAG = "CustomClickTouchListener";
     private final GestureDetectorCompat detector;
     private boolean allowScrollWhenNested;
 
@@ -73,14 +78,42 @@ public abstract class CustomClickTouchListener implements View.OnTouchListener {
         detector.setIsLongpressEnabled(true);
     }
 
-    public static void callClickOnTouch(View field) {
+    public static void callClickOnTouch(View field, View.OnClickListener listener) {
+        callClickOnTouch(field, listener, true);
+    }
+
+    public static void callClickOnTouch(View field, View.OnClickListener listener, boolean consumeEvent) {
+        if(field instanceof AdapterView) {
+            Logging.log(Log.DEBUG, TAG, "Unable to set click listener on an AdapterView, calling direct");
+            addClickListenerOverride(field, listener, consumeEvent);
+        } else {
+            callClickOnTouch(field, consumeEvent);
+            field.setOnClickListener(listener);
+        }
+    }
+
+    private static void addClickListenerOverride(View field, View.OnClickListener listener, boolean consumeEvent) {
+        field.setOnTouchListener(new CustomClickTouchListener(field) {
+            @Override
+            public boolean onClick() {
+                listener.onClick(field);
+                return consumeEvent;
+            }
+        });
+    }
+
+    public static void callClickOnTouch(View field, boolean consumeEvent) {
         field.setOnTouchListener(new CustomClickTouchListener(field) {
             @Override
             public boolean onClick() {
                 field.performClick();
-                return true;
+                return consumeEvent;
             }
         });
+    }
+
+    public static void callClickOnTouch(View field) {
+        callClickOnTouch(field, true);
     }
 
     /**
