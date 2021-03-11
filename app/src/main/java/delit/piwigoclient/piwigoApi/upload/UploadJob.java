@@ -707,6 +707,20 @@ public class UploadJob implements Parcelable {
 
     }
 
+    public boolean getHasFilesRequiringCompression(List<FileUploadDetails> excludeFromCheck) {
+        Set<FileUploadDetails> filesNeedingProcessing = new HashSet<>(getFilesForUpload());
+        for (Iterator<FileUploadDetails> iterator = filesNeedingProcessing.iterator(); iterator.hasNext(); ) {
+            FileUploadDetails uploadDetails = iterator.next();
+            if(excludeFromCheck.contains(uploadDetails)) {
+                continue;
+            }
+            if(uploadDetails.isCompressionWanted() && !uploadDetails.isUploadStarted()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static class ImageCompressionParams implements Parcelable {
         public static final Creator<ImageCompressionParams> CREATOR = new Creator<ImageCompressionParams>() {
             @Override
