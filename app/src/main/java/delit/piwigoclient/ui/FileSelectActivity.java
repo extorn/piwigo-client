@@ -55,7 +55,6 @@ public class FileSelectActivity<A extends FileSelectActivity<A, AUIH>, AUIH exte
 
     public static final String INTENT_SELECTED_FILES = "FileSelectActivity.selectedFiles";
     public static final String ACTION_TIME_MILLIS = "FileSelectActivity.actionTimeMillis";
-    public static final String STATE_ADAPTER_PREFS = "fsa.adapterPrefs";
     public static String INTENT_DATA = "configData";
     private FolderItemViewAdapterPreferences folderItemSelectPrefs;
 

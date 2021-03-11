@@ -28,7 +28,7 @@ public class ForegroundJobLoadActor extends JobLoadActor {
                     // this could occur if the user forcibly stopped the app
                     Logging.log(Log.WARN, TAG, "Loading foreground job from file with illogical status - marking stopped");
                     job.setStatusStopped();
-                    new JobLoadActor(getContext()).saveStateToDisk(job);
+                    saveStateToDisk(job);
                 }
                 return job;
             }

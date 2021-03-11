@@ -3,6 +3,8 @@ package delit.piwigoclient.piwigoApi.upload;
 import android.content.Context;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -17,17 +19,18 @@ import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileLocalErrorRe
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadProgressUpdateResponse;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadUnexpectedLocalErrorResponse;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoVideoCompressionProgressUpdateResponse;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.upload.PiwigoFileUploadResponseListener;
 
-public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUploadResponseListener {
+public class BackgroundPiwigoFileUploadResponseListener<P extends UIHelper<P,T>, T> extends PiwigoFileUploadResponseListener<P,T> {
 
     public BackgroundPiwigoFileUploadResponseListener(Context context) {
         super(context);
     }
 
     @Override
-    protected void onMessageForUser(Context context, MessageForUserResponse response) {
+    protected void onMessageForUser(@NonNull Context context, MessageForUserResponse response) {
 
     }
 
@@ -37,49 +40,49 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
-    protected void onRequestedFileUploadCancelComplete(Context context, Uri cancelledFile) {
+    protected void onRequestedFileUploadCancelComplete(@NonNull Context context, Uri cancelledFile) {
 
     }
 
     @Override
-    protected void onAddUploadedFileToAlbumFailure(Context context, PiwigoUploadFileAddToAlbumFailedResponse response) {
+    protected void onAddUploadedFileToAlbumFailure(@NonNull Context context, PiwigoUploadFileAddToAlbumFailedResponse response) {
 
     }
 
     @Override
-    protected void onChunkUploadFailed(Context context, PiwigoUploadFileChunkFailedResponse response) {
+    protected void onChunkUploadFailed(@NonNull Context context, PiwigoUploadFileChunkFailedResponse response) {
 
     }
 
     @Override
-    protected void onFilesSelectedForUploadAlreadyExistOnServer(Context context, PiwigoUploadFileFilesExistAlreadyResponse response) {
+    protected void onFilesSelectedForUploadAlreadyExistOnServer(@NonNull Context context, PiwigoUploadFileFilesExistAlreadyResponse response) {
 
     }
 
     @Override
-    protected void onLocalFileError(Context context, PiwigoUploadFileLocalErrorResponse response) {
+    protected void onLocalFileError(@NonNull Context context, PiwigoUploadFileLocalErrorResponse response) {
 
     }
 
     @Override
-    protected void onLocalUnexpectedError(Context context, PiwigoUploadUnexpectedLocalErrorResponse response) {
+    protected void onLocalUnexpectedError(@NonNull Context context, PiwigoUploadUnexpectedLocalErrorResponse response) {
 
     }
 
     @Override
-    protected void onFileCompressionProgressUpdate(Context context, PiwigoVideoCompressionProgressUpdateResponse response) {
+    protected void onFileCompressionProgressUpdate(@NonNull Context context, PiwigoVideoCompressionProgressUpdateResponse response) {
         // Do nothing for now.
     }
 
     @Override
-    protected void onFileUploadProgressUpdate(Context context, PiwigoUploadProgressUpdateResponse response) {
+    protected void onFileUploadProgressUpdate(@NonNull Context context, @NonNull PiwigoUploadProgressUpdateResponse response) {
         if (response.getProgress() == 100) {
             onFileUploadComplete(context, response);
         }
     }
 
-    private void onFileUploadComplete(Context context, final PiwigoUploadProgressUpdateResponse response) {
-        UploadJob uploadJob = BackgroundJobLoadActor.getActiveBackgroundJobByJobId(context, response.getJobId());
+    private void onFileUploadComplete(@NonNull Context context, @NonNull final PiwigoUploadProgressUpdateResponse response) {
+        UploadJob uploadJob = BackgroundJobLoadActor.getDefaultInstance(context).getActiveBackgroundJobByJobId(response.getJobId());
         if (uploadJob != null) {
             //TODO too much updating?
             for (Long albumParent : uploadJob.getUploadToCategory().getParentageChain()) {
@@ -90,17 +93,17 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
-    protected void onPrepareUploadFailed(Context context, PiwigoPrepareUploadFailedResponse response) {
+    protected void onPrepareUploadFailed(@NonNull Context context, PiwigoPrepareUploadFailedResponse response) {
 
     }
 
     @Override
-    protected void onCleanupPostUploadFailed(Context context, PiwigoCleanupPostUploadFailedResponse response) {
+    protected void onCleanupPostUploadFailed(@NonNull Context context, PiwigoCleanupPostUploadFailedResponse response) {
 
     }
 
     @Override
-    protected void onUploadComplete(Context context, UploadJob job) {
+    protected void onUploadComplete(@NonNull Context context, UploadJob job) {
         // update the album view(s) if relevant.
         for (Long albumParent : job.getUploadToCategory().getParentageChain()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));

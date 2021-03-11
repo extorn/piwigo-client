@@ -118,7 +118,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     protected final void runJob(long jobId) {
         try {
             EventBus.getDefault().register(this);
-            ForegroundJobLoadActor jobLoadActor = new ForegroundJobLoadActor(this);
+            ForegroundJobLoadActor jobLoadActor = getJobLoadActor();
             UploadJob thisUploadJob = jobLoadActor.getActiveForegroundJob(jobId);
             runJob(jobLoadActor, thisUploadJob, null, true);
         } finally {
@@ -129,6 +129,11 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     @Override
     protected void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<Uri, String> uploadedFileChecksums) {
         //TODO add the files checksums to a list that can then be used by the file selection for upload fragment perhaps to show those files that have been uploaded subtly.
+    }
+
+    @Override
+    protected ForegroundJobLoadActor getJobLoadActor() {
+        return new ForegroundJobLoadActor(this);
     }
 
     @Override

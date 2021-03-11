@@ -39,6 +39,7 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetChildAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
+import delit.piwigoclient.piwigoApi.upload.BackgroundJobConfigurationErrorListener;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.piwigoApi.upload.actor.BackgroundJobLoadActor;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
@@ -84,7 +85,7 @@ public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFr
         setPreferencesFromResource(R.xml.pref_auto_upload_job, rootKey);
 
         Preference viewUploadStatus = findPreference(R.string.preference_data_upload_automatic_job_view_status_key);
-        viewUploadStatus.setEnabled(BackgroundJobLoadActor.getActiveBackgroundJobByJobConfigId(requireContext(), jobConfigId) != null);
+        viewUploadStatus.setEnabled(BackgroundJobLoadActor.getDefaultInstance(requireContext()).getActiveBackgroundJobByJobConfigId(jobConfigId) != null);
         viewUploadStatus.setOnPreferenceClickListener(preference -> {
             onUploadJobStatusButtonClick();
             return true;
@@ -118,7 +119,7 @@ public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFr
     }
 
     private void onUploadJobStatusButtonClick() {
-        UploadJob uploadJob = BackgroundJobLoadActor.getActiveBackgroundJobByJobConfigId(requireContext(), jobConfigId);
+        UploadJob uploadJob = BackgroundJobLoadActor.getDefaultInstance(requireContext()).getActiveBackgroundJobByJobConfigId(jobConfigId);
         if (uploadJob != null) {
             EventBus.getDefault().post(new ViewJobStatusDetailsEvent(uploadJob));
         } else {

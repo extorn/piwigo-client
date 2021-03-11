@@ -125,6 +125,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         runningUploadJob = null;
     }
 
+    protected abstract JobLoadActor getJobLoadActor();
+
     protected void runJob(@NonNull JobLoadActor jobLoadActor, @NonNull UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
         ActorListener actorListener = buildUploadActorListener(thisUploadJob, uploadNotificationManager);
 

@@ -34,23 +34,27 @@ public class BackgroundJobLoadActor extends JobLoadActor {
     private final static String TAG = "BackgroundJobLoadActor";
     private final BackgroundJobConfigurationErrorListener listener;
 
-    public BackgroundJobLoadActor(Context context, BackgroundJobConfigurationErrorListener listener) {
+    public BackgroundJobLoadActor(@NonNull Context context, @NonNull BackgroundJobConfigurationErrorListener listener) {
         super(context);
         this.listener = listener;
+    }
+
+    public static BackgroundJobLoadActor getDefaultInstance(@NonNull Context context) {
+        return new BackgroundJobLoadActor(context, new BackgroundJobConfigurationErrorListener(context));
     }
 
     private BackgroundJobConfigurationErrorListener getListener() {
         return listener;
     }
 
-    public static @Nullable UploadJob getActiveBackgroundJob(@NonNull Context context) {
+    public @Nullable UploadJob getActiveBackgroundJob() {
         synchronized (activeUploadJobs) {
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.isRunInBackground()) {
                     return uploadJob;
                 }
             }
-            activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
+            activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk());
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.isRunInBackground()) {
                     return uploadJob;
@@ -112,8 +116,8 @@ public class BackgroundJobLoadActor extends JobLoadActor {
         return uploadJob;
     }
 
-    public static List<UploadJob> loadBackgroundJobsStateFromDisk(@NonNull Context context) {
-        File jobsFolder = new File(context.getExternalCacheDir(), "uploadJobs");
+    public List<UploadJob> loadBackgroundJobsStateFromDisk() {
+        File jobsFolder = new File(getContext().getExternalCacheDir(), "uploadJobs");
         if (!jobsFolder.exists()) {
             if (!jobsFolder.mkdir()) {
                 Logging.log(Log.ERROR, TAG, "Unable to create folder to store background upload job status data in");
@@ -126,7 +130,7 @@ public class BackgroundJobLoadActor extends JobLoadActor {
         for (DocumentFile jobFile : jobFiles) {
             UploadJob job = null;
             try {
-                job = IOUtils.readParcelableFromDocumentFile(context.getContentResolver(), jobFile, UploadJob.class);
+                job = IOUtils.readParcelableFromDocumentFile(getContext().getContentResolver(), jobFile, UploadJob.class);
             } catch (Exception e) {
                 Logging.log(Log.WARN, TAG, "Unable to reload job from saved state (will be deleted) - has parcelable changed?");
             }
@@ -137,7 +141,7 @@ public class BackgroundJobLoadActor extends JobLoadActor {
                     // this could occur if the user forcibly stopped the app
                     Logging.log(Log.WARN, TAG, "Loading background job from file with illogical status - marking stopped");
                     job.setStatusStopped();
-                    new JobLoadActor(context).saveStateToDisk(job);
+                    new JobLoadActor(getContext()).saveStateToDisk(job);
                 }
                 jobs.add(job);
             } else {
@@ -160,14 +164,14 @@ public class BackgroundJobLoadActor extends JobLoadActor {
         return jobs;
     }
 
-    public static UploadJob getActiveBackgroundJobByJobConfigId(@NonNull Context context, long jobConfigId) {
+    public UploadJob getActiveBackgroundJobByJobConfigId(long jobConfigId) {
         synchronized (activeUploadJobs) {
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.isRunInBackground() && uploadJob.getJobConfigId() == jobConfigId) {
                     return uploadJob;
                 }
             }
-            activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
+            activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk());
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.isRunInBackground() && uploadJob.getJobConfigId() == jobConfigId) {
                     return uploadJob;
@@ -177,14 +181,14 @@ public class BackgroundJobLoadActor extends JobLoadActor {
         return null;
     }
 
-    public static UploadJob getActiveBackgroundJobByJobId(Context context, long jobId) {
+    public UploadJob getActiveBackgroundJobByJobId(long jobId) {
         synchronized (activeUploadJobs) {
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.isRunInBackground() && uploadJob.getJobId() == jobId) {
                     return uploadJob;
                 }
             }
-            activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
+            activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk());
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.isRunInBackground() && uploadJob.getJobId() == jobId) {
                     return uploadJob;

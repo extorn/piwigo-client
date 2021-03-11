@@ -269,7 +269,7 @@ public class UploadJob implements Parcelable {
     FileUploadDetails getFileUploadDetails(@NonNull Uri file) {
         FileUploadDetails uploadDetails = fileUploadDetails.get(file);
         if (uploadDetails == null) {
-            throw new IllegalStateException("No size recorded for Upload job file " + file);
+            throw new IllegalStateException("File not found in Upload job file " + file);
         }
         return uploadDetails;
     }

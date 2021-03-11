@@ -90,7 +90,7 @@ class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH 
             getUiHelper().handleAnyQueuedPiwigoMessages();
         } else {
             // reset status ready for next job
-            JobLoadActor.removeJob(uploadJob);
+            new JobLoadActor(getContext()).removeJob(uploadJob, true);
             getOwner().setUploadJobId(null);
         }
 

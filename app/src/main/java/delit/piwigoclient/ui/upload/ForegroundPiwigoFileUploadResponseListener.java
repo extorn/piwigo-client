@@ -35,7 +35,7 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.upload.list.UploadDataItem;
 
-public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends PiwigoFileUploadResponseListener<F,FUIH> {
+public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends PiwigoFileUploadResponseListener<FUIH, F> {
 
     private static final String TAG = "FgFileUploadRespL";
 
@@ -76,7 +76,7 @@ public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUpload
     public void onUploadComplete(@NonNull final Context context, final UploadJob job) {
         if (getParent() != null && getParent().isAdded()) {
             if (job.hasJobCompletedAllActionsSuccessfully() && job.isStatusFinished()) {
-                ForegroundJobLoadActor.removeJob(job);
+                new ForegroundJobLoadActor(context).removeJob(job, true);
                 HashSet<Uri> filesPendingApproval = job.getFilesPendingCommunityApproval();
                 if (filesPendingApproval.size() > 0) {
                     String msg = getParent().getString(R.string.alert_message_info_files_already_pending_approval_pattern, filesPendingApproval.size());
@@ -113,7 +113,7 @@ public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUpload
     }
 
     @Override
-    protected void onLocalUnexpectedError(Context context, PiwigoUploadUnexpectedLocalErrorResponse response) {
+    protected void onLocalUnexpectedError(@NonNull Context context, PiwigoUploadUnexpectedLocalErrorResponse response) {
         String errorMessage;
         Logging.log(Log.ERROR, TAG, "Local Upload Error");
         Logging.recordException(response.getError());
@@ -123,7 +123,7 @@ public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUpload
     }
 
     @Override
-    protected void onLocalFileError(Context context, final PiwigoUploadFileLocalErrorResponse response) {
+    protected void onLocalFileError(@NonNull Context context, final PiwigoUploadFileLocalErrorResponse response) {
         if(response.isItemUploadCancelled()) {
             getParent().getFilesForUploadViewAdapter().updateUploadStatus(response.getFileForUpload(), UploadDataItem.STATUS_ERROR);
         }
@@ -145,7 +145,7 @@ public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUpload
     }
 
     @Override
-    protected void onPrepareUploadFailed(Context context, final PiwigoPrepareUploadFailedResponse response) {
+    protected void onPrepareUploadFailed(@NonNull Context context, final PiwigoPrepareUploadFailedResponse response) {
 
         PiwigoResponseBufferingHandler.Response error = response.getError();
         getParent().processPiwigoError(context, error);
@@ -247,12 +247,12 @@ public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUpload
     }
 
     @Override
-    protected void onMessageForUser(Context context, MessageForUserResponse response) {
+    protected void onMessageForUser(@NonNull Context context, MessageForUserResponse response) {
         getParent().notifyUser(context, R.string.alert_information, response.getMessage());
     }
 
     @Override
-    protected void onChunkUploadFailed(Context context, final PiwigoUploadFileChunkFailedResponse response) {
+    protected void onChunkUploadFailed(@NonNull Context context, final PiwigoUploadFileChunkFailedResponse response) {
         PiwigoResponseBufferingHandler.Response error = response.getError();
         Uri fileForUpload = response.getFileForUpload();
         String errorMessage = null;
@@ -291,7 +291,7 @@ public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUpload
     }
 
     @Override
-    protected void onAddUploadedFileToAlbumFailure(Context context, final PiwigoUploadFileAddToAlbumFailedResponse response) {
+    protected void onAddUploadedFileToAlbumFailure(@NonNull Context context, final PiwigoUploadFileAddToAlbumFailedResponse response) {
         PiwigoResponseBufferingHandler.Response error = response.getError();
         Uri fileForUploadUri = response.getFileForUpload();
         DocumentFile fileForUpload = IOUtils.getSingleDocFile(context, fileForUploadUri);

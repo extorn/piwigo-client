@@ -133,6 +133,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
                 }
                 uriPermissionsProgressTracker.incrementWorkDone(1);
             }
+            uriPermissionsProgressTracker.markComplete();
 
             // Phase 1.3 (0%) notify user of any issues found so far
             if (!unsupportedExts.isEmpty()) {

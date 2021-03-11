@@ -61,9 +61,12 @@ public class JobLoadActor extends LocalUploadActor {
         return uploadJob;
     }
 
-    public static void removeJob(UploadJob job) {
+    public void removeJob(@NonNull UploadJob job, boolean deleteJobState) {
         synchronized (activeUploadJobs) {
             activeUploadJobs.remove(job);
+        }
+        if(deleteJobState) {
+            deleteStateFromDisk(job, deleteJobState);
         }
     }
 
@@ -145,12 +148,11 @@ public class JobLoadActor extends LocalUploadActor {
         }
     }
 
-    public void deleteStateFromDisk(UploadJob uploadJob, boolean deleteJobConfigFile) {
+    public void deleteStateFromDisk(@Nullable UploadJob uploadJob, boolean deleteJobConfigFile) {
         if (uploadJob == null) {
             return; // out of sync! Job no longer exists presumably.
         }
         deleteAllCompressedAndTemporaryFilesThatExist(uploadJob);
-        //FIXME do I need to delete successfully uploaded files now?
         if (deleteJobConfigFile) {
             DocumentFile stateFile = uploadJob.getLoadedFromFile();
             if (stateFile == null) {

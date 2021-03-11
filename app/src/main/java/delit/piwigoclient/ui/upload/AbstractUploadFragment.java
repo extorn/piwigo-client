@@ -197,11 +197,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         if (externallyTriggeredSelectFilesActionId == stickyEvent.getActionId() || getUiHelper().isTrackingRequest(stickyEvent.getActionId())) {
             if(getContext() != null) {
                 EventBus.getDefault().removeStickyEvent(stickyEvent);
-                Long uploadJobId = getUploadJobId();
-                UploadJob activeJob = null;
-                if(uploadJobId != null) {
-                    activeJob = new ForegroundJobLoadActor(requireContext()).getActiveForegroundJob(uploadJobId);
-                }
+                UploadJob activeJob = getActiveJob(requireContext());
                 if(activeJob != null && !activeJob.isStatusFinished()) {
                     if(!activeJob.isStatusRunningNow()) {
                         submitUploadJob(activeJob);
@@ -742,12 +738,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             onEvent(evt);
         }
 
-        UploadJob job = null;
-        Context ctx = requireContext();
-        if (uploadJobId != null) {
-            job = new ForegroundJobLoadActor(ctx).getActiveForegroundJob(uploadJobId);
-
-        }
+        UploadJob job = getActiveJob(requireContext());
         updateUiUploadStatusFromJobIfRun(job);
     }
 
@@ -760,7 +751,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     private void purgeAnyUnwantedSharedFiles() {
         DocumentFile sharedFilesFolder = IOUtils.getSharedFilesFolder(requireContext());
         int deleted = 0;
-        if(sharedFilesFolder.listFiles().length > 0 && new ForegroundJobLoadActor(requireContext()).getFirstActiveForegroundJob() == null) {
+        if(sharedFilesFolder.listFiles().length > 0 && getActiveJob(requireContext()) == null) {
             for(DocumentFile oldFile : sharedFilesFolder.listFiles()) {
                 if(!filesToUploadAdapter.contains(oldFile.getUri())) {
                     oldFile.delete();
@@ -952,7 +943,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         boolean jobIsFinished = uploadJob != null && uploadJob.isStatusFinished();
 
         if(uploadJob == null) {
-            filesToUploadAdapter.clearUploadProgress();
+            //filesToUploadAdapter.clearUploadProgress();
             uploadFilesNowButton.setText(R.string.upload_files_button_title);
         } else {
             uploadFilesNowButton.setText(R.string.upload_files_finish_job_button_title);
@@ -976,12 +967,8 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     private void updateActiveJobActionButtonsStatus() {
-        UploadJob job = null;
-        Context ctx = requireContext();
-        if (uploadJobId != null) {
-            job = new ForegroundJobLoadActor(ctx).getActiveForegroundJob(uploadJobId);
-        }
-        updateActiveJobActionButtonsStatus(ctx, job);
+        UploadJob job = getActiveJob(requireContext());
+        updateActiveJobActionButtonsStatus(requireContext(), job);
     }
 
     private void updateActiveJobActionButtonsStatus(@NonNull Context context, @Nullable UploadJob job) {
@@ -1032,9 +1019,9 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     private void submitUploadJobWithPermissions() {
-        UploadJob activeJob = new ForegroundJobLoadActor(requireContext()).getActiveForegroundJob(uploadJobId);
+        UploadJob activeJob = getActiveJob(requireContext());
         //ensure the handler is actively listening before the job starts.
-        getUiHelper().addBackgroundServiceCall(uploadJobId);
+        getUiHelper().addBackgroundServiceCall(activeJob.getJobId());
         ForegroundPiwigoUploadService.startActionRunOrReRunUploadJob(requireContext(), activeJob);
         allowUserUploadConfiguration(activeJob);
     }
@@ -1221,9 +1208,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             getUiHelper().addNonBlockingActiveServiceCall(getString(R.string.alert_deleting_temporary_upload_album), albumDelHandler.invokeAsync(getContext(), job.getConnectionPrefs()), albumDelHandler.getTag());
         }
         IOUtils.deleteAllFilesSharedWithThisApp(requireContext());
-        ForegroundJobLoadActor.removeJob(job);
-        new ForegroundJobLoadActor(getContext()).deleteStateFromDisk(job, true);
-        job.deleteAnyCompressedFiles(requireContext());
+        new ForegroundJobLoadActor(requireContext()).removeJob(job, true);
         filesToUploadAdapter.clear();
         uploadJobId = null;
         allowUserUploadConfiguration(null);
@@ -1292,21 +1277,13 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         onClickUploadJobStatusButton();
     }
 
-    protected void onUserActionRemoveFailedUploadsAndFinish() {
-        UploadJob uploadJob = getActiveJob(requireContext());
-        getFilesForUploadViewAdapter().removeAll(uploadJob.getFilesRequiringRetry());
-        uploadJob.cancelAllFailedUploads();
-        new ForegroundJobLoadActor(getContext()).saveStateToDisk(uploadJob);
-        submitUploadJob(uploadJob);
-    }
-
     protected void onUserActionClearUploadErrorsAndRetry() {
         UploadJob uploadJob = getActiveJob(requireContext());
         for(Uri file : uploadJob.getFilesRequiringRetry()) {
             getFilesForUploadViewAdapter().updateUploadStatus(file, null);
         }
         uploadJob.clearUploadErrors();
-        new ForegroundJobLoadActor(getContext()).saveStateToDisk(uploadJob);
+        new ForegroundJobLoadActor(requireContext()).saveStateToDisk(uploadJob);
         submitUploadJob(uploadJob);
     }
 

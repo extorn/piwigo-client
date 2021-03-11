@@ -348,7 +348,7 @@ public class DisplayUtils {
             View decorView = window.getDecorView();
             // force user to swipe up from bottom or down from top to bring back status bars
             int uiFlags = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-
+            int currentFlags = decorView.getSystemUiVisibility();
             if (!showNavButtons) {
                 // Make content appear behind the navigation bar
                 uiFlags |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -369,8 +369,9 @@ public class DisplayUtils {
                 }
 
             }
-
-            decorView.setSystemUiVisibility(uiFlags);
+            if(currentFlags != uiFlags) {
+                decorView.setSystemUiVisibility(uiFlags);
+            }
 //            decorView.setOnSystemUiVisibilityChangeListener(new SystemUiVisibilityChangeListener(decorView, uiFlags));
         }
 

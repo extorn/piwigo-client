@@ -148,7 +148,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
      * at a later point. The reason the job wants cancelling is that it will tidy state and then save it.
      */
     private void cancelAnyRunningUploadJob() {
-        UploadJob uploadJob = BackgroundJobLoadActor.getActiveBackgroundJob(this);
+        UploadJob uploadJob = new BackgroundJobLoadActor(this, new BackgroundJobConfigurationErrorListener(this)).getActiveBackgroundJob();
         if(uploadJob != null && !uploadJob.isStatusFinished()) {
             uploadJob.cancelUploadAsap();
         }
@@ -192,7 +192,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
         try {
 
-            BackgroundPiwigoFileUploadResponseListener jobListener = new BackgroundPiwigoFileUploadResponseListener(context);
+            BackgroundPiwigoFileUploadResponseListener<?,?> jobListener = new BackgroundPiwigoFileUploadResponseListener<>(context);
 
             while (!terminateUploadServiceThreadAsap) {
 
@@ -211,13 +211,13 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
     }
 
-    private void pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(Context context, AutoUploadJobsConfig jobs, Map<Uri, UriWatcher> runningObservers, BackgroundPiwigoFileUploadResponseListener jobListener) {
+    private void pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(Context context, AutoUploadJobsConfig jobs, Map<Uri, UriWatcher> runningObservers, BackgroundPiwigoFileUploadResponseListener<?,?> jobListener) {
         getUploadNotificationManager().updateNotificationText(R.string.notification_text_background_upload_polling, true);
         UploadJob unfinishedJob;
-
+        BackgroundJobLoadActor jobLoadActor = getJobLoadActor();
         do {
             // if there's an old incomplete job, try and finish that first.
-            unfinishedJob = BackgroundJobLoadActor.getActiveBackgroundJob(context);
+            unfinishedJob = jobLoadActor.getActiveBackgroundJob();
             if (unfinishedJob != null) {
                 ConnectionPreferences.ProfilePreferences jobConnProfilePrefs = unfinishedJob.getConnectionPrefs();
                 boolean jobIsValid = jobConnProfilePrefs != null && jobConnProfilePrefs.isValid(getPrefs(), getApplicationContext());
@@ -228,17 +228,16 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                     if(0 == unfinishedJob.getActionableFilesCount()) {
                         // ALL Files not uploaded are in error state. Cancel them all so the server will be cleaned of any partial uploads
                         unfinishedJob.cancelAllFailedUploads();
-                        new JobLoadActor(this).saveStateToDisk(unfinishedJob);
+                        jobLoadActor.saveStateToDisk(unfinishedJob);
                     }
-                    BackgroundJobLoadActor jobLoadActor = new BackgroundJobLoadActor(this, new BackgroundJobConfigurationErrorListener(this));
+
                     runJob(jobLoadActor, unfinishedJob, this, true);
                     if (unfinishedJob.hasJobCompletedAllActionsSuccessfully()) {
-                        JobLoadActor.removeJob(unfinishedJob);
+                        jobLoadActor.removeJob(unfinishedJob, false);
                     }
                 } else {
                     // no longer valid (connection doesn't exist any longer).
-                    new JobLoadActor(this).deleteStateFromDisk(unfinishedJob, true);
-                    JobLoadActor.removeJob(unfinishedJob);
+                    jobLoadActor.removeJob(unfinishedJob, true);
                 }
             }
         } while (unfinishedJob != null && !terminateUploadServiceThreadAsap);
@@ -266,7 +265,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                         observer.startWatching();
                     }
                     if (!terminateUploadServiceThreadAsap && jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
-                        BackgroundJobLoadActor jobLoaderActor = new BackgroundJobLoadActor(this, new BackgroundJobConfigurationErrorListener(this));
+                        BackgroundJobLoadActor jobLoaderActor = getJobLoadActor();
                         UploadJob uploadJob = jobLoaderActor.getUploadJob(jobConfig, jobListener);
                         if (uploadJob != null) {
                             runJob(jobLoaderActor, uploadJob, this, false);
@@ -279,6 +278,11 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 }
             }
         }
+    }
+
+    @Override
+    protected BackgroundJobLoadActor getJobLoadActor() {
+        return new BackgroundJobLoadActor(this, new BackgroundJobConfigurationErrorListener(this));
     }
 
     private void sendServiceToSleep() {

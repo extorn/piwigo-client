@@ -3,6 +3,8 @@ package delit.piwigoclient.ui.upload;
 import android.content.Context;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 import delit.libs.core.util.Logging;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -20,13 +22,13 @@ import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadFileLocalErrorRe
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadProgressUpdateResponse;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoUploadUnexpectedLocalErrorResponse;
 import delit.piwigoclient.piwigoApi.upload.messages.PiwigoVideoCompressionProgressUpdateResponse;
-import delit.piwigoclient.ui.common.FragmentUIHelper;
+import delit.piwigoclient.ui.common.UIHelper;
 
-public abstract class PiwigoFileUploadResponseListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends BasicPiwigoResponseListener<FUIH,F> {
+public abstract class PiwigoFileUploadResponseListener<P extends UIHelper<P,T>, T>  extends BasicPiwigoResponseListener<P,T> {
 
     private final Context context;
 
-    public PiwigoFileUploadResponseListener(Context context) {
+    public PiwigoFileUploadResponseListener(@NonNull Context context) {
         this.context = context.getApplicationContext();// use app context so it doesn't matter if it leaks.
     }
 
@@ -69,31 +71,31 @@ public abstract class PiwigoFileUploadResponseListener<F extends AbstractUploadF
         }
     }
 
-    protected abstract void onMessageForUser(Context context, MessageForUserResponse response);
+    protected abstract void onMessageForUser(@NonNull Context context, MessageForUserResponse response);
 
     protected abstract void onErrorResponse(PiwigoResponseBufferingHandler.ErrorResponse response);
 
-    protected abstract void onRequestedFileUploadCancelComplete(Context context, Uri cancelledFile);
+    protected abstract void onRequestedFileUploadCancelComplete(@NonNull Context context, Uri cancelledFile);
 
-    protected abstract void onAddUploadedFileToAlbumFailure(Context context, PiwigoUploadFileAddToAlbumFailedResponse response);
+    protected abstract void onAddUploadedFileToAlbumFailure(@NonNull Context context, PiwigoUploadFileAddToAlbumFailedResponse response);
 
-    protected abstract void onChunkUploadFailed(Context context, PiwigoUploadFileChunkFailedResponse response);
+    protected abstract void onChunkUploadFailed(@NonNull Context context, PiwigoUploadFileChunkFailedResponse response);
 
-    protected abstract void onFilesSelectedForUploadAlreadyExistOnServer(Context context, PiwigoUploadFileFilesExistAlreadyResponse response);
+    protected abstract void onFilesSelectedForUploadAlreadyExistOnServer(@NonNull Context context, PiwigoUploadFileFilesExistAlreadyResponse response);
 
-    protected abstract void onLocalFileError(Context context, PiwigoUploadFileLocalErrorResponse response);
+    protected abstract void onLocalFileError(@NonNull Context context, PiwigoUploadFileLocalErrorResponse response);
 
-    protected abstract void onFileUploadProgressUpdate(Context context, PiwigoUploadProgressUpdateResponse response);
+    protected abstract void onFileUploadProgressUpdate(@NonNull Context context, PiwigoUploadProgressUpdateResponse response);
 
-    protected abstract void onLocalUnexpectedError(Context context, PiwigoUploadUnexpectedLocalErrorResponse response);
+    protected abstract void onLocalUnexpectedError(@NonNull Context context, PiwigoUploadUnexpectedLocalErrorResponse response);
 
-    protected abstract void onFileCompressionProgressUpdate(Context context, PiwigoVideoCompressionProgressUpdateResponse response);
+    protected abstract void onFileCompressionProgressUpdate(@NonNull Context context, PiwigoVideoCompressionProgressUpdateResponse response);
 
-    protected abstract void onPrepareUploadFailed(Context context, PiwigoPrepareUploadFailedResponse response);
+    protected abstract void onPrepareUploadFailed(@NonNull Context context, PiwigoPrepareUploadFailedResponse response);
 
-    protected abstract void onCleanupPostUploadFailed(Context context, PiwigoCleanupPostUploadFailedResponse response);
+    protected abstract void onCleanupPostUploadFailed(@NonNull Context context, PiwigoCleanupPostUploadFailedResponse response);
 
-    protected abstract void onUploadComplete(Context context, UploadJob job);
+    protected abstract void onUploadComplete(@NonNull Context context, UploadJob job);
 
     @Override
     public boolean canHandlePiwigoResponseNow(PiwigoResponseBufferingHandler.Response response) {
