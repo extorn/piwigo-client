@@ -2,8 +2,9 @@ package delit.piwigoclient.database;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Index;
 
-@Entity(primaryKeys = {"uri", "uploadToKey"})
+@Entity(primaryKeys = {"uri", "uploadToKey"}, indices = {@Index("uri"),@Index("uploadToKey")})
 public class UploadDestinationPriorUploadCrossRef {
     @NonNull
     public String uri;
