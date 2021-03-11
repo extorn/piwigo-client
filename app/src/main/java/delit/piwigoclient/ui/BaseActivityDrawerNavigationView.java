@@ -173,6 +173,10 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        if(isInEditMode()) {
+            // In Android studio preview
+            return;
+        }
         createUiHelperIfNeeded();
 
         setMenuVisibilityToMatchSessionState();
@@ -196,11 +200,14 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
 
     @Override
     protected void onDetachedFromWindow() {
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this);
-        }
-        if(uiHelper != null) {
-            uiHelper.deregisterFromActiveServiceCalls();
+        if(!isInEditMode()) {
+            // NOT In Android studio preview
+            if (EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().unregister(this);
+            }
+            if(uiHelper != null) {
+                uiHelper.deregisterFromActiveServiceCalls();
+            }
         }
         super.onDetachedFromWindow();
     }
