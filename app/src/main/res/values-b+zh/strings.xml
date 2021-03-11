@@ -114,7 +114,7 @@
     <string name="upload_files_finish_job_button_title">完成上传</string>
     <string name="upload_job_status_button">状态</string>
     <string name="alert_really_delete_upload_job">这将从该设备删除作业状态。您将需要手动清除部分上传到服务器的任何文件（或使用此应用程序中的首选项-上传设置页面）。如果以后再恢复作业，通常会成功完成。您确定要采取这个激烈的步骤吗？</string>
-    <string name="loading_please_wait">加载请稍候</string>
+    <string name="loading_please_wait">加载请稍候…</string>
     <string name="alert_title_server_error">服务器错误</string>
     <string name="alert_server_error_pattern">服务器返回HTTP错误：%1$d（%2$s）</string>
     <string name="alert_title_error_handling_response">解析Piwigo响应时出错</string>

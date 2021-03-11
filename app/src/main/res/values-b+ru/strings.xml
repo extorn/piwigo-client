@@ -114,7 +114,7 @@
     <string name="upload_files_finish_job_button_title">Завершить загрузку</string>
     <string name="upload_job_status_button">Положение дел</string>
     <string name="alert_really_delete_upload_job">Это удалит статус задания с этого устройства. Вам нужно будет вручную очистить любые файлы, частично загруженные на сервер (или использовать предпочтения в этом приложении - страницу настроек загрузки). Задания часто завершаются успешно, если вы возобновите их позже. Вы уверены, что хотите сделать этот решительный шаг?</string>
-    <string name="loading_please_wait">Загрузка, пожалуйста подождите</string>
+    <string name="loading_please_wait">Загрузка, пожалуйста подождите…</string>
     <string name="alert_title_server_error">Ошибка сервера</string>
     <string name="alert_server_error_pattern">Сервер возвратил ошибку HTTP:%1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Ошибка при разборе ответа piwigo</string>

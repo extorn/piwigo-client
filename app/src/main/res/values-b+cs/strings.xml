@@ -114,7 +114,7 @@
     <string name="upload_files_finish_job_button_title">Dokončete nahrávání</string>
     <string name="upload_job_status_button">Postavení</string>
     <string name="alert_really_delete_upload_job">Tímto odstraníte stav úlohy z tohoto zařízení. Budete muset ručně vyčistit všechny soubory částečně nahrané na server (nebo použít předvolbu v této aplikaci - stránka nastavení nahrávání). Úlohy se často úspěšně dokončí, pokud je později obnovíte. Opravdu chcete udělat tento drastický krok?</string>
-    <string name="loading_please_wait">Načítání prosím čekejte</string>
+    <string name="loading_please_wait">Načítání prosím čekejte…</string>
     <string name="alert_title_server_error">Chyba serveru</string>
     <string name="alert_server_error_pattern">Server vrátil chybu HTTP:%1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Chyba při analýze odpovědi piwigo</string>

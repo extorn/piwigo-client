@@ -119,6 +119,12 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
         if(lastIntent == null || currentIntent != lastIntent) {
             lastIntent = currentIntent;
         }
+        checkForSentFiles(lastIntent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
@@ -129,9 +135,7 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
                 createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
             }
         }
-        checkForSentFiles(lastIntent);
     }
-
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -299,7 +303,7 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
         CategoryItemStub currentAlbum = getIntent().getParcelableExtra(INTENT_DATA_CURRENT_ALBUM);
 
         if (isCurrentUserAuthorisedToUpload(sessionDetails)) {
-            UploadFragment f = UploadFragment.newInstance(currentAlbum, fileSelectionEventId);
+            UploadFragment<?,?> f = UploadFragment.newInstance(currentAlbum, fileSelectionEventId);
             removeFragmentsFromHistory(UploadFragment.class);
             showFragmentNow(f);
         }

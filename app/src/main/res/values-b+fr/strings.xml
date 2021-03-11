@@ -114,7 +114,7 @@
     <string name="upload_files_finish_job_button_title">Terminer le téléchargement</string>
     <string name="upload_job_status_button">Statut</string>
     <string name="alert_really_delete_upload_job">Cela supprimera l\'état du travail de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - page de paramètres de téléchargement). Les travaux se termineront souvent avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir franchir cette étape radicale?</string>
-    <string name="loading_please_wait">Chargement, veuillez patienter</string>
+    <string name="loading_please_wait">Chargement, veuillez patienter…</string>
     <string name="alert_title_server_error">erreur du serveur</string>
     <string name="alert_server_error_pattern">Le serveur a renvoyé une erreur HTTP:%1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Erreur lors de l\'analyse de la réponse piwigo</string>

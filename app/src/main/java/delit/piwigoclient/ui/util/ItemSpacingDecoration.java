@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.util;
 
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.View;
 
@@ -36,7 +37,7 @@ public class ItemSpacingDecoration extends RecyclerView.ItemDecoration {
 
     protected void setItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state, int position, int startsInCol, int cols, int horizontalMargin, int verticalMargin) {
         boolean atBottom = position == parent.getChildCount();
-        atBottom |= startsInCol == 0 && position + cols - 1 == parent.getChildCount();
+        atBottom |= startsInCol == 0 && position + cols - 1 == state.getItemCount();
         applyItemOffsets(outRect, atBottom,startsInCol == 0, horizontalMargin, verticalMargin);
     }
 
@@ -47,5 +48,10 @@ public class ItemSpacingDecoration extends RecyclerView.ItemDecoration {
         if(!atBottom) {
             outRect.bottom = verticalMargin;
         }
+    }
+
+    @Override
+    public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+        //called when the parent is drawn
     }
 }

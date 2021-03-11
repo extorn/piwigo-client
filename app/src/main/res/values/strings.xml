@@ -114,7 +114,7 @@
     <string name="upload_files_finish_job_button_title">Finish Uploading</string>
     <string name="upload_job_status_button">Status</string>
     <string name="alert_really_delete_upload_job">This will delete the job status from this device. You will need to manually cleanup any files partially uploaded to the server (or use the preference in this app - upload settings page). Jobs will often complete successfully if you resume them later. Are you sure you wish to take this drastic step?</string>
-    <string name="loading_please_wait">Loading, Please wait</string>
+    <string name="loading_please_wait">Loading, Please wait…</string>
     <string name="alert_title_server_error">Server Error</string>
     <string name="alert_server_error_pattern">Server returned HTTP error: %1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Error parsing piwigo response</string>

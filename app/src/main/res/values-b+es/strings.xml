@@ -114,7 +114,7 @@
     <string name="upload_files_finish_job_button_title">Terminar de cargar</string>
     <string name="upload_job_status_button">Estado</string>
     <string name="alert_really_delete_upload_job">Esto eliminará el estado del trabajo de este dispositivo. Deberá limpiar manualmente los archivos cargados parcialmente en el servidor (o utilizar la preferencia en esta aplicación: página de configuración de carga). Los trabajos a menudo se completarán correctamente si los reanuda más tarde. ¿Está seguro de que desea dar este paso drástico?</string>
-    <string name="loading_please_wait">Cargando por favor espere</string>
+    <string name="loading_please_wait">Cargando por favor espere…</string>
     <string name="alert_title_server_error">Error del Servidor</string>
     <string name="alert_server_error_pattern">El servidor devolvió un error HTTP:%1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Error al analizar la respuesta de piwigo</string>

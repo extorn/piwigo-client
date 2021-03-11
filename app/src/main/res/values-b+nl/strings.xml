@@ -114,7 +114,7 @@
     <string name="upload_files_finish_job_button_title">Voltooi het uploaden</string>
     <string name="upload_job_status_button">Toestand</string>
     <string name="alert_really_delete_upload_job">Hierdoor wordt de taakstatus van dit apparaat verwijderd. U moet alle bestanden die gedeeltelijk naar de server zijn geüpload handmatig opschonen (of gebruik de voorkeur in deze app - pagina met uploadinstellingen). Taken worden vaak met succes voltooid als u ze later hervat. Weet u zeker dat u deze drastische stap wilt zetten?</string>
-    <string name="loading_please_wait">Laden even geduld aub</string>
+    <string name="loading_please_wait">Laden even geduld aub…</string>
     <string name="alert_title_server_error">Serverfout</string>
     <string name="alert_server_error_pattern">Server heeft HTTP-fout geretourneerd:%1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Fout bij het parseren van piwigo-reactie</string>

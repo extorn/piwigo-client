@@ -247,7 +247,13 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
     public void removeItemByPosition(int idxRemoved) {
         if (idxRemoved >= 0) {
             removeItemFromInternalStore(idxRemoved);
+            if(idxRemoved > 0) {
+                notifyItemChanged(idxRemoved -1, Boolean.FALSE);
+            }
             notifyItemRemoved(idxRemoved);
+            if(idxRemoved < getItemCount() -1) {
+                notifyItemChanged(idxRemoved +1, Boolean.FALSE);
+            }
         }
     }
 
@@ -267,7 +273,13 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
         if (itemToBeReplaced != null) {
             int replaceIdx = getItemPosition(itemToBeReplaced);
             replaceItemInInternalStore(replaceIdx, item);
+            if(replaceIdx > 0) {
+                notifyItemChanged(replaceIdx -1, Boolean.FALSE);
+            }
             notifyItemChanged(replaceIdx);
+            if(replaceIdx < getItemCount() -1) {
+                notifyItemChanged(replaceIdx +1, Boolean.FALSE);
+            }
         } else {
             addItem(item);
         }

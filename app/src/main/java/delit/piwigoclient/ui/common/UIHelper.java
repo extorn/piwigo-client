@@ -124,7 +124,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
     private BasicPiwigoResponseListener<UIH, OWNER> piwigoResponseListener;
     private int permissionsNeededReason;
     private NotificationManagerCompat notificationManager;
-    private WeakReference<ProgressIndicator> progressIndicator;
+    private WeakReference<ProgressIndicator> progressIndicatorRef;
     private ConcurrentHashMap<Long, Action<UIH, OWNER,? extends PiwigoResponseBufferingHandler.Response>> actionOnServerCallComplete = new ConcurrentHashMap<>();
 
     public UIHelper(OWNER parent, SharedPreferences prefs, Context context) {
@@ -345,7 +345,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
     private void loadProgressIndicatorIfPossible(View view) {
         if(view != null) {
             try {
-                progressIndicator = new WeakReference<>(ViewCompat.requireViewById(view.getRootView(), R.id.progressIndicator));
+                progressIndicatorRef = new WeakReference<>(ViewCompat.requireViewById(view.getRootView(), R.id.progressIndicator));
             } catch(IllegalArgumentException e) {
                 Logging.recordException(new Exception().fillInStackTrace());
                 Logging.log(Log.ERROR, TAG, "Progress indicator not available in current view graph " + Utils.getId(getParent()));
@@ -1020,13 +1020,13 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
     }
 
     public ProgressIndicator getProgressIndicator() {
-        if(progressIndicator == null) {
+        if(progressIndicatorRef == null) {
             loadProgressIndicatorIfPossible(getParentView());
         }
-        if(progressIndicator == null) {
+        if(progressIndicatorRef == null) {
             return null;
         }
-        return progressIndicator.get();
+        return progressIndicatorRef.get();
     }
 
     public void showUserHint(String tag, int hintId, @StringRes int hintStrResId) {

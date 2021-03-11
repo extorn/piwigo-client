@@ -114,7 +114,7 @@
     <string name="upload_files_finish_job_button_title">Beenden Sie das Hochladen</string>
     <string name="upload_job_status_button">Status</string>
     <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen alle Dateien, die teilweise auf den Server hochgeladen wurden, manuell bereinigen (oder die Einstellungen in dieser App verwenden - Seite mit den Upload-Einstellungen). Jobs werden häufig erfolgreich abgeschlossen, wenn Sie sie später fortsetzen. Sind Sie sicher, dass Sie diesen drastischen Schritt machen möchten?</string>
-    <string name="loading_please_wait">Laden, bitte warten</string>
+    <string name="loading_please_wait">Laden, bitte warten…</string>
     <string name="alert_title_server_error">Serverfehler</string>
     <string name="alert_server_error_pattern">Server hat HTTP-Fehler zurückgegeben:%1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Fehler beim Parsen der Piwigo-Antwort</string>
