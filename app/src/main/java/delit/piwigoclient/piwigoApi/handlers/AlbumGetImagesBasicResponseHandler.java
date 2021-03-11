@@ -402,6 +402,8 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
             String sitePathsPattern = CollectionUtils.toCsvList(sitePaths, "|");
             if(sitePathsPattern != null) {
                 sitePathsPattern = "|" + sitePathsPattern;
+            } else {
+                sitePathsPattern = "";
             }
             String pattern = "^(" + basePiwigoUri + ")([\\d]*/.*)?((?<=/)(?:upload"+sitePathsPattern+")/.*\\.([a-zA-Z0-9]{3,5}))$";
             Pattern multimediaPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
