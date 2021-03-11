@@ -998,7 +998,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     public Basket getBasket() {
-        MainActivity<?> activity = (MainActivity<?>) requireActivity();
+        MainActivity activity = (MainActivity) requireActivity();
         return activity.getBasket();
     }
 
