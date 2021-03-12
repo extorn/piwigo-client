@@ -142,12 +142,18 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>未来</item>
-        <item>"*主要仅限错误修正
-                *可能完全重写了上载过程，因为它不适合进行迭代式改进
-                *可能会完全重写应用程序，并着重于简单性，以便一般用户最初浏览"</item>
+        <item>"*仅仅是错误修正
+                *可能完全重新编写应用程序，专注于最初的普通用户浏览的简单性"</item>
         
+        <item>1.4.0.135</item>
+        <item>"改变：
+              - 更换作业配置存储和检索代码，以更好地支持大型工作
+              - 记录在设备上的数据库中上传到服务器的文件ID，以允许早期过滤或标记这些"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.134</item>
+        <item>"改变：
+              - 庞大的性能改进加载文件上传"</item>
         <item>1.4.0.133</item>
         <item>"改变：
                   - 强烈建议获取此更新，当然，如果您使用应用程序上传文件。

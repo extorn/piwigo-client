@@ -142,12 +142,18 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
-        <item>"* Principalmente solo correcciones de errores
-                * Posiblemente una reescritura completa del proceso de carga, ya que no se presta a una mejora iterativa
-                * Posiblemente una reescritura completa de la aplicación con un enfoque en la simplicidad para la navegación general del usuario inicialmente"</item>
+        <item>"* Principalmente de errores solamente
+                * Posiblemente una reconstrucción completa de la aplicación con un enfoque en la simplicidad para la navegación de usuarios generales inicialmente"</item>
         
+        <item>1.4.0.135</item>
+        <item>"Cambio:
+             - Reemplazo del código de almacenamiento y recuperación de la configuración de trabajo para admitir mejor los trabajos grandes
+             - Registre los ID de archivo cargados en servidores en una base de datos en el dispositivo para permitir filtrado anterior o etiquetar estos"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.134</item>
+        <item>"Cambio:
+             - VASTE MEJORA DE RENDIMIENTO Cargando archivos para cargar"</item>
         <item>1.4.0.133</item>
         <item>"Cambio:
                  - Conseje fuertemente Obtenga esta actualización, ciertamente si sube archivos usando la aplicación.

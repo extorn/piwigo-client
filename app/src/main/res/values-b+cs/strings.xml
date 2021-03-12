@@ -724,4 +724,6 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="upload_error_server_resource_not_retrieved_repaired">Zdroj serveru nebyl po nahráni obsah souboru správně načten. Byl učiněn pokus o řešení tohoto problému, ale nemusí fungovat.</string>
     <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Poslední kus dat souborů byla nahrána pro soubor, ale server se nepodařilo poskytnout identifikátor zdroje. Mohlo by to být získatelné.</string>
     <string name="checking_uri_permissions">Aktualizace záznamů o oprávněních souborů</string>
+    <string name="please_wait_in_progress">Počkejte prosím na předchozí požadavek na dokončení</string>
+    
 </resources>

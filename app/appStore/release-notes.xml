@@ -1,99 +1,40 @@
 <en-GB>
 Change:
-- Strongly advise getting this update, certainly if you upload files using the app.
-- Rewrite of the upload code (mostly user invisible). Readies codebase for performance enhancement
-- Performance improvement implementation for vast upload data transfer speed boost
-Bugfix:
-- Fixes annoying bug in recent releases
-- quirky bugs in the upload UI
-- other assorted bugs
+- Vast Performance improvement loading files to upload
 </en-GB>
 <cs-CZ>
 Změna:
-- Silně doporučuje dostat tuto aktualizaci, určitě, pokud nahrát soubory pomocí aplikace.
-- Přepsat kód nahrávání (většinou uživatel invisible). Opraveno Codebase pro vylepšení výkonu
-- implementace vylepšení výkonu pro rozsáhlé nahrávání dat přenosu dat
-Oprava chyby:
-- opravuje otravnou chybu v nedávných verzích
-- Quirky Bugs v nahrávání UI
-- Ostatní různé chyby
+- rozsáhlé zlepšení výkonu načítání souborů do nahrávání
 </cs-CZ>
 <de-DE>
 Veränderung:
-- Beratung dieses Updates dringend, sicherlich, wenn Sie Dateien mithilfe der App hochladen.
-- Umschreiben des Upload-Codes (meistens Benutzer unsichtbar). Ladies Codebase für die Leistungssteigerung
-- Implementierung der Leistungsverbesserung für einen großen Upload-Datenübertragungsgeschwindigkeitsschub
-Fehlerbehebung:
-- Fixiert ärgerlicher Fehler in den letzten Releases
-- schrullige Fehler im Upload-UI
-- andere sortierte Fehler
+- Überwachung der Leistungsverbesserung Loading-Dateien zum Hochladen
 </de-DE>
 <es-ES>
 Cambio:
-- Conseje fuertemente Obtenga esta actualización, ciertamente si sube archivos usando la aplicación.
-- Reescribir el código de carga (en su mayoría de usuario invisible). Readies CodeBase para mejorar el rendimiento
-- Implementación de mejora del rendimiento para una vasta carga de la velocidad de transferencia de datos.
-Arreglo del fallo:
-- Corrige un error molesto en lanzamientos recientes.
-- Bugs peculiares en la UI Subir
-- otros insectos surtidos
+- VASTE MEJORA DE RENDIMIENTO Cargando archivos para cargar
 </es-ES>
 <fr-FR>
 Changement:
-- conseiller fortement à obtenir cette mise à jour, certainement si vous téléchargez des fichiers à l\'aide de l\'application.
-- Réécrire du code de téléchargement (principalement utilisateur invisible). Lisibles CodeBase pour l\'amélioration de la performance
-- Mise en œuvre de l\'amélioration de la performance pour une vaste amélioration de la vitesse de transfert de données de téléchargement
-Correction d\'un bug:
-- corrige un bogue ennuyeux dans les dernières versions
-- Bugs b..."
+- Vaste performance Amélioration des fichiers de chargement à télécharger
 </fr-FR>
 <it-IT>
 Modificare:
-- Consiglia vivamente di ottenere questo aggiornamento, certamente se carichi i file utilizzando l\'app.
-- Riscrivi il codice di caricamento (per lo più invisibile per lo più invisibile). Letture CodeBase per il miglioramento delle prestazioni
-- Implementazione del miglioramento delle prestazioni per vasta boost di trasferimento dei dati di upload
-Risoluzione del problema:
-- Corregge fastidiosi bug nelle uscite recenti
-- Bug quirky nell\'utente ui
-- Altri bug assortiti
+- I vasta prestazioni Miglioramento del caricamento dei file da caricare
 </it-IT>
 <ja-JP>
 変化する：
-- アプリを使用してファイルをアップロードした場合、このアップデートを手に入れることを強くお勧めします。
-- アップロードコードの書き換え（主に目に見えない）。 Performance EnhancementのためにCodeBaseを読みます
-- 膨大なアップロードデータ転送速度昇圧のための性能改善実装
-バグ修正：
-- 最近のリリースで迷惑なバグを修正しました
-- アップロードUIのクォリキーバグ
-- その他の盛り合わせのバグ
+- アップロードするファイルの読み込み機能を拡大します
 </ja-JP>
 <nl-NL>
 Verandering:
-- Sterk adviseren om deze update te krijgen, zeker als u bestanden uploadt met behulp van de app.
-- Herschrijven van de uploadcode (meestal door de gebruiker onzichtbaar). Leestingen CodeBase voor prestatieverbetering
-- Implementatie van prestatiesverbetering voor VAST UPLOAD Gegevensoverdracht Snelheidsboost
-Bugfix:
-- Fixeert irritante bug in recente releases
-- eigenzinnige bugs in de upload ui
-- andere geassorteerde bugs
+- VASTE PRESTATIESVERKOMPING LOADINGSBESTELLINGEN om te uploaden
 </nl-NL>
 <ru-RU>
 Изменять:
-- Сильно рекомендуйте получить это обновление, конечно, если вы загружете файлы, используя приложение.
-- Переписывайте код загрузки (в основном пользователь невидимый). Headies CodeBase для улучшения производительности
-- Реализация повышения производительности для расширенного увеличения скорости передачи данных загрузки
-Исправлена ошибка:
-- исправления раздражающей ошибки в последние релизы
-- причудливые ошибки в UI загрузки
-- другие разные ошибки
+- Обширное улучшение производительности Загрузка файлов для загрузки
 </ru-RU>
 <zh-CN>
 改变：
-- 强烈建议获取此更新，当然，如果您使用应用程序上传文件。
-- 重写上传代码（主要是用户不可见）。 receies用于性能增强的CodeBase
-- 巨大上传数据传输速度提升性能改进实施
-错误修正：
-- 在最近的版本中修复恼人的错误
-- 上传UI中的古怪错误
-- 其他什锦错误
+- 庞大的性能改进加载文件上传
 </zh-CN>

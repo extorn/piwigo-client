@@ -143,11 +143,17 @@
     <string-array name="planned_releases" translatable="true">
         <item>De toekomst</item>
         <item>"* Alleen voornamelijk bugfixes
-                * Mogelijk een volledig herschrijven van het uploadproces, aangezien het zich niet leent om iteratief te worden verbeterd
-                * Mogelijk een volledige herschrijving van de app met de nadruk in eerste instantie op eenvoud voor algemene gebruikers"</item>
+                * Mogelijk een compleet opnieuw schrijven van de app met een focus op eenvoud voor algemene gebruiker die aanvankelijk browsing"</item>
         
+        <item>1.4.0.135</item>
+        <item>"Verandering:
+             - Vervanging van de opslag- en ophaalcode van het werkconfiguratie om grote banen beter te ondersteunen
+             - Recordbestand-ID\'s die worden geüpload naar servers in een database op het apparaat om eerder filtering of etikettering toe te staan"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.134</item>
+        <item>"Verandering:
+             - VASTE PRESTATIESVERKOMPING LOADINGSBESTELLINGEN om te uploaden"</item>
         <item>1.4.0.133</item>
         <item>"Verandering:
                  - Sterk adviseren om deze update te krijgen, zeker als u bestanden uploadt met behulp van de app.

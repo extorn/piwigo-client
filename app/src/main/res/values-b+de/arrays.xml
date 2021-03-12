@@ -142,12 +142,18 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Die Zukunft</item>
-        <item>"* Hauptsächlich nur Bugfixes
-                * Möglicherweise ein vollständiges Umschreiben des Upload-Prozesses, da er nicht iterativ verbessert werden kann
-                * Möglicherweise ein vollständiges Umschreiben der App mit dem Schwerpunkt auf Einfachheit für das allgemeine Surfen anfangs"</item>
+        <item>"* In erster Linie nur Bugfixes
+                * Möglicherweise ein komplettes Neuschreiben der App mit einem Fokus auf Einfachheit halber für das allgemeine Benutzer"</item>
         
+        <item>1.4.0.135</item>
+        <item>"Veränderung:
+             - Austausch des Auftragskonfigurationspeicher- und Abrufcode, um große Jobs besser zu unterstützen
+             - Daten-Datei-IDs aufnehmen, die in Servern in einer Datenbank auf dem Gerät hochgeladen wurden, um eine frühere Filterung oder Beschriftung dieser zu ermöglichen"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.134</item>
+        <item>"Veränderung:
+             - Überwachung der Leistungsverbesserung Loading-Dateien zum Hochladen"</item>
         <item>1.4.0.133</item>
         <item>"Veränderung:
                  - Beratung dieses Updates dringend, sicherlich, wenn Sie Dateien mithilfe der App hochladen.

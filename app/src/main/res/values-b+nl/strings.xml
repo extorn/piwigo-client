@@ -724,4 +724,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="upload_error_server_resource_not_retrieved_repaired">De serverresource is niet correct opgehaald nadat de inhoud van het bestand is geüpload. Er is een poging gedaan om met dit probleem aan te pakken, maar het werkt misschien niet.</string>
     <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">Het laatste deel van bestandsgegevens werd geüpload voor het bestand, maar de server kan een resource-identifier niet bieden. Het kan worden teruggevorderd.</string>
     <string name="checking_uri_permissions">Het bijwerken van records van vastgehouden bestandsmachtigingen</string>
+    <string name="please_wait_in_progress">Wacht alstublieft op het vorige verzoek om te voltooien</string>
+    
 </resources>

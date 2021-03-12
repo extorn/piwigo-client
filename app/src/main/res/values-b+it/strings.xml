@@ -724,4 +724,6 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="upload_error_server_resource_not_retrieved_repaired">La risorsa del server non è stata recuperata correttamente dopo che il contenuto del file è stato caricato. È stato fatto un tentativo di gestire questo problema, ma potrebbe non funzionare.</string>
     <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">L\'ultimo blocco di dati dei file è stato caricato per il file, ma il server non è riuscito a fornire un identificatore di risorse. Potrebbe essere recuperabile.</string>
     <string name="checking_uri_permissions">Aggiornamento dei record delle autorizzazioni dei file</string>
+    <string name="please_wait_in_progress">Si prega di attendere la precedente richiesta di finire</string>
+    
 </resources>

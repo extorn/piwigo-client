@@ -724,4 +724,6 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="upload_error_server_resource_not_retrieved_repaired">上载文件内容后未正确检索服务器资源。 已经尝试处理这个问题，但它可能无法正常工作。</string>
     <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">文件数据的最后一块块为文件上载，但服务器无法提供资源标识符。 它可能是可检索的。</string>
     <string name="checking_uri_permissions">更新文件权限的记录</string>
+    <string name="please_wait_in_progress">请等待以前的要求完成</string>
+    
 </resources>

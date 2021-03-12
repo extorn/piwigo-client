@@ -724,4 +724,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="upload_error_server_resource_not_retrieved_repaired">El recurso del servidor no se recuperó correctamente después de cargar el contenido del archivo. Se ha intentado tratarse con este problema, pero puede que no funcione.</string>
     <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">El último trozo de datos de archivos se cargó para el archivo, pero el servidor no pudo proporcionar un identificador de recursos. Podría ser recuperable.</string>
     <string name="checking_uri_permissions">Actualización de registros de permisos de archivos mantenidos</string>
+    <string name="please_wait_in_progress">Por favor, espere a que finalice la solicitud anterior.</string>
+    
 </resources>
