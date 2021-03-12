@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/page_title"
@@ -11,7 +12,7 @@
         android:text="@string/files_selection_title"
         android:textAppearance="?textAppearanceHeadline5"
         android:visibility="visible"
-        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
         app:layout_constraintTop_toTopOf="@id/guideline_margin_top" />
 
 
@@ -23,7 +24,7 @@
         android:text="@string/folder_root_label"
         android:textAppearance="?textAppearanceCaption"
         android:visibility="visible"
-        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
         app:layout_constraintTop_toBottomOf="@+id/page_title" />
 
     <Spinner
@@ -34,7 +35,7 @@
         android:gravity="fill_horizontal"
         android:spinnerMode="dropdown"
         app:layout_constraintEnd_toStartOf="@+id/remove_root"
-        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
         app:layout_constraintTop_toBottomOf="@+id/folder_root_label" />
 
     <Button
@@ -70,7 +71,7 @@
         android:paddingBottom="3dp"
         app:breadcrumbDivisionLayout="@layout/layout_breadcrumb_item_separator"
         app:breadcrumbLayout="@layout/layout_breadcrumb_item"
-        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
         app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
         app:layout_constraintTop_toBottomOf="@+id/barrier_root_controls" />
 
@@ -79,9 +80,18 @@
         android:id="@+id/file_ext_filters"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
         app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
         app:layout_constraintTop_toBottomOf="@id/folder_path" />
+
+    <TextView
+        android:id="@+id/selected_file_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="Files selected: 5 (1.25Mb)"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+        app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+        app:layout_constraintTop_toBottomOf="@id/file_ext_filters" />
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -91,9 +101,9 @@
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toTopOf="@+id/barrier_action_buttons"
-        app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
         app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
-        app:layout_constraintTop_toBottomOf="@id/file_ext_filters" />
+        app:layout_constraintTop_toBottomOf="@id/selected_file_info" />
 
     <Button
         android:id="@+id/list_action_cancel_button"
@@ -103,7 +113,7 @@
         android:text="@string/button_cancel"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/list_adView"
-        app:layout_constraintStart_toStartOf="@id/guideline_margin_start" />
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start" />
 
     <Button
         android:id="@+id/list_action_toggle_all_button"

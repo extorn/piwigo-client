@@ -189,6 +189,14 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
         notifyDataSetChanged();
     }
 
+    public long getTotalSizeOfFiles() {
+        long totalSize = 0;
+        for (Long size : uploadDataItemsModel.getFilesSelectedForUpload().values()) {
+            totalSize += size;
+        }
+        return totalSize;
+    }
+
     public interface RemoveListener<LVA extends FilesToUploadRecyclerViewAdapter<LVA,MSA,VH>, MSA extends UploadItemMultiSelectStatusAdapter<MSA, LVA,VH>, VH extends UploadDataItemViewHolder<VH, LVA,MSA>> {
         void onRemove(LVA adapter, Uri itemToRemove, boolean longClick);
     }

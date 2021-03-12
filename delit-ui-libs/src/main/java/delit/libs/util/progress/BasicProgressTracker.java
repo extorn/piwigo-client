@@ -128,6 +128,9 @@ public class BasicProgressTracker implements Parcelable {
                 listener.onComplete();
             }
         }
+        synchronized (this) {
+            notifyAll();
+        }
     }
 
     /**
@@ -211,5 +214,29 @@ public class BasicProgressTracker implements Parcelable {
         sb.append(String.format(Locale.UK, ", complete=%1.0f%% (%2$d / %3$d)", Math.rint(100 * getProgressPercentage()), workComplete, totalWork));
         sb.append('}');
         return sb.toString();
+    }
+
+    public void waitForProgress(long maxWait) throws InterruptedException {
+        synchronized (this) {
+            wait(maxWait);
+        }
+    }
+
+    public void waitUntilComplete(long waitMillis, boolean exitOnInterrupt) {
+        boolean cancelled = false;
+        while (!cancelled && !isComplete()) {
+            try {
+                waitForProgress(waitMillis);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                if(exitOnInterrupt) {
+                    cancelled = true;
+                } else {
+                    Logging.log(Log.WARN,TAG, "Ignoring interrupt while waiting for progress tracker to complete ! %1$s", this);
+                }
+            }
+        }
+        int outstandingTasks = (int)getRemainingWork();
+        Logging.log(Log.INFO,TAG, "Finished waiting for executor to end (cancelled : "+cancelled+") while listening to progress. Outstanding Task Count : " + outstandingTasks);
     }
 }

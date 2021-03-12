@@ -45,7 +45,7 @@ import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
  * a service on a separate handler thread.
  * <p>
  */
-public class BackgroundPiwigoUploadService extends BasePiwigoUploadService implements BasePiwigoUploadService.JobUploadListener {
+public class BackgroundPiwigoUploadService extends BasePiwigoUploadService<BackgroundPiwigoUploadService> implements BasePiwigoUploadService.JobUploadListener {
 
     private static final String TAG =  "PwgCli:BgUpldSvc";
     private static final String ACTION_BACKGROUND_UPLOAD_FILES = "delit.piwigoclient.action.ACTION_BACKGROUND_UPLOAD_FILES";
@@ -92,7 +92,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     }
 
     @Override
-    protected UploadActionsBroadcastReceiver<?> buildActionBroadcastReceiver() {
+    protected UploadActionsBroadcastReceiver<BackgroundPiwigoUploadService> buildActionBroadcastReceiver() {
         // adds a few extra commands (pause resume - used for WIFI / non wifi)
         return new BackgroundActionsBroadcastReceiver(this);
     }

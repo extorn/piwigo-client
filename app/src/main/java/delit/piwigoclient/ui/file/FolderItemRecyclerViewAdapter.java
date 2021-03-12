@@ -36,7 +36,6 @@ import java.util.TreeSet;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.SafeAsyncTask;
-import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
@@ -50,7 +49,12 @@ import delit.piwigoclient.business.ResizingPicassoLoader;
 
 import static delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences.ALPHABETICAL;
 
-public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,FolderItemViewAdapterPreferences,T,VH>, VH extends FolderItemRecyclerViewAdapter.FolderItemViewHolder<VH, LVA, T, MSL>> extends BaseRecyclerViewAdapter<LVA, FolderItemViewAdapterPreferences, T, VH, MSL> {
+public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAdapter<LVA,P,T,MSL,VH>,
+                                            P extends FolderItemViewAdapterPreferences<P>,
+                                            T extends FolderItem,
+                                            MSL extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,P,T,VH>,
+                                            VH extends FolderItemRecyclerViewAdapter.FolderItemViewHolder<VH, LVA, T, MSL,P>>
+                                            extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL> {
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
     public final static int VIEW_TYPE_FILE_IMAGE = 2;
@@ -66,8 +70,8 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
     private SafeAsyncTask activeTask;
     ProgressListener taskListener;
     Set<String> currentFileTypesToShow = new HashSet<>();
-
-    public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MSL multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
+    
+    public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MSL multiSelectStatusListener, P folderViewPrefs) {
         super(multiSelectStatusListener, folderViewPrefs);
         this.navigationListener = navigationListener;
         setHasStableIds(true);
@@ -356,7 +360,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
 
 
     @Override
-    protected CustomClickListener<MSL,LVA, FolderItemViewAdapterPreferences, T, VH> buildCustomClickListener(VH viewHolder) {
+    protected CustomClickListener<MSL,LVA, P, T, VH> buildCustomClickListener(VH viewHolder) {
         return new FolderItemCustomClickListener<>(viewHolder, (LVA)this);
     }
 
@@ -618,7 +622,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         void onPostFolderOpened(DocumentFile oldFolder, DocumentFile newFolder);
     }
 
-    static class FolderItemCustomClickListener<LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,FolderItemViewAdapterPreferences,T,VH>, VH extends FolderItemRecyclerViewAdapter.FolderItemViewHolder<VH, LVA, T, MSL>> extends CustomClickListener<MSL,LVA, FolderItemViewAdapterPreferences, T, VH> {
+    static class FolderItemCustomClickListener<LVA extends FolderItemRecyclerViewAdapter<LVA,P,T,MSL,VH>, P extends FolderItemViewAdapterPreferences<P>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<MSL, LVA,P,T,VH>, VH extends FolderItemRecyclerViewAdapter.FolderItemViewHolder<VH, LVA, T,MSL,P>> extends CustomClickListener<MSL,LVA, P, T, VH> {
         public FolderItemCustomClickListener(VH viewHolder, LVA parentAdapter) {
             super(viewHolder, parentAdapter);
         }
@@ -648,7 +652,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
     }
 
-    protected class FolderItemFolderViewHolder extends FolderItemViewHolder<VH, LVA, T, MSL> {
+    protected class FolderItemFolderViewHolder extends FolderItemViewHolder<VH, LVA, T, MSL,P> {
 
         public FolderItemFolderViewHolder(View view) {
             super(view);
@@ -669,14 +673,14 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
 
         @Override
-        public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
+        public void cacheViewFieldsAndConfigure(P adapterPrefs) {
             super.cacheViewFieldsAndConfigure(adapterPrefs);
             getIconView().setColorFilter(ContextCompat.getColor(itemView.getContext(),R.color.app_secondary), PorterDuff.Mode.SRC_IN);
             getIconViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
         }
     }
 
-    protected class FolderItemDocumentFileViewHolder extends FolderItemViewHolder<VH, LVA, T, MSL> {
+    protected class FolderItemDocumentFileViewHolder extends FolderItemViewHolder<VH, LVA, T, MSL,P> {
 
         private TextView itemHeading;
         private static final String TAG = "FolderItemDocFileVH";
@@ -727,14 +731,14 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
 
         @Override
-        public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
+        public void cacheViewFieldsAndConfigure(P adapterPrefs) {
             super.cacheViewFieldsAndConfigure(adapterPrefs);
             itemHeading = itemView.findViewById(delit.libs.R.id.list_item_heading);
             getIconViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
         }
     }
 
-    public abstract static class FolderItemViewHolder<VH extends FolderItemViewHolder<VH,LVA,T,MSL>, LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,FolderItemViewAdapterPreferences,T,VH>> extends BaseViewHolder<VH,FolderItemViewAdapterPreferences, T, LVA,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
+    public abstract static class FolderItemViewHolder<VH extends FolderItemViewHolder<VH,LVA,T,MSL,P>, LVA extends FolderItemRecyclerViewAdapter<LVA,P,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,P,T,VH>, P extends FolderItemViewAdapterPreferences<P>> extends BaseViewHolder<VH,P, T, LVA,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
 
         private ImageView iconView;
         private ImageView typeIndicatorView;
@@ -759,7 +763,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         public abstract void fillValues(T newItem, boolean allowItemDeletion);
 
         @Override
-        public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
+        public void cacheViewFieldsAndConfigure(P adapterPrefs) {
 
             super.cacheViewFieldsAndConfigure(adapterPrefs);
             typeIndicatorView = itemView.findViewById(delit.libs.R.id.type_indicator);
@@ -827,7 +831,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
     }
 
-    private static class UpdateFolderContentTask<FIVA extends FolderItemRecyclerViewAdapter<FIVA,FolderItem,?,?>> extends OwnedSafeAsyncTask<FIVA, Void,Object,Pair<List<FolderItem>,List<FolderItem>>> {
+    private static class UpdateFolderContentTask<FIVA extends FolderItemRecyclerViewAdapter<FIVA,P,FolderItem,?,?>, P extends FolderItemViewAdapterPreferences<P>> extends OwnedSafeAsyncTask<FIVA, Void,Object,Pair<List<FolderItem>,List<FolderItem>>> {
 
         private static final String TAG = "UpdateFolderContentTask";
         private final DocumentFile newContent;

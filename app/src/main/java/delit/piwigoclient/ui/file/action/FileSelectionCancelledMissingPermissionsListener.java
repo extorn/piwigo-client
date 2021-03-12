@@ -9,9 +9,10 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.file.FolderItem;
 import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
+import delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences;
 import delit.piwigoclient.ui.file.RecyclerViewDocumentFileFolderItemSelectFragment;
 
-public class FileSelectionCancelledMissingPermissionsListener<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>,FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA, FolderItem,?,?>> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
+public class FileSelectionCancelledMissingPermissionsListener<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,P>,FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA, P, FolderItem,?,?>, P extends FolderItemViewAdapterPreferences<P>> extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
     public FileSelectionCancelledMissingPermissionsListener(FUIH uiHelper) {
         super(uiHelper);
@@ -34,17 +35,17 @@ public class FileSelectionCancelledMissingPermissionsListener<F extends Recycler
     @Override
     public void onDismiss(AlertDialog dialog) {
         super.onDismiss(dialog);
-        getParent().onUserActionCancelFileSelection();
+        getParent().onClickCancelFileSelectionButton();
     }
 
-    public static final Creator<FileSelectionCancelledMissingPermissionsListener<?,?,?>> CREATOR = new Creator<FileSelectionCancelledMissingPermissionsListener<?,?,?>>() {
+    public static final Creator<FileSelectionCancelledMissingPermissionsListener<?,?,?,?>> CREATOR = new Creator<FileSelectionCancelledMissingPermissionsListener<?,?,?,?>>() {
         @Override
-        public FileSelectionCancelledMissingPermissionsListener<?,?,?> createFromParcel(Parcel in) {
+        public FileSelectionCancelledMissingPermissionsListener<?,?,?,?> createFromParcel(Parcel in) {
             return new FileSelectionCancelledMissingPermissionsListener<>(in);
         }
 
         @Override
-        public FileSelectionCancelledMissingPermissionsListener<?,?,?>[] newArray(int size) {
+        public FileSelectionCancelledMissingPermissionsListener<?,?,?,?>[] newArray(int size) {
             return new FileSelectionCancelledMissingPermissionsListener[size];
         }
     };

@@ -208,7 +208,7 @@ public class UsernameSelectFragment<F extends UsernameSelectFragment<F,FUIH>, FU
 
 
     @Override
-    protected void onUserActionCancelFileSelection() {
+    protected void onClickCancelFileSelectionButton() {
         // reset the selection to default.
         getListAdapter().setSelectedItems(null);
         onSelectActionComplete(getListAdapter().getSelectedItemIds());

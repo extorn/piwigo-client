@@ -183,7 +183,8 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         for (int i = 0; i < pathSegments.size(); i++) {
             builder.appendEncodedPath(Uri.encode(pathSegments.get(i)));
         }
-        return builder.build().toString();
+        String uriToSendToServer = builder.build().toString();
+        return uriToSendToServer;
     }
 
     private void readAnyQueryParameters(Context c, Uri uri, Uri.Builder builder, Set<String> queryParamIds) {

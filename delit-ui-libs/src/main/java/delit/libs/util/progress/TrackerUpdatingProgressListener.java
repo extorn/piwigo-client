@@ -1,11 +1,19 @@
 package delit.libs.util.progress;
 
+import android.util.Log;
+
+import delit.libs.core.util.Logging;
+
 public class TrackerUpdatingProgressListener implements ProgressListener {
 
-    private BasicProgressTracker tracker;
+    private static final String TAG = "TrackerUpdatingProgressListener";
+    private final BasicProgressTracker tracker;
 
     public TrackerUpdatingProgressListener(BasicProgressTracker tracker) {
         this.tracker = tracker;
+        if(this.tracker.getTotalWork() != 100) {
+            Logging.log(Log.WARN, TAG, "Tracker is expected to have exactly 100 items of work. Actually has %1$d", tracker.getTotalWork());
+        }
     }
 
     @Override

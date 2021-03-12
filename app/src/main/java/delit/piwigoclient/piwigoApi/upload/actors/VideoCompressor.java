@@ -85,12 +85,10 @@ public class VideoCompressor extends Thread {
 
             while (!listener.isCompressionComplete() && null == listener.getCompressionError()) {
                 try {
-                    synchronized (this) {
-                        wait(1000);
-                        if (uploadJob.isCancelUploadAsap() || fud.isUploadCancelled()) {
-                            compressor.cancel();
-                            return false;
-                        }
+                    uploadJob.waitBriefly(1000);
+                    if (uploadJob.isCancelUploadAsap() || fud.isUploadCancelled()) {
+                        compressor.cancel();
+                        return false;
                     }
                 } catch (InterruptedException e) {
                     Log.e(TAG, "Listener awoken!");

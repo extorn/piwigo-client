@@ -67,6 +67,23 @@
                 app:layout_constraintVertical_chainStyle="packed"/>
 
             <TextView
+                android:id="@+id/files_for_upload_count_field"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:paddingTop="0dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="5dp"
+                tools:text="234"
+                android:textAppearance="?textAppearanceCaption"
+                app:layout_constraintStart_toEndOf="@+id/files_for_upload_label"
+                app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
+                app:layout_constraintBaseline_toBaselineOf="@+id/files_for_upload_label"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintVertical_chainStyle="packed"/>
+
+            <TextView
                 android:id="@+id/files_uploadable_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

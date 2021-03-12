@@ -3,14 +3,18 @@ package delit.piwigoclient.ui.upload;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.ExecutorManager;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
@@ -45,26 +49,35 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
         DividableProgressTracker overallTaskProgressTracker = new DividableProgressTracker("Overall file selection", 100, progressViewUpdater);
         FileSelectionCompleteEvent event = objects[0];
 
-        //Phase 1. (15%) (note this might remove items from the list in the event)
-        loadAndPerformSimpleChecksOnFiles(overallTaskProgressTracker, event.getSelectedFolderItems());
+        DividableProgressTracker taskTracker;
+        //Phase 1. (18%) (note this might remove items from the list in the event)
+        taskTracker = overallTaskProgressTracker.addChildTask("cache file info", 100, 10);
+        doActionCacheFileInformation(taskTracker, event.getSelectedFolderItems());
+        taskTracker =overallTaskProgressTracker.addChildTask("uri permission and mime type check", 100,8);
+        doActionCheckForUriPermissionAndPermissableMimeType(taskTracker, event.getSelectedFolderItems());
+        taskTracker =overallTaskProgressTracker.addChildTask("files checksum calculation", 100, overallTaskProgressTracker.getRemainingWork() - 1);
+        ArrayList<UploadDataItem> uploadDataItems = doActionCalculateChecksums(taskTracker, event.getSelectedFolderItems());
 
+        getOwner().updateLastOpenedFolderPref(getContext(), event.getSelectedFolderItems());
+        overallTaskProgressTracker.markComplete();
+        return uploadDataItems;
+    }
 
-        // At this point, overallChecksumCalcTask is initialised (15% -100% or 0% - 100% as appropriate - same number of files to process)
-        long totalImportedFileBytes = getTotalImportedFileBytes(event.getSelectedFolderItems());
-        DividableProgressTracker overallChecksumCalcTask = overallTaskProgressTracker.addChildTask("overall files checksum calculation", totalImportedFileBytes, overallTaskProgressTracker.getRemainingWork());
+    private ArrayList<UploadDataItem> doActionCalculateChecksums(DividableProgressTracker progressTracker, ArrayList<FolderItem> selectedFolderItems) {
+        long totalImportedFileBytes = getTotalImportedFileBytes(selectedFolderItems);
+        DividableProgressTracker taskTracker = progressTracker.addChildTask("checksum calculation detail", totalImportedFileBytes, progressTracker.getRemainingWork());
 
         // this will store the acceptable imported files
-        ArrayList<UploadDataItem> uploadDataItems = new ArrayList<>(event.getSelectedFolderItems().size());
+        ArrayList<UploadDataItem> uploadDataItems = new ArrayList<>(selectedFolderItems.size());
 
-        for (FolderItem f : event.getSelectedFolderItems()) {
+        for (FolderItem f : selectedFolderItems) {
             if(BuildConfig.DEBUG) {
-                Log.e(TAG,"Overall File selection progress : " + overallTaskProgressTracker.getProgressPercentage());
+                Log.e(TAG,"Overall File selection progress : " + taskTracker.getProgressPercentage());
             }
-            calculateChecksumOnFile(overallChecksumCalcTask, uploadDataItems, f);
+            calculateChecksumOnFile(taskTracker, uploadDataItems, f);
         }
-        overallChecksumCalcTask.markComplete();
-        overallTaskProgressTracker.markComplete();
-        getOwner().updateLastOpenedFolderPref(getContext(), event.getSelectedFolderItems());
+        taskTracker.markComplete();
+        progressTracker.markComplete();
         return uploadDataItems;
     }
 
@@ -73,7 +86,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
             Log.w(TAG, "Upload Fragment Passed URI: " + f.getContentUri());
         }
         UploadDataItem item = new UploadDataItem(f.getContentUri(), f.getName(), f.getMime(), f.getFileLength());
-        DividableProgressTracker fileChecksumTracker = overallChecksumCalcTask.addChildTask("file checksum calculation", f.getFileLength(), f.getFileLength());
+        DividableProgressTracker fileChecksumTracker = overallChecksumCalcTask.addChildTask("file checksum calculation", 100, f.getFileLength());
         try {
             item.calculateDataHashCode(getContext(), new TrackerUpdatingProgressListener(fileChecksumTracker));
             uploadDataItems.add(item);
@@ -94,63 +107,81 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
         return totalImportedFileBytes;
     }
 
-    private void loadAndPerformSimpleChecksOnFiles(DividableProgressTracker fileSelectionProgress, ArrayList<FolderItem> selectedFolderItems) {
+    private void doActionCacheFileInformation(DividableProgressTracker progressTracker, ArrayList<FolderItem> selectedFolderItems) {
+        try {
+            FolderItem.cacheDocumentInformation(getContext(), selectedFolderItems, new TrackerUpdatingProgressListener(progressTracker));
+        } finally {
+            progressTracker.markComplete();
+        }
+        Logging.log(Log.DEBUG, TAG, "Doc Field Caching Progress : %1$.0f (complete? %2$b)", 100 * progressTracker.getProgressPercentage(), progressTracker.isComplete());
+    }
+
+    private void doActionCheckForUriPermissionAndPermissableMimeType(DividableProgressTracker progressTracker, ArrayList<FolderItem> selectedFolderItems) {
+        ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
+        if (PiwigoSessionDetails.getInstance(activeProfile) == null) {
+            progressTracker.markComplete();
+            return;
+        }
 
         int itemCount = selectedFolderItems.size();
 
-        ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
-        if (PiwigoSessionDetails.getInstance(activeProfile) != null) {
+        Set<String> allowedFileTypes = PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes();
 
-            Set<String> allowedFileTypes = PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes();
-
-            Set<String> unsupportedExts = new HashSet<>();
+        DividableProgressTracker uriPermissionsProgressTracker = progressTracker.addChildTask("Checking file type and uri permissions", itemCount, 99);
+        ExecutorManager executor = new ExecutorManager(12, 32, 1000, 1);
 
 
-            // Initialise phase 1 (0% -15% - split between number of files to process)
-            DividableProgressTracker cachingProgressTracker = fileSelectionProgress.addChildTask("caching files information", itemCount, 6);
-            try {
-                FolderItem.cacheDocumentInformation(getContext(), selectedFolderItems, new TrackerUpdatingProgressListener(cachingProgressTracker));
-            } finally {
-                cachingProgressTracker.markComplete();
-            }
-            Logging.log(Log.DEBUG, TAG, "Doc Field Caching Progress : %1$.0f (complete? %2$b)", 100 * cachingProgressTracker.getProgressPercentage(), cachingProgressTracker.isComplete());
-
-            DividableProgressTracker uriPermissionsProgressTracker = fileSelectionProgress.addChildTask("Checking file type and uri permissions", itemCount, 9);
-            // Phase 1.2 (0%) check for appropriate Uri Permissions
-            Iterator<FolderItem> iter = selectedFolderItems.iterator();
-            int filesMissingPermissionsCount = 0;
-            while (iter.hasNext()) {
-                FolderItem f = iter.next();
-                //FIXME move this code into the UI. Mark them red and suggest they are compressed (as a group perhaps?)
-                if (f.getExt() == null || (!allowedFileTypes.contains(f.getExt()) && !allowedFileTypes.contains(f.getExt().toLowerCase()))) {
-                    String mimeType = f.getMime();
-                    if (mimeType == null && !IOUtils.isPlayableMedia(mimeType)) {
-                        iter.remove();
-                        unsupportedExts.add(f.getExt());
+        Set<FolderItem> filesWithoutPermissions = Collections.synchronizedSet(new HashSet<>());
+        Set<FolderItem> unsupportedFiles = Collections.synchronizedSet(new HashSet<>());
+        // using a scheduler like this means the scheduler gets blocked if no space not this thread.
+        Future<List<Future<Void>>> taskScheduler = executor.submitTasksInTask(new ExecutorManager.TaskSubmitter<Void,FolderItem>(executor, selectedFolderItems) {
+            @Override
+            public Callable<Void> buildTask(FolderItem item) {
+                return () -> {
+                    //FIXME move this code into the UI. Mark them red and suggest they are compressed (as a group perhaps?)
+                    if (item.getExt() == null || (!allowedFileTypes.contains(item.getExt()) && !allowedFileTypes.contains(item.getExt().toLowerCase()))) {
+                        String mimeType = item.getMime();
+                        if (mimeType == null && !IOUtils.isPlayableMedia(mimeType)) {
+                            unsupportedFiles.add(item);
+                        }
                     }
-                }
-                if(!IOUtils.appHoldsAllUriPermissionsForUri(getContext(), f.getContentUri(), IOUtils.URI_PERMISSION_READ)) {
-                    filesMissingPermissionsCount++;
-                }
-                uriPermissionsProgressTracker.incrementWorkDone(1);
+                    if (!IOUtils.appHoldsAllUriPermissionsForUri(getContext(), item.getContentUri(), IOUtils.URI_PERMISSION_READ)) {
+                        filesWithoutPermissions.add(item);
+                    }
+                    uriPermissionsProgressTracker.incrementWorkDone(1);
+                    return null;
+                };
             }
-            uriPermissionsProgressTracker.markComplete();
+        });
 
-            // Phase 1.3 (0%) notify user of any issues found so far
-            if (!unsupportedExts.isEmpty()) {
-                String msg = getOwner().getString(R.string.alert_error_unsupported_file_extensions_pattern, CollectionUtils.toCsvList(unsupportedExts));
-                DisplayUtils.postOnUiThread(() ->getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg));
+        // Wait for the tasks to finish.
+        uriPermissionsProgressTracker.waitUntilComplete(1000 * selectedFolderItems.size(), true);
+        uriPermissionsProgressTracker.markComplete();
+        executor.shutdown(2);
+
+        selectedFolderItems.removeAll(unsupportedFiles);
+
+
+        // Notify user of any issues found so far
+        if (!unsupportedFiles.isEmpty()) {
+            Set<String> unsupportedExts = new TreeSet<>();
+            for(FolderItem folderItem : unsupportedFiles) {
+                unsupportedExts.add(folderItem.getExt());
             }
-            if (filesMissingPermissionsCount > 0) {
-                String msg;
-                if(filesMissingPermissionsCount == selectedFolderItems.size()) {
-                    msg = getContext().getString(R.string.alert_error_files_without_permissions);
-                } else {
-                    msg = getContext().getString(R.string.alert_error_files_without_permissions_pattern, filesMissingPermissionsCount);
-                }
-                DisplayUtils.postOnUiThread(() ->getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, msg));
-            }
+            String msg = getOwner().getString(R.string.alert_error_unsupported_file_extensions_pattern, CollectionUtils.toCsvList(unsupportedExts));
+            DisplayUtils.postOnUiThread(() ->getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg));
         }
+        if (!filesWithoutPermissions.isEmpty()) {
+            String msg;
+            if(filesWithoutPermissions.containsAll(selectedFolderItems)) {
+                msg = getContext().getString(R.string.alert_error_files_without_permissions);
+            } else {
+                filesWithoutPermissions.retainAll(selectedFolderItems);
+                msg = getContext().getString(R.string.alert_error_files_without_permissions_pattern, filesWithoutPermissions.size());
+            }
+            DisplayUtils.postOnUiThread(() ->getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, msg));
+        }
+        progressTracker.markComplete();
     }
 
     @Override

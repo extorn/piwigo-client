@@ -231,7 +231,7 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
 
     public void deselectItem(Long itemId, boolean force) {
         if (force || isAllowItemDeselection(itemId)) {
-            selectedResourceIds.add(itemId);
+            selectedResourceIds.remove(itemId);
             try {
                 T item = getItemById(itemId);
                 int idx = getItemPosition(item);
@@ -287,7 +287,14 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
 
     public final void addItem(T item) {
         addItemToInternalStore(item);
-        notifyItemInserted(getItemPosition(item));
+        int itemPos = getItemPosition(item);
+        if(itemPos > 0) {
+            notifyItemChanged(itemPos -1, Boolean.FALSE);
+        }
+        notifyItemInserted(itemPos);
+        if(itemPos < getItemCount() -1) {
+            notifyItemChanged(itemPos +1, Boolean.FALSE);
+        }
     }
 
     @Override

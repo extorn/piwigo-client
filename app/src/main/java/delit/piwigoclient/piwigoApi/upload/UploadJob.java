@@ -673,6 +673,13 @@ public class UploadJob implements Parcelable {
         return runAttempts > 0;
     }
 
+
+    public void waitBriefly(int maxWait) throws InterruptedException {
+        synchronized (this) {
+            this.wait(maxWait);
+        }
+    }
+
     public void waitUntilNotified() throws InterruptedException {
         synchronized (this) {
             this.wait();

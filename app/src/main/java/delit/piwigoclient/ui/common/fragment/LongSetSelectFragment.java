@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -44,7 +43,7 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FUIH,Y,X,Z>,FUIH extends FragmentUIHelper<FUIH,F>, Y extends View, X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences<Z>> extends MyFragment<F,FUIH> {
+public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FUIH,Y, LVA, P>,FUIH extends FragmentUIHelper<FUIH,F>, Y extends View, LVA extends Enableable, P extends BaseRecyclerViewAdapterPreferences<P>> extends MyFragment<F,FUIH> {
 
     private static final String ARG_ACTION_ID = "actionId";
     private static final String ARG_INITIAL_SELECTION = "initialSelection";
@@ -53,7 +52,7 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
     private static final String TAG = "LogSetSelFrag";
 
     private Y list;
-    private X listAdapter;
+    private LVA listAdapter;
     private Button saveChangesButton;
     private ExtendedFloatingActionButton reloadListButton;
     // Maintained state
@@ -63,7 +62,8 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
     private Button toggleAllSelectionButton;
     private boolean selectToggle;
     private ExtendedFloatingActionButton addListItemButton;
-    private Z viewPrefs;
+    private P viewPrefs;
+    private boolean saveActionRunning;
 
     public static <Z extends BaseRecyclerViewAdapterPreferences<Z>> Bundle buildArgsBundle(Z prefs, int actionId, HashSet<Long> initialSelection) {
 
@@ -88,7 +88,7 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
         return list;
     }
 
-    public Z getViewPrefs() {
+    public P getViewPrefs() {
         return viewPrefs;
     }
 
@@ -119,7 +119,7 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
 
     }
 
-    protected abstract Z loadPreferencesFromBundle(Bundle bundle);
+    protected abstract P loadPreferencesFromBundle(Bundle bundle);
 
     private void loadStateFromBundle(Bundle bundle) {
 
@@ -177,16 +177,16 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
 
         Button cancelChangesButton = view.findViewById(R.id.list_action_cancel_button);
         cancelChangesButton.setVisibility(View.VISIBLE);
-        cancelChangesButton.setOnClickListener(v -> onUserActionCancelFileSelection());
+        cancelChangesButton.setOnClickListener(v -> onClickCancelFileSelectionButton());
 
         toggleAllSelectionButton = view.findViewById(R.id.list_action_toggle_all_button);
         toggleAllSelectionButton.setVisibility(viewPrefs.isMultiSelectionEnabled() ? View.VISIBLE : View.GONE);
-        toggleAllSelectionButton.setOnClickListener(v -> onToggleAllSelection());
+        toggleAllSelectionButton.setOnClickListener(v -> onClickToggleAllSelection());
         setToggleSelectionButtonText();
 
         saveChangesButton = view.findViewById(R.id.list_action_save_button);
         saveChangesButton.setVisibility(View.VISIBLE);
-        saveChangesButton.setOnClickListener(v -> onSaveChanges());
+        saveChangesButton.setOnClickListener(v -> onClickSaveChangesButton());
 
         reloadListButton = view.findViewById(R.id.list_retryAction_actionButton);
         if(reloadListButton != null) {
@@ -238,9 +238,10 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
      * keeps toggle button in sync
      */
     public void deselectAllItems() {
-        onToggleAllSelection();
-        if (!selectToggle) {
-            onToggleAllSelection();
+        if (selectToggle) {
+            onClickToggleAllSelection();
+        } else {
+            setToggleSelectionButtonText();
         }
     }
 
@@ -248,14 +249,14 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
      * keeps toggle button in sync
      */
     public void selectAllItems() {
-        if(!selectToggle) {
-            onToggleAllSelection();
+        if (!selectToggle) {
+            onClickToggleAllSelection();
         } else {
-            selectAllListItems();
+            setToggleSelectionButtonText();
         }
     }
 
-    private void onToggleAllSelection() {
+    private void onClickToggleAllSelection() {
         if (!selectToggle) {
             selectAllListItems();
             selectToggle = true;
@@ -270,11 +271,11 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
         setToggleSelectionButtonText();
     }
 
-    public X getListAdapter() {
+    public LVA getListAdapter() {
         return listAdapter;
     }
 
-    public void setListAdapter(X listAdapter) {
+    public void setListAdapter(LVA listAdapter) {
         this.listAdapter = listAdapter;
     }
 
@@ -290,7 +291,23 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
 
     protected abstract long[] getSelectedItemIds();
 
-    private void onSaveChanges() {
+    private void onClickSaveChangesButton() {
+        synchronized (this) {
+            if (saveActionRunning) {
+                getUiHelper().showDetailedShortMsg(R.string.alert_information, R.string.please_wait_in_progress);
+                return;
+            }
+            try {
+                saveActionRunning = true;
+                onUserActionSaveChanges();
+            } catch (RuntimeException e) {
+                Logging.recordException(e);
+                Logging.waitForExceptionToBeSent();
+            }
+        }
+    }
+
+    protected void onUserActionSaveChanges() {
         long[] selectedItemIds = getSelectedItemIds();
 
         // convert the array of long to a set of Long
@@ -307,9 +324,13 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
         onSelectActionComplete(selectedIdsSet);
     }
 
+    protected void onSaveActionFinished() {
+        saveActionRunning = false;
+    }
+
     protected abstract void onSelectActionComplete(HashSet<Long> selectedIdsSet);
 
-    protected void onUserActionCancelFileSelection() {
+    protected void onClickCancelFileSelectionButton() {
         if (isVisible()) {
             Logging.log(Log.INFO, TAG, "removing from activity immediately on cancel changes action");
             getParentFragmentManager().popBackStackImmediate();
@@ -331,7 +352,7 @@ public abstract class LongSetSelectFragment<F extends LongSetSelectFragment<F,FU
             if (BuildConfig.DEBUG) {
                 throw new RuntimeException("Incorrectly using LongSetSelectFragment when should be using LongSelectableSetSelectFragment");
             }
-            currentSelection = ((SelectableItemsAdapter) listAdapter).getSelectedItemIds();
+            currentSelection = ((SelectableItemsAdapter<?>) listAdapter).getSelectedItemIds();
         }
         return currentSelection;
     }

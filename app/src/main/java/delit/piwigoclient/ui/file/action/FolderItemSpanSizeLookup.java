@@ -6,12 +6,12 @@ import delit.libs.core.util.Logging;
 import delit.piwigoclient.ui.file.FolderItem;
 import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 
-public class FolderItemSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
+public class FolderItemSpanSizeLookup<LVA extends FolderItemRecyclerViewAdapter<?, ?, FolderItem,?,?>> extends GridLayoutManager.SpanSizeLookup {
 
     private final int spanCount;
-    private final FolderItemRecyclerViewAdapter<?, FolderItem,?,?> viewAdapter;
+    private final LVA viewAdapter;
 
-    public FolderItemSpanSizeLookup(FolderItemRecyclerViewAdapter<?,FolderItem,?,?> viewAdapter, int spanCount) {
+    public FolderItemSpanSizeLookup(LVA viewAdapter, int spanCount) {
         this.viewAdapter = viewAdapter;
         this.spanCount = spanCount;
     }

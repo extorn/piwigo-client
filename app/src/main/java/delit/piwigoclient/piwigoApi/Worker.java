@@ -9,13 +9,10 @@ import androidx.annotation.NonNull;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import delit.libs.core.util.Logging;
 import delit.libs.http.cache.CachingAsyncHttpClient;
 import delit.libs.ui.SafeAsyncTask;
+import delit.libs.ui.util.ExecutorManager;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -37,34 +35,14 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
      * An {@link Executor} that can be used to execute tasks in parallel.
      */
     private static final long MAX_TIMEOUT_MILLIS = 1000 * 60; // 1 minute - I can't think of a reason for a single call to exceed this time. Unless debugging!
-    private static final ThreadPoolExecutor HTTP_THREAD_POOL_EXECUTOR;
-    private static final ThreadPoolExecutor HTTP_LOGIN_THREAD_POOL_EXECUTOR;
+    private static final ExecutorManager HTTP_THREAD_POOL_EXECUTOR;
+    private static final ExecutorManager HTTP_LOGIN_THREAD_POOL_EXECUTOR;
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int CORE_POOL_SIZE = 6;
     private static final int MAXIMUM_POOL_SIZE = Math.max(6, CPU_COUNT * 2 + 1);
     private static final int KEEP_ALIVE_SECONDS = 60;
     private static final List<String> runningExecutorTasks = new ArrayList<>(MAXIMUM_POOL_SIZE);
     private static final List<String> queuedExecutorTasks = new ArrayList<>(MAXIMUM_POOL_SIZE);
-    private static final BlockingQueue<Runnable> sPoolWorkQueue =
-            new LinkedBlockingQueue<Runnable>(128) {
-                private static final long serialVersionUID = -7597713770114087334L;
-
-                @Override
-                public void put(@NonNull Runnable o) throws InterruptedException {
-                    Log.d("StandardQueue", "New Queue Size : " + size());
-                    super.put(o);
-                }
-            };
-    private static final BlockingQueue<Runnable> loginPoolWorkQueue =
-            new LinkedBlockingQueue<Runnable>(20) {
-                private static final long serialVersionUID = 3662009715398722828L;
-
-                @Override
-                public void put(@NonNull Runnable o) throws InterruptedException {
-                    Log.d("LoginQueue", "New Queue Size : " + size());
-                    super.put(o);
-                }
-            };
 
     private static final ThreadFactory sThreadFactory = new ThreadFactory() {
         private final AtomicInteger mCount = new AtomicInteger(1);
@@ -83,15 +61,11 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
     private static final String TAG = "WORKER";
 
     static {
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-                CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
-                sPoolWorkQueue, sThreadFactory);
+        ExecutorManager threadPoolExecutor = new ExecutorManager(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS * 1000, 1, sThreadFactory);
         threadPoolExecutor.allowCoreThreadTimeOut(true);
         HTTP_THREAD_POOL_EXECUTOR = threadPoolExecutor;
 
-        ThreadPoolExecutor loginThreadPoolExecutor = new ThreadPoolExecutor(
-                CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
-                loginPoolWorkQueue, loginThreadFactory);
+        ExecutorManager loginThreadPoolExecutor = new ExecutorManager(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS * 1000, 1, loginThreadFactory);
         threadPoolExecutor.allowCoreThreadTimeOut(true);
 
         HTTP_LOGIN_THREAD_POOL_EXECUTOR = loginThreadPoolExecutor;
@@ -298,7 +272,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 
     public long start(long messageId) {
         try {
-            AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
+            AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutorManager().getExecutor(), messageId);
             recordExcutionQueued();
             //TODO collect a list of tasks and kill them all if the app exits.
             return messageId;
@@ -337,7 +311,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
      * @return true if succeeded
      */
     public boolean startAndWait(long messageId) {
-        final AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
+        final AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutorManager().getExecutor(), messageId);
         //TODO collect a list of tasks and kill them all if the app exits.
         Boolean retVal = null;
         boolean timedOut = false;
@@ -400,7 +374,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
         return retVal == null ? false : retVal;
     }
 
-    public Executor getExecutor() {
+    public ExecutorManager getExecutorManager() {
         return getOwner().isPerformingLogin() ? HTTP_LOGIN_THREAD_POOL_EXECUTOR : HTTP_THREAD_POOL_EXECUTOR;
     }
 

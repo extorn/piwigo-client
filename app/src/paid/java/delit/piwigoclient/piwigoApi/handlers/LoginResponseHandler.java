@@ -6,8 +6,7 @@ import androidx.annotation.NonNull;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
+import delit.libs.ui.util.ExecutorManager;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -24,10 +23,10 @@ public class LoginResponseHandler extends AbstractLoginResponseHandler<LoginResp
     }
 
     @Override
-    protected void performExtraServerCalls(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs, ThreadPoolExecutor executor) {
+    protected void performExtraServerCalls(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs, ExecutorManager executor) {
         PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
         if(sessionDetails.isAdminUser() && AppPreferences.isCheckForPiwigoServerUpdates(context, getSharedPrefs())) {
-            executor.execute(()->getUpdatesOfServerComponents(context, connectionPrefs));
+            executor.submit(()->getUpdatesOfServerComponents(context, connectionPrefs));
         }
     }
 

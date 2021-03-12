@@ -22,7 +22,7 @@ import delit.piwigoclient.database.UriPermissionUse;
 /**
  * NOTE: Currently as it is, if you specify file extensions AND mimes that are acceptable, the UNION of those sets is acceptable.
  */
-public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<FolderItemViewAdapterPreferences> {
+public class FolderItemViewAdapterPreferences<P extends FolderItemViewAdapterPreferences<P>> extends BaseRecyclerViewAdapterPreferences<P> {
 
     public final static int ALPHABETICAL = 1;
     public final static int LAST_MODIFIED_DATE = 2;

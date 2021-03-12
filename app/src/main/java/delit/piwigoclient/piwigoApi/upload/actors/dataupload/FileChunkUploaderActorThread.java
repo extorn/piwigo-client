@@ -194,6 +194,12 @@ public class FileChunkUploaderActorThread extends Thread {
         return isFinished;
     }
 
+    public void waitOnBriefly(int maxWait) throws InterruptedException {
+        synchronized (this) {
+            wait(maxWait);
+        }
+    }
+
     public interface ChunkUploadListener {
 
         void onChunkUploadFailed(UploadJob thisUploadJob, UploadFileChunk currentUploadFileChunk, PiwigoResponseBufferingHandler.BaseResponse errorResponse);

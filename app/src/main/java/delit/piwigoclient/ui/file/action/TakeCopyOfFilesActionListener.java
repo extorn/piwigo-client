@@ -10,10 +10,10 @@ import java.util.List;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.file.FolderItem;
-import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
+import delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences;
 import delit.piwigoclient.ui.file.RecyclerViewDocumentFileFolderItemSelectFragment;
 
-public class TakeCopyOfFilesActionListener<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA, FolderItem,?,?>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
+public class TakeCopyOfFilesActionListener<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,P>, FUIH extends FragmentUIHelper<FUIH,F>,P extends FolderItemViewAdapterPreferences<P>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
     private final List<FolderItem> itemsShared;
 
     public TakeCopyOfFilesActionListener(FUIH uiHelper, List<FolderItem> itemsShared) {

@@ -17,7 +17,7 @@ public class UiUpdatingProgressListener extends SimpleProgressListener {
     private final @StringRes
     int taskDescriptionStrRes;
     private final ProgressIndicator progressIndicator;
-    private final TimerThreshold thesholdGate = new TimerThreshold(100); // max update the ui once per half second
+    private final TimerThreshold thresholdGate = new TimerThreshold(100); // max update the ui once per half second
 
     public UiUpdatingProgressListener(@NonNull ProgressIndicator progressIndicator, @StringRes int taskDescriptionStrRes) {
         super(0.01);
@@ -27,7 +27,7 @@ public class UiUpdatingProgressListener extends SimpleProgressListener {
 
     @Override
     public void onProgress(double percent, boolean forceNotification) {
-        if(!thesholdGate.thresholdMet() && !forceNotification) {
+        if(!thresholdGate.thresholdMet() && !forceNotification) {
            /* if(BuildConfig.DEBUG) {
                 Log.d(TAG,"Skipping UI progress view update (beyond refresh rate): " + percent);
             }*/

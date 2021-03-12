@@ -367,7 +367,7 @@ public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends
     }
 
     @Override
-    protected void onUserActionCancelFileSelection() {
+    protected void onClickCancelFileSelectionButton() {
         // reset the selection to default.
         getListAdapter().setSelectedItems(null);
         onSelectActionComplete(getListAdapter().getSelectedItemIds());

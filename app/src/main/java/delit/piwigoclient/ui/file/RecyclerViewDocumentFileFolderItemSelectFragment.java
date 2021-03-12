@@ -53,6 +53,7 @@ import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.AbstractBreadcrumbsView;
 import delit.libs.ui.view.DocumentFileBreadcrumbsView;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
@@ -81,7 +82,7 @@ import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
 import static android.view.View.GONE;
 
 //@RequiresApi(api = Build.VERSION_CODES.KITKAT)
-public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends RecyclerViewLongSetSelectFragment<F,FUIH,LVA, FolderItemViewAdapterPreferences, FolderItem> implements BackButtonHandler {
+public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,P>, FUIH extends FragmentUIHelper<FUIH,F>, P extends FolderItemViewAdapterPreferences<P>> extends RecyclerViewLongSetSelectFragment<F,FUIH,FolderItemRecyclerViewAdapter<?,?,FolderItem,?,?>, P, FolderItem> implements BackButtonHandler {
     private static final String TAG = "RVFolderSelFrg";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
     private DocumentFileBreadcrumbsView folderPathView;
@@ -92,14 +93,15 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     private SortedMap<DocumentFile, List<Object>> listViewStates; // one state for each level within the list (created and deleted on demand)
     private AppSettingsViewModel appSettingsViewModel;
     private FilterControl fileExtFilters;
+    private TextView selectedFileInfoView;
 
-    public static <F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> F newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
-        F fragment = (F) new RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>();
+    public static <F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,P>, FUIH extends FragmentUIHelper<FUIH,F>, P extends FolderItemViewAdapterPreferences<P>> F newInstance(P prefs, int actionId) {
+        RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,P> fragment = new RecyclerViewDocumentFileFolderItemSelectFragment<>();
         fragment.setArguments(RecyclerViewDocumentFileFolderItemSelectFragment.buildArgsBundle(prefs, actionId));
-        return fragment;
+        return (F) fragment;
     }
 
-    public static Bundle buildArgsBundle(FolderItemViewAdapterPreferences prefs, int actionId) {
+    public static <P extends FolderItemViewAdapterPreferences<P>> Bundle buildArgsBundle(P prefs, int actionId) {
         return LongSelectableSetSelectFragment.buildArgsBundle(prefs, actionId, null);
     }
 
@@ -110,8 +112,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     }
 
     @Override
-    protected FolderItemViewAdapterPreferences loadPreferencesFromBundle(Bundle bundle) {
-        return new FolderItemViewAdapterPreferences(bundle);
+    protected P loadPreferencesFromBundle(Bundle bundle) {
+        return (P) new FolderItemViewAdapterPreferences<P>(bundle);
     }
 
     @Override
@@ -174,6 +176,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         folderPathView.setNavigationListener(new DocumentFileNavigationListener());
 
         fileExtFilters = v.findViewById(R.id.file_ext_filters);
+
+        selectedFileInfoView = v.findViewById(R.id.selected_file_info);
 
         MaterialButton addRootButton = v.findViewById(R.id.add_root);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -255,7 +259,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
 //            fileExtFilters.setShowInactiveFilters(false);
             fileExtFilters.setAllFilters(allFilters);
             fileExtFilters.setActiveFilters(getListAdapter().getFileExtsInCurrentFolder());
-            fileExtFilters.selectAll(true);
+            fileExtFilters.selectAll(false);
         }
     }
 
@@ -362,13 +366,13 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         if (resultCode != Activity.RESULT_OK || resultData == null) {
             // this is unnecessary to report since the request for files from the system selector was cancelled.
         } else {
-            new SharedFilesIntentProcessingTask(this, resultData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new SharedFilesIntentProcessingTask<>((F)this, resultData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
     public void processOpenDocumentsWithoutPermissions(List<FolderItem> itemsShared) {
         if(BuildConfig.PAID_VERSION) {
-            new SharedFilesClonedIntentProcessingTask(this).executeNow(itemsShared);
+            new SharedFilesClonedIntentProcessingTask<>((F) this).executeNow(itemsShared);
         } else {
             // this is called from a background thread.
             DisplayUtils.runOnUiThread(() -> getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_shared_without_required_permissions_error), R.string.button_ok));
@@ -512,7 +516,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         if(getListAdapter() == null) {
             applyNewRootsAdapter(buildFolderRootsAdapter());
 
-            final LVA viewAdapter = (LVA) new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter(), getViewPrefs());
+            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemSelectListener<>((F)this), getViewPrefs());
             viewAdapter.setTaskListener(new UiUpdatingProgressListener(getUiHelper().getProgressIndicator(), R.string.progress_loading_folder_content));
 
             if (!viewAdapter.isItemSelectionAllowed()) {
@@ -526,7 +530,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             // will restore previous selection from state if any
             setListAdapter(viewAdapter);
 
-            fileExtFilters.setListener(new FileExtFilterControlListener(getListAdapter()));
+            fileExtFilters.setListener(new FileExtFilterControlListener<>(getListAdapter()));
 
             DocumentFile initialFolder = null;
             Uri lastFolderUsed = getViewPrefs().getInitialFolder();
@@ -555,7 +559,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             colsOnScreen = getViewPrefs().getColumnsOfFiles() * getViewPrefs().getColumnsOfFolders();
         }
         GridLayoutManager layoutMan = new GridLayoutManager(getContext(), colsOnScreen);
-        layoutMan.setSpanSizeLookup(new FolderItemSpanSizeLookup(getListAdapter(), colsOnScreen));
+        layoutMan.setSpanSizeLookup(new FolderItemSpanSizeLookup<>(getListAdapter(), colsOnScreen));
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(getListAdapter());
     }
@@ -582,7 +586,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             f = f.getParentFile();
         }
         Collections.reverse(pathHierarchy);
-        StringBuilder sb = new StringBuilder();
         return CollectionUtils.toCsvList(pathHierarchy, "/");
     }
 
@@ -692,18 +695,20 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
                 getParentFragmentManager().popBackStackImmediate();
             }
         }
+        // notify the ui that the user may use the button again.
+        onSaveActionFinished();
     }
 
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
-        LVA listAdapter = getListAdapter();
+        FolderItemRecyclerViewAdapter<?,?,FolderItem,?,?> listAdapter = getListAdapter();
         HashSet<FolderItem> selectedItems = listAdapter.getSelectedItems();
         addCurrentFolderToListIfEmptyAndFolderSelectionOkay(selectedItems);
         new SelectedFilesUriCheckTask<>((F)this, selectedItems).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void addCurrentFolderToListIfEmptyAndFolderSelectionOkay(HashSet<FolderItem> selectedItems) {
-        LVA listAdapter = getListAdapter();
+        FolderItemRecyclerViewAdapter<?,?,FolderItem,?,?> listAdapter = getListAdapter();
         if (selectedItems.isEmpty() && (getViewPrefs().isAllowItemSelection() && getViewPrefs().isAllowFolderSelection()) && !getViewPrefs().isMultiSelectionEnabled()) {
             if(listAdapter.getActiveFolder() != null) {
                 FolderItem folderItem = new FolderItem(listAdapter.getActiveRootUri(), listAdapter.getActiveFolder());
@@ -728,10 +733,10 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     }
 
     @Override
-    public void onUserActionCancelFileSelection() {
+    public void onClickCancelFileSelectionButton() {
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFiles(getViewPrefs().getInitialSelection()));
-        super.onUserActionCancelFileSelection();
+        super.onClickCancelFileSelectionButton();
     }
 
     private class RootFolderSelectionListener implements AdapterView.OnItemSelectedListener {
@@ -798,14 +803,14 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     private class DocumentFileNavigationListener implements AbstractBreadcrumbsView.NavigationListener<DocumentFile> {
         @Override
         public void onBreadcrumbClicked(DocumentFile pathItemFile) {
-            if(getListAdapter().getActiveFolder() == null) {
+            if (getListAdapter().getActiveFolder() == null) {
                 return; // UI out of sync. Do nothing and be patient.
             }
-            if(getListAdapter().getActiveFolder().getUri().equals(pathItemFile.getUri())) {
+            if (getListAdapter().getActiveFolder().getUri().equals(pathItemFile.getUri())) {
                 getListAdapter().rebuildContentView(requireContext());
             } else {
                 boolean loadedFromMemory = false;
-                if(listViewStates != null) {
+                if (listViewStates != null) {
                     Iterator<Map.Entry<DocumentFile, List<Object>>> iterator = listViewStates.entrySet().iterator();
                     Map.Entry<DocumentFile, List<Object>> item;
                     while (iterator.hasNext()) {
@@ -813,7 +818,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
                         if (item.getKey().getUri().equals(pathItemFile.getUri())) {
                             loadedFromMemory = true;
                             if (getList().getLayoutManager() != null) {
-                                LVA adapter = (LVA)getList().getAdapter();
+                                FolderItemRecyclerViewAdapter<?,?,FolderItem,?,?> adapter = getListAdapter();
                                 Objects.requireNonNull(adapter).restoreState((FolderItemRecyclerViewAdapter.SavedState) item.getValue().get(0));
                                 getList().getLayoutManager().onRestoreInstanceState((Parcelable) item.getValue().get(1));
 
@@ -821,20 +826,42 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
                                 Logging.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
                             }
                             // only keep a single level below our current level in case we moved back accidentally.
-                            if(iterator.hasNext()) {
+                            if (iterator.hasNext()) {
                                 iterator.next();
-                                if(iterator.hasNext()) {
+                                if (iterator.hasNext()) {
                                     iterator.remove();
                                 }
                             }
                         }
                     }
                 }
-                if(!loadedFromMemory) {
+                if (!loadedFromMemory) {
                     getListAdapter().changeFolderViewed(requireContext(), pathItemFile);
                 }
             }
         }
     }
+    private static class FolderItemSelectListener<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,P>, FUIH extends FragmentUIHelper<FUIH,F>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,P,T,VH>, LVA extends FolderItemRecyclerViewAdapter<LVA,P,T,MSL,VH>, P extends FolderItemViewAdapterPreferences<P>, T extends FolderItem, VH extends FolderItemRecyclerViewAdapter.FolderItemViewHolder<VH,LVA,T,MSL,P>> extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA, P, T,VH> {
 
+        private final F ownerFragment;
+
+        public FolderItemSelectListener(F ownerFragment) {
+            this.ownerFragment = ownerFragment;
+        }
+
+
+        @Override
+        public void onItemSelectionCountChanged(LVA adapter, int itemCount) {
+            super.onItemSelectionCountChanged(adapter, itemCount);
+            long totalBytes = 0;
+            for(T item : adapter.getSelectedItems()) {
+                totalBytes += item.getFileLength();
+            }
+            ownerFragment.updateSelectedFileText(itemCount, totalBytes);
+        }
+    }
+
+    protected void updateSelectedFileText(int itemCount, long totalBytes) {
+        selectedFileInfoView.setText(getString(R.string.files_to_upload_count_label_pattern, itemCount, IOUtils.bytesToNormalizedText(totalBytes)));
+    }
 }

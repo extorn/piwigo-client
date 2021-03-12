@@ -47,7 +47,7 @@ public class DeleteAllFilesSelectedAction<F extends AbstractUploadFragment<F,FUI
         if (Boolean.TRUE == positiveAnswer) {
             getParent().showOverallUploadProgressIndicator(R.string.removing_files_from_job, 0);
             F fragment = getUiHelper().getParent();
-            fragment.removeAllFilesFromUploadImmediately();
+            fragment.onUserActionDeleteAllFilesFromUploadImmediately();
         }
     }
 }

@@ -137,6 +137,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     private Button uploadFilesNowButton;
     private Button deleteUploadJobButton;
     private TextView selectedGalleryTextView;
+    private TextView filesForUploadCountView;
     private Spinner privacyLevelSpinner;
     private SwitchMaterial deleteFilesAfterUploadCheckbox;
     private MaterialButton fileSelectButton;
@@ -292,6 +293,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         viewPrefs.selectable(false, false);
         viewPrefs.setFlattenAlbumHierarchy(true);
 
+        filesForUploadCountView = view.findViewById(R.id.files_for_upload_count_field);
         selectedGalleryTextView = view.findViewById(R.id.selected_gallery);
         // can't just use a std click listener as it first focuses the field :-(
         CustomClickTouchListener.callClickOnTouch(selectedGalleryTextView, (sgtf)->onClickSelectedGalleryTextView());
@@ -806,8 +808,19 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
                     Logging.log(Log.WARN,TAG, "Unable to update job action buttons without attached context");
                 }
             }
+            updateTotalUploadSizeField();
         } finally {
             overallUploadProgressBar.hideProgressIndicator();
+        }
+    }
+
+    private void updateTotalUploadSizeField() {
+        try {
+            long bytesToUpload = filesToUploadAdapter.getTotalSizeOfFiles();
+            filesForUploadCountView.setText(getString(R.string.files_to_upload_count_label_pattern, filesToUploadAdapter.getItemCount(), IOUtils.bytesToNormalizedText(bytesToUpload)));
+        } catch(Exception e) {
+            // don't let this cause an issue for anything it isn't important.
+            Logging.recordException(e);
         }
     }
 
@@ -937,6 +950,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
                 adapter.remove(itemToRemove);
                 releaseUriPermissionsForUploadItem(itemToRemove);
                 updateActiveJobActionButtonsStatus();
+                updateTotalUploadSizeField();
             }
         }
     }
@@ -1148,7 +1162,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         return uploadFilesNowButton;
     }
 
-    public void removeAllFilesFromUploadImmediately() {
+    public void onUserActionDeleteAllFilesFromUploadImmediately() {
         Map<Uri,Long> filesAndSizes = getFilesForUploadViewAdapter().getFilesAndSizes();
         Set<Uri> uris = filesAndSizes.keySet();
 
@@ -1160,6 +1174,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         tracker.incrementWorkDone(2);
         updateActiveJobActionButtonsStatus();
         overallUploadProgressBar.hideProgressIndicator();
+        updateTotalUploadSizeField();
     }
 
 

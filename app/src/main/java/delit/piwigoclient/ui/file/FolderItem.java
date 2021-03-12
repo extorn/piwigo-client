@@ -16,12 +16,10 @@ import androidx.documentfile.provider.DocumentFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import delit.libs.core.util.Logging;
+import delit.libs.ui.util.ExecutorManager;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.progress.BasicProgressTracker;
@@ -285,60 +283,38 @@ public class FolderItem implements Parcelable {
         if(items.size() == 0) {
             return true;
         }
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(4, 32, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(items.size()));
+        ExecutorManager executor = new ExecutorManager(12, 32, 1000, 1);
 
         BasicProgressTracker cachingTracker = new BasicProgressTracker("overall file field caching", items.size(), taskListener);
-        for(FolderItem item : items) {
-            executor.execute(() -> {
-                String name = Thread.currentThread().getName();
-                Thread.currentThread().setName("FolderItem Fields Caching");
-                try {
-                    if(!item.isFieldsCached()) {
-                        if (!item.cacheFields(context)) {
-                            Logging.log(Log.ERROR, TAG, "Unable to cache fields for URI : " + item.getContentUri());
+        executor.submit(()->{
+            // This is on it's own thread so the main thread isn't blocked when the executor is at capacity.
+            for(FolderItem item : items) {
+                executor.submit(() -> {
+                    String name = Thread.currentThread().getName();
+                    Thread.currentThread().setName("FolderItem Fields Caching");
+                    try {
+                        if(!item.isFieldsCached()) {
+                            if (!item.cacheFields(context)) {
+                                Logging.log(Log.ERROR, TAG, "Unable to cache fields for URI : " + item.getContentUri());
+                            }
                         }
+                    } catch(RuntimeException e) {
+                        Logging.log(Log.ERROR,TAG, "Unexpected error caching file fields");
+                        Logging.recordException(e);
+                    } finally {
+                        cachingTracker.incrementWorkDone(1);
+                        Thread.currentThread().setName(name);
                     }
-                } catch(RuntimeException e) {
-                    Logging.log(Log.ERROR,TAG, "Unexpected error caching file fields");
-                    Logging.recordException(e);
-                } finally {
-                    cachingTracker.incrementWorkDone(1);
-                    Thread.currentThread().setName(name);
-                }
-            });
-        }
-        boolean cancelled = false;
+                });
+            }
+        });
+
 
         // Wait for the tasks to finish.
+        cachingTracker.waitUntilComplete(500 * items.size(), true);
+        boolean cancelled = !cachingTracker.isComplete();
 
-        if(taskListener != null) {
-            while (!cancelled && !cachingTracker.isComplete()) {
-                try {
-                    synchronized (cachingTracker) {
-                        // timeout every 0.5secs (might not get notified correctly)
-                        cachingTracker.wait(500);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    cancelled = true;
-                }
-            }
-            int outstandingTasks = (int)cachingTracker.getRemainingWork();
-            Logging.log(Log.INFO,TAG, "Finished waiting for executor to end (cancelled : "+cancelled+") while listening to progress. Outstanding Task Count : " + outstandingTasks);
-        } else {
-            try {
-                executor.awaitTermination(60, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                cancelled = true;
-                Logging.log(Log.ERROR, TAG, "Timeout (60sec!) while waiting for folder content fields to be cached");
-            }
-            int outstandingTasks = (int)cachingTracker.getRemainingWork();
-            Logging.log(Log.INFO,TAG, "Finished waiting for executor to end (cancelled : "+cancelled+") . Outstanding Task Count : " + outstandingTasks);
-        }
-        executor.shutdown();
-        try {
-            executor.awaitTermination(2, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
+        if(!executor.shutdown(60)) {
             cancelled = true;
             Logging.log(Log.ERROR, TAG, "Timeout while waiting for folder content field loading executor to end");
         }

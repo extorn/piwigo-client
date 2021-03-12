@@ -151,7 +151,7 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>,FUIH exte
     }
 
     @Override
-    protected void onUserActionCancelFileSelection() {
+    protected void onClickCancelFileSelectionButton() {
         onSelectActionComplete(getInitialSelection());
     }
 

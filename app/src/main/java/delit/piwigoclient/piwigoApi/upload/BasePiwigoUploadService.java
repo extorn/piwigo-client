@@ -23,12 +23,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import delit.libs.core.util.Logging;
+import delit.libs.ui.util.ExecutorManager;
 import delit.libs.util.progress.DividableProgressTracker;
 import delit.libs.util.progress.SimpleProgressListener;
 import delit.piwigoclient.R;
@@ -67,12 +65,12 @@ import static org.greenrobot.eventbus.ThreadMode.ASYNC;
  * a service on a separate handler thread.
  * <p>
  */
-public abstract class BasePiwigoUploadService extends JobIntentService {
+public abstract class BasePiwigoUploadService<T extends BasePiwigoUploadService<T>> extends JobIntentService {
 
     private static final String TAG = "BaseUpldSvc";
     private UploadJob runningUploadJob = null;
     private SharedPreferences prefs;
-    private UploadActionsBroadcastReceiver actionsBroadcastReceiver;
+    private UploadActionsBroadcastReceiver<T> actionsBroadcastReceiver;
     private UploadNotificationManager uploadNotificationManager;
 
     public UploadNotificationManager getUploadNotificationManager() {
@@ -288,15 +286,15 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         super.onDestroy();
     }
 
-    protected abstract UploadActionsBroadcastReceiver<?> buildActionBroadcastReceiver();
+    protected abstract UploadActionsBroadcastReceiver<T> buildActionBroadcastReceiver();
 
     private void doUploadFilesInJob(JobLoadActor jobLoadActor, UploadJob thisUploadJob, ArrayList<CategoryItemStub> availableAlbumsOnServer, ActorListener listener) throws JobUnableToContinueException {
         thisUploadJob.buildTaskProgressTrackerForOverallCompressionAndUploadOfData(this);
         List<FileUploadDetails> filesBeingWorked = Collections.synchronizedList(new ArrayList<>());
-        ThreadPoolExecutor compressionTPE = new ThreadPoolExecutor(1, 1, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(2));
-        compressionTPE.setThreadFactory(new NamedThreadFactory("compression task"));
-        ThreadPoolExecutor uploadTPE = new ThreadPoolExecutor(4, 20, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
-        uploadTPE.setThreadFactory(new NamedThreadFactory("upload task"));
+        ExecutorManager compressionTPE = new ExecutorManager(1, 1, 10 * 1000, 2, new NamedThreadFactory("compression task"));
+        compressionTPE.blockIfBusy(false); // throw RejectedExecutionException instead
+        ExecutorManager uploadTPE = new ExecutorManager(4, 20, 10 * 1000, 1, new NamedThreadFactory("upload task"));
+        uploadTPE.blockIfBusy(false); // throw RejectedExecutionException instead
         boolean finished = false;
         while(!thisUploadJob.isCancelUploadAsap() && !finished) {
             boolean prioritiseCompression = thisUploadJob.getHasFilesRequiringCompression(filesBeingWorked);
@@ -305,7 +303,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     runAllFileUploadTasksForFile(jobLoadActor, fud, thisUploadJob, availableAlbumsOnServer, listener, compressionTPE, uploadTPE, filesBeingWorked, prioritiseCompression);
                 }
                 boolean allItemsBeingWorked = false;
-                while ((!compressionTPE.getQueue().isEmpty() && !uploadTPE.getQueue().isEmpty() && !thisUploadJob.isCancelUploadAsap()) || allItemsBeingWorked) {
+                while ((compressionTPE.isBusy() && uploadTPE.isBusy() && !thisUploadJob.isCancelUploadAsap()) || allItemsBeingWorked) {
                     allItemsBeingWorked = filesBeingWorked.size() == thisUploadJob.getActionableFilesCount();
                     try {
                         thisUploadJob.waitUntilNotified();
@@ -326,11 +324,11 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 }
             }
         }
-        compressionTPE.shutdownNow();
-        uploadTPE.shutdownNow();
+        compressionTPE.shutdown(0);
+        uploadTPE.shutdown(0);
     }
 
-    protected void runAllFileUploadTasksForFile(JobLoadActor jobLoadActor, FileUploadDetails fud, UploadJob thisUploadJob, ArrayList<CategoryItemStub> availableAlbumsOnServer, ActorListener listener, ThreadPoolExecutor compressionTpe, ThreadPoolExecutor uploadTpe, List<FileUploadDetails> filesBeingWorked, boolean prioritiseCompression) throws JobUnableToContinueException {
+    protected void runAllFileUploadTasksForFile(JobLoadActor jobLoadActor, FileUploadDetails fud, UploadJob thisUploadJob, ArrayList<CategoryItemStub> availableAlbumsOnServer, ActorListener listener, ExecutorManager compressionTpe, ExecutorManager uploadTpe, List<FileUploadDetails> filesBeingWorked, boolean prioritiseCompression) throws JobUnableToContinueException {
         int maxChunkUploadAutoRetries = UploadPreferences.getUploadChunkMaxRetries(this, prefs);
 
         if(fud.isProcessingFailed()) {
@@ -351,7 +349,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         if (!fud.isProcessingFailed() && fud.isCompressionNeeded()) {
             filesBeingWorked.add(fud);
             try {
-                compressionTpe.execute(() -> {
+                compressionTpe.submit(() -> {
                     thisUploadJob.wakeAnyWaitingThreads();
                         try {
                             FileCompressionActor fca = new FileCompressionActor(this, thisUploadJob, listener);
@@ -370,7 +368,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             return;
         }
 
-        if(prioritiseCompression && compressionTpe.getQueue().isEmpty() && !uploadTpe.getQueue().isEmpty()) {
+        if(prioritiseCompression && !compressionTpe.isBusy() && !uploadTpe.isBusy()) {
             // spin to fill the compression queue before queuing more uploading tasks
             // the reason being they are longer running.
             return;
@@ -380,7 +378,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         if (!fud.isProcessingFailed() && fud.needsUpload()) {
             filesBeingWorked.add(fud);
             try {
-                uploadTpe.execute(() -> {
+                uploadTpe.submit(() -> {
                     try {
                         thisUploadJob.wakeAnyWaitingThreads();
                         FileDataUploaderActor fdua = new FileDataUploaderActor(this, thisUploadJob, listener, isUseFilenamesOverMd5ChecksumForUniqueness(thisUploadJob));
@@ -447,7 +445,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         void onJobReadyToUpload(Context c, UploadJob thisUploadJob);
     }
 
-    public static class UploadActionsBroadcastReceiver<T extends BasePiwigoUploadService> extends BroadcastReceiver {
+    public static class UploadActionsBroadcastReceiver<T extends BasePiwigoUploadService<T>> extends BroadcastReceiver {
 
         private final String stopAction;
         private final T service;

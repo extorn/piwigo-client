@@ -26,7 +26,7 @@ import delit.piwigoclient.piwigoApi.upload.actors.UploadNotificationManager;
  * a service on a separate handler thread.
  * <p>
  */
-public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
+public class ForegroundPiwigoUploadService extends BasePiwigoUploadService<ForegroundPiwigoUploadService> {
 
     public static final String INTENT_ARG_JOB_ID = "jobId";
     private static final String TAG = "PwgCli:FgUpldSvc";
@@ -38,7 +38,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
         super();
     }
 
-    protected UploadActionsBroadcastReceiver<?> buildActionBroadcastReceiver() {
+    protected UploadActionsBroadcastReceiver<ForegroundPiwigoUploadService> buildActionBroadcastReceiver() {
         return new ForegroundUploadActionsBroadcastReceiver(this);
     }
 

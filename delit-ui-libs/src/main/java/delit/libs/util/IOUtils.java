@@ -413,15 +413,19 @@ public class IOUtils {
     public static String bytesToNormalizedText(long sizeInBytes) {
         long KB = 1024;
         long MB = KB * 1024;
+        long GB = MB * 1024;
         String text = " ";
         if (sizeInBytes < KB) {
             text += String.format(Locale.getDefault(), "%1$d Bytes", sizeInBytes);
         } else if (sizeInBytes < MB) {
             double kb = ((double) sizeInBytes) / KB;
-            text += String.format(Locale.getDefault(), "%1$.1f KB", kb);
-        } else {
+            text += String.format(Locale.getDefault(), "%1$.2f KB", kb);
+        } else if (sizeInBytes < GB) {
             double mb = ((double) sizeInBytes) / MB;
-            text += String.format(Locale.getDefault(), "%1$.1f MB", mb);
+            text += String.format(Locale.getDefault(), "%1$.2f MB", mb);
+        } else {
+            double gb = ((double) sizeInBytes) / GB;
+            text += String.format(Locale.getDefault(), "%1$.2f GB", gb);
         }
         return text;
     }
@@ -711,10 +715,13 @@ public class IOUtils {
                 String document = getDocumentPathFromPathElements(itemPathSegments);
                 String[] path = document.replaceFirst(itemTree, "").split("/");
                 DocumentFile current = Objects.requireNonNull(rootedDocFile);
-                for (String filename : path) {
-                    DocumentFile found = current.findFile(filename);
-                    if (found != null) {
-                        current = found;
+                DocumentFile[] files = current.listFiles();
+                for (DocumentFile doc : files) {
+                    for (String filename : path) {
+                        if (filename.equals(doc.getName())) {
+                            current = doc;
+                            return current;
+                        }
                     }
                 }
                 return current;

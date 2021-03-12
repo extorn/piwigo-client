@@ -1102,4 +1102,6 @@ App Install UUID: %5$s
     <string name="upload_error_server_resource_not_retrieved_repaired">The server resource was not retrieved correctly after the file contents was uploaded. An attempt has been made to deal with this issue, but it may not work.</string>
     <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">The last chunk of file data was uploaded for the file, but the server failed to provide a resource identifier. It might be retrievable.</string>
     <string name="checking_uri_permissions">Updating records of file permissions held</string>
+    <string name="please_wait_in_progress">Please wait for the previous request to finish</string>
+    <string name="files_to_upload_count_label_pattern" translatable="false">%1$d (%2$s)</string>
 </resources>

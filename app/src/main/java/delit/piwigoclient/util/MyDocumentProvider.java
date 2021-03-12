@@ -326,11 +326,17 @@ public class MyDocumentProvider extends DocumentsProvider {
         @Override
         protected void withLoadedThumbnail(Bitmap bitmap) {
             loadedBitmap = bitmap;
+            synchronized (this) {
+                notifyAll();
+            }
         }
 
         @Override
         protected void withErrorThumbnail(Bitmap bitmap) {
             loadedBitmap = bitmap;
+            synchronized (this) {
+                notifyAll();
+            }
         }
     }
 

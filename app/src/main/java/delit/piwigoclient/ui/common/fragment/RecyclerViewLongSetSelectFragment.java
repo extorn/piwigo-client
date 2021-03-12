@@ -16,7 +16,7 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
  * Created by gareth on 03/01/18.
  */
 
-public abstract class RecyclerViewLongSetSelectFragment<F extends RecyclerViewLongSetSelectFragment<F,FUIH,X,Z,T>,FUIH extends FragmentUIHelper<FUIH,F>, X extends Enableable & SelectableItemsAdapter<T>, Z extends BaseRecyclerViewAdapterPreferences<Z>, T> extends LongSelectableSetSelectFragment<F,FUIH,RecyclerView, X, Z,T> {
+public abstract class RecyclerViewLongSetSelectFragment<F extends RecyclerViewLongSetSelectFragment<F,FUIH, LVA, P,T>,FUIH extends FragmentUIHelper<FUIH,F>, LVA extends Enableable & SelectableItemsAdapter<T>, P extends BaseRecyclerViewAdapterPreferences<P>, T> extends LongSelectableSetSelectFragment<F,FUIH,RecyclerView, LVA, P,T> {
 
     @Override
     @LayoutRes
@@ -39,7 +39,7 @@ public abstract class RecyclerViewLongSetSelectFragment<F extends RecyclerViewLo
 
     @Override
     protected long[] getSelectedItemIds() {
-        X listAdapter = getListAdapter();
+        LVA listAdapter = getListAdapter();
         long[] result = null;
         if(listAdapter != null) {
             HashSet<Long> ids = listAdapter.getSelectedItemIds();

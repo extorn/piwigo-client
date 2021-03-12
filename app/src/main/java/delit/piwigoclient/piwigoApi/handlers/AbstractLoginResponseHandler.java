@@ -14,14 +14,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
 import java.net.UnknownHostException;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
 import delit.libs.http.cache.CachingAsyncHttpClient;
 import delit.libs.http.cache.RequestHandle;
+import delit.libs.ui.util.ExecutorManager;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -93,11 +91,11 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
             loadMethodsAvailable();
         }
 
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 5, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        ExecutorManager executor = new ExecutorManager(8, 8, 30000, 5);
         if(canContinue) {
 
             if (PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
-                executor.execute(()->retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs)));
+                executor.submit(()->retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs)));
             } else {
                 PiwigoSessionDetails instance = getPiwigoSessionDetails();
                 if (instance != null) {
@@ -109,31 +107,23 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
                 }
             }
             if (isNeedUserDetails(PiwigoSessionDetails.getInstance(connectionPrefs))) {
-                executor.execute(this::loadUserDetails);
+                executor.submit(this::loadUserDetails);
             }
-            executor.execute(this::loadGalleryConfig);
-            executor.execute(()->loadActiveServerPlugins(getContext(), connectionPrefs));
+            executor.submit(this::loadGalleryConfig);
+            executor.submit(()->loadActiveServerPlugins(getContext(), connectionPrefs));
 
 
             PiwigoSessionDetails sessionDetails = getPiwigoSessionDetails();
             if (sessionDetails.isMethodAvailable(PiwigoClientGetPluginDetailResponseHandler.WS_METHOD_NAME)) {
                 sessionDetails.setPiwigoClientPluginVersion("1.0.5");
-                executor.execute(this::loadPiwigoClientPluginDetails);
+                executor.submit(this::loadPiwigoClientPluginDetails);
             } else {
                 sessionDetails.setPiwigoClientPluginVersion("1.0.4");
             }
             performExtraServerCalls(getContext(), connectionPrefs, executor);
 
             // shut the executor waiting for the server calls to finish.
-            executor.shutdown();
-            try {
-                if (!executor.awaitTermination(15, TimeUnit.SECONDS)) {
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException ex) {
-                executor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
+            executor.shutdown(15);
         }
 
         setRequestURI(getNestedRequestURI());
@@ -148,7 +138,7 @@ public class AbstractLoginResponseHandler<T extends AbstractLoginResponseHandler
         return null;
     }
 
-    protected void performExtraServerCalls(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs, ThreadPoolExecutor executor) {
+    protected void performExtraServerCalls(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs, ExecutorManager executor) {
     }
 
     private boolean loadGalleryConfig() {

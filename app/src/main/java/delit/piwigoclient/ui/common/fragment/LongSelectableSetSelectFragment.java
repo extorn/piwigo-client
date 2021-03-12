@@ -10,10 +10,10 @@ import delit.libs.ui.view.list.SelectableItemsAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 
-public abstract class LongSelectableSetSelectFragment<F extends LongSelectableSetSelectFragment<F,FUIH,Y,X,Z,T>,FUIH extends FragmentUIHelper<FUIH,F>, Y extends View, X extends Enableable & SelectableItemsAdapter<T>, Z extends BaseRecyclerViewAdapterPreferences<Z>, T> extends LongSetSelectFragment<F,FUIH,Y, X, Z> {
+public abstract class LongSelectableSetSelectFragment<F extends LongSelectableSetSelectFragment<F,FUIH,Y, LVA,P,T>,FUIH extends FragmentUIHelper<FUIH,F>, Y extends View, LVA extends Enableable & SelectableItemsAdapter<T>, P extends BaseRecyclerViewAdapterPreferences<P>, T> extends LongSetSelectFragment<F,FUIH,Y, LVA, P> {
     @Override
     public HashSet<Long> getCurrentSelection() {
-        X adapter = getListAdapter();
+        LVA adapter = getListAdapter();
         if (adapter == null) {
             return super.getCurrentSelection();
         }

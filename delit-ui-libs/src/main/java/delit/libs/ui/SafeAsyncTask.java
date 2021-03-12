@@ -12,6 +12,7 @@ import java.util.concurrent.Executor;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.Utils;
+import delit.libs.util.progress.ProgressListener;
 
 public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
@@ -88,7 +89,7 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
 
     @SafeVarargs
     @Override
-    protected final void onProgressUpdate(Progress... progresses) {
+    public final void onProgressUpdate(Progress... progresses) {
         try {
             onProgressUpdateSafely(progresses);
         } catch(Exception e) {
@@ -131,5 +132,46 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
         }
     }
 
+    protected static class AsyncTaskProgressLink implements ProgressListener {
 
+        private final ProgressUpdateCaller updateCaller;
+
+        public interface ProgressUpdateCaller {
+            void onProgress(int percent);
+        }
+
+        public AsyncTaskProgressLink(@NonNull ProgressUpdateCaller updateCaller) {
+            this.updateCaller = updateCaller;
+        }
+
+        @Override
+        public void onProgress(double percent, boolean forceNotification) {
+            updateCaller.onProgress((int) Math.rint(percent * 100));
+        }
+
+        @Override
+        public void onStarted() {
+            onProgress(0, true);
+        }
+
+        @Override
+        public void onComplete() {
+            onProgress(1, true);
+        }
+
+        @Override
+        public void setMinimumProgressToNotifyFor(double notifyOnProgress) {
+            throw new UnsupportedOperationException(); // illogical
+        }
+
+        @Override
+        public double getMinimumProgressToNotifyFor() {
+            return 0.01;//1%
+        }
+
+        @Override
+        public void onProgress(double percent) {
+            onProgress(percent, false);
+        }
+    }
 }

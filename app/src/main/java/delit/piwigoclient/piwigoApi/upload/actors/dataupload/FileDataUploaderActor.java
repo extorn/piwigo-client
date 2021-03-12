@@ -114,9 +114,7 @@ public class FileDataUploaderActor extends UploadActor {
         do {
             try {
                 // 250millis is a reasonable delay to discover the producer died for some unknown reason
-                synchronized (chunkConsumer) {
-                    chunkConsumer.wait(250); // wait for 250millis then wait again.
-                }
+                chunkConsumer.waitOnBriefly(250); // wait for 250millis then wait again.
             } catch (InterruptedException e) {
                 if (thisUploadJob.isCancelUploadAsap()) {
                     chunkProducer.stopAsap();

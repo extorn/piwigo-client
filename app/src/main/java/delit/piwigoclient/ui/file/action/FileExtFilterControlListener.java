@@ -6,11 +6,11 @@ import delit.piwigoclient.ui.file.FilterControl;
 import delit.piwigoclient.ui.file.FolderItem;
 import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 
-public class FileExtFilterControlListener implements FilterControl.FilterListener {
+public class FileExtFilterControlListener<LVA extends FolderItemRecyclerViewAdapter<?, ?, FolderItem,?,?>> implements FilterControl.FilterListener {
 
-    private final FolderItemRecyclerViewAdapter<?, FolderItem,?,?> listAdapter;
+    private final LVA listAdapter;
 
-    public FileExtFilterControlListener(FolderItemRecyclerViewAdapter<?,FolderItem,?,?> adapter) {
+    public FileExtFilterControlListener(LVA adapter) {
         this.listAdapter = adapter;
     }
 

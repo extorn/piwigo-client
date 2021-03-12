@@ -3,20 +3,17 @@ package delit.piwigoclient.ui.file.action;
 import android.content.Intent;
 import android.util.Log;
 
-import androidx.annotation.FloatRange;
-
 import java.util.List;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
-import delit.libs.util.progress.ProgressListener;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.file.FolderItem;
-import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
+import delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences;
 import delit.piwigoclient.ui.file.RecyclerViewDocumentFileFolderItemSelectFragment;
 
-public class SharedFilesIntentProcessingTask<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA, FolderItem,?,?>> extends OwnedSafeAsyncTask<F, Void, Integer, List<FolderItem>> implements ProgressListener {
+public class SharedFilesIntentProcessingTask<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,P>, FUIH extends FragmentUIHelper<FUIH,F>,P extends FolderItemViewAdapterPreferences<P>> extends OwnedSafeAsyncTask<F, Void, Integer, List<FolderItem>> {
 
 
     private static final String TAG = "SharedFilesIntentProcessingTask";
@@ -37,9 +34,9 @@ public class SharedFilesIntentProcessingTask<F extends RecyclerViewDocumentFileF
     @Override
     protected List<FolderItem> doInBackgroundSafely(Void... nothing) {
         if (intent.getClipData() != null) {
-            return getOwner().processOpenDocuments(intent, this);
+            return getOwner().processOpenDocuments(intent, new AsyncTaskProgressLink(this::onProgressUpdate));
         } else {
-            return getOwner().processOpenDocumentTree(intent, this);
+            return getOwner().processOpenDocumentTree(intent, new AsyncTaskProgressLink(this::onProgressUpdate));
         }
     }
 
@@ -68,35 +65,5 @@ public class SharedFilesIntentProcessingTask<F extends RecyclerViewDocumentFileF
         }
         getOwner().getUiHelper().hideProgressIndicator();
         getOwner().getFileExtFilters().setEnabled(true);
-    }
-
-    @Override
-    public void onProgress(@FloatRange(from = 0, to = 1) double percent, boolean forceNotification) {
-        publishProgress((int) Math.rint(percent * 100));
-    }
-
-    @Override
-    public void onProgress(double percent) {
-        onProgress(percent, false);
-    }
-
-    @Override
-    public void onComplete() {
-        onProgress(1.0,true);
-    }
-
-    @Override
-    public void onStarted() {
-        onProgress(0,true);
-    }
-
-    @Override
-    public void setMinimumProgressToNotifyFor(double notifyOnProgress) {
-        throw new UnsupportedOperationException(); // illogical
-    }
-
-    @Override
-    public double getMinimumProgressToNotifyFor() {
-        return 0.01;//1%
     }
 }
