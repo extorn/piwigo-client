@@ -3,23 +3,23 @@
     
     <string name="notification_title_background_upload_service">Achtergrond Piwigo Upload Service</string>
     <string name="notification_text_background_upload_running">Uploadtaak wordt uitgevoerd</string>
-    <string name="notification_text_background_upload_sleeping">Slapen. Voer vervolgens uit op%1$tR</string>
+    <string name="notification_text_background_upload_sleeping">Slapen. Volgende run op %1$tR</string>
     <string name="notification_text_background_upload_polling">Polling om bestanden te uploaden.</string>
 
 
     <string name="alert_warning_auto_upload_service_stopped">Vergeet niet om de uploadservice op de achtergrond te starten als u wilt dat uw taken worden uitgevoerd</string>
     <string name="alert_auto_upload_service_stopped">Uploadservice op de achtergrond is gestopt</string>
     <string name="alert_auto_upload_service_started">Uploadservice op de achtergrond is gestart</string>
-    <string name="alert_auto_upload_service_job_restarted">Begonnen met het uploaden van een voorheen onvolledige taak naar server%1$s met%2$d bestanden</string>
-    <string name="alert_auto_upload_service_job_started">Beginnen met uploaden van taak naar server%1$s met%2$d bestanden</string>
-    <string name="alert_auto_upload_service_job_finished_success">Het uitvoeren van een uploadtaak op de achtergrond naar server%1$s is voltooid.</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">Het uitvoeren van een uploadtaak op de achtergrond naar server%1$s is voltooid. Sommige bestanden konden niet worden geüpload en zullen later opnieuw worden geprobeerd.</string>
-    <string name="alert_auto_upload_service_job_finished_failure">Het uitvoeren van een uploadtaak op de achtergrond naar server%1$s is voltooid. Er konden geen bestanden worden geüpload. Taak wordt later opnieuw geprobeerd.</string>
+    <string name="alert_auto_upload_service_job_restarted">Begonnen met het uploaden van een eerder onvolledige taak naar de server %1$s met %2$d bestanden</string>
+    <string name="alert_auto_upload_service_job_started">Beginnen met het uploaden van taak naar server %1$s met %2$d bestanden</string>
+    <string name="alert_auto_upload_service_job_finished_success">Voltooide running achtergrond Upload taak naar server %1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Voltooide running achtergrond Upload taak naar server %1$s. Sommige bestanden mislukken om te uploaden en worden later opnieuw gepleegd.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Voltooide running achtergrond Upload taak naar server %1$s. Er kunnen geen bestanden worden geüpload. Job wordt later opnieuw geprobeerd.</string>
     <string name="alert_auto_upload_service_checking_for_tasks">Achtergronduploadservicecontrole voor taken</string>
     <string name="progress_creating_tag">Tag maken</string>
-    <string name="error_updating_favorites_pattern">Fout bij het verwijderen van bron (%1$s) uit favorieten:%2$s</string>
+    <string name="error_updating_favorites_pattern">Fout verwijderen Resource (%1$s) van favorieten: %2$s</string>
     <string name="favorites_content_load_failed_text">Kan bronnen die als favoriet zijn gemarkeerd, niet laden</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">U heeft verzocht om%1$d bronnen te verwijderen. Wilt u deze van alle albums (en de server) permanent verwijderen, of wilt u ze gewoon loskoppelen van deze favoriet?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">U hebt gevraagd om te verwijderen %1$d middelen. Wenst u deze uit alle albums (en de server) - permanent, of maakt u gewoon los van deze favoriet?</string>
     <string name="progress_remove_favorite_resources">Bronnen verwijderen uit de favorietenlijst</string>
     <string name="favorites_empty_text">Je hebt momenteel geen favorieten</string>
     <string name="favorites_heading">Uw favorieten</string>
@@ -36,7 +36,7 @@
     <string name="orphans_heading">Verweesde bronnen</string>
     <string name="orphans_album_description">Alle verweesde bronnen verzameld door de PiwigoClient-app</string>
     <string name="orphans_no_orphans_found_on_server">Geen wezen gevonden</string>
-    <string name="orphans_found_on_server_pattern">Wezen gevonden:%1$d</string>
+    <string name="orphans_found_on_server_pattern">Weeskinderen gevonden: %1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Er zijn wezen aanwezig. Om deze te bekijken, moeten we een privémap maken die alleen toegankelijk is voor beheerders. U kunt het album daarna op elk moment verwijderen. Als u het niet eens bent, moet u deze zelf op de server verwerken.</string>
     <string name="progress_rescuing_orphans">Wezen redden</string>
     <string name="piwigo_deep_link_login_email_pattern">Gebruik de onderstaande link om uw kopie van de PIWIGO-client-app te configureren met de server Uri, gebruikersnaam en het wachtwoord om u op weg te helpen.\n\n  %1$s</string>

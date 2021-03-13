@@ -63,12 +63,12 @@
 
     
     <string name="preference_server_connection_timeout_secs_title">Časový limit připojení (sekundy)</string>
-    <string name="preference_server_connection_timeout_secs_summary">%1$d sekund</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d sekundy</string>
     
 
     
     <string name="preference_server_response_timeout_secs_title">Časový limit odezvy (sekundy)</string>
-    <string name="preference_server_response_timeout_secs_summary">%1$d sekund</string>
+    <string name="preference_server_response_timeout_secs_summary">%1$d sekundy</string>
     
 
     
@@ -148,7 +148,7 @@
 
     
     <string name="preference_caching_max_cache_entry_size_title">Maximální velikost položky v mezipaměti (KB)</string>
-    <string name="preference_caching_max_cache_entry_size_summary">%1$d kB</string>
+    <string name="preference_caching_max_cache_entry_size_summary">%1$d KB.</string>
     
 
     
@@ -174,11 +174,11 @@
     <string name="preference_gallery_slideshow_auto_drive_summary">Po nastaveném čase se zobrazí další obrázek nebo video</string>
 
     <string name="preference_gallery_slideshow_auto_drive_delay_title">Automatické zpoždění obrazu jednotky</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s milisekundy</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s Millisecs.</string>
     
 
     <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Automatické zpoždění videa</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s milisekundy</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s Millisecs.</string>
     
 
     <string name="preference_gallery_category_general">Všeobecné</string>
@@ -255,7 +255,7 @@
 
     
     <string name="preference_video_cache_maxsize_mb_title">Maximální velikost mezipaměti videa (MB)</string>
-    <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
+    <string name="preference_video_cache_maxsize_mb_summary">%1$d Mb.</string>
     
 
     
@@ -297,12 +297,12 @@
     <string name="preference_gallery_clearVideoCache_title">Vymazat mezipaměť videa</string>
     
     <string name="preference_gallery_clearVideoCache_summary">Odstraní všechna videa uložená v mezipaměti na disk</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">Odstraní všech%1$.2fMB videí uložených na disk</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Vymaže vše %1$.2f MB videa v mezipaměti na disk</string>
 
     
     
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">Maximální věk posledních položek (dny)</string>
-    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d dní</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d dnů</string>
      
     
 
@@ -323,22 +323,22 @@
 
     
     <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">Skrýt podrobnosti položky po čase</string>
-    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d milisekundy</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d Milliseconds.</string>
     
 
     
     <string name="preference_groups_request_pagesize_title">Skupinový server požaduje velikost stránky</string>
-    <string name="preference_groups_request_pagesize_summary">%1$d položek</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d Položky</string>
     
 
     
     <string name="preference_users_request_pagesize_title">Uživatelský server požaduje velikost stránky</string>
-    <string name="preference_users_request_pagesize_summary">%1$d položek</string>
+    <string name="preference_users_request_pagesize_summary">%1$d Položky</string>
     
 
     
     <string name="preference_album_request_pagesize_title">Velikost stránky požadavku serveru alba</string>
-    <string name="preference_album_request_pagesize_summary">%1$d položek</string>
+    <string name="preference_album_request_pagesize_summary">%1$d Položky</string>
     
 
     <string name="preference_gallery_item_thumbnail_size_title">Velikost miniatury zdroje</string>
@@ -379,13 +379,13 @@
     
 
     
-    <string name="preference_data_upload_default_privacy_level_summary">Nahrané soubory jsou viditelné pro%1$s</string>
+    <string name="preference_data_upload_default_privacy_level_summary">Nahrané soubory Viditelné pro %1$s</string>
     
     <string name="preference_data_upload_default_privacy_level_title">Výchozí úroveň soukromí</string>
 
     
     <string name="preference_data_upload_chunkSizeKb_title">Max. Velikost nahraného bloku (KB)</string>
-    <string name="preference_data_upload_chunkSizeKb_summary">%1$d kB</string>
+    <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB.</string>
     
 
     
@@ -403,7 +403,7 @@
 
     
     <string name="preference_data_upload_max_filesize_mb_title">Maximální velikost souboru k nahrání bez varování (v MB)</string>
-    <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
+    <string name="preference_data_upload_max_filesize_mb_summary">%1$d Mb.</string>
     
 
     
@@ -417,12 +417,12 @@
     
 
     <string name="preference_data_upload_compress_videos_quality_title">Kvalita videa</string>
-    <string name="preference_data_upload_compress_videos_quality_summary">Kvalita komprese videa%1$s</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">Kvalita komprese videa %1$s</string>
     
     
 
     <string name="preference_data_upload_compress_videos_audio_bitrate_title">Přenosová rychlost zvuku</string>
-    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Přenosová rychlost zvuku%1$s</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">AUDIO BITRATE %1$s</string>
     
     
 
@@ -432,28 +432,28 @@
     
 
     <string name="preference_data_upload_compress_images_quality_title">Kvalita obrazu</string>
-    <string name="preference_data_upload_compress_images_quality_summary">Kvalita komprese obrazu%1$s</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Kvalita komprese obrázku %1$s</string>
     
     
     
     
 
     <string name="preference_data_upload_compress_images_max_height_title">Maximální výška</string>
-    <string name="preference_data_upload_compress_images_max_height_summary">Maximální výška (%1$s pixelů)</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">Maximální výška (%1$s pixely)</string>
     
     
     
     
 
     <string name="preference_data_upload_compress_images_max_width_title">Max. Šířka</string>
-    <string name="preference_data_upload_compress_images_max_width_summary">Maximální šířka (%1$s pixelů)</string>
+    <string name="preference_data_upload_compress_images_max_width_summary">Maximální šířka (%1$s pixely)</string>
     
     
     
     
 
     <string name="preference_data_upload_compress_images_output_format_title">Výstupní formát obrazu</string>
-    <string name="preference_data_upload_compress_images_output_format_summary">Výstupní formát komprese obrazu%1$s</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Výstupní formát výstupu obrázku %1$s</string>
     
     
 

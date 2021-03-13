@@ -20,7 +20,7 @@
 
     
     <string name="preference_data_upload_automatic_upload_jobs_title">Tâches de téléchargement automatique</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d emplois</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Emplois</string>
 
     
     
@@ -41,7 +41,7 @@
 
     <string name="preference_data_upload_automatic_job_server_title">Télécharger sur le serveur</string>
     
-    <string name="preference_data_upload_automatic_job_server_summary">Profil:%1$s</string>
+    <string name="preference_data_upload_automatic_job_server_summary">Profil: %1$s</string>
 
     
     <string name="preference_data_upload_automatic_job_server_album_title">Télécharger dans l\'album</string>
@@ -77,15 +77,15 @@
     
     
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Taille maximale du fichier téléchargé</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d Mo</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d Mb</string>
 
     
     
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Extensions de fichiers</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Télécharger des fichiers avec l\'extension%1$s</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Télécharger des fichiers avec ext %1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Niveau de confidentialité</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">Fichiers téléversés visibles par%1$s</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Fichiers téléchargés visibles vers %1$s</string>
     
     
 

@@ -126,7 +126,7 @@
 
     <string-array name="top_tips" translatable="true">
         <item>Wenn Sie Probleme mit der App haben, benachrichtigen Sie mich bitte per E-Mail. Wenn Sie möchten, veröffentlichen Sie eine negative Bewertung bei Google Play. Ich versuche nicht, dies zu stoppen, aber bitte senden Sie auch eine E-Mail. Oben im Menü der ausziehbaren Schublade befindet sich ein Link, über den Sie mir eine E-Mail senden können. Ich kann eine E-Mail-Adresse viel umfassender unterstützen. Danke vielmals.</item>
-        <item>Sie können nur Dateien zum Hochladen auswählen, die zum Hochladen auf Ihren Server zulässig sind. Wenn Sie Videos hochladen möchten, müssen Sie die Datei config.inc.php Ihres Servers so ändern, dass sie $ conf [\'upload_form_all_types\'] = true enthält. eher als falsch</item>
+        <item>Sie können nur Dateien ansehen, um den Upload auszuwählen, der akzeptabel ist, um auf Ihrem Server hochzuladen. Wenn Sie Videos hochladen möchten, ändern Sie Ihre server config.inc.php-Datei, um $ conf [\'uppoload_form_all_types "] = true; anstatt falsch</item>
         <item>Wenn ein Upload gerade nicht erfolgreich ist, versuchen Sie, die Einstellungen auf der Upload-Seite für die App-Einstellungen zu verwenden, um alle verbleibenden fehlgeschlagenen Uploads vom Server zu löschen</item>
         <item>Beim Versuch, Tags zu aktualisieren, tritt immer ein Fehler auf. - "Sie dürfen keine Tags löschen." - Stellen Sie sicher, dass Benutzer Tags hinzufügen und löschen können (Server-Plugin-Einstellung).</item>
         <item>Teilen Sie Dateien aus einer anderen App mit dieser App, um sie dem Upload-Bildschirm hinzuzufügen und auf Ihren aktuellen Server zu übertragen</item>
@@ -239,17 +239,17 @@
                  - Geben Sie bei einem erneuten Versuch des Serveraufrufs nach http 4xx nicht nur zwischengespeicherte Fehler zurück"</item>
         <item>1.4.0.120</item>
         <item>"Veränderung:
-                - Unterstützung für das Herunterladen von Dateien im alternativen Ressourcenformat, die in Ordnern von pwg_format auf piwigo-Sites gehostet werden. HINWEIS: privacy_plugin unterstützt dies derzeit nicht.
-                    * Hinweis: Dies erfordert eine Änderung Ihrer Nginx-Serverkonfigurationsdatei, damit die URLs heruntergeladen werden können.
-                            Beispielauszug aus meiner Testkonfiguration des Nginx-Servers:
-                            # Warnung, dies umgeht das privacy_plugin vollständig (jeder Benutzer kann die Datei herunterladen, wenn er die URL errät).
-                            Ort ~ (^ / piwigo) (/ \ d) (/.*/ pwg_format /.*) {
-                                    # Entfernen Sie vorerst einfach die Bild-ID aus dem Uri und rufen Sie das Bild ab
+                - Unterstützung beim Herunterladen von alternativen Ressourcenformatdateien, die in PWG_FORMAT-Ordnern in PIWIGO-Sites gehostet werden. Hinweis: Privacy_Plugin unterstützt dies derzeit nicht.
+                    * Hinweis: Dies erfordert eine Änderung Ihrer NGINX Server-Konfigurationsdatei, damit die URLs herunterladen können.
+                            Beispiel Auszug aus meiner Tests von NginX Server-Konfiguration:
+                            # WARNUNG, DASS DIESEN ZURÜCKEN DEN PRUMACY_PLUGIN GRUND (jeder Benutzer könnte die Datei herunterladen, wenn sie die URL erraten)
+                            Standort ~ (^ / piwigo) (/ \ d) (/.*/ pwg_format /.*) {
+                                    # Nun, entfernen Sie einfach die Bild-ID von der URI und rufen Sie das Bild ab
                                     try_files $ 1 $ 3 = 404;
-                            }}
-                            # Die Route zu piwigo_privacy / get.php sollte in diese geändert werden - Warnung, dies umgeht das privacy_plugin vollständig (jeder kann die Datei herunterladen, wenn er die URL errät).
-                            Ort ~ (^ / piwigo) (/ \ d /.*/(?&lt;!pwg_format/)[^/‹*) {
-                - Unterstützung für Multimediadateien, die auf willkürlich benannten piwigo-Sites gehostet werden (siehe &lt;server_uri&gt; /admin.php?page=site_manager) - muss das PiwigoClientWsExts-Plugin Version 1.0.15 installiert sein"</item>
+                            }
+                            # Die Route zu Piwigo_Privacy / Get.php sollte in diese WARNUNG geändert werden.
+                            Standort ~ (^ / piwigo) (/ \ d /.*/(?.ecwg_Format/) unt \ \ d
+                - Unterstützung für Multimedia-Dateien, die auf willkürlich genannten PIWIGO-Sites gehostet werden (siehe &lt;server_uri&gt; /admin.php?page=site_manager) - benötigt PIWIGOClientWExts-Plugin Version 1.0.15, um installiert zu werden"</item>
         <item>1.4.0.119</item>
         <item>"Fehlerbehebung:
                  - Absturz bei älteren Versionen, wenn keine Berechtigung zur Verwendung des Cache-Ordners erteilt wurde

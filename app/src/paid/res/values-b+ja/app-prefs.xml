@@ -20,7 +20,7 @@
 
     
     <string name="preference_data_upload_automatic_upload_jobs_title">自動アップロードジョブ</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$dジョブ</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d 求人</string>
 
     
     
@@ -77,15 +77,15 @@
     
     
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">アップロードされた最大ファイルサイズ</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB.</string>
 
     
     
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">ファイル拡張子</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">ext%1$sでファイルをアップロードする</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">ext %1$sを使ってファイルをアップロードする</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">プライバシーレベル</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">アップロードされたファイルは%1$sに表示されます</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">アップロードされたファイルが%1$s</string>
     
     
 

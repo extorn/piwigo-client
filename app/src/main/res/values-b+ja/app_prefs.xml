@@ -63,12 +63,12 @@
 
     
     <string name="preference_server_connection_timeout_secs_title">接続タイムアウト（秒）</string>
-    <string name="preference_server_connection_timeout_secs_summary">%1$d秒</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d 秒数</string>
     
 
     
     <string name="preference_server_response_timeout_secs_title">応答タイムアウト（秒）</string>
-    <string name="preference_server_response_timeout_secs_summary">%1$d秒</string>
+    <string name="preference_server_response_timeout_secs_summary">%1$d 秒数</string>
     
 
     
@@ -148,7 +148,7 @@
 
     
     <string name="preference_caching_max_cache_entry_size_title">最大キャッシュエントリサイズ（KB）</string>
-    <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
+    <string name="preference_caching_max_cache_entry_size_summary">%1$d k</string>
     
 
     
@@ -174,11 +174,11 @@
     <string name="preference_gallery_slideshow_auto_drive_summary">設定時間後、次の画像または動画が表示されます</string>
 
     <string name="preference_gallery_slideshow_auto_drive_delay_title">自動ドライブの画像遅延</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$sミリ秒</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s ミリゼックス</string>
     
 
     <string name="preference_gallery_slideshow_auto_drive_video_delay_title">自動ドライブビデオ遅延</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$sミリ秒</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s ミリゼックス</string>
     
 
     <string name="preference_gallery_category_general">一般</string>
@@ -255,7 +255,7 @@
 
     
     <string name="preference_video_cache_maxsize_mb_title">最大ビデオキャッシュサイズ（MB）</string>
-    <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
+    <string name="preference_video_cache_maxsize_mb_summary">%1$d MB.</string>
     
 
     
@@ -297,12 +297,12 @@
     <string name="preference_gallery_clearVideoCache_title">ビデオキャッシュをクリアする</string>
     
     <string name="preference_gallery_clearVideoCache_summary">ディスクにキャッシュされているすべてのビデオを削除します</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">ディスクにキャッシュされたビデオの%1$.2fMBをすべて削除します</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">すべてを削除します%1$.2fディスクにキャッシュされたビデオのMB</string>
 
     
     
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">最近の最大年齢アイテム（日）</string>
-    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d日</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d 日々</string>
      
     
 
@@ -323,22 +323,22 @@
 
     
     <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">時間の経過後にアイテムの詳細を非表示にする</string>
-    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$dミリ秒</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d ミリ秒</string>
     
 
     
     <string name="preference_groups_request_pagesize_title">グループサーバーリクエストのページサイズ</string>
-    <string name="preference_groups_request_pagesize_summary">%1$dアイテム</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d アイテム</string>
     
 
     
     <string name="preference_users_request_pagesize_title">ユーザーサーバーリクエストのページサイズ</string>
-    <string name="preference_users_request_pagesize_summary">%1$dアイテム</string>
+    <string name="preference_users_request_pagesize_summary">%1$d アイテム</string>
     
 
     
     <string name="preference_album_request_pagesize_title">アルバムサーバーリクエストのページサイズ</string>
-    <string name="preference_album_request_pagesize_summary">%1$dアイテム</string>
+    <string name="preference_album_request_pagesize_summary">%1$d アイテム</string>
     
 
     <string name="preference_gallery_item_thumbnail_size_title">リソースのサムネイルサイズ</string>
@@ -379,13 +379,13 @@
     
 
     
-    <string name="preference_data_upload_default_privacy_level_summary">アップロードされたファイルは%1$sに表示されます</string>
+    <string name="preference_data_upload_default_privacy_level_summary">アップロードされたファイルが%1$s</string>
     
     <string name="preference_data_upload_default_privacy_level_title">デフォルトのプライバシーレベル</string>
 
     
     <string name="preference_data_upload_chunkSizeKb_title">最大アップロードチャンクサイズ（KB）</string>
-    <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>
+    <string name="preference_data_upload_chunkSizeKb_summary">%1$d k</string>
     
 
     
@@ -403,7 +403,7 @@
 
     
     <string name="preference_data_upload_max_filesize_mb_title">警告なしにアップロードする最大ファイルサイズ（MB単位）</string>
-    <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
+    <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB.</string>
     
 
     
@@ -453,7 +453,7 @@
     
 
     <string name="preference_data_upload_compress_images_output_format_title">画像出力フォーマット</string>
-    <string name="preference_data_upload_compress_images_output_format_summary">画像圧縮出力形式%1$s</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">画像圧縮出力フォーマット%1$s</string>
     
     
 

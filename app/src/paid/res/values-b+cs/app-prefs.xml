@@ -20,7 +20,7 @@
 
     
     <string name="preference_data_upload_automatic_upload_jobs_title">Automatické nahrávání úloh</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d pracovních míst</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Pracovní místa</string>
 
     
     
@@ -41,7 +41,7 @@
 
     <string name="preference_data_upload_automatic_job_server_title">Nahrát na server</string>
     
-    <string name="preference_data_upload_automatic_job_server_summary">Profil:%1$s</string>
+    <string name="preference_data_upload_automatic_job_server_summary">Profil: %1$s</string>
 
     
     <string name="preference_data_upload_automatic_job_server_album_title">Nahrát do alba</string>
@@ -77,15 +77,15 @@
     
     
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Byla nahrána maximální velikost souboru</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d Mb.</string>
 
     
     
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Přípony souborů</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Nahrajte soubory s příponou%1$s</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Nahrát soubory s ext %1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Úroveň ochrany osobních údajů</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">Nahrané soubory jsou viditelné pro%1$s</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Nahrané soubory Viditelné pro %1$s</string>
     
     
 

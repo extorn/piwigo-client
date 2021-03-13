@@ -148,7 +148,7 @@
 
     
     <string name="preference_caching_max_cache_entry_size_title">Taille maximale de l\'entrée de cache (Ko)</string>
-    <string name="preference_caching_max_cache_entry_size_summary">%1$d Ko</string>
+    <string name="preference_caching_max_cache_entry_size_summary">%1$d Kb</string>
     
 
     
@@ -174,11 +174,11 @@
     <string name="preference_gallery_slideshow_auto_drive_summary">Après l\'heure définie, l\'image ou la vidéo suivante s\'affiche</string>
 
     <string name="preference_gallery_slideshow_auto_drive_delay_title">Retard d\'image du lecteur automatique</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecondes</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecs</string>
     
 
     <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Retard vidéo du lecteur automatique</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecondes</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecs</string>
     
 
     <string name="preference_gallery_category_general">Général</string>
@@ -255,7 +255,7 @@
 
     
     <string name="preference_video_cache_maxsize_mb_title">Taille maximale du cache vidéo (Mo)</string>
-    <string name="preference_video_cache_maxsize_mb_summary">%1$d Mo</string>
+    <string name="preference_video_cache_maxsize_mb_summary">%1$d Mb</string>
     
 
     
@@ -297,7 +297,7 @@
     <string name="preference_gallery_clearVideoCache_title">Effacer le cache vidéo</string>
     
     <string name="preference_gallery_clearVideoCache_summary">Supprime toutes les vidéos mises en cache sur le disque</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">Supprime tous les%1$.2fMB de vidéos mises en cache sur le disque</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Supprime tout %1$.2f MB de vidéos mis en cache sur disque</string>
 
     
     
@@ -379,13 +379,13 @@
     
 
     
-    <string name="preference_data_upload_default_privacy_level_summary">Fichiers téléversés visibles par%1$s</string>
+    <string name="preference_data_upload_default_privacy_level_summary">Fichiers téléchargés visibles vers %1$s</string>
     
     <string name="preference_data_upload_default_privacy_level_title">Niveau de confidentialité par défaut</string>
 
     
     <string name="preference_data_upload_chunkSizeKb_title">Taille maximale du bloc de téléchargement (Ko)</string>
-    <string name="preference_data_upload_chunkSizeKb_summary">%1$d Ko</string>
+    <string name="preference_data_upload_chunkSizeKb_summary">%1$d Kb</string>
     
 
     
@@ -403,7 +403,7 @@
 
     
     <string name="preference_data_upload_max_filesize_mb_title">Taille maximale du fichier à télécharger sans vous avertir (en Mo)</string>
-    <string name="preference_data_upload_max_filesize_mb_summary">%1$d Mo</string>
+    <string name="preference_data_upload_max_filesize_mb_summary">%1$d Mb</string>
     
 
     
@@ -417,12 +417,12 @@
     
 
     <string name="preference_data_upload_compress_videos_quality_title">Qualité vidéo</string>
-    <string name="preference_data_upload_compress_videos_quality_summary">Qualité de compression vidéo%1$s</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">Qualité de la compression vidéo %1$s</string>
     
     
 
     <string name="preference_data_upload_compress_videos_audio_bitrate_title">Bitrate audio</string>
-    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Débit audio%1$s</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Bittrate audio %1$s</string>
     
     
 
@@ -432,7 +432,7 @@
     
 
     <string name="preference_data_upload_compress_images_quality_title">Qualité d\'image</string>
-    <string name="preference_data_upload_compress_images_quality_summary">Qualité de compression d\'image%1$s</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Image Compression Qualité %1$s</string>
     
     
     
@@ -446,14 +446,14 @@
     
 
     <string name="preference_data_upload_compress_images_max_width_title">Largeur maximale</string>
-    <string name="preference_data_upload_compress_images_max_width_summary">Largeur maximale (%1$s pixels)</string>
+    <string name="preference_data_upload_compress_images_max_width_summary">Max largeur (%1$s pixels)</string>
     
     
     
     
 
     <string name="preference_data_upload_compress_images_output_format_title">Format de sortie d\'image</string>
-    <string name="preference_data_upload_compress_images_output_format_summary">Format de sortie de la compression d\'image%1$s</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Format de sortie de compression d\'image %1$s</string>
     
     
 

@@ -126,7 +126,7 @@
 
     <string-array name="top_tips" translatable="true">
         <item>Als je problemen hebt met de app, gebruik dan een e-mail om me op de hoogte te stellen. Plaats desgewenst een negatieve recensie op Google Play, ik probeer dat niet te stoppen, maar stuur ook een e-mail. Bovenaan het uitschuifbare lademenu staat een link om mij een e-mail te sturen. Ik kan veel uitgebreidere ondersteuning bieden op een e-mailadres. Erg bedankt.</item>
-        <item>U kunt alleen bestanden zien die u kunt selecteren om te uploaden en die op uw server kunnen worden geüpload. Als je video\'s wilt uploaden, zorg er dan voor dat je je server config.inc.php-bestand wijzigt en $ conf [\'upload_form_all_types\'] = true bevat; in plaats van onwaar</item>
+        <item>U kunt alleen bestanden zien om te selecteren om te uploaden die acceptabel zijn om op uw server te uploaden. Als u video\'s wilt uploaden, moet u het bestand van uw server config.inc.php wijzigen om $ Conf [Upload_Form_all_TYPES \'] = TRUE op te nemen; in plaats van false</item>
         <item>Als een upload net niet lukt, probeer dan de voorkeur op de uploadpagina van de app-instellingen te gebruiken om eventuele resterende mislukte uploads van de server te wissen</item>
         <item>Er treedt altijd een fout op bij het updaten van tags - "U mag geen tags verwijderen" - Zorg ervoor dat gebruikers tags zowel kunnen toevoegen als verwijderen (instelling voor serverplug-in)</item>
         <item>Deel bestanden van een andere app met deze app om ze toe te voegen aan het uploadscherm, klaar om naar je huidige server te gaan</item>
@@ -239,17 +239,17 @@
                  - bij het opnieuw proberen van de serveroproep na http 4xx, retourneer dan niet alleen fouten in de cache"</item>
         <item>1.4.0.120</item>
         <item>"Verandering:
-                - Ondersteuning voor het downloaden van bestanden in alternatieve bronindelingen die worden gehost in pwg_format-mappen op piwigo-sites. OPMERKING: privacy_plugin ondersteunt dit momenteel niet.
-                    * Opmerking: dit vereist een wijziging in uw Nginx-serverconfiguratiebestand om de URL\'s te kunnen downloaden.
-                            Voorbeeld uittreksel uit mijn test nginx-serverconfiguratie:
-                            # waarschuwing, hiermee wordt de privacy_plugin volledig omzeild (elke gebruiker kan het bestand downloaden als hij de url raadt)
-                            locatie ~ (^ / piwigo) (/ \ d) (/.*/ pwg_format /.*) {
-                                    # Voorlopig verwijdert u gewoon de afbeelding-ID uit de uri en haalt u de afbeelding op
-                                    try_files $ 1 $ 3 = 404;
+                - Ondersteuning voor het downloaden van alternatieve resource-formaatbestanden die worden gehost in PWG_FORMAT-mappen binnen PIWIGO-sites. Opmerking: Privacy_Plugin ondersteunt dit op dit moment niet.
+                    * Opmerking: dit vereist een wijziging in het configuratiebestand van uw NGGINX SERVER om de URL\'s te downloaden.
+                            Voorbeeld Extract van mijn test NGGINX SERVER-configuratie:
+                            # Waarschuwing, deze omzeilt de privacy_plugin volledig (elke gebruiker kan het bestand downloaden als ze de URL raden)
+                            Locatie ~ (^ / piwigo) (/ \ d) (/.*/ pwg_Format /.*) {
+                                    # Verwijder nu gewoon het beeld-ID van de URI en haal de afbeelding op
+                                    Try_Files $ 1 $ 3 = 404;
                             ​
-                            # de route naar piwigo_privacy / get.php zou hier moeten worden gewijzigd - waarschuwing, dit omzeilt de privacy_plugin volledig (iedereen zou het bestand kunnen downloaden als ze de url raden)
-                            locatie ~ (^ / piwigo) (/ \ d /.*/(?&lt;!pwg_format/)[^/[**) {
-                - Ondersteuning voor multimediabestanden die worden gehost op piwigo-sites met een willekeurige naam (zie &lt;server_uri&gt; /admin.php?page=site_manager) - moet PiwigoClientWsExts plug-in versie 1.0.15 zijn geïnstalleerd"</item>
+                            # De route naar piwigo_privacy / get.php moet worden gewijzigd in deze - waarschuwing, deze omzeilt de privacy_plugin volledig (iedereen kan het bestand downloaden als ze de URL raden)
+                            Locatie ~ (^ / piwigo) (/ \ d /.*/(? &lt;\ toch_Format/)[ ^/]*) {
+                - Ondersteuning voor multimediabestanden die worden gehost op arbitary genaamd Piwigo-sites (zie &lt;server_uri&gt; /admin.php?page=site_manager) - PiwigoclientWSEXTS Plugin versie 1.0.15 moet worden geïnstalleerd"</item>
         <item>1.4.0.119</item>
         <item>"Bugfix:
                  - crash op oudere versies als er geen toestemming is verleend om de cachemap te gebruiken

@@ -126,7 +126,7 @@
 
     <string-array name="top_tips" translatable="true">
         <item>Si vous rencontrez des problèmes avec l\'application, veuillez m\'en informer par e-mail. Si vous le souhaitez, publiez un avis négatif sur Google Play, je n\'essaie pas d\'arrêter cela, mais veuillez également envoyer un e-mail. Il y a un lien pour m\'envoyer un e-mail en haut du menu du tiroir coulissant. Je peux fournir une assistance beaucoup plus complète à une adresse e-mail. Merci beaucoup.</item>
-        <item>Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui peuvent être téléchargés sur votre serveur. Si vous souhaitez télécharger des vidéos, veillez à modifier le fichier config.inc.php de votre serveur pour inclure $ conf [\'upload_form_all_types\'] = true; plutôt que faux</item>
+        <item>Vous ne pouvez voir que des fichiers à sélectionner pour le téléchargement acceptable pour télécharger sur votre serveur. Si vous souhaitez télécharger des vidéos, veillez à modifier votre fichier Server config.inc.PHP pour inclure $ conf [\'upload_form_All_Types\'] = true; plutôt que faux</item>
         <item>Si un téléchargement ne réussit pas, essayez d\'utiliser la préférence dans la page de téléchargement des paramètres de l\'application pour effacer tout téléchargement résiduel ayant échoué depuis le serveur.</item>
         <item>Une erreur se produit toujours lors de la tentative de mise à jour des balises - "Vous n\'êtes pas autorisé à supprimer des balises" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre du plug-in de serveur)</item>
         <item>Partagez des fichiers d\'une autre application avec cette application pour les ajouter à l\'écran de téléchargement, prêts à être envoyés sur votre serveur actuel</item>
@@ -239,17 +239,17 @@
                  - lors d\'une nouvelle tentative d\'appel du serveur après http 4xx, ne renvoyez pas simplement les erreurs mises en cache"</item>
         <item>1.4.0.120</item>
         <item>"Changement:
-                - Prise en charge du téléchargement de fichiers au format de ressources alternatifs hébergés dans les dossiers pwg_format des sites piwigo. REMARQUE: privacy_plugin ne prend pas en charge cela pour le moment.
-                    * Remarque: cela nécessitera une modification du fichier de configuration de votre serveur Nginx pour permettre le téléchargement des URL.
-                            Exemple d\'extrait de la configuration de mon serveur nginx de test:
-                            # avertissement, cela contourne entièrement le privacy_plugin (tout utilisateur peut télécharger le fichier s\'il devine l\'url)
-                            emplacement ~ (^ / piwigo) (/ \ d) (/.*/ pwg_format /.*) {
-                                    # Pour l\'instant, supprimez simplement l\'ID d\'image de l\'URI et récupérez l\'image
+                - Support pour télécharger des fichiers de format de ressources alternatives hébergés dans des dossiers PWG_Format dans les sites PIWIGO. Remarque: Privacy_Plugin ne prend pas en charge cela à l\'heure actuelle.
+                    * Remarque: cela nécessitera une modification de votre fichier de configuration NGinx Server pour permettre aux URL de télécharger.
+                            Exemple Extrait de My Test Nginx Server Configuration:
+                            # Avertissement, cela contourne entièrement le Privacy_Plugin (tout utilisateur pourrait télécharger le fichier si elles devinent l\'URL)
+                            Emplacement ~ (^ / Piwigo) (/ \ d) (/.*/ pwg_format /.*) {
+                                    # Pour l\'instant, supprimez simplement l\'ID d\'image de l\'URI et récupérez l\'image.
                                     try_files $ 1 $ 3 = 404;
                             }
-                            # la route vers piwigo_privacy / get.php doit être remplacée par ceci - attention, cela contourne complètement le privacy_plugin (n\'importe qui peut télécharger le fichier s\'il devine l\'url)
-                            emplacement ~ (^ / piwigo) (/ \ d /.*/(?&lt;!pwg_format/)[^/ &lt;/font&gt;*) {
-                - Prise en charge des fichiers multimédias hébergés sur des sites piwigo nommés arbitraires (voir &lt;server_uri&gt; /admin.php?page=site_manager) - nécessite l\'installation du plugin PiwigoClientWsExts version 1.0.15"</item>
+                            # la route vers piwigo_privacy / get.php doit être changée à cette question - Avertissement, cela contourne entièrement le Privacy_Plugin (tout le monde pouvait télécharger le fichier si elles devinent l\'URL)
+                            Emplacement ~ (^ / Piwigo) (/ \ D /.*/(?&lt;PWG_Format/)[^/]* {
+                - Prise en charge des fichiers multimédia hébergés sur des sites Piwigo nommés arbitraires (voir &lt;Server_uri&gt; /admin.php?page=site_manager) - Besoin Piwigoclientwsexts Plugin version 1.0.15 à installer"</item>
         <item>1.4.0.119</item>
         <item>"Correction d\'un bug:
                  - crash sur les anciennes versions si la permission n\'est pas accordée d\'utiliser le dossier de cache

@@ -3,23 +3,23 @@
     
     <string name="notification_title_background_upload_service">Služba nahrávání na pozadí Piwigo</string>
     <string name="notification_text_background_upload_running">Probíhá nahrávání úlohy</string>
-    <string name="notification_text_background_upload_sleeping">Spící. Další spuštění v%1$tR</string>
+    <string name="notification_text_background_upload_sleeping">Spící. Další běh na %1$tR</string>
     <string name="notification_text_background_upload_polling">Dotazování na soubory k nahrání.</string>
 
 
     <string name="alert_warning_auto_upload_service_stopped">Pokud chcete, aby vaše úlohy běžely, nezapomeňte spustit službu nahrávání na pozadí</string>
     <string name="alert_auto_upload_service_stopped">Služba nahrávání na pozadí byla zastavena</string>
     <string name="alert_auto_upload_service_started">Služba nahrávání na pozadí byla spuštěna</string>
-    <string name="alert_auto_upload_service_job_restarted">Zahájeno nahrávání dříve neúplné úlohy na server%1$s se soubory%2$d</string>
-    <string name="alert_auto_upload_service_job_started">Zahájení nahrávání úlohy na server%1$s se soubory%2$d</string>
-    <string name="alert_auto_upload_service_job_finished_success">Probíhá spuštění úlohy nahrávání na pozadí na server%1$s.</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">Probíhá spuštění úlohy nahrávání na pozadí na server%1$s. Některé soubory se nepodařilo nahrát a budou zkuseny později.</string>
-    <string name="alert_auto_upload_service_job_finished_failure">Probíhá spuštění úlohy nahrávání na pozadí na server%1$s. Nelze nahrát žádné soubory. Úloha bude zkusena později.</string>
+    <string name="alert_auto_upload_service_job_restarted">Začal nahrávání dříve neúplné úlohy serveru %1$s s %2$d Soubory</string>
+    <string name="alert_auto_upload_service_job_started">Začátek uploading úlohy serveru %1$s s %2$d Soubory</string>
+    <string name="alert_auto_upload_service_job_finished_success">Dokončené běžící pozadí Upload Úloha serveru %1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Dokončené běžící pozadí Upload Úloha serveru %1$s. Některé soubory se nepodařilo nahrát a budou opakovány později.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Dokončené běžící pozadí Upload Úloha serveru %1$s. Žádné soubory nelze nahrát. Úloha bude opakována později.</string>
     <string name="alert_auto_upload_service_checking_for_tasks">Služba nahrávání na pozadí kontroluje úkoly</string>
     <string name="progress_creating_tag">Vytváření značky</string>
-    <string name="error_updating_favorites_pattern">Chyba při odstraňování zdroje (%1$s) z oblíbených položek:%2$s</string>
+    <string name="error_updating_favorites_pattern">Chyba odstranění zdrojů (%1$s) z oblíbených: %2$s</string>
     <string name="favorites_content_load_failed_text">Načtení zdrojů označených jako oblíbené se nezdařilo</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Požádali jste o smazání%1$d zdrojů. Přejete si je trvale smazat ze všech alb (a ze serveru), nebo je jednoduše odpojit od tohoto oblíbeného?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Požaduje se, abyste odstranili %1$d zdroje. Chcete tyto ze všech alb (a serveru) odstranit z všech alb (a serveru), nebo jen zrušit z nich z tohoto oblíbeného?</string>
     <string name="progress_remove_favorite_resources">Odebrání zdrojů ze seznamu oblíbených</string>
     <string name="favorites_empty_text">Momentálně nemáte žádné oblíbené</string>
     <string name="favorites_heading">Vaše oblíbené</string>
@@ -36,7 +36,7 @@
     <string name="orphans_heading">Osamocené zdroje</string>
     <string name="orphans_album_description">Všechny osiřelé zdroje shromážděné aplikací PiwigoClient</string>
     <string name="orphans_no_orphans_found_on_server">Nebyly nalezeny žádné sirotky</string>
-    <string name="orphans_found_on_server_pattern">Nalezeny sirotky:%1$d</string>
+    <string name="orphans_found_on_server_pattern">Nalezeno sirotci: %1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Jsou zde sirotci. Abychom je mohli zobrazit, musíme vytvořit soukromou složku přístupnou pouze pro správce. Poté můžete album kdykoli smazat. Pokud nesouhlasíte, budete je muset zpracovat na serveru sami.</string>
     <string name="progress_rescuing_orphans">Záchrana sirotků</string>
     <string name="piwigo_deep_link_login_email_pattern">Pomocí níže uvedeného odkazu nakonfigurujte kopii klientské aplikace PIWIGO se serverem URI, uživatelské jméno a heslo, abyste mohli začít.\n\n  %1$s</string>

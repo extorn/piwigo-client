@@ -20,7 +20,7 @@
 
     
     <string name="preference_data_upload_automatic_upload_jobs_title">Автозагрузка заданий</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d вакансий</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Рабочие места</string>
 
     
     
@@ -41,7 +41,7 @@
 
     <string name="preference_data_upload_automatic_job_server_title">Загрузить на сервер</string>
     
-    <string name="preference_data_upload_automatic_job_server_summary">Профиль:%1$s</string>
+    <string name="preference_data_upload_automatic_job_server_summary">Профиль: %1$s</string>
 
     
     <string name="preference_data_upload_automatic_job_server_album_title">Загрузить в альбом</string>
@@ -77,15 +77,15 @@
     
     
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Максимальный размер загруженного файла</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d МБ</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d Мб</string>
 
     
     
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Расширения файлов</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Загрузить файлы с расширением%1$s</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Загрузить файлы с Ext %1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Уровень конфиденциальности</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">Загруженные файлы видны%1$s</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Загруженные файлы видны на %1$s</string>
     
     
 

@@ -20,7 +20,7 @@
 
     
     <string name="preference_data_upload_automatic_upload_jobs_title">Cargar trabajos automáticamente</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d trabajos</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Trabajos</string>
 
     
     
@@ -41,7 +41,7 @@
 
     <string name="preference_data_upload_automatic_job_server_title">Subir al servidor</string>
     
-    <string name="preference_data_upload_automatic_job_server_summary">Perfil:%1$s</string>
+    <string name="preference_data_upload_automatic_job_server_summary">Perfil: %1$s</string>
 
     
     <string name="preference_data_upload_automatic_job_server_album_title">Subir al álbum</string>
@@ -77,15 +77,15 @@
     
     
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Tamaño máximo de archivo cargado</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MEGABYTE</string>
 
     
     
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Extensiones de archivo</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Subir archivos con la extensión%1$s</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Cargar archivos con ext %1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Nivel de privacidad</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">Archivos cargados visibles para%1$s</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Archivos Subidos Visibles a %1$s</string>
     
     
 

@@ -297,7 +297,7 @@
     <string name="preference_gallery_clearVideoCache_title">Wis videocache</string>
     
     <string name="preference_gallery_clearVideoCache_summary">Verwijdert alle video\'s in het cachegeheugen</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">Verwijdert alle%1$.2fMB aan video\'s in het cachegeheugen op schijf</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Wist alles %1$.2f MB van video\'s in de cache aan de schijf</string>
 
     
     
@@ -379,7 +379,7 @@
     
 
     
-    <string name="preference_data_upload_default_privacy_level_summary">Geüploade bestanden zichtbaar voor%1$s</string>
+    <string name="preference_data_upload_default_privacy_level_summary">Geuploade bestanden die zichtbaar zijn voor %1$s</string>
     
     <string name="preference_data_upload_default_privacy_level_title">Standaard privacyniveau</string>
 
@@ -417,12 +417,12 @@
     
 
     <string name="preference_data_upload_compress_videos_quality_title">Video kwaliteit</string>
-    <string name="preference_data_upload_compress_videos_quality_summary">Videocompressiekwaliteit%1$s</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">Video Compressiekwaliteit %1$s</string>
     
     
 
     <string name="preference_data_upload_compress_videos_audio_bitrate_title">Audiobitsnelheid</string>
-    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Audiobitsnelheid%1$s</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Audio-bitrate %1$s</string>
     
     
 
@@ -432,14 +432,14 @@
     
 
     <string name="preference_data_upload_compress_images_quality_title">Beeldkwaliteit</string>
-    <string name="preference_data_upload_compress_images_quality_summary">Compressiekwaliteit van afbeeldingen%1$s</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Beeldcompressiekwaliteit %1$s</string>
     
     
     
     
 
     <string name="preference_data_upload_compress_images_max_height_title">Maximale hoogte</string>
-    <string name="preference_data_upload_compress_images_max_height_summary">Max. Hoogte (%1$s pixels)</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">MAX HOOGH (%1$s pixels)</string>
     
     
     
@@ -453,7 +453,7 @@
     
 
     <string name="preference_data_upload_compress_images_output_format_title">Afbeelding uitvoerformaat</string>
-    <string name="preference_data_upload_compress_images_output_format_summary">Uitvoerformaat voor beeldcompressie%1$s</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Afbeelding compressie-uitvoerformaat %1$s</string>
     
     
 

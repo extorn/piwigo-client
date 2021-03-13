@@ -126,7 +126,7 @@
 
     <string-array name="top_tips" translatable="true">
         <item>Pokud máte s aplikací nějaké problémy, informujte mě prosím e-mailem. Pokud chcete, zveřejněte negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím pošlete také e-mail. V horní části nabídky vysouvací zásuvky je odkaz na zaslání e-mailu. Na e-mailovou adresu mohu poskytnout mnohem komplexnější podporu. Mnohokrát děkuji.</item>
-        <item>Můžete vidět pouze soubory, které chcete vybrat k nahrání a které jsou přijatelné pro upload na váš server. Pokud chcete nahrávat videa, změňte soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než falešné</item>
+        <item>Soubory můžete zobrazit pouze pro upload, který je přijatelný pro nahrání na serveru. Chcete-li nahrát videa, nezapomeňte si změnit soubor Server Config.inc.php, který chcete zahrnout $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivý</item>
         <item>Pokud nahrávání právě neproběhne úspěšně, zkuste pomocí předvoleb na stránce nahrávání nastavení aplikace vymazat zbytková neúspěšná nahrávání ze serveru</item>
         <item>Při pokusu o aktualizaci značek vždy dojde k chybě - „Nemáte oprávnění mazat značky“ - Zajistěte, aby uživatelé mohli značky přidávat i mazat (nastavení pluginu serveru)</item>
         <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání připravené k přechodu na aktuální server</item>
@@ -239,17 +239,17 @@
                  - při pokusu o volání serveru po http 4xx nevracejte pouze chyby uložené v mezipaměti"</item>
         <item>1.4.0.120</item>
         <item>"Změna:
-                - Podpora stahování souborů alternativního formátu zdrojů hostovaných ve složkách pwg_format na stránkách piwigo. POZNÁMKA: privacy_plugin to v současné době nepodporuje.
-                    * Poznámka: to vyžaduje změnu konfiguračního souboru serveru Nginx, aby bylo možné stahovat adresy URL.
-                            Příklad výpisu z mé konfigurace konfigurace serveru nginx:
-                            # varování, toto zcela obchází privacy_plugin (jakýkoli uživatel si může stáhnout soubor, pokud uhodne adresu URL)
-                            umístění ~ (^ / piwigo) (/ \ d) (/.*/ pwg_format /.*) {
-                                    # Prozatím stačí odstranit ID obrázku z uri a načíst obrázek
+                - Podpora stahování souborů alternativních zdrojů ve formátu sourží hostované v pwg_format složkách v rámci stránek piwigo. Poznámka: Privacy_plugin to nepodporuje v současné době.
+                    * Poznámka: To bude vyžadovat změnu konfiguračního souboru Nginx Server, který umožňuje přehrávání adres URL ke stažení.
+                            Příklad extrahování z mé testování konfigurace serveru Nginx:
+                            # Varování, toto obcházení Privacy_Plugin zcela (jakýkoli uživatel by mohl stáhnout soubor, pokud odhadují adresu URL)
+                            Umístění ~ (^ / piwigo) (/ d) (/.*/ pwg_format /.*) {
+                                    # Prozatím odstraňte ID obrázku z URI a načíst obrázek
                                     try_files $ 1 $ 3 = 404;
                             }
-                            # cesta k piwigo_privacy / get.php by měla být změněna na toto - varování, to zcela obchází privacy_plugin (každý může stáhnout soubor, pokud uhodne adresu URL)
-                            umístění ~ (^ / piwigo) (/ \ d /.*/(?&lt;!pwg_format/)[^/]*) {
-                - Podpora multimediálních souborů hostovaných na libovolně pojmenovaných stránkách piwigo (viz &lt;server_uri&gt; /admin.php?page=site_manager) - vyžaduje instalaci pluginu PiwigoClientWsExts verze 1.0.15"</item>
+                            # Trasa do PIWIGO_PRIVACY / GET.PHP by měla být změněna na toto - varování, toto obcházení privacy_plugin úplně (někdo by mohl stáhnout soubor, pokud hádají adresu URL)
+                            Umístění ~ (^ / piwigo) (/ d /.*/( }&lt;} }&lt;}}} {
+                - Podpora multimediálních souborů hostovaná na libovolném pojmenovaném piwigo weby (viz &lt;Server_uri&gt; /admin.php?Page=site_Manager) - potřebuje piwigoclientwSexts plugin verze 1.0.15"</item>
         <item>1.4.0.119</item>
         <item>"Oprava chyby:
                  - havárie na starších verzích, pokud není uděleno oprávnění k použití složky mezipaměti

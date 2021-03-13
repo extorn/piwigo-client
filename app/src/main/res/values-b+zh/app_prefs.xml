@@ -63,12 +63,12 @@
 
     
     <string name="preference_server_connection_timeout_secs_title">连接超时（秒）</string>
-    <string name="preference_server_connection_timeout_secs_summary">%1$d秒</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d 秒</string>
     
 
     
     <string name="preference_server_response_timeout_secs_title">响应超时（秒）</string>
-    <string name="preference_server_response_timeout_secs_summary">%1$d秒</string>
+    <string name="preference_server_response_timeout_secs_summary">%1$d 秒</string>
     
 
     
@@ -148,7 +148,7 @@
 
     
     <string name="preference_caching_max_cache_entry_size_title">最大缓存条目大小（KB）</string>
-    <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
+    <string name="preference_caching_max_cache_entry_size_summary">%1$d KB.</string>
     
 
     
@@ -174,11 +174,11 @@
     <string name="preference_gallery_slideshow_auto_drive_summary">在设定的时间之后，将显示下一个图像或视频</string>
 
     <string name="preference_gallery_slideshow_auto_drive_delay_title">自动驱动影像延迟</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s毫米</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s 毫秒</string>
     
 
     <string name="preference_gallery_slideshow_auto_drive_video_delay_title">自动驾驶视频延迟</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s毫米</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s 毫秒</string>
     
 
     <string name="preference_gallery_category_general">一般的</string>
@@ -255,7 +255,7 @@
 
     
     <string name="preference_video_cache_maxsize_mb_title">最大视频缓存大小（MB）</string>
-    <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
+    <string name="preference_video_cache_maxsize_mb_summary">%1$d MB.</string>
     
 
     
@@ -297,12 +297,12 @@
     <string name="preference_gallery_clearVideoCache_title">清除影片快取</string>
     
     <string name="preference_gallery_clearVideoCache_summary">删除所有缓存到磁盘的视频</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">删除所有%1$.2fMB缓存到磁盘的视频</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">删除全部%1$.2f MB视频缓存到磁盘</string>
 
     
     
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">最近年龄上限（天）</string>
-    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d天</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d 天</string>
      
     
 
@@ -323,22 +323,22 @@
 
     
     <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">时间后隐藏物品详细信息</string>
-    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d毫秒</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d 毫秒</string>
     
 
     
     <string name="preference_groups_request_pagesize_title">组服务器请求页面大小</string>
-    <string name="preference_groups_request_pagesize_summary">%1$d项</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d 项目</string>
     
 
     
     <string name="preference_users_request_pagesize_title">用户服务器请求页面大小</string>
-    <string name="preference_users_request_pagesize_summary">%1$d项</string>
+    <string name="preference_users_request_pagesize_summary">%1$d 项目</string>
     
 
     
     <string name="preference_album_request_pagesize_title">相册服务器请求页面大小</string>
-    <string name="preference_album_request_pagesize_summary">%1$d项</string>
+    <string name="preference_album_request_pagesize_summary">%1$d 项目</string>
     
 
     <string name="preference_gallery_item_thumbnail_size_title">资源缩略图大小</string>
@@ -379,13 +379,13 @@
     
 
     
-    <string name="preference_data_upload_default_privacy_level_summary">上传的文件对%1$s可见</string>
+    <string name="preference_data_upload_default_privacy_level_summary">上传的文件可见%1$s</string>
     
     <string name="preference_data_upload_default_privacy_level_title">默认隐私级别</string>
 
     
     <string name="preference_data_upload_chunkSizeKb_title">最大上传块大小（KB）</string>
-    <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>
+    <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB.</string>
     
 
     
@@ -403,7 +403,7 @@
 
     
     <string name="preference_data_upload_max_filesize_mb_title">最多上传文件大小而不会警告您（以MB为单位）</string>
-    <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
+    <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB.</string>
     
 
     
@@ -439,7 +439,7 @@
     
 
     <string name="preference_data_upload_compress_images_max_height_title">最大高度</string>
-    <string name="preference_data_upload_compress_images_max_height_summary">最大高度（%1$s像素）</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">max height（%1$s像素）</string>
     
     
     

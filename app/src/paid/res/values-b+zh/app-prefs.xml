@@ -20,7 +20,7 @@
 
     
     <string name="preference_data_upload_automatic_upload_jobs_title">自动上传作业</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d个工作</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d 职位</string>
 
     
     
@@ -41,7 +41,7 @@
 
     <string name="preference_data_upload_automatic_job_server_title">上载到服务器</string>
     
-    <string name="preference_data_upload_automatic_job_server_summary">个人资料：%1$s</string>
+    <string name="preference_data_upload_automatic_job_server_summary">配置文件：%1$s</string>
 
     
     <string name="preference_data_upload_automatic_job_server_album_title">上载到相册</string>
@@ -77,15 +77,15 @@
     
     
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">最大文件大小已上传</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB.</string>
 
     
     
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">文件扩展名</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">上载分机为%1$s的文件</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">使用ext |上传文件%1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">隐私等级</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">上传的文件对%1$s可见</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">上传的文件可见%1$s</string>
     
     
 

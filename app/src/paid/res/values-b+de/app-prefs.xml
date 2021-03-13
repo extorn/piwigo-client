@@ -20,7 +20,7 @@
 
     
     <string name="preference_data_upload_automatic_upload_jobs_title">Jobs automatisch hochladen</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Jobs</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Arbeitsplätze</string>
 
     
     
@@ -77,7 +77,7 @@
     
     
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max. Dateigröße hochgeladen</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d Mb.</string>
 
     
     

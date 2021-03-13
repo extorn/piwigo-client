@@ -126,7 +126,7 @@
 
     <string-array name="top_tips" translatable="true">
         <item>如果您对应用程序有任何疑问，请使用电子邮件通知我。如果您愿意，请在Google Play上发布负面评论，但我不想阻止它，但也请发送电子邮件。滑出式抽屉菜单顶部有一个链接可以向我发送电子邮件。我可以为电子邮件地址提供更全面的支持。非常感谢。</item>
-        <item>您只能看到可以选择上传的文件，这些文件可以在您的服务器上上传。如果您想上传视频，请确保更改服务器的config.inc.php文件，使其包含$ conf [\'upload_form_all_types\'] = true；而不是假的</item>
+        <item>您只能看到要选择的上传以选择要在服务器上载上的文件。 如果您希望上传视频，请务必更改您的服务器Config.inc.php文件以包含$ conf [\'upload_form_all_types\'] = true; 而不是假</item>
         <item>如果上传失败，请尝试使用“应用程序设置”上传页面中的偏好设置，以清除服务器上所有剩余的失败上传</item>
         <item>尝试更新标签时始终会发生错误-“您不允许删除标签”-确保用户可以添加和删除标签（服务器插件设置）</item>
         <item>与此应用共享来自其他应用的文件，以将其添加到上传屏幕中，准备转到当前服务器</item>
@@ -239,17 +239,17 @@
                  -在HTTP 4xx之后重试服务器调用时，不要只返回缓存的错误"</item>
         <item>1.4.0.120</item>
         <item>"改变：
-                -支持下载piwigo网站内pwg_format文件夹中托管的替代资源格式文件。注意：privacy_plugin目前不支持此功能。
-                    *注意：这需要更改您的Nginx服务器配置文件以允许URL下载。
-                            我的测试nginx服务器配置的示例摘录：
-                            ＃警告，这会完全绕开privacy_plugin（任何使用者只要猜到网址便可以下载档案）
-                            位置〜（^ / piwigo）（/ \ d）（/.*/ pwg_format /.*）{
-                                    ＃现在，只需从uri中删除图像ID并检索图像
+                 - 支持下载PIWIGO站点内的PWG_FORMAT文件夹中托管的备用资源格式文件。注意：目前不支持Privacy_Plugin。
+                    *注意：这需要更改Nginx服务器配置文件，以允许下载URL。
+                            来自My Testing Nginx Server配置的示例提取：
+                            ＃警告，这完全避免了privacy_plugin（如果猜测URL，则任何用户都可以下载该文件）
+                            位置〜（^ / piwigo）（/ \ d）（//.*/ pwg_format /.*）{
+                                    ＃目前，只需从URI中删除图像ID并检索图像
                                     try_files $ 1 $ 3 = 404;
                             }
-                            ＃应当将piwigo_privacy / get.php的路由更改为此-警告，这会完全绕过privacy_plugin（任何人如果猜测到URL都可以下载文件）
-                            位置〜（^ / piwigo）（/ \ d /.*/(?&lt;!pwg_format/)[^/]*）{
-                -支持在任意命名的piwigo网站上托管的多媒体文件（请参见&lt;server_uri&gt; /admin.php?page=site_manager）-需要安装PiwigoClientWsExts插件版本1.0.15"</item>
+                            ＃应该更改piwigo_privacy / get.php的路由 - 警告，这完全避免了privacy_plugin（如果他们猜测URL，则任何人都可以下载该文件）
+                            位置〜（^ / piwigo）（/ \ d /.*/ (?&lt;! pwg_format/)[^/]*）{
+                 - 支持在任意名为piwigo站点上托管的多媒体文件（请参阅&lt;server_uri&gt; /admin.php?page=site_manager） - 需要安装piwigoclientwsexts插件1.0.15版"</item>
         <item>1.4.0.119</item>
         <item>"错误修正：
                  -如果未授予使用缓存文件夹的权限，则在旧版本上崩溃

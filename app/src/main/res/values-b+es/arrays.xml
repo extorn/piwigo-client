@@ -126,7 +126,7 @@
 
     <string-array name="top_tips" translatable="true">
         <item>Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una reseña negativa en Google Play, no estoy tratando de detener eso, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias.</item>
-        <item>Solo puede ver los archivos para seleccionar para cargar que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de modificar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso</item>
+        <item>Solo puede ver los archivos para seleccionar para Subir que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de alterar su archivo Config.inc.php para incluir $ CONF [\'UPLOAD_FORM_ALL_TYPES\'] = VERDADERO; en lugar de falso</item>
         <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de la configuración de la aplicación para borrar cualquier carga fallida residual del servidor</item>
         <item>Siempre se produce un error al intentar actualizar las etiquetas - "No se le permite eliminar etiquetas" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
         <item>Comparta archivos de una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga listos para ir a su servidor actual</item>
@@ -239,17 +239,17 @@
                  - al reintentar la llamada al servidor después de http 4xx, no devuelva los errores almacenados en caché"</item>
         <item>1.4.0.120</item>
         <item>"Cambio:
-                - Soporte para descargar archivos de formato de recursos alternativos alojados en carpetas pwg_format dentro de sitios piwigo. NOTA: privacy_plugin no admite esto en este momento.
-                    * Nota: esto requerirá un cambio en el archivo de configuración del servidor Nginx para permitir que se descarguen las URL.
-                            Extracto de ejemplo de mi configuración del servidor nginx de prueba:
-                            # advertencia, esto elude el privacy_plugin por completo (cualquier usuario podría descargar el archivo si adivina la URL)
-                            ubicación ~ (^ / piwigo) (/ \ d) (/.*/ pwg_format /.*) {
-                                    # Por ahora, simplemente elimine el ID de la imagen del uri y recupere la imagen
+                - Soporte para descargar archivos de formato de recursos alternativos alojados en carpetas PWG_FormAT dentro de los sitios PIWIGO. Nota: Privacy_Plugin no admite esto en la actualidad.
+                    * Nota: Esto requerirá un cambio en su archivo de configuración del servidor Nginx para permitir que las URL se descarguen.
+                            Extracto de ejemplo de mi configuración de servidor Nginx de prueba:
+                            # ADVERTENCIA, esto evita en su totalidad el Privacy_Plugin (cualquier usuario podría descargar el archivo si adivina la URL)
+                            Ubicación ~ (^ / piwigo) (/ / \ d) (/.*// pwg_format /.*) {
+                                    # Por ahora, simplemente retire la ID de imagen de la URI y recupere la imagen
                                     try_files $ 1 $ 3 = 404;
                             }
-                            # la ruta a piwigo_privacy / get.php debe cambiarse a esto - advertencia, esto elude el privacy_plugin por completo (cualquiera podría descargar el archivo si adivina la URL)
-                            ubicación ~ (^ / piwigo) (/ \ d /.*/(?&lt;!pwg_format/)[^/]*) {
-                - Soporte para archivos multimedia alojados en sitios piwigo con nombres arbitrarios (consulte &lt;server_uri&gt; /admin.php?page=site_manager) - necesita la versión 1.0.15 del complemento PiwigoClientWsExts para ser instalado"</item>
+                            # La ruta a piwigo_privacy / get.php debe cambiarse a esta: ADVERTENCIA, esto evita en su totalidad el Privacy_Plugin (cualquiera podría descargar el archivo si adivinan la URL)
+                            Ubicación ~ (^ / piwigo) (/ / \ d /.*/(?&lt;!pwg_format/)[^/◆**) {
+                - Soporte para archivos multimedia alojados en Sitios de PIWIGO nombres arbitrarios (consulte &lt;server_uri&gt; /admin.php?page=site_manager) - Necesita PIWIGOCLIENTWSEXTS PLUGIN VERSION 1.0.15 para ser instalado"</item>
         <item>1.4.0.119</item>
         <item>"Arreglo del fallo:
                  - falla en versiones anteriores si no se otorga permiso para usar la carpeta de caché

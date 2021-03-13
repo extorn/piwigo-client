@@ -20,7 +20,7 @@
 
     
     <string name="preference_data_upload_automatic_upload_jobs_title">Taken automatisch uploaden</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d banen</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Banen</string>
 
     
     
@@ -41,7 +41,7 @@
 
     <string name="preference_data_upload_automatic_job_server_title">Upload naar server</string>
     
-    <string name="preference_data_upload_automatic_job_server_summary">Profiel:%1$s</string>
+    <string name="preference_data_upload_automatic_job_server_summary">Profiel: %1$s</string>
 
     
     <string name="preference_data_upload_automatic_job_server_album_title">Uploaden naar album</string>
@@ -82,10 +82,10 @@
     
     
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Bestandsextensies</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Upload bestanden met ext%1$s</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Upload bestanden met EXT %1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Privacyniveau</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">Geüploade bestanden zichtbaar voor%1$s</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Geuploade bestanden die zichtbaar zijn voor %1$s</string>
     
     
 

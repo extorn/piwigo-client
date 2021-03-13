@@ -3,23 +3,23 @@
     
     <string name="notification_title_background_upload_service">Servizio di caricamento di Piwigo in background</string>
     <string name="notification_text_background_upload_running">Esecuzione del lavoro di caricamento</string>
-    <string name="notification_text_background_upload_sleeping">Dormire. Prossima esecuzione a%1$tR</string>
+    <string name="notification_text_background_upload_sleeping">Dormire. Avanti Corri a %1$tR</string>
     <string name="notification_text_background_upload_polling">Polling per i file da caricare.</string>
 
 
     <string name="alert_warning_auto_upload_service_stopped">Non dimenticare di avviare il servizio di caricamento in background se desideri che i tuoi lavori vengano eseguiti</string>
     <string name="alert_auto_upload_service_stopped">Servizio di caricamento in background interrotto</string>
     <string name="alert_auto_upload_service_started">Servizio di caricamento in background avviato</string>
-    <string name="alert_auto_upload_service_job_restarted">È stato avviato il caricamento di un processo precedentemente incompleto sul server%1$s con%2$d file</string>
-    <string name="alert_auto_upload_service_job_started">Avvio del caricamento del lavoro sul server%1$s con%2$d file</string>
-    <string name="alert_auto_upload_service_job_finished_success">Esecuzione del processo di caricamento in background sul server%1$s terminata.</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">Esecuzione del processo di caricamento in background sul server%1$s terminata. Alcuni file non sono stati caricati e verranno riprovati in seguito.</string>
-    <string name="alert_auto_upload_service_job_finished_failure">Esecuzione del processo di caricamento in background sul server%1$s terminata. Nessun file può essere caricato. Il lavoro verrà ritentato più tardi.</string>
+    <string name="alert_auto_upload_service_job_restarted">Ha iniziato il caricamento di un lavoro precedentemente incompleto sul server %1$s con %2$d File</string>
+    <string name="alert_auto_upload_service_job_started">Avvio del caricamento del lavoro sul server %1$s con %2$d File</string>
+    <string name="alert_auto_upload_service_job_finished_success">Finito in esecuzione Sfondo Carica lavoro sul server %1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Finito in esecuzione Sfondo Carica lavoro sul server %1$s. Alcuni file non sono riusciti a caricare e verranno ritentati in seguito.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Finito in esecuzione Sfondo Carica lavoro sul server %1$s. Nessun file potrebbe essere caricato. Il lavoro sarà ritentato in seguito.</string>
     <string name="alert_auto_upload_service_checking_for_tasks">Servizio di caricamento in background che controlla le attività</string>
     <string name="progress_creating_tag">Creazione di tag</string>
-    <string name="error_updating_favorites_pattern">Errore durante la rimozione della risorsa (%1$s) dai preferiti:%2$s</string>
+    <string name="error_updating_favorites_pattern">Errore durante la rimozione della risorsa (%1$s) dai preferiti: %2$s</string>
     <string name="favorites_content_load_failed_text">Impossibile caricare le risorse contrassegnate come preferite</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Hai richiesto di eliminare%1$d risorse. Desideri eliminarli da tutti gli album (e dal server) - in modo permanente o semplicemente scollegarli da questo preferito?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Hai richiesto di eliminare %1$d risorse. Desideri eliminare questi da tutti gli album (e al server) - permanentemente, o semplicemente svuotarli da questo preferito?</string>
     <string name="progress_remove_favorite_resources">Rimozione di risorse dall\'elenco dei preferiti</string>
     <string name="favorites_empty_text">Attualmente non hai preferiti</string>
     <string name="favorites_heading">I tuoi preferiti</string>
@@ -36,10 +36,10 @@
     <string name="orphans_heading">Risorse orfane</string>
     <string name="orphans_album_description">Tutte le risorse orfane raccolte dall\'app PiwigoClient</string>
     <string name="orphans_no_orphans_found_on_server">Nessun orfano trovato</string>
-    <string name="orphans_found_on_server_pattern">Orfani trovati:%1$d</string>
+    <string name="orphans_found_on_server_pattern">Orphans ha trovato: %1$d</string>
     <string name="alert_confirm_okay_to_create_orphans_album">Sono presenti orfani. Per visualizzarli, dobbiamo creare una cartella privata accessibile solo agli amministratori. Puoi eliminare l\'album in qualsiasi momento in seguito. Se non sei d\'accordo, dovrai elaborarli tu stesso sul server.</string>
     <string name="progress_rescuing_orphans">Salvataggio di orfani</string>
-    <string name="piwigo_deep_link_login_email_pattern">Si prega di utilizzare il link sottostante per configurare la copia dell\'app client PIWIGO con URI del server, nome utente e password per iniziare.\n\n  %1$s</string>
+    <string name="piwigo_deep_link_login_email_pattern">Si prega di utilizzare il link sottostante per configurare la copia dell\'app client PIWIGO con URI del server, nome utente e password per iniziare.\n\n  %1$s.</string>
     <string name="deep_link_explanation">Si prega di selezionare una destinazione per il collegamento.\n\n\'Questa app \' creerà un nuovo profilo in questa app con queste credenziali che consente di testare la funzione</string>
     <string name="deep_link_warning_password">Volete creare un link profondo che può essere utilizzato per configurare una copia di questa app con i dettagli del server?\n\nL\'idea è quella di rendere più facile per far iniziare qualcuno.\n\nQuesta funzione non è disponibile nella versione gratuita.</string>
     <string name="deep_link_warning_no_password">L\'attuale link Deep non avrà una password. Se desideri aggiungere la password, è necessario impostare una nuova password per questo utente.\n\nCrea il link profondo senza password?</string>

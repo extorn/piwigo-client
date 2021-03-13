@@ -63,12 +63,12 @@
 
     
     <string name="preference_server_connection_timeout_secs_title">Тайм-аут подключения (секунды)</string>
-    <string name="preference_server_connection_timeout_secs_summary">%1$d секунд</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d секунды</string>
     
 
     
     <string name="preference_server_response_timeout_secs_title">Тайм-аут ответа (секунды)</string>
-    <string name="preference_server_response_timeout_secs_summary">%1$d секунд</string>
+    <string name="preference_server_response_timeout_secs_summary">%1$d секунды</string>
     
 
     
@@ -148,7 +148,7 @@
 
     
     <string name="preference_caching_max_cache_entry_size_title">Максимальный размер записи в кэш (КБ)</string>
-    <string name="preference_caching_max_cache_entry_size_summary">%1$d КБ</string>
+    <string name="preference_caching_max_cache_entry_size_summary">%1$d Kb.</string>
     
 
     
@@ -174,11 +174,11 @@
     <string name="preference_gallery_slideshow_auto_drive_summary">По истечении установленного времени будет показано следующее изображение или видео.</string>
 
     <string name="preference_gallery_slideshow_auto_drive_delay_title">Автоматическая задержка изображения привода</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s миллисекунды</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s Millisecs.</string>
     
 
     <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Автоматическая задержка видео</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s миллисекунды</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s Millisecs.</string>
     
 
     <string name="preference_gallery_category_general">Общий</string>
@@ -255,7 +255,7 @@
 
     
     <string name="preference_video_cache_maxsize_mb_title">Максимальный размер кэша видео (МБ)</string>
-    <string name="preference_video_cache_maxsize_mb_summary">%1$d МБ</string>
+    <string name="preference_video_cache_maxsize_mb_summary">%1$d Мб</string>
     
 
     
@@ -297,12 +297,12 @@
     <string name="preference_gallery_clearVideoCache_title">Очистить кеш видео</string>
     
     <string name="preference_gallery_clearVideoCache_summary">Удаляет все видео, кэшированные на диск</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">Удаляет все%1$.2fMB видео, кэшированных на диск.</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Удаляет все %1$.2f МБ видео кэшированных на диск</string>
 
     
     
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">Максимальный возраст последних элементов (дни)</string>
-    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d дней</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d дни</string>
      
     
 
@@ -323,22 +323,22 @@
 
     
     <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">Скрыть сведения об элементе через раз</string>
-    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d миллисекунды</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d Миллисекунды</string>
     
 
     
     <string name="preference_groups_request_pagesize_title">Размер страницы запроса сервера групп</string>
-    <string name="preference_groups_request_pagesize_summary">%1$d элементов</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d Предметы</string>
     
 
     
     <string name="preference_users_request_pagesize_title">Размер страницы запроса сервера пользователей</string>
-    <string name="preference_users_request_pagesize_summary">%1$d элементов</string>
+    <string name="preference_users_request_pagesize_summary">%1$d Предметы</string>
     
 
     
     <string name="preference_album_request_pagesize_title">Размер страницы запроса сервера альбома</string>
-    <string name="preference_album_request_pagesize_summary">%1$d элементов</string>
+    <string name="preference_album_request_pagesize_summary">%1$d Предметы</string>
     
 
     <string name="preference_gallery_item_thumbnail_size_title">Размер эскиза ресурса</string>
@@ -379,13 +379,13 @@
     
 
     
-    <string name="preference_data_upload_default_privacy_level_summary">Загруженные файлы видны%1$s</string>
+    <string name="preference_data_upload_default_privacy_level_summary">Загруженные файлы видны на %1$s</string>
     
     <string name="preference_data_upload_default_privacy_level_title">Уровень конфиденциальности по умолчанию</string>
 
     
     <string name="preference_data_upload_chunkSizeKb_title">Максимальный размер загружаемого блока (КБ)</string>
-    <string name="preference_data_upload_chunkSizeKb_summary">%1$d КБ</string>
+    <string name="preference_data_upload_chunkSizeKb_summary">%1$d Kb.</string>
     
 
     
@@ -403,7 +403,7 @@
 
     
     <string name="preference_data_upload_max_filesize_mb_title">Максимальный размер файла для загрузки без предупреждения (в МБ)</string>
-    <string name="preference_data_upload_max_filesize_mb_summary">%1$d МБ</string>
+    <string name="preference_data_upload_max_filesize_mb_summary">%1$d Мб</string>
     
 
     
@@ -417,12 +417,12 @@
     
 
     <string name="preference_data_upload_compress_videos_quality_title">Качество видео</string>
-    <string name="preference_data_upload_compress_videos_quality_summary">Качество сжатия видео%1$s</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">Сжатие видео Качество %1$s</string>
     
     
 
     <string name="preference_data_upload_compress_videos_audio_bitrate_title">Битрейт аудио</string>
-    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Битрейт аудио%1$s</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Audio Bitrate %1$s</string>
     
     
 
@@ -432,28 +432,28 @@
     
 
     <string name="preference_data_upload_compress_images_quality_title">Качество изображения</string>
-    <string name="preference_data_upload_compress_images_quality_summary">Качество сжатия изображения%1$s</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Сжатие изображения Качество %1$s</string>
     
     
     
     
 
     <string name="preference_data_upload_compress_images_max_height_title">Максимальная высота</string>
-    <string name="preference_data_upload_compress_images_max_height_summary">Макс. Высота (%1$s пикселей)</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">Макс высота (%1$s пиксели)</string>
     
     
     
     
 
     <string name="preference_data_upload_compress_images_max_width_title">Максимальная ширина</string>
-    <string name="preference_data_upload_compress_images_max_width_summary">Максимальная ширина (%1$s пикселей)</string>
+    <string name="preference_data_upload_compress_images_max_width_summary">Максимальная ширина (%1$s Pixels)</string>
     
     
     
     
 
     <string name="preference_data_upload_compress_images_output_format_title">Формат вывода изображения</string>
-    <string name="preference_data_upload_compress_images_output_format_summary">Формат вывода сжатия изображения%1$s</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Формат выхода сжатия изображения %1$s</string>
     
     
 
