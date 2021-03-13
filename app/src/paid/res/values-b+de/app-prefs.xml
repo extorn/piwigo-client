@@ -41,7 +41,7 @@
 
     <string name="preference_data_upload_automatic_job_server_title">Auf Server hochladen</string>
     
-    <string name="preference_data_upload_automatic_job_server_summary">Profil:%1$s</string>
+    <string name="preference_data_upload_automatic_job_server_summary">Profil: %1$s</string>
 
     
     <string name="preference_data_upload_automatic_job_server_album_title">Zum Album hochladen</string>
@@ -82,10 +82,10 @@
     
     
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Dateierweiterungen</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Laden Sie Dateien mit ext%1$s hoch</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Laden Sie Dateien mit ext %1$s hoch</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Datenschutzstufe</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">Hochgeladene Dateien sichtbar für%1$s</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Hochgeladene Dateien sichtbar für %1$s</string>
     
     
 
