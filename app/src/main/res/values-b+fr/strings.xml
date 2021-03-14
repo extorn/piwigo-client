@@ -590,7 +590,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Préférence %1$s est irrémédiable et a été fait défaut à %2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application."</string>
+    <string name="preference_corrupt_please_re_type_pattern">Préférence %1$s est irrémédiable et a été fait défaut à %2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application.</string>
     <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données mises en cache?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Compresser des vidéos</string>
@@ -726,4 +726,5 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="checking_uri_permissions">Mise à jour des enregistrements des autorisations de fichier tenues</string>
     <string name="please_wait_in_progress">Veuillez attendre la demande précédente de terminer</string>
     
+    <string name="upload_of_files_complete_finishing_up">Téléchargement de fichiers complète. Juste finir.</string>
 </resources>

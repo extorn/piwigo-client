@@ -145,12 +145,15 @@
         <item>"* Alleen voornamelijk bugfixes
                 * Mogelijk een compleet opnieuw schrijven van de app met een focus op eenvoud voor algemene gebruiker die aanvankelijk browsing"</item>
         
-        <item>1.4.0.135</item>
+        <item>1.4.0.136</item>
         <item>"Verandering:
              - Vervanging van de opslag- en ophaalcode van het werkconfiguratie om grote banen beter te ondersteunen
              - Recordbestand-ID\'s die worden geüpload naar servers in een database op het apparaat om eerder filtering of etikettering toe te staan"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.135</item>
+        <item>"Bugfix:
+             - Crash in plaats van rapporten aan de gebruiker die er geen acceptabele serverbestandsindelingen zijn ondersteund"</item>
         <item>1.4.0.134</item>
         <item>"Verandering:
              - VASTE PRESTATIESVERKOMPING LOADINGSBESTELLINGEN om te uploaden"</item>

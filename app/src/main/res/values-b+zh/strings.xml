@@ -590,7 +590,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"偏好%1$s是无可挽回的，默认为%2$s。请在应用设置中重置此值"</string>
+    <string name="preference_corrupt_please_re_type_pattern">偏好%1$s是无可挽回的，默认为%2$s。请在应用设置中重置此值</string>
     <string name="switch_to_cached_mode">该服务器目前不可用。使用缓存的数据？</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">压缩影片</string>
@@ -726,4 +726,5 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="checking_uri_permissions">更新文件权限的记录</string>
     <string name="please_wait_in_progress">请等待以前的要求完成</string>
     
+    <string name="upload_of_files_complete_finishing_up">上传文件完成。 只是完成。</string>
 </resources>

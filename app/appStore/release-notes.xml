@@ -1,40 +1,40 @@
 <en-GB>
-Change:
-- Vast Performance improvement loading files to upload
+Bugfix:
+- Crash rather than reports to user that there are no acceptable server file formats supported
 </en-GB>
 <cs-CZ>
-Změna:
-- rozsáhlé zlepšení výkonu načítání souborů do nahrávání
+Oprava chyby:
+- havárie spíše než zprávy uživateli, že nejsou podporovány žádné přijatelné formáty souborů serverů
 </cs-CZ>
 <de-DE>
-Veränderung:
-- Überwachung der Leistungsverbesserung Loading-Dateien zum Hochladen
+Fehlerbehebung:
+- Absturz anstelle von Berichten an den Benutzer, dass es keine akzeptablen Server-Dateiformate gibt, die unterstützt werden
 </de-DE>
 <es-ES>
-Cambio:
-- VASTE MEJORA DE RENDIMIENTO Cargando archivos para cargar
+Arreglo del fallo:
+- Choque en lugar de informes al usuario que no hay formatos de archivo de servidor aceptables compatibles
 </es-ES>
 <fr-FR>
-Changement:
-- Vaste performance Amélioration des fichiers de chargement à télécharger
+Correction d\'un bug:
+- crash plutôt que des rapports à l\'utilisateur qu\'il n\'y a pas de formats de fichier de serveur acceptables pris en charge
 </fr-FR>
 <it-IT>
-Modificare:
-- I vasta prestazioni Miglioramento del caricamento dei file da caricare
+Risoluzione del problema:
+- Crash anziché segnalazioni all\'utente che non ci sono formati di file del server accettabili supportati
 </it-IT>
 <ja-JP>
-変化する：
-- アップロードするファイルの読み込み機能を拡大します
+バグ修正：
+- 許容できるサーバーファイルフォーマットがサポートされていないことをユーザーに報告するのではなくクラッシュする
 </ja-JP>
 <nl-NL>
-Verandering:
-- VASTE PRESTATIESVERKOMPING LOADINGSBESTELLINGEN om te uploaden
+Bugfix:
+- Crash in plaats van rapporten aan de gebruiker die er geen acceptabele serverbestandsindelingen zijn ondersteund
 </nl-NL>
 <ru-RU>
-Изменять:
-- Обширное улучшение производительности Загрузка файлов для загрузки
+Исправлена ошибка:
+- Сбой, а не отчеты пользователю, что не поддерживаются приемлемые форматы файлов сервера
 </ru-RU>
 <zh-CN>
-改变：
-- 庞大的性能改进加载文件上传
+错误修正：
+- 崩溃而不是向用户报告，没有支持可接受的服务器文件格式
 </zh-CN>

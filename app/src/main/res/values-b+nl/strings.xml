@@ -590,7 +590,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Voorkeur %1$s is onherstelbaar en is in gebreke gebleven naar %2$s. Reset deze waarde in de app-instellingen"</string>
+    <string name="preference_corrupt_please_re_type_pattern">Voorkeur %1$s is onherstelbaar en is in gebreke gebleven naar %2$s. Reset deze waarde in de app-instellingen</string>
     <string name="switch_to_cached_mode">De server is momenteel niet beschikbaar. Gegevens in cache gebruiken?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Comprimeer video\'s</string>
@@ -726,4 +726,5 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="checking_uri_permissions">Het bijwerken van records van vastgehouden bestandsmachtigingen</string>
     <string name="please_wait_in_progress">Wacht alstublieft op het vorige verzoek om te voltooien</string>
     
+    <string name="upload_of_files_complete_finishing_up">Upload van bestanden voltooid. Gewoon afronden.</string>
 </resources>

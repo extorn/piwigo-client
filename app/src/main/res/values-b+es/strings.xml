@@ -590,7 +590,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Preferencia %1$s es irrecuperable y ha sido incumplido en %2$s. Por favor, restablece este valor en la configuración de la aplicación"</string>
+    <string name="preference_corrupt_please_re_type_pattern">Preferencia %1$s es irrecuperable y ha sido incumplido en %2$s. Por favor, restablece este valor en la configuración de la aplicación</string>
     <string name="switch_to_cached_mode">El servidor no está disponible actualmente. ¿Usar datos en caché?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Comprimir videos</string>
@@ -726,4 +726,5 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="checking_uri_permissions">Actualización de registros de permisos de archivos mantenidos</string>
     <string name="please_wait_in_progress">Por favor, espere a que finalice la solicitud anterior.</string>
     
+    <string name="upload_of_files_complete_finishing_up">Subir de archivos completos. Solo terminando</string>
 </resources>
