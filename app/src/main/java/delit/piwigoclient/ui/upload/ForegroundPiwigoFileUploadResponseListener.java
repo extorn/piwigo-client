@@ -224,6 +224,9 @@ public class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUpload
             FilesToUploadRecyclerViewAdapter<?,?,?> adapter = getParent().getFilesForUploadViewAdapter();
             adapter.remove(response.getFileForUpload());
             getParent().releaseUriPermissionsForUploadItem(response.getFileForUpload());
+            if(adapter.getItemCount() == 0 && uploadJob != null && uploadJob.isStatusRunningNow()) {
+                getUiHelper().showDetailedShortMsg(R.string.alert_information, R.string.upload_of_files_complete_finishing_up);
+            }
         }
     }
 

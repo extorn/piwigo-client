@@ -1185,12 +1185,14 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     private void releaseUriPermissionsForUploadItems(Collection<Uri> fileForUploadUris) {
+        //FIXME this is called but seems to call the other one.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             appSettingsViewModel.releasePersistableUriPermission(requireContext(), fileForUploadUris, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, false);
         }
     }
 
     protected void releaseUriPermissionsForUploadItem(@NonNull Uri fileForUploadUri) {
+        //FIXME this is called way too often  (on file finished with).
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             appSettingsViewModel.releasePersistableUriPermission(requireContext(), fileForUploadUri, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, false);
         }

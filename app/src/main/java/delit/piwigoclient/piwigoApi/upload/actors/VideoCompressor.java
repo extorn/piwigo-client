@@ -58,7 +58,12 @@ public class VideoCompressor extends Thread {
         compressionSettings.getAudioCompressionParameters().setBitRate(desiredAudioBitrate);
         Set<String> serverAcceptedFileExts = PiwigoSessionDetails.getInstance(uploadJob.getConnectionPrefs()).getAllowedFileTypes();
 
-        String outputFileExt = compressionSettings.getOutputFileExt(context, serverAcceptedFileExts);
+        String outputFileExt = null;
+        try {
+            outputFileExt = compressionSettings.getOutputFileExt(context, serverAcceptedFileExts);
+        } catch (IllegalStateException e) {
+            listener.notifyUsersOfError(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, e));
+        }
         DocumentFile outputVideo;
 
         if (outputFileExt == null) {

@@ -1104,4 +1104,5 @@ App Install UUID: %5$s
     <string name="checking_uri_permissions">Updating records of file permissions held</string>
     <string name="please_wait_in_progress">Please wait for the previous request to finish</string>
     <string name="files_to_upload_count_label_pattern" translatable="false">%1$d (%2$s)</string>
+    <string name="upload_of_files_complete_finishing_up">Upload of files complete. Just finishing up.</string>
 </resources>
