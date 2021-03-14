@@ -419,7 +419,10 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
                 } else {
                     resourceCountAllToAndIncCurrentPage = firstPageInListResourceCount + (itemsInThisPage * thisPageIdx);
                 }
-                int pageIdxContainingServerIdx = 1 + (desiredIdxOffsetFromFirstPage / itemsInThisPage);
+                int pageIdxContainingServerIdx = 1;
+                if(itemsInThisPage > 0) {
+                    pageIdxContainingServerIdx += (desiredIdxOffsetFromFirstPage / itemsInThisPage);
+                }
                 listIdx += itemsInThisPage;
                 if (serverIdx < resourceCountAllToAndIncCurrentPage && thisPageIdx <= pageIdxContainingServerIdx) {
                     int overshoot = resourceCountAllToAndIncCurrentPage - (serverIdx + 1);//+1 because idx is zero based
