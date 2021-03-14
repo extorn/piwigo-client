@@ -79,7 +79,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
 
     public boolean setAlbumSortOrder(int albumSortOrder) {
         if(comparator.getAlbumSortOrder() != albumSortOrder) {
-            if(getItems().size() > 0) {
+            if(getChildAlbumCount() > 0) {
                 throw new IllegalStateException("Unable to change sort order once items are present");
                 //TODO perhaps replicate server sorting unless swapping to default.
             }

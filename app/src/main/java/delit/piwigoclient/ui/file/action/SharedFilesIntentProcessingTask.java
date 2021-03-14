@@ -3,6 +3,8 @@ package delit.piwigoclient.ui.file.action;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
 import delit.libs.core.util.Logging;
@@ -33,10 +35,19 @@ public class SharedFilesIntentProcessingTask<F extends RecyclerViewDocumentFileF
 
     @Override
     protected List<FolderItem> doInBackgroundSafely(Void... nothing) {
-        if (intent.getClipData() != null) {
-            return getOwner().processOpenDocuments(intent, new AsyncTaskProgressLink(this::onProgressUpdate));
-        } else {
-            return getOwner().processOpenDocumentTree(intent, new AsyncTaskProgressLink(this::onProgressUpdate));
+        try {
+            if (intent.getClipData() != null) {
+                return getOwner().processOpenDocuments(intent, new AsyncTaskProgressLink(this::onProgressUpdate));
+            } else {
+                return getOwner().processOpenDocumentTree(intent, new AsyncTaskProgressLink(this::onProgressUpdate));
+            }
+        } catch (IllegalStateException e) {
+            if(getOwner() == null || getOwner().getContext() == null) {
+                Logging.log(Log.WARN, TAG, "Cancelling operation. No longer appropriate");
+                return null;
+            }
+            // else just cascade the exception.
+            throw e;
         }
     }
 
@@ -53,7 +64,11 @@ public class SharedFilesIntentProcessingTask<F extends RecyclerViewDocumentFileF
     }
 
     @Override
-    protected void onPostExecuteSafely(List<FolderItem> folderItems) {
+    protected void onPostExecuteSafely(@Nullable List<FolderItem> folderItems) {
+        if(folderItems == null) {
+            Logging.log(Log.INFO, TAG,"Operation cancelled. No longer appropriate");
+            return;
+        }
         if(folderItems != null) {
             if (folderItems.size() == 1 && folderItems.get(0).isFolder()) {
                 FolderItem item = folderItems.get(0);

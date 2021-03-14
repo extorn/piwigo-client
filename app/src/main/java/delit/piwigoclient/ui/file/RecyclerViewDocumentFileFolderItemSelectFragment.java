@@ -32,6 +32,7 @@ import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Logger;
 
 import java.io.File;
 import java.io.IOException;
