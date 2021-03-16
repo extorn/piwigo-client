@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "58b052eeb4fb5799f5e09dbdf4838e34",
+    "identityHash": "fc0ff9e0be52c4e876d4818745da0a43",
     "entities": [
       {
         "tableName": "PriorUpload",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`parentUri` TEXT, `uri` TEXT NOT NULL, `checksum` TEXT, PRIMARY KEY(`uri`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`parentUri` TEXT, `uri` TEXT NOT NULL, `checksum` TEXT, `lastUploadedAt` INTEGER, PRIMARY KEY(`uri`), FOREIGN KEY(`uri`) REFERENCES `UploadDestinationPriorUploadCrossRef`(`uri`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "parentUri",
@@ -25,6 +25,12 @@
             "columnName": "checksum",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "lastUploadedAt",
+            "columnName": "lastUploadedAt",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -34,15 +40,33 @@
           "autoGenerate": false
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "UploadDestinationPriorUploadCrossRef",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "uri"
+            ],
+            "referencedColumns": [
+              "uri"
+            ]
+          }
+        ]
       },
       {
         "tableName": "UploadDestination",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uploadToKey` TEXT NOT NULL, PRIMARY KEY(`uploadToKey`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uploadToKey` TEXT NOT NULL, `serverUri` TEXT NOT NULL, PRIMARY KEY(`uploadToKey`), FOREIGN KEY(`uploadToKey`) REFERENCES `UploadDestinationPriorUploadCrossRef`(`uploadToKey`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "uploadToKey",
             "columnName": "uploadToKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serverUri",
+            "columnName": "serverUri",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -54,11 +78,23 @@
           "autoGenerate": false
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "UploadDestinationPriorUploadCrossRef",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "uploadToKey"
+            ],
+            "referencedColumns": [
+              "uploadToKey"
+            ]
+          }
+        ]
       },
       {
         "tableName": "UploadDestinationPriorUploadCrossRef",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uri` TEXT NOT NULL, `uploadToKey` TEXT NOT NULL, PRIMARY KEY(`uri`, `uploadToKey`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uri` TEXT NOT NULL, `uploadToKey` TEXT NOT NULL, `uploadedAt` INTEGER NOT NULL, PRIMARY KEY(`uri`, `uploadToKey`), FOREIGN KEY(`uploadToKey`) REFERENCES `UploadDestination`(`uploadToKey`) ON UPDATE NO ACTION ON DELETE RESTRICT , FOREIGN KEY(`uri`) REFERENCES `PriorUpload`(`uri`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uri",
@@ -70,6 +106,12 @@
             "fieldPath": "uploadToKey",
             "columnName": "uploadToKey",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uploadedAt",
+            "columnName": "uploadedAt",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -98,13 +140,36 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_UploadDestinationPriorUploadCrossRef_uploadToKey` ON `${TABLE_NAME}` (`uploadToKey`)"
           }
         ],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "UploadDestination",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "uploadToKey"
+            ],
+            "referencedColumns": [
+              "uploadToKey"
+            ]
+          },
+          {
+            "table": "PriorUpload",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "uri"
+            ],
+            "referencedColumns": [
+              "uri"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '58b052eeb4fb5799f5e09dbdf4838e34')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fc0ff9e0be52c4e876d4818745da0a43')"
     ]
   }
 }

@@ -371,6 +371,12 @@
 
     
 
+
+    
+    
+    <string name="preference_data_upload_check_for_prior_uploads_summary">Предварительная загрузка проверки на сервер</string>
+    <string name="preference_data_upload_check_for_prior_uploads_title">Предварительные файлы, выбранные для загрузки</string>
+
     
     
     <string name="preference_data_upload_delete_uploaded_summary">Удалить успешно загруженные файлы</string>

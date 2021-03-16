@@ -12,10 +12,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import delit.libs.core.util.Logging;
 import delit.libs.http.cache.CachingAsyncHttpClient;
@@ -39,36 +37,25 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
     private static final ExecutorManager HTTP_LOGIN_THREAD_POOL_EXECUTOR;
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int CORE_POOL_SIZE = 6;
-    private static final int MAXIMUM_POOL_SIZE = Math.max(6, CPU_COUNT * 2 + 1);
+    private static final int MAXIMUM_POOL_SIZE = Math.max(24, CPU_COUNT * 4);
     private static final int KEEP_ALIVE_SECONDS = 60;
     private static final List<String> runningExecutorTasks = new ArrayList<>(MAXIMUM_POOL_SIZE);
     private static final List<String> queuedExecutorTasks = new ArrayList<>(MAXIMUM_POOL_SIZE);
-
-    private static final ThreadFactory sThreadFactory = new ThreadFactory() {
-        private final AtomicInteger mCount = new AtomicInteger(1);
-
-        public Thread newThread(@NonNull Runnable r) {
-            return new Thread(r, "AsyncTask #" + mCount.getAndIncrement());
-        }
-    };
-    private static final ThreadFactory loginThreadFactory = new ThreadFactory() {
-        private final AtomicInteger mCount = new AtomicInteger(1);
-
-        public Thread newThread(@NonNull Runnable r) {
-            return new Thread(r, "AsyncLoginTask #" + mCount.getAndIncrement());
-        }
-    };
     private static final String TAG = "WORKER";
 
     static {
-        ExecutorManager threadPoolExecutor = new ExecutorManager(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS * 1000, 1, sThreadFactory);
-        threadPoolExecutor.allowCoreThreadTimeOut(true);
-        HTTP_THREAD_POOL_EXECUTOR = threadPoolExecutor;
+        ExecutorManager manager = new ExecutorManager(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS * 1000, 1);
+        manager.blockIfBusy(true);
+        manager.setThreadFactory(new ExecutorManager.NamedThreadFactory("AsyncHttpTask"));
+        manager.allowCoreThreadTimeOut(true);
+        HTTP_THREAD_POOL_EXECUTOR = manager;
 
-        ExecutorManager loginThreadPoolExecutor = new ExecutorManager(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS * 1000, 1, loginThreadFactory);
-        threadPoolExecutor.allowCoreThreadTimeOut(true);
+        ExecutorManager loginManager = new ExecutorManager(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS * 1000, 1);
+        loginManager.blockIfBusy(true);
+        loginManager.setThreadFactory(new ExecutorManager.NamedThreadFactory("AsyncHttpLoginTask"));
+        loginManager.allowCoreThreadTimeOut(true);
 
-        HTTP_LOGIN_THREAD_POOL_EXECUTOR = loginThreadPoolExecutor;
+        HTTP_LOGIN_THREAD_POOL_EXECUTOR = loginManager;
     }
 
     private final String DEFAULT_TAG = "PwgAccessSvcAsyncTask";
@@ -76,9 +63,10 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 
 
     private boolean rerunning = false;
-    private AbstractPiwigoDirectResponseHandler handler;
+    private final AbstractPiwigoDirectResponseHandler handler;
     private ConnectionPreferences.ProfilePreferences connectionPreferences;
     private boolean workerDone;
+    private AsyncTask<Long, Integer, Boolean> task;
 
     public Worker(@NonNull AbstractPiwigoDirectResponseHandler handler, Context context) {
         this.handler = handler;
@@ -98,11 +86,12 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
         //Update the max pool size.
         try {
             CachingAsyncHttpClient client = handler.getHttpClientFactory().getAsyncHttpClient(handler.getConnectionPrefs(), getContext());
-//            if (client != null) {
-//                int newMaxPoolSize = client.getMaxConcurrentConnections();
-//                HTTP_THREAD_POOL_EXECUTOR.setCorePoolSize(Math.min(newMaxPoolSize, Math.max(3, newMaxPoolSize / 2)));
-//                HTTP_THREAD_POOL_EXECUTOR.setMaximumPoolSize(newMaxPoolSize);
-//            }
+            if (client != null) {
+                int newMaxPoolSize = client.getMaxConcurrentConnections();
+                int newCorePoolSize = Math.min(newMaxPoolSize, Math.max(3, newMaxPoolSize / 2));
+                HTTP_THREAD_POOL_EXECUTOR.setCorePoolSize(newCorePoolSize);
+                HTTP_THREAD_POOL_EXECUTOR.setMaxPoolSize(newMaxPoolSize);
+            }
         } catch (RuntimeException e) {
             Logging.recordException(e);
             handler.sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
@@ -120,6 +109,13 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
         } else {
             Logging.log(Log.DEBUG, tag, "Worker "+getTaskName()+" terminated, handler still running");
         }
+    }
+
+    @Override
+    public boolean cancelSafely(boolean interrupt) {
+        handler.cancelCallAsap();
+        task.cancel(interrupt);
+        return super.cancelSafely(interrupt);
     }
 
     @Override
@@ -181,44 +177,22 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
                 handler.runCall(rerunning);
 
                 // this is the absolute timeout - in case something is seriously wrong.
-                long callTimeoutAtTime = System.currentTimeMillis() + 300000;
-
-                synchronized (handler) {
-                    boolean timedOut = false;
-                    long start = System.currentTimeMillis();
-                    while (handler.isRunning() && !isCancelled() && !timedOut) {
-                        long waitForMillis = Math.min(1000, callTimeoutAtTime - System.currentTimeMillis());
-                        if (waitForMillis > 0) {
-                            try {
-                                handler.wait(waitForMillis);
-                            } catch (InterruptedException e) {
-                                // Either this has been cancelled or the wait timed out or the handler completed okay and notified us
-                                if (isCancelled()) {
-                                    if (BuildConfig.DEBUG) {
-                                        Log.e(handler.getTag(), "Service call cancelled before handler " + handler.getClass().getSimpleName() + " could finish running");
-                                    }
-                                    handler.cancelCallAsap();
-                                }
-                            }
+                long start = System.currentTimeMillis();
+                handler.waitUntilComplete(300000);
+                if(BuildConfig.DEBUG) {
+                    long callTookMillis = System.currentTimeMillis() - start;
+                    String call;
+                    if (handler instanceof AbstractPiwigoWsResponseHandler) {
+                        call = ((AbstractPiwigoWsResponseHandler) handler).getPiwigoMethod();
+                    } else {
+                        URI uri = handler.getRequestURI();
+                        if(uri != null) {
+                            call = handler.getRequestURI().toASCIIString();
                         } else {
-                            timedOut = true;
+                            call = handler.getTag();
                         }
                     }
-                    if(BuildConfig.DEBUG) {
-                        long callTookMillis = System.currentTimeMillis() - start;
-                        String call;
-                        if (handler instanceof AbstractPiwigoWsResponseHandler) {
-                            call = ((AbstractPiwigoWsResponseHandler) handler).getPiwigoMethod();
-                        } else {
-                            URI uri = handler.getRequestURI();
-                            if(uri != null) {
-                                call = handler.getRequestURI().toASCIIString();
-                            } else {
-                                call = handler.getTag();
-                            }
-                        }
-                        Logging.log(Log.ERROR, TAG, "HANDLER_TIME: %2$dms : calling [%3$d]%1$s", call, callTookMillis, handler.getMessageId());
-                    }
+                    Logging.log(Log.ERROR, TAG, "HANDLER_TIME: %2$dms : calling [%3$d]%1$s", call, callTookMillis, handler.getMessageId());
                 }
             } else {
                 Logging.log(Log.WARN, TAG, "No active session after attempting login.");
@@ -272,7 +246,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 
     public long start(long messageId) {
         try {
-            AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutorManager().getExecutor(), messageId);
+            task = executeOnExecutor(getExecutorManager().getExecutor(), messageId);
             recordExcutionQueued();
             //TODO collect a list of tasks and kill them all if the app exits.
             return messageId;
@@ -319,9 +293,6 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
         long timeoutAt = workerStartedAt + MAX_TIMEOUT_MILLIS;
         while (!task.isCancelled() && !workerDone && !timedOut) {
 
-            if(retVal != null) {
-                timedOut = System.currentTimeMillis() > timeoutAt;
-            }
             try {
                 if (BuildConfig.DEBUG) {
                     Log.e(tag, "Thread " + Thread.currentThread().getName() + " starting to wait for response from handler " + getOwner().getClass().getSimpleName());
@@ -339,10 +310,13 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
                         timeoutAt = System.currentTimeMillis() + 1500;
                     }
                 } else {
-                    Logging.log(Log.DEBUG, TAG, "Waiting up to 500ms for task %1$s to finish after result received", handler.getTag());
+                    Logging.log(Log.DEBUG, TAG, "Waiting up to 100ms for task %1$s to finish after result received", handler.getTag());
                     synchronized (this) {
-                        wait(500);
+                        wait(100);
                     }
+                }
+                if(retVal != null) {
+                    timedOut = System.currentTimeMillis() > timeoutAt;
                 }
             } catch (InterruptedException e) {
                 // ignore unless the worker is cancelled.
@@ -353,6 +327,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
                 if (BuildConfig.DEBUG) {
                     Log.e(tag, "Thread " + Thread.currentThread().getName() + ": Error retrieving result from handler " + getOwner().getClass().getSimpleName(), e);
                 }
+                workerDone = true; // definitely stop waiting.
             }
         }
         if(BuildConfig.DEBUG) {

@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -92,11 +93,13 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         Collections.sort(migrators); // into incrementing version number order
 
         int currentPrefsVersion = prefs.getInt(getString(R.string.preference_app_prefs_version_key), -1);
-
+        int latestAppVersion = ProjectUtils.getVersionCode(getApplicationContext());
+        if (currentPrefsVersion < latestAppVersion) {
+            //TODO show message - migrating settings to latest app version progress bar ideally (maybe impossible at this stage of the app startup).
+        }
         for (PreferenceMigrator migrator : migrators) {
             migrator.execute(this, prefs, currentPrefsVersion);
         }
-        int latestAppVersion = ProjectUtils.getVersionCode(getApplicationContext());
         if (currentPrefsVersion < latestAppVersion) {
             ConnectionPreferences.PreferenceActor actor = new ConnectionPreferences.PreferenceActor();
             actor.with(R.string.preference_app_prefs_version_key);
@@ -106,6 +109,9 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             bundle.putInt("to_version", latestAppVersion);
             Logging.logAnalyticEvent(this,"app_upgraded", bundle);
             Logging.log(Log.DEBUG, TAG, "Upgraded app Preferences from " + currentPrefsVersion +" to " + latestAppVersion + " and saved");
+            DisplayUtils.postOnUiThread(() -> {
+                Toast.makeText(this, R.string.migrated_settings_from_previous_version, Toast.LENGTH_LONG).show();
+            });
         }
     }
 

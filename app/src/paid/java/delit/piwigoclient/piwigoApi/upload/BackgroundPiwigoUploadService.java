@@ -25,11 +25,14 @@ import java.util.Objects;
 import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.database.PiwigoUploadsDatabase;
+import delit.piwigoclient.database.PriorUploadRepository;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.upload.action.BackgroundUploadNotificationManager;
 import delit.piwigoclient.piwigoApi.upload.actor.BackgroundJobLoadActor;
 import delit.piwigoclient.piwigoApi.upload.actors.ActorListener;
 import delit.piwigoclient.piwigoApi.upload.actors.JobLoadActor;
+import delit.piwigoclient.piwigoApi.upload.actors.PriorUploadsActor;
 import delit.piwigoclient.piwigoApi.upload.actors.UploadNotificationManager;
 import delit.piwigoclient.piwigoApi.upload.network.NetworkUtils;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
@@ -329,19 +332,15 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService<Backg
     }
 
     @Override
-    protected void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<Uri, String> uploadedFileChecksums) {
-        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(uploadJob.getJobConfigId());
-        AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(getApplicationContext());
-        priorUploads.putAll(uploadedFileChecksums);
-        jobConfig.saveFilesPreviouslyUploaded(getApplicationContext(), priorUploads);
+    protected void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, ActorListener actorListener) {
+        PriorUploadRepository priorUploadRepository = PriorUploadRepository.getInstance(PiwigoUploadsDatabase.getInstance(getApplication()));
+        new PriorUploadsActor(this, uploadJob, actorListener).updatePriorUploadsList(priorUploadRepository);
     }
 
     @Override
-    public void onJobReadyToUpload(Context c, UploadJob thisUploadJob) {
-        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
-        //FIXME this isn't scalable. Needs storing in a database and querying on a file by file basis as needed
-        AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(c);
-        thisUploadJob.filterPreviouslyUploadedFiles(priorUploads.getFileUrisAndHashcodes());
+    public void onJobReadyToUpload(Context c, UploadJob thisUploadJob, ActorListener actorListener) {
+        PriorUploadRepository priorUploadRepository = PriorUploadRepository.getInstance(PiwigoUploadsDatabase.getInstance(getApplication()));
+        new PriorUploadsActor(c, thisUploadJob, actorListener).filterPriorUploadsByUri(priorUploadRepository);
         // technically this is called after the job has already started, but the user doesn't need to know that.
         if(thisUploadJob.getActionableFilesCount() > 0) {
             EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob, thisUploadJob.isHasRunBefore()));

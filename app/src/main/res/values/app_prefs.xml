@@ -371,6 +371,11 @@
 
     <!-- prefs -->
 
+    <bool name="preference_data_upload_check_for_prior_uploads_default">true</bool>
+    <string name="preference_data_upload_check_for_prior_uploads_key" translatable="false">preference_data_upload_check_for_prior_uploads</string>
+    <string name="preference_data_upload_check_for_prior_uploads_summary">Prior uploaded check per server</string>
+    <string name="preference_data_upload_check_for_prior_uploads_title">Pre-Check Files Selected For Upload</string>
+
     <bool name="preference_data_upload_delete_uploaded_default">false</bool>
     <string name="preference_data_upload_delete_uploaded_key" translatable="false">preference_data_upload_delete_uploaded</string>
     <string name="preference_data_upload_delete_uploaded_summary">Delete successfully uploaded files</string>

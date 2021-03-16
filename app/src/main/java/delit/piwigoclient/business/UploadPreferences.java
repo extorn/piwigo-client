@@ -119,4 +119,8 @@ public class UploadPreferences {
     public static boolean isDeleteFilesAfterUploadDefault(Context context, SharedPreferences prefs) {
         return getBoolean(context, prefs, R.string.preference_data_upload_delete_uploaded_key, R.bool.preference_data_upload_delete_uploaded_default);
     }
+
+    public static boolean isCheckForPriorUploads(Context context, SharedPreferences prefs) {
+        return getBoolean(context, prefs, R.string.preference_data_upload_check_for_prior_uploads_key, R.bool.preference_data_upload_check_for_prior_uploads_default);
+    }
 }

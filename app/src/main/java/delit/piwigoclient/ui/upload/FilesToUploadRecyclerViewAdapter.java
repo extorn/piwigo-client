@@ -7,10 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +35,10 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
     private final RemoveListener<LVA,MSA,VH> listener;
     private int viewType = VIEW_TYPE_LIST;
 
-    public FilesToUploadRecyclerViewAdapter(@NonNull ArrayList<DocumentFile> filesToUpload, @NonNull RemoveListener<LVA,MSA,VH> listener) {
-        super((MSA) new UploadItemMultiSelectStatusAdapter<MSA,LVA,VH>(), new UploadAdapterPrefs());
+    public FilesToUploadRecyclerViewAdapter(@NonNull RemoveListener<LVA,MSA,VH> listener) {
+        super((MSA) new UploadItemMultiSelectStatusAdapter(), new UploadAdapterPrefs());
         this.listener = listener;
-        this.uploadDataItemsModel = new UploadDataItemModel(filesToUpload);
+        this.uploadDataItemsModel = new UploadDataItemModel();
         setItems(uploadDataItemsModel.getUploadDataItemsReference());
         this.setHasStableIds(true);
     }

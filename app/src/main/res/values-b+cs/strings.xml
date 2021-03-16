@@ -727,4 +727,6 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="please_wait_in_progress">Počkejte prosím na předchozí požadavek na dokončení</string>
     
     <string name="upload_of_files_complete_finishing_up">Nahrávání souborů dokončeno. Jen skončit.</string>
+    <string name="uploaded_previously">Nahráno dříve</string>
+    <string name="migrated_settings_from_previous_version">Nastavení přenosná z předchozí verzi aplikace</string>
 </resources>

@@ -10,15 +10,13 @@ import android.util.Log;
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.documentfile.provider.DocumentFile;
-
-import com.google.android.exoplayer2.util.MimeTypes;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -357,11 +355,13 @@ public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable
             return DocumentFile.fromFile(jobsFolder);
         }
 
-        public void saveToFile(Context c) {
+        public void deleteFile(Context c) {
             DocumentFile folder = getFolder(c);
             DocumentFile child = folder.findFile(""+jobId);
-            if(child == null) {
-                child = folder.createFile(MimeTypes.BASE_TYPE_APPLICATION, ""+jobId);
+            if(child != null) {
+                if(!child.delete()) {
+                    IOUtils.onFileDeleteFailed(TAG, child, "prior uploads");
+                }
             }
             if(child == null) {
                 Logging.log(Log.ERROR, TAG,"Unable to save to file. File could not be created in folder " + folder.getUri());
@@ -370,11 +370,11 @@ public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable
             }
         }
 
-        public static PriorUploads loadFromFile(Context c, int jobId) {
+        public static @Nullable PriorUploads loadFromFile(Context c, int jobId) {
             DocumentFile folder = getFolder(c);
             DocumentFile child = folder.findFile(""+jobId);
             if(child == null) {
-                return new PriorUploads(jobId);
+                return null;
             } else {
                 PriorUploads uploadedFiles = IOUtils.readParcelableFromDocumentFile(c.getContentResolver(), child, PriorUploads.class);
                 if(uploadedFiles == null) {
@@ -385,45 +385,16 @@ public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable
                 return uploadedFiles;
             }
         }
-
-        /**
-         * NOT idempotent!
-         *
-         * @return
-         */
-        public boolean isOutOfSyncWithFileSystem(Context context) {
-            boolean outOfSync = false;
-            if(fileUrisAndHashcodes.size() > 0) {
-                Set<Uri> itemsToRemove = new HashSet<>();
-                for(Map.Entry<Uri, String> priorUploadEntry : fileUrisAndHashcodes.entrySet()) {
-                    DocumentFile docFile = IOUtils.getSingleDocFile(context, priorUploadEntry.getKey());
-                    if(docFile == null || !docFile.exists()) {
-                        itemsToRemove.add(priorUploadEntry.getKey());
-                        outOfSync = true;
-                    }
-                }
-                for(Uri itemToRemove : itemsToRemove) {
-                    fileUrisAndHashcodes.remove(itemToRemove);
-                }
-            }
-            return outOfSync;
-        }
-
-        public void putAll(HashMap<Uri, String> uploadedFileChecksums) {
-            Collections.checkedMap(new HashMap<>(),Uri.class, String.class).putAll(uploadedFileChecksums);
-        }
     }
 
-    public PriorUploads getFilesPreviouslyUploaded(Context c) {
+    //FIXME delete after some future version.
+    @Deprecated
+    public PriorUploads getFilesPreviouslyUploaded(@NonNull Context c) {
         PriorUploads uploads = PriorUploads.loadFromFile(c, jobId);
-        if(uploads.isOutOfSyncWithFileSystem(c)) {
-            uploads.saveToFile(c);
+        if(uploads != null) {
+            uploads.deleteFile(c);
         }
         return uploads;
-    }
-
-    public void saveFilesPreviouslyUploaded(Context c, PriorUploads priorUploads) {
-        priorUploads.saveToFile(c);
     }
 
     public Set<String> getFileExtsToUpload(Context c) {

@@ -559,7 +559,7 @@ public class KeystorePreferenceDialogFragmentCompat<F extends KeystorePreference
                 }
                 currentFile++;
                 publishProgress((int) Math.rint(100 * ((double) currentFile / loadOps.length)));
-                getOwner().appSettingsViewModel.releasePersistableUriPermission(getContext(), loadOp.getFileUri(), getOwner().getUriPermissionsKey(), true);
+                getOwner().appSettingsViewModel.removeAllUriPermissionsRecords(getContext(), loadOp.getFileUri(), getOwner().getUriPermissionsKey());
             }
             return loadOperationResult;
         }

@@ -727,4 +727,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="please_wait_in_progress">Wacht alstublieft op het vorige verzoek om te voltooien</string>
     
     <string name="upload_of_files_complete_finishing_up">Upload van bestanden voltooid. Gewoon afronden.</string>
+    <string name="uploaded_previously">Geüpload eerder</string>
+    <string name="migrated_settings_from_previous_version">Instellingen gemigreerd van de vorige app-versie</string>
 </resources>

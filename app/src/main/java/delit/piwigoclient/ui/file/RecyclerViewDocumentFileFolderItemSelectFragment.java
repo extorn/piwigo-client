@@ -32,7 +32,6 @@ import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -213,8 +212,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         int pos = folderRootFolderSpinner.getSelectedItemPosition();
         DocumentFile documentFile = folderRootsAdapter.getItemValue(pos);
         if(documentFile != null) {
-            Uri treeUri = IOUtils.getTreeUri(documentFile.getUri());
-            appSettingsViewModel.releasePersistableUriPermission(requireContext(), treeUri, UriPermissionUse.CONSUMER_ID_FILE_SELECT, true);
+            appSettingsViewModel.removeAllUriPermissionsRecords(requireContext(), IOUtils.getUriAndTreeUriIfUriIsNot(documentFile.getUri()), UriPermissionUse.CONSUMER_ID_FILE_SELECT);
             folderRootsAdapter.remove(folderRootsAdapter.getItem(pos));
             folderRootFolderSpinner.setSelection(0); //  calls listener because it's a definite change.
 //                            DisplayUtils.selectSpinnerItemAndCallItemSelectedListener(folderRootFolderSpinner, 0);

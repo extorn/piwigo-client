@@ -573,7 +573,6 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     public void cancelCallAsap() {
         synchronized (this) {
-            this.notifyAll();
             cancelCallAsap = true;
             if (requestHandle != null && !(requestHandle.isFinished() || requestHandle.isCancelled())) {
                 boolean cancelled = requestHandle.cancel(true);
@@ -581,6 +580,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_request_timed_out)));
                 }
             }
+            this.notifyAll();
         }
     }
 
@@ -654,5 +654,30 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     protected PiwigoSessionDetails getPiwigoSessionDetails() {
         return PiwigoSessionDetails.getInstance(getConnectionPrefs());
+    }
+
+    public void waitUntilComplete(long waitAtMostMillis) {
+        synchronized (this) {
+            boolean timedOut = false;
+            long start = System.currentTimeMillis();
+            long callTimeoutAtTime = start + waitAtMostMillis;
+            while (isRunning() && !isCancelCallAsap() && !timedOut) {
+                long waitForMillis = Math.min(1000, callTimeoutAtTime - System.currentTimeMillis());
+                if (waitForMillis > 0) {
+                    try {
+                        wait(waitForMillis);
+                    } catch (InterruptedException e) {
+                        // Either this has been cancelled or the wait timed out or the handler completed okay and notified us
+                        if (isCancelCallAsap()) {
+                            if (BuildConfig.DEBUG) {
+                                Log.e(getTag(), "Service call cancelled before handler " + getClass().getSimpleName() + " could finish running");
+                            }
+                        }
+                    }
+                } else {
+                    timedOut = true;
+                }
+            }
+        }
     }
 }

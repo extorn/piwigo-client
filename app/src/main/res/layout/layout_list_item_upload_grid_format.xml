@@ -8,6 +8,7 @@
     tools:layout_width="180dp"
     >
 <!--android:background="?attr/colorAlbumItemBackground"-->
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/file_for_upload_img"
         android:layout_width="match_parent"
@@ -32,7 +33,7 @@
         app:layout_constraintBottom_toTopOf="@id/barrier_top_of_footer"
         app:layout_constraintEnd_toEndOf="@id/file_for_upload_img"
         tools:src="@drawable/ic_file_black_24dp"
-        android:contentDescription="@string/media_type_indicator" />
+        android:contentDescription="@string/media_type_indicator"/>
 
     <ImageView
         android:id="@+id/cancelled_indicator"
@@ -68,6 +69,24 @@
         app:layout_constraintTop_toTopOf="@id/file_for_upload_img"
         tools:text="Heading"
         tools:visibility="visible" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/file_previously_uploaded"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/drawable_scrim_heavy_bright"
+        android:padding="4dp"
+        android:textAlignment="center"
+        android:textAppearance="?textAppearanceBody2"
+        android:visibility="gone"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/file_for_upload_delete_button"
+        app:layout_constraintBottom_toTopOf="@id/barrier_top_of_footer"
+        android:text="@string/uploaded_previously"
+        tools:visibility="visible" />
+
+
 
     <TextView
         android:id="@+id/file_for_upload_txt"

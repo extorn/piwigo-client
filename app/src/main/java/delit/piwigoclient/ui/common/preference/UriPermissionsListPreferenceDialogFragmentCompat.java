@@ -161,7 +161,7 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
     public void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
             for(UriPermissionUse itemForDelete : itemsForDelete) {
-                getPreference().getAppSettingsViewModel().releasePersistableUriPermission(requireContext(), itemForDelete);
+                getPreference().getAppSettingsViewModel().removeAllUriPermissionsRecords(requireContext(), itemForDelete);
             }
         }
     }

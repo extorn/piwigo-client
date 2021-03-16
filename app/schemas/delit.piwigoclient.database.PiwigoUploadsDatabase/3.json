@@ -1,0 +1,194 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "39ecc1165d8c1efb50cb2481da05d304",
+    "entities": [
+      {
+        "tableName": "PriorUpload",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uri` TEXT NOT NULL, `parentUri` TEXT, `checksum` TEXT, `lastUploadedAt` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uri",
+            "columnName": "uri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parentUri",
+            "columnName": "parentUri",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "checksum",
+            "columnName": "checksum",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastUploadedAt",
+            "columnName": "lastUploadedAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_PriorUpload_uri",
+            "unique": true,
+            "columnNames": [
+              "uri"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_PriorUpload_uri` ON `${TABLE_NAME}` (`uri`)"
+          },
+          {
+            "name": "index_PriorUpload_checksum",
+            "unique": true,
+            "columnNames": [
+              "checksum"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_PriorUpload_checksum` ON `${TABLE_NAME}` (`checksum`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "UploadDestination",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uploadToKey` TEXT NOT NULL, `serverUri` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uploadToKey",
+            "columnName": "uploadToKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serverUri",
+            "columnName": "serverUri",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_UploadDestination_uploadToKey",
+            "unique": true,
+            "columnNames": [
+              "uploadToKey"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_UploadDestination_uploadToKey` ON `${TABLE_NAME}` (`uploadToKey`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "UploadDestinationPriorUploadCrossRef",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `priorUploadId` INTEGER NOT NULL, `uploadToId` INTEGER NOT NULL, `uploadedAt` INTEGER NOT NULL, FOREIGN KEY(`uploadToId`) REFERENCES `UploadDestination`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT , FOREIGN KEY(`priorUploadId`) REFERENCES `PriorUpload`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "priorUploadId",
+            "columnName": "priorUploadId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uploadToId",
+            "columnName": "uploadToId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uploadedAt",
+            "columnName": "uploadedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_UploadDestinationPriorUploadCrossRef_priorUploadId",
+            "unique": false,
+            "columnNames": [
+              "priorUploadId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_UploadDestinationPriorUploadCrossRef_priorUploadId` ON `${TABLE_NAME}` (`priorUploadId`)"
+          },
+          {
+            "name": "index_UploadDestinationPriorUploadCrossRef_uploadToId",
+            "unique": false,
+            "columnNames": [
+              "uploadToId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_UploadDestinationPriorUploadCrossRef_uploadToId` ON `${TABLE_NAME}` (`uploadToId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "UploadDestination",
+            "onDelete": "RESTRICT",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "uploadToId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "PriorUpload",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "priorUploadId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '39ecc1165d8c1efb50cb2481da05d304')"
+    ]
+  }
+}

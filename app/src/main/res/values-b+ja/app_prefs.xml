@@ -371,6 +371,12 @@
 
     
 
+
+    
+    
+    <string name="preference_data_upload_check_for_prior_uploads_summary">サーバーごとに以前のアップロードチェック</string>
+    <string name="preference_data_upload_check_for_prior_uploads_title">アップロードのために選択されたファイルを事前にチェックします</string>
+
     
     
     <string name="preference_data_upload_delete_uploaded_summary">正常にアップロードされたファイルを削除する</string>

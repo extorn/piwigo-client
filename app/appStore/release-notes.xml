@@ -1,40 +1,40 @@
 <en-GB>
 Bugfix:
-- Crash rather than reports to user that there are no acceptable server file formats supported
+- corrected issue with app thinking uri permissions were still needed after an upload completed
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- havárie spíše než zprávy uživateli, že nejsou podporovány žádné přijatelné formáty souborů serverů
+- Opravený problém s oprávněními aplikace URI aplikace URI byla stále potřebná po ukončení nahrávání
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Absturz anstelle von Berichten an den Benutzer, dass es keine akzeptablen Server-Dateiformate gibt, die unterstützt werden
+- Korrigiertes Problem mit App Denken URI-Berechtigungen wurden nach einem Upload noch erforderlich
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Choque en lugar de informes al usuario que no hay formatos de archivo de servidor aceptables compatibles
+- Problema corregido con la aplicación Pensando permisos de URI todavía se necesitaban después de una carga completada
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- crash plutôt que des rapports à l\'utilisateur qu\'il n\'y a pas de formats de fichier de serveur acceptables pris en charge
+- Le problème corrigé avec les autorisations URI de réflexion sur l\'application était toujours nécessaire après la fin du téléchargement.
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Crash anziché segnalazioni all\'utente che non ci sono formati di file del server accettabili supportati
+- Problema corretto con APP I permessi URI Pensiero erano ancora necessari dopo un caricamento completato
 </it-IT>
 <ja-JP>
 バグ修正：
-- 許容できるサーバーファイルフォーマットがサポートされていないことをユーザーに報告するのではなくクラッシュする
+- アップロードが完了した後も、App Thinking URI権限が依然として必要とされていました
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Crash in plaats van rapporten aan de gebruiker die er geen acceptabele serverbestandsindelingen zijn ondersteund
+- Gecorrigeerd probleem met app Thinking URI-machtigingen waren nog steeds nodig nadat een upload is voltooid
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Сбой, а не отчеты пользователю, что не поддерживаются приемлемые форматы файлов сервера
+- Исправленная проблема с разрешениями URI Manuing URI приложения все еще нужны после завершения загрузки
 </ru-RU>
 <zh-CN>
 错误修正：
-- 崩溃而不是向用户报告，没有支持可接受的服务器文件格式
+- 在上传完成后，仍需要使用应用程序思维URI权限的纠正问题
 </zh-CN>

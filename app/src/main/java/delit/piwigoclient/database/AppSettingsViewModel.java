@@ -13,20 +13,19 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
+import delit.piwigoclient.database.livedata.PermissionsRemovingObserver;
 import delit.piwigoclient.ui.util.LiveDataTransientObserver;
 
 public class AppSettingsViewModel extends AndroidViewModel {
 
     private static final String TAG = "AppSettingsVM";
-    private AppSettingsRepository appSettingsRepository;
+    private final AppSettingsRepository appSettingsRepository;
 
     public AppSettingsViewModel(@NonNull Application application) {
         super(application);
@@ -85,33 +84,32 @@ public class AppSettingsViewModel extends AndroidViewModel {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void releaseAllPersistableUriPermissions(@NonNull Context context, String consumerId) {
+    public void removeAllUriPermissionsRecords(@NonNull Context context, String consumerId) {
         LiveData<List<UriPermissionUse>> liveData = getAllForConsumer(consumerId);
         liveData.observeForever(new LiveDataTransientObserver<List<UriPermissionUse>>(context, liveData) {
             @Override
             public void onChangeObserved(List<UriPermissionUse> permissionsHeld) {
                 for(UriPermissionUse use : permissionsHeld) {
-                    releasePersistableUriPermission(context, Uri.parse(use.uri), use.consumerId, false);
+                    removeAllUriPermissionsRecords(context, Uri.parse(use.uri), use.consumerId);
                 }
             }
         });
     }
 
-    public void releasePersistableUriPermission(@NonNull Context context, @NonNull UriPermissionUse uriPermissionUse) {
-        releasePersistableUriPermission(context, Uri.parse(uriPermissionUse.uri), uriPermissionUse.consumerId, false);
+    public void removeAllUriPermissionsRecords(@NonNull Context context, @NonNull UriPermissionUse uriPermissionUse) {
+        removeAllUriPermissionsRecords(context, Uri.parse(uriPermissionUse.uri), uriPermissionUse.consumerId);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void releasePersistableUriPermission(@NonNull Context context, @NonNull Uri uri, String consumerId, boolean removeTreeToo) {
+    public void removeAllUriPermissionsRecords(@NonNull Context context, @NonNull Uri uri, String consumerId) {
         LiveData<List<UriPermissionUse>> liveData = getAllForUri(uri);
-        DisplayUtils.runOnUiThread(()-> liveData.observeForever(new PermissionsRemovingObserver(context.getApplicationContext(), liveData, uri, consumerId, removeTreeToo)));
+        DisplayUtils.runOnUiThread(()-> liveData.observeForever(new PermissionsRemovingObserver(context.getApplicationContext(), appSettingsRepository, liveData, uri, consumerId)));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void releasePersistableUriPermission(@NonNull Context context, @NonNull Collection<Uri> uris, String consumerId, boolean removeTreeToo) {
+    public void removeAllUriPermissionsRecords(@NonNull Context context, @NonNull Collection<Uri> uris, String consumerId) {
         LiveData<List<UriPermissionUse>> liveData = getAllForUris(uris);
-        //TODO is this actually going to help?!
-        DisplayUtils.runOnUiThread(()-> liveData.observeForever(new PermissionsRemovingObserver(context.getApplicationContext(), liveData, uris, consumerId, removeTreeToo)));
+        DisplayUtils.runOnUiThread(()-> liveData.observeForever(new PermissionsRemovingObserver(context.getApplicationContext(), appSettingsRepository, liveData, uris, consumerId)));
     }
 
     //TODO need to use this kind of thing to ensure we ask user to add permissions back for URis that they removed permissions for in the system UI
@@ -132,72 +130,5 @@ public class AppSettingsViewModel extends AndroidViewModel {
 
     public void deleteAllForUri(@NonNull Uri folderUri) {
         appSettingsRepository.deleteAllForUri(folderUri);
-    }
-
-    private class PermissionsRemovingObserver extends LiveDataTransientObserver<List<UriPermissionUse>> {
-        private final Collection<Uri> uris;
-        private final String consumerId;
-        private final boolean removeTreeToo;
-
-
-        public PermissionsRemovingObserver(Context context, LiveData<List<UriPermissionUse>> liveData, Collection<Uri> uris, String consumerId, boolean removeTreeToo) {
-            super(context, liveData);
-            this.uris = uris;
-            this.consumerId = consumerId;
-            this.removeTreeToo = removeTreeToo;
-        }
-
-        public PermissionsRemovingObserver(Context context, LiveData<List<UriPermissionUse>> liveData, Uri uri, String consumerId, boolean removeTreeToo) {
-            this(context, liveData, Collections.singletonList(uri), consumerId, removeTreeToo);
-        }
-
-        @Override
-        public void onChangeObserved(List<UriPermissionUse> permissionsHeld) {
-            List<String> consumers = new ArrayList<>();
-            int flagsToRemove = 0;
-            int flagsStillUsed = 0;
-            for (UriPermissionUse use : permissionsHeld) {
-                if (!use.consumerId.equals(consumerId)) {
-                    consumers.add(use.consumerId);
-                    flagsStillUsed |= use.flags;
-                } else {
-                    flagsToRemove = use.flags;
-                    // remove our tracking entry for how we are using the uri permission
-                    delete(use);
-                }
-            }
-            // remove the flags to keep from the flags to remove
-            int mask = ~flagsStillUsed;
-            flagsToRemove &= mask;
-
-            if ((flagsToRemove != 0 || flagsStillUsed == 0) && consumers.size() == 0) {
-                // remove the Uri permission if it is no longer in use
-                Collection<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(getContext(), uris);
-                for(Uri uri : uris) {
-                    removePermissionsForUri(uriPermsHeld, uri, flagsToRemove);
-                }
-            }
-        }
-
-        private void removePermissionsForUri(Collection<Uri> uriPermsHeld, Uri uri, int flagsToRemove) {
-            if(uriPermsHeld.contains(uri)) {
-                try {
-                    getContext().getContentResolver().releasePersistableUriPermission(uri, flagsToRemove);
-                } catch(SecurityException e) {
-                    String mimeType = getContext().getContentResolver().getType(uri);
-                    Logging.log(Log.WARN, TAG, "unable to release permission for uri. Uri Mime type : "  + mimeType);
-                    Logging.recordException(e);
-                }
-            } else if(removeTreeToo) {
-                // check the tree uri.
-                Uri treeUri = IOUtils.getTreeUri(uri);
-                if(!treeUri.equals(uri)) {
-                    uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(getContext(), Collections.singletonList(treeUri));
-                    if (!uriPermsHeld.isEmpty()) {
-                        releasePersistableUriPermission(getContext(), treeUri, consumerId, true);
-                    }
-                }
-            }
-        }
     }
 }

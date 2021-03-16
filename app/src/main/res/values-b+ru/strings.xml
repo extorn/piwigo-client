@@ -727,4 +727,6 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="please_wait_in_progress">Пожалуйста, подождите, пока предыдущий запрос завершится</string>
     
     <string name="upload_of_files_complete_finishing_up">Загрузить файлы завершены. Просто заканчивая.</string>
+    <string name="uploaded_previously">Загружено раньше</string>
+    <string name="migrated_settings_from_previous_version">Настройки мигрированы из предыдущей версии приложения</string>
 </resources>

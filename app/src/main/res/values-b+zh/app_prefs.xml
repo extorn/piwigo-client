@@ -371,6 +371,12 @@
 
     
 
+
+    
+    
+    <string name="preference_data_upload_check_for_prior_uploads_summary">每台服务器上传的上传支票</string>
+    <string name="preference_data_upload_check_for_prior_uploads_title">选中上传的预检查文件</string>
+
     
     
     <string name="preference_data_upload_delete_uploaded_summary">删除成功上传的文件</string>

@@ -76,7 +76,7 @@ public class UploadJobStatusDetailsFragment<F extends UploadJobStatusDetailsFrag
         HashSet<Uri> filesAwaitingVerification = uploadJob.getFilesAwaitingVerification();
         HashSet<Uri> filesAwaitingConfiguration = uploadJob.getFilesAwaitingConfiguration();
         HashSet<Uri> filesFinishedWith = uploadJob.getFilesWithoutFurtherActionNeeded();
-        HashSet<Uri> filesNeedDeletingFromServer = uploadJob.getFilesRequiringDelete();
+        HashSet<Uri> filesNeedDeletingFromServer = uploadJob.getFilesRequiringDeleteFromServer();
         boolean tempAlbumNeedsDelete = uploadJob.getTemporaryUploadAlbumId() > 0;
 
         TextView textView = view.findViewById(R.id.files_awaiting_transfer);

@@ -99,7 +99,7 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
         } else if(!hasPermission) {
             // need to remove this permission from our list of stored ones against this use key. It doesn't reflect reality
             Logging.log(Log.WARN, TAG, "Deleting record of permissions use for uri %1$s by %2$s. Correct permissions not held", folderUri, getUriPermissionsKey());
-            appSettingsViewModel.releasePersistableUriPermission(getContext(), folderUri, getUriPermissionsKey(), false);
+            appSettingsViewModel.removeAllUriPermissionsRecords(getContext(), folderUri, getUriPermissionsKey());
         }
         return hasPermission;
     }
@@ -219,11 +219,11 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
                     Uri oldFolder = IOUtils.getLocalFileUri(oldValue);
                     if(!"file".equals(oldFolder.getScheme())) {
                         // file uris don't get dealt with in this way.
-                        thisPref.appSettingsViewModel.releasePersistableUriPermission(thisPref.getContext(), oldFolder, thisPref.getUriPermissionsKey(), true);
+                        thisPref.appSettingsViewModel.removeAllUriPermissionsRecords(thisPref.getContext(), IOUtils.getUriAndTreeUriIfUriIsNot(oldFolder), thisPref.getUriPermissionsKey());
                         DocumentFile docFile = DocumentFile.fromTreeUri(thisPref.getContext(), oldFolder);
                         if(docFile != null) {
                             // this is needed only because I messed up and added items incorrectly in the past.
-                            thisPref.appSettingsViewModel.releasePersistableUriPermission(thisPref.getContext(), oldFolder, thisPref.getUriPermissionsKey(), true);
+                            thisPref.appSettingsViewModel.removeAllUriPermissionsRecords(thisPref.getContext(), IOUtils.getUriAndTreeUriIfUriIsNot(oldFolder), thisPref.getUriPermissionsKey());
                         }
                     }
                 }

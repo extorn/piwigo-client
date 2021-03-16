@@ -371,6 +371,12 @@
 
     
 
+
+    
+    
+    <string name="preference_data_upload_check_for_prior_uploads_summary">Verifica anticipata caricato per server</string>
+    <string name="preference_data_upload_check_for_prior_uploads_title">File di pre-controllo selezionati per il caricamento</string>
+
     
     
     <string name="preference_data_upload_delete_uploaded_summary">Elimina i file caricati con successo</string>

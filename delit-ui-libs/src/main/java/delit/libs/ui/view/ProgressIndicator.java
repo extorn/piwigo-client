@@ -2,6 +2,7 @@ package delit.libs.ui.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -12,7 +13,9 @@ import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 import androidx.core.view.ViewCompat;
 
@@ -43,14 +46,19 @@ public class ProgressIndicator extends FrameLayout {
         init(context, attrs, defStyleAttr);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public ProgressIndicator(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.ProgressIndicator, defStyleAttr, 0);
         ViewCompat.setBackgroundTintList(this, a.getColorStateList(R.styleable.ProgressIndicator_backgroundTint));
         a.recycle();
 
-        View content = inflate(context, R.layout.layout_progress_indicator, null);
-        addView(content);
+        View content = inflate(context, R.layout.layout_progress_indicator, this);
+
         actionButton = findViewById(R.id.progressAction);
         descriptionField = findViewById(R.id.progressText);
         progressBar = findViewById(R.id.progressBar);

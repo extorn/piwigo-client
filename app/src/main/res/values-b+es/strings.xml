@@ -727,4 +727,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="please_wait_in_progress">Por favor, espere a que finalice la solicitud anterior.</string>
     
     <string name="upload_of_files_complete_finishing_up">Subir de archivos completos. Solo terminando</string>
+    <string name="uploaded_previously">Subido antes</string>
+    <string name="migrated_settings_from_previous_version">Configuración migrada de la versión anterior de la aplicación</string>
 </resources>

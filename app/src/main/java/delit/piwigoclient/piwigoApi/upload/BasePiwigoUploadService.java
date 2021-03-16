@@ -31,6 +31,8 @@ import delit.libs.util.progress.DividableProgressTracker;
 import delit.libs.util.progress.SimpleProgressListener;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.UploadPreferences;
+import delit.piwigoclient.database.AppSettingsDatabase;
+import delit.piwigoclient.database.AppSettingsRepository;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
@@ -87,13 +89,12 @@ public abstract class BasePiwigoUploadService<T extends BasePiwigoUploadService<
         if (uploadJob == null) {
             return; // Do nothing.
         }
-
-        JobCleanupActor jobFileActor = new JobCleanupActor(this, uploadJob, actorListener);
+        AppSettingsRepository appSettingsRepository = AppSettingsRepository.getInstance(AppSettingsDatabase.getInstance(getApplication()));
+        JobCleanupActor jobFileActor = new JobCleanupActor(this, uploadJob, appSettingsRepository, actorListener);
         jobFileActor.deleteSuccessfullyUploadedFilesFromDevice();
 
         // record all files uploaded to prevent repeated upload (do this always in case delete fails for a file!
-        HashMap<Uri, String> uploadedFileChecksums = uploadJob.getSelectedFileChecksumsForBlockingFutureUploads();
-        updateListOfPreviouslyUploadedFiles(uploadJob, uploadedFileChecksums);
+        updateListOfPreviouslyUploadedFiles(uploadJob, actorListener);
     }
 
     protected void doBeforeWork(@NonNull Intent intent) {
@@ -110,7 +111,7 @@ public abstract class BasePiwigoUploadService<T extends BasePiwigoUploadService<
 
     protected abstract void doWork(@NonNull Intent intent);
 
-    protected abstract void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<Uri, String> uploadedFileChecksums);
+    protected abstract void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, ActorListener actorListener);
 
 
 
@@ -167,7 +168,7 @@ public abstract class BasePiwigoUploadService<T extends BasePiwigoUploadService<
                 saveStatusAndStopJobIfRequested(jobLoadActor, thisUploadJob, actorListener);
 
                 if (thisUploadJob.isRunInBackground() && listener != null) {
-                    listener.onJobReadyToUpload(this, thisUploadJob);
+                    listener.onJobReadyToUpload(this, thisUploadJob, actorListener);
                 }
 
                 // is name or md5sum used for uniqueness on this server?
@@ -442,7 +443,7 @@ public abstract class BasePiwigoUploadService<T extends BasePiwigoUploadService<
     protected abstract ActorListener buildUploadActorListener(UploadJob uploadJob, UploadNotificationManager notificationManager);
 
     public interface JobUploadListener {
-        void onJobReadyToUpload(Context c, UploadJob thisUploadJob);
+        void onJobReadyToUpload(Context c, UploadJob thisUploadJob, ActorListener actorListener);
     }
 
     public static class UploadActionsBroadcastReceiver<T extends BasePiwigoUploadService<T>> extends BroadcastReceiver {

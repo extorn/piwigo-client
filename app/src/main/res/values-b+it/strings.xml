@@ -727,4 +727,6 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="please_wait_in_progress">Si prega di attendere la precedente richiesta di finire</string>
     
     <string name="upload_of_files_complete_finishing_up">Carica di file completi. Basta finire.</string>
+    <string name="uploaded_previously">Caricato prima</string>
+    <string name="migrated_settings_from_previous_version">Impostazioni migrate dalla versione precedente dell\'app</string>
 </resources>

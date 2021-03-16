@@ -48,7 +48,7 @@ class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH 
         if(!filesToProcess.isEmpty()) {
             DividableProgressTracker fileParser = tracker.addChildTask("parse files", filesToProcess.size(), 80);
             for (FileUploadDetails fud : filesToProcess) {
-                itemsToBeUploaded.add(new UploadDataItem(fud.getFileUri(), fud.getFilename(getContext()), fud.getFileToUploadMimeType(getContext()), fud.getFileSize()));
+                itemsToBeUploaded.add(new UploadDataItem(fud.getFileUri(), fud.getFilename(getContext()), fud.getFileExt(getContext()), fud.getFileToUploadMimeType(getContext()), fud.getFileSize()));
                 fileParser.incrementWorkDone(1);
             }
         }

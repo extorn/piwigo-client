@@ -371,6 +371,12 @@
 
     
 
+
+    
+    
+    <string name="preference_data_upload_check_for_prior_uploads_summary">Vérification précédente téléchargée par serveur</string>
+    <string name="preference_data_upload_check_for_prior_uploads_title">Pré-cochez les fichiers sélectionnés pour le téléchargement</string>
+
     
     
     <string name="preference_data_upload_delete_uploaded_summary">Supprimer les fichiers téléchargés avec succès</string>

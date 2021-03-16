@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import java.util.Objects;
 
 public class NetworkUtils {
+    @SuppressWarnings("deprecation")
     private BroadcastEventsListener networkStatusChangeListener;
 
     public boolean hasNetworkConnection(@NonNull Context context) {
@@ -48,6 +49,7 @@ public class NetworkUtils {
         if (cm != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             cm.registerDefaultNetworkCallback(new MyNetworkCallback(networkListener));
         } else {
+            //noinspection deprecation
             networkStatusChangeListener = new BroadcastEventsListener(networkListener);
             context.registerReceiver(networkStatusChangeListener, networkStatusChangeListener.getIntentFilter());
         }

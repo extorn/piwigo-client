@@ -443,6 +443,19 @@ public class UploadJob implements Parcelable {
         jobStatus = JOB_STATUS_SUBMITTED;
     }
 
+    public <T extends Collection<Uri>> void filterPreviouslyUploadedFilesByUri(T previousUploads) {
+        int cancelledUploads = 0;
+        for (FileUploadDetails fud : fileUploadDetails.values()) {
+            if (previousUploads.contains(fud.getFileUri())) {
+                cancelledUploads++;
+                fud.setStatusUserCancelled();
+            }
+        }
+        if(cancelledUploads > 0) {
+            Logging.log(Log.WARN, TAG, "Upload contains files previously uploaded to this PIWIGO server. Ignoring files : %1$d", cancelledUploads);
+        }
+    }
+
     public void filterPreviouslyUploadedFiles(Map<Uri, String> fileUploadedHashMap) {
         for (FileUploadDetails fud : fileUploadDetails.values()) {
             if (fileUploadedHashMap.containsKey(fud.getFileUri())) {
@@ -575,16 +588,6 @@ public class UploadJob implements Parcelable {
         return resourceIds;
     }
 
-    public HashMap<Uri, String> getSelectedFileChecksumsForBlockingFutureUploads() {
-        HashMap<Uri, String> uploadedFileChecksums = new HashMap<>(fileUploadDetails.size());
-        for (FileUploadDetails fud : fileUploadDetails.values()) {
-            if (fud.isSuccessfullyUploaded() && !fud.isDeleteAfterUpload()) {
-                uploadedFileChecksums.put(fud.getFileUri(), fud.getChecksumOfSelectedFile());
-            }
-        }
-        return uploadedFileChecksums;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -647,7 +650,7 @@ public class UploadJob implements Parcelable {
         return matches;
     }
 
-    public HashSet<Uri> getFilesRequiringDelete() {
+    public HashSet<Uri> getFilesRequiringDeleteFromServer() {
         return getFilesMatchingStatus(FileUploadDetails.REQUIRES_DELETE);
     }
 

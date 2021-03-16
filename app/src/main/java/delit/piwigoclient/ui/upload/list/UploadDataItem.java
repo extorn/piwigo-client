@@ -32,6 +32,7 @@ public class UploadDataItem implements Parcelable {
     private final long uid;
     private final String mimeType;
     private final Uri uri;
+    private final String fileExt;
     private String dataHashcode = null;
     private long dataLength = -1;
     private String filename;
@@ -39,12 +40,15 @@ public class UploadDataItem implements Parcelable {
     public static final Integer STATUS_ERROR = -1;
     public static final Integer STATUS_UPLOADING = 2;
     public static final Integer STATUS_UPLOADED = 3;
+    private boolean previouslyUploaded;
+    private boolean needsCompression;
 
-    public UploadDataItem(Uri uri, String filename, String mimeType, long dataLength) {
+    public UploadDataItem(Uri uri, String filename, String fileExt, String mimeType, long dataLength) {
         this.uri = uri;
         this.mimeType = mimeType;
         uploadProgress = new UploadProgressInfo(uri);
         this.filename = filename;
+        this.fileExt = fileExt;
         this.setDataLength(dataLength);
         uid = getNextUid();
     }
@@ -56,6 +60,7 @@ public class UploadDataItem implements Parcelable {
         setDataHashcode(in.readString());
         setDataLength(in.readLong());
         filename = in.readString();
+        fileExt = in.readString();
         uploadProgress = in.readParcelable(UploadProgressInfo.class.getClassLoader());
     }
 
@@ -75,7 +80,12 @@ public class UploadDataItem implements Parcelable {
         dest.writeString(getDataHashcode());
         dest.writeLong(getDataLength());
         dest.writeString(filename);
+        dest.writeString(fileExt);
         dest.writeParcelable(uploadProgress, flags);
+    }
+
+    public String getFileExt() {
+        return fileExt;
     }
 
     @Override
@@ -95,6 +105,10 @@ public class UploadDataItem implements Parcelable {
         return uid;
     }
 
+    public boolean isPreviouslyUploaded() {
+        return previouslyUploaded;
+    }
+
     protected String getFileSizeStr(@NonNull Context context) {
         if(getDataLength() < 0) {
             Uri uri = this.getUri();
@@ -107,7 +121,7 @@ public class UploadDataItem implements Parcelable {
         return String.format(Locale.getDefault(), "%1$.2fMB", sizeMb);
     }
 
-    public String getFilename(Context context) {
+    public String getFilename(@NonNull Context context) {
         if(filename == null) {
             Uri currentFileUri = null;
             if(uploadProgress != null) {
@@ -161,6 +175,18 @@ public class UploadDataItem implements Parcelable {
 
     public boolean isUploadFailed() {
         return uploadProgress != null && uploadProgress.isUploadFailed();
+    }
+
+    public void setPreviouslyUploaded(boolean previouslyUploaded) {
+        this.previouslyUploaded = previouslyUploaded;
+    }
+
+    public boolean isNeedsCompression() {
+        return needsCompression;
+    }
+
+    public void setNeedsCompression(boolean needsCompression) {
+        this.needsCompression = needsCompression;
     }
 
     protected static class UploadProgressInfo implements Parcelable {

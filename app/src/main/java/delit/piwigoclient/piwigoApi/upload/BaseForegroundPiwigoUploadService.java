@@ -3,15 +3,12 @@ package delit.piwigoclient.piwigoApi.upload;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.util.HashMap;
 
 import delit.libs.core.util.Logging;
 import delit.piwigoclient.BuildConfig;
@@ -26,7 +23,7 @@ import delit.piwigoclient.piwigoApi.upload.actors.UploadNotificationManager;
  * a service on a separate handler thread.
  * <p>
  */
-public class ForegroundPiwigoUploadService extends BasePiwigoUploadService<ForegroundPiwigoUploadService> {
+public class BaseForegroundPiwigoUploadService<T extends BaseForegroundPiwigoUploadService<T>> extends BasePiwigoUploadService<T> {
 
     public static final String INTENT_ARG_JOB_ID = "jobId";
     private static final String TAG = "PwgCli:FgUpldSvc";
@@ -34,17 +31,17 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService<Foreg
     private static final int JOB_ID = 20;
     public static final String ACTION_STOP = "delit.piwigoclient.foregroundUpload.action.STOP";
 
-    public ForegroundPiwigoUploadService() {
+    public BaseForegroundPiwigoUploadService() {
         super();
     }
 
-    protected UploadActionsBroadcastReceiver<ForegroundPiwigoUploadService> buildActionBroadcastReceiver() {
-        return new ForegroundUploadActionsBroadcastReceiver(this);
+    protected UploadActionsBroadcastReceiver<T> buildActionBroadcastReceiver() {
+        return new ForegroundUploadActionsBroadcastReceiver<>((T)this);
     }
 
-    public static class ForegroundUploadActionsBroadcastReceiver extends UploadActionsBroadcastReceiver<ForegroundPiwigoUploadService> {
+    public static class ForegroundUploadActionsBroadcastReceiver<T extends BaseForegroundPiwigoUploadService<T>> extends UploadActionsBroadcastReceiver<T> {
 
-        public ForegroundUploadActionsBroadcastReceiver(@NonNull ForegroundPiwigoUploadService service) {
+        public ForegroundUploadActionsBroadcastReceiver(@NonNull T service) {
             super(service, ACTION_STOP);
         }
     }
@@ -55,14 +52,14 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService<Foreg
      * @param uploadJob the job to run
      * @return jobId of the started job (passed in as param)
      */
-    public static long startActionRunOrReRunUploadJob(@NonNull Context context, @NonNull UploadJob uploadJob) {
+    protected static <T extends BaseForegroundPiwigoUploadService<T>> long startActionRunOrReRunUploadJob(@NonNull Context context, @NonNull UploadJob uploadJob, Class<T> serviceClass) {
         Context appContext = context.getApplicationContext();
-        Intent intent = new Intent(appContext, ForegroundPiwigoUploadService.class);
+        Intent intent = new Intent(appContext, serviceClass);
         intent.setAction(ACTION_UPLOAD_FILES);
         intent.putExtra(INTENT_ARG_JOB_ID, uploadJob.getJobId());
         uploadJob.setStatusSubmitted();
         try {
-            enqueueWork(appContext, ForegroundPiwigoUploadService.class, JOB_ID, intent);
+            enqueueWork(appContext, serviceClass, JOB_ID, intent);
         } catch(RuntimeException e) {
             Logging.log(Log.ERROR,TAG, "Unexpected error starting upload service");
             Logging.recordException(e);
@@ -127,8 +124,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService<Foreg
     }
 
     @Override
-    protected void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<Uri, String> uploadedFileChecksums) {
-        //TODO add the files checksums to a list that can then be used by the file selection for upload fragment perhaps to show those files that have been uploaded subtly.
+    protected void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, ActorListener actorListener) {
     }
 
     @Override

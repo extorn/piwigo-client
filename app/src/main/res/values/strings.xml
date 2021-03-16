@@ -904,7 +904,7 @@ SOFTWARE.
     <string name="rating_score_pattern">%1$.2f (%2$d rates)</string>
     <string name="connection_reset_warning_pattern">The server has closed the connection %1$d times in the past %2$d minutes. This could indicate an issue with your server configuration.</string>
     <string name="content_description_icon">icon</string>
-    <string name="duplicates_ignored_pattern">%1$d duplicates have been ignored.</string>
+    <string name="duplicates_ignored_pattern">Duplicates ignored: %1$d</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">The Piwigo WS method %1$s is no longer available on this server, and the fallback %2$s has been used. Have you just deactivated or deleted a server plugin?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">The Piwigo WS method %1$s no longer available on this server. Disabling affected functionality in the app. Have you just deactivated or deleted a server plugin?</string>
     <string name="removing_favorite">Removing favorite</string>
@@ -1036,7 +1036,7 @@ SOFTWARE.
     <string name="downloads_menu_title">Downloads</string>
     <string name="view_exported_files">View Exported Files</string>
     <string name="generating_upload_job">Configuring Upload Job with your selection</string>
-    <string name="alert_error_files_without_permissions">Uri Permissions were not provided for the files by the app you shared from. The upload can continue, but if the job is paused and later resumed (for example by Android power management) these files will no longer be uploadable. To avoid this issue, select files to upload using this app if possible.</string>
+    <string name="alert_error_files_without_permissions">Uri Permissions were not provided for the files by the app you shared from. The upload can continue, but if the job is paused and later resumed (for example by Android power management) it will no longer be possible to continue uploading these files. To avoid this issue, select files to upload using this app if possible.</string>
     <string name="alert_error_files_without_permissions_pattern">Uri Permissions were not provided for all files. Those without will not upload if the job is paused and later resumed (for example by Android power management). To avoid this issue, select files to upload using this app if possible. Affected files: %1$d.</string>
     <string name="button_compress">Compress</string>
     <string name="unable_to_compress_without_data">Unable to compress without the settings</string>
@@ -1105,4 +1105,7 @@ App Install UUID: %5$s
     <string name="please_wait_in_progress">Please wait for the previous request to finish</string>
     <string name="files_to_upload_count_label_pattern" translatable="false">%1$d (%2$s)</string>
     <string name="upload_of_files_complete_finishing_up">Upload of files complete. Just finishing up.</string>
+    <string name="uploaded_previously">Uploaded Before</string>
+    <string name="migrated_settings_from_previous_version">Settings migrated from previous app version</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Not all items selected are acceptable to this server. Those requiring re-compression: %1$d "</string>
 </resources>

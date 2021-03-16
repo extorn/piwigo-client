@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 /**
  * This is the old way of doing things.
  */
+@Deprecated
 public class BroadcastEventsListener extends BroadcastReceiver {
 
     private final MyBroadcastEventListener listener;

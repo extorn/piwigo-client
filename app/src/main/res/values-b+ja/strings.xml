@@ -727,4 +727,6 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="please_wait_in_progress">前回の要求を終了するのを待ってください</string>
     
     <string name="upload_of_files_complete_finishing_up">完全なファイルのアップロード 終わりました。</string>
+    <string name="uploaded_previously">前にアップロードされました</string>
+    <string name="migrated_settings_from_previous_version">前のアプリバージョンから移行された設定</string>
 </resources>

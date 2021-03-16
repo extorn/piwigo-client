@@ -74,7 +74,8 @@ public class DebugCompressionListener implements ExoPlayerCompression.Compressio
                 //FIXME - This works because even though the compressed file (media store) uri is not written to, it is one already (I think!).
                 String filename = IOUtils.getFilename(uiHelper.getAppContext(), outputFile);
                 String mimeType = IOUtils.getMimeType(uiHelper.getAppContext(), outputFile);
-                fragment.getFilesForUploadViewAdapter().add(new UploadDataItem(outputFile, filename, mimeType, -1));
+                String fileExt = IOUtils.getFileExt(filename);
+                fragment.getFilesForUploadViewAdapter().add(new UploadDataItem(outputFile, filename, fileExt, mimeType, -1));
             });
         }
 

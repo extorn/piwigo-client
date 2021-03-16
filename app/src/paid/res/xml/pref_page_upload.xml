@@ -48,6 +48,14 @@
             android:title="@string/preference_data_upload_default_privacy_level_title"
             app:entries="@array/privacy_levels_groups_array"
             app:entryValues="@array/privacy_levels_values_array" />
+
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_data_upload_check_for_prior_uploads_default"
+            android:key="@string/preference_data_upload_check_for_prior_uploads_key"
+            android:summary="@string/preference_data_upload_check_for_prior_uploads_summary"
+            android:title="@string/preference_data_upload_check_for_prior_uploads_title" />
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
         android:layout_width="match_parent"

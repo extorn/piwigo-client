@@ -371,6 +371,12 @@
 
     
 
+
+    
+    
+    <string name="preference_data_upload_check_for_prior_uploads_summary">Před odesláním zkontrolované kontroly na server</string>
+    <string name="preference_data_upload_check_for_prior_uploads_title">Pre-kontrolní soubory vybrané pro nahrání</string>
+
     
     
     <string name="preference_data_upload_delete_uploaded_summary">Smažte úspěšně nahrané soubory</string>

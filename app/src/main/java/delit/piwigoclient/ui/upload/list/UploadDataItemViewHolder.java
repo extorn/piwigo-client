@@ -32,6 +32,7 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
     private ResizingPicassoLoader<ImageView> imageLoader;
     private ImageView fileForUploadMimeTypeImageView;
     private ImageView fileUploadCancelledIndicator;
+    private TextView previouslyUploadedMarkerField;
 
     public UploadDataItemViewHolder(View view) {
         super(view);
@@ -77,6 +78,16 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
             fileForUploadMimeTypeImageView.setVisibility(View.VISIBLE);
         } else {
             fileForUploadMimeTypeImageView.setVisibility(View.GONE);
+        }
+        if(uploadDataItem.isPreviouslyUploaded()) {
+            previouslyUploadedMarkerField.setVisibility(View.VISIBLE);
+        } else {
+            previouslyUploadedMarkerField.setVisibility(View.GONE);
+        }
+        if(uploadDataItem.isNeedsCompression()) {
+            fileForUploadMimeTypeImageView.setBackgroundColor(itemView.getResources().getColor(R.color.needs_compression));
+        } else {
+            fileForUploadMimeTypeImageView.setBackgroundColor(itemView.getResources().getColor(R.color.transparent));
         }
         updateProgressFields(uploadDataItem);
 
@@ -130,6 +141,7 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
         
         fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
         fileForUploadMimeTypeImageView = itemView.findViewById(R.id.type_indicator);
+        previouslyUploadedMarkerField = itemView.findViewById(R.id.file_previously_uploaded);
 
         imageLoader = new ResizingPicassoLoader<>(fileForUploadImageView, this, 0, 0);
         imageLoader.setUsePlaceholderIfNothingToLoad(true);

@@ -431,7 +431,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         });
 
         if (filesToUploadAdapter == null) {
-            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter<>(new ArrayList<DocumentFile>(), new AdapterActionListener());
+            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(new AdapterActionListener<>());
             filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
 
             filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -595,9 +595,15 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             event.requestUriReadPermission();
 
             Set<String> visibleMimeTypes = new HashSet<>();
-            //FIXME only add this if the server supports video of some sort!
-            visibleMimeTypes.add("video/*");
-            visibleMimeTypes.add("audio/*");
+            Set<String> acceptableMimes = IOUtils.getMimeTypesFromFileExts(new HashSet<>(), allowedFileTypes);
+            boolean videoSupported = IOUtils.hasMimeMatch(acceptableMimes, "video/*");
+            boolean audioSupported = IOUtils.hasMimeMatch(acceptableMimes, "audio/*");
+            if(videoSupported) {
+                visibleMimeTypes.add("video/*");
+            }
+            if(videoSupported || audioSupported) {
+                visibleMimeTypes.add("audio/*");
+            }
             IOUtils.getMimeTypesFromFileExts(visibleMimeTypes, allowedFileTypes);
             event.withVisibleMimeTypes(visibleMimeTypes);
 
@@ -1180,21 +1186,21 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
     private void releaseUriPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            appSettingsViewModel.releaseAllPersistableUriPermissions(requireContext(), URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD);
+            appSettingsViewModel.removeAllUriPermissionsRecords(requireContext(), URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD);
         }
     }
 
     private void releaseUriPermissionsForUploadItems(Collection<Uri> fileForUploadUris) {
         //FIXME this is called but seems to call the other one.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            appSettingsViewModel.releasePersistableUriPermission(requireContext(), fileForUploadUris, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, false);
+            appSettingsViewModel.removeAllUriPermissionsRecords(requireContext(), fileForUploadUris, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD);
         }
     }
 
     protected void releaseUriPermissionsForUploadItem(@NonNull Uri fileForUploadUri) {
         //FIXME this is called way too often  (on file finished with).
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            appSettingsViewModel.releasePersistableUriPermission(requireContext(), fileForUploadUri, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, false);
+            appSettingsViewModel.removeAllUriPermissionsRecords(requireContext(), fileForUploadUri, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD);
         }
     }
 
@@ -1203,6 +1209,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         String message = getString(R.string.alert_upload_success);
         notifyUser(getContext(), R.string.alert_success, message);
         allowUserUploadConfiguration(null);
+        updateTotalUploadSizeField();
     }
 
     public void onNotificationUploadJobFailure(UploadJob job) {
@@ -1243,6 +1250,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         compressVideosCheckbox.setChecked(uploadJob.isCompressPlayableMediaBeforeUpload());
         setPrivacyLevelSpinnerSelection(uploadJob.getPrivacyLevelWanted());
         deleteFilesAfterUploadCheckbox.setChecked(uploadJob.isDeleteFilesAfterUpload());
+        updateTotalUploadSizeField();
         //FIXME populate the remaining fields. (can be removed from the job status tab then).
         allowUserUploadConfiguration(uploadJob);
     }

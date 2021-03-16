@@ -6,6 +6,9 @@
     <color name="colorTest4">#00FFFF</color>
     <color name="colorTest5">#FF00FF</color>
 
+
+    <color name="needs_compression">#FFEB3B</color>
+
     <!-- raw colors used -->
     <color name="transparent">#00000000</color>
 

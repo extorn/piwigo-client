@@ -297,6 +297,17 @@ public class FileUploadDetails implements Parcelable {
         throw new IllegalStateException("No file found");
     }
 
+    public @NonNull
+    String getFileExt(@NonNull Context context) {
+        if (fileUri != null) {
+            return Objects.requireNonNull(IOUtils.getFileExt(context, fileUri));
+        } else if (compressedFileUri != null) {
+            return Objects.requireNonNull(IOUtils.getFileExt(context, compressedFileUri));
+        }
+        Logging.log(Log.ERROR, TAG, "No file found in file upload details");
+        throw new IllegalStateException("No file found");
+    }
+
     public boolean needsVerification() {
         return isUploadNeeded() || isStatusIn(UPLOADED, CORRUPT);
     }

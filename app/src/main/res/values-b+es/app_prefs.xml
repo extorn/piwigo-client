@@ -371,6 +371,12 @@
 
     
 
+
+    
+    
+    <string name="preference_data_upload_check_for_prior_uploads_summary">Cheque superior puntiado por servidor</string>
+    <string name="preference_data_upload_check_for_prior_uploads_title">Archivos previos a la verificación seleccionados para cargar</string>
+
     
     
     <string name="preference_data_upload_delete_uploaded_summary">Eliminar archivos cargados correctamente</string>

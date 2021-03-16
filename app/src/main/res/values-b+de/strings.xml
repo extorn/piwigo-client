@@ -727,4 +727,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="please_wait_in_progress">Bitte warten Sie, bis die vorherige Anfrage abgeschlossen ist</string>
     
     <string name="upload_of_files_complete_finishing_up">Upload von Dateien abschließen. Einfach fertig.</string>
+    <string name="uploaded_previously">Vorher hochgeladen</string>
+    <string name="migrated_settings_from_previous_version">Einstellungen aus der vorherigen App-Version migriert</string>
 </resources>

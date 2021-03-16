@@ -78,4 +78,12 @@ public class Utils {
         }
         return new String(data, 0, len);
     }
+
+    public static long longFractionOf(long total, int numerator, int divisor) {
+        return (int)Math.round(((double)(total / divisor)) * numerator);
+    }
+
+    public static int intFractionOf(int total, int numerator, int divisor) {
+        return (int)Math.round(((double)(total / divisor)) * numerator);
+    }
 }

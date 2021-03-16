@@ -3,6 +3,7 @@ package delit.libs.ui.util;
 import android.util.Log;
 
 import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import delit.libs.core.util.Logging;
 
@@ -58,6 +60,32 @@ public class ExecutorManager {
         throw new TimeoutException("Waited as long as possible");
     }
 
+    public void setThreadFactory(ThreadFactory threadFactory) {
+        executor.setThreadFactory(threadFactory);
+    }
+
+    public void setMaxPoolSize(int newMaxThreadCount) {
+        executor.setMaximumPoolSize(newMaxThreadCount);
+    }
+
+    public void setCorePoolSize(int min) {
+        executor.setCorePoolSize(min);
+    }
+
+    public static class NamedThreadFactory implements ThreadFactory {
+
+        private final AtomicInteger mCount = new AtomicInteger(1);
+        private final String threadNamePrefix;
+
+        public NamedThreadFactory(String threadNamePrefix) {
+            this.threadNamePrefix = threadNamePrefix;
+        }
+
+        public Thread newThread(@NonNull Runnable r) {
+            return new Thread(r, threadNamePrefix + " #" + mCount.getAndIncrement());
+        }
+
+    }
 
     public abstract static class TaskSubmitter<T,S> implements Callable<List<Future<T>>> {
 

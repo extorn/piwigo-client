@@ -371,6 +371,12 @@
 
     
 
+
+    
+    
+    <string name="preference_data_upload_check_for_prior_uploads_summary">Vorige geüploade cheque per server</string>
+    <string name="preference_data_upload_check_for_prior_uploads_title">Controleer bestanden die zijn geselecteerd voor upload</string>
+
     
     
     <string name="preference_data_upload_delete_uploaded_summary">Verwijder succesvol geüploade bestanden</string>

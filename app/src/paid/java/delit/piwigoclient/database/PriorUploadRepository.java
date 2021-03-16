@@ -3,24 +3,32 @@ package delit.piwigoclient.database;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
+import androidx.room.Transaction;
+import androidx.sqlite.db.SimpleSQLiteQuery;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.Future;
 
+import delit.libs.core.util.Logging;
 import delit.libs.util.CollectionUtils;
+import delit.piwigoclient.database.dao.PriorUploadDao;
+import delit.piwigoclient.database.dao.UploadDestinationDao;
+import delit.piwigoclient.database.pojo.UploadDestinationWithPriorUploads;
 
 public class PriorUploadRepository {
     private static PriorUploadRepository instance;
     private final PriorUploadDao priorUploadDao;
+    private final UploadDestinationDao uploadDestinationWithPriorUploadsDao;
 
-    PriorUploadRepository(PiwigoDatabase database) {
+    PriorUploadRepository(PiwigoUploadsDatabase database) {
         this.priorUploadDao = database.priorUploadDao();
+        this.uploadDestinationWithPriorUploadsDao = database.uploadDestinationWithPriorUploadsDao();
     }
 
-    public static PriorUploadRepository getInstance(final PiwigoDatabase database) {
+    public static PriorUploadRepository getInstance(final PiwigoUploadsDatabase database) {
         if (instance == null) {
             synchronized (PriorUploadRepository.class) {
                 if (instance == null) {
@@ -31,55 +39,69 @@ public class PriorUploadRepository {
         return instance;
     }
 
-    // Room executes all queries on a separate thread.
-    // Observed LiveData will notify the observer when the data has changed.
-    public LiveData<List<PriorUpload>> getAllPriorUploadsWithUri(@NonNull Uri uri) {
-        return priorUploadDao.loadAllByUri(uri.toString());
-    }
-
-    // Room executes all queries on a separate thread.
-    // Observed LiveData will notify the observer when the data has changed.
-    public LiveData<List<PriorUpload>> getAllPriorUploadsWithParentUri(@NonNull Uri parentUri) {
-        return priorUploadDao.loadAllByParentUri(parentUri.toString());
-    }
-
-    // Room executes all queries on a separate thread.
-    // Observed LiveData will notify the observer when the data has changed.
-    public LiveData<List<PriorUpload>> getAllPriorUploads(@NonNull Collection<Uri> uris) {
-        return priorUploadDao.loadAllByUris(CollectionUtils.toStrings(uris, new HashSet<>(uris.size())));
-    }
-
-    // Room executes all queries on a separate thread.
-    // Observed LiveData will notify the observer when the data has changed.
-    public LiveData<List<PriorUpload>> getAllPriorUploadsByChecksum(@NonNull Collection<Uri> checksums) {
-        return priorUploadDao.loadAllByChecksums(CollectionUtils.toStrings(checksums, new HashSet<>(checksums.size())));
-    }
-
-    // Room executes all queries on a separate thread.
-    // Observed LiveData will notify the observer when the data has changed.
-    public LiveData<List<PriorUpload>> getAllPriorUploads(@NonNull String checksum) {
-        return priorUploadDao.loadAllByChecksum(checksum);
-    }
-
-    // You must call this on a non-UI thread or your app will throw an exception. Room ensures
-    // that you're not doing any long running operations on the main thread, blocking the UI.
-    public void insert(@NonNull PriorUpload priorUpload) {
-        AppSettingsDatabase.databaseWriteExecutor.execute(() -> priorUploadDao.insertAll(priorUpload));
-    }
-
-    public void delete(@NonNull PriorUpload priorUpload) {
-        AppSettingsDatabase.databaseWriteExecutor.execute(() -> priorUploadDao.delete(priorUpload));
-    }
-
-    public void deleteAllForUri(@NonNull Uri uri) {
-        AppSettingsDatabase.databaseWriteExecutor.execute(() -> priorUploadDao.deleteAll(uri.toString()));
-    }
-
-    public void deleteAll(@NonNull Set<Uri> uris) {
-        HashSet<String> uriStrs = new HashSet<>();
-        for(Uri u : uris) {
-            uriStrs.add(u.toString());
+    public List<Uri> getAllPreviouslyUploadedUrisToServerKeyMatching(String uploadToKey, @NonNull Collection<Uri> uris) {
+        // Usage of RawDao
+        List<Object> args = new ArrayList<>(uris.size() + 1);
+        args.add(uploadToKey);
+        args.addAll(CollectionUtils.toStrings(uris, new HashSet<>(uris.size())));
+        List<String> uriStrs = priorUploadDao.getAllMatchingRawQuery(new SimpleSQLiteQuery("SELECT PriorUpload.uri FROM PriorUpload INNER JOIN UploadDestinationPriorUploadCrossRef ON PriorUpload.id = UploadDestinationPriorUploadCrossRef.priorUploadId INNER JOIN UploadDestination ON UploadDestinationPriorUploadCrossRef.uploadToId = UploadDestination.id WHERE uploadToKey = :uploadToKey AND PriorUpload.uri IN(" + makePlaceholders(uris.size()) + ")", args.toArray()));
+        List<Uri> retVal = new ArrayList<>();
+        for(String uriStr : uriStrs) {
+            retVal.add(Uri.parse(uriStr));
         }
-        AppSettingsDatabase.databaseWriteExecutor.execute(() -> priorUploadDao.deleteAll(uriStrs));
+        return retVal;
+    }
+
+    @Transaction
+    public List<String> getAllPreviouslyUploadedChecksumsToServerKeyMatching(String uploadToKey, @NonNull Collection<String> checksums) {
+        List<Object> args = new ArrayList<>(checksums.size() + 1);
+        args.add(uploadToKey);
+        args.addAll(checksums);
+        return priorUploadDao.getAllMatchingRawQuery(new SimpleSQLiteQuery("SELECT PriorUpload.uri FROM PriorUpload INNER JOIN UploadDestinationPriorUploadCrossRef ON PriorUpload.id = UploadDestinationPriorUploadCrossRef.priorUploadId INNER JOIN UploadDestination ON UploadDestinationPriorUploadCrossRef.uploadToId = UploadDestination.id WHERE uploadToKey = :uploadToKey AND PriorUpload.checksum IN("+makePlaceholders(checksums.size())+")", args.toArray()));
+    }
+
+    String makePlaceholders(int len) {
+        if (len < 1) {
+            // It will lead to an invalid query anyway ..
+            throw new RuntimeException("No placeholders");
+        } else {
+            StringBuilder sb = new StringBuilder(len * 2 - 1);
+            sb.append("?");
+            for (int i = 1; i < len; i++) {
+                sb.append(",?");
+            }
+            return sb.toString();
+        }
+    }
+
+    public Future<?> insert(@NonNull UploadDestinationWithPriorUploads uploadDestination) {
+        return PiwigoUploadsDatabase.databaseWriteExecutor.submit(() -> {
+            try {
+                uploadDestinationWithPriorUploadsDao.upsert(uploadDestination);
+            } catch(RuntimeException e) {
+                Logging.recordException(e);
+            }
+        });
+    }
+
+    public void delete(@NonNull UploadDestinationWithPriorUploads uploadDestination) {
+        PiwigoUploadsDatabase.databaseWriteExecutor.execute(() -> {
+            try {
+                uploadDestinationWithPriorUploadsDao.delete(uploadDestination);
+            } catch(RuntimeException e) {
+                Logging.recordException(e);
+            }
+        });
+    }
+
+    public void insertAll(List<UploadDestinationWithPriorUploads> destinations) {
+        PiwigoUploadsDatabase.databaseWriteExecutor.execute(() -> {
+            try {
+                uploadDestinationWithPriorUploadsDao.insertAll(destinations);
+            } catch(RuntimeException e) {
+                Logging.recordException(e);
+            }
+        });
+
     }
 }

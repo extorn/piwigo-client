@@ -371,6 +371,12 @@
 
     
 
+
+    
+    
+    <string name="preference_data_upload_check_for_prior_uploads_summary">Vorher hochgeladener Check pro Server</string>
+    <string name="preference_data_upload_check_for_prior_uploads_title">Dateien, die zum Hochladen ausgewählt sind, vorüberprüfen</string>
+
     
     
     <string name="preference_data_upload_delete_uploaded_summary">Löschen Sie erfolgreich hochgeladene Dateien</string>

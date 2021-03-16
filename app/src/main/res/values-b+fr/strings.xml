@@ -727,4 +727,6 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="please_wait_in_progress">Veuillez attendre la demande précédente de terminer</string>
     
     <string name="upload_of_files_complete_finishing_up">Téléchargement de fichiers complète. Juste finir.</string>
+    <string name="uploaded_previously">Téléchargé avant</string>
+    <string name="migrated_settings_from_previous_version">Paramètres migrés de la version précédente de l\'application</string>
 </resources>

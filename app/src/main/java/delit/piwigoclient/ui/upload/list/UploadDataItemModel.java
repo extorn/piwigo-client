@@ -5,7 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import androidx.documentfile.provider.DocumentFile;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +18,6 @@ import java.util.Set;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
-import delit.libs.util.IOUtils;
 
 public class UploadDataItemModel implements Parcelable {
 
@@ -40,11 +39,8 @@ public class UploadDataItemModel implements Parcelable {
         uploadDataItems = ParcelUtils.readArrayList(p, UploadDataItem.class.getClassLoader());
     }
 
-    public UploadDataItemModel(ArrayList<DocumentFile> filesToUpload) {
+    public UploadDataItemModel() {
         this.uploadDataItems = new ArrayList<>();
-        for (DocumentFile f : filesToUpload) {
-            uploadDataItems.add(new UploadDataItem(f.getUri(), IOUtils.getFilename(f), f.getType(), f.length()));
-        }
     }
 
     public ArrayList<UploadDataItem> getUploadDataItemsReference() {
@@ -86,20 +82,26 @@ public class UploadDataItemModel implements Parcelable {
     }
 
     /**
+     * Will not add items with a Uri or Hashcode already present.
+     *
      * @param filesForUpload list of files to be uploaded
      * @return count of items actually added
      */
-    public int addAll(List<UploadDataItem> filesForUpload) {
+    public int addAll(@NonNull List<UploadDataItem> filesForUpload) {
 
+        Set<Uri> uniqueUris = new HashSet<>(filesForUpload.size());
         Set<String> hashcodesForFilesToAll = new HashSet<>(filesForUpload.size());
         for(UploadDataItem item : filesForUpload) {
             hashcodesForFilesToAll.add(item.getDataHashcode());
+            uniqueUris.add(item.getUri());
         }
+        hashcodesForFilesToAll.remove(null); // remove null if present
 
+        Set<Uri> urisAlreadyPresent = findUris(uniqueUris);
         Set<String> hashCodesAlreadyPresent = findDataHashCodes(hashcodesForFilesToAll);
         int itemsAdded = 0;
         for(UploadDataItem item : filesForUpload) {
-            if(!hashCodesAlreadyPresent.contains(item.getDataHashcode())) {
+            if(!hashCodesAlreadyPresent.contains(item.getDataHashcode()) && !urisAlreadyPresent.contains(item.getUri())) {
                 uploadDataItems.add(item);
                 itemsAdded++;
             }
@@ -107,11 +109,25 @@ public class UploadDataItemModel implements Parcelable {
         return itemsAdded;
     }
 
+    private Set<Uri> findUris(Set<Uri> urisToFind) {
+        HashSet<Uri> urisFound = new HashSet<>();
+        if(urisToFind.size() > 0) {
+            for (UploadDataItem item : uploadDataItems) {
+                if (urisToFind.contains(item.getUri())) {
+                    urisFound.add(item.getUri());
+                }
+            }
+        }
+        return urisFound;
+    }
+
     private Set<String> findDataHashCodes(Set<String> dataHashCodesToFind) {
         HashSet<String> foundHashcodes = new HashSet<>();
-        for(UploadDataItem item : uploadDataItems) {
-            if(dataHashCodesToFind.contains(item.getDataHashcode())) {
-                foundHashcodes.add(item.getDataHashcode());
+        if(dataHashCodesToFind.size() > 0) {
+            for (UploadDataItem item : uploadDataItems) {
+                if (dataHashCodesToFind.contains(item.getDataHashcode())) {
+                    foundHashcodes.add(item.getDataHashcode());
+                }
             }
         }
         return foundHashcodes;

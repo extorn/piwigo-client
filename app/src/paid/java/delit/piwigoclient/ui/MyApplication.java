@@ -11,6 +11,7 @@ import delit.piwigoclient.ui.upgrade.PreferenceMigrator;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator226Paid;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator256Paid;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator362Paid;
+import delit.piwigoclient.ui.upgrade.PreferenceMigrator392Paid;
 
 public class MyApplication extends AbstractMyApplication {
 
@@ -38,6 +39,7 @@ public class MyApplication extends AbstractMyApplication {
         migrators.add(new PreferenceMigrator226Paid());
         migrators.add(new PreferenceMigrator256Paid());
         migrators.add(new PreferenceMigrator362Paid());
+        migrators.add(new PreferenceMigrator392Paid());
         return migrators;
     }
 

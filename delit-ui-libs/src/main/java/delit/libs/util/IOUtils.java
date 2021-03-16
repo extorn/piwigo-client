@@ -1091,8 +1091,18 @@ public class IOUtils {
         return folder;
     }
 
+    public static List<Uri> getUriAndTreeUriIfUriIsNot(@NonNull Uri uri) {
+        Uri uriTreeUri = IOUtils.getTreeUri(uri);
+        List<Uri> uris = new ArrayList<>(2);
+        uris.add(uri);
+        if(!uriTreeUri.equals(uri)) {
+            uris.add(uriTreeUri);
+        }
+        return uris;
+    }
+
     @RequiresApi(api = KITKAT)
-    public static <T extends Collection<Uri>> ArrayList<Uri> removeUrisWeLackPermissionFor(@NonNull Context context, @NonNull T uris) {
+    public static <T extends Collection<Uri>> ArrayList<Uri> getSubsetOfUrisContainingOnlyThoseAppHasPermissionFor(@NonNull Context context, @NonNull T uris) {
         // remove the persisted uri permission for each
         Set<Uri> heldPerms = new HashSet<>();
         for(UriPermission actualHeldPerm : context.getContentResolver().getPersistedUriPermissions()) {
@@ -1585,5 +1595,9 @@ public class IOUtils {
                 Logging.log(Log.WARN, tag, "\"Unable to delete " + fileDesc);
             }
         }
+    }
+
+    public static boolean hasMimeMatch(Set<String> acceptableMimes, String filterPattern) {
+        return null != MimeTypeFilter.matches(acceptableMimes.toArray(new String[0]), filterPattern);
     }
 }

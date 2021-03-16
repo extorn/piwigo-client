@@ -727,4 +727,6 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="please_wait_in_progress">请等待以前的要求完成</string>
     
     <string name="upload_of_files_complete_finishing_up">上传文件完成。 只是完成。</string>
+    <string name="uploaded_previously">上传之前</string>
+    <string name="migrated_settings_from_previous_version">设置从以前的应用程序版本迁移</string>
 </resources>
