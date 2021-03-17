@@ -12,12 +12,13 @@ import delit.libs.ui.util.ParcelUtils;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
+import delit.piwigoclient.ui.upload.list.UploadDataItem;
 
 public class FileSizeExceededAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-    private final Set<Uri> filesToDelete;
+    private final Set<UploadDataItem> filesToDelete;
 
-    public FileSizeExceededAction(FUIH uiHelper, Set<Uri> filesForReview) {
+    public FileSizeExceededAction(FUIH uiHelper, Set<UploadDataItem> filesForReview) {
         super(uiHelper);
         this.filesToDelete = filesForReview;
     }
@@ -55,8 +56,8 @@ public class FileSizeExceededAction<F extends AbstractUploadFragment<F,FUIH>,FUI
         F fragment = getUiHelper().getParent();
 
         if (Boolean.TRUE == positiveAnswer) {
-            for (Uri file : filesToDelete) {
-                fragment.onUserActionDeleteFileFromUpload(fragment.getFilesForUploadViewAdapter(), file, false);
+            for (UploadDataItem file : filesToDelete) {
+                fragment.onUserActionDeleteFileFromUpload(fragment.getFilesForUploadViewAdapter(), file.getUri(), false);
             }
         }
         if (positiveAnswer != null) {

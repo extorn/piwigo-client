@@ -1509,6 +1509,10 @@ public class IOUtils {
     }
 
 
+    public static boolean isImage(@Nullable String mimeType) {
+        return MimeTypeFilter.matches(mimeType, "image/*");
+    }
+
     public static boolean isPlayableMedia(@Nullable String mimeType) {
         boolean isVideo = MimeTypeFilter.matches(mimeType, "video/*");
         boolean isAudio = MimeTypeFilter.matches(mimeType, "audio/*");

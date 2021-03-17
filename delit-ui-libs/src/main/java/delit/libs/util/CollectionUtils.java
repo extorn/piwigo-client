@@ -37,15 +37,17 @@ public class CollectionUtils {
         StringBuilder sb = new StringBuilder();
 
         String itemVal;
-        for (Object item : items) {
+        for (Iterator<?> iterator = items.iterator(); iterator.hasNext(); ) {
+            Object item = iterator.next();
             itemVal = item == null ? null : item.toString();
             sb.append(itemVal);
-            if(itemVal != null && itemVal.contains(delimiter)) {
+            if (itemVal != null && itemVal.contains(delimiter)) {
                 Logging.log(Log.ERROR, TAG, "generated CSV list is corrupt as value contained a delimiter : " + itemVal);
             }
-            sb.append(delimiter);
+            if(iterator.hasNext()) {
+                sb.append(delimiter);
+            }
         }
-        sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
 

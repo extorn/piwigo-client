@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -16,8 +17,10 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.material.button.MaterialButton;
 
 import delit.libs.core.util.Logging;
+import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.recycler.CustomViewHolder;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
@@ -52,6 +55,7 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
             imageLoader.load();
         }
         updateProgressFields(uploadDataItem);
+        setCompressionIconColor();
     }
 
     @Override
@@ -76,7 +80,11 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
         } else if (MimeTypes.isAudio(uploadDataItem.getMimeType())) {
             fileForUploadMimeTypeImageView.setImageDrawable(ResourcesCompat.getDrawable(itemView.getResources(), R.drawable.ic_audiotrack_black_24dp, itemView.getContext().getTheme()));
             fileForUploadMimeTypeImageView.setVisibility(View.VISIBLE);
+        } else if (IOUtils.isImage(uploadDataItem.getMimeType())) {
+            fileForUploadMimeTypeImageView.setImageDrawable(ResourcesCompat.getDrawable(itemView.getResources(), R.drawable.ic_baseline_image_black_24, itemView.getContext().getTheme()));
+            fileForUploadMimeTypeImageView.setVisibility(View.VISIBLE);
         } else {
+            fileForUploadMimeTypeImageView.setImageDrawable(ResourcesCompat.getDrawable(itemView.getResources(), R.drawable.ic_file_black_24dp, itemView.getContext().getTheme()));
             fileForUploadMimeTypeImageView.setVisibility(View.GONE);
         }
         if(uploadDataItem.isPreviouslyUploaded()) {
@@ -84,13 +92,48 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
         } else {
             previouslyUploadedMarkerField.setVisibility(View.GONE);
         }
-        if(uploadDataItem.isNeedsCompression()) {
-            fileForUploadMimeTypeImageView.setBackgroundColor(itemView.getResources().getColor(R.color.needs_compression));
-        } else {
-            fileForUploadMimeTypeImageView.setBackgroundColor(itemView.getResources().getColor(R.color.transparent));
-        }
+        setCompressionIconColor();
+
         updateProgressFields(uploadDataItem);
 
+    }
+
+    private void setCompressionIconColor() {
+        UploadDataItem item = getItem();
+        @ColorRes int colorId;
+        if(item.isCompressThisFile() == null) {
+            if(item.isCompressByDefault()) {
+                // compression set (may or may not require it)
+                colorId = R.color.compress_this_file_yes_default;
+            } else {
+                if(item.isNeedsCompression()) {
+                    // compression not set, but requires it
+                    colorId = R.color.compress_this_file_needed;
+                } else {
+                    // compression not set, does not require it
+                    colorId = R.color.transparent;
+                }
+            }
+        } else {
+            if(item.isCompressThisFile()) {
+                // force compression
+                colorId = R.color.compress_this_file_yes;
+            } else {
+                if(item.isNeedsCompression()) {
+                    // force no compression but requires it
+                    colorId = R.color.compress_this_file_needed;
+                } else {
+                    if(item.isCompressByDefault()) {
+                        // force no compression (overriding default)
+                        colorId = R.color.compress_this_file_no;
+                    } else {
+                        // compression not set either for this file or as a default
+                        colorId = R.color.transparent;
+                    }
+                }
+            }
+        }
+        fileForUploadMimeTypeImageView.setBackgroundColor(itemView.getResources().getColor(colorId));
     }
 
     private void updateProgressFields(UploadDataItem uploadDataItem) {
@@ -143,6 +186,8 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
         fileForUploadMimeTypeImageView = itemView.findViewById(R.id.type_indicator);
         previouslyUploadedMarkerField = itemView.findViewById(R.id.file_previously_uploaded);
 
+        CustomClickTouchListener.callClickOnTouch(fileForUploadMimeTypeImageView, this::toggleCompression);
+
         imageLoader = new ResizingPicassoLoader<>(fileForUploadImageView, this, 0, 0);
         imageLoader.setUsePlaceholderIfNothingToLoad(true);
 
@@ -163,6 +208,11 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
             onDeleteButtonClicked((IVH) this, true);
             return true;
         });
+    }
+
+    private void toggleCompression(View view) {
+        getItem().setCompressThisFile(!Boolean.TRUE.equals(getItem().isCompressThisFile()));
+        setCompressionIconColor();
     }
 
     private void onDeleteButtonClicked(IVH vh, boolean longClick) {

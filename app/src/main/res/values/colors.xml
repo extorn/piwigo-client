@@ -6,8 +6,10 @@
     <color name="colorTest4">#00FFFF</color>
     <color name="colorTest5">#FF00FF</color>
 
-
-    <color name="needs_compression">#FFEB3B</color>
+    <color name="compress_this_file_yes">#4CAF50</color>
+    <color name="compress_this_file_yes_default">#8BC34A</color>
+    <color name="compress_this_file_no">#00BCD4</color>
+    <color name="compress_this_file_needed">#FF5722</color>
 
     <!-- raw colors used -->
     <color name="transparent">#00000000</color>
@@ -44,6 +46,7 @@
     <color name="video_timebar_locally_cached">@color/app_secondary</color>
     <color name="video_timebar_unplayed">#FF555555</color>
     <color name="video_timebar_buffered">#FFFFFF</color>
+
 
     <!-- end used -->
 

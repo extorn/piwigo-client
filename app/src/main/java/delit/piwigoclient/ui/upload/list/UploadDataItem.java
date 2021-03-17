@@ -16,17 +16,6 @@ import delit.libs.util.progress.ProgressListener;
 
 public class UploadDataItem implements Parcelable {
 
-    public static final Creator<UploadDataItem> CREATOR = new Creator<UploadDataItem>() {
-        @Override
-        public UploadDataItem createFromParcel(Parcel in) {
-            return new UploadDataItem(in);
-        }
-
-        @Override
-        public UploadDataItem[] newArray(int size) {
-            return new UploadDataItem[size];
-        }
-    };
     private static long nextUid;
     protected final UploadProgressInfo uploadProgress;
     private final long uid;
@@ -42,6 +31,9 @@ public class UploadDataItem implements Parcelable {
     public static final Integer STATUS_UPLOADED = 3;
     private boolean previouslyUploaded;
     private boolean needsCompression;
+    private Boolean compressThisFile;
+    private boolean compressByDefault; // not an individual setting.
+    private Boolean deleteAfterUpload;
 
     public UploadDataItem(Uri uri, String filename, String fileExt, String mimeType, long dataLength) {
         this.uri = uri;
@@ -54,15 +46,51 @@ public class UploadDataItem implements Parcelable {
     }
 
     protected UploadDataItem(Parcel in) {
+        uploadProgress = in.readParcelable(UploadProgressInfo.class.getClassLoader());
         uid = in.readLong();
         mimeType = in.readString();
         uri = in.readParcelable(Uri.class.getClassLoader());
-        setDataHashcode(in.readString());
-        setDataLength(in.readLong());
-        filename = in.readString();
         fileExt = in.readString();
-        uploadProgress = in.readParcelable(UploadProgressInfo.class.getClassLoader());
+        dataHashcode = in.readString();
+        dataLength = in.readLong();
+        filename = in.readString();
+        previouslyUploaded = in.readByte() != 0;
+        needsCompression = in.readByte() != 0;
+        byte tmpCompressThisFile = in.readByte();
+        compressThisFile = tmpCompressThisFile == 0 ? null : tmpCompressThisFile == 1;
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(uploadProgress, flags);
+        dest.writeLong(uid);
+        dest.writeString(mimeType);
+        dest.writeParcelable(uri, flags);
+        dest.writeString(fileExt);
+        dest.writeString(dataHashcode);
+        dest.writeLong(dataLength);
+        dest.writeString(filename);
+        dest.writeByte((byte) (previouslyUploaded ? 1 : 0));
+        dest.writeByte((byte) (needsCompression ? 1 : 0));
+        dest.writeByte((byte) (compressThisFile == null ? 0 : compressThisFile ? 1 : 2));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<UploadDataItem> CREATOR = new Creator<UploadDataItem>() {
+        @Override
+        public UploadDataItem createFromParcel(Parcel in) {
+            return new UploadDataItem(in);
+        }
+
+        @Override
+        public UploadDataItem[] newArray(int size) {
+            return new UploadDataItem[size];
+        }
+    };
 
     private static long getNextUid() {
         nextUid++;
@@ -72,25 +100,8 @@ public class UploadDataItem implements Parcelable {
         return nextUid;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(uid);
-        dest.writeString(mimeType);
-        dest.writeParcelable(getUri(), flags);
-        dest.writeString(getDataHashcode());
-        dest.writeLong(getDataLength());
-        dest.writeString(filename);
-        dest.writeString(fileExt);
-        dest.writeParcelable(uploadProgress, flags);
-    }
-
     public String getFileExt() {
         return fileExt;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     public void calculateDataHashCode(Context context, ProgressListener progressListener) throws Md5SumUtils.Md5SumException {
@@ -181,12 +192,36 @@ public class UploadDataItem implements Parcelable {
         this.previouslyUploaded = previouslyUploaded;
     }
 
+    public Boolean isCompressThisFile() {
+        return compressThisFile;
+    }
+
+    public void setCompressThisFile(boolean compressThisFile) {
+        this.compressThisFile = compressThisFile;
+    }
+
     public boolean isNeedsCompression() {
         return needsCompression;
     }
 
     public void setNeedsCompression(boolean needsCompression) {
         this.needsCompression = needsCompression;
+    }
+
+    public void setCompressThisFileByDefault(boolean compressByDefault) {
+        this.compressByDefault = compressByDefault;
+    }
+
+    public boolean isCompressByDefault() {
+        return compressByDefault;
+    }
+
+    public void setDeleteAfterUpload(boolean deleteAfterUpload) {
+        this.deleteAfterUpload = deleteAfterUpload;
+    }
+
+    public Boolean getDeleteAfterUpload() {
+        return deleteAfterUpload;
     }
 
     protected static class UploadProgressInfo implements Parcelable {

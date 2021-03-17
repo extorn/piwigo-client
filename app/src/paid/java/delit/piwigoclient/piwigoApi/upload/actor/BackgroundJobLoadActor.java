@@ -1,7 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload.actor;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -11,10 +10,8 @@ import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
@@ -29,6 +26,8 @@ import delit.piwigoclient.piwigoApi.upload.actors.JobLoadActor;
 import delit.piwigoclient.ui.file.DocumentFileFilter;
 import delit.piwigoclient.ui.file.SimpleDocumentFileFilter;
 import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
+import delit.piwigoclient.ui.upload.list.UploadDataItem;
+import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
 
 public class BackgroundJobLoadActor extends JobLoadActor {
     private final static String TAG = "BackgroundJobLoadActor";
@@ -70,7 +69,9 @@ public class BackgroundJobLoadActor extends JobLoadActor {
             getListener().postError(jobConfig.getJobId(), getContext().getString(R.string.ignoring_job_local_folder_not_found));
             return null;
         }
+        boolean deleteAfterUpload = jobConfig.isDeleteFilesAfterUpload(getContext());
         boolean compressVideos = jobConfig.isCompressVideosBeforeUpload(getContext());
+        boolean compressImages = jobConfig.isCompressImagesBeforeUpload(getContext());
         Set<String> fileExtsToUpload = jobConfig.getFileExtsToUpload(getContext());
         int maxFileSizeMb = jobConfig.getMaxUploadSize(getContext());
         if (fileExtsToUpload == null) {
@@ -83,7 +84,7 @@ public class BackgroundJobLoadActor extends JobLoadActor {
         SimpleDocumentFileFilter filter = new SimpleDocumentFileFilter() {
             @Override
             protected boolean nonAcceptOverride(DocumentFile f) {
-                return compressVideos && IOUtils.isPlayableMedia(f.getType());
+                return compressVideos && IOUtils.isPlayableMedia(f.getType()) || compressImages && IOUtils.isImage(f.getType());
             }
         }.withFileExtIn(fileExtsToUpload).withMaxSizeBytes(maxFileSizeMb * 1024 * 1024);
         List<DocumentFile> matchingFiles = DocumentFileFilter.filterDocumentFiles(localFolderToMonitor.listFiles(), filter);
@@ -94,14 +95,24 @@ public class BackgroundJobLoadActor extends JobLoadActor {
         if(matchingFiles.isEmpty()) {
             return null;
         }
-        Map<Uri,Long> filesToUpload = new HashMap<>(matchingFiles.size());
+        UploadDataItemModel model = new UploadDataItemModel();
         for (DocumentFile matchingFile : matchingFiles) {
-            filesToUpload.put(matchingFile.getUri(), matchingFile.length());
+            UploadDataItem udi = new UploadDataItem(matchingFile.getUri(), null, null, matchingFile.getType(), matchingFile.length());
+            boolean compress = IOUtils.isPlayableMedia(udi.getMimeType()) && compressVideos || IOUtils.isImage(udi.getMimeType()) && compressImages;
+            udi.setCompressThisFile(compress);
+            udi.setDeleteAfterUpload(deleteAfterUpload);
+            model.add(udi);
         }
 
+        boolean deleteFilesPostUpload = jobConfig.isDeleteFilesAfterUpload(getContext());
         CategoryItemStub category = jobConfig.getUploadToAlbum(getContext());
-        UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(getContext(), getPrefs()), filesToUpload, category,
-                jobConfig.getUploadedFilePrivacyLevel(getContext()), jobListener.getHandlerId(), jobConfig.isDeleteFilesAfterUpload(getContext()));
+        if(deleteFilesPostUpload) {
+            for (UploadDataItem uploadDataItem : model.getUploadDataItemsReference()) {
+                uploadDataItem.setDeleteAfterUpload(true);
+            }
+        }
+        UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(getContext(), getPrefs()), model, category,
+                jobConfig.getUploadedFilePrivacyLevel(getContext()), jobListener.getHandlerId(), deleteFilesPostUpload);
 
         uploadJob.setToRunInBackground();
         uploadJob.setJobConfigId(jobConfig.getJobId());
@@ -112,7 +123,6 @@ public class BackgroundJobLoadActor extends JobLoadActor {
 
         uploadJob.setPlayableMediaCompressionParams(jobConfig.getVideoCompressionParams(getContext()));
         uploadJob.setImageCompressionParams(jobConfig.getImageCompressionParams(getContext()));
-        pushJobConfigurationToFiles(uploadJob);
         return uploadJob;
     }
 

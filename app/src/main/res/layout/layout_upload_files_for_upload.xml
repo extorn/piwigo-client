@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingStart="2dp"
+    android:paddingTop="15dp"
+    android:paddingEnd="2dp"
+    android:paddingBottom="5dp">
+
+
+
+    <Button
+        android:id="@+id/information_for_upload_button"
+        style="?materialButtonIconStyle"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        app:icon="@drawable/ic_info_black_24dp"
+        app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"/>
+
+    <Button
+        android:id="@+id/select_files_for_upload_button"
+        style="?materialButtonIconStyle"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        app:icon="@drawable/ic_add_circle_black_24px"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/information_for_upload_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintVertical_bias="0"/>
+
+    <TextView
+        android:id="@+id/files_for_upload_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/selected_files_for_upload"
+        android:paddingStart="5dp"
+        android:paddingTop="0dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/files_for_upload_title"
+        android:textAppearance="?textAppearanceCaption"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
+        app:layout_constraintTop_toBottomOf="@id/information_for_upload_button"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/files_for_upload_count_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:paddingTop="0dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
+        tools:text="234"
+        android:textAppearance="?textAppearanceCaption"
+        app:layout_constraintStart_toEndOf="@+id/files_for_upload_label"
+        app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
+        app:layout_constraintBaseline_toBaselineOf="@+id/files_for_upload_label"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/files_for_upload_header_bottom_barrier"
+        app:barrierDirection="bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="information_for_upload_button, select_files_for_upload_button, files_for_upload_label"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/selected_files_for_upload"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/files_for_upload_header_bottom_barrier"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constrainedHeight="true"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

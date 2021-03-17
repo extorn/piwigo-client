@@ -83,14 +83,18 @@ public class UploadJob implements Parcelable {
     private DividableProgressTracker overallProgressTracker;
     private int runAttempts;
 
-    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, Map<Uri, Long> filesForUploadAndBytes, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel, boolean isDeleteFilesAfterUpload) {
+    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel, boolean isDeleteFilesAfterUpload) {
         this.jobId = jobId;
         this.connectionPrefs = connectionPrefs;
         this.responseHandlerId = responseHandlerId;
         this.uploadToCategory = destinationCategory;
         this.privacyLevelWanted = uploadedFilePrivacyLevel;
-        this.fileUploadDetails = buildFileUploadDetails(filesForUploadAndBytes);
         this.isDeleteFilesAfterUpload = isDeleteFilesAfterUpload;
+        fileUploadDetails = new HashMap<>();
+    }
+
+    public void addFileForUpload(FileUploadDetails fud) {
+        fileUploadDetails.put(fud.getFileUri(), fud);
     }
 
     protected UploadJob(Parcel in) {

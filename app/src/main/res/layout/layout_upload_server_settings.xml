@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/upload_server_detail_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?textAppearanceHeadline6"
+        android:paddingTop="15dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="@string/upload_server_detail_label"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"/>
+
+    <TextView
+        android:id="@+id/upload_username_label"
+        android:labelFor="@id/upload_username"
+        android:text="@string/upload_username_title"
+        style="?editableFieldLabel"/>
+
+    <TextView
+        android:id="@+id/upload_username"
+        tools:text="username"
+        style="?editableFieldText"/>
+
+    <TextView
+        android:id="@+id/upload_to_label"
+        android:labelFor="@id/selected_gallery"
+        android:text="@string/gallery_to_alter_title"
+        style="?editableFieldLabel" />
+
+    <TextView
+        android:id="@+id/selected_gallery"
+        tools:text="some album"
+        style="?editableFieldTextClickable"/>
+
+    <TextView
+        android:id="@+id/privacy_level_label"
+        android:labelFor="@id/privacy_level"
+        android:text="@string/upload_file_privacy_level_title"
+        style="?editableFieldLabel" />
+
+    <Spinner
+        android:id="@+id/privacy_level"
+        style="?editableFieldSpinner"/>
+
+    <TextView
+        android:id="@+id/upload_defaults_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?textAppearanceHeadline6"
+        android:paddingTop="15dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="@string/upload_defaults_label"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/delete_files_after_upload_checkbox"
+        android:text="@string/delete_uploaded_files_title"
+        style="?editableFieldSwitch"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/compress_images_button"
+        android:text="@string/compress_images"
+        style="?editableFieldSwitch"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/compress_videos_button"
+        android:text="@string/compress_videos"
+        style="?editableFieldSwitch"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"/>
+
+</LinearLayout>

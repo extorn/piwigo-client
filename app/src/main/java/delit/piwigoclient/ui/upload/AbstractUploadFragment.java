@@ -8,14 +8,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.NumberPicker;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -35,6 +35,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.greenrobot.eventbus.EventBus;
@@ -55,7 +56,6 @@ import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.list.BiArrayAdapter;
 import delit.libs.util.ArrayUtils;
-import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.progress.BasicProgressTracker;
 import delit.piwigoclient.BuildConfig;
@@ -143,21 +143,20 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     private MaterialButton fileSelectButton;
     private FilesToUploadRecyclerViewAdapter<?,?,?> filesToUploadAdapter;
     private Button uploadJobStatusButton;
-    private TextView uploadableFilesView;
     private SwitchMaterial compressVideosCheckbox;
     private SwitchMaterial allowUploadOfRawVideosIfIncompressibleCheckbox;
     private SwitchMaterial compressImagesCheckbox;
     private ViewPager mViewPager;
-    private ViewGroup compressImagesSettings;
-    private ViewGroup compressVideosSettings;
     private Spinner compressVideosQualitySpinner;
     private Spinner compressVideosAudioBitrateSpinner;
-    private NumberPicker compressImagesQualityNumberPicker;
+    private Slider compressImagesQualityNumberPicker;
     private Spinner compressImagesOutputFormatSpinner;
-    private NumberPicker compressImagesMaxHeightNumberPicker;
-    private NumberPicker compressImagesMaxWidthNumberPicker;
+    private EditText compressImagesMaxHeightNumberField;
+    private EditText compressImagesMaxWidthNumberField;
     private ProgressIndicator overallUploadProgressBar;
     private FilesForUploadViewModel filesForUploadViewModel; //TODO I don't think this is required, but it's not doing any harm that I can see.
+    private View compressImagesSettings;
+    private View compressVideosSettings;
 
 
     protected Bundle buildArgs(CategoryItemStub uploadToAlbum, int actionId) {
@@ -186,9 +185,9 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         if(savedInstanceState == null) {
             //Set these values once the screen is back to normal (otherwise horrible JVM crash)
             // only set them if the saved instance state is null else we overwrite the user values.
-            compressImagesQualityNumberPicker.setValue(UploadPreferences.getImageCompressionQuality(getContext(), getPrefs()));
-            compressImagesMaxHeightNumberPicker.setValue(UploadPreferences.getImageCompressionMaxHeight(getContext(), getPrefs()));
-            compressImagesMaxWidthNumberPicker.setValue(UploadPreferences.getImageCompressionMaxWidth(getContext(), getPrefs()));
+            compressImagesQualityNumberPicker.setValue(((float)UploadPreferences.getImageCompressionQuality(getContext(), getPrefs())));
+            compressImagesMaxHeightNumberField.setText(String.valueOf(UploadPreferences.getImageCompressionMaxHeight(getContext(), getPrefs())));
+            compressImagesMaxWidthNumberField.setText(String.valueOf(UploadPreferences.getImageCompressionMaxWidth(getContext(), getPrefs())));
         }
         super.onViewStateRestored(savedInstanceState);
     }
@@ -222,16 +221,16 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         return allowUploadOfRawVideosIfIncompressibleCheckbox.isChecked();
     }
 
-    public void onFilesForUploadTooLarge(String filenamesCsv, Map<Uri, Double> filesForReview) {
-        getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenamesCsv), R.string.button_no, R.string.button_cancel, R.string.button_yes, new FileSizeExceededAction<>(getUiHelper(), filesForReview.keySet()));
-    }
-
-    public boolean isCompressVideos() {
-        return compressVideosCheckbox.isChecked();
-    }
-
-    public boolean isCompressImages() {
-        return compressImagesCheckbox.isChecked();
+    public void onFilesForUploadTooLarge(Set<UploadDataItem> filesForReview) {
+        StringBuilder filenameListStrB = new StringBuilder();
+        for (UploadDataItem item : filesForReview) {
+            if (filesForReview.size() > 0) {
+                filenameListStrB.append(", ");
+            }
+            filenameListStrB.append(item.getUri().getPath());
+            filenameListStrB.append(IOUtils.bytesToNormalizedText(item.getDataLength()));
+        }
+        getUiHelper().showOrQueueTriButtonDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_cancel, R.string.button_yes, new FileSizeExceededAction<>(getUiHelper(), filesForReview));
     }
 
     public void withFilesUnacceptableForUploadRejected(Set<String> unacceptableFileExts) {
@@ -301,8 +300,8 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         fileSelectButton = view.findViewById(R.id.select_files_for_upload_button);
         fileSelectButton.setOnClickListener(v -> onClickFileSelectionWanted());
 
-        uploadableFilesView = view.findViewById(R.id.files_uploadable_label);
-        uploadableFilesView.setOnClickListener((v) -> getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.supported_file_types)));
+        Button informationForUploadButton = view.findViewById(R.id.information_for_upload_button);
+        informationForUploadButton.setOnClickListener(v -> onClickInformationForUploadButton());
 
         // check for login status as need to be logged in to get this information (supplied by server)
         ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
@@ -311,10 +310,6 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             String serverUri = activeProfile.getPiwigoServerAddress(getPrefs(), getContext());
             String callName = getString(R.string.logging_in_to_piwigo_pattern, serverUri);
             getUiHelper().invokeActiveServiceCall(callName, new LoginResponseHandler(), new OnLoginAction<>());
-        } else {
-            String list = CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes());
-            String fileTypesStr = String.format("(%1$s)", list == null ? " * " : list);
-            uploadableFilesView.setText(fileTypesStr);
         }
 
         filesForUploadView = view.findViewById(R.id.selected_files_for_upload);
@@ -371,18 +366,12 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             compressVideosCheckbox.setVisibility(GONE);
             compressVideosSettings.setVisibility(GONE);
         } else {
-            boolean compressVids = UploadPreferences.isCompressVideosByDefault(getContext(), getPrefs());
-            compressVideosCheckbox.setChecked(!compressVids);// ensure the checked change listener is called!
-            compressVideosCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                compressVideosSettings.setVisibility(isChecked && buttonView.isEnabled() ? VISIBLE : GONE);
-//                    compressVideosSettings.setEnabled(buttonView.isEnabled());
-            });
             compressVideosCheckbox.setOnClickListener(v -> {
-                CompoundButton buttonView = (CompoundButton) v;
-                compressVideosSettings.setVisibility(buttonView.isChecked() && buttonView.isEnabled() ? VISIBLE : GONE);
-                DisplayUtils.toggleHierachyEnabled(compressVideosSettings, buttonView.isEnabled());
+                updateCompressFilesSetting(getFilesForUploadViewAdapter().getUploadDataItemsModel().getUploadDataItemsReference());
+                // trigger a partial update.
+                getFilesForUploadViewAdapter().notifyItemRangeChanged(0, getFilesForUploadViewAdapter().getItemCount(), Boolean.FALSE);
             });
-            compressVideosCheckbox.setChecked(compressVids);
+            compressVideosCheckbox.setChecked(UploadPreferences.isCompressVideosByDefault(getContext(), getPrefs()));
         }
         allowUploadOfRawVideosIfIncompressibleCheckbox = view.findViewById(R.id.allow_upload_of_incompressible_videos_button);
 
@@ -391,58 +380,46 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         setSpinnerSelectedItem(compressImagesOutputFormatSpinner, UploadPreferences.getImageCompressionOutputFormat(getContext(), getPrefs()));
 
         compressImagesQualityNumberPicker = compressImagesSettings.findViewById(R.id.compress_images_quality);
-        compressImagesQualityNumberPicker.setMinValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_quality_min));
-        compressImagesQualityNumberPicker.setMaxValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_quality_max));
         compressImagesQualityNumberPicker.setSaveFromParentEnabled(false);
         compressImagesQualityNumberPicker.setSaveEnabled(true);
 
-        compressImagesMaxHeightNumberPicker = compressImagesSettings.findViewById(R.id.compress_images_max_height);
-        compressImagesMaxHeightNumberPicker.setMinValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_height_min));
-        compressImagesMaxHeightNumberPicker.setMaxValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_height_max));
-        compressImagesMaxHeightNumberPicker.setSaveFromParentEnabled(false);
-        compressImagesMaxHeightNumberPicker.setSaveEnabled(true);
+        compressImagesMaxHeightNumberField = compressImagesSettings.findViewById(R.id.compress_images_max_height);
+        compressImagesMaxHeightNumberField.setFilters(new InputFilter[]{new InputFilterMinMax(120, getResources().getInteger(R.integer.preference_data_upload_compress_images_max_height_max))});
+        compressImagesMaxHeightNumberField.setSaveFromParentEnabled(false);
+        compressImagesMaxHeightNumberField.setSaveEnabled(true);
 
-        compressImagesMaxWidthNumberPicker = compressImagesSettings.findViewById(R.id.compress_images_max_width);
-        compressImagesMaxWidthNumberPicker.setMinValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_width_min));
-        compressImagesMaxWidthNumberPicker.setMaxValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_width_max));
-        compressImagesMaxWidthNumberPicker.setSaveFromParentEnabled(false);
-        compressImagesMaxWidthNumberPicker.setSaveEnabled(true);
+        compressImagesMaxWidthNumberField = compressImagesSettings.findViewById(R.id.compress_images_max_width);
+        compressImagesMaxWidthNumberField.setFilters(new InputFilter[]{new InputFilterMinMax(120, getResources().getInteger(R.integer.preference_data_upload_compress_images_max_width_max))});
+        compressImagesMaxWidthNumberField.setSaveFromParentEnabled(false);
+        compressImagesMaxWidthNumberField.setSaveEnabled(true);
 
 
         compressImagesCheckbox = view.findViewById(R.id.compress_images_button);
-        boolean compressPics = UploadPreferences.isCompressImagesByDefault(getContext(), getPrefs());
-        compressImagesCheckbox.setChecked(!compressPics);// ensure the checked change listener is called!
-        compressImagesCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            compressImagesSettings.setVisibility(isChecked && buttonView.isEnabled() ? VISIBLE : GONE);
-//                compressImagesSettings.setEnabled(buttonView.isEnabled());
-        });
         compressImagesCheckbox.setOnClickListener(v -> {
-            CompoundButton buttonView = (CompoundButton) v;
-            compressImagesSettings.setVisibility(buttonView.isChecked() && buttonView.isEnabled() ? VISIBLE : GONE);
-            DisplayUtils.toggleHierachyEnabled(compressImagesSettings, buttonView.isEnabled());
+            updateCompressFilesSetting(getFilesForUploadViewAdapter().getUploadDataItemsModel().getUploadDataItemsReference());
+            // trigger a partial update.
+            getFilesForUploadViewAdapter().notifyItemRangeChanged(0, getFilesForUploadViewAdapter().getItemCount(), Boolean.FALSE);
         });
-        compressImagesCheckbox.setChecked(compressPics);
+        compressImagesCheckbox.setChecked(UploadPreferences.isCompressImagesByDefault(getContext(), getPrefs()));
 
         allowUploadOfRawVideosIfIncompressibleCheckbox.setChecked(UploadPreferences.isAllowUploadOfRawVideosIfIncompressible(getContext(), getPrefs()));
 
         uploadFilesNowButton = view.findViewById(R.id.upload_files_button);
-        uploadFilesNowButton.setOnClickListener(v -> {
-            onClickUploadFilesButton();
-        });
+        uploadFilesNowButton.setOnClickListener(v -> onClickUploadFilesButton());
 
         if (filesToUploadAdapter == null) {
             filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(new AdapterActionListener<>());
             filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
 
-            filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                @Override
-                public void onChanged() {
-                    compressVideosCheckbox.setEnabled(isPlayableMediaFilesWaitingForUpload());
-                    compressVideosCheckbox.callOnClick();
-                    compressImagesCheckbox.setEnabled(isImageFilesWaitingForUpload());
-                    compressImagesCheckbox.callOnClick();
-                }
-            });
+//            filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+//                @Override
+//                public void onChanged() {
+//                    compressVideosCheckbox.setEnabled(isPlayableMediaFilesWaitingForUpload());
+//                    compressVideosCheckbox.callOnClick();
+//                    compressImagesCheckbox.setEnabled(isImageFilesWaitingForUpload());
+//                    compressImagesCheckbox.callOnClick();
+//                }
+//            });
         }
 
         if (savedInstanceState != null) {
@@ -484,6 +461,18 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         }
 
         return view;
+    }
+
+    protected void onClickInformationForUploadButton() {
+        UploadJob job = getActiveJob(requireContext());
+        ConnectionPreferences.ProfilePreferences profile;
+        if(job == null) {
+            profile = ConnectionPreferences.getActiveProfile();
+        } else {
+            profile = job.getConnectionPrefs();
+        }
+        UploadInformationView view = new UploadInformationView(profile);
+        view.showNow(getChildFragmentManager(), UploadInformationView.class.getName());
     }
 
     private void invokeCallToRetrieveUploadDestination() {
@@ -539,10 +528,10 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
 
 
-    private void setSpinnerSelectedItem(Spinner spinner, Object item) {
+    private <T> void setSpinnerSelectedItem(Spinner spinner, T item) {
         SpinnerAdapter adapter = spinner.getAdapter();
         if (adapter instanceof ArrayAdapter) {
-            int itemPosition = ((ArrayAdapter) spinner.getAdapter()).getPosition(item);
+            int itemPosition = ((ArrayAdapter<T>) spinner.getAdapter()).getPosition(item);
             spinner.setSelection(itemPosition);
         } else {
             Logging.log(Log.ERROR, TAG, "Cannot set selected spinner item - adapter is not instance of ArrayAdapter");
@@ -574,10 +563,6 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-    }
-
-    public TextView getUploadableFilesView() {
-        return uploadableFilesView;
     }
 
     private void requestFileSelection(Set<String> allowedFileTypes) {
@@ -676,11 +661,6 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         getUiHelper().getPiwigoResponseListener().switchHandlerId(uploadJob.getResponseHandlerId());
         getUiHelper().updateHandlerForAllMessages();
 
-        PiwigoSessionDetails piwigoSessionDetails = PiwigoSessionDetails.getInstance(uploadJob.getConnectionPrefs());
-        if (piwigoSessionDetails != null) {
-            String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(piwigoSessionDetails.getAllowedFileTypes()));
-            uploadableFilesView.setText(fileTypesStr);
-        }
         setUploadJobId(uploadJob.getJobId());
         uploadToAlbum = new CategoryItemStub(uploadJob.getUploadToCategory().getName(), uploadJob.getUploadToCategory().getId());
         AlbumGetChildAlbumNamesResponseHandler getChildAlbumNamesHandler = new AlbumGetChildAlbumNamesResponseHandler(uploadJob.getUploadToCategory().getId(), false);
@@ -689,7 +669,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         byte privacyLevelWanted = uploadJob.getPrivacyLevelWanted();
         if (privacyLevelWanted >= 0) {
-            privacyLevelSpinner.setSelection(((BiArrayAdapter) privacyLevelSpinner.getAdapter()).getPosition(privacyLevelWanted));
+            privacyLevelSpinner.setSelection(((BiArrayAdapter<?>) privacyLevelSpinner.getAdapter()).getPosition(privacyLevelWanted));
         }
     }
 
@@ -864,11 +844,11 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
     public void buildAndSubmitNewUploadJob(boolean fileSizesHaveBeenChecked) {
         FilesToUploadRecyclerViewAdapter<?,?,?> fileListAdapter = getFilesForUploadViewAdapter();
-        Map<Uri,Long> filesForUpload = fileListAdapter.getFilesAndSizes();
+        UploadDataItemModel model = fileListAdapter.getUploadDataItemsModel();
         byte privacyLevelWanted = (byte) privacyLevelSpinner.getSelectedItemId(); // save as just bytes!
         long piwigoListenerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
         boolean isDeleteFilesAfterUpload = deleteFilesAfterUploadCheckbox.isChecked();
-        CreateAndSubmitUploadJobTask createAndSubmitUploadJobTask = new CreateAndSubmitUploadJobTask(this, filesForUpload, uploadToAlbum, privacyLevelWanted, piwigoListenerId, isDeleteFilesAfterUpload,  fileSizesHaveBeenChecked);
+        CreateAndSubmitUploadJobTask createAndSubmitUploadJobTask = new CreateAndSubmitUploadJobTask(this, model, uploadToAlbum, privacyLevelWanted, piwigoListenerId, isDeleteFilesAfterUpload, fileSizesHaveBeenChecked);
         createAndSubmitUploadJobTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -881,9 +861,9 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         if (compressImagesCheckbox.isChecked()) {
             UploadJob.ImageCompressionParams imageCompParams = new UploadJob.ImageCompressionParams();
             imageCompParams.setOutputFormat(compressImagesOutputFormatSpinner.getSelectedItem().toString());
-            imageCompParams.setQuality(compressImagesQualityNumberPicker.getValue());
-            imageCompParams.setMaxHeight(compressImagesMaxHeightNumberPicker.getValue());
-            imageCompParams.setMaxWidth(compressImagesMaxWidthNumberPicker.getValue());
+            imageCompParams.setQuality(Float.valueOf(compressImagesQualityNumberPicker.getValue()).intValue());
+            imageCompParams.setMaxHeight(Integer.parseInt(compressImagesMaxHeightNumberField.getText().toString()));
+            imageCompParams.setMaxWidth(Integer.parseInt(compressImagesMaxWidthNumberField.getText().toString()));
         }
         return null;
     }
@@ -975,11 +955,14 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             uploadFilesNowButton.setText(R.string.upload_files_finish_job_button_title);
         }
 
-        compressVideosCheckbox.setEnabled((noJobIsYetConfigured || jobIsFinished) && isPlayableMediaFilesWaitingForUpload());
+        compressVideosCheckbox.setEnabled(noJobIsYetConfigured || (jobIsFinished && !filesStillToBeUploaded));
         compressVideosCheckbox.callOnClick(); // set relevant fields to enabled / disabled
 
-        compressImagesCheckbox.setEnabled((noJobIsYetConfigured || jobIsFinished) && isImageFilesWaitingForUpload());
+        compressImagesCheckbox.setEnabled(noJobIsYetConfigured || (jobIsFinished && !filesStillToBeUploaded));
         compressImagesCheckbox.callOnClick(); // set relevant fields to enabled / disabled
+
+        compressImagesSettings.setEnabled(noJobIsYetConfigured || (jobIsFinished && !filesStillToBeUploaded));
+        compressVideosSettings.setEnabled(noJobIsYetConfigured || (jobIsFinished && !filesStillToBeUploaded));
 
         deleteFilesAfterUploadCheckbox.setEnabled(noJobIsYetConfigured || jobIsFinished && !filesStillToBeUploaded);
 
@@ -989,15 +972,15 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         selectedGalleryTextView.setEnabled(noJobIsYetConfigured || (jobIsFinished && !filesStillToBeUploaded));
         privacyLevelSpinner.setEnabled(noJobIsYetConfigured || jobIsFinished);
 
-        updateActiveJobActionButtonsStatus(requireContext(), uploadJob);
+        updateActiveJobActionButtonsStatus(uploadJob);
     }
 
     private void updateActiveJobActionButtonsStatus() {
         UploadJob job = getActiveJob(requireContext());
-        updateActiveJobActionButtonsStatus(requireContext(), job);
+        updateActiveJobActionButtonsStatus(job);
     }
 
-    private void updateActiveJobActionButtonsStatus(@NonNull Context context, @Nullable UploadJob job) {
+    private void updateActiveJobActionButtonsStatus(@Nullable UploadJob job) {
         boolean essentiallyRunning = job != null && (job.isStatusSubmitted() || job.isStatusRunningNow());
         if (job != null && !essentiallyRunning && !job.hasJobCompletedAllActionsSuccessfully()) {
             uploadJobStatusButton.setVisibility(VISIBLE);
@@ -1220,7 +1203,27 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     public void onAddFilesForUpload(List<UploadDataItem> folderItems) {
         hideOverallUploadProgressIndicator();
         switchToUploadingFilesTab();
+        updateCompressFilesSetting(folderItems);
         updateFilesForUploadList(folderItems);
+    }
+
+    private void updateCompressFilesSetting(List<UploadDataItem> folderItems) {
+        boolean compressVideos = compressVideosCheckbox.isChecked();
+        boolean compressImages = compressImagesCheckbox.isChecked();
+        boolean warnCompressionNeededForSomeFiles = false;
+        for(UploadDataItem item : folderItems) {
+            if (IOUtils.isPlayableMedia(item.getMimeType())) {
+                item.setCompressThisFileByDefault(compressVideos);
+            } else if (IOUtils.isImage(item.getMimeType())) {
+                item.setCompressThisFileByDefault(compressImages);
+            }
+            if(item.isNeedsCompression() && !item.isCompressByDefault()) {
+                warnCompressionNeededForSomeFiles = true;
+            }
+        }
+        if(warnCompressionNeededForSomeFiles) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_error_require_compression_pattern));
+        }
     }
 
     public void onUserActionDeleteUploadJob() {
@@ -1256,7 +1259,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     private void setPrivacyLevelSpinnerSelection(int groupPermission) {
-        privacyLevelSpinner.setSelection(((BiArrayAdapter) privacyLevelSpinner.getAdapter()).getPosition(groupPermission));
+        privacyLevelSpinner.setSelection(((BiArrayAdapter<?>) privacyLevelSpinner.getAdapter()).getPosition(groupPermission));
     }
 
     private static class OnUploadJobFailureQuestionListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends QuestionResultAdapter<FUIH, F> implements Parcelable {
@@ -1281,8 +1284,6 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            F fragment = getUiHelper().getParent();
-
             if (Boolean.TRUE == positiveAnswer) {
                 getParent().onUserActionClearUploadErrorsAndRetry();
             } else if (Boolean.FALSE == positiveAnswer) {

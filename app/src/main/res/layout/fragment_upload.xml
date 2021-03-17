@@ -38,100 +38,7 @@
             android:layout_height="wrap_content"
             android:text="@string/upload_tab_title_files" />
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="2dp"
-            android:paddingTop="15dp"
-            android:paddingEnd="2dp"
-            android:paddingBottom="5dp">
-
-            <TextView
-                android:id="@+id/files_for_upload_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:labelFor="@id/selected_files_for_upload"
-                android:paddingStart="5dp"
-                android:paddingTop="0dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="5dp"
-                android:text="@string/files_for_upload_title"
-                android:textAppearance="?textAppearanceCaption"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/files_uploadable_label"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintVertical_bias="0"
-                app:layout_constraintVertical_chainStyle="packed"/>
-
-            <TextView
-                android:id="@+id/files_for_upload_count_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="5dp"
-                android:paddingTop="0dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="5dp"
-                tools:text="234"
-                android:textAppearance="?textAppearanceCaption"
-                app:layout_constraintStart_toEndOf="@+id/files_for_upload_label"
-                app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
-                app:layout_constraintBaseline_toBaselineOf="@+id/files_for_upload_label"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintVertical_bias="0"
-                app:layout_constraintVertical_chainStyle="packed"/>
-
-            <TextView
-                android:id="@+id/files_uploadable_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:gravity="bottom"
-                android:padding="5dp"
-                style="?clickableTextViewStyleBody1"
-                tools:layout_editor_absoluteX="2dp"
-                tools:text="(jpg,mpg,avi)"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/files_for_upload_label"
-                app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintVertical_bias="0"
-                app:layout_constrainedWidth="true"/>
-
-            <Button
-                android:id="@+id/select_files_for_upload_button"
-                style="?materialButtonIconStyle"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                app:icon="@drawable/ic_add_circle_black_24px"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="1"
-                app:layout_constraintVertical_bias="0"/>
-
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/files_for_upload_header_bottom_barrier"
-                app:barrierDirection="bottom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="select_files_for_upload_button, files_uploadable_label"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/selected_files_for_upload"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/files_for_upload_header_bottom_barrier"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constrainedHeight="true"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <include layout="@layout/layout_upload_files_for_upload"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -147,199 +54,27 @@
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="5dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/upload_username_label"
-                    android:labelFor="@id/upload_username"
-                    android:text="@string/upload_username_title"
-                    style="?editableFieldLabel"/>
-
-                <TextView
-                    android:id="@+id/upload_username"
-                    tools:text="username"
-                    style="?editableFieldText"/>
-
-                <TextView
-                    android:id="@+id/upload_to_label"
-                    android:labelFor="@id/selected_gallery"
-                    android:text="@string/gallery_to_alter_title"
-                    style="?editableFieldLabel" />
-
-                <TextView
-                    android:id="@+id/selected_gallery"
-                    tools:text="some album"
-                    style="?editableFieldTextClickable"/>
-
-                <TextView
-                    android:id="@+id/privacy_level_label"
-                    android:labelFor="@id/privacy_level"
-                    android:text="@string/upload_file_privacy_level_title"
-                    style="?editableFieldLabel" />
-
-                <Spinner
-                    android:id="@+id/privacy_level"
-                    style="?editableFieldSpinner"/>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/delete_files_after_upload_checkbox"
-                    android:text="@string/delete_uploaded_files_title"
-                    style="?editableFieldSwitch"/>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/compress_images_button"
-                    android:enabled="false"
-                    android:text="@string/compress_images"
-                    style="?editableFieldSwitch"/>
-
-                <LinearLayout
-                    android:id="@+id/image_compression_options"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp">
-
-                    <TextView
-                        android:id="@+id/compress_images_output_format_label"
-                        android:labelFor="@id/compress_images_output_format"
-                        android:text="@string/preference_data_upload_compress_images_output_format_title"
-                        style="?editableFieldLabel"/>
-
-                    <Spinner
-                        android:id="@+id/compress_images_output_format"
-                        android:duplicateParentState="true"
-                        android:entries="@array/preference_data_upload_compress_images_output_format_items"
-                        style="?editableFieldSpinner"/>
-
-                    <TextView
-                        android:id="@+id/compress_images_quality_label"
-                        android:labelFor="@id/compress_images_quality"
-                        android:text="@string/preference_data_upload_compress_images_quality_title"
-                        style="?editableFieldLabel" />
-
-                    <NumberPicker
-                        android:id="@+id/compress_images_quality"
-                        android:duplicateParentState="true"
-                        style="?editableFieldNumberPicker"/>
-
-                    <TextView
-                        android:id="@+id/compress_images_max_width_label"
-                        android:labelFor="@id/compress_images_max_width"
-                        android:text="@string/preference_data_upload_compress_images_max_width_title"
-                        style="?editableFieldLabel"/>
-
-                    <NumberPicker
-                        android:id="@+id/compress_images_max_width"
-                        android:duplicateParentState="true"
-                        style="?editableFieldNumberPicker"/>
-                    <!--<EditText
-                        android:id="@+id/compress_images_max_width"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="9dp"
-                        android:duplicateParentState="true"
-                        android:inputType="number"
-                        android:digits="0123456789"/>-->
-
-                    <TextView
-                        android:id="@+id/compress_images_max_height_label"
-                        android:labelFor="@id/compress_images_max_height"
-                        android:text="@string/preference_data_upload_compress_images_max_height_title"
-                        style="?editableFieldLabel"/>
-
-                    <NumberPicker
-                        android:id="@+id/compress_images_max_height"
-                        android:duplicateParentState="true"
-                        style="?editableFieldNumberPicker"/>
-
-                    <!--<EditText
-                        android:id="@+id/compress_images_max_height"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="9dp"
-                        android:duplicateParentState="true"
-                        android:inputType="number"
-                        android:digits="0123456789"/>-->
-
-                </LinearLayout>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/compress_videos_button"
-                    android:enabled="false"
-                    android:text="@string/compress_videos"
-                    style="?editableFieldSwitch"/>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/video_compression_options"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp">
-
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/allow_upload_of_incompressible_videos_button"
-                        android:text="@string/allow_upload_of_incompressible_videos"
-                        style="?editableFieldSwitch"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintHorizontal_bias="0"/>
-
-                    <TextView
-                        android:id="@+id/compress_videos_quality_label"
-                        android:labelFor="@id/compress_videos_quality"
-                        android:text="@string/preference_data_upload_compress_videos_quality_title"
-                        style="?editableFieldLabel"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/allow_upload_of_incompressible_videos_button"
-                        app:layout_constraintHorizontal_bias="0"/>
-
-                    <Spinner
-                        android:id="@+id/compress_videos_quality"
-                        android:duplicateParentState="true"
-                        style="?editableFieldSpinner"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/compress_videos_quality_label"
-                        app:layout_constraintHorizontal_bias="0"/>
-
-                    <TextView
-                        android:id="@+id/compress_videos_audio_bitrate_label"
-                        android:labelFor="@id/compress_videos_audio_bitrate"
-                        android:text="@string/preference_data_upload_compress_videos_audio_bitrate_title"
-                        style="?editableFieldLabel"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/compress_videos_quality"
-                        app:layout_constraintHorizontal_bias="0"/>
-
-                    <Spinner
-                        android:id="@+id/compress_videos_audio_bitrate"
-                        android:duplicateParentState="true"
-                        style="?editableFieldSpinner"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/compress_videos_audio_bitrate_label"
-                        app:layout_constraintHorizontal_bias="0"/>
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            </LinearLayout>
+            <include layout="@layout/layout_upload_server_settings"/>
 
         </androidx.core.widget.NestedScrollView>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/upload_tab_title_compression" />
+
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/upload_compression_settings_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="5dp">
+
+            <include layout="@layout/layout_upload_compression_settings"/>
+        </androidx.core.widget.NestedScrollView>
     </delit.libs.ui.view.CustomViewPager>
 
     <androidx.constraintlayout.widget.ConstraintLayout

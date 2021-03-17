@@ -7,9 +7,6 @@ import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
 
-import delit.libs.util.CollectionUtils;
-import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -53,9 +50,6 @@ public class OnLoginAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends
             if(button != null) { // will be null if fragment not visible or initialising perhaps.
                 button.setEnabled(true);
             }
-            ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
-            String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes()));
-            fragment.getUploadableFilesView().setText(fileTypesStr);
             FileSelectionCompleteEvent evt = EventBus.getDefault().getStickyEvent(FileSelectionCompleteEvent.class);
             if (evt != null) {
                 fragment.onEvent(evt);

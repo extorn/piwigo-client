@@ -1108,4 +1108,20 @@ App Install UUID: %5$s
     <string name="uploaded_previously">Uploaded Before</string>
     <string name="migrated_settings_from_previous_version">Settings migrated from previous app version</string>
     <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Not all items selected are acceptable to this server. Those requiring re-compression: %1$d "</string>
+    <string name="upload_uploadable_files_label">File types acceptable to this server</string>
+    <string name="upload_icon_key_label">Icon Colours</string>
+    <string name="compress_because_thats_the_default">Will be compressed</string>
+    <string name="compress_specifically">Compress this file</string>
+    <string name="compress_no_specifically">Do not compress this file</string>
+    <string name="compress_required">Requires compression to be uploaded</string>
+    <string name="no_compress_and_not_needed">Will not be compressed</string>
+    <string name="upload_information_header">Key to upload detail</string>
+    <string name="upload_files_label">Server accepted file types</string>
+    <string name="upload_icon_key_explanation">Icon for playable media used in the following examples</string>
+    <string name="alert_error_require_compression_pattern">Some files selected require compression. They are identifiable with a red border. Please check and either remove these from the upload or re-enable compression.</string>
+    <string name="upload_tab_title_compression">Compression</string>
+    <string name="image_compression_settings">Images</string>
+    <string name="video_compression_settings">Audio and Video</string>
+    <string name="upload_defaults_label">Upload File Defaults</string>
+    <string name="upload_server_detail_label">Server Detail</string>
 </resources>

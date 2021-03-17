@@ -2,7 +2,6 @@ package delit.piwigoclient.piwigoApi.upload.actors;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -13,7 +12,6 @@ import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import delit.libs.core.util.Logging;
@@ -22,6 +20,8 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.upload.FileUploadDetails;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.ui.upload.list.UploadDataItem;
+import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
 
 import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler.getNextMessageId;
 
@@ -38,25 +38,17 @@ public class JobLoadActor extends LocalUploadActor {
         return PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
-    public @NonNull UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, Map<Uri, Long> filesForUploadAndBytes, CategoryItemStub category, byte uploadedFilePrivacyLevel, long responseHandlerId, boolean isDeleteFilesAfterUpload) {
+    public @NonNull UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, UploadDataItemModel filesForUpload, CategoryItemStub category, byte uploadedFilePrivacyLevel, long responseHandlerId, boolean isDeleteFilesAfterUpload) {
         long jobId = getNextMessageId();
-        UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, filesForUploadAndBytes, category, uploadedFilePrivacyLevel, isDeleteFilesAfterUpload);
+        UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, category, uploadedFilePrivacyLevel, isDeleteFilesAfterUpload);
+        for (UploadDataItem uploadDataItem : filesForUpload.getUploadDataItemsReference()) {
+            FileUploadDetails fud = new FileUploadDetails(uploadDataItem.getUri(), uploadDataItem.getDataLength());
+            fud.setCompressionNeeded(uploadDataItem.isCompressByDefault() || Boolean.TRUE.equals(uploadDataItem.isCompressThisFile()));
+            fud.setChecksum(uploadDataItem.getUri(), uploadDataItem.getDataHashcode());
+            uploadJob.addFileForUpload(fud);
+        }
         synchronized (activeUploadJobs) {
             activeUploadJobs.add(uploadJob);
-        }
-        return uploadJob;
-    }
-
-    public @Nullable UploadJob pushJobConfigurationToFiles(@NonNull UploadJob uploadJob) {
-        for(FileUploadDetails fud : uploadJob.getFilesForUpload()) {
-            if(uploadJob.isDeleteFilesAfterUpload()) {
-                fud.setDeleteAfterUpload(true);
-            }
-            if(uploadJob.isPlayableMedia(getContext(), fud.getFileUri())) {
-                fud.setCompressionNeeded(uploadJob.isCompressPlayableMediaBeforeUpload());
-            } else {
-                fud.setCompressionNeeded(uploadJob.isCompressPhotosBeforeUpload());
-            }
         }
         return uploadJob;
     }
