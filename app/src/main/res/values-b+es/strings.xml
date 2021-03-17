@@ -548,7 +548,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="rating_score_pattern">%1$.2f (%2$d tarifas)</string>
     <string name="connection_reset_warning_pattern">El servidor ha cerrado la conexión %1$d veces en el pasado %2$d minutos. Esto podría indicar un problema con la configuración de su servidor.</string>
     <string name="content_description_icon">icono</string>
-    <string name="duplicates_ignored_pattern">%1$d Los duplicados han sido ignorados.</string>
+    <string name="duplicates_ignored_pattern">Duplicados ignorados: %1$d</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">El método de PIWIGO WS %1$s Ya no está disponible en este servidor, y el flowback %2$s ha sido usado. ¿Ha desactivado o eliminado un complemento de servidor?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">El método de PIWIGO WS %1$s Ya no está disponible en este servidor. Desactivación de la funcionalidad afectada en la aplicación. ¿Ha desactivado o eliminado un complemento de servidor?</string>
     <string name="removing_favorite">Eliminando favorito</string>
@@ -680,7 +680,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="downloads_menu_title">Descargas</string>
     <string name="view_exported_files">Ver archivos exportados</string>
     <string name="generating_upload_job">Configuración de Cargar trabajo con su selección</string>
-    <string name="alert_error_files_without_permissions">Los permisos de URI no se proporcionaron para los archivos por la aplicación que compartió. La carga puede continuar, pero si el trabajo está en pausa y luego se reanudó (por ejemplo, por administración de energía de Android), estos archivos ya no serán adquiridos. Para evitar este problema, seleccione Archivos para cargar usando esta aplicación si es posible.</string>
+    <string name="alert_error_files_without_permissions">Los permisos de URI no se proporcionaron para los archivos por la aplicación que compartió. La carga puede continuar, pero si el trabajo se detiene y luego se reanudó (por ejemplo, por la administración de energía de Android), ya no será posible continuar cargando estos archivos. Para evitar este problema, seleccione Archivos para cargar usando esta aplicación si es posible.</string>
     <string name="alert_error_files_without_permissions_pattern">Los permisos de URI no se proporcionaron para todos los archivos. Aquellos sin que no se cargarán si el trabajo se detiene y luego se reanudó (por ejemplo, por la administración de energía de Android). Para evitar este problema, seleccione Archivos para cargar usando esta aplicación si es posible. Archivos afectados: %1$d.</string>
     <string name="button_compress">Comprimir</string>
     <string name="unable_to_compress_without_data">No se puede comprimir sin la configuración</string>
@@ -729,4 +729,21 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="upload_of_files_complete_finishing_up">Subir de archivos completos. Solo terminando</string>
     <string name="uploaded_previously">Subido antes</string>
     <string name="migrated_settings_from_previous_version">Configuración migrada de la versión anterior de la aplicación</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"No todos los artículos seleccionados son aceptables para este servidor. Los que requieren re-compresión: %1$d"</string>
+    <string name="upload_uploadable_files_label">Tipos de archivos aceptables para este servidor</string>
+    <string name="upload_icon_key_label">Colores de iconos</string>
+    <string name="compress_because_thats_the_default">Estará comprimido</string>
+    <string name="compress_specifically">Comprimir este archivo</string>
+    <string name="compress_no_specifically">No comprima este archivo</string>
+    <string name="compress_required">Requiere compresión para ser cargada</string>
+    <string name="no_compress_and_not_needed">No será comprimido</string>
+    <string name="upload_information_header">Clave para subir detalle</string>
+    <string name="upload_files_label">Tipos de archivos aceptados por el servidor</string>
+    <string name="upload_icon_key_explanation">Icono para medios jugables utilizados en los siguientes ejemplos.</string>
+    <string name="alert_error_require_compression_pattern">Algunos archivos seleccionados requieren compresión. Son identificables con una frontera roja. Por favor, compruebe y elimine estos desde la carga o vuelva a habilitar la compresión.</string>
+    <string name="upload_tab_title_compression">Compresión</string>
+    <string name="image_compression_settings">Imagenes</string>
+    <string name="video_compression_settings">Audio y video</string>
+    <string name="upload_defaults_label">Cargar los valores predeterminados del archivo</string>
+    <string name="upload_server_detail_label">Detalle del servidor</string>
 </resources>

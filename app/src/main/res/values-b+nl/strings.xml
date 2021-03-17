@@ -548,7 +548,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="rating_score_pattern">%1$.2f (%2$d tarieven)</string>
     <string name="connection_reset_warning_pattern">De server heeft de verbinding gesloten %1$d tijden in het verleden %2$d minuten. Dit kan een probleem met uw serverconfiguratie aangeven.</string>
     <string name="content_description_icon">icoon</string>
-    <string name="duplicates_ignored_pattern">%1$d Duplicaten zijn genegeerd.</string>
+    <string name="duplicates_ignored_pattern">Duplicaten genegeerd: %1$d</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">De PIWIGO WS-methode %1$s is niet langer beschikbaar op deze server en de fallback %2$s is gebruikt. Heb je net een server-plug-in gedeactiveerd of verwijderd?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">De PIWIGO WS-methode %1$s Niet langer beschikbaar op deze server. Het uitschakelen van de getroffen functionaliteit in de app. Heb je net een server-plug-in gedeactiveerd of verwijderd?</string>
     <string name="removing_favorite">Favoriet verwijderen</string>
@@ -680,7 +680,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="downloads_menu_title">Downloads</string>
     <string name="view_exported_files">Bekijk geëxporteerde bestanden</string>
     <string name="generating_upload_job">Upload Job configureren met uw selectie</string>
-    <string name="alert_error_files_without_permissions">URI-machtigingen zijn niet voor de bestanden verstrekt door de app die u hebt gedeeld. De upload kan doorgaan, maar als de taak wordt gepauzeerd en later wordt hervat (bijvoorbeeld door Android Power Management) zijn deze bestanden niet langer uploadbaar. Als u dit probleem wilt voorkomen, selecteert u Bestanden om indien mogelijk te uploaden met deze app.</string>
+    <string name="alert_error_files_without_permissions">URI-machtigingen zijn niet voor de bestanden verstrekt door de app die u hebt gedeeld. De upload kan doorgaan, maar als de taak is gepauzeerd en later wordt hervat (bijvoorbeeld door Android Power Management) is het niet langer mogelijk om deze bestanden te blijven uploaden. Als u dit probleem wilt voorkomen, selecteert u Bestanden om indien mogelijk te uploaden met deze app.</string>
     <string name="alert_error_files_without_permissions_pattern">URI-machtigingen zijn niet voor alle bestanden verstrekt. Degenen zonder niet uploaden als de taak wordt gepauzeerd en later wordt hervat (bijvoorbeeld door Android Power Management). Als u dit probleem wilt voorkomen, selecteert u Bestanden om indien mogelijk met deze app te uploaden. Getroffen bestanden: %1$d.</string>
     <string name="button_compress">Samendrukken</string>
     <string name="unable_to_compress_without_data">Kan niet comprimeren zonder de instellingen</string>
@@ -729,4 +729,21 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="upload_of_files_complete_finishing_up">Upload van bestanden voltooid. Gewoon afronden.</string>
     <string name="uploaded_previously">Geüpload eerder</string>
     <string name="migrated_settings_from_previous_version">Instellingen gemigreerd van de vorige app-versie</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Niet alle geselecteerde items zijn acceptabel op deze server. DIE DIE RE-COMPRESSIE VEREIST: %1$d"</string>
+    <string name="upload_uploadable_files_label">Bestandstypen aanvaardbaar op deze server</string>
+    <string name="upload_icon_key_label">Pictogramkleuren</string>
+    <string name="compress_because_thats_the_default">Zal worden gecomprimeerd</string>
+    <string name="compress_specifically">Comprimeer dit bestand</string>
+    <string name="compress_no_specifically">Comprimeer dit bestand niet</string>
+    <string name="compress_required">Vereist compressie om te worden geüpload</string>
+    <string name="no_compress_and_not_needed">Zal niet worden gecomprimeerd</string>
+    <string name="upload_information_header">Sleutel om details te uploaden</string>
+    <string name="upload_files_label">Server geaccepteerde bestandstypen geaccepteerd</string>
+    <string name="upload_icon_key_explanation">Icoon voor afspeelbare media die in de volgende voorbeelden worden gebruikt</string>
+    <string name="alert_error_require_compression_pattern">Sommige bestanden geselecteerd vereisen compressie. Ze zijn identificeerbaar met een rode rand. Controleer of verwijder deze van de compressie uploaden of opnieuw inschakelen.</string>
+    <string name="upload_tab_title_compression">Compressie</string>
+    <string name="image_compression_settings">Afbeeldingen</string>
+    <string name="video_compression_settings">Audio en video</string>
+    <string name="upload_defaults_label">Upload bestandsinstellingen</string>
+    <string name="upload_server_detail_label">Serverdetail</string>
 </resources>

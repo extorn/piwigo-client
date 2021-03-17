@@ -548,7 +548,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="rating_score_pattern">%1$.2f (%2$d Tarifs)</string>
     <string name="connection_reset_warning_pattern">Le serveur a fermé la connexion %1$d fois dans le passé %2$d minutes. Cela pourrait indiquer un problème avec votre configuration de serveur.</string>
     <string name="content_description_icon">icône</string>
-    <string name="duplicates_ignored_pattern">%1$d les doublons ont été ignorés.</string>
+    <string name="duplicates_ignored_pattern">Duplicats ignorés: %1$d</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">La méthode Piwigo WS %1$s n\'est plus disponible sur ce serveur et la barre de secours %2$s a été utilisé. Avez-vous simplement désactivé ou supprimé un plugin de serveur?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">La méthode Piwigo WS %1$s N\'est plus disponible sur ce serveur. Désactiver la fonctionnalité affectée dans l\'application. Avez-vous simplement désactivé ou supprimé un plugin de serveur?</string>
     <string name="removing_favorite">Supprimer le favori</string>
@@ -680,7 +680,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="downloads_menu_title">Téléchargements</string>
     <string name="view_exported_files">Afficher les fichiers exportés</string>
     <string name="generating_upload_job">Configuration de la tâche de téléchargement avec votre sélection</string>
-    <string name="alert_error_files_without_permissions">Les autorisations URI n\'ont pas été fournies pour les fichiers par l\'application que vous avez partagés. Le téléchargement peut continuer, mais si le travail est en pause et a repris par exemple (par exemple par la gestion de l\'alimentation Android), ces fichiers ne seront plus téléchargés. Pour éviter ce problème, sélectionnez Fichiers à télécharger à l\'aide de cette application si possible.</string>
+    <string name="alert_error_files_without_permissions">Les autorisations URI n\'ont pas été fournies pour les fichiers par l\'application que vous avez partagés. Le téléchargement peut continuer, mais si le travail est en pause et repris par exemple (par exemple par la gestion de l\'alimentation Android), il ne sera plus possible de continuer à télécharger ces fichiers. Pour éviter ce problème, sélectionnez Fichiers à télécharger à l\'aide de cette application si possible.</string>
     <string name="alert_error_files_without_permissions_pattern">Les autorisations URI n\'ont pas été fournies pour tous les fichiers. Ceux sans ne pas télécharger si le travail est mis en pause et repris par exemple (par exemple par la gestion de l\'alimentation Android). Pour éviter ce problème, sélectionnez Fichiers à télécharger à l\'aide de cette application si possible. Fichiers concernés: %1$d.</string>
     <string name="button_compress">Compresse</string>
     <string name="unable_to_compress_without_data">Impossible de compresser sans les paramètres</string>
@@ -729,4 +729,21 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="upload_of_files_complete_finishing_up">Téléchargement de fichiers complète. Juste finir.</string>
     <string name="uploaded_previously">Téléchargé avant</string>
     <string name="migrated_settings_from_previous_version">Paramètres migrés de la version précédente de l\'application</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Tous les éléments sélectionnés ne sont pas acceptables pour ce serveur. Ceux qui nécessitent une ré-compression: %1$d"</string>
+    <string name="upload_uploadable_files_label">Types de fichiers acceptables sur ce serveur</string>
+    <string name="upload_icon_key_label">Couleurs d\'icône</string>
+    <string name="compress_because_thats_the_default">Sera compressé</string>
+    <string name="compress_specifically">Compressez ce fichier</string>
+    <string name="compress_no_specifically">Ne comprimez pas ce fichier</string>
+    <string name="compress_required">Nécessite une compression pour être téléchargée</string>
+    <string name="no_compress_and_not_needed">Ne sera pas compressé</string>
+    <string name="upload_information_header">Touche pour télécharger des détails</string>
+    <string name="upload_files_label">Types de fichiers acceptés du serveur</string>
+    <string name="upload_icon_key_explanation">Icône pour les supports jouables utilisés dans les exemples suivants</string>
+    <string name="alert_error_require_compression_pattern">Certains fichiers sélectionnés nécessitent une compression. Ils sont identifiables avec une bordure rouge. Veuillez vérifier et les supprimer de la compression de téléchargement ou de réactivation.</string>
+    <string name="upload_tab_title_compression">Compression</string>
+    <string name="image_compression_settings">Images</string>
+    <string name="video_compression_settings">Audio et vidéo</string>
+    <string name="upload_defaults_label">Télécharger les valeurs par défaut des fichiers</string>
+    <string name="upload_server_detail_label">Détail du serveur</string>
 </resources>

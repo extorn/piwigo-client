@@ -548,7 +548,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="rating_score_pattern">%1$.2f. (%2$d Tariffe)</string>
     <string name="connection_reset_warning_pattern">Il server ha chiuso la connessione %1$d volte in passato %2$d minuti. Ciò potrebbe indicare un problema con la configurazione del server.</string>
     <string name="content_description_icon">icona</string>
-    <string name="duplicates_ignored_pattern">%1$d. I duplicati sono stati ignorati.</string>
+    <string name="duplicates_ignored_pattern">Duplicati ignorati: %1$d</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">Il metodo Piwigo WS %1$s non è più disponibile su questo server e il fallback %2$s è stato usato. Hai appena disattivato o cancellato un plug-in server?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">Il metodo Piwigo WS %1$s Non è più disponibile su questo server. Disabilitazione della funzionalità interessata nell\'app. Hai appena disattivato o cancellato un plug-in server?</string>
     <string name="removing_favorite">Rimozione dei preferiti</string>
@@ -680,7 +680,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="downloads_menu_title">Download</string>
     <string name="view_exported_files">Visualizza file esportati</string>
     <string name="generating_upload_job">Configurazione di Carica lavoro con la tua selezione</string>
-    <string name="alert_error_files_without_permissions">Le autorizzazioni URI non sono state fornite per i file dall\'app che hai condiviso. Il caricamento può continuare, ma se il lavoro è in pausa e in seguito ripreso (ad esempio da Android Power Management) Questi file non saranno più caricabili. Per evitare questo problema, selezionare i file da caricare utilizzando questa app se possibile.</string>
+    <string name="alert_error_files_without_permissions">Le autorizzazioni URI non sono state fornite per i file dall\'app che hai condiviso. Il caricamento può continuare, ma se il lavoro è in pausa e in seguito ripreso (ad esempio da Android Power Management) non sarà più possibile continuare a caricare questi file. Per evitare questo problema, selezionare i file da caricare utilizzando questa app se possibile.</string>
     <string name="alert_error_files_without_permissions_pattern">Le autorizzazioni URI non sono state fornite per tutti i file. Quelli senza non verranno caricati se il lavoro è in pausa e in seguito ripreso (ad esempio da Android Power Management). Per evitare questo problema, selezionare i file da caricare utilizzando questa app se possibile. File interessati: %1$d.</string>
     <string name="button_compress">Comprimere</string>
     <string name="unable_to_compress_without_data">Impossibile comprimere senza le impostazioni</string>
@@ -729,4 +729,21 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="upload_of_files_complete_finishing_up">Carica di file completi. Basta finire.</string>
     <string name="uploaded_previously">Caricato prima</string>
     <string name="migrated_settings_from_previous_version">Impostazioni migrate dalla versione precedente dell\'app</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Non tutti gli elementi selezionati sono accettabili per questo server. Quelli che richiedono la ris-compressione: %1$d"</string>
+    <string name="upload_uploadable_files_label">Tipi di file accettabili a questo server</string>
+    <string name="upload_icon_key_label">Icona Colors.</string>
+    <string name="compress_because_thats_the_default">Sarà compresso</string>
+    <string name="compress_specifically">Comprimi questo file</string>
+    <string name="compress_no_specifically">Non comprimere questo file</string>
+    <string name="compress_required">Richiede che la compressione venga caricata</string>
+    <string name="no_compress_and_not_needed">Non sarà compresso</string>
+    <string name="upload_information_header">Tasto per caricare i dettagli</string>
+    <string name="upload_files_label">Tipi di file accettati dal server</string>
+    <string name="upload_icon_key_explanation">Icona per supporti riproducibili utilizzati nei seguenti esempi</string>
+    <string name="alert_error_require_compression_pattern">Alcuni file selezionati richiedono la compressione. Sono identificabili con un bordo rosso. Si prega di controllare e rimuoverli dal caricamento o riabilitazione della compressione.</string>
+    <string name="upload_tab_title_compression">Compressione</string>
+    <string name="image_compression_settings">immagini</string>
+    <string name="video_compression_settings">Audio e video</string>
+    <string name="upload_defaults_label">Carica i valori predefiniti del file</string>
+    <string name="upload_server_detail_label">Dettaglio del server</string>
 </resources>

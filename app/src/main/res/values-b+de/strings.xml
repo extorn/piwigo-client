@@ -548,7 +548,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="rating_score_pattern">%1$.2f (%2$d Tarife)</string>
     <string name="connection_reset_warning_pattern">Der Server hat die Verbindung geschlossen %1$d Zeiten in der Vergangenheit %2$d Protokoll. Dies kann ein Problem mit Ihrer Serverkonfiguration anzeigen.</string>
     <string name="content_description_icon">Symbol</string>
-    <string name="duplicates_ignored_pattern">%1$d Duplikate wurden ignoriert.</string>
+    <string name="duplicates_ignored_pattern">Duplikate ignoriert: %1$d</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">Die Piwigo WS-Methode %1$s ist auf diesem Server nicht mehr verfügbar, und der Fallback %2$s wurde verwendet. Haben Sie ein Server-Plugin gerade deaktiviert oder gelöscht?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">Die Piwigo WS-Methode %1$s auf diesem Server nicht mehr verfügbar. Deaktivieren der betroffenen Funktionalität in der App. Haben Sie ein Server-Plugin gerade deaktiviert oder gelöscht?</string>
     <string name="removing_favorite">Favorit entfernen</string>
@@ -680,7 +680,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="downloads_menu_title">Downloads</string>
     <string name="view_exported_files">Exportierte Dateien anzeigen</string>
     <string name="generating_upload_job">Konfigurieren des Upload-Jobs mit Ihrer Auswahl</string>
-    <string name="alert_error_files_without_permissions">URI-Berechtigungen wurden nicht für die Dateien von der von Ihnen geteilten App bereitgestellt. Der Upload kann fortgesetzt, aber wenn der Job angehalten und später wieder aufgenommen wird (z. B. von Android Power Management) werden diese Dateien nicht mehr hochgeladen. Um dieses Problem zu vermeiden, wählen Sie nach Möglichkeit Dateien, um mit dieser App mit dieser App hochzuladen.</string>
+    <string name="alert_error_files_without_permissions">URI-Berechtigungen wurden nicht für die Dateien von der von Ihnen geteilten App bereitgestellt. Der Upload kann fortgesetzt, aber wenn der Job angehalten und später wieder aufgenommen wird (z. B. von Android Power Management), ist es nicht mehr möglich, diese Dateien weiter hochzuladen. Um dieses Problem zu vermeiden, wählen Sie nach Möglichkeit Dateien, um mit dieser App mit dieser App hochzuladen.</string>
     <string name="alert_error_files_without_permissions_pattern">URI-Berechtigungen wurden nicht für alle Dateien bereitgestellt. Diejenigen ohne das Hochladen, wenn der Job angehalten und später wieder aufgenommen wird (z. B. von Android-Energieverwaltung). Um dieses Problem zu vermeiden, wählen Sie nach Möglichkeit Dateien, um mit dieser App mit dieser App hochzuladen. Betroffene Dateien: %1$d.</string>
     <string name="button_compress">Kompresse</string>
     <string name="unable_to_compress_without_data">Ohne die Einstellungen kann nicht komprimiert werden</string>
@@ -729,4 +729,21 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_of_files_complete_finishing_up">Upload von Dateien abschließen. Einfach fertig.</string>
     <string name="uploaded_previously">Vorher hochgeladen</string>
     <string name="migrated_settings_from_previous_version">Einstellungen aus der vorherigen App-Version migriert</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Nicht alle ausgewählten Elemente sind für diesen Server akzeptabel. Diejenigen, die erneut komprimieren müssen: %1$d"</string>
+    <string name="upload_uploadable_files_label">Dateitypen, die für diesen Server akzeptabel sind</string>
+    <string name="upload_icon_key_label">Symbolfarben</string>
+    <string name="compress_because_thats_the_default">Wird komprimiert</string>
+    <string name="compress_specifically">Komprimiere diese Datei.</string>
+    <string name="compress_no_specifically">Komprimiere diese Datei nicht</string>
+    <string name="compress_required">Erfordert eine Komprimierung, um hochgeladen zu werden</string>
+    <string name="no_compress_and_not_needed">Wird nicht komprimiert</string>
+    <string name="upload_information_header">Schlüssel zum Hochladen von Details</string>
+    <string name="upload_files_label">Server akzeptierte Dateitypen</string>
+    <string name="upload_icon_key_explanation">Symbol für spielbare Medien, die in den folgenden Beispielen verwendet werden</string>
+    <string name="alert_error_require_compression_pattern">Einige ausgewählte Dateien erfordern eine Komprimierung. Sie sind mit einer roten Grenze identifizierbar. Bitte prüfen Sie und entfernen Sie diese aus dem Upload- oder RE-ENTWICKLER-Komprimieren.</string>
+    <string name="upload_tab_title_compression">Kompression</string>
+    <string name="image_compression_settings">Bildern</string>
+    <string name="video_compression_settings">Audio und Video</string>
+    <string name="upload_defaults_label">Datei Standardwerte hochladen.</string>
+    <string name="upload_server_detail_label">Server-Detail</string>
 </resources>

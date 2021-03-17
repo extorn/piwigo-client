@@ -1,40 +1,50 @@
 <en-GB>
-Bugfix:
-- corrected issue with app thinking uri permissions were still needed after an upload completed
+"Change:
+- PaidOnly: Record file ids uploaded to servers in a database on the device to allow earlier filtering or labelling these
+- Rework of the upload to allow better control over which files are compressed (new icon colours)
 </en-GB>
 <cs-CZ>
-Oprava chyby:
-- Opravený problém s oprávněními aplikace URI aplikace URI byla stále potřebná po ukončení nahrávání
+"Změna:
+- Paidonly: ID záznamu souborů nahrané do serverů v databázi zařízení, která umožní dřívější filtrování nebo označení
+- přepracování nahrávání, aby bylo možné lepší kontrolu nad tím, které soubory jsou komprimovány (nová ikona barvy)
 </cs-CZ>
 <de-DE>
-Fehlerbehebung:
-- Korrigiertes Problem mit App Denken URI-Berechtigungen wurden nach einem Upload noch erforderlich
+"Veränderung:
+- Peinlich: Notieren Sie Datei-IDs, die auf Server in einer Datenbank auf dem Gerät hochgeladen wurden, um diese Filterung zu ermöglichen oder diese zu kennzeichnen
+- Überarbeiten des Uploads, um eine bessere Steuerung zu ermöglichen, über die Dateien komprimiert sind (neue Symbolfarben)
 </de-DE>
 <es-ES>
-Arreglo del fallo:
-- Problema corregido con la aplicación Pensando permisos de URI todavía se necesitaban después de una carga completada
+"Cambio:
+- PAZGONALY: ID de registro de archivos cargados a servidores en una base de datos en el dispositivo para permitir filtrado anterior o etiquetar estos
+- Realización de la carga para permitir un mejor control sobre qué archivos se comprimen (nuevos colores de icono)
 </es-ES>
 <fr-FR>
-Correction d\'un bug:
-- Le problème corrigé avec les autorisations URI de réflexion sur l\'application était toujours nécessaire après la fin du téléchargement.
+"Changement:
+- Pabliely: enregistrez les identifiants de fichier téléchargés sur des serveurs dans une base de données sur l\'appareil pour permettre un filtrage antérieur ou étiqueter ces éléments.
+- retravailler du téléchargement pour permettre un meilleur contrôle sur les fichiers compressés (nouvelles couleurs d\'icône)
 </fr-FR>
 <it-IT>
-Risoluzione del problema:
-- Problema corretto con APP I permessi URI Pensiero erano ancora necessari dopo un caricamento completato
+"Modificare:
+- Painly: registra ID file caricato su server in un database sul dispositivo per consentire il filtraggio o l\'etichettatura precedente
+- rilavorare il caricamento per consentire un controllo migliore su quali file sono compressi (nuovi colori dell\'icona)
 </it-IT>
 <ja-JP>
-バグ修正：
-- アップロードが完了した後も、App Thinking URI権限が依然として必要とされていました
+"変化する：
+-  PaidOnly：レコードファイルIDは、デバイス上のデータベース内のサーバーにアップロードされたレコードファイルのデータベース内のデータベースにアップロードして、これらを以前のフィルタリングまたはラベリングを可能にします。
+- アップロードのリワードで、どのファイルが圧縮されているよりも良いコントロールを可能にする（新しいアイコンの色）
 </ja-JP>
 <nl-NL>
-Bugfix:
-- Gecorrigeerd probleem met app Thinking URI-machtigingen waren nog steeds nodig nadat een upload is voltooid
+"Verandering:
+- Pastonly: Recordbestand-ID\'s die worden geüpload naar servers in een database op het apparaat om eerder filtering of etikettering toe te staan
+- herwerken van de upload om betere controle mogelijk te maken over welke bestanden worden gecomprimeerd (nieuwe pictogramkleuren)
 </nl-NL>
 <ru-RU>
-Исправлена ошибка:
-- Исправленная проблема с разрешениями URI Manuing URI приложения все еще нужны после завершения загрузки
+"Изменять:
+- Payonly: записи идентификаторов файлов, загруженные на серверы в базе данных на устройстве, чтобы разрешить более раннюю фильтрацию или маркировку их
+- Перезапись загрузки, чтобы обеспечить улучшенный контроль над тем, какие файлы сжаты (новые цвета значка)
 </ru-RU>
 <zh-CN>
-错误修正：
-- 在上传完成后，仍需要使用应用程序思维URI权限的纠正问题
+“改变：
+-  Babonly：记录在设备上的数据库中上传到服务器的文件ID，以允许早期过滤或标记这些
+- 返工上传，以便更好地控制压缩哪些文件（新图标颜色）
 </zh-CN>
