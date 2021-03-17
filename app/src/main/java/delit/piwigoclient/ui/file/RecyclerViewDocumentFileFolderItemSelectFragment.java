@@ -258,7 +258,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
 //            fileExtFilters.setShowInactiveFilters(false);
             fileExtFilters.setAllFilters(allFilters);
             fileExtFilters.setActiveFilters(getListAdapter().getFileExtsInCurrentFolder());
-            fileExtFilters.selectAll(false);
+            fileExtFilters.selectAll(true);
         }
     }
 

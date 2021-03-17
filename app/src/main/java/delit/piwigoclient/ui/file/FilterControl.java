@@ -146,15 +146,13 @@ public class FilterControl extends FrameLayout {
         if(selectedFilters == null) {
             selectedFilters = new HashSet<>();
         }
-        selectedFilters.clear();
+
         if(activeFilters == null) {
             activeFilters = new HashSet<>();
         }
-        selectedFilters.addAll(activeFilters);
-//        if(allFilters != null) {
-//            selectedFilters.addAll(allFilters);
-//        }
-        buildFilterViews(notifyListenersOfFilterStatusChange);
+        boolean changed = selectedFilters.retainAll(activeFilters);
+        changed |= selectedFilters.addAll(activeFilters);
+        buildFilterViews(changed && notifyListenersOfFilterStatusChange);
     }
     public void selectNone() {
         selectNone(true);
@@ -188,12 +186,12 @@ public class FilterControl extends FrameLayout {
                 FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
                 boolean checked = selectedFilters.contains(filterText);
                 if (!checked) {
-                    filterShown = true;
+                    filterHidden = true;
                     if(listener != null) {
                         listener.onFilterUnchecked(getContext(), filterText);
                     }
                 } else {
-                    filterHidden = true;
+                    filterShown = true;
                     if(listener != null) {
                         listener.onFilterChecked(getContext(), filterText);
                     }
