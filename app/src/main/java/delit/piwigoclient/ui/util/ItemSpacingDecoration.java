@@ -38,8 +38,15 @@ public class ItemSpacingDecoration extends RecyclerView.ItemDecoration {
     protected void setItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state, int position, int startsInCol, int cols, int horizontalMargin, int verticalMargin) {
         boolean atBottom = position == state.getItemCount();
         if(!atBottom) {
-            int rows = (int)Math.ceil(((double)state.getItemCount()) / cols);
-            atBottom = position >= ((rows - 1) * cols);
+            if (parent.getLayoutManager() instanceof GridLayoutManager) {
+                GridLayoutManager.SpanSizeLookup spanSizeLookup = ((GridLayoutManager) parent.getLayoutManager()).getSpanSizeLookup();
+                int row = spanSizeLookup.getSpanGroupIndex(position, cols);
+                int lastRow = spanSizeLookup.getSpanGroupIndex(state.getItemCount() -1, cols);
+                atBottom = row == lastRow;
+            } else {
+                int rows = (int) Math.ceil(((double) state.getItemCount()) / cols);
+                atBottom = position >= ((rows - 1) * cols);
+            }
         }
         applyItemOffsets(outRect, atBottom,startsInCol == 0, horizontalMargin, verticalMargin);
     }

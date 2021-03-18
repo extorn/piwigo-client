@@ -63,7 +63,7 @@ public class BackgroundJobLoadActor extends JobLoadActor {
         return null;
     }
 
-    public @Nullable UploadJob getUploadJob(@NonNull AutoUploadJobConfig jobConfig, @NonNull BackgroundPiwigoFileUploadResponseListener jobListener) {
+    public @Nullable UploadJob getUploadJob(@NonNull AutoUploadJobConfig jobConfig, @NonNull BackgroundPiwigoFileUploadResponseListener<?,?> jobListener) {
         DocumentFile localFolderToMonitor = jobConfig.getLocalFolderToMonitor(getContext());
         if(localFolderToMonitor == null || !localFolderToMonitor.exists()) {
             getListener().postError(jobConfig.getJobId(), getContext().getString(R.string.ignoring_job_local_folder_not_found));
@@ -112,7 +112,7 @@ public class BackgroundJobLoadActor extends JobLoadActor {
             }
         }
         UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(getContext(), getPrefs()), model, category,
-                jobConfig.getUploadedFilePrivacyLevel(getContext()), jobListener.getHandlerId(), deleteFilesPostUpload);
+                jobConfig.getUploadedFilePrivacyLevel(getContext()), jobListener.getHandlerId());
 
         uploadJob.setToRunInBackground();
         uploadJob.setJobConfigId(jobConfig.getJobId());

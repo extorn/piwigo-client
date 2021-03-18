@@ -65,22 +65,16 @@
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/delete_files_after_upload_checkbox"
         android:text="@string/delete_uploaded_files_title"
-        style="?editableFieldSwitch"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"/>
+        style="?editableFieldSwitch"/>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/compress_images_button"
         android:text="@string/compress_images"
-        style="?editableFieldSwitch"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"/>
+        style="?editableFieldSwitch"/>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/compress_videos_button"
         android:text="@string/compress_videos"
-        style="?editableFieldSwitch"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"/>
+        style="?editableFieldSwitch"/>
 
 </LinearLayout>

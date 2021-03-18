@@ -616,7 +616,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         cellSpanLookup = new AlbumViewItemSpanSizeLookup(galleryModel, totalSpans, colsSpannedByAlbum, colsSpannedByImage);
         gridLayoutMan.setSpanSizeLookup(cellSpanLookup);
         galleryListView.setLayoutManager(gridLayoutMan);
-        galleryListView.addItemDecoration(new AlbumItemSpacingDecoration(DisplayUtils.dpToPx(requireContext(), 1), DisplayUtils.dpToPx(requireContext(), 16)));
+        galleryListView.addItemDecoration(new AlbumItemSpacingDecoration(DisplayUtils.dpToPx(requireContext(), 4), DisplayUtils.dpToPx(requireContext(), 16)));
 
         galleryListViewScrollListener = new AlbumScrollListener(this, galleryListView.getLayoutManager());
         galleryListView.addOnScrollListener(galleryListViewScrollListener);
