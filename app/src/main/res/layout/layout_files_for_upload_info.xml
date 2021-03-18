@@ -61,6 +61,19 @@
             app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
             app:layout_constraintEnd_toEndOf="@id/guideline_margin_end"
             app:layout_constraintHorizontal_bias="0"/>
+<!--
+        <TextView
+            android:id="@+id/upload_icon_types_label"
+            style="?textAppearanceHeadline6"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_marginTop="24dp"
+            android:labelFor="@+id/upload_icon_keys"
+            android:text="@string/upload_icon_types_label"
+            app:layout_constraintTop_toBottomOf="@id/files_uploadable_explanation"
+            app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
+            app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+            app:layout_constraintHorizontal_bias="0"/>-->
 
         <TextView
             android:id="@+id/upload_icon_key_label"
@@ -218,6 +231,7 @@
             app:layout_constraintStart_toStartOf="@id/guideline_margin_start"
             app:layout_constraintEnd_toEndOf="@id/guideline_margin_end"
             app:layout_constraintHorizontal_bias="0"
+            android:background="@color/app_color_scrim_color_soft_bright"
             app:srcCompat="@drawable/ic_movie_filter_black_24px"/>
 
         <TextView

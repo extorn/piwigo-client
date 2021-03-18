@@ -36,8 +36,11 @@ public class ItemSpacingDecoration extends RecyclerView.ItemDecoration {
     }
 
     protected void setItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state, int position, int startsInCol, int cols, int horizontalMargin, int verticalMargin) {
-        boolean atBottom = position == parent.getChildCount();
-        atBottom |= startsInCol == 0 && position + cols - 1 == state.getItemCount();
+        boolean atBottom = position == state.getItemCount();
+        if(!atBottom) {
+            int rows = (int)Math.ceil(((double)state.getItemCount()) / cols);
+            atBottom = position >= ((rows - 1) * cols);
+        }
         applyItemOffsets(outRect, atBottom,startsInCol == 0, horizontalMargin, verticalMargin);
     }
 

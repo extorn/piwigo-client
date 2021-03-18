@@ -18,6 +18,8 @@ import delit.libs.ui.view.recycler.SimpleRecyclerViewAdapter;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.ui.upload.list.UploadDataItem;
+import delit.piwigoclient.ui.upload.list.UploadDataItemGridViewHolder;
+import delit.piwigoclient.ui.upload.list.UploadDataItemListViewHolder;
 import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
 import delit.piwigoclient.ui.upload.list.UploadDataItemViewHolder;
 import delit.piwigoclient.ui.upload.list.UploadItemMultiSelectStatusAdapter;
@@ -60,7 +62,13 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
     @NonNull
     @Override
     public VH buildViewHolder(View view, int viewType) {
-        return (VH)new UploadDataItemViewHolder<>(view);
+        if (viewType == VIEW_TYPE_GRID) {
+            return (VH) new UploadDataItemGridViewHolder<>(view);
+        } else if (viewType == VIEW_TYPE_LIST) {
+            return (VH) new UploadDataItemListViewHolder<>(view);
+        } else {
+            throw new IllegalArgumentException("Unsupported view type : " + viewType);
+        }
     }
 
     @Override
@@ -75,6 +83,9 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
         if (viewType == VIEW_TYPE_GRID) {
             return LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.layout_list_item_upload_grid_format, parent, false);
+        } else if(viewType == VIEW_TYPE_LIST){
+            return LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.layout_list_item_upload_list_format, parent, false);
         } else {
             throw new IllegalStateException("viewType not supported" + viewType);
         }

@@ -233,9 +233,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     private class FolderItemNavigationListener implements FolderItemRecyclerViewAdapter.NavigationListener {
 
         @Override
-        public void onPreFolderOpened(DocumentFile oldFolder, DocumentFile[] newFolderContent) {
+        public void onPreFolderOpened(DocumentFile currentFolder) {
             // need to do this before the folder is opened
-            recordTheCurrentListOfVisibleItemsInState(oldFolder);
+            recordTheCurrentListOfVisibleItemsInState(currentFolder);
         }
 
         @Override

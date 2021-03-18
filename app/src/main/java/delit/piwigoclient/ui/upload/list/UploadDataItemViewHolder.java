@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
@@ -17,7 +18,6 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.material.button.MaterialButton;
 
 import delit.libs.core.util.Logging;
-import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.libs.util.IOUtils;
@@ -26,7 +26,7 @@ import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.ui.upload.FilesToUploadRecyclerViewAdapter;
 
-public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,LVA,MSA>,LVA extends FilesToUploadRecyclerViewAdapter<LVA,MSA,IVH>, MSA extends UploadItemMultiSelectStatusAdapter<MSA,LVA,IVH>> extends CustomViewHolder<IVH, LVA, FilesToUploadRecyclerViewAdapter.UploadAdapterPrefs, UploadDataItem, MSA> implements PicassoLoader.PictureItemImageLoaderListener<ImageView> {
+public abstract class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,LVA,MSA>,LVA extends FilesToUploadRecyclerViewAdapter<LVA,MSA,IVH>, MSA extends UploadItemMultiSelectStatusAdapter<MSA,LVA,IVH>> extends CustomViewHolder<IVH, LVA, FilesToUploadRecyclerViewAdapter.UploadAdapterPrefs, UploadDataItem, MSA> implements PicassoLoader.PictureItemImageLoaderListener<ImageView> {
     private static final String TAG = "UploadDataItemVH";
     private ProgressIndicator progressBar;
     private TextView fileNameField;
@@ -55,7 +55,43 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
             imageLoader.load();
         }
         updateProgressFields(uploadDataItem);
-        setCompressionIconColor();
+    }
+
+    protected @ColorInt int getCompressionIconColor(UploadDataItem item) {
+        @ColorRes int colorId;
+        if(item.isCompressThisFile() == null) {
+            if(item.isCompressByDefault()) {
+                // compression set (may or may not require it)
+                colorId = R.color.compress_this_file_yes_default;
+            } else {
+                if(item.isNeedsCompression()) {
+                    // compression not set, but requires it
+                    colorId = R.color.compress_this_file_needed;
+                } else {
+                    // compression not set, does not require it
+                    colorId = R.color.app_color_scrim_color_soft_bright;
+                }
+            }
+        } else {
+            if(item.isCompressThisFile()) {
+                // force compression
+                colorId = R.color.compress_this_file_yes;
+            } else {
+                if(item.isNeedsCompression()) {
+                    // force no compression but requires it
+                    colorId = R.color.compress_this_file_needed;
+                } else {
+                    if(item.isCompressByDefault()) {
+                        // force no compression (overriding default)
+                        colorId = R.color.compress_this_file_no;
+                    } else {
+                        // compression not set either for this file or as a default
+                        colorId = R.color.app_color_scrim_color_soft_bright;
+                    }
+                }
+            }
+        }
+        return itemView.getResources().getColor(colorId);
     }
 
     @Override
@@ -92,48 +128,7 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
         } else {
             previouslyUploadedMarkerField.setVisibility(View.GONE);
         }
-        setCompressionIconColor();
-
         updateProgressFields(uploadDataItem);
-
-    }
-
-    private void setCompressionIconColor() {
-        UploadDataItem item = getItem();
-        @ColorRes int colorId;
-        if(item.isCompressThisFile() == null) {
-            if(item.isCompressByDefault()) {
-                // compression set (may or may not require it)
-                colorId = R.color.compress_this_file_yes_default;
-            } else {
-                if(item.isNeedsCompression()) {
-                    // compression not set, but requires it
-                    colorId = R.color.compress_this_file_needed;
-                } else {
-                    // compression not set, does not require it
-                    colorId = R.color.transparent;
-                }
-            }
-        } else {
-            if(item.isCompressThisFile()) {
-                // force compression
-                colorId = R.color.compress_this_file_yes;
-            } else {
-                if(item.isNeedsCompression()) {
-                    // force no compression but requires it
-                    colorId = R.color.compress_this_file_needed;
-                } else {
-                    if(item.isCompressByDefault()) {
-                        // force no compression (overriding default)
-                        colorId = R.color.compress_this_file_no;
-                    } else {
-                        // compression not set either for this file or as a default
-                        colorId = R.color.transparent;
-                    }
-                }
-            }
-        }
-        fileForUploadMimeTypeImageView.setBackgroundColor(itemView.getResources().getColor(colorId));
     }
 
     private void updateProgressFields(UploadDataItem uploadDataItem) {
@@ -174,6 +169,10 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
         }
     }
 
+    public ImageView getFileForUploadMimeTypeImageView() {
+        return fileForUploadMimeTypeImageView;
+    }
+
     @Override
     public void cacheViewFieldsAndConfigure(FilesToUploadRecyclerViewAdapter.UploadAdapterPrefs adapterPrefs) {
         fileUploadCancelledIndicator = itemView.findViewById(R.id.cancelled_indicator);
@@ -185,8 +184,6 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
         fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
         fileForUploadMimeTypeImageView = itemView.findViewById(R.id.type_indicator);
         previouslyUploadedMarkerField = itemView.findViewById(R.id.file_previously_uploaded);
-
-        CustomClickTouchListener.callClickOnTouch(fileForUploadMimeTypeImageView, this::toggleCompression);
 
         imageLoader = new ResizingPicassoLoader<>(fileForUploadImageView, this, 0, 0);
         imageLoader.setUsePlaceholderIfNothingToLoad(true);
@@ -208,11 +205,6 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
             onDeleteButtonClicked((IVH) this, true);
             return true;
         });
-    }
-
-    private void toggleCompression(View view) {
-        getItem().setCompressThisFile(!Boolean.TRUE.equals(getItem().isCompressThisFile()));
-        setCompressionIconColor();
     }
 
     private void onDeleteButtonClicked(IVH vh, boolean longClick) {

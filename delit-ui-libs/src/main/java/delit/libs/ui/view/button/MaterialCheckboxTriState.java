@@ -62,6 +62,8 @@ public class MaterialCheckboxTriState extends MaterialCheckBox {
 
         if(a.hasValue(R.styleable.MaterialCheckboxTriState_checked)) {
             setChecked(a.getBoolean(R.styleable.MaterialCheckboxTriState_checked, false));
+        } else {
+            setChecked(null);
         }
 
         setButtonDrawable(ContextCompat.getDrawable(context,R.drawable.checkbox));
@@ -71,6 +73,10 @@ public class MaterialCheckboxTriState extends MaterialCheckBox {
         refreshDrawableState();
     }
 
+    /**
+     * This is essentially setChecked but for a list view item
+     * @param activated new value
+     */
     @Override
     public void setActivated(boolean activated) {
         super.setActivated(activated);
@@ -79,23 +85,29 @@ public class MaterialCheckboxTriState extends MaterialCheckBox {
         }
     }
 
-    public void setSecondaryChecked(boolean alwaysChecked, boolean resetLocalValue) {
-        if(resetLocalValue) {
-            primaryCheckedValueSet = false;
-        }
-        if (this.secondaryChecked != alwaysChecked) {
-            this.secondaryChecked = alwaysChecked;
+    public void setSecondaryChecked(boolean secondaryChecked) {
+        if (this.secondaryChecked != secondaryChecked) {
+            this.secondaryChecked = secondaryChecked;
             refreshDrawableState();
         }
     }
 
-    public void setSecondaryChecked(boolean secondaryChecked) {
-        setSecondaryChecked(secondaryChecked, true);
+    /**
+     * @param checked null will ensure the secondary checked value is used and clear the primary checked status
+     */
+    public void setChecked(Boolean checked) {
+        if(checked == null) {
+            primaryCheckedValueSet = false;
+            refreshDrawableState();
+        } else {
+            super.setChecked(checked);
+            primaryCheckedValueSet = true;
+        }
     }
 
     /**
      * DO NOT call this if using local value overrides mode. This doesn't mark the field as locally set.
-     * Use {@link #toggle()} instead.
+     * Use {@link #toggle()} or {@link #setChecked(Boolean)} instead.
      * @param checked new value
      */
     @Override

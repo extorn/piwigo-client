@@ -153,8 +153,20 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
             adapter.activeRootUri = activeRootUri;
             restored = true;
         }
+    }
 
-
+    @Override
+    public void selectAllItemIds() {
+        // can't do the default as we need to filter the selection
+        HashSet<Long> selectedIds = getSelectedItemIds();
+        SortedSet<String> acceptableFileExts = getAdapterPrefs().getAcceptableFileExts(getFileExtsAndMimesInCurrentFolder());
+        for(FolderItem item : currentDisplayContent) {
+            if(acceptableFileExts.contains(item.getExt())) {
+                selectedIds.add(item.getUid());
+            }
+        }
+        notifyItemRangeChanged(0, getItemCount());
+        getMultiSelectStatusListener().onItemSelectionCountChanged((LVA) this,selectedIds.size());
     }
 
     public void setInitiallySelectedItems(Context context) {
@@ -509,7 +521,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
 
     private void afterAddingFolderItemsToInternalStore(@NonNull Context context) {
         if(activeFolder == null) {
-            navigationListener.onPreFolderOpened(null, getItems());
+            navigationListener.onPreFolderOpened(null);
             Logging.log(Log.DEBUG, TAG, "Invoking Background task (afterAddingFolderItemsToInternalStore) - UpdateContentListAndSortContentAfterAdd");
 //            Logging.recordException(new Exception().fillInStackTrace());
             activeTask = new UpdateContentListAndSortContentAfterAdd(this).withContext(context);
@@ -581,15 +593,13 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
     }
 
-    public DocumentFile[] getItems() {
+    public List<FolderItem> getItems() {
         if(currentDisplayContent == null) {
             return null;
         }
-        List<DocumentFile> docFiles = new ArrayList<>(currentDisplayContent.size());
-        for(FolderItem item : currentDisplayContent) {
-            docFiles.add(item.getDocumentFile());
-        }
-        return docFiles.toArray(new DocumentFile[0]);
+        List<FolderItem> docFiles = new ArrayList<>(currentDisplayContent.size());
+        docFiles.addAll(currentDisplayContent);
+        return docFiles;
     }
 
     public void clear() {
@@ -617,7 +627,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
     }
 
     public interface NavigationListener {
-        void onPreFolderOpened(DocumentFile oldFolder, DocumentFile[] newFolderContent);
+        void onPreFolderOpened(DocumentFile currentFolder);
 
         void onPostFolderOpened(DocumentFile oldFolder, DocumentFile newFolder);
     }
@@ -865,7 +875,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
             oldFolder = getOwner().activeFolder;
 
             if (!refreshingExistingFolder) {
-                getOwner().navigationListener.onPreFolderOpened(oldFolder, newContent != null ? newContent.listFiles() : null);
+                getOwner().navigationListener.onPreFolderOpened(oldFolder);
             }
         }
 

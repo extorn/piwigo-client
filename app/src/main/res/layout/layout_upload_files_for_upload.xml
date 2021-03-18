@@ -17,13 +17,44 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         app:icon="@drawable/ic_info_black_24dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/files_for_upload_header_bottom_barrier"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintHorizontal_chainStyle="spread_inside"/>
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggle_list_mode_button_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/information_for_upload_button"
+        app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/files_for_upload_header_bottom_barrier"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:selectionRequired="true"
+        app:singleSelection="true"
+        app:checkedButton="@+id/toggle_mode_normal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/toggle_mode_normal"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_baseline_view_comfy_24"
+            android:text="@string/normal_mode"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/toggle_mode_detail"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_baseline_view_stream_24"
+            android:text="@string/detail_mode"/>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <Button
         android:id="@+id/select_files_for_upload_button"
@@ -34,9 +65,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/information_for_upload_button"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/files_for_upload_header_bottom_barrier"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintVertical_bias="0"/>
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:id="@+id/clear_individual_overrides_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clear_individual_settings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/information_for_upload_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        tools:visibility="visible"
+        android:visibility="gone"/>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/buttons_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="clear_individual_overrides_button, information_for_upload_button, select_files_for_upload_button"/>
 
     <TextView
         android:id="@+id/files_for_upload_label"
@@ -51,7 +102,7 @@
         android:textAppearance="?textAppearanceCaption"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/select_files_for_upload_button"
-        app:layout_constraintTop_toBottomOf="@id/information_for_upload_button"
+        app:layout_constraintTop_toBottomOf="@id/buttons_barrier"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintVertical_chainStyle="packed"/>
@@ -88,6 +139,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/files_for_upload_header_bottom_barrier"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constrainedHeight="true"/>
+        app:layout_constrainedHeight="true"
+        tools:itemCount="2"
+        tools:listitem="@layout/layout_list_item_upload_list_format"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,6 +34,7 @@ public class UploadDataItem implements Parcelable {
     private Boolean compressThisFile;
     private boolean compressByDefault; // not an individual setting.
     private Boolean deleteAfterUpload;
+    private boolean deleteByDefault; // not an individual setting.
 
     public UploadDataItem(Uri uri, String filename, String fileExt, String mimeType, long dataLength) {
         this.uri = uri;
@@ -196,7 +197,7 @@ public class UploadDataItem implements Parcelable {
         return compressThisFile;
     }
 
-    public void setCompressThisFile(boolean compressThisFile) {
+    public void setCompressThisFile(Boolean compressThisFile) {
         this.compressThisFile = compressThisFile;
     }
 
@@ -208,6 +209,10 @@ public class UploadDataItem implements Parcelable {
         this.needsCompression = needsCompression;
     }
 
+    public void setDeleteByDefault(boolean deleteByDefault) {
+        this.deleteByDefault = deleteByDefault;
+    }
+
     public void setCompressThisFileByDefault(boolean compressByDefault) {
         this.compressByDefault = compressByDefault;
     }
@@ -216,11 +221,15 @@ public class UploadDataItem implements Parcelable {
         return compressByDefault;
     }
 
-    public void setDeleteAfterUpload(boolean deleteAfterUpload) {
+    public boolean isDeleteByDefault() {
+        return deleteByDefault;
+    }
+
+    public void setDeleteAfterUpload(Boolean deleteAfterUpload) {
         this.deleteAfterUpload = deleteAfterUpload;
     }
 
-    public Boolean getDeleteAfterUpload() {
+    public Boolean isDeleteAfterUpload() {
         return deleteAfterUpload;
     }
 

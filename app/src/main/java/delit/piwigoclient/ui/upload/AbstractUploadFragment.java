@@ -35,6 +35,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -105,6 +106,7 @@ import delit.piwigoclient.ui.upload.list.UploadDataItem;
 import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
 import delit.piwigoclient.ui.upload.list.UploadDataItemViewHolder;
 import delit.piwigoclient.ui.upload.list.UploadItemMultiSelectStatusAdapter;
+import delit.piwigoclient.ui.upload.list.UploadItemSpanSizeLookup;
 import delit.piwigoclient.ui.util.ItemSpacingDecoration;
 import delit.piwigoclient.ui.util.UiUpdatingProgressListener;
 
@@ -359,6 +361,11 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         compressVideosAudioBitrateSpinner.setSelection(audioBitrateAdapter.getPosition(defaultAudioBitrate));
 
         deleteFilesAfterUploadCheckbox = view.findViewById(R.id.delete_files_after_upload_checkbox);
+        deleteFilesAfterUploadCheckbox.setOnClickListener(v->{
+            updateIndividualFilesSetting(getFilesForUploadViewAdapter().getUploadDataItemsModel().getUploadDataItemsReference(), false);
+            // trigger a partial update.
+            getFilesForUploadViewAdapter().notifyItemRangeChanged(0, getFilesForUploadViewAdapter().getItemCount(), Boolean.FALSE);
+        });
         deleteFilesAfterUploadCheckbox.setChecked(UploadPreferences.isDeleteFilesAfterUploadDefault(getContext(), getPrefs()));
 
         compressVideosCheckbox = view.findViewById(R.id.compress_videos_button);
@@ -367,7 +374,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             compressVideosSettings.setVisibility(GONE);
         } else {
             compressVideosCheckbox.setOnClickListener(v -> {
-                updateCompressFilesSetting(getFilesForUploadViewAdapter().getUploadDataItemsModel().getUploadDataItemsReference());
+                updateIndividualFilesSetting(getFilesForUploadViewAdapter().getUploadDataItemsModel().getUploadDataItemsReference(), false);
                 // trigger a partial update.
                 getFilesForUploadViewAdapter().notifyItemRangeChanged(0, getFilesForUploadViewAdapter().getItemCount(), Boolean.FALSE);
             });
@@ -396,7 +403,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         compressImagesCheckbox = view.findViewById(R.id.compress_images_button);
         compressImagesCheckbox.setOnClickListener(v -> {
-            updateCompressFilesSetting(getFilesForUploadViewAdapter().getUploadDataItemsModel().getUploadDataItemsReference());
+            updateIndividualFilesSetting(getFilesForUploadViewAdapter().getUploadDataItemsModel().getUploadDataItemsReference(), false);
             // trigger a partial update.
             getFilesForUploadViewAdapter().notifyItemRangeChanged(0, getFilesForUploadViewAdapter().getItemCount(), Boolean.FALSE);
         });
@@ -406,6 +413,21 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         uploadFilesNowButton = view.findViewById(R.id.upload_files_button);
         uploadFilesNowButton.setOnClickListener(v -> onClickUploadFilesButton());
+        View clearIndividualOverridesButton = view.findViewById(R.id.clear_individual_overrides_button);
+        clearIndividualOverridesButton.setOnClickListener((v)->onClickClearIndividualOverridesButton());
+
+        MaterialButtonToggleGroup listModeToggleGroup = view.findViewById(R.id.toggle_list_mode_button_group);
+        listModeToggleGroup.addOnButtonCheckedListener((v, buttonId, checked)->{
+
+            if(buttonId == R.id.toggle_mode_normal) {
+                filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
+                clearIndividualOverridesButton.setVisibility(GONE);
+            } else {
+                filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_LIST);
+                clearIndividualOverridesButton.setVisibility(VISIBLE);
+            }
+            filesToUploadAdapter.notifyDataSetChanged();
+        });
 
         if (filesToUploadAdapter == null) {
             filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(new AdapterActionListener<>());
@@ -450,7 +472,8 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), columnsToShow);
         filesForUploadView.setLayoutManager(gridLayoutMan);
-        filesForUploadView.addItemDecoration(new ItemSpacingDecoration(DisplayUtils.dpToPx(requireContext(), 1)));
+        gridLayoutMan.setSpanSizeLookup(new UploadItemSpanSizeLookup<>(filesToUploadAdapter, columnsToShow));
+        filesForUploadView.addItemDecoration(new ItemSpacingDecoration(DisplayUtils.dpToPx(requireContext(), 4)));
 
         filesForUploadView.setAdapter(filesToUploadAdapter);
 
@@ -461,6 +484,12 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         }
 
         return view;
+    }
+
+    private void onClickClearIndividualOverridesButton() {
+        updateIndividualFilesSetting(getFilesForUploadViewAdapter().getUploadDataItemsModel().getUploadDataItemsReference(), true);
+        // trigger a partial update.
+        getFilesForUploadViewAdapter().notifyItemRangeChanged(0, getFilesForUploadViewAdapter().getItemCount(), Boolean.FALSE);
     }
 
     protected void onClickInformationForUploadButton() {
@@ -1203,21 +1232,27 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     public void onAddFilesForUpload(List<UploadDataItem> folderItems) {
         hideOverallUploadProgressIndicator();
         switchToUploadingFilesTab();
-        updateCompressFilesSetting(folderItems);
+        updateIndividualFilesSetting(folderItems, false);
         updateFilesForUploadList(folderItems);
     }
 
-    private void updateCompressFilesSetting(List<UploadDataItem> folderItems) {
+    private void updateIndividualFilesSetting(List<UploadDataItem> folderItems, boolean clearIndividualValues) {
         boolean compressVideos = compressVideosCheckbox.isChecked();
         boolean compressImages = compressImagesCheckbox.isChecked();
+        boolean deleteAfterUpload = deleteFilesAfterUploadCheckbox.isChecked();
         boolean warnCompressionNeededForSomeFiles = false;
         for(UploadDataItem item : folderItems) {
+            if(clearIndividualValues) {
+                item.setDeleteAfterUpload(null);
+                item.setCompressThisFile(null);
+            }
             if (IOUtils.isPlayableMedia(item.getMimeType())) {
                 item.setCompressThisFileByDefault(compressVideos);
             } else if (IOUtils.isImage(item.getMimeType())) {
                 item.setCompressThisFileByDefault(compressImages);
             }
-            if(item.isNeedsCompression() && !item.isCompressByDefault()) {
+            item.setDeleteByDefault(deleteAfterUpload);
+            if(item.isNeedsCompression() && !(item.isCompressByDefault() || item.isCompressThisFile())) {
                 warnCompressionNeededForSomeFiles = true;
             }
         }

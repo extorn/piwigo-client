@@ -142,8 +142,8 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         }
 
 
-        boolean alwaysChecked = indirectlySelectedItems != null && indirectlySelectedItems.contains(thisItemId);
-        imageView.setSecondaryChecked(alwaysChecked);
+        boolean indirectlyChecked = indirectlySelectedItems != null && indirectlySelectedItems.contains(thisItemId);
+        imageView.setSecondaryChecked(indirectlyChecked);
         imageView.setEnabled(adapterPrefs.isEnabled());
         imageView.setOnCheckedChangeListener(new ItemSelectionListener(position));
 //

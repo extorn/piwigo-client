@@ -1118,11 +1118,15 @@ App Install UUID: %5$s
     <string name="upload_information_header">Key to upload detail</string>
     <string name="upload_files_label">Server accepted file types</string>
     <string name="upload_icon_key_explanation">Icon for playable media used in the following examples</string>
-    <string name="alert_error_require_compression_pattern">Some files selected require compression. They are identifiable with a red border. Please check and either remove these from the upload or re-enable compression.</string>
+    <string name="alert_error_require_compression_pattern">Some files selected require compression.Please check and either remove these from the upload or re-enable compression.</string>
     <string name="upload_tab_title_compression">Compression</string>
     <string name="image_compression_settings">Images</string>
     <string name="video_compression_settings">Audio and Video</string>
     <string name="upload_defaults_label">Upload File Defaults</string>
     <string name="upload_server_detail_label">Server Detail</string>
     <string name="delete_after_upload">Delete afterwards</string>
+    <string name="detail_mode">Detail</string>
+    <string name="normal_mode">Normal</string>
+    <string name="clear_individual_settings">clear individual settings</string>
+    <string name="upload_icon_types_label">File types</string>
 </resources>

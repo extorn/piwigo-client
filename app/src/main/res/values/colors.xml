@@ -6,10 +6,10 @@
     <color name="colorTest4">#00FFFF</color>
     <color name="colorTest5">#FF00FF</color>
 
-    <color name="compress_this_file_yes">#4CAF50</color>
-    <color name="compress_this_file_yes_default">#8BC34A</color>
-    <color name="compress_this_file_no">#00BCD4</color>
-    <color name="compress_this_file_needed">#FF5722</color>
+    <color name="compress_this_file_yes">#CD4CAF50</color>
+    <color name="compress_this_file_yes_default">#CD8BC34A</color>
+    <color name="compress_this_file_no">#CD00BCD4</color>
+    <color name="compress_this_file_needed">#CDFF5722</color>
 
     <!-- raw colors used -->
     <color name="transparent">#00000000</color>
@@ -31,6 +31,7 @@
     <color name="app_color_on_surface">#FFFFFF</color>
     <color name="app_color_on_background">#212121</color>
     <color name="app_color_scrim_color_bright">#EEFFFFFF</color>
+    <color name="app_color_scrim_color_soft_bright">#CDFFFFFF</color>
     <color name="app_color_scrim_color_dark">#212121</color>
     <color name="ripple_dark">#33ffffff</color>
     <color name="ripple_light">#1f000000</color>

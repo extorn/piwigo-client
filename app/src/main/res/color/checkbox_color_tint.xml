@@ -4,8 +4,8 @@
     <item android:state_enabled="false" app:secondaryChecked="true" android:alpha="0.5" android:color="?attr/colorControlNormal"/>
     <item android:state_enabled="false" android:color="?attr/colorControlNormal"/>
     <!-- if enabled and secondary checked, show partially grayed -->
-    <item android:state_activated="false" app:secondaryChecked="true" android:alpha="0.5" android:color="color/app_secondary" />
-    <item android:state_checked="false" app:secondaryChecked="true" android:alpha="0.5" android:color="color/app_secondary" />
+    <item android:state_activated="false" app:secondaryChecked="true" android:alpha="0.5" android:color="@color/app_secondary" />
+    <item android:state_checked="false" app:secondaryChecked="true" android:alpha="0.5" android:color="@color/app_secondary" />
     <!-- otherwise -->
     <item android:state_enabled="true" android:color="@color/app_secondary"/>
     <item android:state_active="true" android:color="@color/app_secondary"/>
