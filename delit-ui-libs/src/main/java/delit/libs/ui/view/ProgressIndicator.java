@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -17,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.ViewCompat;
 
 import java.util.Objects;
@@ -25,45 +26,49 @@ import delit.libs.R;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 
-public class ProgressIndicator extends FrameLayout {
+public class ProgressIndicator extends ConstraintLayout {
     private static final String TAG = "ProgressInd";
     private Button actionButton;
     private TextView descriptionField;
     private ProgressBar progressBar;
+    private boolean showActionButton;
 
     public ProgressIndicator(Context context) {
         super(context);
-        init(context, null, 0);
+        init(context, null, 0, 0);
     }
 
     public ProgressIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs, 0);
+        init(context, attrs, 0, 0);
     }
 
     public ProgressIndicator(Context context, AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr, 0);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public ProgressIndicator(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+    private void init(@NonNull Context context, AttributeSet attrs, @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
         TypedArray a = context.obtainStyledAttributes(
-                attrs, R.styleable.ProgressIndicator, defStyleAttr, 0);
+                attrs, R.styleable.ProgressIndicator, defStyleAttr, defStyleRes);
         ViewCompat.setBackgroundTintList(this, a.getColorStateList(R.styleable.ProgressIndicator_backgroundTint));
+        showActionButton = a.getBoolean(R.styleable.ProgressIndicator_showActionButton, false);
         a.recycle();
 
-        View content = inflate(context, R.layout.layout_progress_indicator, this);
+        inflate(context, R.layout.layout_progress_indicator, this);
 
         actionButton = findViewById(R.id.progressAction);
         descriptionField = findViewById(R.id.progressText);
         progressBar = findViewById(R.id.progressBar);
+        actionButton.setVisibility(showActionButton ? VISIBLE : GONE);
     }
-    
+
     public void showProgressIndicator(@StringRes int progressTextRes, @IntRange(from=-1,to=100) int progress) {
         progressBar.setIndeterminate(progress < 0);
         showProgressIndicatorInternal(getContext().getString(progressTextRes), progress, 0, null);
