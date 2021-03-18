@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_checked="true"
+        android:drawable="@drawable/ic_baseline_compress_24" /> <!-- checked -->
+    <item android:state_checked="false"
+        android:drawable="@android:color/transparent" /> <!-- unchecked -->
+
+    <!--<item android:state_focused="true"
+        android:drawable="@drawable/btn_check_onfocus" /> -->   <!--on focus-->
+    <!--<item android:drawable="@drawable/btn_check_off" />--> <!-- default -->
+</selector>

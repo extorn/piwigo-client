@@ -4,6 +4,8 @@
     <attr format="reference" name="materialButtonIconStyle"/>
     <attr format="reference" name="materialButtonIconAccentedStyle"/>
     <attr format="reference" name="checkboxFavoriteAccentedStyle"/>
+    <attr format="reference" name="deleteToggleStyle"/>
+    <attr format="reference" name="compressToggleStyle"/>
     <attr format="reference" name="visibilityToggleStyle"/>
     <attr format="reference" name="foldingToggleStyle"/>
     <attr format="reference" name="layoutExpansionToggleStyle"/>

@@ -45,6 +45,7 @@
 
     <declare-styleable name="ProgressIndicator">
         <attr name="backgroundTint" format="color"/>
+        <attr name="showActionButton" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="FlowLayout">

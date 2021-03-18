@@ -82,6 +82,22 @@
         <item name="android:button">@drawable/visibility_checkbox</item> <!-- just a null drawable - never shown -->
     </style>
 
+    <!-- delete toggle button style -->
+    <style name="App.Widget.CompoundButton.CheckBox.Delete" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="buttonCompat">@drawable/delete_checkbox</item> <!-- needed for pre lollipop -->
+        <item name="android:button">@drawable/delete_checkbox</item> <!-- just a null drawable - never shown -->
+    </style>
+
+    <!-- compress toggle button style -->
+    <style name="App.Widget.CompoundButton.CheckBox.Compress" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="buttonCompat">@drawable/compress_checkbox</item> <!-- needed for pre lollipop -->
+        <item name="android:button">@drawable/compress_checkbox</item> <!-- just a null drawable - never shown -->
+    </style>
+
     <!-- Accented Favorite (heart) icon style button -->
     <style name="Widget.CompoundButton.CheckBox.Favorite.Accented" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="buttonTint">?attr/colorSecondary</item> <!-- colors the button icon -->

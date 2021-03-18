@@ -1124,4 +1124,5 @@ App Install UUID: %5$s
     <string name="video_compression_settings">Audio and Video</string>
     <string name="upload_defaults_label">Upload File Defaults</string>
     <string name="upload_server_detail_label">Server Detail</string>
+    <string name="delete_after_upload">Delete afterwards</string>
 </resources>
