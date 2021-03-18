@@ -22,17 +22,15 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
     private final CategoryItemStub uploadToAlbum;
     private final byte privacyWanted;
     private final long piwigoListenerId;
-    private final boolean deleteFilesAfterUpload;
     private final boolean filesizesChecked;
 
-    public CreateAndSubmitUploadJobTask(AbstractUploadFragment<?,?> owner, UploadDataItemModel model, CategoryItemStub uploadToAlbum, byte privacyWanted, long piwigoListenerId, boolean deleteUploadedFiles, boolean filesizesChecked) {
+    public CreateAndSubmitUploadJobTask(AbstractUploadFragment<?,?> owner, UploadDataItemModel model, CategoryItemStub uploadToAlbum, byte privacyWanted, long piwigoListenerId, boolean filesizesChecked) {
         super(owner);
         withContext(owner.requireContext());
         this.model = model;
         this.uploadToAlbum = uploadToAlbum;
         this.privacyWanted = privacyWanted;
         this.piwigoListenerId = piwigoListenerId;
-        this.deleteFilesAfterUpload = deleteUploadedFiles;
         this.filesizesChecked = filesizesChecked;
     }
 
@@ -69,15 +67,8 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
         }
 
         if (activeJob == null) {
-            if(deleteFilesAfterUpload) {
-                //TODO this could be a user configurable option on a per file basis.
-                for (UploadDataItem uploadDataItem : model.getUploadDataItemsReference()) {
-                    uploadDataItem.setDeleteAfterUpload(true);
-                }
-            }
-
             ForegroundJobLoadActor jobLoadActor = new ForegroundJobLoadActor(getContext());
-            activeJob = jobLoadActor.createUploadJob(ConnectionPreferences.getActiveProfile(), model, uploadToAlbum, privacyWanted, piwigoListenerId, deleteFilesAfterUpload);
+            activeJob = jobLoadActor.createUploadJob(ConnectionPreferences.getActiveProfile(), model, uploadToAlbum, privacyWanted, piwigoListenerId);
             UploadJob.VideoCompressionParams vidCompParams = getOwner().buildVideoCompressionParams();
             UploadJob.ImageCompressionParams imageCompParams = getOwner().buildImageCompressionParams();
             if (vidCompParams != null) {

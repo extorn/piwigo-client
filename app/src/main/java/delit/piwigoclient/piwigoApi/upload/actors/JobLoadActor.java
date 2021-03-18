@@ -38,13 +38,14 @@ public class JobLoadActor extends LocalUploadActor {
         return PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
-    public @NonNull UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, UploadDataItemModel filesForUpload, CategoryItemStub category, byte uploadedFilePrivacyLevel, long responseHandlerId, boolean isDeleteFilesAfterUpload) {
+    public @NonNull UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, UploadDataItemModel filesForUpload, CategoryItemStub category, byte uploadedFilePrivacyLevel, long responseHandlerId) {
         long jobId = getNextMessageId();
-        UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, category, uploadedFilePrivacyLevel, isDeleteFilesAfterUpload);
+        UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, category, uploadedFilePrivacyLevel);
         for (UploadDataItem uploadDataItem : filesForUpload.getUploadDataItemsReference()) {
             FileUploadDetails fud = new FileUploadDetails(uploadDataItem.getUri(), uploadDataItem.getDataLength());
             fud.setCompressionNeeded(uploadDataItem.isCompressByDefault() || Boolean.TRUE.equals(uploadDataItem.isCompressThisFile()));
             fud.setChecksum(uploadDataItem.getUri(), uploadDataItem.getDataHashcode());
+            fud.setDeleteAfterUpload(uploadDataItem.isDeleteByDefault() || Boolean.TRUE.equals(uploadDataItem.isDeleteAfterUpload()));
             uploadJob.addFileForUpload(fud);
         }
         synchronized (activeUploadJobs) {

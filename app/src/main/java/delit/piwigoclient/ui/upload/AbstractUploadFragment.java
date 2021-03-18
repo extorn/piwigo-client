@@ -877,7 +877,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         byte privacyLevelWanted = (byte) privacyLevelSpinner.getSelectedItemId(); // save as just bytes!
         long piwigoListenerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
         boolean isDeleteFilesAfterUpload = deleteFilesAfterUploadCheckbox.isChecked();
-        CreateAndSubmitUploadJobTask createAndSubmitUploadJobTask = new CreateAndSubmitUploadJobTask(this, model, uploadToAlbum, privacyLevelWanted, piwigoListenerId, isDeleteFilesAfterUpload, fileSizesHaveBeenChecked);
+        CreateAndSubmitUploadJobTask createAndSubmitUploadJobTask = new CreateAndSubmitUploadJobTask(this, model, uploadToAlbum, privacyLevelWanted, piwigoListenerId, fileSizesHaveBeenChecked);
         createAndSubmitUploadJobTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -1284,12 +1284,8 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
     public void populateUiFromJob(UploadJob uploadJob) {
         setUploadToAlbum(uploadJob.getUploadToCategory());
-        compressImagesCheckbox.setChecked(uploadJob.isCompressPhotosBeforeUpload());
-        compressVideosCheckbox.setChecked(uploadJob.isCompressPlayableMediaBeforeUpload());
         setPrivacyLevelSpinnerSelection(uploadJob.getPrivacyLevelWanted());
-        deleteFilesAfterUploadCheckbox.setChecked(uploadJob.isDeleteFilesAfterUpload());
         updateTotalUploadSizeField();
-        //FIXME populate the remaining fields. (can be removed from the job status tab then).
         allowUserUploadConfiguration(uploadJob);
     }
 

@@ -278,7 +278,7 @@ END"
                     style="?materialButtonIconStyle"
                     android:layout_alignWithParentIfMissing="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="0dp"
                     app:icon="@drawable/ic_delete_black_24px" />
 

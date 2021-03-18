@@ -4,12 +4,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:paddingStart="2dp"
-    android:paddingTop="15dp"
-    android:paddingEnd="2dp"
-    android:paddingBottom="5dp">
-
-
+    android:paddingTop="16dp"
+    tools:showIn="@layout/fragment_upload">
 
     <Button
         android:id="@+id/information_for_upload_button"
@@ -75,6 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/clear_individual_settings"
+        android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/information_for_upload_button"
@@ -94,10 +91,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:labelFor="@id/selected_files_for_upload"
-        android:paddingStart="5dp"
-        android:paddingTop="0dp"
-        android:paddingEnd="5dp"
-        android:paddingBottom="5dp"
+        android:layout_marginTop="8dp"
+        android:paddingBottom="8dp"
         android:text="@string/files_for_upload_title"
         android:textAppearance="?textAppearanceCaption"
         app:layout_constraintStart_toStartOf="parent"
@@ -111,10 +106,7 @@
         android:id="@+id/files_for_upload_count_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="5dp"
-        android:paddingTop="0dp"
-        android:paddingEnd="5dp"
-        android:paddingBottom="5dp"
+        android:layout_marginStart="8dp"
         tools:text="234"
         android:textAppearance="?textAppearanceCaption"
         app:layout_constraintStart_toEndOf="@+id/files_for_upload_label"

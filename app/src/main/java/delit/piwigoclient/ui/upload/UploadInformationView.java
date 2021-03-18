@@ -28,7 +28,7 @@ public class UploadInformationView extends DialogFragment {
         final MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(getContext(), R.style.Theme_App_EditPages));
         builder1.setTitle(R.string.alert_information);
         builder1.setPositiveButton(R.string.button_ok, (v,b)-> dismiss());
-        builder1.setView(R.layout.layout_files_for_upload_info);
+        builder1.setView(R.layout.layout_upload_files_for_upload_info);
         return builder1.create();
     }
 

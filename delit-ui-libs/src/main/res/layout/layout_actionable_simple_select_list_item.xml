@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="16dp"
         android:layout_toEndOf="@+id/actionable_list_item_checked"
         android:layout_toStartOf="@+id/actionable_list_item_delete_button"
         android:layout_alignWithParentIfMissing="true">

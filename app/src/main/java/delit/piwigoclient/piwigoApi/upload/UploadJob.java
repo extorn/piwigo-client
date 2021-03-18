@@ -67,7 +67,6 @@ public class UploadJob implements Parcelable {
     private final CategoryItemStub uploadToCategory;
     private final byte privacyLevelWanted;
     private final ConnectionPreferences.ProfilePreferences connectionPrefs;
-    private final boolean isDeleteFilesAfterUpload;
     private final Map<Uri, FileUploadDetails> fileUploadDetails;
     private int jobConfigId = -1;
     private boolean runInBackground;
@@ -83,13 +82,12 @@ public class UploadJob implements Parcelable {
     private DividableProgressTracker overallProgressTracker;
     private int runAttempts;
 
-    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel, boolean isDeleteFilesAfterUpload) {
+    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel) {
         this.jobId = jobId;
         this.connectionPrefs = connectionPrefs;
         this.responseHandlerId = responseHandlerId;
         this.uploadToCategory = destinationCategory;
         this.privacyLevelWanted = uploadedFilePrivacyLevel;
-        this.isDeleteFilesAfterUpload = isDeleteFilesAfterUpload;
         fileUploadDetails = new HashMap<>();
     }
 
@@ -112,7 +110,6 @@ public class UploadJob implements Parcelable {
         playableMediaCompressionParams = ParcelUtils.readParcelable(in, UploadJob.VideoCompressionParams.class);
         imageCompressionParams = ParcelUtils.readParcelable(in, UploadJob.ImageCompressionParams.class);
         allowUploadOfRawVideosIfIncompressible = ParcelUtils.readBool(in);
-        isDeleteFilesAfterUpload = ParcelUtils.readBool(in);
         overallProgressTracker = ParcelUtils.readValue(in, DividableProgressTracker.class);
         runAttempts = in.readInt();
     }
@@ -125,15 +122,6 @@ public class UploadJob implements Parcelable {
         Map<Uri, FileUploadDetails> fileUploadDetails = new HashMap<>(filesForUploadAndBytes.size());
         for (FileUploadDetails item : filesForUploadAndBytes) {
             fileUploadDetails.put(item.getFileUri(), item);
-        }
-        return fileUploadDetails;
-    }
-
-    private @NonNull
-    Map<Uri, FileUploadDetails> buildFileUploadDetails(@NonNull Map<Uri, Long> filesForUploadAndBytes) {
-        Map<Uri, FileUploadDetails> fileUploadDetails = new HashMap<>(filesForUploadAndBytes.size());
-        for (Map.Entry<Uri, Long> entry : filesForUploadAndBytes.entrySet()) {
-            fileUploadDetails.put(entry.getKey(), new FileUploadDetails(entry.getKey(), entry.getValue()));
         }
         return fileUploadDetails;
     }
@@ -613,13 +601,8 @@ public class UploadJob implements Parcelable {
         ParcelUtils.writeParcelable(dest, playableMediaCompressionParams);
         ParcelUtils.writeParcelable(dest, imageCompressionParams);
         ParcelUtils.writeBool(dest, allowUploadOfRawVideosIfIncompressible);
-        ParcelUtils.writeBool(dest, isDeleteFilesAfterUpload);
         ParcelUtils.writeParcelable(dest, overallProgressTracker);
         dest.writeInt(runAttempts);
-    }
-
-    public boolean isDeleteFilesAfterUpload() {
-        return isDeleteFilesAfterUpload;
     }
 
     public HashSet<Uri> getFilesMatchingStatus(int status) {

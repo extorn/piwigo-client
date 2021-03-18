@@ -20,7 +20,7 @@
             android:id="@+id/list_item_name"
             android:layout_marginStart="5dp"
             android:layout_width="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="16dp"
             android:layout_height="wrap_content"
             tools:text="dummy text"
             android:textAppearance="?textAppearanceBody2"/>
@@ -29,7 +29,7 @@
             android:id="@+id/list_item_details"
             android:layout_marginStart="5dp"
             android:layout_width="wrap_content"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="16dp"
             android:layout_height="wrap_content"
             tools:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
             android:textAppearance="?textAppearanceBody1"/>
