@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:state_activated="false" app:state_always_checked="true" android:alpha="0.5" android:color="@color/app_secondary" />
-    <item android:state_checked="false" app:state_always_checked="true" android:alpha="0.5" android:color="@color/app_secondary" />
-    <item android:state_enabled="false" android:color="@color/app_primary"/>
+    <!-- if not enabled always show greyed to a degree -->
+    <item android:state_enabled="false" app:secondaryChecked="true" android:alpha="0.5" android:color="?attr/colorControlNormal"/>
+    <item android:state_enabled="false" android:color="?attr/colorControlNormal"/>
+    <!-- if enabled and secondary checked, show partially grayed -->
+    <item android:state_activated="false" app:secondaryChecked="true" android:alpha="0.5" android:color="color/app_secondary" />
+    <item android:state_checked="false" app:secondaryChecked="true" android:alpha="0.5" android:color="color/app_secondary" />
+    <!-- otherwise -->
     <item android:state_enabled="true" android:color="@color/app_secondary"/>
     <item android:state_active="true" android:color="@color/app_secondary"/>
     <item android:state_activated="true" android:color="@color/app_secondary"/>
+    <!-- (enabled, not active, not activated, not secondary checked) -->
     <item android:color="?attr/colorControlNormal"/>
 </selector>

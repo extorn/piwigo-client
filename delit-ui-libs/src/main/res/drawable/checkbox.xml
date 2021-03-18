@@ -4,12 +4,12 @@
     <!-- items are applied in order from top to bottom - first match ends selection -->
     <item android:state_activated="true"
         android:drawable="@drawable/ic_check_box_checked_24dp" />
-    <item android:state_checked="true" app:state_always_checked="false"
+    <item android:state_checked="true" app:secondaryChecked="false"
         android:drawable="@drawable/ic_check_box_checked_24dp" /> <!-- checked -->
-    <item android:state_checked="true" app:state_always_checked="true"
+    <item android:state_checked="true" app:secondaryChecked="true"
         android:drawable="@drawable/ic_check_box_checked_24dp" /> <!-- checked -->
-    <item android:state_checked="false" app:state_always_checked="false"
+    <item android:state_checked="false" app:secondaryChecked="false"
         android:drawable="@drawable/ic_check_box_unchecked_24dp" /> <!-- checked -->
-    <item android:state_checked="false" app:state_always_checked="true"
+    <item android:state_checked="false" app:secondaryChecked="true"
         android:alpha="0.8" android:drawable="@drawable/ic_check_box_checked_24dp" /> <!-- checked -->
 </selector>

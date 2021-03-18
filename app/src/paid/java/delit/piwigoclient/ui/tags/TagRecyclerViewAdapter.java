@@ -76,7 +76,7 @@ public class TagRecyclerViewAdapter<LVA extends TagRecyclerViewAdapter<LVA, MSL,
             boolean alwaysChecked = !parentAdapter.isAllowItemDeselection(getItemId());
             getCheckBox().setChecked(isChecked);
             getCheckBox().setEnabled(parentAdapter.isEnabled());
-            getCheckBox().setAlwaysChecked(alwaysChecked);
+            getCheckBox().setSecondaryChecked(alwaysChecked);
         }
 
     }

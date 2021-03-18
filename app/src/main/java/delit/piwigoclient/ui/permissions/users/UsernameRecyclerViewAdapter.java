@@ -90,7 +90,7 @@ public class UsernameRecyclerViewAdapter<LVA extends UsernameRecyclerViewAdapter
                 getDeleteButton().setVisibility(View.GONE);
             }
             getCheckBox().setVisibility(parentAdapter.isMultiSelectionAllowed() ? View.VISIBLE : View.GONE);
-            getCheckBox().setAlwaysChecked(isIndirectlySelected(newItem.getId()));
+            getCheckBox().setSecondaryChecked(isIndirectlySelected(newItem.getId()));
             getCheckBox().setChecked(parentAdapter.getSelectedItemIds().contains(newItem.getId()));
             getCheckBox().setEnabled(parentAdapter.isEnabled());
         }

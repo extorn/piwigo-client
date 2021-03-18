@@ -89,27 +89,27 @@
         tools:visibility="visible" />
 
     <delit.libs.ui.view.button.MaterialCheckboxTriState
-        android:id="@+id/file_delete_after_upload_checkbox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:checked="false"
-        android:clickable="false"
-        android:focusable="false"
-        app:layout_constraintStart_toEndOf="@id/file_for_upload_img"
-        app:layout_constraintTop_toTopOf="@id/file_for_upload_img"
-        app:layout_constraintEnd_toStartOf="@+id/file_for_upload_delete_button"
-        app:layout_constraintBottom_toTopOf="@id/file_compress_before_upload_checkbox"
-        android:text="@string/button_compress"/>
-
-    <delit.libs.ui.view.button.MaterialCheckboxTriState
         android:id="@+id/file_compress_before_upload_checkbox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:checked="false"
-        android:clickable="false"
-        android:focusable="false"
+        app:secondaryOverrides="false"
+        tools:secondaryChecked="true"
+        tools:checked="false"
         app:layout_constraintStart_toEndOf="@id/file_for_upload_img"
-        app:layout_constraintTop_toBottomOf="@+id/file_delete_after_upload_checkbox"
+        app:layout_constraintTop_toTopOf="@id/file_for_upload_img"
+        app:layout_constraintEnd_toStartOf="@+id/file_for_upload_delete_button"
+        app:layout_constraintBottom_toTopOf="@id/file_delete_after_upload_checkbox"
+        android:text="@string/button_compress"/>
+
+    <delit.libs.ui.view.button.MaterialCheckboxTriState
+        android:id="@+id/file_delete_after_upload_checkbox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:secondaryOverrides="false"
+        tools:secondaryChecked="true"
+        tools:checked="false"
+        app:layout_constraintStart_toEndOf="@id/file_for_upload_img"
+        app:layout_constraintTop_toBottomOf="@+id/file_compress_before_upload_checkbox"
         app:layout_constraintEnd_toStartOf="@+id/file_for_upload_delete_button"
         app:layout_constraintBottom_toTopOf="@+id/barrier_top_of_footer"
         android:text="@string/delete_after_upload"/>

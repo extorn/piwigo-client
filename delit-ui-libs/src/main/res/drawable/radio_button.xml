@@ -6,7 +6,7 @@
         android:drawable="@drawable/ic_radio_button_checked_24dp" />
     <item android:state_checked="true"
         android:drawable="@drawable/ic_radio_button_checked_24dp" /> <!-- checked -->
-    <item android:drawable="@drawable/ic_radio_button_checked_24dp" android:state_checked="false" app:state_always_checked="true" /> <!-- checked or unchecked but essentially still checked! -->
+    <item android:drawable="@drawable/ic_radio_button_checked_24dp" android:state_checked="false" app:secondaryChecked="true" /> <!-- checked or unchecked but essentially still checked! -->
     <item android:state_checked="false"
         android:drawable="@drawable/ic_radio_button_unchecked_24dp" /> <!-- unchecked -->
 

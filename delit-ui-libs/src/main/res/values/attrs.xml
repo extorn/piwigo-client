@@ -58,7 +58,9 @@
     </declare-styleable>
 
     <declare-styleable name="MaterialCheckboxTriState">
-        <attr name="state_always_checked" format="boolean"/>
+        <attr name="checked" format="boolean"/>
+        <attr name="secondaryOverrides" format="boolean"/>
+        <attr name="secondaryChecked" format="boolean"/>
         <attr name="checkbox_at_end" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="CustomMaterialTabLayout">
