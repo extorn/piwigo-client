@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
@@ -17,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StyleRes;
+import androidx.constraintlayout.helper.widget.Flow;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.TextViewCompat;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import delit.libs.R;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 
-public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
+public abstract class AbstractBreadcrumbsView<T> extends ConstraintLayout {
 
     private static final String TAG = "BreadcrumbView";
     private PathNavigator<T> pathNavigator;
@@ -121,21 +122,28 @@ public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
         int pathSepHorizontalPaddingPx = DisplayUtils.dpToPx(getContext(), 3);
         int pathItemHorizontalPaddingPx = DisplayUtils.dpToPx(getContext(), 9);
 
+        View v;
+        int[] ids = new int[pathItems.size() * 2 -1];
         for (final T pathItemFile : pathItems) {
             idx++;
-            addView(buildPathItem(idx, pathItemFile, pathItemHorizontalPaddingPx, verticalPaddingPx));
+            v = buildPathItem(idx, pathItemFile, pathItemHorizontalPaddingPx, verticalPaddingPx);
+            v.setId(View.generateViewId());
+            ids[(idx-1)*2] = v.getId();
+            addView(v);
 
             if (idx < pathItems.size()) {
-                View pathSeparatorView = buildPathItemSeparator(pathSepHorizontalPaddingPx, verticalPaddingPx);
-                if(pathSeparatorView != null) {
-                    ViewGroup.LayoutParams lp = pathSeparatorView.getLayoutParams();
-                    if(lp == null) {
-                        lp = new LayoutParams(LayoutParams.WRAP_CONTENT, 0);
-                    }
-                    addView(pathSeparatorView, lp);
-                }
+                v = buildPathItemSeparator(pathSepHorizontalPaddingPx, verticalPaddingPx);
+                v.setId(View.generateViewId());
+                ids[(idx-1)*2 + 1] = v.getId();
+                addView(v);
             }
         }
+        Flow flow = new Flow(getContext());
+        flow.setVerticalAlign(Flow.VERTICAL_ALIGN_CENTER);
+        flow.setHorizontalStyle(Flow.CHAIN_PACKED);
+        flow.setWrapMode(Flow.WRAP_CHAIN);
+        flow.setReferencedIds(ids);
+        addView(flow);
     }
 
     private View buildPathItemSeparator(int pathSepHorizontalPaddingPx, int verticalPaddingPx) {

@@ -7,5 +7,5 @@
     style="@style/Widget.MaterialComponents.Chip.Action"
     tools:text="Test Chip"
     app:chipCornerRadius="4dp"
-    app:chipSurfaceColor="?attr/scrimLight"
+    app:chipSurfaceColor="?attr/scrimHeavy"
     android:textColor="?attr/colorSecondary"/>
