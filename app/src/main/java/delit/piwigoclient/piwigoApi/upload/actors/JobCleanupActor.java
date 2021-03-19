@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.LiveData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import delit.libs.ui.util.DisplayUtils;
@@ -16,7 +17,6 @@ import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.database.livedata.PermissionsRemovingObserver;
 import delit.piwigoclient.piwigoApi.upload.FileUploadDetails;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
-import kotlin.collections.ArrayDeque;
 
 import static delit.piwigoclient.ui.upload.AbstractUploadFragment.URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD;
 
@@ -31,7 +31,7 @@ public class JobCleanupActor extends UploadActor {
     }
 
     public void deleteSuccessfullyUploadedFilesFromDevice() {
-        List<Uri> uris = new ArrayDeque<>(getUploadJob().getFilesForUpload().size());
+        List<Uri> uris = new ArrayList<>(getUploadJob().getFilesForUpload().size());
         for(FileUploadDetails uploadDetails : getUploadJob().getFilesForUpload()) {
             if(uploadDetails.isSuccessfullyUploaded()) {
                 if(uploadDetails.isDeleteAfterUpload()) {
