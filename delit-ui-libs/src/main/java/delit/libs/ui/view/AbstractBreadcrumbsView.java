@@ -118,32 +118,35 @@ public abstract class AbstractBreadcrumbsView<T> extends ConstraintLayout {
         }
         int idx = 0;
 
-        int verticalPaddingPx = DisplayUtils.dpToPx(getContext(), 3);
-        int pathSepHorizontalPaddingPx = DisplayUtils.dpToPx(getContext(), 3);
-        int pathItemHorizontalPaddingPx = DisplayUtils.dpToPx(getContext(), 9);
+        if(!pathItems.isEmpty()){
 
-        View v;
-        int[] ids = new int[pathItems.size() * 2 -1];
-        for (final T pathItemFile : pathItems) {
-            idx++;
-            v = buildPathItem(idx, pathItemFile, pathItemHorizontalPaddingPx, verticalPaddingPx);
-            v.setId(View.generateViewId());
-            ids[(idx-1)*2] = v.getId();
-            addView(v);
+            int verticalPaddingPx = DisplayUtils.dpToPx(getContext(), 3);
+            int pathSepHorizontalPaddingPx = DisplayUtils.dpToPx(getContext(), 3);
+            int pathItemHorizontalPaddingPx = DisplayUtils.dpToPx(getContext(), 9);
 
-            if (idx < pathItems.size()) {
-                v = buildPathItemSeparator(pathSepHorizontalPaddingPx, verticalPaddingPx);
+            View v;
+            int[] ids = new int[pathItems.size() * 2 -1];
+            for (final T pathItemFile : pathItems) {
+                idx++;
+                v = buildPathItem(idx, pathItemFile, pathItemHorizontalPaddingPx, verticalPaddingPx);
                 v.setId(View.generateViewId());
-                ids[(idx-1)*2 + 1] = v.getId();
+                ids[(idx-1)*2] = v.getId();
                 addView(v);
+
+                if (idx < pathItems.size()) {
+                    v = buildPathItemSeparator(pathSepHorizontalPaddingPx, verticalPaddingPx);
+                    v.setId(View.generateViewId());
+                    ids[(idx-1)*2 + 1] = v.getId();
+                    addView(v);
+                }
             }
+            Flow flow = new Flow(getContext());
+            flow.setVerticalAlign(Flow.VERTICAL_ALIGN_CENTER);
+            flow.setHorizontalStyle(Flow.CHAIN_PACKED);
+            flow.setWrapMode(Flow.WRAP_CHAIN);
+            flow.setReferencedIds(ids);
+            addView(flow);
         }
-        Flow flow = new Flow(getContext());
-        flow.setVerticalAlign(Flow.VERTICAL_ALIGN_CENTER);
-        flow.setHorizontalStyle(Flow.CHAIN_PACKED);
-        flow.setWrapMode(Flow.WRAP_CHAIN);
-        flow.setReferencedIds(ids);
-        addView(flow);
     }
 
     private View buildPathItemSeparator(int pathSepHorizontalPaddingPx, int verticalPaddingPx) {
