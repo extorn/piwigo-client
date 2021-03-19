@@ -30,7 +30,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            tools:initialTabIdx="0"
+            app:tabIndicatorFullWidth="true"
+            app:initialTabIdx="0"
+            app:tabPaddingStart="24dp"
+            app:tabPaddingEnd="24dp"
+            app:tabMode="auto"
             style="?appTabLayout"/>
 
         <TextView
