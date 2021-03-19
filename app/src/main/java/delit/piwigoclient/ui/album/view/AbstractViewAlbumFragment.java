@@ -1485,7 +1485,9 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         if (informationShowing) {
             if (currentGroups == null) {
                 // haven't yet loaded the existing permissions - do this now.
-                privacyStatusFieldListener.onCheckedChanged(galleryPrivacyStatusField, galleryPrivacyStatusField.isChecked());
+                if(galleryPrivacyStatusField != null) {
+                    privacyStatusFieldListener.onCheckedChanged(galleryPrivacyStatusField, galleryPrivacyStatusField.isChecked());
+                }
             }
         }
     }

@@ -304,7 +304,9 @@ public class EditableListPreference extends MyDialogPreference {
     }
 
     public void updateEntryValues(ArrayList<EditableListPreferenceDialogFragmentCompat.ListAction> actions) {
-
+        if(entries == null) {
+            entries = new TreeSet<>();
+        }
         for (EditableListPreferenceDialogFragmentCompat.ListAction action : actions) {
             if (action instanceof EditableListPreferenceDialogFragmentCompat.Removal) {
                 if (listener != null) {
