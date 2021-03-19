@@ -152,7 +152,7 @@
     <string-array name="release_history" translatable="true">
         <item>1.4.0.137</item>
         <item>\"Verandering:
-                 - Pastonly: Recordbestand-ID\'s die worden geüpload naar servers in een database op het apparaat om eerder filtering of etikettering toe te staan
+                 - Alleen betaald: Recordbestand-ID\'s die worden geüpload naar servers in een database op het apparaat om eerder filtering of etikettering toe te staan
                  - herwerken van de upload om betere controle mogelijk te maken over welke bestanden worden gecomprimeerd (nieuwe pictogramkleuren)</item>
         <item>1.4.0.136</item>
         <item>"Bugfix:

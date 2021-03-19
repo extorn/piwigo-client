@@ -729,7 +729,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="upload_of_files_complete_finishing_up">Upload van bestanden voltooid. Gewoon afronden.</string>
     <string name="uploaded_previously">Geüpload eerder</string>
     <string name="migrated_settings_from_previous_version">Instellingen gemigreerd van de vorige app-versie</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Niet alle geselecteerde items zijn acceptabel op deze server. DIE DIE RE-COMPRESSIE VEREIST: %1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">Niet alle geselecteerde items zijn acceptabel op deze server. DIE DIE RE-COMPRESSIE VEREIST: %1$d</string>
     <string name="upload_uploadable_files_label">Bestandstypen aanvaardbaar op deze server</string>
     <string name="upload_icon_key_label">Pictogramkleuren</string>
     <string name="compress_because_thats_the_default">Zal worden gecomprimeerd</string>
@@ -740,10 +740,15 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="upload_information_header">Sleutel om details te uploaden</string>
     <string name="upload_files_label">Server geaccepteerde bestandstypen geaccepteerd</string>
     <string name="upload_icon_key_explanation">Icoon voor afspeelbare media die in de volgende voorbeelden worden gebruikt</string>
-    <string name="alert_error_require_compression_pattern">Sommige bestanden geselecteerd vereisen compressie. Ze zijn identificeerbaar met een rode rand. Controleer of verwijder deze van de compressie uploaden of opnieuw inschakelen.</string>
+    <string name="alert_error_require_compression_pattern">Sommige bestanden zijn geselecteerd, vereisen compressie. Controleer ofwel verwijder deze van de upload of het opnieuw inschakelen van compressie.</string>
     <string name="upload_tab_title_compression">Compressie</string>
     <string name="image_compression_settings">Afbeeldingen</string>
     <string name="video_compression_settings">Audio en video</string>
     <string name="upload_defaults_label">Upload bestandsinstellingen</string>
     <string name="upload_server_detail_label">Serverdetail</string>
+    <string name="delete_after_upload">Verwijder achteraf</string>
+    <string name="detail_mode">Detail</string>
+    <string name="normal_mode">Normaal</string>
+    <string name="clear_individual_settings">Duidelijke individuele instellingen</string>
+    <string name="upload_icon_types_label">Bestand types</string>
 </resources>

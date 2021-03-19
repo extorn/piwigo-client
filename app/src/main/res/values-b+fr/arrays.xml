@@ -152,8 +152,8 @@
     <string-array name="release_history" translatable="true">
         <item>1.4.0.137</item>
         <item>\"Changement:
-                 - Pabliely: enregistrez les identifiants de fichier téléchargés sur des serveurs dans une base de données sur l\'appareil pour permettre un filtrage antérieur ou étiqueter ces éléments.
-                 - retravailler du téléchargement pour permettre un meilleur contrôle sur les fichiers compressés (nouvelles couleurs d\'icône)</item>
+                 - uniquement payé: ID de fichier enregistré téléchargé sur des serveurs dans une base de données sur l\'appareil pour permettre un filtrage antérieur ou étiqueter ces éléments.
+                 - retravailler du téléchargement pour permettre un meilleur contrôle sur les fichiers compressés (nouvelles couleurs d\'icônes)</item>
         <item>1.4.0.136</item>
         <item>"Correction d\'un bug:
                  - Le problème corrigé avec les autorisations URI de réflexion sur l\'application était toujours nécessaire après la fin du téléchargement."</item>

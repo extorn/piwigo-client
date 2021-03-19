@@ -1,50 +1,50 @@
 <en-GB>
 "Change:
-- PaidOnly: Record file ids uploaded to servers in a database on the device to allow earlier filtering or labelling these
+- Paid Only: Record file ids uploaded to servers in a database on the device to allow earlier filtering or labelling these
 - Rework of the upload to allow better control over which files are compressed (new icon colours)
 </en-GB>
 <cs-CZ>
 "Změna:
-- Paidonly: ID záznamu souborů nahrané do serverů v databázi zařízení, která umožní dřívější filtrování nebo označení
+- pouze placené pouze: ID záznamu souborů nahraných na servery v databázi zařízení, které umožní dřívější filtrování nebo označování
 - přepracování nahrávání, aby bylo možné lepší kontrolu nad tím, které soubory jsou komprimovány (nová ikona barvy)
 </cs-CZ>
 <de-DE>
 "Veränderung:
-- Peinlich: Notieren Sie Datei-IDs, die auf Server in einer Datenbank auf dem Gerät hochgeladen wurden, um diese Filterung zu ermöglichen oder diese zu kennzeichnen
+- nur bezahlt: Nutzen Sie Datei-IDs, die in Server in einer Datenbank auf dem Gerät hochgeladen wurden, um eine frühere Filterung oder Beschriftung dieser zu ermöglichen
 - Überarbeiten des Uploads, um eine bessere Steuerung zu ermöglichen, über die Dateien komprimiert sind (neue Symbolfarben)
 </de-DE>
 <es-ES>
 "Cambio:
-- PAZGONALY: ID de registro de archivos cargados a servidores en una base de datos en el dispositivo para permitir filtrado anterior o etiquetar estos
+- solo pagado: ID de archivo de registro cargado a servidores en una base de datos en el dispositivo para permitir filtrado anterior o etiquetar estos
 - Realización de la carga para permitir un mejor control sobre qué archivos se comprimen (nuevos colores de icono)
 </es-ES>
 <fr-FR>
 "Changement:
-- Pabliely: enregistrez les identifiants de fichier téléchargés sur des serveurs dans une base de données sur l\'appareil pour permettre un filtrage antérieur ou étiqueter ces éléments.
-- retravailler du téléchargement pour permettre un meilleur contrôle sur les fichiers compressés (nouvelles couleurs d\'icône)
+- uniquement payé: ID de fichier enregistré téléchargé sur des serveurs dans une base de données sur l\'appareil pour permettre un filtrage antérieur ou étiqueter ces éléments.
+- retravailler du téléchargement pour permettre un meilleur contrôle sur les fichiers compressés (nouvelles couleurs d\'icônes)
 </fr-FR>
 <it-IT>
 "Modificare:
-- Painly: registra ID file caricato su server in un database sul dispositivo per consentire il filtraggio o l\'etichettatura precedente
+- Solo record: ID file di registrazione caricati su server in un database sul dispositivo per consentire il filtraggio o l\'etichettatura precedente
 - rilavorare il caricamento per consentire un controllo migliore su quali file sono compressi (nuovi colori dell\'icona)
 </it-IT>
 <ja-JP>
 "変化する：
--  PaidOnly：レコードファイルIDは、デバイス上のデータベース内のサーバーにアップロードされたレコードファイルのデータベース内のデータベースにアップロードして、これらを以前のフィルタリングまたはラベリングを可能にします。
+- 支払ったのみ：レコードファイルIDがデバイス上のデータベース内のサーバーにアップロードされたレコードファイルのデータベース内のデータベースにアップロードされています。
 - アップロードのリワードで、どのファイルが圧縮されているよりも良いコントロールを可能にする（新しいアイコンの色）
 </ja-JP>
 <nl-NL>
 "Verandering:
-- Pastonly: Recordbestand-ID\'s die worden geüpload naar servers in een database op het apparaat om eerder filtering of etikettering toe te staan
+- Alleen betaald: Recordbestand-ID\'s die worden geüpload naar servers in een database op het apparaat om eerder filtering of etikettering toe te staan
 - herwerken van de upload om betere controle mogelijk te maken over welke bestanden worden gecomprimeerd (nieuwe pictogramkleuren)
 </nl-NL>
 <ru-RU>
 "Изменять:
-- Payonly: записи идентификаторов файлов, загруженные на серверы в базе данных на устройстве, чтобы разрешить более раннюю фильтрацию или маркировку их
+- Только заплата: запись идентификаторов файлов, загруженные на серверы в базе данных на устройстве, чтобы разрешить более раннюю фильтрацию или маркировку их
 - Перезапись загрузки, чтобы обеспечить улучшенный контроль над тем, какие файлы сжаты (новые цвета значка)
 </ru-RU>
 <zh-CN>
 “改变：
--  Babonly：记录在设备上的数据库中上传到服务器的文件ID，以允许早期过滤或标记这些
+- 仅支付：记录在设备上的数据库中上传到服务器的文件ID，以允许早期过滤或标记这些
 - 返工上传，以便更好地控制压缩哪些文件（新图标颜色）
 </zh-CN>

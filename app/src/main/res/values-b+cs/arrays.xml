@@ -152,7 +152,7 @@
     <string-array name="release_history" translatable="true">
         <item>1.4.0.137</item>
         <item>\"Změna:
-                 - Paidonly: ID záznamu souborů nahrané do serverů v databázi zařízení, která umožní dřívější filtrování nebo označení
+                 - pouze placené pouze: ID záznamu souborů nahraných na servery v databázi zařízení, které umožní dřívější filtrování nebo označování
                  - přepracování nahrávání, aby bylo možné lepší kontrolu nad tím, které soubory jsou komprimovány (nová ikona barvy)</item>
         <item>1.4.0.136</item>
         <item>"Oprava chyby:

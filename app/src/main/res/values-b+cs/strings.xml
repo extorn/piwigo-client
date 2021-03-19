@@ -729,7 +729,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="upload_of_files_complete_finishing_up">Nahrávání souborů dokončeno. Jen skončit.</string>
     <string name="uploaded_previously">Nahráno dříve</string>
     <string name="migrated_settings_from_previous_version">Nastavení přenosná z předchozí verzi aplikace</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Ne všechny vybrané položky jsou pro tento server přijatelný. Ti, kteří vyžadují znovu kompresi: %1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">Ne všechny vybrané položky jsou pro tento server přijatelný. Ti, kteří vyžadují znovu kompresi: %1$d</string>
     <string name="upload_uploadable_files_label">Typy souborů přijatelné pro tento server</string>
     <string name="upload_icon_key_label">Barvy ikon</string>
     <string name="compress_because_thats_the_default">Bude komprimován</string>
@@ -740,10 +740,15 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="upload_information_header">Klávesa pro nahrání detailů</string>
     <string name="upload_files_label">Serverované typy souborů</string>
     <string name="upload_icon_key_explanation">Ikona pro přehrávatelné médium použité v následujících příkladech</string>
-    <string name="alert_error_require_compression_pattern">Některé vybrané soubory vyžadují kompresi. Jsou identifikovatelné s červeným okrajem. Zkontrolujte a odstraňte tyto odebrání z upload nebo znovu povolit kompresi.</string>
+    <string name="alert_error_require_compression_pattern">Některé vybrané soubory vyžadují kompresi.</string>
     <string name="upload_tab_title_compression">Komprese</string>
     <string name="image_compression_settings">snímky</string>
     <string name="video_compression_settings">Audio a video</string>
     <string name="upload_defaults_label">Výchozí nastavení souboru Upload.</string>
     <string name="upload_server_detail_label">Detail serveru</string>
+    <string name="delete_after_upload">Odstranit se poté</string>
+    <string name="detail_mode">Detail</string>
+    <string name="normal_mode">Normální</string>
+    <string name="clear_individual_settings">Vymazat jednotlivá nastavení</string>
+    <string name="upload_icon_types_label">Typy souborů</string>
 </resources>

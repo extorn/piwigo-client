@@ -729,7 +729,7 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="upload_of_files_complete_finishing_up">完全なファイルのアップロード 終わりました。</string>
     <string name="uploaded_previously">前にアップロードされました</string>
     <string name="migrated_settings_from_previous_version">前のアプリバージョンから移行された設定</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"選択したすべての項目がこのサーバーに受け入れられるわけではありません。 再圧縮を必要とするもの：%1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">選択したすべての項目がこのサーバーに受け入れられるわけではありません。 再圧縮を必要とするもの：%1$d</string>
     <string name="upload_uploadable_files_label">このサーバーに受け入れ可能なファイルの種類</string>
     <string name="upload_icon_key_label">アイコンの色</string>
     <string name="compress_because_thats_the_default">圧縮されます</string>
@@ -740,10 +740,15 @@ piwigo_privacyプラグインのコピーをインストールし、VideoJSプ�
     <string name="upload_information_header">詳細をアップロードするための鍵</string>
     <string name="upload_files_label">サーバー承認ファイルの種類</string>
     <string name="upload_icon_key_explanation">次の例で使用される再生可能メディアのアイコン</string>
-    <string name="alert_error_require_compression_pattern">選択したファイル一部のファイルは圧縮を必要とします。 彼らは赤い境界線で識別可能です。 アップロードからこれらを確認して削除したり、圧縮を再度有効にしてください。</string>
+    <string name="alert_error_require_compression_pattern">選択された一部のファイルには圧縮が必要です。</string>
     <string name="upload_tab_title_compression">圧縮</string>
     <string name="image_compression_settings">画像</string>
     <string name="video_compression_settings">オーディオとビデオ</string>
     <string name="upload_defaults_label">ファイルのデフォルトアップロード</string>
     <string name="upload_server_detail_label">サーバーの詳細</string>
+    <string name="delete_after_upload">その後削除してください</string>
+    <string name="detail_mode">detail detail</string>
+    <string name="normal_mode">正常</string>
+    <string name="clear_individual_settings">個々の設定を明確にする</string>
+    <string name="upload_icon_types_label">ファイルタイプ</string>
 </resources>

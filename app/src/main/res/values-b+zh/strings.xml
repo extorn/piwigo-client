@@ -729,7 +729,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="upload_of_files_complete_finishing_up">上传文件完成。 只是完成。</string>
     <string name="uploaded_previously">上传之前</string>
     <string name="migrated_settings_from_previous_version">设置从以前的应用程序版本迁移</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"并非所选的所有项目都可以接受此服务器。 那些需要重新压缩的人：%1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">并非所选的所有项目都可以接受此服务器。 那些需要重新压缩的人：%1$d</string>
     <string name="upload_uploadable_files_label">此服务器可接受的文件类型</string>
     <string name="upload_icon_key_label">图标颜色</string>
     <string name="compress_because_thats_the_default">将被压缩</string>
@@ -740,10 +740,15 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="upload_information_header">上传细节的关键</string>
     <string name="upload_files_label">服务器被接受的文件类型</string>
     <string name="upload_icon_key_explanation">以下示例中使用的可播放介质的图标</string>
-    <string name="alert_error_require_compression_pattern">选择的某些文件需要压缩。 它们是用红色边框识别的。 请检查并从上载或重新启用压缩中删除这些。</string>
+    <string name="alert_error_require_compression_pattern">选择的某些文件需要压缩。请检查并从上载或重新启用压缩中删除这些文件。</string>
     <string name="upload_tab_title_compression">压缩</string>
     <string name="image_compression_settings">图片</string>
     <string name="video_compression_settings">音频和视频</string>
     <string name="upload_defaults_label">上传文件默认值</string>
     <string name="upload_server_detail_label">服务器详细信息</string>
+    <string name="delete_after_upload">之后删除</string>
+    <string name="detail_mode">细节</string>
+    <string name="normal_mode">普通的</string>
+    <string name="clear_individual_settings">清除单个设置</string>
+    <string name="upload_icon_types_label">文件类型</string>
 </resources>

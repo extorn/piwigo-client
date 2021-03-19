@@ -729,7 +729,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_of_files_complete_finishing_up">Upload von Dateien abschließen. Einfach fertig.</string>
     <string name="uploaded_previously">Vorher hochgeladen</string>
     <string name="migrated_settings_from_previous_version">Einstellungen aus der vorherigen App-Version migriert</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Nicht alle ausgewählten Elemente sind für diesen Server akzeptabel. Diejenigen, die erneut komprimieren müssen: %1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">Nicht alle ausgewählten Elemente sind für diesen Server akzeptabel. Diejenigen, die erneut komprimieren müssen: %1$d</string>
     <string name="upload_uploadable_files_label">Dateitypen, die für diesen Server akzeptabel sind</string>
     <string name="upload_icon_key_label">Symbolfarben</string>
     <string name="compress_because_thats_the_default">Wird komprimiert</string>
@@ -740,10 +740,15 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_information_header">Schlüssel zum Hochladen von Details</string>
     <string name="upload_files_label">Server akzeptierte Dateitypen</string>
     <string name="upload_icon_key_explanation">Symbol für spielbare Medien, die in den folgenden Beispielen verwendet werden</string>
-    <string name="alert_error_require_compression_pattern">Einige ausgewählte Dateien erfordern eine Komprimierung. Sie sind mit einer roten Grenze identifizierbar. Bitte prüfen Sie und entfernen Sie diese aus dem Upload- oder RE-ENTWICKLER-Komprimieren.</string>
+    <string name="alert_error_require_compression_pattern">Einige ausgewählte Dateien erfordern Komprimierung</string>
     <string name="upload_tab_title_compression">Kompression</string>
     <string name="image_compression_settings">Bildern</string>
     <string name="video_compression_settings">Audio und Video</string>
     <string name="upload_defaults_label">Datei Standardwerte hochladen.</string>
     <string name="upload_server_detail_label">Server-Detail</string>
+    <string name="delete_after_upload">Danach löschen</string>
+    <string name="detail_mode">Detail</string>
+    <string name="normal_mode">Normal</string>
+    <string name="clear_individual_settings">Klare individuelle Einstellungen</string>
+    <string name="upload_icon_types_label">Datentypen</string>
 </resources>

@@ -729,7 +729,7 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="upload_of_files_complete_finishing_up">Загрузить файлы завершены. Просто заканчивая.</string>
     <string name="uploaded_previously">Загружено раньше</string>
     <string name="migrated_settings_from_previous_version">Настройки мигрированы из предыдущей версии приложения</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Не все выбранные элементы приемлемы для этого сервера. Те, кто требует повторного сжатия: %1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">Не все выбранные элементы приемлемы для этого сервера. Те, кто требует повторного сжатия: %1$d</string>
     <string name="upload_uploadable_files_label">Типы файлов приемлемы для этого сервера</string>
     <string name="upload_icon_key_label">Цвета значка</string>
     <string name="compress_because_thats_the_default">Будет сжиматься</string>
@@ -740,10 +740,15 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="upload_information_header">Ключ для загрузки детали</string>
     <string name="upload_files_label">Принятые серверы типы файлов</string>
     <string name="upload_icon_key_explanation">Значок для воспроизводимых носителей, используемых в следующих примерах</string>
-    <string name="alert_error_require_compression_pattern">Некоторые файлы выбранные требуют сжатия. Они идентифицируются с красной границей. Пожалуйста, проверьте и удалите их из загрузки или восстановления сжатия.</string>
+    <string name="alert_error_require_compression_pattern">Некоторые выбранные файлы требуют сжатия. Пожалуйста, удалите их из загрузки или восстановления сжатия.</string>
     <string name="upload_tab_title_compression">Сжатие</string>
     <string name="image_compression_settings">Изображений</string>
     <string name="video_compression_settings">Аудио и видео</string>
     <string name="upload_defaults_label">Загрузить файл по умолчанию</string>
     <string name="upload_server_detail_label">Сервер деталь</string>
+    <string name="delete_after_upload">Удалить после этого</string>
+    <string name="detail_mode">Деталь</string>
+    <string name="normal_mode">Нормальный</string>
+    <string name="clear_individual_settings">Очистить отдельные настройки</string>
+    <string name="upload_icon_types_label">Типы файлов</string>
 </resources>

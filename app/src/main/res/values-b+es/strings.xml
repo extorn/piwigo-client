@@ -729,7 +729,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="upload_of_files_complete_finishing_up">Subir de archivos completos. Solo terminando</string>
     <string name="uploaded_previously">Subido antes</string>
     <string name="migrated_settings_from_previous_version">Configuración migrada de la versión anterior de la aplicación</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"No todos los artículos seleccionados son aceptables para este servidor. Los que requieren re-compresión: %1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">No todos los artículos seleccionados son aceptables para este servidor. Los que requieren re-compresión: %1$d</string>
     <string name="upload_uploadable_files_label">Tipos de archivos aceptables para este servidor</string>
     <string name="upload_icon_key_label">Colores de iconos</string>
     <string name="compress_because_thats_the_default">Estará comprimido</string>
@@ -740,10 +740,15 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="upload_information_header">Clave para subir detalle</string>
     <string name="upload_files_label">Tipos de archivos aceptados por el servidor</string>
     <string name="upload_icon_key_explanation">Icono para medios jugables utilizados en los siguientes ejemplos.</string>
-    <string name="alert_error_require_compression_pattern">Algunos archivos seleccionados requieren compresión. Son identificables con una frontera roja. Por favor, compruebe y elimine estos desde la carga o vuelva a habilitar la compresión.</string>
+    <string name="alert_error_require_compression_pattern">Algunos archivos seleccionados requieren compresión. Por favor, verifique y eliminelos de la compresión de carga o reaptación.</string>
     <string name="upload_tab_title_compression">Compresión</string>
     <string name="image_compression_settings">Imagenes</string>
     <string name="video_compression_settings">Audio y video</string>
     <string name="upload_defaults_label">Cargar los valores predeterminados del archivo</string>
     <string name="upload_server_detail_label">Detalle del servidor</string>
+    <string name="delete_after_upload">Eliminar después</string>
+    <string name="detail_mode">Detalle</string>
+    <string name="normal_mode">Normal</string>
+    <string name="clear_individual_settings">Ajustes individuales claros</string>
+    <string name="upload_icon_types_label">Tipos de archivo</string>
 </resources>
