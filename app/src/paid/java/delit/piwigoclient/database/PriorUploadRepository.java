@@ -41,6 +41,9 @@ public class PriorUploadRepository {
 
     public List<Uri> getAllPreviouslyUploadedUrisToServerKeyMatching(String uploadToKey, @NonNull Collection<Uri> uris) {
         // Usage of RawDao
+        if(uris.isEmpty()) {
+            return new ArrayList<>(0);
+        }
         List<Object> args = new ArrayList<>(uris.size() + 1);
         args.add(uploadToKey);
         args.addAll(CollectionUtils.toStrings(uris, new HashSet<>(uris.size())));
@@ -60,7 +63,7 @@ public class PriorUploadRepository {
         return priorUploadDao.getAllMatchingRawQuery(new SimpleSQLiteQuery("SELECT PriorUpload.uri FROM PriorUpload INNER JOIN UploadDestinationPriorUploadCrossRef ON PriorUpload.id = UploadDestinationPriorUploadCrossRef.priorUploadId INNER JOIN UploadDestination ON UploadDestinationPriorUploadCrossRef.uploadToId = UploadDestination.id WHERE uploadToKey = :uploadToKey AND PriorUpload.checksum IN("+makePlaceholders(checksums.size())+")", args.toArray()));
     }
 
-    String makePlaceholders(int len) {
+    protected String makePlaceholders(int len) {
         if (len < 1) {
             // It will lead to an invalid query anyway ..
             throw new RuntimeException("No placeholders");
