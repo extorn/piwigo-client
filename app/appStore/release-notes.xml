@@ -1,50 +1,40 @@
 <en-GB>
-"Change:
-- Paid Only: Record file ids uploaded to servers in a database on the device to allow earlier filtering or labelling these
-- Rework of the upload to allow better control over which files are compressed (new icon colours)
+"Bugfix:
+- Paid Only: Minor issue with the upload tracking database
 </en-GB>
 <cs-CZ>
-"Změna:
-- pouze placené pouze: ID záznamu souborů nahraných na servery v databázi zařízení, které umožní dřívější filtrování nebo označování
-- přepracování nahrávání, aby bylo možné lepší kontrolu nad tím, které soubory jsou komprimovány (nová ikona barvy)
+"Oprava chyby:
+- placené pouze: menší problém s databází pro sledování uploadu
 </cs-CZ>
 <de-DE>
-"Veränderung:
-- nur bezahlt: Nutzen Sie Datei-IDs, die in Server in einer Datenbank auf dem Gerät hochgeladen wurden, um eine frühere Filterung oder Beschriftung dieser zu ermöglichen
-- Überarbeiten des Uploads, um eine bessere Steuerung zu ermöglichen, über die Dateien komprimiert sind (neue Symbolfarben)
+"Fehlerbehebung:
+- nur bezahlt: Nebenausgabe mit der Upload-Tracking-Datenbank
 </de-DE>
 <es-ES>
-"Cambio:
-- solo pagado: ID de archivo de registro cargado a servidores en una base de datos en el dispositivo para permitir filtrado anterior o etiquetar estos
-- Realización de la carga para permitir un mejor control sobre qué archivos se comprimen (nuevos colores de icono)
+"Arreglo del fallo:
+- Solo pago: problema menor con la base de datos de seguimiento de carga
 </es-ES>
 <fr-FR>
-"Changement:
-- uniquement payé: ID de fichier enregistré téléchargé sur des serveurs dans une base de données sur l\'appareil pour permettre un filtrage antérieur ou étiqueter ces éléments.
-- retravailler du téléchargement pour permettre un meilleur contrôle sur les fichiers compressés (nouvelles couleurs d\'icônes)
+"Correction d\'un bug:
+- Payé uniquement: problème mineur avec la base de données de suivi de téléchargement
 </fr-FR>
 <it-IT>
-"Modificare:
-- Solo record: ID file di registrazione caricati su server in un database sul dispositivo per consentire il filtraggio o l\'etichettatura precedente
-- rilavorare il caricamento per consentire un controllo migliore su quali file sono compressi (nuovi colori dell\'icona)
+"Risoluzione del problema:
+- Solo pagato: numero minori con il database di tracciamento del caricamento
 </it-IT>
 <ja-JP>
-"変化する：
-- 支払ったのみ：レコードファイルIDがデバイス上のデータベース内のサーバーにアップロードされたレコードファイルのデータベース内のデータベースにアップロードされています。
-- アップロードのリワードで、どのファイルが圧縮されているよりも良いコントロールを可能にする（新しいアイコンの色）
+"バグ修正：
+- 支払った唯一の：アップロード追跡データベースに関するマイナーな問題
 </ja-JP>
 <nl-NL>
-"Verandering:
-- Alleen betaald: Recordbestand-ID\'s die worden geüpload naar servers in een database op het apparaat om eerder filtering of etikettering toe te staan
-- herwerken van de upload om betere controle mogelijk te maken over welke bestanden worden gecomprimeerd (nieuwe pictogramkleuren)
+"Bugfix:
+- Alleen betaald: Minor Probleem met de upload-tracking-database
 </nl-NL>
 <ru-RU>
-"Изменять:
-- Только заплата: запись идентификаторов файлов, загруженные на серверы в базе данных на устройстве, чтобы разрешить более раннюю фильтрацию или маркировку их
-- Перезапись загрузки, чтобы обеспечить улучшенный контроль над тем, какие файлы сжаты (новые цвета значка)
+"Исправлена ошибка:
+- Занимается только: незначительная проблема с базой данных отслеживания загрузки
 </ru-RU>
 <zh-CN>
-“改变：
-- 仅支付：记录在设备上的数据库中上传到服务器的文件ID，以允许早期过滤或标记这些
-- 返工上传，以便更好地控制压缩哪些文件（新图标颜色）
+“错误修复：
+- 仅支付：上传跟踪数据库的次要问题
 </zh-CN>

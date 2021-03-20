@@ -145,11 +145,14 @@
         <item>"* In erster Linie nur Bugfixes
                 * Möglicherweise ein komplettes Neuschreiben der App mit einem Fokus auf Einfachheit halber für das allgemeine Benutzer"</item>
         
-        <item>1.4.0.138</item>
+        <item>1.4.0.139</item>
         <item>"Veränderung:
                  - Austausch des Auftragskonfigurationspeicher- und Abrufcode, um große Jobs besser zu unterstützen"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.138</item>
+        <item>\"Fehlerbehebung:
+                 - nur bezahlt: Nebenausgabe mit der Upload-Tracking-Datenbank</item>
         <item>1.4.0.137</item>
         <item>\"Veränderung:
                  - nur bezahlt: Nutzen Sie Datei-IDs, die in Server in einer Datenbank auf dem Gerät hochgeladen wurden, um eine frühere Filterung oder Beschriftung dieser zu ermöglichen
