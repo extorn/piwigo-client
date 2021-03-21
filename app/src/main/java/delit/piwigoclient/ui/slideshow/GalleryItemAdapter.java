@@ -190,8 +190,16 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
                 Logging.log(Log.DEBUG, TAG, "Need Video Fragment for item %3$s (idx %1$d) at slideshowPosition %2$d", itemGalleryIdx, position, galleryItem);
                 return (Class<? extends SIF>)(Class) AlbumVideoItemFragment.class;
             }
-            Logging.log(Log.ERROR, TAG, "Unable to establish fragment type needed for item %3$s (idx %1$d) at slideshowPosition %2$d", itemGalleryIdx, position, galleryItem);
-            throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + Utils.getId(galleryItem) + ")");
+            // The album has been updated and our cache is invalid. Reload it and try again.
+            onModelChange();
+            if(itemGalleryIdx != galleryResourceItemsFullGalleryIdx.get(position)) {
+                // the update has been successful - re-call this method.
+                return getFragmentType(position);
+            } else {
+                // otherwise, unfortunately we have to crash :-(
+                Logging.log(Log.ERROR, TAG, "Unable to establish fragment type needed for item %3$s (idx %1$d) at slideshowPosition %2$d", itemGalleryIdx, position, galleryItem);
+                throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + Utils.getId(galleryItem) + ")");
+            }
         } catch(IndexOutOfBoundsException e) {
             Logging.log(Log.ERROR, TAG, "The gallery has %1$d items. Requested item that isn't present.", gallery.getItemCount());
             return (Class<? extends SIF>)(Class) AlbumItemNotLoadedFragment.class;
