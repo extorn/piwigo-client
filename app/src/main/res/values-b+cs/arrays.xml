@@ -145,11 +145,15 @@
         <item>"* Pouze bugfixy
                 * Možná kompletní re-zápis aplikace se zaměřením na jednoduchost pro procházení uživatelů pro uživatele pro uživatele uživatele"</item>
         
-        <item>1.4.0.139</item>
+        <item>1.4.0.140</item>
         <item>"Změna:
                  - nahrazení úložiště úlohy úlohy a vyhledávací kód pro lepší podporu velkých pracovních míst"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.139</item>
+        <item>\"Oprava chyby:
+                 - Crash Aktualizace řazení alb
+                 - selektivní soubory</item>
         <item>1.4.0.138</item>
         <item>\"Oprava chyby:
                  - placené pouze: menší problém s databází pro sledování uploadu</item>

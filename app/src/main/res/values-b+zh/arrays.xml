@@ -145,11 +145,15 @@
         <item>"*仅仅是错误修正
                 *可能完全重新编写应用程序，专注于最初的普通用户浏览的简单性"</item>
         
-        <item>1.4.0.139</item>
+        <item>1.4.0.140</item>
         <item>"改变：
                   - 更换作业配置存储和检索代码，以更好地支持大型工作"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.139</item>
+        <item>“错误修复：
+                  - 崩溃更新相册排序顺序
+                  - 崩溃选择文件</item>
         <item>1.4.0.138</item>
         <item>“错误修复：
                   - 仅支付：上传跟踪数据库的次要问题</item>

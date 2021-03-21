@@ -145,11 +145,15 @@
         <item>"* Principalmente de errores solamente
                 * Posiblemente una reconstrucción completa de la aplicación con un enfoque en la simplicidad para la navegación de usuarios generales inicialmente"</item>
         
-        <item>1.4.0.139</item>
+        <item>1.4.0.140</item>
         <item>"Cambio:
                  - Reemplazo del código de almacenamiento y recuperación de la configuración de trabajo para admitir mejor los trabajos grandes"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.139</item>
+        <item>\"Arreglo del fallo:
+                 - Crash Actualizando el álbum Orden de clasificación
+                 - Crash Selección de archivos</item>
         <item>1.4.0.138</item>
         <item>\"Arreglo del fallo:
                  - Solo pago: problema menor con la base de datos de seguimiento de carga</item>

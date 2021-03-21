@@ -145,11 +145,15 @@
         <item>"* Principalement de bugfixes seulement
                 * Peut-être une réécriture complète de l\'application en mettant l\'accent sur la simplicité pour la navigation d\'utilisateur général initialement"</item>
         
-        <item>1.4.0.139</item>
+        <item>1.4.0.140</item>
         <item>"Changement:
                  - Remplacement du code de stockage et de récupération de la configuration du travail pour mieux soutenir les gros emplois"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.139</item>
+        <item>\"Correction d\'un bug:
+                 - Crash mise à jour de l\'ordre de tri de l\'album
+                 - Crash sélectionnant des fichiers</item>
         <item>1.4.0.138</item>
         <item>\"Correction d\'un bug:
                  - Payé uniquement: problème mineur avec la base de données de suivi de téléchargement</item>
