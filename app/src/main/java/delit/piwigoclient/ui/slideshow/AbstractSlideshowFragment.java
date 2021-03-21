@@ -346,7 +346,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     private void reloadSlideshowModel() {
         String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
         if(resourceContainer == null) {
-            Logging.log(Log.WARN,TAG, , "Unable to reload slideshow because resource container is null");
+            Logging.log(Log.WARN,TAG, "Unable to reload slideshow because resource container is null");
         } else {
             T album = resourceContainer.getContainerDetails();
             reloadSlideshowModel(album, preferredAlbumThumbnailSize);
