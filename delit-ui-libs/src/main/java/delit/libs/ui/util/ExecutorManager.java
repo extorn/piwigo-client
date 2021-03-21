@@ -12,6 +12,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -71,6 +72,7 @@ public class ExecutorManager {
     public void setCorePoolSize(int min) {
         executor.setCorePoolSize(min);
     }
+
 
     public static class NamedThreadFactory implements ThreadFactory {
 
@@ -173,12 +175,20 @@ public class ExecutorManager {
         executor.allowCoreThreadTimeOut(allowTimeout);
     }
 
-    public Executor getExecutor() {
+    public ExecutorService getExecutorService() {
         return executor;
     }
 
     public boolean isBusy() {
         return !executor.getQueue().isEmpty();
+    }
+
+    public void blockIfBusy(boolean blockIfBusy, boolean silentlyDropRejections) {
+        if(!silentlyDropRejections) {
+            blockIfBusy(blockIfBusy);
+        } else {
+            executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());
+        }
     }
 
     public void blockIfBusy(boolean blockIfBusy) {

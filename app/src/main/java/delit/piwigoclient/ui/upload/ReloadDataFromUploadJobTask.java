@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.upload;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
@@ -43,12 +44,13 @@ class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH 
 
     @Override
     protected List<UploadDataItem> doInBackgroundSafely(Void... nothing) {
+        Context context = getContext();
         Set<FileUploadDetails> filesToProcess = uploadJob.getFilesRequiringProcessing();
         List<UploadDataItem> itemsToBeUploaded = new ArrayList<>(filesToProcess.size());
         if(!filesToProcess.isEmpty()) {
             DividableProgressTracker fileParser = tracker.addChildTask("parse files", filesToProcess.size(), 80);
             for (FileUploadDetails fud : filesToProcess) {
-                itemsToBeUploaded.add(new UploadDataItem(fud.getFileUri(), fud.getFilename(getContext()), fud.getFileExt(getContext()), fud.getFileToUploadMimeType(getContext()), fud.getFileSize()));
+                itemsToBeUploaded.add(new UploadDataItem(fud.getFileUri(), fud.getFilename(context), fud.getFileExt(context), fud.getFileToUploadMimeType(context), fud.getFileSize()));
                 fileParser.incrementWorkDone(1);
             }
         }

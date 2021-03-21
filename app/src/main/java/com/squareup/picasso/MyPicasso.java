@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import delit.libs.ui.util.ExecutorManager;
+
 /**
  * Created by gareth on 26/03/18.
  * The purpose of this is to remove the first request handler from the list (this loads resources but cannot load vector versions).
@@ -208,7 +210,9 @@ public class MyPicasso extends Picasso {
                 cache = new LruExifCache(context);
             }
             if (service == null) {
-                service = new PicassoExecutorService();
+                ExecutorManager execMan = new ExecutorManager(3, 3, 0L, 20, new Utils.PicassoThreadFactory());
+                execMan.blockIfBusy(false, true);
+                service = execMan.getExecutorService();
             }
             if (transformer == null) {
                 transformer = RequestTransformer.IDENTITY;

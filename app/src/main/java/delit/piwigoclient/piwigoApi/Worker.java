@@ -246,7 +246,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 
     public long start(long messageId) {
         try {
-            task = executeOnExecutor(getExecutorManager().getExecutor(), messageId);
+            task = executeOnExecutor(getExecutorManager().getExecutorService(), messageId);
             recordExcutionQueued();
             //TODO collect a list of tasks and kill them all if the app exits.
             return messageId;
@@ -285,7 +285,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
      * @return true if succeeded
      */
     public boolean startAndWait(long messageId) {
-        final AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutorManager().getExecutor(), messageId);
+        final AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutorManager().getExecutorService(), messageId);
         //TODO collect a list of tasks and kill them all if the app exits.
         Boolean retVal = null;
         boolean timedOut = false;
