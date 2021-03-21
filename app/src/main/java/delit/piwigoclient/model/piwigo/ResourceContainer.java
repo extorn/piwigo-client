@@ -187,9 +187,9 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ResourceContainer{");
-        sb.append("containerDetails=").append(containerDetails);
+        sb.append("super=").append(super.toString());
+        sb.append(", containerDetails=").append(containerDetails);
         sb.append(", resourceSortOrder='").append(resourceComparator.getSortOrder()).append('\'');
-        sb.append(", super=").append(super.toString());
         sb.append('}');
         return sb.toString();
     }

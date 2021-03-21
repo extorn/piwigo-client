@@ -692,8 +692,13 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         final StringBuilder sb = new StringBuilder("PagedList{");
         sb.append("itemType='").append(itemType).append('\'');
         sb.append(", pagesLoadedIdxToSizeMap=").append(pagesLoadedIdxToSizeMap);
-        sb.append(", items=").append(items);
-        sb.append(", sortedItems=").append(sortedItems);
+        if(sortedItems.size() < 50) {
+            sb.append(", items=").append(items);
+            sb.append(", sortedItems=").append(sortedItems);
+        } else {
+            sb.append(", itemsCount=").append(items.size());
+            sb.append(", sortedItemsCount=").append(sortedItems.size());
+        }
         sb.append(", pagesLoadingPageIdxToLoadIdMap=").append(pagesLoadingPageIdxToLoadIdMap);
         sb.append(", pagesFailedToLoad=").append(pagesFailedToLoad);
         sb.append(", fullyLoaded=").append(fullyLoaded);

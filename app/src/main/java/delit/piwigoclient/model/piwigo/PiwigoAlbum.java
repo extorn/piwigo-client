@@ -317,6 +317,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PiwigoAlbum{");
+        sb.append(", super=").append(super.toString());
         sb.append("albumDetail=").append(getContainerDetails());
         sb.append("comparator=").append(comparator);
         sb.append(", childAlbumCount=").append(childAlbumCount);
@@ -325,7 +326,6 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         sb.append(", hideAlbums=").append(hideAlbums);
         sb.append(", itemType=").append(getItemType());
         sb.append(", reverseOrder=").append(isRetrieveChildAlbumsInReverseOrder());
-        sb.append(", super=").append(super.toString());
         sb.append('}');
         return sb.toString();
     }
