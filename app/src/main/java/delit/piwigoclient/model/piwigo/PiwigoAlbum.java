@@ -532,8 +532,8 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         } else {
             int fromIdx = Math.max(0,getItemIdx((T)StaticCategoryItem.ALBUM_HEADING));
             int toIdx = fromIdx + childAlbumCount;
-            for(int i = fromIdx; i < toIdx; i++) {
-                remove(i);
+            for(int i = fromIdx; i <= toIdx; i++) {
+                remove(fromIdx);
             }
         }
         notifyListenersOfChange(CHANGE_ALBUMS_CLEARED);

@@ -1,40 +1,50 @@
 <en-GB>
 "Bugfix:
-- Paid Only: Minor issue with the upload tracking database
+- crash updating album sort order
+- crash selecting files
 </en-GB>
 <cs-CZ>
 "Oprava chyby:
-- placené pouze: menší problém s databází pro sledování uploadu
+- Crash Aktualizace řazení alb
+- selektivní soubory
 </cs-CZ>
 <de-DE>
 "Fehlerbehebung:
-- nur bezahlt: Nebenausgabe mit der Upload-Tracking-Datenbank
+- Crash-Aktualisierungsalbum-Sortierreihenfolge
+- Crash-Auswahl von Dateien
 </de-DE>
 <es-ES>
 "Arreglo del fallo:
-- Solo pago: problema menor con la base de datos de seguimiento de carga
+- Crash Actualizando el álbum Orden de clasificación
+- Crash Selección de archivos
 </es-ES>
 <fr-FR>
 "Correction d\'un bug:
-- Payé uniquement: problème mineur avec la base de données de suivi de téléchargement
+- Crash mise à jour de l\'ordre de tri de l\'album
+- Crash sélectionnant des fichiers
 </fr-FR>
 <it-IT>
 "Risoluzione del problema:
-- Solo pagato: numero minori con il database di tracciamento del caricamento
+- Crash Aggiornamento dell\'album Sort Order
+- Crash selezionando i file
 </it-IT>
 <ja-JP>
 "バグ修正：
-- 支払った唯一の：アップロード追跡データベースに関するマイナーな問題
+- クラッシュの更新アルバムを更新します
+- ファイルを選択します
 </ja-JP>
 <nl-NL>
 "Bugfix:
-- Alleen betaald: Minor Probleem met de upload-tracking-database
+- Crash bijwerken Album Sorteerorder
+- Crash-bestanden selecteren
 </nl-NL>
 <ru-RU>
 "Исправлена ошибка:
-- Занимается только: незначительная проблема с базой данных отслеживания загрузки
+- Обновление аварийного обновления альбома
+- Аварийные выбора файлов
 </ru-RU>
 <zh-CN>
 “错误修复：
-- 仅支付：上传跟踪数据库的次要问题
+- 崩溃更新相册排序顺序
+- 崩溃选择文件
 </zh-CN>

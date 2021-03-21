@@ -86,6 +86,115 @@ public class PiwigoAlbumTest {
     }
 
     @Test
+    public void testRemoveAllCategoriesJustCategories() {
+        PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategories(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, 0);
+        album.removeAllAlbums();
+        assertEquals(0, album.getItemCount());
+
+        album = loadCategories(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, 3);
+        album.removeAllAlbums();
+        assertEquals(0, album.getItemCount());
+    }
+
+    @Test
+    public void testRemoveAllCategoriesMixedPartial() {
+        int loadedAlbumCount = 20;
+        int sortOrder= PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
+        ArrayList<CategoryItem> categoryItemLoad = initialiseCategoryItemLoadData(sortOrder, loadedAlbumCount);
+        int photosLoaded = 25;
+        List<Integer> skipPages = Arrays.asList(2,3);
+        int spacerAlbums = 3;
+        int pageSize = 5;
+        boolean isReversed = false;
+
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, photosLoaded, pageSize, isReversed);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(0, photosLoaded));
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesToSkip = skipResourcePageLoads(resourceItemLoadPages, skipPages);
+        loadCategoriesCheckingSortOrder(album, categoryItemLoad, false,spacerAlbums);
+        loadResourceItemPages(resourceItemLoadPages, album);
+        int resourcesLoaded = PiwigoResourceUtil.countItemsInPagesLessThan(Integer.MAX_VALUE, resourceItemLoadPages);
+        album.setRetrieveChildAlbumsInReverseOrder(!album.isRetrieveChildAlbumsInReverseOrder());
+        album.removeAllAlbums();
+        assertEquals(resourcesLoaded + album.getBannerCount(), album.getItemCount());
+    }
+
+    @Test
+    public void testRemoveAllResourcesMixedPartial() {
+        int loadedAlbumCount = 20;
+        int sortOrder= PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
+        ArrayList<CategoryItem> categoryItemLoad = initialiseCategoryItemLoadData(sortOrder, loadedAlbumCount);
+        int photosLoaded = 25;
+        List<Integer> skipPages = Arrays.asList(2,3);
+        int spacerAlbums = 3;
+        int pageSize = 5;
+        boolean isReversed = false;
+
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, photosLoaded, pageSize, isReversed);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(0, photosLoaded));
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesToSkip = skipResourcePageLoads(resourceItemLoadPages, skipPages);
+        loadCategoriesCheckingSortOrder(album, categoryItemLoad, false,spacerAlbums);
+        loadResourceItemPages(resourceItemLoadPages, album);
+        album.setRetrieveChildAlbumsInReverseOrder(!album.isRetrieveChildAlbumsInReverseOrder());
+        album.removeAllResources();
+        assertEquals(categoryItemLoad.size() + spacerAlbums + album.getBannerCount(), album.getItemCount());
+    }
+
+    @Test
+    public void testRemoveAllResourcesMixedPartialReversed() {
+        int loadedAlbumCount = 20;
+        int sortOrder= PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
+        ArrayList<CategoryItem> categoryItemLoad = initialiseCategoryItemLoadData(sortOrder, loadedAlbumCount);
+        int photosLoaded = 25;
+        List<Integer> skipPages = Arrays.asList(2,3);
+        int spacerAlbums = 3;
+        int pageSize = 5;
+        boolean isReversed = true;
+
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, photosLoaded, pageSize, isReversed);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(0, photosLoaded));
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesToSkip = skipResourcePageLoads(resourceItemLoadPages, skipPages);
+        loadCategoriesCheckingSortOrder(album, categoryItemLoad, false,spacerAlbums);
+        loadResourceItemPages(resourceItemLoadPages, album);
+        album.setRetrieveChildAlbumsInReverseOrder(!album.isRetrieveChildAlbumsInReverseOrder());
+        album.removeAllResources();
+        assertEquals(categoryItemLoad.size() + spacerAlbums + album.getBannerCount(), album.getItemCount());
+    }
+
+    @Test
+    public void testRemoveAllCategoriesJustCategoriesReversed() {
+        PiwigoAlbum<CategoryItem, GalleryItem> album = loadCategories(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true, 0);
+        album.removeAllAlbums();
+        assertEquals(0, album.getItemCount());
+
+        album = loadCategories(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, true, 3);
+        album.removeAllAlbums();
+        assertEquals(0, album.getItemCount());
+    }
+
+    @Test
+    public void testRemoveAllCategoriesMixedPartialReversed() {
+        int loadedAlbumCount = 20;
+        int sortOrder= PiwigoAlbum.ALBUM_SORT_ORDER_NAME;
+        ArrayList<CategoryItem> categoryItemLoad = initialiseCategoryItemLoadData(sortOrder, loadedAlbumCount);
+        int photosLoaded = 25;
+        List<Integer> skipPages = Arrays.asList(2,3);
+        int spacerAlbums = 3;
+        int pageSize = 5;
+        boolean isReversed = true;
+
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPages = PiwigoResourceUtil.initialiseResourceItemLoadPages(resourceItemFactory, sortOrder, photosLoaded, pageSize, isReversed);
+        PiwigoAlbum<CategoryItem,GalleryItem> album = new PiwigoAlbum<>(categoryItemFactory.getNextByName(0, photosLoaded));
+        List<ItemLoadPage<GalleryItem>> resourceItemLoadPagesToSkip = skipResourcePageLoads(resourceItemLoadPages, skipPages);
+        loadCategoriesCheckingSortOrder(album, categoryItemLoad, false,spacerAlbums);
+        loadResourceItemPages(resourceItemLoadPages, album);
+        int resourcesLoaded = PiwigoResourceUtil.countItemsInPagesLessThan(Integer.MAX_VALUE, resourceItemLoadPages);
+        album.setRetrieveChildAlbumsInReverseOrder(!album.isRetrieveChildAlbumsInReverseOrder());
+        album.removeAllAlbums();
+        assertEquals(resourcesLoaded + album.getBannerCount(), album.getItemCount());
+    }
+
+
+    @Test
     public void testItemReplacementJustCategories() {
         loadCategories(PiwigoAlbum.ALBUM_SORT_ORDER_NAME, false, 0);
     }

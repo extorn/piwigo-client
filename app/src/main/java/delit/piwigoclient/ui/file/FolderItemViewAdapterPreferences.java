@@ -170,18 +170,22 @@ public class FolderItemViewAdapterPreferences<P extends FolderItemViewAdapterPre
     }
 
 
-    public @NonNull SortedSet<String> getAcceptableFileExts(@NonNull Map<String,String> extToMimeMap) {
+    public @NonNull SortedSet<String> getAcceptableFileExts(@Nullable Map<String,String> extToMimeMap) {
         SortedSet<String> wantedExts = new TreeSet<>();
         if (visibleMimeTypes != null) {
             String[] visibleMimeTypesArray = CollectionUtils.asStringArray(visibleMimeTypes);
-            for(Map.Entry<String,String> extToMime : extToMimeMap.entrySet()) {
-                if(null != MimeTypeFilter.matches(extToMime.getValue(), visibleMimeTypesArray)
-                        || (visibleFileTypes != null && visibleFileTypes.contains(extToMime.getKey()))) {
-                    wantedExts.add(extToMime.getKey());
+            if(extToMimeMap != null) {
+                for (Map.Entry<String, String> extToMime : extToMimeMap.entrySet()) {
+                    if (null != MimeTypeFilter.matches(extToMime.getValue(), visibleMimeTypesArray)
+                            || (visibleFileTypes != null && visibleFileTypes.contains(extToMime.getKey()))) {
+                        wantedExts.add(extToMime.getKey());
+                    }
                 }
             }
         } else if(visibleFileTypes == null) {
-            wantedExts.addAll(extToMimeMap.keySet());
+            if(extToMimeMap != null) {
+                wantedExts.addAll(extToMimeMap.keySet());
+            }
         }
         return wantedExts;
     }
@@ -246,16 +250,6 @@ public class FolderItemViewAdapterPreferences<P extends FolderItemViewAdapterPre
             if(ext != null) {
                 fileExts.add(ext);
             }
-        }
-        return fileExts;
-    }
-
-    public SortedSet<String> getVisibleFileTypesForFileExts(Set<String> keySet) {
-        TreeSet<String> fileExts = new TreeSet<>(keySet);
-        SortedSet<String> wantedVisibleExts = getVisibleFileTypes();
-        if(wantedVisibleExts != null) {
-            // if null, we are opting not to filter
-            fileExts.retainAll(wantedVisibleExts);
         }
         return fileExts;
     }
