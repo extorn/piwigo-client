@@ -40,10 +40,12 @@ import java.util.Set;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.AppPreferences;
+import delit.piwigoclient.business.BaseSlideshowViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
@@ -137,10 +139,15 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
         imageView.setMinimumWidth(DisplayUtils.dpToPx(requireContext(), 120));
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
-        imageView.setScaleType(AlbumViewPreferences.getSlideshowImageScalingType(prefs, requireContext()));
+        imageView.setScaleType(BaseSlideshowViewPreferences.getSlideshowImageScalingType(prefs, requireContext()));
         //imageView.setRotateImageToFitScreen(AlbumViewPreferences.isRotateImageSoAspectMatchesScreenAspect(prefs, requireContext()));
-
-        imageView.setOnTouchImageViewListener(() -> getOverlaysVisibilityControl().runWithDelay(imageView));
+        //This is sadly unavoidable. No other way seems to work at present.
+        imageView.setOnTouchListener((v, e) -> {
+            if(e.getAction() == MotionEvent.ACTION_UP) {
+                getOverlaysVisibilityControl().runWithDelay(imageView);
+            }
+            return false;
+        });
 
         return imageView;
     }
@@ -219,7 +226,6 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
         }
         EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
         hideProgressIndicator();
-        getOverlaysVisibilityControl().runWithDelay(imageView);
     }
 
     @Override
@@ -277,7 +283,7 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
         // Load the content into the screen.
         if (currentImageUrlDisplayed == null) {
 
-            String preferredImageSize = AlbumViewPreferences.getPreferredSlideshowImageSize(prefs, requireContext());
+            String preferredImageSize = BaseSlideshowViewPreferences.getPreferredSlideshowImageSize(prefs, requireContext());
             fileSizeToShow = preferredImageSize;
             for (ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
                 if (rf.getName().equals(preferredImageSize)) {

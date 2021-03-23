@@ -21,8 +21,8 @@ import delit.libs.ui.view.TouchObservingRelativeLayout;
 import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.business.SlideshowViewPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
@@ -76,7 +76,7 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH exten
         ((TouchObservingRelativeLayout)view).setTouchObserver(ev -> {
             int currentSlideshowPage = getViewPager().getCurrentItem();
             if(currentSlideshowDriver != null && currentSlideshowDriver.isActive(currentSlideshowPage)) {
-                if(AlbumViewPreferences.isAutoDriveSlideshow(getPrefs(), container.getContext())) {
+                if(SlideshowViewPreferences.isAutoDriveSlideshow(getPrefs(), container.getContext())) {
                     getUiHelper().showDetailedMsg(R.string.alert_information, R.string.slideshow_auto_drive_paused);
                 }
                 // stop the driver from being used on this slide
@@ -161,19 +161,19 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH exten
         if(BuildConfig.DEBUG) {
             Log.d(TAG, "Handling slideshow item finished with event for item at pager index : " + event.getPagerItemIndex());
         }
-        if(AlbumViewPreferences.isAutoDriveSlideshow(prefs, requireContext())) {
+        if(SlideshowViewPreferences.isAutoDriveSlideshow(prefs, requireContext())) {
             int currentSlideshowPage = getViewPager().getCurrentItem();
             int moveToItem = currentSlideshowPage + 1;
             int items = getGalleryItemAdapter().getCount();
             if(items > moveToItem) {
                 if(currentSlideshowDriver.isActive(currentSlideshowPage)) {
-                    if(AlbumViewPreferences.isAutoDriveSlideshow(getPrefs(), requireContext())) {
+                    if(SlideshowViewPreferences.isAutoDriveSlideshow(getPrefs(), requireContext())) {
                         currentSlideshowDriver.setMoveToPage(moveToItem);
                         GalleryItem item = getGalleryItemAdapter().getItemByPagerPosition(currentSlideshowPage);
                         if (item instanceof VideoResourceItem) {
-                            DisplayUtils.runOnUiThread(currentSlideshowDriver, AlbumViewPreferences.getAutoDriveVideoDelayMillis(prefs, requireContext()));
+                            DisplayUtils.runOnUiThread(currentSlideshowDriver, SlideshowViewPreferences.getAutoDriveVideoDelayMillis(prefs, requireContext()));
                         } else {
-                            DisplayUtils.runOnUiThread(currentSlideshowDriver, AlbumViewPreferences.getAutoDriveDelayMillis(prefs, requireContext()));
+                            DisplayUtils.runOnUiThread(currentSlideshowDriver, SlideshowViewPreferences.getAutoDriveDelayMillis(prefs, requireContext()));
                         }
                     }
                 } else {

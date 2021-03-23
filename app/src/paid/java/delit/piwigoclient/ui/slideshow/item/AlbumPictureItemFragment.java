@@ -19,8 +19,8 @@ import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomViewPager;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.PicassoLoader;
+import delit.piwigoclient.business.SlideshowViewPreferences;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.ExifDataRetrievedEvent;
@@ -71,7 +71,7 @@ public class AlbumPictureItemFragment<F extends AlbumPictureItemFragment<F,FUIH,
             DisplayUtils.runOnUiThread(() -> {
                 // then this image is showing to the user and we should notify the pager that we're done.
                 EventBus.getDefault().post(new SlideshowItemPageFinished(getPagerIndex(), immediate));
-            }, duration + AlbumViewPreferences.getAutoDriveVideoDelayMillis(prefs, requireContext()));
+            }, duration + SlideshowViewPreferences.getAutoDriveVideoDelayMillis(prefs, requireContext()));
         } else {
             // then this image is showing to the user and we should notify the pager that we're done.
             EventBus.getDefault().post(new SlideshowItemPageFinished(getPagerIndex(), immediate));

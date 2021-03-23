@@ -47,6 +47,7 @@ import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.AppPreferences;
+import delit.piwigoclient.business.BaseSlideshowViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
@@ -434,7 +435,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
             currentAlbum = (CategoryItem) selectedItem;
             showGallery(currentAlbum);
         } else {
-            boolean showVideosInSlideshow = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, this);
+            boolean showVideosInSlideshow = BaseSlideshowViewPreferences.isIncludeVideosInSlideshow(prefs, this);
             boolean allowVideoPlayback = AlbumViewPreferences.isVideoPlaybackEnabled(prefs, this);
             if (selectedItem instanceof VideoResourceItem) {
                 if (showVideosInSlideshow) {

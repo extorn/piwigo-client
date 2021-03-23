@@ -20,9 +20,8 @@
             android:indeterminate="true"
             android:visibility="visible" />
 
-        <include
-            android:id="@+id/item_overlay_details_panel"
-            layout="@layout/layout_slideshow_item_resource_details_panel"/>
+        <include layout="@layout/layout_slideshow_item_resource_details_panel"/>
+
 
     </RelativeLayout>
 

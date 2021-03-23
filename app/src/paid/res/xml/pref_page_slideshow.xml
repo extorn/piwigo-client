@@ -80,6 +80,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/preference_gallery_slideshow_item_detail_show_on_item_show_key"
+            android:defaultValue="@bool/preference_gallery_slideshow_item_detail_show_on_item_show_default"
+            android:title="@string/preference_gallery_slideshow_item_detail_show_on_item_show_title"
+            android:summary="@string/preference_gallery_slideshow_item_detail_show_on_item_show_summary" />
+
         <delit.libs.ui.view.preference.NumberPickerPreference
             android:defaultValue="@integer/preference_gallery_slideshow_item_detail_auto_hide_delay_default"
             app:minValue="2000"
@@ -105,14 +113,6 @@
             android:key="@string/preference_gallery_include_videos_in_slideshow_key"
             android:summary="@string/preference_gallery_include_videos_in_slideshow_summary"
             android:title="@string/preference_gallery_include_videos_in_slideshow_title" />
-
-        <androidx.preference.SwitchPreference
-            android:defaultValue="@bool/preference_gallery_slideshow_transparent_extra_info_shadow_default"
-            android:key="@string/preference_gallery_slideshow_transparent_extra_info_shadow_key"
-            android:summary="@string/preference_gallery_slideshow_transparent_extra_info_shadow_summary"
-            android:title="@string/preference_gallery_slideshow_transparent_extra_info_shadow_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
     </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>

@@ -88,19 +88,6 @@ public class BaseAlbumViewPreferences {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_enable_video_playback_key), context.getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
     }
 
-    public static String getPreferredSlideshowImageSize(SharedPreferences prefs, Context context) {
-        return prefs.getString(context.getString(R.string.preference_gallery_item_slideshow_image_size_key), context.getString(R.string.preference_gallery_item_slideshow_image_size_default));
-    }
-
-    public static boolean isIncludeVideosInSlideshow(SharedPreferences prefs, Context context) {
-        return prefs.getBoolean(context.getString(R.string.preference_gallery_include_videos_in_slideshow_key), context.getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
-    }
-
-    //FIXME OBSOLETE - REMOVE
-    public static boolean isSlideshowExtraInfoShadowTransparent(SharedPreferences prefs, Context context) {
-        return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_transparent_extra_info_shadow_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_transparent_extra_info_shadow_default));
-    }
-
     public static boolean getAlbumChildAlbumSortOrderInverted(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_child_album_sort_order_inverted_key), context.getResources().getBoolean(R.bool.preference_gallery_child_album_sort_order_inverted_default));
     }
@@ -109,16 +96,8 @@ public class BaseAlbumViewPreferences {
         return prefs.getInt(context.getString(R.string.preference_gallery_child_album_sort_order_key), context.getResources().getInteger(R.integer.preference_gallery_child_album_sort_order_default));
     }
 
-    public static ImageView.ScaleType getSlideshowImageScalingType(SharedPreferences prefs, Context context) {
-        String scaleTypeName = prefs.getString(context.getString(R.string.preference_gallery_slideshow_image_scaletype_key), context.getResources().getString(R.string.preference_gallery_slideshow_image_scaletype_default));
-        return ImageView.ScaleType.valueOf(scaleTypeName);
-    }
-
     public static boolean isRotateImageSoAspectMatchesScreenAspect(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_image_rotate_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_image_rotate_default));
     }
 
-    public static long getAutoHideItemDetailDelayMillis(SharedPreferences prefs, Context context) {
-        return prefs.getInt(context.getString(R.string.preference_gallery_slideshow_item_detail_auto_hide_delay_key), context.getResources().getInteger(R.integer.preference_gallery_slideshow_item_detail_auto_hide_delay_default));
-    }
 }

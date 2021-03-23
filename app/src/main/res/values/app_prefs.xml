@@ -218,6 +218,10 @@
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Album thumbnails are center cropped</string>
     <bool name="preference_gallery_show_album_thumbnail_zoomed_default">true</bool>
 
+    <string name="preference_gallery_slideshow_item_detail_show_on_item_show_key" translatable="false">preference_gallery_slideshow_item_detail_show_on_item_show</string>
+    <bool name="preference_gallery_slideshow_item_detail_show_on_item_show_default">true</bool>
+    <string name="preference_gallery_slideshow_item_detail_show_on_item_show_title">Show resource header</string>
+    <string name="preference_gallery_slideshow_item_detail_show_on_item_show_summary">Show resource information when resource shown</string>
 
     <string name="preference_gallery_show_file_size_showing_key" translatable="false">preference_gallery_show_file_size_showing</string>
     <string name="preference_gallery_show_file_size_showing_title">Show Server Size of Photos Viewed</string>
@@ -305,11 +309,6 @@
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d days</string>
     <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer> <!--one week (7 days) -->
     <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
-
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_key" translatable="false">preference_gallery_slideshow_transparent_extra_info_shadow</string>
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Slideshow drawer is transparent</string>
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Slideshow image information drawer is transparent</string>
-    <bool name="preference_gallery_slideshow_transparent_extra_info_shadow_default">false</bool>
 
     <string name="preference_gallery_slideshow_image_scaletype_title">Slideshow image scaling type</string>
     <string name="preference_gallery_slideshow_image_scaletype_key" translatable="false">preference_gallery_slideshow_image_scaletype</string>

@@ -104,7 +104,9 @@ public abstract class SlideshowItemFragment<F extends SlideshowItemFragment<F,FU
                 favoriteButton.setTag("noListener");
                 favoriteButton.setChecked(modelVal);
             }
-            favoriteButton.setVisibility(View.VISIBLE);
+            if(favoriteButton.getVisibility() != View.VISIBLE) {
+                favoriteButton.setVisibility(View.VISIBLE);
+            }
         } else {
             favoriteButton.setVisibility(View.INVISIBLE);
         }
@@ -191,6 +193,7 @@ public abstract class SlideshowItemFragment<F extends SlideshowItemFragment<F,FU
             boolean favoritesSupported = model.hasFavoriteInfo();
             //PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isPiwigoClientPluginInstalled();
             favoriteButton.setVisibility(favoritesSupported ? View.VISIBLE : View.INVISIBLE);
+            getOverlaysVisibilityControl().setVisibility(View.INVISIBLE);
         }
     }
 

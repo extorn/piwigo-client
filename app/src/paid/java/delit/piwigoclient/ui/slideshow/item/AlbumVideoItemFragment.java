@@ -7,7 +7,7 @@ import com.google.android.exoplayer2.Player;
 
 import org.greenrobot.eventbus.EventBus;
 
-import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.business.SlideshowViewPreferences;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.SlideshowItemPageFinished;
@@ -21,8 +21,8 @@ public class AlbumVideoItemFragment<F extends AbstractAlbumVideoItemFragment<F,F
 
     @Override
     protected void onViewCreatedAndStateLoaded(View view, Bundle savedInstanceState) {
-        setPlayVideoAutomatically(isPlayVideoAutomatically() | AlbumViewPreferences.isAutoDriveSlideshow(prefs, requireContext()));
-        setVideoIsPlayingWhenVisible(isVideoIsPlayingWhenVisible() |  AlbumViewPreferences.isAutoDriveSlideshow(prefs, requireContext()));
+        setPlayVideoAutomatically(isPlayVideoAutomatically() | SlideshowViewPreferences.isAutoDriveSlideshow(prefs, requireContext()));
+        setVideoIsPlayingWhenVisible(isVideoIsPlayingWhenVisible() |  SlideshowViewPreferences.isAutoDriveSlideshow(prefs, requireContext()));
     }
 
     class PaidPlayerEventListener extends MyPlayerEventListener {

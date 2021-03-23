@@ -249,23 +249,26 @@
         Could Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
         Background async loading of images in the slideshow, perhaps not to bitmap them, just caching - if local http caching enabled - ?impact on videos?
         -->
-        <item>1.4.0.140</item>
+        <item>1.4.0.141</item>
         <item>"Change:
                 - Replacement of the job configuration storage and retrieval code to support large jobs better
             "</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.140</item>
+        <item>"Change:
+                - New preference is slideshow to permit hiding the information overlay in slideshow until click on image"</item>
         <item>1.4.0.139</item>
         <item>"Bugfix:
                 - crash updating album sort order
-                - crash selecting files</item>
+                - crash selecting files"</item>
         <item>1.4.0.138</item>
         <item>"Bugfix:
-                - Paid Only: Minor issue with the upload tracking database</item>
+                - Paid Only: Minor issue with the upload tracking database"</item>
         <item>1.4.0.137</item>
         <item>"Change:
                 - Paid Only: Record file ids uploaded to servers in a database on the device to allow earlier filtering or labelling these
-                - Rework of the upload to allow better control over which files are compressed (new icon colours)</item>
+                - Rework of the upload to allow better control over which files are compressed (new icon colours)"</item>
         <item>1.4.0.136</item>
         <item>"Bugfix:
                 - corrected issue with app thinking uri permissions were still needed after an upload completed"</item>

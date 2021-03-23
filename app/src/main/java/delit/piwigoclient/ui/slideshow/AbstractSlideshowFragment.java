@@ -31,6 +31,7 @@ import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.business.BaseSlideshowViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -279,7 +280,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         }
 
         viewPager = view.findViewById(R.id.slideshow_viewpager);
-        boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
+        boolean shouldShowVideos = BaseSlideshowViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
         shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, requireContext());
 
         Bundle arguments = getArguments();
@@ -320,7 +321,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         super.onViewStateRestored(savedInstanceState);
 
         // overrride the gallery item adapter settings restored with up to date user choices
-        boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
+        boolean shouldShowVideos = BaseSlideshowViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
         // update settings with newest values.
         galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
 

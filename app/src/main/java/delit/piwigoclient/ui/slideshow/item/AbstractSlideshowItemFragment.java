@@ -50,8 +50,9 @@ import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.business.BaseSlideshowViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.business.SlideshowViewPreferences;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -404,8 +405,12 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
 
 
         overlaysVisibilityControl = new ViewVisibleControl(v.findViewById(R.id.item_overlay_details_panel));
-        overlaysVisibilityControl.setDelayMillis(AlbumViewPreferences.getAutoHideItemDetailDelayMillis(getPrefs(),requireContext()));
-        overlaysVisibilityControl.setVisibility(View.VISIBLE);
+        overlaysVisibilityControl.setDelayMillis(BaseSlideshowViewPreferences.getAutoHideItemDetailDelayMillis(getPrefs(),requireContext()));
+        if(SlideshowViewPreferences.isShowItemDetailOnSlideshowItemOpen(getPrefs(), requireContext())) {
+            overlaysVisibilityControl.setVisibility(View.VISIBLE);
+        } else {
+            overlaysVisibilityControl.setVisibility(View.INVISIBLE);
+        }
 
         RelativeLayout itemContentLayout = v.findViewById(R.id.slideshow_item_content_layout);
         itemContent = createItemContent(inflater, itemContentLayout, savedInstanceState);
@@ -441,10 +446,13 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         uiHelper.setBlockDialogsFromShowing(false);
         uiHelper.handleAnyQueuedPiwigoMessages();
 //        setTitleBar();
-        overlaysVisibilityControl.setVisibility(View.VISIBLE);
-        if (getParentFragment() != null) {
-            getOverlaysVisibilityControl().runWithDelay(getParentFragment().getView());
+        if(SlideshowViewPreferences.isShowItemDetailOnSlideshowItemOpen(getPrefs(), requireContext())) {
+            overlaysVisibilityControl.setVisibility(View.VISIBLE);
+            if (getParentFragment() != null) {
+                getOverlaysVisibilityControl().runWithDelay(getParentFragment().getView());
+            }
         }
+
     }
 
     protected @LayoutRes
@@ -477,7 +485,9 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         if (albumLoadedItemCount == 1 && slideshowPageIdx == albumLoadedItemCount && albumTotalItemCount == albumLoadedItemCount) {
             itemPositionTextView.setVisibility(GONE);
         } else {
-            itemPositionTextView.setVisibility(VISIBLE);
+            if(itemPositionTextView.getVisibility() != VISIBLE) {
+                itemPositionTextView.setVisibility(VISIBLE);
+            }
             if(albumLoadedItemCount < albumTotalItemCount) {
                 itemPositionTextView.setText(String.format(Locale.getDefault(), "%1$d/%2$d[%3$d]", slideshowPageIdx + 1, albumLoadedItemCount, albumTotalItemCount));
             } else {
