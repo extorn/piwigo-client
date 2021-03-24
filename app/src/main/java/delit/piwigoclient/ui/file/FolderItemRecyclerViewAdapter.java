@@ -160,13 +160,15 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         // can't do the default as we need to filter the selection
         HashSet<Long> selectedIds = getSelectedItemIds();
         SortedSet<String> acceptableFileExts = getAdapterPrefs().getAcceptableFileExts(getFileExtsAndMimesInCurrentFolder());
-        for(FolderItem item : currentDisplayContent) {
-            if(acceptableFileExts.contains(item.getExt())) {
-                selectedIds.add(item.getUid());
+        if(currentDisplayContent != null) {
+            for (FolderItem item : currentDisplayContent) {
+                if (acceptableFileExts.contains(item.getExt())) {
+                    selectedIds.add(item.getUid());
+                }
             }
+            notifyItemRangeChanged(0, getItemCount());
+            getMultiSelectStatusListener().onItemSelectionCountChanged((LVA) this, selectedIds.size());
         }
-        notifyItemRangeChanged(0, getItemCount());
-        getMultiSelectStatusListener().onItemSelectionCountChanged((LVA) this,selectedIds.size());
     }
 
     public void setInitiallySelectedItems(Context context) {

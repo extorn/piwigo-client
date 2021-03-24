@@ -144,8 +144,10 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
                     // Deliberate fall-through
                 case PagedList.CHANGE_SORT_ORDER:
                     Logging.log(Log.DEBUG,TAG, "Slideshow accepts model change type : %1$d", changeType);
-                    galleryItemAdapter.onModelChange();
-                    galleryItemAdapter.notifyDataSetChanged();
+                    if(galleryItemAdapter != null) {
+                        galleryItemAdapter.onModelChange();
+                        galleryItemAdapter.notifyDataSetChanged();
+                    }
                     break;
                 default:
                     //Ignore
