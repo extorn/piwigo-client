@@ -44,7 +44,7 @@
     
     <string name="alert_title_login">Авторизоваться</string>
     <string name="alert_title_connectionTest">Тест на связи</string>
-    <string name="alert_message_success_connectionTest">Успех\nТип пользователя: ||| 1 |||.</string>
+    <string name="alert_message_success_connectionTest">Успех\nТип пользователя: %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Предупреждение\nСервер не сообщил о доступных размерах изображений.</string>
     <string name="alert_success">УСПЕХ!</string>
     <string name="alert_error">Ошибка</string>
@@ -87,8 +87,8 @@
     <string name="alert_upload_failed_webserver">Загрузка не удалась из-за ошибки веб-сервера (%1$d: %2$s).</string>
     <string name="alert_upload_failed_webresponse">Загрузка не удалось из-за обработки ошибок Piwigo Response. Это, вероятно, связано с изменением API Piwigo. Непроблемный ответ: %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Загрузить кусок для файла %1$s не удалось. Отказ от загрузки файла.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">Файл ||| 1 ||| больше не доступен на устройстве. Проверьте его было удалено или перемещено.\n||| 2 |||</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Ошибка при загрузке файла ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">Файл %1$s больше не доступен на устройстве. Проверьте его было удалено или перемещено.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Ошибка при загрузке файла %1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Загруженный файл %1$s уже присутствует на сервере, действие отменено.</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Загрузить файл %1$s Не удалось из-за ошибки в Piwigo Server (%2$d: %3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Загрузить файл %1$s Не удалось из-за ошибки веб-сервера (%2$d: %3$s).</string>
@@ -419,9 +419,9 @@ SourceCode: https://github.com/extorn/piwigoClient.
     <string name="alert_title_select_album">Выберите альбом</string>
     <string name="alert_title_set_album_thumbnail">Обновите альбом миниатюры?</string>
     <string name="alert_message_set_album_thumbnail">Обновите альбом Thumbnail на это изображение?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Вы уверены, что хотите удалить альбом (||| 1 |||)?\n\nНет функции отмены</string>
-    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Вы удалеете альбом (||| 1 |||) с ||| 2 ||| фото.\n\nХотите навсегда удалить любой осирофон?</string>
-    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Вы удалеете альбом (||| 1 |||) с ||| 2 ||| Фотографии и ||| 3 ||| Детские альбомы, содержащие дальнейшее ||| 4 ||| фото.\n\nХотите навсегда удалить любой осирофон?</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Вы уверены, что хотите удалить альбом (%1$s)?\n\nНет функции отмены</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Вы удалеете альбом (%1$s) с %2$d фото.\n\nХотите навсегда удалить любой осирофон?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Вы удалеете альбом (%1$s) с %2$d Фотографии и %3$d Детские альбомы, содержащие дальнейшее %4$d фото.\n\nХотите навсегда удалить любой осирофон?</string>
     <string name="alert_confirm_copy_items_here_pattern">Скопируйте %1$d Элемент (ы) в корзине здесь (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Переместить %1$d Элемент (ы) в корзине здесь (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Связанные альбомы</string>
@@ -451,7 +451,7 @@ SourceCode: https://github.com/extorn/piwigoClient.
     <string name="alert_title_error_connecting_to_server">Ошибка подключения к серверу</string>
     <string name="alert_error_adding_certificate_to_truststore">Ошибка добавления сертификата к ведению Trust</string>
     <string name="alert_add_cert_to_truststore_pattern">Добавить сертификат цепочки в список доверенных CAS?</string>
-    <string name="certificate_summary_pattern">Тема: ||| 1 |||\nДействительно: ||| 2 ||| - ||| 3 |||\nСерийный: ||| 4 |||</string>
+    <string name="certificate_summary_pattern">Тема: %1$s\nДействительно: %2$s - %3$s\nСерийный: %4$s</string>
     <string name="alert_http_engine_shutdown">HTTP-отключение двигателя. Будет перезапущен автоматически по мере необходимости.</string>
     
     <string name="alert_clearing_certificate_use_history">Сброс списка сертификатов, выбранных для доверия</string>
@@ -590,7 +590,7 @@ SourceCode: https://github.com/extorn/piwigoClient.
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Предпочтение %1$s безвозвратно и был по умолчанию для %2$s. Пожалуйста, сбросьте это значение в настройках приложения"</string>
+    <string name="preference_corrupt_please_re_type_pattern">Предпочтение %1$s безвозвратно и был по умолчанию для %2$s. Пожалуйста, сбросьте это значение в настройках приложения</string>
     <string name="switch_to_cached_mode">Сервер в настоящее время недоступен. Используйте кэшированные данные?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Сжатие видео</string>
@@ -626,7 +626,7 @@ SourceCode: https://github.com/extorn/piwigoClient.
     <string name="alert_message_showing_image_thumbnails_of_size">Показаны миниатюры изображения от сервера размера %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Показаны миниатюры альбома с сервера размера %1$s</string>
     
-    <string name="alert_error_upload_file_compression_error_message_pattern">Ошибка при сжатии файла для загрузки ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Ошибка при сжатии файла для загрузки %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Загрузка</string>
     <string name="compressing_progress_bar_message">Сжимание</string>
     <string name="warning_missing_tags_links_removed_from_resource">Не все теги, связанные с этим элементом, все еще существуют в базе данных. Ссылки на %1$d был удален</string>
@@ -640,7 +640,7 @@ SourceCode: https://github.com/extorn/piwigoClient.
     <string name="system_file_selector_label">Выбор системного файла</string>
     <string name="preference_uri_consumer_description_pattern">Предпочтение: %1$s</string>
     <string name="selected_files_missing_permissions_warning_message_pattern">Обязательные разрешения больше не доступны для некоторых выбранных файлов. Выбор файла отменен.</string>
-    <string name="missing_permissions_warning_message_pattern">"Поскольку в последний раз это приложение было открыто, были удалены разрешения на файлы, требуемые следующими частями приложения.\n\n||| 1 |||\n\nПожалуйста, выберите новые разрешения для этих параметров, чтобы все могли работать, как ожидалось."</string>
+    <string name="missing_permissions_warning_message_pattern">"Поскольку в последний раз это приложение было открыто, были удалены разрешения на файлы, требуемые следующими частями приложения.\n\n%1$s\n\nПожалуйста, выберите новые разрешения для этих параметров, чтобы все могли работать, как ожидалось."</string>
     <string name="folder_selection_title">Выберите папку</string>
     <string name="files_selection_title">Выбрать файлы</string>
     <string name="all">Все</string>
@@ -692,7 +692,7 @@ SourceCode: https://github.com/extorn/piwigoClient.
     <string name="orphans_menu_title">Сирот</string>
     <string name="piwigo_server">Piwigo Server</string>
     <string name="piwigo_server_plugin">Серверный плагин</string>
-    <string name="piwigo_server_updates_available_pattern">Доступно обновление Piwigo:\n\n||| 1 |||\n||| 2 |||</string>
+    <string name="piwigo_server_updates_available_pattern">Доступно обновление Piwigo:\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">Этот шаблон электронной почты для вашего удобства.\nЕсли вы чувствуете, что это не имеет отношения к предоставлению каких-либо из следующих деталей, пожалуйста, удалите их.\n\nUUID позволяет мне отфильтровать все зарегистрированные данные, чтобы показать только те, которые имеют отношение к вам. Это будет только нужно, если я изо всех сил пытаюсь исправить ошибку, которую вы испытываете.</string>
     <string name="try_enabling_privacy_plugin_media_uris">Ресурс не может быть найден на сервере. Хотите включить Plugin Plugin Uri Multimedia URI?</string>
@@ -716,7 +716,7 @@ SourceCode: https://github.com/extorn/piwigoClient.
     <string name="button_clipboard">Буфер обмена</string>
     <string name="button_email">Электронное письмо</string>
     <string name="button_this_app">Это приложение</string>
-    <string name="connection_profile_amended_with_new_details_pattern">Профиль соединения сервера\n  ||| 1 |||\n  был создан и изменен с новыми деталями</string>
+    <string name="connection_profile_amended_with_new_details_pattern">Профиль соединения сервера\n  %1$s\n  был создан и изменен с новыми деталями</string>
     <string name="alert_create_or_update_server_connection_details">Хотите создать или обновить информацию о подключении сервера Piwigo App Piwigo?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">Приложение не может найти необходимые разрешения файлов для выбранной вами папки. Пожалуйста, выберите другой. Если это root, пожалуйста, удалите и снова добавьте root, затем выберите еще раз.</string>
     <string name="upload_job_stopped_by_user">Загрузка остановлена ​​пользователем</string>
@@ -729,7 +729,7 @@ SourceCode: https://github.com/extorn/piwigoClient.
     <string name="upload_of_files_complete_finishing_up">Загрузить файлы завершены. Просто заканчивая.</string>
     <string name="uploaded_previously">Загружено раньше</string>
     <string name="migrated_settings_from_previous_version">Настройки мигрированы из предыдущей версии приложения</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Не все выбранные элементы приемлемы для этого сервера. Те, кто требует повторного сжатия: %1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">Не все выбранные элементы приемлемы для этого сервера. Те, кто требует повторного сжатия: %1$d</string>
     <string name="upload_uploadable_files_label">Типы файлов приемлемы для этого сервера</string>
     <string name="upload_icon_key_label">Цвета значка</string>
     <string name="compress_because_thats_the_default">Будет сжиматься</string>

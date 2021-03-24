@@ -44,7 +44,7 @@
     
     <string name="alert_title_login">Přihlásit se</string>
     <string name="alert_title_connectionTest">Test připojení</string>
-    <string name="alert_message_success_connectionTest">Úspěch\nTyp uživatele: ||| 1 |||.</string>
+    <string name="alert_message_success_connectionTest">Úspěch\nTyp uživatele: %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Varování\nServer neoznámil dostupné velikosti obrazu.</string>
     <string name="alert_success">ÚSPĚCH!</string>
     <string name="alert_error">Chyba</string>
@@ -87,8 +87,8 @@
     <string name="alert_upload_failed_webserver">Upload se nezdařilo z důvodu chyby webového serveru (%1$d: %2$s).</string>
     <string name="alert_upload_failed_webresponse">Nahrát se nezdařilo kvůli chybám zpracování piwigo reakce. To je pravděpodobně způsobeno změnou API PIWIGO. Nepřípaná odpověď: %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Upload kusu pro soubor %1$s selhal. Opouštějící nahrávání souboru.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">Soubor ||| 1 ||| již není k dispozici na přístroji.PERHAPS byl vymazán nebo přesunut.\n||| 2 |||</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Chyba při nahrávání souboru ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">Soubor %1$s již není k dispozici na přístroji.PERHAPS byl vymazán nebo přesunut.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Chyba při nahrávání souboru %1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Nahráno soubor %1$s je již přítomen na serveru, akce zrušena.</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Nahrát soubor %1$s Selhalo z důvodu chyby v serveru PIWIGO (%2$d: %3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Nahrát soubor %1$s Selhalo z důvodu chyby webového serveru (%2$d: %3$s).</string>
@@ -419,9 +419,9 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="alert_title_select_album">Vyberte album</string>
     <string name="alert_title_set_album_thumbnail">Aktualizovat náhled alba?</string>
     <string name="alert_message_set_album_thumbnail">Aktualizovat náhled alba na tento obrázek?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Opravdu chcete odstranit album (||| 1 |||)?\n\nNeexistuje žádná funkce zpět</string>
-    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Vymazáváte album (||| 1 |||) s ||| 2 ||| fotky.\n\nChcete trvale odstranit jakýkoliv osamocený obsah?</string>
-    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Vymazáváte album (||| 1 |||) s ||| 2 ||| Fotografie a ||| 3 ||| Dítě alba obsahující další ||| 4 ||| fotky.\n\nChcete trvale odstranit jakýkoliv osamocený obsah?</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Opravdu chcete odstranit album (%1$s)?\n\nNeexistuje žádná funkce zpět</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Vymazáváte album (%1$s) s %2$d fotky.\n\nChcete trvale odstranit jakýkoliv osamocený obsah?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Vymazáváte album (%1$s) s %2$d Fotografie a %3$d Dítě alba obsahující další %4$d fotky.\n\nChcete trvale odstranit jakýkoliv osamocený obsah?</string>
     <string name="alert_confirm_copy_items_here_pattern">Zkopírujte %1$d Položka (y) v košíku zde (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Přesunout %1$d Položka (y) v košíku zde (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Propojené alba</string>
@@ -451,7 +451,7 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="alert_title_error_connecting_to_server">Chyba Připojení k serveru</string>
     <string name="alert_error_adding_certificate_to_truststore">Chyba při přidání certifikátu do úložiště důvěryhodnosti</string>
     <string name="alert_add_cert_to_truststore_pattern">Přidat certifikátový řetězec do seznamu důvěryhodných CAS?</string>
-    <string name="certificate_summary_pattern">Předmět: ||| 1 |||\nPlatný: ||| 2 ||| - ||| 3 |||\nSerial: ||| 4 |||</string>
+    <string name="certificate_summary_pattern">Předmět: %1$s\nPlatný: %2$s - %3$s\nSerial: %4$s</string>
     <string name="alert_http_engine_shutdown">Vypnutí motoru HTTP. Bude automaticky restartován podle potřeby.</string>
     
     <string name="alert_clearing_certificate_use_history">Resetování seznamu vybraných certifikátů, které mají být důvěryhodné</string>
@@ -590,7 +590,7 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Preference %1$s je nenávratný a byl vysloven %2$s. Obnovte tuto hodnotu v nastavení aplikace"</string>
+    <string name="preference_corrupt_please_re_type_pattern">Preference %1$s je nenávratný a byl vysloven %2$s. Obnovte tuto hodnotu v nastavení aplikace</string>
     <string name="switch_to_cached_mode">Server je v současné době k dispozici. Používejte data mezipaměti?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Komprimovat videa</string>
@@ -626,7 +626,7 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="alert_message_showing_image_thumbnails_of_size">Zobrazeno snímky miniatury ze serveru velikosti %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Zobrazeno miniatury alba od serveru velikosti %1$s</string>
     
-    <string name="alert_error_upload_file_compression_error_message_pattern">Chyba při kompresi souboru pro nahrání ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Chyba při kompresi souboru pro nahrání %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Nahrávání</string>
     <string name="compressing_progress_bar_message">Komprese</string>
     <string name="warning_missing_tags_links_removed_from_resource">Ne všechny značky spojené s touto položkou stále existují v databázi. Odkazy na %1$d byly odstraněny</string>
@@ -640,7 +640,7 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="system_file_selector_label">Výběr systému souborů</string>
     <string name="preference_uri_consumer_description_pattern">Preference: %1$s</string>
     <string name="selected_files_missing_permissions_warning_message_pattern">Požadovaná oprávnění již nejsou k dispozici pro některé vybrané soubory. Volba souboru zrušeno.</string>
-    <string name="missing_permissions_warning_message_pattern">"Protože naposledy byla tato aplikace otevřena, byla odstraněna oprávnění k souboru požadovanou následujícími částmi aplikace\n\n||| 1 |||\n\nVyberte prosím nová oprávnění pro tato nastavení, aby se věci pracovaly podle očekávání."</string>
+    <string name="missing_permissions_warning_message_pattern">"Protože naposledy byla tato aplikace otevřena, byla odstraněna oprávnění k souboru požadovanou následujícími částmi aplikace\n\n%1$s\n\nVyberte prosím nová oprávnění pro tato nastavení, aby se věci pracovaly podle očekávání."</string>
     <string name="folder_selection_title">Vybrat složku</string>
     <string name="files_selection_title">Vyberte soubory</string>
     <string name="all">Všechno</string>
@@ -692,7 +692,7 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="orphans_menu_title">Sirotci</string>
     <string name="piwigo_server">Piwigo Server.</string>
     <string name="piwigo_server_plugin">Serverový plugin.</string>
-    <string name="piwigo_server_updates_available_pattern">K dispozici aktualizace PIWIGO:\n\n||| 1 |||\n||| 2 |||</string>
+    <string name="piwigo_server_updates_available_pattern">K dispozici aktualizace PIWIGO:\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">Tato e-mailová šablona je pro vaše pohodlí.\nPokud se domníváte, že není relevantní pro poskytování některého z následujících podrobností, smažte je.\n\nUUID mi umožňuje filtrovat všechna zaznamenaná data, která se zobrazí pouze ty, které jsou pro vás relevantní. To bude potřeba pouze tehdy, když se snažím opravit chybu, který zažíváte.</string>
     <string name="try_enabling_privacy_plugin_media_uris">Zdroj nebyl nalezen na serveru. Chcete povolit operaci soukromí plugin multimediální uri opravit?</string>
@@ -716,7 +716,7 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="button_clipboard">Schránka</string>
     <string name="button_email">E-mailem</string>
     <string name="button_this_app">Tato aplikace</string>
-    <string name="connection_profile_amended_with_new_details_pattern">Profil připojení serveru\n  ||| 1 |||\n  byl vytvořen a upraven novými údaji</string>
+    <string name="connection_profile_amended_with_new_details_pattern">Profil připojení serveru\n  %1$s\n  byl vytvořen a upraven novými údaji</string>
     <string name="alert_create_or_update_server_connection_details">Chcete vytvořit nebo aktualizovat podrobnosti připojení aplikace Piwigo Server?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">Aplikace nemůže najít potřebná oprávnění k souborům pro vybranou složku. Vyberte prosím další. Pokud se jedná o kořen, odstraňte a znovu přidejte kořen a znovu vyberte znovu.</string>
     <string name="upload_job_stopped_by_user">Upload zastavil uživatelem</string>
@@ -729,7 +729,7 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="upload_of_files_complete_finishing_up">Nahrávání souborů dokončeno. Jen skončit.</string>
     <string name="uploaded_previously">Nahráno dříve</string>
     <string name="migrated_settings_from_previous_version">Nastavení přenosná z předchozí verzi aplikace</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Ne všechny vybrané položky jsou pro tento server přijatelný. Ti, kteří vyžadují znovu kompresi: %1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">Ne všechny vybrané položky jsou pro tento server přijatelný. Ti, kteří vyžadují znovu kompresi: %1$d</string>
     <string name="upload_uploadable_files_label">Typy souborů přijatelné pro tento server</string>
     <string name="upload_icon_key_label">Barvy ikon</string>
     <string name="compress_because_thats_the_default">Bude komprimován</string>

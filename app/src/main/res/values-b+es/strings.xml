@@ -44,7 +44,7 @@
     
     <string name="alert_title_login">Acceso</string>
     <string name="alert_title_connectionTest">Prueba de conexión</string>
-    <string name="alert_message_success_connectionTest">Éxito\nTipo de usuario: ||| 1 |||.</string>
+    <string name="alert_message_success_connectionTest">Éxito\nTipo de usuario: %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Advertencia\nEl servidor no reportó los tamaños de imágenes disponibles.</string>
     <string name="alert_success">¡ÉXITO!</string>
     <string name="alert_error">Error</string>
@@ -87,8 +87,8 @@
     <string name="alert_upload_failed_webserver">Subir falló debido al error del servidor web (%1$d: %2$s).</string>
     <string name="alert_upload_failed_webresponse">Subir Fallido debido a la respuesta de PIWIGO de procesamiento de errores. Esto es probablemente debido a un cambio de API de PIWIGO. Respuesta desechable: %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Subir de trozo para el archivo %1$s fallido. Abandonando la carga de archivos.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">Archivo ||| 1 ||| Ya no está disponible en el dispositivo. Tapas que se ha eliminado o se mueve.\n||| 2 |||</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Error al subir el archivo ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">Archivo %1$s Ya no está disponible en el dispositivo. Tapas que se ha eliminado o se mueve.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Error al subir el archivo %1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Archivo Subido %1$s Ya está presente en el servidor, se cancela la acción.</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Archivo de carga %1$s Falló debido al error en el servidor PIWIGO (%2$d: %3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Archivo de carga %1$s Falló debido al error del servidor web (%2$d: %3$s).</string>
@@ -419,9 +419,9 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
     <string name="alert_title_select_album">Seleccione el álbum</string>
     <string name="alert_title_set_album_thumbnail">¿Actualizar el álbum thumbnail?</string>
     <string name="alert_message_set_album_thumbnail">Actualizar el álbum Thumbnail a esta imagen?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">¿Seguro que deseas eliminar el álbum (||| 1 |||)?\n\nNo hay una característica de deshacer</string>
-    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Usted está eliminando el álbum (||| 1 |||) con ||| 2 ||| Fotos.\n\n¿Te gustaría eliminar permanentemente algún contenido huérfano?</string>
-    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Usted está eliminando el álbum (||| 1 |||) con ||| 2 ||| Fotos, y ||| 3 ||| Álbumes infantiles que contienen otros ||| 4 ||| Fotos.\n\n¿Te gustaría eliminar permanentemente algún contenido huérfano?</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">¿Seguro que deseas eliminar el álbum (%1$s)?\n\nNo hay una característica de deshacer</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Usted está eliminando el álbum (%1$s) con %2$d Fotos.\n\n¿Te gustaría eliminar permanentemente algún contenido huérfano?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Usted está eliminando el álbum (%1$s) con %2$d Fotos, y %3$d Álbumes infantiles que contienen otros %4$d Fotos.\n\n¿Te gustaría eliminar permanentemente algún contenido huérfano?</string>
     <string name="alert_confirm_copy_items_here_pattern">Copia el %1$d Artículo (s) en la cesta aquí (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Mueve el %1$d Artículo (s) en la cesta aquí (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Álbumes vinculados</string>
@@ -451,7 +451,7 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
     <string name="alert_title_error_connecting_to_server">Error al conectarse al servidor</string>
     <string name="alert_error_adding_certificate_to_truststore">Error agregando certificado a Tienda de confianza</string>
     <string name="alert_add_cert_to_truststore_pattern">Agregar cadena de certificados a la lista de CAS de confianza?</string>
-    <string name="certificate_summary_pattern">Asunto: ||| 1 |||\nVálido: ||| 2 ||| - ||| 3 |||\nSerial: ||| 4 |||</string>
+    <string name="certificate_summary_pattern">Asunto: %1$s\nVálido: %2$s - %3$s\nSerial: %4$s</string>
     <string name="alert_http_engine_shutdown">Apagado del motor HTTP. Se reiniciará automáticamente según sea necesario.</string>
     
     <string name="alert_clearing_certificate_use_history">Restablecimiento de la lista de certificados elegidos para ser de confianza</string>
@@ -590,7 +590,7 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Preferencia %1$s es irrecuperable y ha sido incumplido en %2$s. Por favor, restablece este valor en la configuración de la aplicación"</string>
+    <string name="preference_corrupt_please_re_type_pattern">Preferencia %1$s es irrecuperable y ha sido incumplido en %2$s. Por favor, restablece este valor en la configuración de la aplicación</string>
     <string name="switch_to_cached_mode">El servidor actualmente no está disponible. Usar datos en caché?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Comprimir videos</string>
@@ -626,7 +626,7 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
     <string name="alert_message_showing_image_thumbnails_of_size">Mostrando imágenes en miniaturas del servidor de tamaño %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Mostrando miniaturas del álbum desde el servidor de tamaño %1$s</string>
     
-    <string name="alert_error_upload_file_compression_error_message_pattern">Error al comprimir el archivo para Subir ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Error al comprimir el archivo para Subir %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Cargar</string>
     <string name="compressing_progress_bar_message">Apresamiento</string>
     <string name="warning_missing_tags_links_removed_from_resource">No todas las etiquetas vinculadas a este artículo todavía existen en la base de datos. Los enlaces a %1$d se han eliminado</string>
@@ -640,7 +640,7 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
     <string name="system_file_selector_label">Selección de archivos del sistema</string>
     <string name="preference_uri_consumer_description_pattern">Preferencia: %1$s</string>
     <string name="selected_files_missing_permissions_warning_message_pattern">Los permisos requeridos ya no están disponibles para algunos de los archivos seleccionados. Selección de archivos cancelada.</string>
-    <string name="missing_permissions_warning_message_pattern">"Desde la última vez que se abrió esta aplicación, los permisos de archivo requeridos por las siguientes partes de la aplicación se han eliminado\n\n||| 1 |||\n\nSeleccione nuevos permisos para que estas configuraciones mantengan las cosas trabajando como se esperaba."</string>
+    <string name="missing_permissions_warning_message_pattern">"Desde la última vez que se abrió esta aplicación, los permisos de archivo requeridos por las siguientes partes de la aplicación se han eliminado\n\n%1$s\n\nSeleccione nuevos permisos para que estas configuraciones mantengan las cosas trabajando como se esperaba."</string>
     <string name="folder_selection_title">Seleccione la carpeta</string>
     <string name="files_selection_title">Selecciona archivos</string>
     <string name="all">Todos</string>
@@ -692,7 +692,7 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
     <string name="orphans_menu_title">Huérfanos</string>
     <string name="piwigo_server">Servidor piwigo</string>
     <string name="piwigo_server_plugin">Plugin del servidor</string>
-    <string name="piwigo_server_updates_available_pattern">Actualización de PIWIGO DISPONIBLE:\n\n||| 1 |||\n||| 2 |||</string>
+    <string name="piwigo_server_updates_available_pattern">Actualización de PIWIGO DISPONIBLE:\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">Esta plantilla de correo electrónico es para su conveniencia.\nSi cree que no es relevante para proporcionar ninguno de los siguientes detalles, elimínelos.\n\nEl UUID me permite filtrar todos los datos registrados para mostrarlo solo a los relevantes. Esto solo será necesario si estoy luchando para solucionar un error que está experimentando.</string>
     <string name="try_enabling_privacy_plugin_media_uris">El recurso no se pudo encontrar en el servidor. ¿Le gustaría habilitar la corrección de URI Multimedia Plugin de privacidad?</string>
@@ -716,7 +716,7 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
     <string name="button_clipboard">Portapapeles</string>
     <string name="button_email">Correo electrónico</string>
     <string name="button_this_app">Esta aplicación</string>
-    <string name="connection_profile_amended_with_new_details_pattern">El perfil de conexión del servidor\n  ||| 1 |||\n  Se ha creado y o modificado con nuevos detalles.</string>
+    <string name="connection_profile_amended_with_new_details_pattern">El perfil de conexión del servidor\n  %1$s\n  Se ha creado y o modificado con nuevos detalles.</string>
     <string name="alert_create_or_update_server_connection_details">¿Le gustaría crear o actualizar los detalles de la conexión del servidor PIWIGO?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">La aplicación no puede encontrar los permisos de archivos necesarios para la carpeta que seleccionó. Por favor, seleccione otro. Si es una raíz, elimine y vuelva a agregar la raíz, luego seleccione nuevamente.</string>
     <string name="upload_job_stopped_by_user">Subir detenido por el usuario</string>
@@ -729,7 +729,7 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
     <string name="upload_of_files_complete_finishing_up">Subir de archivos completos. Solo terminando</string>
     <string name="uploaded_previously">Subido antes</string>
     <string name="migrated_settings_from_previous_version">Configuración migrada de la versión anterior de la aplicación</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"No todos los artículos seleccionados son aceptables para este servidor. Los que requieren re-compresión: %1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">No todos los artículos seleccionados son aceptables para este servidor. Los que requieren re-compresión: %1$d</string>
     <string name="upload_uploadable_files_label">Tipos de archivos aceptables para este servidor</string>
     <string name="upload_icon_key_label">Colores de iconos</string>
     <string name="compress_because_thats_the_default">Estará comprimido</string>

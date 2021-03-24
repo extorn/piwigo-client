@@ -44,7 +44,7 @@
     
     <string name="alert_title_login">Connexion</string>
     <string name="alert_title_connectionTest">Test de connexion</string>
-    <string name="alert_message_success_connectionTest">Succès\nType d\'utilisateur: ||| 1 |||.</string>
+    <string name="alert_message_success_connectionTest">Succès\nType d\'utilisateur: %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Avertissement\nLe serveur n\'a pas signalé de tailles d\'image disponibles.</string>
     <string name="alert_success">SUCCÈS!</string>
     <string name="alert_error">Erreur</string>
@@ -87,8 +87,8 @@
     <string name="alert_upload_failed_webserver">L\'échec de téléchargement échoué en raison d\'une erreur du serveur Web (%1$d: %2$s).</string>
     <string name="alert_upload_failed_webresponse">Le téléchargement a échoué en raison de la traduction de la réponse de Piwigo. Ceci est probablement dû à un changement d\'API de Piwigo. Réponse imparable: %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Téléchargement de chunk pour le fichier %1$s manqué. Abandonner le téléchargement de fichier.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">Fichier ||| 1 ||| n\'est plus disponible sur le périphérique.Perahaps qu\'il a été supprimé ou déplacé.\n||| 2 |||</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Erreur lors du téléchargement de fichier ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">Fichier %1$s n\'est plus disponible sur le périphérique.Perahaps qu\'il a été supprimé ou déplacé.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Erreur lors du téléchargement de fichier %1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Fichier téléchargé %1$s est déjà présent sur le serveur, action annulée.</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Télécharger le fichier %1$s Échec du fait de l\'erreur dans le serveur Piwigo (%2$d: %3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Télécharger le fichier %1$s Échec du fait d\'une erreur de serveur Web (%2$d: %3$s).</string>
@@ -419,9 +419,9 @@ Les versions sont sur une base ad hoc pour le moment. La fréquence des versions
     <string name="alert_title_select_album">Sélectionnez l\'album</string>
     <string name="alert_title_set_album_thumbnail">Mettre à jour l\'album Thumbnail?</string>
     <string name="alert_message_set_album_thumbnail">Update album thumbnail sur cette image?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Êtes-vous sûr de souhaiter supprimer l\'album (||| 1 |||)?\n\nIl n\'y a pas de fonctionnalité d\'annulation</string>
-    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Vous supprimez l\'album (||| 1 |||) avec ||| 2 ||| Photos.\n\nSouhaitez-vous supprimer définitivement un contenu orphelin?</string>
-    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Vous supprimez l\'album (||| 1 |||) avec ||| 2 ||| Photos, et ||| 3 ||| Albums enfants contenant un autre ||| 4 ||| Photos.\n\nSouhaitez-vous supprimer définitivement un contenu orphelin?</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Êtes-vous sûr de souhaiter supprimer l\'album (%1$s)?\n\nIl n\'y a pas de fonctionnalité d\'annulation</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Vous supprimez l\'album (%1$s) avec %2$d Photos.\n\nSouhaitez-vous supprimer définitivement un contenu orphelin?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Vous supprimez l\'album (%1$s) avec %2$d Photos, et %3$d Albums enfants contenant un autre %4$d Photos.\n\nSouhaitez-vous supprimer définitivement un contenu orphelin?</string>
     <string name="alert_confirm_copy_items_here_pattern">Copier le %1$d article (s) dans le panier ici (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Déplacer le %1$d article (s) dans le panier ici (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Albums liés</string>
@@ -451,7 +451,7 @@ Les versions sont sur une base ad hoc pour le moment. La fréquence des versions
     <string name="alert_title_error_connecting_to_server">Erreur de connexion au serveur</string>
     <string name="alert_error_adding_certificate_to_truststore">Erreur lors de l\'ajout de certificat au magasin Trust Store</string>
     <string name="alert_add_cert_to_truststore_pattern">Ajouter une chaîne de certificats à la liste de CAS de confiance?</string>
-    <string name="certificate_summary_pattern">Objet: ||| 1 |||\nValable: ||| 2 ||| - ||| 3 |||\nSérie: ||| 4 |||</string>
+    <string name="certificate_summary_pattern">Objet: %1$s\nValable: %2$s - %3$s\nSérie: %4$s</string>
     <string name="alert_http_engine_shutdown">Arrêt du moteur http. Sera redémarré automatiquement au besoin.</string>
     
     <string name="alert_clearing_certificate_use_history">Réinitialisation de la liste des certificats choisis à faire confiance</string>
@@ -590,7 +590,7 @@ Les versions sont sur une base ad hoc pour le moment. La fréquence des versions
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Préférence %1$s est irrémédiable et a été fait défaut à %2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application."</string>
+    <string name="preference_corrupt_please_re_type_pattern">Préférence %1$s est irrémédiable et a été fait défaut à %2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application.</string>
     <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données en cache?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Compresser des vidéos</string>
@@ -626,7 +626,7 @@ Les versions sont sur une base ad hoc pour le moment. La fréquence des versions
     <string name="alert_message_showing_image_thumbnails_of_size">Afficher les vignettes de l\'image du serveur de taille %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Afficher les vignettes d\'album du serveur de taille %1$s</string>
     
-    <string name="alert_error_upload_file_compression_error_message_pattern">Erreur lors de la compression du fichier de téléchargement ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Erreur lors de la compression du fichier de téléchargement %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Téléchargement</string>
     <string name="compressing_progress_bar_message">Compression</string>
     <string name="warning_missing_tags_links_removed_from_resource">Toutes les balises liées à cet élément n\'existent pas dans la base de données. Les liens vers %1$d ont été supprimés</string>
@@ -640,7 +640,7 @@ Les versions sont sur une base ad hoc pour le moment. La fréquence des versions
     <string name="system_file_selector_label">Sélection de fichier système</string>
     <string name="preference_uri_consumer_description_pattern">Préférence: %1$s</string>
     <string name="selected_files_missing_permissions_warning_message_pattern">Les autorisations requises ne sont plus disponibles pour certains des fichiers sélectionnés. Sélection de fichier annulée.</string>
-    <string name="missing_permissions_warning_message_pattern">"Depuis la dernière fois que cette application a été ouverte, les autorisations de fichier requises par les parties suivantes de l\'application ont été supprimées.\n\n||| 1 |||\n\nVeuillez sélectionner de nouvelles autorisations pour ces paramètres pour que les choses fonctionnent comme prévu."</string>
+    <string name="missing_permissions_warning_message_pattern">"Depuis la dernière fois que cette application a été ouverte, les autorisations de fichier requises par les parties suivantes de l\'application ont été supprimées.\n\n%1$s\n\nVeuillez sélectionner de nouvelles autorisations pour ces paramètres pour que les choses fonctionnent comme prévu."</string>
     <string name="folder_selection_title">Sélectionner le dossier</string>
     <string name="files_selection_title">Sélectionnez les fichiers</string>
     <string name="all">Tout</string>
@@ -692,7 +692,7 @@ Les versions sont sur une base ad hoc pour le moment. La fréquence des versions
     <string name="orphans_menu_title">Orphelin</string>
     <string name="piwigo_server">Serveur Piwigo</string>
     <string name="piwigo_server_plugin">Plugin de serveur</string>
-    <string name="piwigo_server_updates_available_pattern">PIWIGO mise à jour disponible:\n\n||| 1 |||\n||| 2 |||</string>
+    <string name="piwigo_server_updates_available_pattern">PIWIGO mise à jour disponible:\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">Ce modèle de messagerie est pour votre commodité.\nSi vous pensez qu\'il n\'est pas pertinent de fournir l\'un des détails suivants, veuillez les supprimer.\n\nL\'UUID me permet de filtrer toutes les données connectées pour afficher les personnes qui vous concernent. Cela ne sera nécessaire que si je me suis battu pour corriger un bug que vous avez expérimenté.</string>
     <string name="try_enabling_privacy_plugin_media_uris">La ressource n\'a pas pu être trouvée sur le serveur. Souhaitez-vous activer le correctif multimédia URI de plug-in de la confidentialité?</string>
@@ -716,7 +716,7 @@ Les versions sont sur une base ad hoc pour le moment. La fréquence des versions
     <string name="button_clipboard">Presse-plans</string>
     <string name="button_email">E-mail</string>
     <string name="button_this_app">Cette application</string>
-    <string name="connection_profile_amended_with_new_details_pattern">Le profil de connexion du serveur\n  ||| 1 |||\n  a été créé et ou modifié avec de nouveaux détails</string>
+    <string name="connection_profile_amended_with_new_details_pattern">Le profil de connexion du serveur\n  %1$s\n  a été créé et ou modifié avec de nouveaux détails</string>
     <string name="alert_create_or_update_server_connection_details">Souhaitez-vous créer ou mettre à jour les détails de la connexion de l\'application PIWIGO Server?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">L\'application ne trouve pas les autorisations de fichier nécessaires pour le dossier sélectionné. Veuillez sélectionner un autre. S\'il s\'agit d\'une racine, veuillez supprimer et ré-ajouter la racine, puis sélectionnez à nouveau.</string>
     <string name="upload_job_stopped_by_user">Télécharger arrêté par l\'utilisateur</string>
@@ -729,7 +729,7 @@ Les versions sont sur une base ad hoc pour le moment. La fréquence des versions
     <string name="upload_of_files_complete_finishing_up">Téléchargement de fichiers complète. Juste finir.</string>
     <string name="uploaded_previously">Téléchargé avant</string>
     <string name="migrated_settings_from_previous_version">Paramètres migrés de la version précédente de l\'application</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Tous les éléments sélectionnés ne sont pas acceptables pour ce serveur. Ceux qui nécessitent une ré-compression: %1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">Tous les éléments sélectionnés ne sont pas acceptables pour ce serveur. Ceux qui nécessitent une ré-compression: %1$d</string>
     <string name="upload_uploadable_files_label">Types de fichiers acceptables sur ce serveur</string>
     <string name="upload_icon_key_label">Couleurs d\'icône</string>
     <string name="compress_because_thats_the_default">Sera compressé</string>

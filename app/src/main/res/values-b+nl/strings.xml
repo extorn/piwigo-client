@@ -44,7 +44,7 @@
     
     <string name="alert_title_login">Log in</string>
     <string name="alert_title_connectionTest">Verbindingstest</string>
-    <string name="alert_message_success_connectionTest">Succes\nGebruikersnaam: ||| 1 |||.</string>
+    <string name="alert_message_success_connectionTest">Succes\nGebruikersnaam: %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Waarschuwing\nServer heeft geen beschikbare afbeeldingsgroottes gemeld.</string>
     <string name="alert_success">SUCCES!</string>
     <string name="alert_error">Fout</string>
@@ -87,8 +87,8 @@
     <string name="alert_upload_failed_webserver">Upload mislukt vanwege webserverfout (%1$d: %2$s).</string>
     <string name="alert_upload_failed_webresponse">Upload is mislukt vanwege de foutenverwerking Piwigo-reactie. Dit is waarschijnlijk te wijten aan een Piwigo API-verandering. Ongeparend antwoord: %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Upload van brok voor bestand %1$s Mislukt. Het verlaten van upload van het bestand.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">Bestand ||| 1 ||| is niet langer beschikbaar op het apparaat. Het is verwijderd of verplaatst.\n||| 2 |||</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Fout bij het uploaden van bestand ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">Bestand %1$s is niet langer beschikbaar op het apparaat. Het is verwijderd of verplaatst.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Fout bij het uploaden van bestand %1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Geupload bestand %1$s is al aanwezig op de server, Actie geannuleerd.</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Upload bestand %1$s Mislukt vanwege fout in Piwigo-server (%2$d: %3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Upload bestand %1$s Mislukt vanwege webserverfout (%2$d: %3$s).</string>
@@ -419,9 +419,9 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
     <string name="alert_title_select_album">Selecteer album</string>
     <string name="alert_title_set_album_thumbnail">Update album thumbnail?</string>
     <string name="alert_message_set_album_thumbnail">Werk de thumbnail van het album bij op deze afbeelding?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Weet je zeker dat je het album wilt verwijderen (||| 1 |||)?\n\nEr is geen functie ongedaan</string>
-    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">U verwijdert album (||| 1 |||) met ||| 2 ||| foto\'s.\n\nWilt u eventuele weesgehalte permanent verwijderen?</string>
-    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">U verwijdert album (||| 1 |||) met ||| 2 ||| Foto\'s, en ||| 3 ||| Kindalbums met een verder ||| 4 ||| foto\'s.\n\nWilt u eventuele weesgehalte permanent verwijderen?</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Weet je zeker dat je het album wilt verwijderen (%1$s)?\n\nEr is geen functie ongedaan</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">U verwijdert album (%1$s) met %2$d foto\'s.\n\nWilt u eventuele weesgehalte permanent verwijderen?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">U verwijdert album (%1$s) met %2$d Foto\'s, en %3$d Kindalbums met een verder %4$d foto\'s.\n\nWilt u eventuele weesgehalte permanent verwijderen?</string>
     <string name="alert_confirm_copy_items_here_pattern">Kopieer de %1$d Item (s) in de mand hier (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Verplaats de %1$d Item (s) in de mand hier (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Gelinkte albums</string>
@@ -451,7 +451,7 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
     <string name="alert_title_error_connecting_to_server">Fout bij verbinding met de server</string>
     <string name="alert_error_adding_certificate_to_truststore">Fout toevoegen Certificaat toevoegen aan Trust Store</string>
     <string name="alert_add_cert_to_truststore_pattern">Voeg certificaatketen toe aan lijst met vertrouwde CAS?</string>
-    <string name="certificate_summary_pattern">Betreft: ||| 1 |||\nGeldig: ||| 2 ||| - ||| 3 |||\nSerieel: ||| 4 |||</string>
+    <string name="certificate_summary_pattern">Betreft: %1$s\nGeldig: %2$s - %3$s\nSerieel: %4$s</string>
     <string name="alert_http_engine_shutdown">HTTP Engine Shutdown. Zal zo nodig worden gestart.</string>
     
     <string name="alert_clearing_certificate_use_history">De lijst met gekozen certificaten opnieuw instellen om te vertrouwd te worden</string>
@@ -590,7 +590,7 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Voorkeur %1$s is onherstelbaar en is in gebreke gebleven naar %2$s. Reset deze waarde in de app-instellingen"</string>
+    <string name="preference_corrupt_please_re_type_pattern">Voorkeur %1$s is onherstelbaar en is in gebreke gebleven naar %2$s. Reset deze waarde in de app-instellingen</string>
     <string name="switch_to_cached_mode">De server is momenteel niet beschikbaar. Gebruik cached-gegevens?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Comprimeer video\'s</string>
@@ -626,7 +626,7 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
     <string name="alert_message_showing_image_thumbnails_of_size">Beeldminiaturen weergeven van server van grootte %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Albumminiaturen weergeven vanaf server van grootte %1$s</string>
     
-    <string name="alert_error_upload_file_compression_error_message_pattern">Fout bij het comprimeren van bestand voor upload ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Fout bij het comprimeren van bestand voor upload %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Uploading</string>
     <string name="compressing_progress_bar_message">Compressie</string>
     <string name="warning_missing_tags_links_removed_from_resource">Niet alle tags die aan dit item zijn gekoppeld, bestaan ​​nog steeds in de database. De links naar %1$d zijn verwijderd</string>
@@ -640,7 +640,7 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
     <string name="system_file_selector_label">Systeembestandselectie</string>
     <string name="preference_uri_consumer_description_pattern">Voorkeur: %1$s</string>
     <string name="selected_files_missing_permissions_warning_message_pattern">Vereiste machtigingen zijn niet langer beschikbaar voor sommige van de geselecteerde bestanden. Bestandselectie geannuleerd.</string>
-    <string name="missing_permissions_warning_message_pattern">"Sinds de laatste keer dat deze app is geopend, zijn de bestandsmachtigingen vereist door de volgende delen van de app verwijderd\n\n||| 1 |||\n\nSelecteer nieuwe machtigingen voor deze instellingen om dingen die werken zoals verwacht te houden."</string>
+    <string name="missing_permissions_warning_message_pattern">"Sinds de laatste keer dat deze app is geopend, zijn de bestandsmachtigingen vereist door de volgende delen van de app verwijderd\n\n%1$s\n\nSelecteer nieuwe machtigingen voor deze instellingen om dingen die werken zoals verwacht te houden."</string>
     <string name="folder_selection_title">Selecteer map</string>
     <string name="files_selection_title">Selecteer bestand</string>
     <string name="all">Alle</string>
@@ -692,7 +692,7 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
     <string name="orphans_menu_title">Wezen</string>
     <string name="piwigo_server">Piwigo-server</string>
     <string name="piwigo_server_plugin">Server plugin</string>
-    <string name="piwigo_server_updates_available_pattern">Piwigo-update beschikbaar:\n\n||| 1 |||\n||| 2 |||</string>
+    <string name="piwigo_server_updates_available_pattern">Piwigo-update beschikbaar:\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">Deze e-mailsjabloon is voor uw gemak.\nAls u vindt dat het niet relevant is om een van de volgende gegevens te verstrekken, verwijdert u ze alstublieft.\n\nMet de UUID kan ik alle aangemelde gegevens filteren om alleen die relevant voor u te tonen. Dit is alleen nodig als ik worstel om een bug te bevestigen die je ervaart.</string>
     <string name="try_enabling_privacy_plugin_media_uris">De bron kan niet op de server worden gevonden. Wilt u de Privacy Plugin Multimedia Uri-fix inschakelen?</string>
@@ -716,7 +716,7 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
     <string name="button_clipboard">Klembord</string>
     <string name="button_email">E-mail</string>
     <string name="button_this_app">Deze app</string>
-    <string name="connection_profile_amended_with_new_details_pattern">Het serververbindingsprofiel\n  ||| 1 |||\n  is gemaakt en of gewijzigd met nieuwe details</string>
+    <string name="connection_profile_amended_with_new_details_pattern">Het serververbindingsprofiel\n  %1$s\n  is gemaakt en of gewijzigd met nieuwe details</string>
     <string name="alert_create_or_update_server_connection_details">Wilt u de APP PIWIGO Server-verbindingsdetails maken of bijwerken?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">De app kan geen benodigde bestandsmachtigingen vinden voor de map die u hebt geselecteerd. Selecteer een andere. Als het een root is, verwijdert u en voegt u de root opnieuw toe en selecteert u opnieuw.</string>
     <string name="upload_job_stopped_by_user">Upload gestopt door gebruiker</string>
@@ -729,7 +729,7 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
     <string name="upload_of_files_complete_finishing_up">Upload van bestanden voltooid. Gewoon afronden.</string>
     <string name="uploaded_previously">Geüpload eerder</string>
     <string name="migrated_settings_from_previous_version">Instellingen gemigreerd van de vorige app-versie</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Niet alle geselecteerde items zijn acceptabel op deze server. DIE DIE RE-COMPRESSIE VEREIST: %1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">Niet alle geselecteerde items zijn acceptabel op deze server. DIE DIE RE-COMPRESSIE VEREIST: %1$d</string>
     <string name="upload_uploadable_files_label">Bestandstypen aanvaardbaar op deze server</string>
     <string name="upload_icon_key_label">Pictogramkleuren</string>
     <string name="compress_because_thats_the_default">Zal worden gecomprimeerd</string>

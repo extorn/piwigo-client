@@ -44,7 +44,7 @@
     
     <string name="alert_title_login">登录</string>
     <string name="alert_title_connectionTest">连接测试</string>
-    <string name="alert_message_success_connectionTest">成功\n用户类型：||| 1 |||。</string>
+    <string name="alert_message_success_connectionTest">成功\n用户类型：%1$s。</string>
     <string name="alert_message_no_available_image_sizes">警告\n服务器未报告可用的图像大小。</string>
     <string name="alert_success">成功！</string>
     <string name="alert_error">错误</string>
@@ -87,8 +87,8 @@
     <string name="alert_upload_failed_webserver">由于Web服务器错误，上传失败（%1$d：%2$s）。</string>
     <string name="alert_upload_failed_webresponse">由于错误处理piwigo响应，上传失败。这可能是由于Piwigo API变化。无法进行响应：%1$s。</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">上传块for file %1$s失败的。放弃上传文件。</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">文件||| 1 ||| 在设备上不再可用。它已被删除或移动。\n|||| 2 |||</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">上传文件时出错||| 1 |||。\n|||| 2 |||</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">文件%1$s 在设备上不再可用。它已被删除或移动。\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">上传文件时出错%1$s。\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">上传文件%1$s已经存在于服务器上，操作取消。</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">上传文件%1$s由于piwigo服务器的错误（%2$d：%3$s）失败</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">上传文件%1$s由于Web服务器错误（%2$d：%3$s</string>
@@ -419,9 +419,9 @@ Piwigo Server I测试的版本目前为11.0.3。
     <string name="alert_title_select_album">选择专辑</string>
     <string name="alert_title_set_album_thumbnail">更新专辑缩略图？</string>
     <string name="alert_message_set_album_thumbnail">更新专辑缩略图到此图片？</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">您确定要删除相册（||| 1 |||）？\n\n没有撤消功能</string>
-    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">您正在删除相册（||| 1 |||）with ||| 2 ||| 相片。\n\n您想永久删除任何孤立内容吗？</string>
-    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">您正在删除相册（||| 1 |||）with ||| 2 ||| 照片和||| 3 |||| 包含一个进一步的儿童专辑||| 4 |||| 相片。\n\n您想永久删除任何孤立内容吗？</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">您确定要删除相册（%1$s）？\n\n没有撤消功能</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">您正在删除相册（%1$s）with %2$d 相片。\n\n您想永久删除任何孤立内容吗？</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">您正在删除相册（%1$s）with %2$d 照片和%3$d 包含一个进一步的儿童专辑%4$d 相片。\n\n您想永久删除任何孤立内容吗？</string>
     <string name="alert_confirm_copy_items_here_pattern">复制%1$d篮子里的物品在这里（%2$s）？</string>
     <string name="alert_confirm_move_items_here_pattern">移动%1$d篮子里的物品在这里（%2$s）？</string>
     <string name="slideshow_image_details_linked_albums_title">联系相册</string>
@@ -451,7 +451,7 @@ Piwigo Server I测试的版本目前为11.0.3。
     <string name="alert_title_error_connecting_to_server">连接到服务器时出错</string>
     <string name="alert_error_adding_certificate_to_truststore">将证书添加到信任商店时出错</string>
     <string name="alert_add_cert_to_truststore_pattern">将证书链添加到可信CA列表中？</string>
-    <string name="certificate_summary_pattern">主题：||| 1 |||\n有效：||| 2 ||||  -  ||| 3 ||||\n串行：||| 4 |||</string>
+    <string name="certificate_summary_pattern">主题：%1$s\n有效：%2$s  -  %3$s\n串行：%4$s</string>
     <string name="alert_http_engine_shutdown">HTTP引擎关闭。将根据需要自动重新启动。</string>
     
     <string name="alert_clearing_certificate_use_history">重置所选择的证书列表</string>
@@ -590,7 +590,7 @@ Piwigo Server I测试的版本目前为11.0.3。
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"偏好%1$s是无可挽回的，默认为%2$s。请在应用设置中重置此值"</string>
+    <string name="preference_corrupt_please_re_type_pattern">偏好%1$s是无可挽回的，默认为%2$s。请在应用设置中重置此值</string>
     <string name="switch_to_cached_mode">服务器目前不可用。使用缓存数据？</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">压缩视频</string>
@@ -626,7 +626,7 @@ Piwigo Server I测试的版本目前为11.0.3。
     <string name="alert_message_showing_image_thumbnails_of_size">从大小的服务器显示图像缩略图%1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">显示来自size的服务器的专辑缩略图%1$s</string>
     
-    <string name="alert_error_upload_file_compression_error_message_pattern">压缩上传文件时出错||| 1 |||。\n|||| 2 |||</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">压缩上传文件时出错%1$s。\n%2$s</string>
     <string name="uploading_progress_bar_message">上传</string>
     <string name="compressing_progress_bar_message">压缩</string>
     <string name="warning_missing_tags_links_removed_from_resource">并非所有与此项目链接的标记仍然存在于数据库中。链接到%1$d已被删除</string>
@@ -640,7 +640,7 @@ Piwigo Server I测试的版本目前为11.0.3。
     <string name="system_file_selector_label">系统文件选择</string>
     <string name="preference_uri_consumer_description_pattern">偏好：%1$s</string>
     <string name="selected_files_missing_permissions_warning_message_pattern">所选某些文件不再可用所需的权限。文件选择已取消。</string>
-    <string name="missing_permissions_warning_message_pattern">"自上次打开此应用程序以来，已删除了应用程序所需的文件权限\n\n|||| 1 |||\n\n请为这些设置选择新权限，以保持按预期工作的内容。"</string>
+    <string name="missing_permissions_warning_message_pattern">"自上次打开此应用程序以来，已删除了应用程序所需的文件权限\n\n%1$s\n\n请为这些设置选择新权限，以保持按预期工作的内容。"</string>
     <string name="folder_selection_title">选择文件夹</string>
     <string name="files_selection_title">选择文件</string>
     <string name="all">全部</string>
@@ -692,7 +692,7 @@ Piwigo Server I测试的版本目前为11.0.3。
     <string name="orphans_menu_title">孤子</string>
     <string name="piwigo_server">piwigo服务器</string>
     <string name="piwigo_server_plugin">服务器插件</string>
-    <string name="piwigo_server_updates_available_pattern">Piwigo更新可用：\n\n|||| 1 |||\n|||| 2 |||</string>
+    <string name="piwigo_server_updates_available_pattern">Piwigo更新可用：\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">此电子邮件模板为您方便起见。\n如果您觉得提供以下任何细节并不相关，请删除它们。\n\nUUID允许我过滤所有记录的数据以显示与您相关的数据。 如果我努力修复困难，那么这将是必要的。</string>
     <string name="try_enabling_privacy_plugin_media_uris">无法在服务器上找到资源。您想启用隐私插件多媒体URI修复吗？</string>
@@ -716,7 +716,7 @@ Piwigo Server I测试的版本目前为11.0.3。
     <string name="button_clipboard">剪贴板</string>
     <string name="button_email">电子邮件</string>
     <string name="button_this_app">这个应用程序</string>
-    <string name="connection_profile_amended_with_new_details_pattern">服务器连接配置文件\n  |||| 1 |||\n  已创建和或修改新细节</string>
+    <string name="connection_profile_amended_with_new_details_pattern">服务器连接配置文件\n  %1$s\n  已创建和或修改新细节</string>
     <string name="alert_create_or_update_server_connection_details">您想创建或更新App Piwigo Server连接详细信息吗？</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">该应用程序无法找到所选文件夹的必要文件权限。请选择另一个。如果它是根，请删除并重新添加root，然后再次选择。</string>
     <string name="upload_job_stopped_by_user">上传用户停止</string>
@@ -729,7 +729,7 @@ Piwigo Server I测试的版本目前为11.0.3。
     <string name="upload_of_files_complete_finishing_up">上传文件完成。只是完成。</string>
     <string name="uploaded_previously">上传之前</string>
     <string name="migrated_settings_from_previous_version">设置从以前的应用程序版本迁移</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"并非所选的所有项目都可以接受此服务器。那些需要重新压缩的人：%1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">并非所选的所有项目都可以接受此服务器。那些需要重新压缩的人：%1$d</string>
     <string name="upload_uploadable_files_label">此服务器可接受的文件类型</string>
     <string name="upload_icon_key_label">图标颜色</string>
     <string name="compress_because_thats_the_default">将被压缩</string>

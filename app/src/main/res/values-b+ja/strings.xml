@@ -44,7 +44,7 @@
     
     <string name="alert_title_login">ログイン</string>
     <string name="alert_title_connectionTest">接続テスト</string>
-    <string name="alert_message_success_connectionTest">成功\nユーザータイプ：||| 1 |||</string>
+    <string name="alert_message_success_connectionTest">成功\nユーザータイプ：%1$s</string>
     <string name="alert_message_no_available_image_sizes">警告\nサーバーは利用可能なイメージサイズを報告しませんでした。</string>
     <string name="alert_success">成功！</string>
     <string name="alert_error">エラー</string>
@@ -87,8 +87,8 @@
     <string name="alert_upload_failed_webserver">Webサーバーエラー（%1$d：%2$s：%2$s：</string>
     <string name="alert_upload_failed_webresponse">PIWIGO応答の処理エラーのため、アップロードが失敗しました。これはおそらくPiwigo APIの変更によるものです。解析不可能な応答：%1$s。</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">ファイルのチャンクのアップロード%1$s失敗しました。ファイルのアップロードを放棄する。</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">ファイル||| 1 ||| デバイス上では使用できなくなりました。削除または移動されました。\n||| 2 |||</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">ファイルをアップロード中にエラー||| 1 ||||。\n||| 2 |||</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">ファイル%1$s デバイス上では使用できなくなりました。削除または移動されました。\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">ファイルをアップロード中にエラー%1$s。\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">アップロードされたファイル%1$sサーバー上にすでに存在しています、アクションはキャンセルされました。</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">アップロードファイル%1$s Piwigo Serverのエラーが原因で失敗しました（%2$d：%3$s）。</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">アップロードファイル%1$s Webサーバーエラー（%2$d：%3$s：%3$s：</string>
@@ -419,9 +419,9 @@ My Test Galleryには、.jpgと.mp4と.m4vファイルのみが含まれてい�
     <string name="alert_title_select_album">アルバムを選択してください</string>
     <string name="alert_title_set_album_thumbnail">アルバムのサムネイルを更新しますか？</string>
     <string name="alert_message_set_album_thumbnail">このイメージにアルバムのサムネイルを更新しますか？</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">アルバム（||| 1 |||を削除してもよろしいですか？\n\n元に戻す機能はありません</string>
-    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">アルバムを削除しています（||| 1 |||）||| 2 ||| 写真。\n\n孤立したコンテンツを恒久的に削除しますか？</string>
-    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">アルバムを削除しています（||| 1 |||）||| 2 ||| 写真、||| 3 ||| さらにAを含む子供アルバム||| 4 ||| 写真。\n\n孤立したコンテンツを恒久的に削除しますか？</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">アルバム（%1$sを削除してもよろしいですか？\n\n元に戻す機能はありません</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">アルバムを削除しています（%1$s）%2$d 写真。\n\n孤立したコンテンツを恒久的に削除しますか？</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">アルバムを削除しています（%1$s）%2$d 写真、%3$d さらにAを含む子供アルバム%4$d 写真。\n\n孤立したコンテンツを恒久的に削除しますか？</string>
     <string name="alert_confirm_copy_items_here_pattern">%1$dをコピーするここでのバスケット内のアイテム（%2$s）？</string>
     <string name="alert_confirm_move_items_here_pattern">%1$dを動かすここでのバスケット内のアイテム（%2$s）？</string>
     <string name="slideshow_image_details_linked_albums_title">リンクされたアルバム</string>
@@ -451,7 +451,7 @@ My Test Galleryには、.jpgと.mp4と.m4vファイルのみが含まれてい�
     <string name="alert_title_error_connecting_to_server">サーバーへの接続エラー</string>
     <string name="alert_error_adding_certificate_to_truststore">信頼ストアへの証明書の追加エラー</string>
     <string name="alert_add_cert_to_truststore_pattern">信頼できるCAのリストに証明書チェーンを追加しますか？</string>
-    <string name="certificate_summary_pattern">件名：||| 1 |||\n有効：||| 2 |||  -  ||| 3 |||\nシリアル：||| 4 |||</string>
+    <string name="certificate_summary_pattern">件名：%1$s\n有効：%2$s  -  %3$s\nシリアル：%4$s</string>
     <string name="alert_http_engine_shutdown">HTTPエンジンのシャットダウン。必要に応じて自動的に再起動されます。</string>
     
     <string name="alert_clearing_certificate_use_history">信頼されるように選択された証明書のリストをリセットする</string>
@@ -590,7 +590,7 @@ My Test Galleryには、.jpgと.mp4と.m4vファイルのみが含まれてい�
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"嗜好%1$s IRRETRIEVABLEで、デフォルトの[%2$sアプリ設定でこの値をリセットしてください"</string>
+    <string name="preference_corrupt_please_re_type_pattern">嗜好%1$s IRRETRIEVABLEで、デフォルトの[%2$sアプリ設定でこの値をリセットしてください</string>
     <string name="switch_to_cached_mode">サーバーは現在利用できません。キャッシュデータを使用してください。</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">動画を圧縮します</string>
@@ -626,7 +626,7 @@ My Test Galleryには、.jpgと.mp4と.m4vファイルのみが含まれてい�
     <string name="alert_message_showing_image_thumbnails_of_size">サイズのサーバーからの画像サムネイルを表示%1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">サイズのサーバーからのサムネイルを表示%1$s</string>
     
-    <string name="alert_error_upload_file_compression_error_message_pattern">アップロードのためのファイル圧縮中にエラーが発生しました||| 1 |||\n||| 2 |||</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">アップロードのためのファイル圧縮中にエラーが発生しました%1$s\n%2$s</string>
     <string name="uploading_progress_bar_message">アップロード</string>
     <string name="compressing_progress_bar_message">圧迫</string>
     <string name="warning_missing_tags_links_removed_from_resource">このアイテムにリンクされているすべてのタグがまだデータベースに存在しません。 %1$dへのリンク削除されました</string>
@@ -640,7 +640,7 @@ My Test Galleryには、.jpgと.mp4と.m4vファイルのみが含まれてい�
     <string name="system_file_selector_label">システムファイルの選択</string>
     <string name="preference_uri_consumer_description_pattern">嗜好：%1$s</string>
     <string name="selected_files_missing_permissions_warning_message_pattern">選択されたファイルの中には、必要な権限は使用できなくなりました。ファイル選択がキャンセルされました。</string>
-    <string name="missing_permissions_warning_message_pattern">"このアプリが最後に開かれたので、アプリの次の部分に必要なファイル権限が削除されました\n\n||| 1 |||\n\nこれらの設定の新しい権限を選択して、事実が期待どおりに機能します。"</string>
+    <string name="missing_permissions_warning_message_pattern">"このアプリが最後に開かれたので、アプリの次の部分に必要なファイル権限が削除されました\n\n%1$s\n\nこれらの設定の新しい権限を選択して、事実が期待どおりに機能します。"</string>
     <string name="folder_selection_title">フォルダーを選択</string>
     <string name="files_selection_title">ファイルを選択してください</string>
     <string name="all">すべて</string>
@@ -692,7 +692,7 @@ My Test Galleryには、.jpgと.mp4と.m4vファイルのみが含まれてい�
     <string name="orphans_menu_title">孤児</string>
     <string name="piwigo_server">ピウイゴサーバー</string>
     <string name="piwigo_server_plugin">サーバープラグイン</string>
-    <string name="piwigo_server_updates_available_pattern">Piwigo Updateが入手可能：\n\n||| 1 |||\n||| 2 |||</string>
+    <string name="piwigo_server_updates_available_pattern">Piwigo Updateが入手可能：\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">このメールテンプレートはあなたの便宜のためのものです。\n以下の詳細を提供するのに関連がないと感じている場合は、それらを削除してください。\n\nUUIDは私があなたに関連するものだけを示すためにすべてのログデータをフィルタリングすることを可能にします。 あなたが経験したバグを修正するのに苦労している場合にのみこれは必要になるでしょう。</string>
     <string name="try_enabling_privacy_plugin_media_uris">リソースがサーバー上で見つかりませんでした。プライバシープラグインマルチメディアURI修正を有効にしますか？</string>
@@ -716,7 +716,7 @@ My Test Galleryには、.jpgと.mp4と.m4vファイルのみが含まれてい�
     <string name="button_clipboard">クリップボード</string>
     <string name="button_email">Eメール</string>
     <string name="button_this_app">このアプリ</string>
-    <string name="connection_profile_amended_with_new_details_pattern">サーバー接続プロファイル\n  ||| 1 |||\n  新しい詳細を作成して修正しました</string>
+    <string name="connection_profile_amended_with_new_details_pattern">サーバー接続プロファイル\n  %1$s\n  新しい詳細を作成して修正しました</string>
     <string name="alert_create_or_update_server_connection_details">App Piwigo Server接続の詳細を作成または更新しますか？</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">アプリは、選択したフォルダに対して必要なファイル権限を見つけることができません。別のものを選択してください。 rootであれば、ルートを削除して再追加してから、もう一度選択してください。</string>
     <string name="upload_job_stopped_by_user">アップロードはユーザーによって停止しました</string>
@@ -729,7 +729,7 @@ My Test Galleryには、.jpgと.mp4と.m4vファイルのみが含まれてい�
     <string name="upload_of_files_complete_finishing_up">完全なファイルのアップロード終わりました。</string>
     <string name="uploaded_previously">前にアップロードされました</string>
     <string name="migrated_settings_from_previous_version">前のアプリバージョンから移行された設定</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"選択したすべての項目がこのサーバーに受け入れられるわけではありません。再圧縮を必要とするもの：%1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">選択したすべての項目がこのサーバーに受け入れられるわけではありません。再圧縮を必要とするもの：%1$d</string>
     <string name="upload_uploadable_files_label">このサーバーに受け入れ可能なファイルの種類</string>
     <string name="upload_icon_key_label">アイコンの色</string>
     <string name="compress_because_thats_the_default">圧縮されます</string>

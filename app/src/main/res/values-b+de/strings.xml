@@ -44,7 +44,7 @@
     
     <string name="alert_title_login">Anmeldung</string>
     <string name="alert_title_connectionTest">Verbindungstest</string>
-    <string name="alert_message_success_connectionTest">Erfolg\nBenutzertyp: ||| 1 |||.</string>
+    <string name="alert_message_success_connectionTest">Erfolg\nBenutzertyp: %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Warnung\nServer meldete nicht verfügbare Bildgrößen.</string>
     <string name="alert_success">ERFOLG!</string>
     <string name="alert_error">Error</string>
@@ -87,8 +87,8 @@
     <string name="alert_upload_failed_webserver">Upload fehlgeschlagen aufgrund des Webserver-Fehlers (%1$d: %2$s).</string>
     <string name="alert_upload_failed_webresponse">Upload fehlgeschlagen aufgrund der Fehlerverarbeitung PIWIGO-Antwort. Dies ist wahrscheinlich auf eine Piwigo-API-Änderung zurückzuführen. Unarsame Antwort: %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Upload von Chunk für Datei %1$s gescheitert. Upload der Datei aufgeben.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">Datei ||| 1 ||| ist auf dem Gerät nicht mehr verfügbar. Es wurde nicht gelöscht oder verschoben.\n||| 2 |||</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Fehler beim Hochladen von Datei ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">Datei %1$s ist auf dem Gerät nicht mehr verfügbar. Es wurde nicht gelöscht oder verschoben.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Fehler beim Hochladen von Datei %1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Hochgeladene Datei %1$s ist bereits auf dem Server vorhanden, der Aktion storniert.</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Datei hochladen %1$s Fehlgeschlagen aufgrund des Fehlers im PIWIGO-Server (%2$d: %3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Datei hochladen %1$s Fehlgeschlagen aufgrund des Webserver-Fehlers (%2$d: %3$s).</string>
@@ -419,9 +419,9 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="alert_title_select_album">Album auswählen</string>
     <string name="alert_title_set_album_thumbnail">Album Thumbnail aktualisieren?</string>
     <string name="alert_message_set_album_thumbnail">Album-Miniaturansicht auf dieses Bild aktualisieren?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Möchten Sie sicher, dass Sie das Album löschen möchten (||| 1 |||)?\n\nEs gibt keine Rückgängig-Funktion</string>
-    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Sie löschen Album (||| 1 |||) mit ||| 2 ||| Fotos.\n\nMöchten Sie dauerhaft jeden Waisenhalter löschen?</string>
-    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Sie löschen Album (||| 1 |||) mit ||| 2 ||| Fotos und ||| 3 ||| Kinderalben mit einem weiteren ||| 4 ||| Fotos.\n\nMöchten Sie dauerhaft jeden Waisenhalter löschen?</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Möchten Sie sicher, dass Sie das Album löschen möchten (%1$s)?\n\nEs gibt keine Rückgängig-Funktion</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">Sie löschen Album (%1$s) mit %2$d Fotos.\n\nMöchten Sie dauerhaft jeden Waisenhalter löschen?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">Sie löschen Album (%1$s) mit %2$d Fotos und %3$d Kinderalben mit einem weiteren %4$d Fotos.\n\nMöchten Sie dauerhaft jeden Waisenhalter löschen?</string>
     <string name="alert_confirm_copy_items_here_pattern">Kopieren Sie den %1$d Artikel im Warenkorb Hier (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Bewegen Sie den %1$d Artikel im Warenkorb Hier (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Verknüpfte Alben</string>
@@ -451,7 +451,7 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="alert_title_error_connecting_to_server">Fehler beim Verbinden mit dem Server</string>
     <string name="alert_error_adding_certificate_to_truststore">Fehler beim Hinzufügen von Zertifikat zum Vertrauensgeschäft</string>
     <string name="alert_add_cert_to_truststore_pattern">Zertifikatkette in die Liste der vertrauenswürdigen CAS hinzufügen?</string>
-    <string name="certificate_summary_pattern">Betrifft: ||| 1 |||\nGültig: ||| 2 ||| - ||| 3 |||\nSerie: ||| 4 |||</string>
+    <string name="certificate_summary_pattern">Betrifft: %1$s\nGültig: %2$s - %3$s\nSerie: %4$s</string>
     <string name="alert_http_engine_shutdown">HTTP-Motorabschaltung. Wird bei Bedarf automatisch neu gestartet.</string>
     
     <string name="alert_clearing_certificate_use_history">Zurücksetzen der Liste der zu vertrauenswürdigen Zertifikate</string>
@@ -590,7 +590,7 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Präferenz %1$s ist unwiederbringlich und wurde mit %2$s. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück"</string>
+    <string name="preference_corrupt_please_re_type_pattern">Präferenz %1$s ist unwiederbringlich und wurde mit %2$s. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück</string>
     <string name="switch_to_cached_mode">Der Server ist derzeit nicht verfügbar. Verwenden Sie zwischengespeicherte Daten?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Videos komprimieren.</string>
@@ -626,7 +626,7 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="alert_message_showing_image_thumbnails_of_size">Bild-Miniaturbilder vom Server der Größe anzeigen %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Anzeigen von Album Thumbnails vom Server der Größe %1$s</string>
     
-    <string name="alert_error_upload_file_compression_error_message_pattern">Fehler beim Komprimieren der Datei zum Hochladen ||| 1 |||.\n||| 2 |||</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Fehler beim Komprimieren der Datei zum Hochladen %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Hochladen</string>
     <string name="compressing_progress_bar_message">Komprimieren.</string>
     <string name="warning_missing_tags_links_removed_from_resource">Nicht alle mit diesem Artikel verknüpften Tags sind in der Datenbank vorhanden. Die Links zu %1$d wurden entfernt</string>
@@ -640,7 +640,7 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="system_file_selector_label">Auswahl der Systemdatei.</string>
     <string name="preference_uri_consumer_description_pattern">Präferenz: %1$s</string>
     <string name="selected_files_missing_permissions_warning_message_pattern">Erforderliche Berechtigungen sind für einige der ausgewählten Dateien nicht mehr verfügbar. Dateiauswahl storniert.</string>
-    <string name="missing_permissions_warning_message_pattern">"Da diese App zum letzten Mal geöffnet wurde, wurden Dateiberechtigungen, die von den folgenden Teilen der App erforderlich sind, entfernt wurden\n\n||| 1 |||\n\nBitte wählen Sie neue Berechtigungen für diese Einstellungen aus, um die Arbeiten wie erwartet zu halten."</string>
+    <string name="missing_permissions_warning_message_pattern">"Da diese App zum letzten Mal geöffnet wurde, wurden Dateiberechtigungen, die von den folgenden Teilen der App erforderlich sind, entfernt wurden\n\n%1$s\n\nBitte wählen Sie neue Berechtigungen für diese Einstellungen aus, um die Arbeiten wie erwartet zu halten."</string>
     <string name="folder_selection_title">Ordner auswählen</string>
     <string name="files_selection_title">Dateien auswählen</string>
     <string name="all">Alle</string>
@@ -692,7 +692,7 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="orphans_menu_title">Waisenkinder</string>
     <string name="piwigo_server">Piwigo-Server</string>
     <string name="piwigo_server_plugin">Server-Plugin.</string>
-    <string name="piwigo_server_updates_available_pattern">Piwigo-Update verfügbar:\n\n||| 1 |||\n||| 2 |||</string>
+    <string name="piwigo_server_updates_available_pattern">Piwigo-Update verfügbar:\n\n%1$s\n%2$s</string>
     
     <string name="localizedEmailHelp">Diese E-Mail-Vorlage ist für Ihre Bequemlichkeit.\nWenn Sie das Gefühl haben, dass es nicht relevant ist, eine der folgenden Angaben anzugeben, löschen Sie sie bitte.\n\nMit dem UUID können Sie alle protokollierten Daten filtern, um nur die für Sie relevanten Informationen anzuzeigen. Dies ist nur erforderlich, wenn ich mich bemühen, einen Fehler zu beheben, den Sie erleben.</string>
     <string name="try_enabling_privacy_plugin_media_uris">Die Ressource konnte auf dem Server nicht gefunden werden. Möchten Sie den Datenschutz-Plugin Multimedia URI-Fix aktivieren?</string>
@@ -716,7 +716,7 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="button_clipboard">Zwischenablage</string>
     <string name="button_email">Email</string>
     <string name="button_this_app">Diese App</string>
-    <string name="connection_profile_amended_with_new_details_pattern">Das Serververbindungsprofil\n  ||| 1 |||\n  wurde mit neuen Details erstellt und geändert</string>
+    <string name="connection_profile_amended_with_new_details_pattern">Das Serververbindungsprofil\n  %1$s\n  wurde mit neuen Details erstellt und geändert</string>
     <string name="alert_create_or_update_server_connection_details">Möchten Sie die Anwendungsdetails der App Piwigo Server-Verbindung erstellen oder aktualisieren?</string>
     <string name="alert_error_unable_to_choose_folder_no_uri_permissions">Die App kann keine erforderlichen Dateiberechtigungen für den von Ihnen ausgewählten Ordner finden. Bitte wählen Sie einen anderen. Wenn es sich um eine Stamm handelt, löschen Sie bitte das Root und fügen Sie das Root, und wählen Sie sie erneut aus.</string>
     <string name="upload_job_stopped_by_user">Upload wird vom Benutzer gestoppt</string>
@@ -729,7 +729,7 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="upload_of_files_complete_finishing_up">Upload von Dateien abschließen. Einfach fertig.</string>
     <string name="uploaded_previously">Vorher hochgeladen</string>
     <string name="migrated_settings_from_previous_version">Einstellungen aus der vorherigen App-Version migriert</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"Nicht alle ausgewählten Elemente sind für diesen Server akzeptabel. Diejenigen, die erneut komprimieren müssen: %1$d"</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">Nicht alle ausgewählten Elemente sind für diesen Server akzeptabel. Diejenigen, die erneut komprimieren müssen: %1$d</string>
     <string name="upload_uploadable_files_label">Dateitypen, die für diesen Server akzeptabel sind</string>
     <string name="upload_icon_key_label">Symbolfarben</string>
     <string name="compress_because_thats_the_default">Wird komprimiert</string>
