@@ -6,14 +6,14 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0 b / s (—X)</item>
-        <item>velmi nízká (0,025 b / pixelů * rámeček)</item>
-        <item>nižší (0,05 b / pixely * rámeček)</item>
-        <item>nízký (0,1 b / pixelů * rámeček)</item>
-        <item>střední (0,15 b / pixely * rámeček)</item>
-        <item>vysoká (0,2 b / pixely * rámeček)</item>
-        <item>velmi vysoká (0,25 b / pixely * rámeček)</item>
-        <item>ultra vysoký (0,3 b / pixel * rámeček)</item>
+        <item>0bps (-x)</item>
+        <item>Velmi nízká (0,025 b / pixelů * rám)</item>
+        <item>nižší (0,05 b / pixelů * rámec)</item>
+        <item>nízká (0,1 b / pixelů * rám)</item>
+        <item>Médium (0,15 b / pixelů * Rámeček)</item>
+        <item>Vysoký (0,2 b / pixelů * rámec)</item>
+        <item>Velmi vysoký (0,25 b / pixelů * rám)</item>
+        <item>Ultra High (0,3 b / pixelů * rám)</item>
     </string-array>
 
     
@@ -22,38 +22,38 @@
     
 
     <string-array name="preference_gallery_child_album_sort_order_entry_text">
-        <item>Výchozí</item>
-        <item>Název alba A-Z</item>
+        <item>Výchozí hodnota</item>
+        <item>Jméno alb A-Z</item>
         <item>Naposledy aktualizováno</item>
     </string-array>
     
     <string-array name="preference_caching_level_items">
-        <item>Ukládání do mezipaměti zakázáno</item>
+        <item>Ukládání do mezipaměti se zdravotním postižením</item>
         <item>Mezipaměť do paměti</item>
         <item>Mezipaměť na disk</item>
     </string-array>
 
 
     <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
-        <item>Výchozí</item>
-        <item>přizpůsobit velikosti obrazovky</item>
-        <item>zvětšit a oříznout, aby se vešly na obrazovku</item>
-        <item>uprostřed na obrazovce</item>
+        <item>Výchozí hodnota</item>
+        <item>přizpůsobit velikost obrazovky</item>
+        <item>Zvětšit a plodina pro Fit Screen</item>
+        <item>Centrum na obrazovce</item>
     </string-array>
 
     
 
     <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
-        <item>nejvhodnější</item>
+        <item>best-fit</item>
         <item>náměstí</item>
         <item>palec</item>
-        <item>2 malé</item>
-        <item>xsmall</item>
+        <item>2small.</item>
+        <item>XSmall.</item>
         <item>malý</item>
         <item>střední</item>
         <item>velký</item>
-        <item>xlarge</item>
-        <item>xxlarge</item>
+        <item>Xlarge.</item>
+        <item>xxlarge.</item>
         
     </string-array>
 
@@ -62,19 +62,19 @@
     <string-array name="preference_gallery_item_thumbnail_size_entry_text">
         <item>náměstí</item>
         <item>palec</item>
-        <item>2 malé</item>
-        <item>xsmall</item>
+        <item>2small.</item>
+        <item>XSmall.</item>
         <item>malý</item>
     </string-array>
 
     
     <string-array name="preference_gallery_child_resource_sort_order_entry_text">
-        <item>Výchozí nastavení serveru</item>
+        <item>Výchozí server</item>
         <item>ID zdroje</item>
-        <item>Název souboru zdroje</item>
+        <item>Zdrojový název zdroje</item>
         <item>Název zdroje</item>
-        <item>Počet přístupů</item>
-        <item>Průměrné hodnocení</item>
+        <item>Počet hitů</item>
+        <item>Průměrné hodnocení hodnocení</item>
         <item>Datum vzniku</item>
         <item>Datum k dispozici</item>
         <item>náhodný</item>
@@ -82,13 +82,13 @@
     
     <string-array name="server_ssl_certificate_hostname_verification_entries">
         <item>Přísný</item>
-        <item>Kompatibilní s prohlížečem</item>
+        <item>Prohlížeč kompatibilní</item>
         <item>Vypnuto</item>
     </string-array>
     
     <string-array name="user_types_array">
         <item>webmaster</item>
-        <item>admin</item>
+        <item>administrátor</item>
         <item>normální</item>
         <item>obecný</item>
         <item>host</item>
@@ -97,10 +97,10 @@
     
 
     <string-array name="privacy_levels_groups_array">
-        <item>Správci</item>
-        <item>Správci, rodina</item>
-        <item>Správci, rodina, přátelé</item>
-        <item>Správci, rodina, přátelé, kontakty</item>
+        <item>Administrativní</item>
+        <item>Administy, rodina</item>
+        <item>Administy, rodina, přátelé</item>
+        <item>Admins, rodina, přátelé, kontakty</item>
         <item>Všichni</item>
     </string-array>
 
@@ -109,58 +109,61 @@
     
 
     <string-array name="preference_gallery_unique_id_entries">
-        <item>md5sum</item>
+        <item>md5sum.</item>
         <item>název</item>
     </string-array>
 
     
 
     <string-array name="rotation_array">
-        <item>Vlevo o 90 stupňů</item>
+        <item>Opustil 90 stupňů</item>
         <item>Žádný</item>
-        <item>Správně o 90 stupňů</item>
-        <item>Vpravo o 180 stupňů</item>
+        <item>90 stupňů</item>
+        <item>Vpravo 180 stupňů</item>
     </string-array>
 
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Pokud máte s aplikací nějaké problémy, informujte mě prosím e-mailem. Pokud chcete, zveřejněte negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím pošlete také e-mail. V horní části nabídky vysouvací zásuvky je odkaz na zaslání e-mailu. Na e-mailovou adresu mohu poskytnout mnohem komplexnější podporu. Mnohokrát děkuji.</item>
-        <item>Soubory můžete zobrazit pouze pro upload, který je přijatelný pro nahrání na serveru. Chcete-li nahrát videa, nezapomeňte si změnit soubor Server Config.inc.php, který chcete zahrnout $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivý</item>
-        <item>Pokud nahrávání právě neproběhne úspěšně, zkuste pomocí předvoleb na stránce nahrávání nastavení aplikace vymazat zbytková neúspěšná nahrávání ze serveru</item>
-        <item>Při pokusu o aktualizaci značek vždy dojde k chybě - „Nemáte oprávnění mazat značky“ - Zajistěte, aby uživatelé mohli značky přidávat i mazat (nastavení pluginu serveru)</item>
-        <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání připravené k přechodu na aktuální server</item>
-        <item>Dlouhým kliknutím na obrázek (miniaturu nebo položku prezentace), který se nepodařilo načíst, jej znovu načtete</item>
-        <item>Dlouhým kliknutím na album toto album a veškerý obsah odstraníte</item>
-        <item>Dlouhým kliknutím na obrázek alba povolíte hromadný výběr obrázků pro akci</item>
-        <item>Při prohlížení libovolného obrázku v prezentaci dlouhým kliknutím otočíte / změníte zobrazenou velikost obrázku / povolíte další přiblížení</item>
-        <item>Při prohlížení v prezentaci můžete obraz přiblížit tak, že na obrazovce přitáhnete dva prsty k sobě nebo od sebe</item>
-        <item>Pokud jste přihlášeni jako správce, před podáním zařízení příteli k prohlížení vašich fotografií aktivujte funkci zámku aplikace, abyste zabránili neúmyslným změnám v galerii</item>
-        <item>Jakmile je zobrazeno celé video, je-li povoleno ukládání do mezipaměti místního souboru, je možné toto video uložit do složky ke stažení</item>
-        <item>Dlouhým kliknutím na tlačítko mazání na \'souboru k nahrání \' vymažete všechny soubory, které se mají nahrát (pokud právě neprobíhá úloha)</item>
-        <item>Pokud se obrázky načítají pomalu, zkontrolujte, zda váš server po nahrání automaticky generuje velikost používanou touto aplikací</item>
+        <item>"Pokud máte nějaké problémy s aplikací, použijte prosím e-mail, abyste mě informovali. Pokud si přejete, pošlete negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím také e-mail. K dispozici je odkaz, který mi pošlete e-mail v horní části nabídky zásuvky. Poskytnu mnohem komplexnější podporu e-mailové adrese. Mnohokrát děkuji."</item>
+        <item>"Soubory můžete zobrazit pouze pro upload, který je přijatelný pro nahrání na serveru. Chcete-li nahrát videa, nezapomeňte si změnit soubor Server Config.inc.php, který chcete zahrnout $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivý"</item>
+        <item>Je-li nahrát právě vyhráli "t uspět, zkuste použít předvolbu v nastavení aplikace Upload strana pro vymazání libovolných zbytkových neúspěšných nahrávek ze serveru</item>
+        <item>Chyba vždy dochází při pokusu o aktualizaci tagů - "Nejste oprávněni odstranit značky" - Zkontrolujte, zda uživatelé mohou přidat a mazat značky (nastavení pluginu serveru)</item>
+        <item>Sdílejte soubory z jiné aplikace s touto aplikací pro přidání do obrazovky Upload Připraveno pro přání na aktuální server</item>
+        <item>Dlouhé kliknutí na obrázek (buď miniatury nebo položku Slideshow), které se nepodařilo načíst, aby ji znovu načíst</item>
+        <item>Dlouhé kliknutí na album odstranit album a veškerý obsah</item>
+        <item>Dlouhé klikněte na obrázek alba, abyste umožnili hromadný výběr obrázků pro akci</item>
+        <item>Při prohlížení jakéhokoliv obrázku v prezentaci, dlouhé kliknutí otočit / změnit velikost obrázku Zobrazí / povolit další zvětšení</item>
+        <item>Při prohlížení v prezentaci můžete přiblížit na snímek tím, že nakreslete dva prsty dohromady nebo od sebe na obrazovce</item>
+        <item>Při přihlášení jako správce, před podáním zařízení k příteli Chcete-li zobrazit fotografie, zapojte své funkce, zapojte funkci zámku aplikace, abyste zabránili neúmyslným změnám, které se provádí do vaší galerie</item>
+        <item>Jakmile si prohlížíte celé video, pokud je povoleno místní mezipaměti souborů, je možné uložit video do složky ke stažení</item>
+        <item>DLOUHÁ Klikněte na tlačítko Odstranit v souboru pro nahrání "Chcete-li odstranit všechny soubory, které mají být nahrané (když úloha nedochází)</item>
+        <item>Pokud jsou snímky pomalé pro načtení, zkontrolujte, zda váš server automaticky generuje velikost používanou touto aplikací, když jsou nahrané</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Budoucnost</item>
         <item>"* Pouze bugfixy
                 * Možná kompletní re-zápis aplikace se zaměřením na jednoduchost pro procházení uživatelů pro uživatele pro uživatele uživatele"</item>
         
-        <item>1.4.0.140</item>
+        <item>1.4.0.141</item>
         <item>"Změna:
                  - nahrazení úložiště úlohy úlohy a vyhledávací kód pro lepší podporu velkých pracovních míst"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.140</item>
+        <item>"Změna:
+                 - Nová preference je prezentace pro povolení skrytí informací o překrytí v prezentaci do kliknutí na obrázek"</item>
         <item>1.4.0.139</item>
-        <item>\"Oprava chyby:
+        <item>"Oprava chyby:
                  - Crash Aktualizace řazení alb
-                 - selektivní soubory</item>
+                 - selektivní soubory"</item>
         <item>1.4.0.138</item>
-        <item>\"Oprava chyby:
-                 - placené pouze: menší problém s databází pro sledování uploadu</item>
+        <item>"Oprava chyby:
+                 - placené pouze: menší problém s databází pro sledování uploadu"</item>
         <item>1.4.0.137</item>
-        <item>\"Změna:
+        <item>"Změna:
                  - pouze placené pouze: ID záznamu souborů nahraných na servery v databázi zařízení, které umožní dřívější filtrování nebo označování
-                 - přepracování nahrávání, aby bylo možné lepší kontrolu nad tím, které soubory jsou komprimovány (nová ikona barvy)</item>
+                 - přepracování nahrávání, aby bylo možné lepší kontrolu nad tím, které soubory jsou komprimovány (nová ikona barvy)"</item>
         <item>1.4.0.136</item>
         <item>"Oprava chyby:
                  - Opravený problém s oprávněními aplikace URI aplikace URI byla stále potřebná po ukončení nahrávání"</item>
@@ -199,60 +202,60 @@
                 - změna v opakování logiky pro odezvu 401/403 serverů - dejte mi prosím vědět, pokud jste informováni o chybách 401/403"</item>
         <item>1.4.0.129</item>
         <item>"Oprava chyby:
-                 - Opravte lokátor sirotků a načtěte kód"</item>
+                 - Správný lokátor sirotek a zatížení kód"</item>
         <item>1.4.0.128</item>
         <item>"Změna:
-                - Pokud je pořadí řazení prostředků invertováno, zdroje v rámci značky nebo seznamu oblíbených položek se také zobrazí v opačném pořadí
+                - Pokud je objednávka řazení prostředků obrácena, zdroje v rámci značky nebo seznamu oblíbených se zobrazí také v opačném pořadí
                Oprava chyby:
-                - okamžitě zobrazit cestu ke složce po přidání jako kořen, místo toho, aby se původně zobrazoval pouze název složky
-                - opraveno stránkované načítání oblíbených a označených položek
-                - okamžitě aktualizovat počet fotografií v podřízené složce zobrazený po přesunutí položek do složky a poté uživatel přejde do nadřazené složky
-                - okamžitě aktualizovat miniaturu zobrazenou pro složku po změně jejího reprezentativního obrázku a poté uživatel přejde na nadřazenou složku
-                - zhroucení, pokud uživatel při prohlížení alba, s fotografiemi obrátí pořadí řazení a poté znovu nenačte obsah alba ručně
-                - znovu povolená navigace do kořenového adresáře galerie pomocí navigace v horní části zobrazení alba
-                - opravit skrytí a rozbalení alb (nedávno rozbitých)
-                - miniatury správně překresleny přepínání podřízených alb opakovaně směřujících"</item>
+                - ihned zobrazit cestu ke složce po přidání jako kořen spíše než zpočátku zobrazující pouze název složky
+                - opravil stránkovanou nakládání oblíbených položek a označených předmětů
+                - okamžitě aktualizovat počet fotografií na podřízené složce zobrazené po přesunutí položek do složky a pak uživatel naviguje na rodiče
+                - okamžitě aktualizovat náhled zobrazený pro složku po změně svého reprezentativního obrazu a poté uživatel naviguje na rodiče
+                - Crash Pokud uživatel obnoví pořadí řazení při prohlížení alba, s fotografiemi a pak ručně znovu načíst obsah alba
+                - znovu povolena navigace k kořenové galerii pomocí stropu v horní části zobrazení alba
+                - Opravte skrýt a rozbalte alba (nedávno přerušené)
+                - miniatury správně překreslete přepínání dětských alb se opakovaně"</item>
         <item>1.4.0.127</item>
         <item>"Oprava chyby:
-                 - ve voliči kořenů pro výběr souboru byla viditelná pouze první kořenová složka daného jména
+                 - Pouze první kořenová složka daného jména byla viditelná ve voliči výběru souborů
                 Změna:
-                 - implementujte tlačítko pro obnovení na stránce slideshow \'item not loaded\'
-                 - implementovat tlačítko zpět na výběr alba - zpět přes strouhanku
-                 - implementovat tlačítko Zpět na výběr složky - zpět přes strouhanku"</item>
+                 - Zavedení tlačítka Obnovit v položce Slideshow není načtena stránka
+                 - implementovat zadní tlačítko na album SELECT - Reverzní přes strouhanku
+                 - Zavedení tlačítka Zpět na složku Select - Reverzujte se prostřednictvím strouhanky"</item>
         <item>1.4.0.126</item>
         <item>"Oprava chyby:
-                 - Selhání, kde by ID profilu připojení nebylo legálním názvem souboru
-                 - Opravte zmrazení nahrávání blízko konce nahrávání více bloků"</item>
+                 - havárie, kde by ID připojení profilu nebylo zákonným názvem
+                 - Fix Upload Mrazení v blízkosti konce více nahrávání"</item>
         <item>1.4.0.125</item>
         <item>"Oprava chyby:
-                 - při restartování úlohy zkontrolujte, zda je použito původní nastavení úlohy
-                 - při mazání neúspěšné úlohy odeberte veškerý komprimovaný, ale ne nahraný soubor
-                 - nelze procházet chybami na stránce se stavem nahrávání
+                 - Při restartování úlohy ujistěte se, že se použijí původní nastavení úlohy
+                 - Při vymazání neúspěšné úlohy odstraňte libovolný komprimovaný, ale ne nahraný soubor
+                 - Nelze procházet chybami ve stavu nahrávání
                 Změna:
-                 - Chyby stavu nahrávání jsou nyní uvedeny nejnovější jako první s vylepšeným rozložením
-                 - Velké zlepšení odolnosti nahrávání souborů, opraveno mnoho chyb z dokonalé cesty
-                 - Zlepšení výkonu pro všechna volání serveru HTTP
-                 - Neodstraňujte komprimovaný soubor, pokud se úloha nezdaří (počkejte, až bude odstraněna) - pro povolení opakování bez opětovné komprese
-                 - ujistěte se, že nahrané bloky jsou co největší v rámci nakonfigurované maximální velikosti bloku"</item>
+                 - Chyby stavu nahrávání jsou nyní uvedeny nejnovější s vylepšeným rozložením
+                 - rozsáhlé zlepšení odolnosti odesílání souborů, spousta chyb z dokonalé cesty
+                 - Zlepšení výkonu pro všechny volání HTTP serveru
+                 - Neodstraňujte komprimovaný soubor, pokud se úloha nezdaří (vyčkejte, dokud nebude odstraněna) - umožňuje opakování bez opakovaného komprese
+                 - Ujistěte se, že kusy nahrané jsou tak velké v rámci konfigurované maximální velikosti kusu"</item>
         <item>1.4.0.124</item>
         <item>"Oprava chyby:
                  - Několik neočekávaných chyb
-                 - chyba při objednávání na prezentacích a stránkách alba"</item>
+                 - Chyba objednávání na stránkách slideshow a alb"</item>
         <item>1.4.0.123</item>
         <item>"Oprava chyby:
-                 - Seznam administrátorů tagů sloučených správně se seznamem uživatelů při načítání tagů
-                 - Povolit mazání značek pro uživatele správce
-                 - Opravena kontrola verze pluginu PiwigoClientWsExt"</item>
+                 - Seznam administrátorských značek správně spojil s uživatelským seznamem na zatížení
+                 - Povolit odstranění značek pro uživatele administrátorů
+                 - PiwigoclientwSext pluginová verze Kontrola opravena"</item>
         <item>1.4.0.122</item>
         <item>"Oprava chyby:
-                 - zhroucení při prezentaci (pokud se zde stále setkáte se zhroucením, pošlete mi e-mail, pokud zjistíte, jaká posloupnost událostí to způsobuje \'.
-                 - havárie po odstranění uživatele nebo skupiny
-                 - zobrazení uživatele a skupiny se po přidání položky neaktualizuje"</item>
+                 - Crash na Slideshow (pokud se stále setkáte s havárií, prosím, napište mi, pokud vypracujete, jaký posloupnost událostí to způsobuje \'.
+                 - Crash Po smazání uživatele nebo skupiny
+                 - Displej uživatelů a skupiny není aktualizováno po přidání položky"</item>
         <item>1.4.0.121</item>
         <item>"Oprava chyby:
-                 - Varování verze pluginu pluginu PiwigoClientWsExts se u postižených uživatelů nezobrazuje
-                 - limit přidaný k délce odpovědi serveru zobrazený při zobrazení chybové odpovědi
-                 - při pokusu o volání serveru po http 4xx nevracejte pouze chyby uložené v mezipaměti"</item>
+                 - Pluginová verze PiwigoClientWSexts VAROVÁNÍ NENÍ zobrazení postižených uživatelů
+                 - limit přidán k délce odezvy serveru zobrazenou při zobrazení chybové odpovědi
+                 - Na Opakování serveru volání po http 4xx, nezpracovávejte chyby v mezipaměti"</item>
         <item>1.4.0.120</item>
         <item>"Změna:
                 - Podpora stahování souborů alternativních zdrojů ve formátu sourží hostované v pwg_format složkách v rámci stránek piwigo. Poznámka: Privacy_plugin to nepodporuje v současné době.
@@ -268,111 +271,111 @@
                 - Podpora multimediálních souborů hostovaná na libovolném pojmenovaném piwigo weby (viz &lt;Server_uri&gt; /admin.php?Page=site_Manager) - potřebuje piwigoclientwSexts plugin verze 1.0.15"</item>
         <item>1.4.0.119</item>
         <item>"Oprava chyby:
-                 - havárie na starších verzích, pokud není uděleno oprávnění k použití složky mezipaměti
-                 - protokoly se někdy neodesílají, pokud aplikace po chybě přihlášení selže příliš rychle"</item>
+                 - havárie na starších verzích, pokud není povolení poskytnuta pro použití složky mezipaměti
+                 - Protokoly Někdy nejsou odeslány, pokud aplikace selhává příliš rychle po chybě protokolování"</item>
         <item>1.4.0.118</item>
         <item>"Změna:
-                 - Vylepšená podpora pro nahrávání zvukových souborů"</item>
+                 - Vylepšená podpora pro nahrání zvukového souboru"</item>
         <item>1.4.0.117</item>
         <item>"Oprava chyby:
-                 - nahrávání souborů sdílených některými aplikacemi může tiše selhat
-                 - zobrazení stavu úlohy pro úlohy, které skončily s některými poruchami, které po dokončení úlohy nejsou k dispozici
-                 - obrazovka se neotevře
-                 - jakékoli zjištěné příčiny selhání aplikace
+                 - Nahrávání souborů sdílených některými aplikacemi mohou selhat tiše
+                 - Zobrazení stavu úlohy pro úlohy, které skončily s některými poruchami, které nejsou k dispozici po dokončení úlohy
+                 - O obrazovce se neotevře
+                 - jakékoli zjištěné příčiny aplikace havaruje
                 Změna:
-                 - Soubor, jehož nahrávání bylo zrušeno úlohou nahrávání kvůli chybě, zobrazí červené X
-                 - Chyby nahrávání jsou nyní seskupeny podle místního souboru na stránce stavu úlohy nahrávání
-                 - Pokud se nahrávání nezdaří, zobrazí se nový dialog s možnostmi řešení problému"</item>
+                 - Soubor, který má jeho nahrání zrušené úlohou odesílání v důsledku chyby, zobrazí červený x
+                 - Chyby nahrávání jsou nyní seskupeny místním souborem na stránce Stav úlohy Upload
+                 - Pokud se nahradí nahrávání, nové dialogové okno se zobrazí možnosti řešení problémů"</item>
         <item>1.4.0.116</item>
         <item>"Oprava chyby:
-                 chyby prezentace způsobující pády -"</item>
+                 - Slideshow chyby způsobující havárie"</item>
         <item>1.4.0.115</item>
         <item>"Oprava chyby:
-                 - videa nebyla identifikována, pokud se používá plugin pro ochranu osobních údajů a videa přístupná z / galerie.
-                 - stránky prezentace a zobrazení alba nezpracovávají správně změnu orientace
+                 - Videa, která nejsou identifikována, pokud používají plugin soukromí a videa, která jsou přístupná z / galerie.
+                 - Slideshow a zobrazení alb se správně nezpracovávají orientaci
                 Změna:
-                 - aplikace nyní rozpoznává, že některé servery ukládají videa spíše pod / galerie než / upload"</item>
+                 - Aplikace nyní rozpozná, že některé servery ukládají videa pod / galerie spíše než / upload"</item>
         <item>1.4.0.114</item>
         <item>"Oprava chyby:
-                 načtení stránky osiřelé položky způsobující pád
+                 - Zápis stránek Orphan Položka způsobuje havárii
                 Změna:
-                 - název přidělený sledovačům postupu úkolů, aby umožnil řešení chyb, kde je podřízený úkol sledovače průběhu neočekávaně neúplný"</item>
+                 - Jméno Dáno Task Process Trackers, aby umožnily rozlišení chyb, kde je dětský úkol pokroku Tracker neočekávaně neúplný"</item>
         <item>1.4.0.113</item>
         <item>"Oprava chyby:
-                 - Konečně! vyřešeno, proč aplikace pro některé uživatele havarovala v prezentaci
-                 - vylepšil nějaké rozvržení dialogu
+                 - Konečně! Zpracoval, proč aplikace narazil na prezentaci pro některé uživatele
+                 - vylepšené dialogové rozložení
                 Změna:
-                 - Dialog zobrazující všechny poznámky k verzi od poslední aktualizace po aktualizaci"</item>
+                 - Dialog zobrazující všechny poznámky k verzi, protože jste naposledy aktualizovali po aktualizaci"</item>
         <item>1.4.0.112</item>
         <item>"Změna:
-                 - Uklidněte stránky předvoleb aplikace"</item>
+                 - uklizené stránky předvoleb App"</item>
         <item>1.4.0.111</item>
         <item>"Oprava chyby:
-                 - Multimediální identifikátory URI nefungují pro uživatele zásuvných modulů bez ochrany osobních údajů.
-                 - přehrávání videa se nespustí, pokud je nastavena předvolba nezahrnovat videa do prezentací
+                 - Multimediální uris nefunguje pro uživatele zásuvných modulů soukromí.
+                 - Přehrávání videa nezačne, pokud se nastavení předvoleb nezahrnuje videa v prezentací
                 Změna:
-                 - v předvolbách připojení je k dispozici nové nastavení pro opravu URI pluginu ochrany osobních údajů"</item>
+                 - Existuje nové nastavení v předvolbách připojení pro opravu soukromí Plugin URI"</item>
         <item>1.4.0.110</item>
         <item>"Oprava chyby:
-                 - Crash více podřízených alb se zobrazí vedle sebe s lichým počtem podřízených alb (režim na šířku nebo zařízení s velkou obrazovkou)
-                 - Upload Job - Upload to Piwigo server list not selectable (impact for users with more than one server connection profile configured in the app)
-                 - alba serveru se nenačtou při prvním vstupu do úlohy automatického nahrávání, vyberte předvolbu kategorie
-                 - náhledy alb serveru se nenačítají pro podřízené složky při nahrávání do výběru složky
-                 - Nelze vybrat nahrávání do alba serveru pro úlohu automatického nahrávání pomocí jiného než výchozího serveru"</item>
+                 - havárie více dětských alb show vedle sebe s lichým počtem dětských alb přítomných (režim na šířku nebo velká obrazovka)
+                 - Upload Job - Upload to Piwigo Server Seznam není volitelný (dopad pro uživatele s více než jedním profilem připojení serveru nakonfigurovaný v aplikaci)
+                 - Serverová alba Nesmíte načíst na první položku do automatické úlohy Upload Vyberte předvolbu kategorie
+                 - Serverové album Miniatury NENÍ načítání pro podřízené složky v nahrávání do výběru složek
+                 - Nelze vybrat Upload to Server album pro automatickou úlohu pro automatickou nahrávání pomocí výchozího serveru"</item>
         <item>1.4.0.109</item>
         <item>"Změna:
-                 - Přidané prohlášení pro vaši srozumitelnost v horní části šablony e-mailu vytvořené touto aplikací pro žádosti o podporu
-                 - Paid Only: Přidaná podpora pro upozornění na aktualizace dostupné pro server nebo pluginy"</item>
+                 - přidané prohlášení pro vaši jasnost v horní části e-mailové šablony vytvořené touto aplikací pro požadavky na podporu
+                 - Zaplacené pouze: Přidaná podpora pro oznámení o aktualizacích jsou k dispozici pro server nebo pluginy"</item>
         <item>1.4.0.108</item>
         <item>"Oprava chyby:
-                 - Uspořádejte spoustu problémů způsobujících zhroucení aplikace po posledním měsíci změn
-                 - Výchozí nastavení pro kompresi videa opraveno
-                 - Znovu přidaná podpora pro minimalizaci alb
-                 - opravit videa nebyla detekována
+                 - uklizení mnoha otázek způsobujících havárie napříč aplikaci po posledním měsíci změn
+                 - Výchozí nastavení pro korigovanou kompresi videa
+                 - Re-přidaná podpora pro minimalizaci alb
+                 - Opravte videa, která nejsou detekována
                Změny:
-                 - Odebraná možnost určit, které soubory lze přehrávat video. To se děje na základě mimetypu odvozeného od přípony souboru"</item>
+                 - Odstranit možnost zadat, které soubory jsou přehrávané video. To se provádí na základě prodloužení souboru Odvozený MimeType"</item>
         <item>1.4.0.107</item>
         <item>"Oprava chyby:
-                 - Potenciál pro vynechání jednoho zdroje z prezentace zdroje alba (náhled na celou obrazovku)
-                 - havárie na náhledu osiřelého souboru
+                 - potenciál pro jeden zdroj, který má být vynechán ze slideshow prostředků alba (celá obrazovka náhled)
+                 - havárie na náhled osamoceného souboru
                 Změna:
-                 - náhled osamocených souborů a prohlížení v rámci prezentace, pokud si přejete, je nyní podporován
-                 - možnost nabídky pro sirotky je k dispozici pouze správcům, když aplikace není jen pro čtení"</item>
+                 - Náhled osamocených souborů a zobrazení v rámci prezentace, pokud si přáli je nyní podporován
+                 - Volba nabídky Orphans je k dispozici pouze pro uživatele Admin, když aplikace není readonly"</item>
         <item>1.4.0.106</item>
         <item>"Oprava chyby:
-                 - Doufejme, že poslední chyba, kde se miniatury alb nezdály správně načítat
+                 - doufejme, že poslední chyba, kde se ukázaly miniatur album, aby nebyla načítat správně
                 Změny:
-                 - Při mazání alba lze podřízené prostředky buď odpojit, nebo odstranit ze serveru
-                 - Paid Only: There are a new orphaned resource management page"</item>
+                 - Při mazání alba mohou být podřízené zdroje buď odpojené nebo odstraněny ze serveru
+                 - pouze zaplaceno: existuje nová stránka srovnání zdrojů zdrojů"</item>
         <item>1.4.0.105</item>
         <item>"Oprava chyby:
-                 - Přepište album, značku a oblíbený třídicí kód, protože byl plný chyb
-                     : Pokud nyní něco v této oblasti nefunguje tak, jak očekáváte, dejte mi prosím vědět.
-                     : To by mělo vyřešit pády, ke kterým došlo na stránce prezentace
-                 - Nedávno pozměněná ikona žluté hvězdy se neobjevila v nějakém pořadí
-                 - Opravte načítání miniatur
-                 - Opravte chybu, která brání manuálnímu opětovnému načtení neúspěšného načtení miniatur kliknutím - pouze jednou, takže to není příliš iritující, pokud chcete změnit album
+                 - přepsání alba, tagu a oblíbeného třídícího kódu, protože to bylo prošpinlo s chybami
+                     : Pokud se něco v této oblasti nefunguje, jak očekáváte, dejte mi prosím vědět.
+                     : To by mělo vyřešit havárie, které se vyskytly na stránce Slideshow
+                 - nedávno změněná ikona žlutá hvězda nebyla objevena v některých řazení
+                 - opravit zatížení miniatur
+                 - opravit chybu zabraňující ruční reload selhání náhledy kliknutím - jen jednou, takže to není příliš igativní, pokud chcete změnit album
                 Změny:
-             - Nová preference umožňující nezávislé obrácení pořadí řazení podřízených alb a zdrojů"</item>
+             - Nové preference umožňující nezávislé pořadí pořadí dětských alb a zdrojů"</item>
         <item>1.4.0.104</item>
         <item>"Oprava chyby:
-                 - Problémy způsobené při nahrávání po přepracování výběru souborů pro úložiště klíčů a certifikáty
-                     : Děkujeme za trpělivost, správa oprávnění souborů Android je složitá
-                 - mazání alb v kořenovém adresáři je nyní v případě potřeby vždy k dispozici při načtení aplikace
-                 - položky lze nyní vybrat kliknutím kdekoli nejen do zaškrtávacího políčka"</item>
+                 - Problémy způsobené v nahrávání po opětovném zpracování výběru souborů pro klíč a certifikáty
+                     : Díky za vaši trpělivost, správa oprávnění Android je složité
+                 - Odstranění alb v root nyní vždy k dispozici na zatížení aplikace, pokud je to vhodné
+                 - Položky lze nyní vybrat klepnutím na tlačítko Anywhere nejen v políčku"</item>
         <item>1.4.0.103</item>
         <item>"Oprava chyby:
-                 - Úpravy úložiště klíčů a důvěryhodných certifikátů způsobily selhání.
-                     : Pokud mi taková klíčová funkce nefunguje, pošlete mi e-mail z aplikace.
-                 - Někdy nelze vybrat poslední soubory pomocí výběru systémových souborů
-                 - Seznam skupin vertikálně zarovnaný ke středu obrazovky
+                 - Keystore a důvěryhodný certifikát Editace způsobila selhání.
+                     : Prosím, napište mi z aplikace, když klíčová funkce taková nefunguje.
+                 - Někdy nelze navigovat z nedávných souborů s výběrovým výběrem
+                 - Seznam skupiny svisle zarovnány do středu obrazovky
                 Změny:
-                 - Lepší uživatelský komfort pro úložiště klíčů a import certifikátů
-                 - Nová předvolba pro ovládání doby zobrazení detailu obrázku v zobrazení na celou obrazovku nebo v prezentaci"</item>
+                 - lepší uživatelský zážitek pro import klíčů a certifikátu
+                 - Nová preference pro řízení délky doby detail obrázku je zobrazen v zobrazení fullScreen nebo prezentace"</item>
         <item>1.4.0.102</item>
         <item>"Oprava chyby:
-                 - Nedávné změny znemožnily mít bezplatnou i placenou verzi nainstalovanou současně na jednom zařízení
-                 - miniatury alb, které se uživateli správce nezobrazují vždy
-                 - testováno proti Piwigo 11. Otevření obrázku nefungovalo"</item>
+                 - nedávné změny znemožňovaly mít jak zdarma a placené verze nainstalovány současně na jednom zařízení
+                 - miniatury alba, které nejsou vždy zobrazeny pro administrátor
+                 - Testováno proti piwigo 11. Otevření obrazu nefungoval"</item>
     </string-array>
 </resources>

@@ -1,52 +1,52 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     
-    <string name="shortDesc">Explore y modifique el contenido en la galería de fotos de Piwigo de su elección</string>
-    <string name="longDesc">Utilícelo para explorar una galería de fotos de PIWIGO.
+    <string name="shortDesc">Navegue y altere el contenido en la galería de fotos de PIWIGO de su elección</string>
+    <string name="longDesc">Utilizar para navegar por una galería de fotos de PIWIGO.
 
-NOTA: El EULA debe aceptarse en la descarga.
+Nota: Se debe aceptar EULA en la descarga.
 
-Si te gusta la aplicación, pero no los anuncios, busca la versión de pago que no tiene publicidad y que tiene cada vez más funcionalidad.
+Si le gusta la aplicación, pero no los anuncios, busque la versión de pago que está libre de anuncios y tiene una funcionalidad progresivamente más.
 
-** La aplicación ahora no se está desarrollando activamente (solo correcciones de errores) **
+** La aplicación ahora no se está desarrollando activamente (solamente correcciones de errores) **
 ** Si algo no funciona, envíeme un correo electrónico, se solucionará **
 
-** Para una funcionalidad completa, debe instalar el complemento de servidor PiwigoClientWsExts. **
+** Para una funcionalidad completa, debe instalar el complemento de servidor PIWIGOCLIENTWSEXTS. **
 
 Vea la lista completa de características a continuación.
 
-Conéctese a servidores que se ejecutan en puertos http o https no estándar
-Acepte certificados de servidor no válidos (nombre de host incorrecto) o autofirmados si es necesario
-Se admite la fijación de certificados del servidor (verifique los certificados con una copia local)
-Vea imágenes con una resolución optimizada para su pantalla (o seleccione la que desee).
-Mostrar y permitir zoom en imágenes de cualquier tamaño disponibles en el servidor
-Ver videos MP4 (otros también deberían funcionar, pero no he probado otros formatos)
-Descarga imágenes.
+Conectarse a servidores que se ejecutan en puertos HTTP o HTTPS no estándar
+Acepte inválido (nombre de host incorrecto) o certificados de servidor auto firmados si es necesario
+Se admite el certificado del servidor Pinning (Verifique los certificados contra una copia local)
+Vea las imágenes a una resolución optimizada para su pantalla (o seleccione la que desee).
+Mostrar y permitir zoom en imágenes de cualquier tamaño disponible en el servidor
+Ver videos MP4 (otros deben funcionar también, pero no he probado otros formatos)
+Descargar imágenes.
 Guardar videos completamente descargados
-Opcionalmente, excluya videos de presentaciones de diapositivas
-Calificar imágenes y ver calificaciones promedio
-Cargue nuevas imágenes o videos (se puede comprimir opcionalmente)
-Establecer y modificar permisos, descripción y otros detalles de álbumes y archivos
-Agregar o modificar álbumes, sus permisos, descripción, etc.
-Agregar, ver y editar usuarios de la galería
-Agregar, ver y editar grupos de galería
-Copie o mueva imágenes dentro de la galería
-Seleccione imágenes para cargar usando otras aplicaciones y compártalas con PIWIGO
-Modo de solo lectura de la aplicación especial disponible para evitar alteraciones no deseadas en la galería
-Algún control sobre el diseño de las pantallas en la aplicación (utilícelo para personalizar la pantalla de su dispositivo)
-Soporte para descarga de formato alternativo (por ejemplo, sin formato, psd, etc.) para elementos alojados en la carpeta secundaria pwg_format (sitios sincronizados)
+Opcionalmente, excluir videos de Slide-Shows
+Tasa las imágenes y vea las calificaciones promedio
+Sube nuevas imágenes o videos (se puede comprimir opcionalmente)
+Configuración y modificación de permisos, descripción y otros detalles de los álbumes y archivos.
+Añadir o alterar los álbumes, sus permisos, descripción, etc.
+Añadir, ver y editar usuarios de la galería.
+Agregar, ver y editar grupos de galerías
+Copia o mueve imágenes en la galería.
+Seleccione la (s) imagen (s) para cargar usando otras aplicaciones y compártalas con PIWIGO
+Modo especial de solo lectura de la aplicación disponible para evitar cualquier alteración no deseada en la galería
+Algunos controles sobre el diseño de pantallas en la aplicación (usarse para personalizar para la pantalla en su dispositivo)
+Soporte para formato alternativo (por ejemplo, por favor, PSD, etc.) Descarga para artículos alojados en PWG_Format Child Folder (Sitios sincronizados)
 
-Complementos de servidor compatibles: PiwigoClientWsExts, community, piwigo_privacy, videojs, descripciones extendidas.
+Complementos de servidor compatibles: PIWIGOCLIENTWSEXTS, Comunidad, PIWIGO_PRIVYCY, Videojs, descripciones extendidas.
 
-¿Quieres algo más que no esté en la lista? Prueba la aplicación. Si no hace exactamente lo que necesita. Envíeme un correo electrónico utilizando el enlace de la aplicación y buscaré agregar las funciones que faltan.
+¿Quieres algo más que no figura en la lista? Prueba la aplicación. Si no hace exactamente lo que necesitas. Déjeme un correo electrónico usando el enlace en la aplicación y veré agregando la (s) característica (s) que falta.
 
-Próximos cambios:
+Cambios próximos:
 
-La intención es mejorar la interfaz de usuario progresivamente, y uno de los usuarios, David Klement, ha proporcionado amablemente algunas sugerencias para los diseños de pantalla en el futuro que comencé a usar desde la versión 1.3.95 y sin duda tomaré más ideas. Las propuestas están disponibles en su totalidad:
-https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
+La intención es mejorar progresivamente la interfaz de usuario, y uno de los usuarios, David Klement, ha proporcionado amablemente algunas sugerencias para los diseños de la pantalla que van a seguir adelante, que he comenzado a usar desde la versión 1.3.95 y sin duda tomará más ideas. Las propuestas están disponibles en su totalidad:
+https://api-8938561204297001672-604498.firebasapp.com/design-proposals/index.html
 
 Limitaciones conocidas:
 
-1. Actualmente, los comentarios no son compatibles; no puede verlos ni agregarlos. Si esta función que falta es importante para usted, hable conmigo.
-2. La cantidad de archivos que se pueden agregar a un trabajo de carga está limitada a 5 en esta versión gratuita (use la versión paga para eliminar este límite)</string>
+1. Los comentarios actualmente no están respaldados: no puede ver comentarios ni agregarlos. Si esta característica que falta es importante para usted, por favor háblame.
+2. El número de archivos que se pueden agregar a un trabajo de carga se limita a 5 en esta versión gratuita (use la versión de pago para eliminar este límite)</string>
 </resources>

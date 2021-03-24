@@ -1,50 +1,40 @@
 <en-GB>
-"Bugfix:
-- crash updating album sort order
-- crash selecting files
+Change:
+- New preference is slideshow to permit hiding the information overlay in slideshow until click on image
 </en-GB>
 <cs-CZ>
-"Oprava chyby:
-- Crash Aktualizace řazení alb
-- selektivní soubory
+Změna:
+- Nová preference je prezentace pro povolení skrytí informací o překrytí v prezentaci do kliknutí na obrázek
 </cs-CZ>
 <de-DE>
-"Fehlerbehebung:
-- Crash-Aktualisierungsalbum-Sortierreihenfolge
-- Crash-Auswahl von Dateien
+Veränderung:
+- Neue Präferenz ist die Diashow, um die Informationsüberlagerung in der Diashow zu verbergen, bis Sie auf das Bild klicken
 </de-DE>
 <es-ES>
-"Arreglo del fallo:
-- Crash Actualizando el álbum Orden de clasificación
-- Crash Selección de archivos
+Cambio:
+- La nueva preferencia es la presentación de diapositivas para permitir que oculte la superposición de información en presentación de diapositivas hasta que haga clic en la imagen
 </es-ES>
 <fr-FR>
-"Correction d\'un bug:
-- Crash mise à jour de l\'ordre de tri de l\'album
-- Crash sélectionnant des fichiers
+Changement:
+- La nouvelle préférence est le diaporama pour permettre de masquer la superposition de l\'information dans le diaporama jusqu\'à cliquer sur l\'image
 </fr-FR>
 <it-IT>
-"Risoluzione del problema:
-- Crash Aggiornamento dell\'album Sort Order
-- Crash selezionando i file
+Modificare:
+- La nuova preferenza è la presentazione per consentire a nascondere la sovrapposizione delle informazioni nella presentazione fino a quando fai clic sull\'immagine
 </it-IT>
 <ja-JP>
-"バグ修正：
-- クラッシュの更新アルバムを更新します
-- ファイルを選択します
+変化する：
+- 画像をクリックするまで、スライドショーで情報オーバーレイを隠すことを許可するための新しい設定はスライドショーです。
 </ja-JP>
 <nl-NL>
-"Bugfix:
-- Crash bijwerken Album Sorteerorder
-- Crash-bestanden selecteren
+Verandering:
+- Nieuwe voorkeur is de diavoorstelling om de informatie overlay in de diavoorstelling te verbergen totdat u op de afbeelding klikt
 </nl-NL>
 <ru-RU>
-"Исправлена ошибка:
-- Обновление аварийного обновления альбома
-- Аварийные выбора файлов
+Изменять:
+- Новое предпочтение является слайд-шоу, чтобы разрешить скрывать информацию о наложении в слайд-шоу, пока не нажму на изображение
 </ru-RU>
 <zh-CN>
-“错误修复：
-- 崩溃更新相册排序顺序
-- 崩溃选择文件
+改变：
+- 新的偏好是幻灯片，以允许在幻灯片中隐藏信息叠加，直到单击图像
 </zh-CN>

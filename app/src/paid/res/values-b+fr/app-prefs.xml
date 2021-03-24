@@ -2,15 +2,15 @@
 <resources>
     
 
-    <string name="preference_page_auto_upload_jobs">Téléchargement automatique</string>
-    <string name="preference_data_upload_automatic_title">Transferts automatiques</string>
-    <string name="preference_data_upload_automatic_job_title">Tâche de téléchargement automatique</string>
+    <string name="preference_page_auto_upload_jobs">Télécharger automatique</string>
+    <string name="preference_data_upload_automatic_title">Téléchargement automatique</string>
+    <string name="preference_data_upload_automatic_job_title">Travail de téléchargement automatique</string>
 
     
 
     
-    <string name="preference_data_upload_automatic_upload_enable_summary">Activer le téléchargement en arrière-plan</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Transferts automatiques</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Activer le téléchargement des antécédents</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Téléchargement automatique</string>
     
 
     <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utilisez uniquement le téléchargement automatique sur un réseau non compteur</string>
@@ -19,7 +19,7 @@
     
 
     
-    <string name="preference_data_upload_automatic_upload_jobs_title">Tâches de téléchargement automatique</string>
+    <string name="preference_data_upload_automatic_upload_jobs_title">Emplois de téléchargement automatique</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Emplois</string>
 
     
@@ -28,15 +28,15 @@
     
 
     
-    <string name="preference_data_upload_automatic_job_view_status_title">Afficher l\'état du téléchargement</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">Afficher le statut de la dernière exécution du travail (si disponible)</string>
+    <string name="preference_data_upload_automatic_job_view_status_title">Voir le statut de téléchargement</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Voir l\'état du dernier travail (si disponible)</string>
 
     
     <string name="preference_data_upload_automatic_job_is_valid_title">Le travail est valide</string>
 
     
-    <string name="preference_data_upload_automatic_job_enabled_summary">Le service de téléchargement utilisera-t-il ce travail?</string>
-    <string name="preference_data_upload_automatic_job_enabled_title">Job activé</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">Le service de téléchargement utilisera-t-il cet emploi?</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Travail activé</string>
     
 
     <string name="preference_data_upload_automatic_job_server_title">Télécharger sur le serveur</string>
@@ -44,17 +44,17 @@
     <string name="preference_data_upload_automatic_job_server_summary">Profil: %1$s</string>
 
     
-    <string name="preference_data_upload_automatic_job_server_album_title">Télécharger dans l\'album</string>
+    <string name="preference_data_upload_automatic_job_server_album_title">Télécharger sur Album</string>
     <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
-    <string name="preference_data_upload_automatic_job_local_folder_title">Télécharger à partir du dossier</string>
+    <string name="preference_data_upload_automatic_job_local_folder_title">Télécharger depuis le dossier</string>
     
     <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
 
     
     <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Supprimer les fichiers téléchargés avec succès</string>
-    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Suppression automatique</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Supprimer automatiquement</string>
     
 
     
@@ -76,15 +76,15 @@
 
     
     
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Taille maximale du fichier téléchargé</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max FileSize téléchargé</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d Mb</string>
 
     
     
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Extensions de fichiers</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Extensions de fichier</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Télécharger des fichiers avec ext %1$s</string>
 
-    <string name="preference_data_upload_automatic_job_privacy_level_title">Niveau de confidentialité</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Niveau de la vie privée</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">Fichiers téléchargés visibles vers %1$s</string>
     
     

@@ -6,14 +6,14 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0 bps (-X)</item>
-        <item>sehr niedrig (0,025 b / Pixel * Frame)</item>
-        <item>niedriger (0,05 b / Pixel * Frame)</item>
-        <item>niedrig (0,1 b / Pixel * Frame)</item>
-        <item>mittel (0,15 b / Pixel * Frame)</item>
-        <item>hoch (0,2 b / Pixel * Frame)</item>
-        <item>sehr hoch (0,25 b / Pixel * Frame)</item>
-        <item>ultrahoch (0,3 b / Pixel * Frame)</item>
+        <item>0bps (-x)</item>
+        <item>sehr niedrig (0,025 b / pixel * rahmen)</item>
+        <item>niedriger (0,05 b / pixel * frame)</item>
+        <item>Niedrig (0,1 B / Pixel * -Rahmen)</item>
+        <item>Medium (0,15 B / Pixel * Rahmen)</item>
+        <item>hoch (0,2 b / pixel * frame)</item>
+        <item>Sehr hoch (0,25 B / Pixel * -Rahmen)</item>
+        <item>Ultra hoch (0,3 B / Pixel * -Rahmen)</item>
     </string-array>
 
     
@@ -29,16 +29,16 @@
     
     <string-array name="preference_caching_level_items">
         <item>Caching deaktiviert</item>
-        <item>Cache to Memory</item>
-        <item>Auf Festplatte zwischenspeichern</item>
+        <item>Cache zum Erinnerung</item>
+        <item>Cache zur Diskette</item>
     </string-array>
 
 
     <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
         <item>Standard</item>
-        <item>passend zur Bildschirmgröße</item>
-        <item>vergrößern und zuschneiden, um den Bildschirm anzupassen</item>
-        <item>Mitte auf dem Bildschirm</item>
+        <item>Zur Bildschirmgröße passen</item>
+        <item>Vergrößern und Ernte zum Bildschirm passen</item>
+        <item>Zentrum auf dem Bildschirm</item>
     </string-array>
 
     
@@ -47,12 +47,12 @@
         <item>beste Passform</item>
         <item>Platz</item>
         <item>Daumen</item>
-        <item>2klein</item>
-        <item>xsmall</item>
+        <item>2small.</item>
+        <item>Xsmall</item>
         <item>klein</item>
         <item>Mittel</item>
         <item>groß</item>
-        <item>xlarge</item>
+        <item>Xlarge</item>
         <item>xxlarge</item>
         
     </string-array>
@@ -62,27 +62,27 @@
     <string-array name="preference_gallery_item_thumbnail_size_entry_text">
         <item>Platz</item>
         <item>Daumen</item>
-        <item>2klein</item>
-        <item>xsmall</item>
+        <item>2small.</item>
+        <item>Xsmall</item>
         <item>klein</item>
     </string-array>
 
     
     <string-array name="preference_gallery_child_resource_sort_order_entry_text">
-        <item>Server Standard</item>
-        <item>Ressourcen-ID</item>
+        <item>Server default.</item>
+        <item>Ressourcen-ID.</item>
         <item>Ressourcendateiname</item>
         <item>Ressourcenname</item>
         <item>Anzahl der Treffer</item>
-        <item>Durchschnittliche Bewertungspunktzahl</item>
+        <item>Durchschnittliche Bewertung Score.</item>
         <item>Erstellungsdatum</item>
         <item>Datum verfügbar</item>
         <item>zufällig</item>
     </string-array>
     
     <string-array name="server_ssl_certificate_hostname_verification_entries">
-        <item>Streng</item>
-        <item>Browserkompatibel</item>
+        <item>Strikt</item>
+        <item>Browser kompatibel</item>
         <item>aus</item>
     </string-array>
     
@@ -98,9 +98,9 @@
 
     <string-array name="privacy_levels_groups_array">
         <item>Admins</item>
-        <item>Admins, Familie</item>
+        <item>Admins, Familie.</item>
         <item>Admins, Familie, Freunde</item>
-        <item>Administratoren, Familie, Freunde, Kontakte</item>
+        <item>Admins, Familie, Freunde, Kontakte</item>
         <item>Jeder</item>
     </string-array>
 
@@ -109,58 +109,61 @@
     
 
     <string-array name="preference_gallery_unique_id_entries">
-        <item>md5sum</item>
+        <item>MD5SUM.</item>
         <item>Name</item>
     </string-array>
 
     
 
     <string-array name="rotation_array">
-        <item>Links 90 Grad</item>
+        <item>90 Grad linke</item>
         <item>Keiner</item>
-        <item>Rechts 90 Grad</item>
-        <item>Rechts 180 Grad</item>
+        <item>Rechts um 90 Grad.</item>
+        <item>Rechts um 180 Grad.</item>
     </string-array>
 
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Wenn Sie Probleme mit der App haben, benachrichtigen Sie mich bitte per E-Mail. Wenn Sie möchten, veröffentlichen Sie eine negative Bewertung bei Google Play. Ich versuche nicht, dies zu stoppen, aber bitte senden Sie auch eine E-Mail. Oben im Menü der ausziehbaren Schublade befindet sich ein Link, über den Sie mir eine E-Mail senden können. Ich kann eine E-Mail-Adresse viel umfassender unterstützen. Danke vielmals.</item>
-        <item>Sie können nur Dateien ansehen, um den Upload auszuwählen, der akzeptabel ist, um auf Ihrem Server hochzuladen. Wenn Sie Videos hochladen möchten, ändern Sie Ihre server config.inc.php-Datei, um $ conf [\'uppoload_form_all_types "] = true; anstatt falsch</item>
-        <item>Wenn ein Upload gerade nicht erfolgreich ist, versuchen Sie, die Einstellungen auf der Upload-Seite für die App-Einstellungen zu verwenden, um alle verbleibenden fehlgeschlagenen Uploads vom Server zu löschen</item>
-        <item>Beim Versuch, Tags zu aktualisieren, tritt immer ein Fehler auf. - "Sie dürfen keine Tags löschen." - Stellen Sie sicher, dass Benutzer Tags hinzufügen und löschen können (Server-Plugin-Einstellung).</item>
-        <item>Teilen Sie Dateien aus einer anderen App mit dieser App, um sie dem Upload-Bildschirm hinzuzufügen und auf Ihren aktuellen Server zu übertragen</item>
-        <item>Klicken Sie lange auf ein Bild (entweder Miniaturbild oder Diashow), das nicht geladen werden konnte, um es erneut abzurufen</item>
-        <item>Klicken Sie lange auf ein Album, um das Album und den gesamten Inhalt zu löschen</item>
-        <item>Klicken Sie lange auf ein Albumbild, um die Massenauswahl von Bildern für eine Aktion zu aktivieren</item>
-        <item>Wenn Sie ein Bild in der Diashow anzeigen, klicken Sie lange, um die angezeigte Bildgröße zu drehen / zu ändern / weiteres Zoomen zu ermöglichen</item>
-        <item>Sie können ein Bild beim Anzeigen in einer Diashow vergrößern, indem Sie zwei Finger zusammen oder auseinander auf dem Bildschirm zeichnen</item>
-        <item>Wenn Sie als Administrator angemeldet sind, aktivieren Sie die Anwendungssperrfunktion, bevor Sie Ihr Gerät einem Freund zum Anzeigen Ihrer Fotos übergeben, um zu verhindern, dass versehentlich Änderungen an Ihrer Galerie vorgenommen werden</item>
-        <item>Wenn Sie ein ganzes Video angesehen haben und das lokale Datei-Caching aktiviert ist, können Sie dieses Video in Ihrem Download-Ordner speichern</item>
-        <item>Klicken Sie lange auf die Schaltfläche "Löschen" in einer "Datei zum Hochladen", um alle hochzuladenden Dateien zu löschen (wenn der Auftrag nicht ausgeführt wird).</item>
-        <item>Wenn Bilder nur langsam geladen werden, überprüfen Sie, ob Ihr Server beim Hochladen automatisch die von dieser App verwendete Größe generiert</item>
+        <item>"Wenn Sie Probleme mit der App haben, verwenden Sie bitte E-Mail, um mich zu benachrichtigen. Wenn Sie möchten, posten Sie eine negative Überprüfung bei Google Play, ich versuche nicht, das zu stoppen, aber auch bitte eine E-Mail. Es gibt einen Link, um mir eine E-Mail an der Spitze des Slide-Out-Schubladenmenüs zu senden. Ich kann einer E-Mail-Adresse viel umfassender unterstützen. Danke vielmals."</item>
+        <item>"Sie können nur Dateien ansehen, um den Upload auszuwählen, der akzeptabel ist, um auf Ihrem Server hochzuladen. Wenn Sie Videos hochladen möchten, ändern Sie Ihre server config.inc.php-Datei, um $ conf [\'uppoload_form_all_types \"] = true; anstatt falsch"</item>
+        <item>Wenn ein Upload gerade erfolgreich ist, können Sie die Präferenz in der APP-Settings-Seite verwenden, um alle verbleibenden fehlgeschlagenen Uploads vom Server zu löschen</item>
+        <item>Fehler tritt immer auf, wenn Sie versuchen, Tags zu aktualisieren - "Sie dürfen keine Tags löschen" - Stellen Sie sicher, dass Benutzer beide Tags hinzufügen und löschen können (Server-Plugin-Einstellung).</item>
+        <item>Teilen Sie Dateien aus einer anderen App mit dieser App, um sie dem Upload-Bildschirm hinzuzufügen, der bereit ist, auf Ihren aktuellen Server zu gelangen</item>
+        <item>Klicken Sie auf ein Bild (entweder Miniaturansicht oder Diashow-Element), das nicht geladen ist, um es erneut abzurufen</item>
+        <item>Klicken Sie auf ein Album, um dieses Album und alle Inhalte zu löschen</item>
+        <item>Klicken Sie auf ein Albumbild, um die Bulk-Auswahl von Bildern für eine Aktion zu aktivieren</item>
+        <item>Wenn Sie ein Bild in der Diashow anzeigen, klicken Sie lange auf Drehen / Ändern der Bildgröße gezeigter / Zerlegung weiterer Zoomen</item>
+        <item>Sie können ein Bild in ein Bild vergrößern, wenn Sie sich in einer Diashow anzeigen, indem Sie zwei Finger zusammenziehen oder auf dem Bildschirm auseinander drücken</item>
+        <item>Wenn Sie sich als Administrator angemeldet, bevor Sie Ihr Gerät an einen Freund übergeben, um Ihre Fotos anzuzeigen, geben Sie die Anwendungssperre an, um unbeabsichtigtes Änderungen an Ihrer Galerie zu verhindern</item>
+        <item>Wenn Sie ein ganzes Video angesehen haben, ist es möglich, dass das Video in Ihrem Download-Ordner gespeichert ist, wenn Sie ein gesamtes Video-Caching aktiviert sind</item>
+        <item>Langwunsch Klicken Sie auf einer Taste löschen in einer \'Datei zum Hochladen \', um alle zu laufenden Dateien zu löschen (wenn der Job nicht in Arbeit ist)</item>
+        <item>Wenn Bilder langsam geladen werden, überprüfen Sie, ob Ihr Server automatisch die von dieser App verwendete Größe generiert, wenn sie hochgeladen werden</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Die Zukunft</item>
         <item>"* In erster Linie nur Bugfixes
                 * Möglicherweise ein komplettes Neuschreiben der App mit einem Fokus auf Einfachheit halber für das allgemeine Benutzer"</item>
         
-        <item>1.4.0.140</item>
+        <item>1.4.0.141</item>
         <item>"Veränderung:
                  - Austausch des Auftragskonfigurationspeicher- und Abrufcode, um große Jobs besser zu unterstützen"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.140</item>
+        <item>"Veränderung:
+                 - Neue Präferenz ist die Diashow, um die Informationsüberlagerung in der Diashow zu verbergen, bis Sie auf das Bild klicken"</item>
         <item>1.4.0.139</item>
-        <item>\"Fehlerbehebung:
+        <item>"Fehlerbehebung:
                  - Crash-Aktualisierungsalbum-Sortierreihenfolge
-                 - Crash-Auswahl von Dateien</item>
+                 - Crash-Auswahl von Dateien"</item>
         <item>1.4.0.138</item>
-        <item>\"Fehlerbehebung:
-                 - nur bezahlt: Nebenausgabe mit der Upload-Tracking-Datenbank</item>
+        <item>"Fehlerbehebung:
+                 - nur bezahlt: Nebenausgabe mit der Upload-Tracking-Datenbank"</item>
         <item>1.4.0.137</item>
-        <item>\"Veränderung:
+        <item>"Veränderung:
                  - nur bezahlt: Nutzen Sie Datei-IDs, die in Server in einer Datenbank auf dem Gerät hochgeladen wurden, um eine frühere Filterung oder Beschriftung dieser zu ermöglichen
-                 - Überarbeiten des Uploads, um eine bessere Steuerung zu ermöglichen, über die Dateien komprimiert sind (neue Symbolfarben)</item>
+                 - Überarbeiten des Uploads, um eine bessere Steuerung zu ermöglichen, über die Dateien komprimiert sind (neue Symbolfarben)"</item>
         <item>1.4.0.136</item>
         <item>"Fehlerbehebung:
                  - Korrigiertes Problem mit App Denken URI-Berechtigungen wurden nach einem Upload noch erforderlich"</item>
@@ -199,60 +202,60 @@
                 - Änderung der Wiederholungslogik für eine 401/403-Server-Antwort - bitte lassen Sie mich wissen, ob Sie über 401/403 Fehler informiert sind"</item>
         <item>1.4.0.129</item>
         <item>"Fehlerbehebung:
-                 - Korrigieren Sie den Orphan Locator und den Ladecode"</item>
+                 - Korrigieren Sie den Orphan-Locator und Ladungscode"</item>
         <item>1.4.0.128</item>
         <item>"Veränderung:
-                - Wenn die Sortierreihenfolge der Ressourcen invertiert ist, werden Ressourcen innerhalb eines Tags oder einer Favoritenliste auch in umgekehrter Reihenfolge angezeigt
+                - Wenn die Ressourcen-Sortierreihenfolge invertiert ist, erscheint auch Ressourcen innerhalb einer Tag- oder Favoritenliste in umgekehrter Reihenfolge
                Fehlerbehebung:
-                - Zeigen Sie den Pfad zum Ordner sofort an, nachdem Sie ihn als Stamm hinzugefügt haben, anstatt zunächst nur den Ordnernamen anzuzeigen
-                - Das seitliche Laden von Favoriten und markierten Elementen wurde korrigiert
-                - Aktualisieren Sie sofort die Anzahl der Fotos im untergeordneten Ordner, die angezeigt werden, nachdem Elemente in einen Ordner verschoben wurden und der Benutzer zum übergeordneten Ordner navigiert
-                - Aktualisieren Sie sofort die für den Ordner angezeigte Miniaturansicht, nachdem Sie das repräsentative Bild geändert haben, und navigieren Sie dann zum übergeordneten Ordner
-                - Absturz, wenn der Benutzer die Sortierreihenfolge beim Anzeigen eines Albums mit Fotos umkehrt und den Albuminhalt dann nicht manuell neu lädt
-                - Die Navigation zum Stammverzeichnis der Galerie mithilfe des Breadcrumb oben in der Albumansicht wurde wieder aktiviert
-                - Korrigieren Sie das Ausblenden und Erweitern von Alben (kürzlich beschädigt)
-                - Miniaturansichten, die beim wiederholten Umschalten von untergeordneten Alben korrekt neu gezeichnet wurden"</item>
+                - Zeigen Sie sofort den Pfad zum Ordner an, nachdem er sie als Wurzel hinzugefügt hat, anstatt den Ordnernamen zunächst zu zeigen
+                - Korrigiertes Pagage-Laden der Favoriten und markierte Artikel
+                - Sofort aktualisieren Sie die Fotozählung auf dem angezeigten untergeordneten Ordner, nachdem die Elemente in einen Ordner verschoben wurden, und der Benutzer navigiert zum Elternteil
+                - Aktualisieren Sie das für den Ordner nach dem Ändern des repräsentativen Bilds sofort, um den Ordner für den Ordner gezeigtzufahren, und dann navigiert der Benutzer mit dem Elternteil
+                - Absturz, wenn der Benutzer die Sortierreihenfolge beim Anzeigen eines Albums mit Fotos umkehrt, und die Albuminhalte nicht manuell neu laden
+                - Aktivierte Navigation in der Galerie der Galerie mit der Breadcrumb an der Spitze der Albumansicht
+                - Korrigieren Sie die Ausblenden und Erweitern der Alben (kürzlich gebrochen)
+                - Thumbnails REVAWN REGRAWN TOGLING KIND-ALBEN REPETITION"</item>
         <item>1.4.0.127</item>
         <item>"Fehlerbehebung:
-                 - In der Stammauswahl der Dateiauswahl war nur der erste Stammordner eines bestimmten Namens sichtbar
+                 - Im File Selection Roots Selector war nur der erste Stammordner eines bestimmten Namens sichtbar
                 Veränderung:
-                 - Implementieren Sie die Schaltfläche \"Aktualisieren\" auf der Diashow-Seite \"Element nicht geladen\"
-                 - Implementieren Sie die Zurück-Taste bei der Albumauswahl. - Umkehren durch Breadcrumbs
-                 - Implementieren Sie die Schaltfläche \"Zurück\" bei der Ordnerauswahl. - Umkehren durch Breadcrumbs"</item>
+                 - Implementieren Sie die Aktualisierungsschaltfläche auf der Slideshow \'Element nicht geladene Seite\'
+                 - Implementieren Sie die Back-Taste auf dem Album auswählen - Rückwärtsgang durch Breadcrumbs
+                 - Implementieren Sie die Back-Taste auf dem Ordner auswählen - Rückwärtsgang durch Breadcrumbs"</item>
         <item>1.4.0.126</item>
         <item>"Fehlerbehebung:
-                 - Absturz, bei dem eine Verbindungsprofil-ID kein zulässiger Dateiname ist
-                 - Das Einfrieren von Uploads gegen Ende mehrerer Chunk-Uploads wurde behoben"</item>
+                 - Absturz, bei dem ein Verbindungsprofil-ID kein legaler Dateiname ist
+                 - Fix-Upload-Einfrieren in der Nähe von Multiple Chunk-Uploads"</item>
         <item>1.4.0.125</item>
         <item>"Fehlerbehebung:
-                 - Stellen Sie beim Neustart eines Jobs sicher, dass die ursprünglichen Jobeinstellungen verwendet werden
+                 - Stellen Sie beim Neustart eines Jobs sicher, dass die ursprünglichen Stelleneinstellungen verwendet werden
                  - Entfernen Sie beim Löschen eines fehlgeschlagenen Jobs alle komprimierten, aber nicht hochgeladenen Dateien
-                 - Fehler beim Hochladen der Upload-Statusseite nicht möglich
+                 - Durch Fehler in der Upload-Status-Seite können nicht durch Fehler blättern
                 Veränderung:
-                 - Upload-Statusfehler werden jetzt mit einem verbesserten Layout als letztes zuerst aufgeführt
-                 - Deutliche Verbesserung der Ausfallsicherheit beim Hochladen von Dateien, viele Fehler auf dem perfekten Weg behoben
-                 - Leistungsverbesserung für alle http-Serveraufrufe
-                 - Löschen Sie eine komprimierte Datei nicht, wenn ein Job fehlschlägt (warten Sie, bis er gelöscht wird), um einen erneuten Versuch ohne erneutes Komprimieren zu ermöglichen
-                 - Stellen Sie sicher, dass die hochgeladenen Chunks innerhalb der konfigurierten maximalen Chunk-Größe so groß wie möglich sind"</item>
+                 - Hochladen von Statusfehlern sind jetzt zuerst mit einem verbesserten Layout aufgelistet
+                 - Große Verbesserung der Widerstandsfähigkeit des Uploads von Dateien, vielen Fehlerbörsen aus dem perfekten Pfad
+                 - Leistungsverbesserung für alle HTTP-Serveranrufe
+                 - Löschen Sie keine komprimierte Datei, wenn ein Job fehlschlägt (Warten Sie, bis es gelöscht wird) - um Wiederholung ohne Neukomprimierung zuzulassen
+                 - Stellen Sie sicher, dass Teile hochgeladen werden, die in der konfigurierten maximalen Chunk-Größe so groß wie möglich sind"</item>
         <item>1.4.0.124</item>
         <item>"Fehlerbehebung:
-                 - Mehrere unerwartete Fehler
+                 - mehrere unerwartete Fehler
                  - Bestellfehler auf Diashow- und Albumseiten"</item>
         <item>1.4.0.123</item>
         <item>"Fehlerbehebung:
-                 - Die Admin-Liste der Tags wurde beim Laden der Tags korrekt mit der Benutzerliste zusammengeführt
-                 - Ermöglichen das Löschen von Tags für Administratorbenutzer
-                 - Die Versionsprüfung des PiwigoClientWsExt-Plugins wurde korrigiert"</item>
+                 - Administratorliste der Tags, die korrekt mit der Benutzerliste auf Tags laden
+                 - Löschen Sie den Tags für Admin-Benutzer löschen
+                 - PIWIGOCLIENTWSEXT-Plugin-Versionsprüfung korrigiert"</item>
         <item>1.4.0.122</item>
         <item>"Fehlerbehebung:
-                 - Absturz in der Diashow (wenn hier immer noch Abstürze auftreten, senden Sie mir bitte eine E-Mail, wenn Sie herausfinden, welche Abfolge von Ereignissen dies verursacht).
+                 - Absturz auf der Diashow (Wenn Sie hier noch Abstürze stoßen, senden Sie mir bitte eine E-Mail, wenn Sie herausfinden, welche Reihenfolge der Ereignisse dies verursacht \'.
                  - Absturz nach dem Löschen des Benutzers oder der Gruppe
-                 - Benutzer- und Gruppenanzeige werden nach dem Hinzufügen eines Elements nicht aktualisiert"</item>
+                 - Benutzer- und Gruppenanzeige, die nach dem Hinzufügen eines Artikels nicht aktualisiert werden"</item>
         <item>1.4.0.121</item>
         <item>"Fehlerbehebung:
-                 - Die Versionswarnung für das PiwigoClientWsExts-Plugin wird für betroffene Benutzer nicht angezeigt
-                 - Begrenzung der Länge der Serverantwort hinzugefügt, die angezeigt wird, wenn eine Fehlerantwort angezeigt wird
-                 - Geben Sie bei einem erneuten Versuch des Serveraufrufs nach http 4xx nicht nur zwischengespeicherte Fehler zurück"</item>
+                 - PIWIGOCLIENTWSEXTS-Plugin-Version Warnung Nicht für betroffene Benutzer erscheint
+                 - Limit hinzugefügt, um die Angabe der Serverantwort hinzugefügt, die angezeigt wird, wenn die Fehlerantwort angezeigt wird
+                 - Bei Wiederholend des Serveraufrufs nach HTTP 4xx gibt keine zwischengespeicherten Fehler zurück"</item>
         <item>1.4.0.120</item>
         <item>"Veränderung:
                 - Unterstützung beim Herunterladen von alternativen Ressourcenformatdateien, die in PWG_FORMAT-Ordnern in PIWIGO-Sites gehostet werden. Hinweis: Privacy_Plugin unterstützt dies derzeit nicht.
@@ -268,111 +271,111 @@
                 - Unterstützung für Multimedia-Dateien, die auf willkürlich genannten PIWIGO-Sites gehostet werden (siehe &lt;server_uri&gt; /admin.php?page=site_manager) - benötigt PIWIGOClientWExts-Plugin Version 1.0.15, um installiert zu werden"</item>
         <item>1.4.0.119</item>
         <item>"Fehlerbehebung:
-                 - Absturz bei älteren Versionen, wenn keine Berechtigung zur Verwendung des Cache-Ordners erteilt wurde
-                 - Protokolle werden manchmal nicht gesendet, wenn die App nach einem Protokollierungsfehler zu schnell abstürzt"</item>
+                 - Absturz auf älteren Versionen, wenn die Erlaubnis nicht gewährt wird, um den Cache-Ordner zu verwenden
+                 - Protokolle, die manchmal nicht gesendet werden, wenn die App nach dem Protokollierung zu schnell abstürzt"</item>
         <item>1.4.0.118</item>
         <item>"Veränderung:
-                 - Verbesserte Unterstützung für das Hochladen von Audiodateien"</item>
+                 - Verbesserte Unterstützung für Audiodatei-Upload"</item>
         <item>1.4.0.117</item>
         <item>"Fehlerbehebung:
-                 - Das Hochladen von Dateien, die von einigen Apps gemeinsam genutzt werden, kann unbemerkt fehlschlagen
-                 - Jobstatusansicht für Jobs, die mit einigen Fehlern beendet wurden, die nach Beendigung des Jobs nicht verfügbar sind
-                 - Der Bildschirm wird nicht geöffnet
-                 - alle identifizierten Ursachen für App-Abstürze
+                 - Hochladen von Dateien, die von einigen Apps geteilt werden, können stummgeschaltet werden
+                 - Jobstatusansicht für Jobs, die mit einigen Fehlern abgeschlossen sind, die nach Berufsvorgänge nicht verfügbar sind
+                 - Über den Bildschirm wird nicht geöffnet
+                 - Alle identifizierten Ursachen für App-Abstürze
                 Veränderung:
-                 - In einer Datei, deren Upload aufgrund eines Fehlers vom Upload-Auftrag abgebrochen wurde, wird ein rotes X angezeigt
-                 - Die Upload-Fehler werden jetzt auf der Statusseite des Upload-Jobs nach lokaler Datei gruppiert
-                 - Wenn ein Upload fehlschlägt, werden Sie in einem neuen Dialogfeld mit den Optionen zur Problemlösung aufgefordert"</item>
+                 - Eine Datei, mit der sein Upload vom Upload-Job aufgrund des Fehlers gekündigt wird, wird ein rotes X angezeigt
+                 - Die Upload-Fehler werden jetzt mit der lokalen Datei auf der Seite der Upload-Jobstatus gruppiert
+                 - Wenn ein Upload fehlschlägt, erfolgt ein neuer Dialog mit den Optionen für die Problemlösung"</item>
         <item>1.4.0.116</item>
         <item>"Fehlerbehebung:
                  - Diashow-Fehler, die Abstürze verursachen"</item>
         <item>1.4.0.115</item>
         <item>"Fehlerbehebung:
-                 - Videos, die bei Verwendung des Datenschutz-Plugins nicht identifiziert wurden, und Videos, auf die von / gallery zugegriffen wird.
-                 - Diashow- und Albumansichtseiten behandeln Orientierungsänderungen nicht korrekt
+                 - Videos, die nicht identifiziert werden, wenn Sie Datenschutz-Plugin und Videos von / Galerien verwenden.
+                 - Slideshow- und Album-Ansichtsseiten stellen keine Orientierungsänderung ordnungsgemäß um
                 Veränderung:
-                 - Die App erkennt jetzt, dass einige Server Videos unter / gallery anstatt unter / upload speichern"</item>
+                 - Die App erkennt nun an, dass einige Server Videos unter / Galerien und nicht / hochladen speichern"</item>
         <item>1.4.0.114</item>
         <item>"Fehlerbehebung:
-                 - Laden der Seite mit verwaisten Elementen, was zu einem Absturz führt
+                 - Orphan-Artikel-Seitenlast, der einen Absturz verursacht
                 Veränderung:
-                 - Name für Task-Fortschritts-Tracker, um die Fehlerbehebung zu ermöglichen, wenn die untergeordnete Aufgabe eines Fortschritts-Trackers unerwartet unvollständig ist"</item>
+                 - Name, der an Task-Fortschritts-Tracker angegeben ist, um eine Fehlerauflösung zu ermöglichen, in der die untergeordnete Aufgabe eines Fortschritts-Trackers unerwartet unvollständig ist"</item>
         <item>1.4.0.113</item>
         <item>"Fehlerbehebung:
-                 - Endlich! hat herausgefunden, warum die App in der Diashow für einige Benutzer abstürzte
-                 - Einige Dialoglayouts wurden optimiert
+                 - Endlich! erarbeitet, warum die App für einige Benutzer auf der Diashow stürzte
+                 - Einige Dialog-Layout
                 Veränderung:
-                 - Dialogfeld mit allen Versionshinweisen seit Ihrer letzten Aktualisierung nach einem Update"</item>
+                 - Dialogfeld zeigt alle Versionshinweise an, seit Sie nach einem Update aktualisiert haben"</item>
         <item>1.4.0.112</item>
         <item>"Veränderung:
-                 - Räumen Sie die Seiten mit den App-Einstellungen auf"</item>
+                 - ordnen Sie die Seiten der App-Voreinstellungen auf"</item>
         <item>1.4.0.111</item>
         <item>"Fehlerbehebung:
-                 - Multimedia-URIs funktionieren nicht für Benutzer von Nicht-Datenschutz-Plugins.
-                 - Die Videowiedergabe startet nicht, wenn die Einstellung so eingestellt ist, dass keine Videos in Diashows aufgenommen werden
+                 - Multimedia-Uris arbeitet nicht für Nicht-Datenschutz-Plugin-Benutzer.
+                 - Die Videowiedergabe startet nicht, wenn die Präferenz-Set nicht auf Videos in Diashows einbezogen werden
                 Veränderung:
-                 - Es gibt eine neue Einstellung in den Verbindungseinstellungen für die Reparatur des Datenschutz-Plugins uri"</item>
+                 - Es gibt eine neue Einstellung in den Anschlussvorstellungen für die Datenschutz-Plugin-URI-Reparatur"</item>
         <item>1.4.0.110</item>
         <item>"Fehlerbehebung:
-                 - Mehrere untergeordnete Alben stürzen nebeneinander ab, wobei eine ungerade Anzahl von untergeordneten Alben vorhanden ist (Querformat oder Großbildgeräte).
-                 - Upload-Auftrag - Upload auf Piwigo-Serverliste nicht auswählbar (Auswirkung für Benutzer mit mehr als einem in der App konfigurierten Serververbindungsprofil)
-                 - Serveralben werden beim ersten Eintrag für den automatischen Upload-Auftrag nicht geladen. Wählen Sie eine Kategorieeinstellung aus
-                 - Miniaturansichten des Serveralbums werden beim Hochladen in die Ordnerauswahl nicht für untergeordnete Ordner geladen
-                 - Upload auf Serveralbum für automatischen Upload-Auftrag mit nicht standardmäßigem Server kann nicht ausgewählt werden"</item>
+                 - Crash-Mehrfachkind-Alben siehe nebeneinander mit einer ungeraden Anzahl von untergeordneten Anwesenheit (Landschaftsmodus oder Großbildgeräte)
+                 - Job hochladen - Hochladen in die PIWIGO-Serverliste nicht wählbar (Auswirkung für Benutzer mit mehr als einem in der App konfigurierten Server-Verbindungsprofil)
+                 - Server-Alben laden nicht den ersten Eintrag zum automatischen Upload-Job, den eine Kategoriepräferenz auswählen
+                 - Server-Album-Thumbnails, die nicht für untergeordnete Ordner auf dem Hochladen in die Ordnerauswahl geladen werden
+                 - Das Upload kann nicht auf dem Server-Album für den automatischen Upload-Job mit einem nicht-Standard-Server ausgewählt werden"</item>
         <item>1.4.0.109</item>
         <item>"Veränderung:
-                 - Erklärung zu Ihrer Klarheit oben in der von dieser App für Supportanfragen erstellten E-Mail-Vorlage hinzugefügt
-                 - Nur bezahlt: Unterstützung für Benachrichtigung über Updates für den Server oder die Plugins hinzugefügt"</item>
+                 - Hinzugefügte Erklärung für Ihre Klarheit an der Spitze der von dieser App erstellten E-Mail-Vorlage für Support-Anfragen
+                 - nur bezahlt: Zusätzlicher Support für die Benachrichtigung über Updates für den Server oder der Plugins"</item>
         <item>1.4.0.108</item>
         <item>"Fehlerbehebung:
-                 - Beheben Sie viele Probleme, die nach dem letzten Monat der Änderungen zu Abstürzen in der gesamten App führen
-                 - Standardeinstellung für Videokomprimierung korrigiert
-                 - Unterstützung für das Minimieren von Alben wurde hinzugefügt
-                 - Korrigieren Sie nicht erkannte Videos
+                 - ordnen Sie auf, dass viele Probleme aufgeräumt werden, die in der gesamten App von den letzten Monats der Änderungen stürzt
+                 - Standardeinstellung für die Videokomprimierung korrigiert
+                 - Neu hinzugefügte Unterstützung für Minimierung von Alben
+                 - Fix-Videos, die nicht erkannt werden
                Änderungen:
-                 - Option entfernt, um anzugeben, welche Dateien per Video abgespielt werden können. Dies erfolgt basierend auf dem von der Dateierweiterung abgeleiteten Mimetyp"</item>
+                 - Option entfernt, um anzugeben, welche Dateien Videos spielbar sind. Dies geschieht basierend auf der Dateierweiterung abgeleitetem Mimeterype"</item>
         <item>1.4.0.107</item>
         <item>"Fehlerbehebung:
-                 - Möglicherweise wird eine Ressource in der Diashow der Albumressource übersehen (Vollbildvorschau).
-                 - Absturz bei Vorschau der verwaisten Datei
+                 - Potenzial für eine Ressource, die von der Albumressourcen-Diashow verpasst werden soll (Vollbild-Vorschau)
+                 - Absturz auf der Vorschau der verworrenen Datei
                 Veränderung:
-                 - Die Vorschau verwaister Dateien und die Ansicht innerhalb einer Diashow, falls gewünscht, wird jetzt unterstützt
-                 - Die Menüoption \"Waisen\" steht nur Administratoren zur Verfügung, wenn die App nicht schreibgeschützt ist"</item>
+                 - eine Vorschau auf verwaiste Dateien und Ansicht innerhalb einer Diashow, falls gewünscht wird, wird jetzt unterstützt
+                 - Die MENÜ-Option kann nur für Administratoren verfügbar, wenn die App nicht readonly ist"</item>
         <item>1.4.0.106</item>
         <item>"Fehlerbehebung:
-                 - Hoffentlich wurde der letzte Fehler, bei dem die Miniaturansichten des Albums nicht richtig geladen wurden
+                 - Hoffentlich der endgültige Fehler, in dem Album-Thumbnails nicht korrekt geladen wurden
                 Änderungen:
-                 - Beim Löschen eines Albums können untergeordnete Ressourcen entweder nicht verbunden oder vom Server gelöscht werden
-                 - Nur bezahlt: Es gibt eine neue verwaiste Ressourcenverwaltungsseite"</item>
+                 - Beim Löschen eines Albums können Kinderressourcen entweder nicht verknüpft oder vom Server gelöscht werden
+                 - Nur bezahlt: Es gibt eine neue Waisenressourcenmanagement-Seite"</item>
         <item>1.4.0.105</item>
         <item>"Fehlerbehebung:
-                 - Schreiben Sie das Album, das Tag und den bevorzugten Sortiercode neu, da es voller Fehler war
-                     : Wenn etwas in diesem Bereich jetzt nicht wie erwartet funktioniert, lassen Sie es mich bitte wissen.
-                     : Dies sollte Abstürze beheben, die auf der Diashow-Seite aufgetreten sind
-                 - Das kürzlich geänderte gelbe Sternsymbol wurde in einigen Sortierreihenfolgen nicht angezeigt
-                 - Korrigieren Sie das Laden von Thumbnails
-                 - Fehler behoben, der das manuelle Neuladen fehlgeschlagener Miniaturansichten durch Klicken verhindert - nur einmal, damit es nicht zu ärgerlich ist, wenn Sie das Album ändern möchten
+                 - Umschreiben des Albums, Tags und Lieblings-Sortiercodes, da es mit Fehler ausgefüllt wurde
+                     : Wenn etwas in diesem Bereich jetzt nicht so funktioniert, wie Sie erwarten, lass es mich wissen.
+                     : Dies sollte Abstürze lösen, die auf der Diashow-Seite aufgetreten sind
+                 - Das kürzlich veränderte gelbe Sternsymbol erscheint nicht in einigen Sortieraufträgen
+                 - Korrigieren Sie das Laden von Miniaturen
+                 - Fehler beheben Verhinderung des manuellen Nachladens der fehlgeschlagenen Miniaturansicht der fehlgeschlagenen Miniaturansicht
                 Änderungen:
-             - Neue Einstellung, um die unabhängige Umkehrung der Sortierreihenfolge von untergeordneten Alben und Ressourcen zu ermöglichen"</item>
+             - Neue Präferenz, um unabhängige Sortierauftragsumkehr von Kinderalben und Ressourcen zu ermöglichen"</item>
         <item>1.4.0.104</item>
         <item>"Fehlerbehebung:
-                 - Probleme beim Hochladen nach Überarbeitung der Dateiauswahl für Keystore und Zertifikate
-                     : Vielen Dank für Ihre Geduld, die Verwaltung von Android-Dateiberechtigungen ist schwierig
-                 - Löschen von Alben im Stammverzeichnis jetzt bei Bedarf immer beim Laden der App verfügbar
-                 - Elemente können jetzt ausgewählt werden, indem Sie auf eine beliebige Stelle klicken, nicht nur in das Kontrollkästchen"</item>
+                 - Probleme beim Hochladen, nachdem Sie die Dateiauswahl für Keystore und Zertifikate neu funktionieren
+                     : Danke für Ihre Geduld, Android-Dateiberechtigungsmanagement ist schwierig
+                 - Löschen von Alben in root Jetzt in der App-Ladung, gegebenenfalls
+                 - Artikel können jetzt ausgewählt werden, indem Sie auf eine beliebige Stelle klicken, nicht nur in das Kontrollkästchen"</item>
         <item>1.4.0.103</item>
         <item>"Fehlerbehebung:
-                 - Die Bearbeitung von Keystore- und vertrauenswürdigen Zertifikatelementen verursachte einen Absturz.
-                     : Bitte senden Sie mir eine E-Mail von der App, wenn solche Schlüsselfunktionen nicht funktionieren.
-                 - Manchmal kann mit der Auswahl der Systemdateien nicht aus den zuletzt verwendeten Dateien navigiert werden
-                 - Die Gruppenliste ist vertikal zur Bildschirmmitte ausgerichtet
+                 - Keystore und Trusted Certificate-Artikelbearbeitung verursacht den Absturz.
+                     : Bitte senden Sie mir eine E-Mail von der App, wenn die wichtigste Funktionalität so funktioniert.
+                 - Manchmal kann die letzten Dateien mit der SYSTEM-Dateiauswahl nicht navigieren
+                 - Gruppenliste senkrecht auf die Mitte des Bildschirms ausgerichtet
                 Änderungen:
-                 - Bessere Benutzererfahrung für den Import von Schlüsselspeichern und Zertifikaten
-                 - Neue Einstellung zur Steuerung der Zeitdauer, in der die Bilddetails in der Vollbild- oder Diashow-Ansicht angezeigt werden"</item>
+                 - Bessere Benutzererfahrung für Keystore- und Zertifikatimport
+                 - Neue Präferenz zur Steuerung der Zeitdauer Das Bilddetail wird in der Vollbild- oder Diashow-Ansicht angezeigt"</item>
         <item>1.4.0.102</item>
         <item>"Fehlerbehebung:
-                 - Aufgrund der jüngsten Änderungen war es nicht möglich, sowohl die kostenlose als auch die kostenpflichtige Version gleichzeitig auf einem einzigen Gerät zu installieren
-                 - Album-Miniaturansichten werden für Administratoren nicht immer angezeigt
-                 - gegen Piwigo 11 getestet. Das Öffnen eines Bildes funktionierte nicht"</item>
+                 - Die jüngsten Änderungen machten es unmöglich, sowohl die freien als auch der kostenpflichtigen Versionen gleichzeitig auf einem einzigen Gerät installieren zu lassen
+                 - Album-Thumbnails zeigen nicht immer für Admin-Benutzer
+                 - Getestet gegen PIWIGO 11. Das Öffnen eines Bildes funktionierte nicht"</item>
     </string-array>
 </resources>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="checking_license">正在检查许可证...</string>
+    <string name="checking_license">检查许可证......</string>
     <string name="button_quit">出口</string>
-    <string name="button_buy">购买应用</string>
-    <string name="unlicensed_dialog_retry_body">无法确认该应用程序已获得许可。请从Android Market购买。如果有，请检查是否有可用的网络连接，然后重试此许可证检查。</string>
-    <string name="unlicensed_dialog_body">无法验证许可证。检查网络连接是否可用。</string>
-    <string name="unlicensed_dialog_title">申请未获许可</string>
+    <string name="button_buy">购买应用程序</string>
+    <string name="unlicensed_dialog_retry_body">无法确认该申请已许可。请从Android Market购买它。如果您有，请检查有可用的网络连接，并重试此许可证检查。</string>
+    <string name="unlicensed_dialog_body">无法验证许可证。检查是否提供网络连接。</string>
+    <string name="unlicensed_dialog_title">应用程序不予许可</string>
     <string name="application_error">应用程序错误：%1$d</string>
     
 
@@ -30,82 +30,82 @@
     
 
     <string name="alert_title_permissions_needed">需要额外的权限</string>
-    <string name="alert_write_permission_needed_for_download">需要许可权才能写入文件系统以下载文件</string>
+    <string name="alert_write_permission_needed_for_download">需要权限来写入文件系统以下载文件</string>
 
     
 
     
 
-    <string name="progress_clearing_failed_uploads_from_server">从服务器清除所有失败的上传</string>
-    <string name="cleared_failed_uploads_from_server_pattern">清除%1$d 从服务器上传失败</string>
+    <string name="progress_clearing_failed_uploads_from_server">从服务器清除任何失败的上传</string>
+    <string name="cleared_failed_uploads_from_server_pattern">清除%1$d从服务器上传失败</string>
 
-    <string name="gallery_photos_summary_text_pattern">%1$d 相片</string>
-    <string name="gallery_subcategory_summary_text_pattern">%1$d 子专辑和%2$d 相片</string>
+    <string name="gallery_photos_summary_text_pattern">%1$d相片</string>
+    <string name="gallery_subcategory_summary_text_pattern">%1$d子专辑和%2$d相片</string>
     
     <string name="alert_title_login">登录</string>
     <string name="alert_title_connectionTest">连接测试</string>
-    <string name="alert_message_success_connectionTest">成功\n用户类型：%1$s。</string>
-    <string name="alert_message_no_available_image_sizes">警告\n服务器未报告可用图像大小。</string>
+    <string name="alert_message_success_connectionTest">成功\n用户类型：||| 1 |||。</string>
+    <string name="alert_message_no_available_image_sizes">警告\n服务器未报告可用的图像大小。</string>
     <string name="alert_success">成功！</string>
     <string name="alert_error">错误</string>
-    <string name="alert_error_no_app_available_to_handle_action">找不到应用程序来处理此操作。</string>
-    <string name="alert_error_no_app_available_to_rate_app">找不到任何应用对该应用进行评分。感谢您的尝试。</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">下载已取消。必需的文件系统权限不可用。</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">下载已取消。必需的文件系统权限不可用。作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
+    <string name="alert_error_no_app_available_to_handle_action">没有找到应用程序来处理此操作。</string>
+    <string name="alert_error_no_app_available_to_rate_app">没有找到应用程序来评估此应用程序。谢谢你尝试。</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">下载取消。必需的文件系统权限不可用。</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">下载取消。必需的文件系统权限不可用。作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
     <string name="button_retry">重试</string>
 
 
-    <string name="button_unlink">取消连结</string>
+    <string name="button_unlink">解开</string>
     <string name="button_untag">删除标签</string>
     <string name="button_close">关闭</string>
-    <string name="settings_menu_title">应用程式设定</string>
+    <string name="settings_menu_title">应用程序设置</string>
     <string name="offline_mode_menu_title">离线模式</string>
     <string name="online_mode_menu_title">在线模式</string>
     <string name="gallery_menu_title">画廊</string>
-    <string name="upload_menu_title">上载</string>
-    <string name="upload_page_title">Piwigo上传</string>
-    <string name="gallery_to_alter_title">上载到</string>
+    <string name="upload_menu_title">上传</string>
+    <string name="upload_page_title">piwigo上传</string>
+    <string name="gallery_to_alter_title">上传到</string>
 
-    <string name="alert_question_enable_network_access">允许从服务器检索数据？</string>
-    <string name="alert_question_disable_network_access">仅使用已在此设备上缓存的数据？</string>
+    <string name="alert_question_enable_network_access">允许从服务器中检索数据？</string>
+    <string name="alert_question_disable_network_access">只使用数据已经缓存在此设备上？</string>
 
     <string name="upload_file_privacy_level_title">文件隐私级别</string>
-    <string name="cacheCleared_title">快取</string>
+    <string name="cacheCleared_title">缓存</string>
     <string name="cacheClearingStarted_message">清除缓存</string>
-    <string name="cacheCleared_message">缓存已清除。下次请求时，将从远程服务器下载所有图像。</string>
-    <string name="cacheClearFailed_message">目前无法清除缓存。如果问题仍然存在，请报告错误。</string>
+    <string name="cacheCleared_message">缓存清除了。下一步请求时，所有图像将从远程服务器下载。</string>
+    <string name="cacheClearFailed_message">此时无法清除缓存。如果问题继续，请报告错误。</string>
     <string name="videoCacheCleared_message">视频缓存已清除。下次请求时，将从远程服务器下载所有视频。</string>
-    <string name="videoCacheClearFailed_message">目前无法清除视频缓存。如果问题仍然存在，请报告错误。</string>
+    <string name="videoCacheClearFailed_message">此时无法清除视频缓存。如果问题继续，请报告错误。</string>
 
     <string name="navigation_drawer_open">打开导航抽屉</string>
     <string name="navigation_drawer_close">关闭导航抽屉</string>
 
-    <string name="alert_items_for_upload_already_exist_message_pattern">%1$d 文件已存在于服务器上。 它们的权限将被更改为反映在此选择的权限，如果需要，它们将与此专辑联系起来。</string>
+    <string name="alert_items_for_upload_already_exist_message_pattern">%1$d文件已存在于服务器上。它们的权限将被更改为反映在此选择的权限，如果需要，它们将与此专辑联系起来。</string>
     <string name="alert_upload_success">上传完成。</string>
-    <string name="alert_upload_partial_success">上传完成。如果需要，无法上载的文件将保留在列表中以重试。如果没有完成任何操作，则无法将新文件添加到上传列表中。单击上载按钮以完成它们。</string>
+    <string name="alert_upload_partial_success">上传完成。如果需要，无法上载的文件将保留在重试的列表中。如果任何操作不完整，则可以将新文件添加到上传列表中。单击“上载”按钮完成它们。</string>
     <string name="alert_upload_failed_piwigo">上传由于Piwigo服务器中的错误导致失败（%1$d：%2$s）。</string>
     <string name="alert_upload_failed_webserver">由于Web服务器错误，上传失败（%1$d：%2$s）。</string>
-    <string name="alert_upload_failed_webresponse">由于错误处理piwigo响应，上传失败。 这可能是由于Piwigo API变化。 无法进行响应：%1$s。</string>
-    <string name="alert_error_upload_chunk_failed_message_pattern">上传块for file %1$s 失败的。 放弃上传文件。</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">文件%1$s 在设备上不再可用。它已被删除或移动。\n%2$s</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">上传文件时出错%1$s。\n%2$s</string>
-    <string name="alert_error_upload_file_already_on_server_message_pattern">上传文件%1$s 已经存在于服务器上，操作取消。</string>
-    <string name="alert_upload_file_failed_piwigo_message_pattern">上传文件%1$s 由于piwigo服务器的错误（%2$d：%3$s）失败</string>
-    <string name="alert_upload_file_failed_webserver_message_pattern">上传文件%1$s 由于Web服务器错误（%2$d：%3$s</string>
-    <string name="alert_upload_file_failed_webresponse_message_pattern">上传文件%1$s 由于处理piwigo响应而失败。 这可能是由于Piwigo API变化。 不可解释的响应：%2$s。</string>
-    <string name="action_settings">设定值</string>
+    <string name="alert_upload_failed_webresponse">由于错误处理piwigo响应，上传失败。这可能是由于Piwigo API变化。无法进行响应：%1$s。</string>
+    <string name="alert_error_upload_chunk_failed_message_pattern">上传块for file %1$s失败的。放弃上传文件。</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">文件||| 1 ||| 在设备上不再可用。它已被删除或移动。\n|||| 2 |||</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">上传文件时出错||| 1 |||。\n|||| 2 |||</string>
+    <string name="alert_error_upload_file_already_on_server_message_pattern">上传文件%1$s已经存在于服务器上，操作取消。</string>
+    <string name="alert_upload_file_failed_piwigo_message_pattern">上传文件%1$s由于piwigo服务器的错误（%2$d：%3$s）失败</string>
+    <string name="alert_upload_file_failed_webserver_message_pattern">上传文件%1$s由于Web服务器错误（%2$d：%3$s</string>
+    <string name="alert_upload_file_failed_webresponse_message_pattern">上传文件%1$s由于处理piwigo响应而失败。这可能是由于Piwigo API变化。不可解释的响应：%2$s。</string>
+    <string name="action_settings">设置</string>
 
     
-    <string name="createGallery_pageTitle">建立相簿</string>
-    <string name="createGallery_parentGalleryTitle">上层相簿</string>
+    <string name="createGallery_pageTitle">创建专辑</string>
+    <string name="createGallery_parentGalleryTitle">父专辑</string>
     <string name="createGallery_galleryNameTitle">专辑名称</string>
     <string name="createGallery_galleryDescriptionTitle">描述</string>
     <string name="createGallery_galleryCommentsAllowed">允许用户添加评论</string>
-    <string name="createGallery_galleryIsPrivate">专辑是私人的吗？</string>
-    <string name="createGallery_permissions_allowedGroupsTitle">允许的团体</string>
-    <string name="createGallery_permissions_allowedUsersTitle">允许的用户</string>
-    <string name="createGallery_createGalleryButtonTitle">建立相簿</string>
-    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">无法正确设置图库的权限。再次删除。请再试一遍。如果错误仍然存​​在，请向此应用提出问题，以便我们进行改进，然后手动执行此步骤。</string>
+    <string name="createGallery_galleryIsPrivate">专辑是私人的？</string>
+    <string name="createGallery_permissions_allowedGroupsTitle">允许团体</string>
+    <string name="createGallery_permissions_allowedUsersTitle">允许用户</string>
+    <string name="createGallery_createGalleryButtonTitle">创建专辑</string>
+    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">无法在库上正确设置权限。再次删除。请再试一遍。如果错误继续，请使用此应用提出问题，以便我们可以改进它，并手动执行步骤。</string>
 
     <string name="logging_in_to_piwigo_pattern">登录%1$s</string>
 
@@ -113,402 +113,402 @@
     <string name="upload_files_button_title">开始上传</string>
     <string name="upload_files_finish_job_button_title">完成上传</string>
     <string name="upload_job_status_button">状态</string>
-    <string name="alert_really_delete_upload_job">这将从该设备删除作业状态。您将需要手动清除部分上传到服务器的任何文件（或使用此应用程序中的首选项-上传设置页面）。如果以后再恢复作业，通常会成功完成。您确定要采取这个激烈的步骤吗？</string>
+    <string name="alert_really_delete_upload_job">这将删除此设备的作业状态。您需要手动清理部分上载到服务器的任何文件（或在此应用程序中使用首选项 - 上传设置页面）。如果您稍后恢复它们，就会常常成功完成。你确定你想采取这个急剧的一步吗？</string>
     <string name="loading_please_wait">加载请稍候…</string>
     <string name="alert_title_server_error">服务器错误</string>
     <string name="alert_server_error_pattern">服务器返回HTTP错误：%1$d （%2$s）</string>
-    <string name="alert_title_error_handling_response">解析Piwigo响应时出错</string>
+    <string name="alert_title_error_handling_response">解析piwigo响应时出错</string>
     <string name="alert_error_handling_response_pattern">不可原回应：%1$d （%2$s）</string>
     <string name="none_selected">没有</string>
-    <string name="alert_error_too_many_users_message">用户太多，无法处理。请提交增强请求以启用用户分页。</string>
+    <string name="alert_error_too_many_users_message">太多用户处理。请提交增强请求以启用用户的分页。</string>
 
     <string name="slideshow_resource_action_download">下载文件</string>
     <string name="slideshow_resource_action_delete">删除</string>
-    <string name="slideshow_resource_action_copy">复制到相册</string>
-    <string name="slideshow_resource_action_move">移至相簿</string>
+    <string name="slideshow_resource_action_copy">复制到专辑</string>
+    <string name="slideshow_resource_action_move">搬到专辑</string>
     <string name="slideshow_image_details_comments">评论</string>
 
     <string name="gallery_details_updating_progress_title">更新专辑</string>
     <string name="progress_resource_details_updating">更新资源详细信息</string>
     <string name="gallery_details_name_title">专辑名称</string>
-    <string name="gallery_details_description_title">专辑说明</string>
+    <string name="gallery_details_description_title">专辑描述</string>
     <string name="gallery_details_save_button">救</string>
-    <string name="notification_upload_event">Piwigo上传</string>
+    <string name="notification_upload_event">piwigo上传</string>
     <string name="progress_downloading">下载文件</string>
-    <string name="alert_error_unimplemented">功能尚未实现。</string>
+    <string name="alert_error_unimplemented">功能尚未实施。</string>
     <string name="button_ok">好的</string>
     <string name="button_yes">是的</string>
     <string name="button_no">不</string>
     <string name="button_save">救</string>
     <string name="alert_confirm_title">确认</string>
     <string name="alert_question_title">问题</string>
-    <string name="alert_confirm_really_delete_from_server">这将从服务器上永久删除该项目。继续？</string>
-    <string name="alert_confirm_really_delete_items_from_server">这将从服务器上永久删除项目。继续？</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">你请求删除%1$d 与其他专辑共享的资源。 您是否希望从所有相册（和永久）中删除这些（以及永久的服务器），或者只是从这张专辑中取消链接？</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">你请求删除%1$d 资源。 您是否希望永久地从所有相册（和服务器）删除这些（或者只是从此标记中取消链接它们？</string>
-    <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">你请求删除%1$d 资源。 您是否希望永久地删除所有相册（和服务器）？ （如果没有安装在服务器上的USertags插件，则无法从图像中删除标记）</string>
+    <string name="alert_confirm_really_delete_from_server">这将永久从服务器中删除该项目。继续？</string>
+    <string name="alert_confirm_really_delete_items_from_server">这将永久从服务器中删除项目。继续？</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">你请求删除%1$d与其他专辑共享的资源。您是否希望从所有相册（和永久）中删除这些（以及永久的服务器），或者只是从这张专辑中取消链接？</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">你请求删除%1$d资源。您是否希望永久地从所有相册（和服务器）删除这些（或者只是从此标记中取消链接它们？</string>
+    <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">你请求删除%1$d资源。您是否希望永久地删除所有相册（和服务器）？ （如果没有安装在服务器上的USertags插件，则无法从图像中删除标签）</string>
     <string name="about_menu_title">关于</string>
     <string name="other_licences_button_text">其他许可组件</string>
     <string name="oss_licences_menu_title">OSS许可证</string>
-    <string name="about_heading">关于这个程序</string>
+    <string name="about_heading">关于这个应用程序</string>
     
     <string formatted="false" name="eula">"最终用户许可协议（“协议”）
 
 
 ** 源代码：
-        https://github.com/extorn/piwigo-client
+        https://github.com/extorn/piwigo-client.
 
-**最后更新时间：2020年9月18日
+**上次更新：2020年9月18日
 
-在点击“我同意”之前，请仔细阅读本最终用户许可协议（“协议”）。
-按钮，下载或使用Piwigo Client（“应用程序”）。
+请在点击“我同意”之前仔细阅读此最终用户许可协议（“协议”）
+按钮，下载或使用piwigo客户端（“应用程序”）。
 
-通过单击“我同意”按钮，下载或使用应用程序，即表示您同意受约束
-根据本协议的条款和条件。
-如果您不同意本协议的条款，请不要单击“我同意”按钮，并且不要
+点击“我同意”按钮，下载或使用该应用程序，您同意绑定
+通过本协议的条款和条件。
+如果您不同意本协议的条款，请不要点击“我同意”按钮，不要
 下载或使用该应用程序。
 
-如果您正在考虑使用此应用程序访问和/或修改用于商业目的的服务器，则必须阅读并理解责任限制。
-您必须根据自己的决定在非生产服务器上对此进行测试，以使您满意，然后再承担任何风险和责任。这个程序主要是设计
-用于非商业目的。
+如果您正在考虑使用此应用程序来访问和或修改用于商业目的的服务器，您必须阅读并理解责任的局限性。
+在根据您的决定，您必须在接受任何风险和责任之前对非生产服务器进行满意的。这个应用程序主要是设计的
+对于非商业目的。
 
 **定义
 
-被许可方：被许可方是打算使用许可软件或已经合法或非法使用许可软件的个人或公司。术语“被许可方”并不意味着默认情况下该软件是合法许可的。
+被许可人：被许可人是打算使用许可软件或已经合法或非法使用的人或公司。 “被许可人”一词并不意味着该软件默认情况下具有法律许可。
 
 
 ** 执照
 
-Gareth Deli授予您可撤销的，非排他的，不可转让的有限许可
-仅出于个人或商业目的下载，安装和使用该应用程序
+Gareth Deli授予您可撤销，非独家，不可转让，许可证
+仅为您的个人或商业目的下载，安装和使用应用程序
 严格按照本协议的条款。
 
-本软件按“原样”提供，不提供任何形式的明示或暗示担保，包括但不限于对适销性，特定目的的适用性和非侵权性的保证。无论是由于软件，使用或其他方式产生的，与之有关或与之有关的合同，侵权或其他形式的任何索赔，损害或其他责任，作者或版权所有者概不负责。软件
+该软件提供“原样”，没有任何类型，表达或暗示的保证，包括但不限于适销性，特定目的健康和非犯罪的保证。在任何情况下，作者或版权持有人应对任何索赔，损害赔偿或其他责任，无论是在合同，侵权行为的行动，侵权行为，否则，否则与软件或使用或其他交易中出现软件
 
 
 ** 限制
 
-您同意不这样做，也不会允许其他人：
-a）许可，出售，出租，租赁，转让，分发，传输，托管，外包，披露或以其他方式
-商业上利用该应用程序或使该应用程序可用于任何第三方。
-b）基于此应用程序创建派生作品。
+您同意不，您不会允许其他人：
+a）许可，销售，租赁，租赁，分配，分发，传输，主机，外包，披露或以其他方式
+商业利用申请或使申请提供给任何第三方。
+b）根据此应用程序创建衍生工程。
 
 
 **用户数据收集
 
-Firebase集成已添加到此应用程序中，以便于跟踪应用程序的使用，其主要目的是更有效地解决问题并确定应用程序的使用方式。将收集达到此目的所需的最少数据。
+此应用程序添加了Firebase集成，以便于跟踪应用程序的使用，主要目的是更有效的错误分辨率，并确定应用程序的使用方式。将收集达到此目的所需的最低数据。
 
 
 **有限保修和免责声明
 
-该软件“按原样”提供，被许可人自负风险。 Gareth Deli对使用，性能或对特定用途的适用性不做任何保证。软件总是有可能包含错误（错误）而无法正常工作。因此Gareth Deli不保证该软件完全没有错误，也不保证该软件在不中断所有计算机和配置的情况下即可正常运行。被许可方有责任检查该软件是否符合其特定目的或是否满足其功能和性能要求。被许可人还必须测试该软件如何在其设备及其配置上运行；测试所有用例，并检查在生产环境中使用该软件之前，是否按要求正确处理了数据。如果将该软件用于商业目的，则至关重要。
+该软件提供了“正如”\“，被许可人以他/她自己的风险使用它。 Gareth Deli无需其使用，以其表现或其适合特定目的。软件始终可能包含错误（错误）并且无法工作。因此，Gareth Deli不保证软件完全无错误，或者它在没有中断所有计算机和配置的情况下运行。它完全在被许可方有责任检查软件是否适合他的特定目的或满足他的功能和性能要求。被许可人还有义务测试软件如何在其设备上运作;测试所有使用情况并检查是否在没有错误的情况下处理数据，并且在他们在生产环境中使用软件之前，请检查数据。如果使用该软件以进行商业目的，这是至关重要的。
 
 
-**责任限制
+**对责任的限制
 
-被许可方对使用软件的后果以及由此造成的直接和间接损害（在法律上可能的范围内）负责。在法律允许的范围内，责任仅限于购买价格；否则，将其限制为法律上可能的最小值。
-
-
-**维护与支持
-
-Gareth Deli仅通过电子邮件为软件的当前版本提供常规支持。不支持旧版本。
+许可人负责软件的使用后果，从而导致直接和间接损害，就法可行。责任仅限于购买价格，就具有法律可能的责任;否则它仅限于合法可能的最低限度。
 
 
-**修改申请
+**维护和支持
 
-Gareth Deli保留临时，临时或中止修改，暂停或终止的权利
-应用程序或与之连接的任何服务，无论有无通知，无
-对您的责任。
+Gareth Deli仅通过电子邮件提供对当前版本的软件版本的一般支持。不支持旧版本。
 
 
-**期限和终止
+**对应用的修改
 
-本协议将一直有效，直到您或Gareth Deli终止。
+Gareth Deli保留修改，暂停或停止，暂时或中断的权利
+永久，应用程序或其连接的任何服务，有或没有通知，没有
+对你责任。
 
-Gareth Deli可以全权酌情决定在任何时间，出于任何理由或没有理由，
-暂停或终止本协议，恕不另行通知。
-本协议将立即终止，而无需Gareth Deli的事先通知。
-如果您不遵守本协议的任何规定。您也可以终止此操作
-通过从您的移动设备或您的移动设备中删除该应用程序及其所有副本达成协议
+
+**术语和终止
+
+本协议将在您或Gareth Deli终止之前保持有效。
+
+在任何时候都可以自行决定和任何或无缘无故，加勒斯·迪尔
+暂停或终止本协议或毫无前提通知。
+本协议将立即终止，恕不另行通知Gareth Deli
+您未能遵守本协议的任何提供的事件。你也可能终止这个
+通过从您的移动设备或其从您的移动设备中删除应用程序和所有副本来协议
 桌面。
-本协议终止后，您应停止使用本应用程序并删除所有副本
-从移动设备或台式机上下载应用程序。
+在终止本协议后，您将停止所有应用程序并删除所有副本
+从您的移动设备或桌面中的应用程序。
 
 
 **可分割性
 
-如果本协议的任何条款被裁定为不可执行或无效，则该条款将为
-更改和解释以最大程度地实现此类规定的目标
-根据适用法律的规定，其余条款将继续完全有效。
+如果持有此协议的任何规定，将无法执行或无效，则此类规定将是
+改变并解释为在最大程度上完成此类提供的目标
+适用法律的可能性，剩余的条款将继续全力和效果。
 
 
 **本协议的修订
 
-Gareth Deli保留自行决定修改或替换此文件的权利。
-随时同意。打开应用程序时，您将收到有关更改的通知，并具有
-选项以接受更改，或停止使用该应用程序。
+Gareth Deli以唯一的自由裁量权保留右侧修改或更换此项
+同意随时达成协议。您将收到打开申请的变更通知，并拥有
+选项要么接受更改，或者停止使用该应用程序。
 
 
 ** 联系信息
 
-如果您对此协议有任何疑问，请与我们联系。"
+如果您对本协议有任何疑问，请联系我们。"
 </string>
-    <string name="about_content">"编写此应用是为了让我在旅途中更轻松地访问我的Piwigo照片库。
+    <string name="about_content">"这个应用程序是写的，让我在移动时更容易地访问我的piwigo照片库。
 
-源代码：https://github.com/extorn/piwigo-client
+Sourcecode：https://github.com/extorn/piwigo-client.
 
-此应用程序没有进一步的更新计划，如果您已购买副本，谢谢您的支持。没有付费用户，我很久以前就已经停止了此应用程序的开发。
-我目前正在解决一些错误，这些错误会不断出现并发布，有时会添加新功能。
-从本质上讲，该应用程序可以正常运行，并且可以正确处理服务器上的工作，但是我缺乏Android开发经验，因此有时会崩溃。
+如果您购买了副本，则不会为此应用程序计划此应用程序提供进一步更新，感谢您支持。没有付费用户，我将很久以前停止了这个应用程序的开发。
+我目前正在通过错误，因为他们裁剪并释放它们，有时会增加新功能。
+基本上，应用程序工作，以及它对服务器做的事情做得正确，但是，我缺乏Android开发经验表明，它有时会崩溃。
 
-如果您能够建立一组总是导致崩溃的步骤，请给我发送电子邮件或在我的github项目页面上提出问题，以帮助我修复它。
+如果您能够建立一组始终导致崩溃的步骤，请给我发一封电子邮件或在我的GitHub项目页面上提出一个问题，以帮助我修复它。
 
-在2018年8月，用户David Klement通过屏幕模型回到我身边，以提供更专业的设计。从1.3.95版本开始，我一直在结合这些想法，从专辑查看屏幕开始。
-可以在应用程序网站（https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html）上查看建议的屏幕设计的这些完整列表。
+2018年8月，一个用户David Klement，用屏幕模拟来回复我，以获得更专业的设计。从版本1.3.95开始，我一直在纳入这些想法，从专辑查看屏幕开始。
+这些完整的屏幕设计列表可以在App网站上查看（https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html）。
 
-注意：语言翻译是使用www.Deepl.com或Google翻译网站进行的。如果您发现任何明显的错误，请让我知道，以便我进行纠正。
+注意：使用www.deepl.com或谷歌翻译网站执行语言翻译。如果你发现任何明显的错误，请告诉我，所以我可以纠正它们。
 
-有两个版本，一个是免费版本（带有广告），另一个是付费版本（没有广告）。您可以自由选择自己喜欢的。您目前无法“升级”免费版本，安装付费版本并删除免费版本。
-注意：版本会随着时间而变化。大部分更改将针对免费版和付费版进行。
+有两个版本，免费版（带广告）和付费版本（没有广告）。您可以自由选择您喜欢的。您无法“升级”此目前的免费版，安装付费版本，并删除免费版本。
+注意：版本将随着时间的推移而发散。大多数更改将对免费和付费版本进行。
 
-目前，付费版本增加了对标签的支持：
-        Piwigo在某种程度上支持标签，但“用户标签”插件增加了更多功能（已执行基本测试）。
-        如果您有想要的关于标签的功能，但应用程序未提供，请询问。
+目前，付费版本已添加支持标签：
+        piwigo支持标签到框中的一定程度，但用户标签插件会增加更多功能（执行基本测试）。
+        如果您想要的标签有一个功能，但应用程序未提供，请询问。
 
-目前，它提供了基本功能级别，以允许在现有图库中导航，上传新照片和视频以及在图库中创建新类别。创建后，某些字段可以修改，但许多字段目前仍是只读的。
+目前，它提供了基本的功能级别，以允许在现有库中导航，上传新照片和视频，并在库中创建新类别。有些字段可以修改一次，但许多人仍然只读....现在！
 
-请问如果您卸载该应用程序，可以使用应用程序菜单上的链接向我发送电子邮件，告诉我为什么该应用程序无法满足您的需求，因此我可以解决此问题。
+请问，如果卸载应用程序，您可以使用应用程序菜单上的链接给我联系告诉我为什么该应用程序不符合您的需求，以便我能解决这个问题。
 
-我测试的PIWIGO服务器的版本当前为11.0.3。
+Piwigo Server I测试的版本目前为11.0.3。
 
-我的测试库仅包含.jpg和.mp4和.m4v文件。如果您的文件包含其他文件，则很可能会遇到问题-如果是这样，请告诉我，我将优先处理这些文件类型。
+我的测试库只包含.jpg和.mp4和.m4v文件。如果您包含其他人，您可能会遇到问题 - 如果是这样，请告诉我，我将在那些文件类型上优先考虑工作。
 
-我一直在测试安装的piwigo_privacy插件和VideoJS插件的副本。
-*注意：对于最近的一些更改，我不得不要求对隐私插件进行一些更改。如果您在使用此插件时遇到问题，我可能会提供帮助（不过，这不是我的工作）。我已经安装了扩展描述插件的副本，并且增加了对它提供的某些功能的支持，但是它将要求您在服务器上安装我的插件-PiwigoClientWsExts。
+我一直在使用安装的piwigo_privacy插件的副本测试，也安装了VideoJS插件。
+*注意：我必须为最近的更改提供一些对隐私插件的更改。如果您有此插件的问题，我可能会帮助（此插件不是我的工作）。我有一个安装了扩展描述插件的副本，并为其提供的某些功能添加了支持，但它需要您在服务器上安装我的插件 -  PiwiGlientWsexts。
 
-如果您遇到任何错误，请向我发送任何电子邮件通知。我已经在android模拟器，三星手机和三星平板电脑上进行了测试，但这是我的第一个应用程序，因此，我确定有人会出错。
+如果您遇到任何错误，请向我报告任何电子邮件。我在Android仿真器，三星电话和三星平板电脑上测试了这一点，但它是我的第一个应用程序，所以我肯定的事情会对某人出了问题。
 
-非常感谢向我发送建议或错误的电子邮件的所有人。我将努力尽快解决您的所有建议。
+一个大声谢谢将我发给我建议或错误的人。我将尽快解决所有建议。
 
-请选择报告每次发生的崩溃。如果您发现该错误在下次更新后仍然存在，请花点时间给我发送电子邮件。在错误发生之前，我可能需要更多有关周围情况的上下文。
+请选择报告发生的每次崩溃。如果在下次更新后发现错误仍然发生，请花时间给我发电子邮件。很可能我需要在发生错误之前发生的事情有点更多的背景。
 
-目前，发布是临时的。随着应用程序的成熟，发布的频率有望降低。发布时间表和历史记录如下所示。这可能会改变，事情可能会延迟，但是您可以看到列表中的内容。"</string>
-    <string name="licences_heading">此应用内使用的资源的许可</string>
+释放目前正在基于广告。释放的频率预计会随着应用程序的成熟而减少。发布计划和历史如下所示。这可能会更改，事情可能会延迟，但您可以看到列表中的内容。"</string>
+    <string name="licences_heading">此应用中使用的资源许可证</string>
     
     <string name="slideshow_image_details_name_title">资源名称</string>
-    <string name="slideshow_image_details_description_title">资源说明</string>
+    <string name="slideshow_image_details_description_title">资源描述</string>
     <string name="unlock_menu_title">开锁</string>
     <string name="lock_menu_title">锁</string>
     <string name="button_lock">锁</string>
     <string name="alert_title_lock">锁定应用程序？</string>
-    <string name="alert_message_lock">如果您选择锁定应用程序，则该应用程序将仅允许对图库进行只读访问。禁止更改图像等的等级，并且将删除对应用程序设置的访问。要解锁，您需要提供当前的PIWIGO用户密码。</string>
+    <string name="alert_message_lock">如果您选择锁定应用程序，则该应用程序将仅允许只读访问库。禁用更改图像等额定值，并删除对应用程序设置的访问。解锁您需要提供当前的Piwigo用户密码。</string>
     <string name="alert_title_unlock">解锁应用程序？</string>
-    <string name="alert_message_unlock">输入piwigo密码%1$s 重新启用对此应用程序的所有功能的完全访问，然后单击解锁。</string>
+    <string name="alert_message_unlock">输入piwigo密码%1$s重新启用对此应用程序的所有功能的完全访问，然后单击解锁。</string>
     <string name="button_unlock">开锁</string>
-    <string name="alert_app_unlocked_message">该应用现已解锁</string>
+    <string name="alert_app_unlocked_message">该应用程序现已解锁</string>
     <string name="gallery_details_status_title">隐私状态</string>
     <string name="gallery_details_status">限制对此文件夹的访问</string>
-    <string name="gallery_details_allowed_groups_title">允许的团体</string>
-    <string name="gallery_details_allowed_users_title">允许的用户</string>
-    <string name="click_to_view">点击查看</string>
-    <string name="click_to_view_pattern">%1$d  - 单击以查看/编辑</string>
-    <string name="alert_warning_lowMemory_message">设备在内存上运行低（%1$d）。 已清除存储器图像缓存。</string>
-    <string name="files_for_upload_title">上载文件</string>
+    <string name="gallery_details_allowed_groups_title">允许团体</string>
+    <string name="gallery_details_allowed_users_title">允许用户</string>
+    <string name="click_to_view">单击查看</string>
+    <string name="click_to_view_pattern">%1$d - 单击以查看/编辑</string>
+    <string name="alert_warning_lowMemory_message">设备在内存上运行低（%1$d）。已清除存储器图像缓存。</string>
+    <string name="files_for_upload_title">上传文件</string>
     <string name="alert_information">信息</string>
     <string name="alert_image_download_title">下载</string>
     <string name="alert_image_download_message">请选择文件大小</string>
     <string name="action">行动</string>
     <string name="copy_link">复制链接</string>
     <string name="download_file">下载文件</string>
-    <string name="share_with_an_app">与应用共享</string>
+    <string name="share_with_an_app">与应用分享</string>
     <string name="alert_image_show_image_title">图像渲染控制</string>
     <string name="alert_image_show_image_message">请选择您要查看的文件大小</string>
     <string name="alert_image_download_complete_message">下载完毕。</string>
-    <string name="alert_error_unsupported_piwigo_version_pattern">服务器正在运行piwigo版本%1$s。 使用此应用程序测试的最低版本是%2$s。 应用程序中的某些功能可能无法按预期工作。 请检查关于任何已确定的问题的关于页面。</string>
-    <string name="notification_download_event">文件下载</string>
-    <string name="alert_image_download_cancelled_message">您已成功取消下载</string>
-    <string name="app_licence_heading">最终用户许可协议</string>
+    <string name="alert_error_unsupported_piwigo_version_pattern">服务器正在运行piwigo版本%1$s。使用此应用程序测试的最低版本是%2$s。应用程序中的某些功能可能无法按预期工作。请检查关于任何已确定的问题的关于页面。</string>
+    <string name="notification_download_event">文件下载了</string>
+    <string name="alert_image_download_cancelled_message">您成功取消了下载</string>
+    <string name="app_licence_heading">EULA.</string>
     <string name="button_agree">我同意</string>
-    <string name="eula_menu_title">最终用户许可协议</string>
+    <string name="eula_menu_title">EULA.</string>
     <string name="alert_warning">警告</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">您所连接的服务器本身不支持您选择的缩略图大小。服务器将返回“最近匹配”尺寸的图像。</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">您所选择的缩略图大小并未由您连接的服务器自然支持。服务器将返回“最近匹配”大小的图像。</string>
     <string name="groups_menu_title">团体</string>
     <string name="group_members_pattern">（%1$d成员）</string>
     <string name="alert_group_delete_success_pattern">组（%1$s）已成功删除</string>
     <string name="alert_user_delete_success_pattern">用户（%1$s）已成功删除</string>
-    <string name="alert_group_delete_failed_pattern">删除组时出错（%1$s）。 请重试。</string>
-    <string name="alert_user_delete_failed_pattern">删除用户时出错（%1$s）。 请重试。</string>
-    <string name="alert_confirm_really_delete_group">您确定要删除该组吗？属于该用户的任何用户都不会被删除，但是可能会失去对该用户组具有的画廊区域的访问权限。</string>
-    <string name="alert_confirm_really_delete_user">您确定要删除该用户吗？</string>
-    <string name="users_menu_title">用户数</string>
+    <string name="alert_group_delete_failed_pattern">删除组时出错（%1$s）。请重试。</string>
+    <string name="alert_user_delete_failed_pattern">删除用户时出错（%1$s）。请重试。</string>
+    <string name="alert_confirm_really_delete_group">您确定要删除此组吗？任何属于它的用户都不会被删除，但可能会失去访问该组的库区域。</string>
+    <string name="alert_confirm_really_delete_user">您确定要删除此用户吗？</string>
+    <string name="users_menu_title">用户</string>
     <string name="alert_error_unable_to_delete_yourself_pattern">对不起，您无法删除您登录的用户（%1$s）。</string>
-    <string name="alert_information_coming_soon">此功能即将推出。</string>
+    <string name="alert_information_coming_soon">这个功能即将推出。</string>
 
     <string name="user_username_title">用户名</string>
-    <string name="user_lastvisit_title">上次访问该网站</string>
-    <string name="user_groups_title">团体会员</string>
+    <string name="user_lastvisit_title">上次访问了该网站</string>
+    <string name="user_groups_title">集团成员资格</string>
     <string name="user_usertype_title">用户类型</string>
     <string name="user_user_heading">用户</string>
     <string name="group_heading">团体</string>
     <string name="group_name_title">姓名</string>
-    <string name="group_members_title">会员</string>
+    <string name="group_members_title">成员</string>
     <string name="user_access_rights_title">访问权</string>
     <string name="group_access_rights_title">访问权</string>
     <string name="groups_heading">团体</string>
-    <string name="users_heading">用户数</string>
+    <string name="users_heading">用户</string>
     <string name="albums_heading">专辑</string>
-    <string name="user_high_definition_title">高画质</string>
+    <string name="user_high_definition_title">高清晰度</string>
     <string name="user_email_title">电子邮件地址</string>
     <string name="none_value">没有</string>
     <string name="access_rights_heading">访问权</string>
-    <string name="progress_loading_album_content">加载相册内容</string>
+    <string name="progress_loading_album_content">加载专辑内容</string>
     <string name="progress_loading_resource_details">加载资源详细信息</string>
-    <string name="progress_delete_album">删除相册和内容</string>
+    <string name="progress_delete_album">删除专辑和内容</string>
     <string name="progress_delete_resource">删除资源</string>
     <string name="progress_delete_resources">删除资源</string>
-    <string name="progress_unlink_resources">取消链接资源</string>
+    <string name="progress_unlink_resources">解锁资源</string>
     <string name="progress_untag_resources_pattern">从标签删除资源%1$s</string>
     <string name="progress_copy_resources">复制资源</string>
     <string name="progress_move_resources">移动资源</string>
-    <string name="progress_checking_with_server">使用服务器检查凭证</string>
-    <string name="progress_creating_album">建立相簿</string>
-    <string name="progress_setting_permissions">设定权限</string>
+    <string name="progress_checking_with_server">使用服务器检查凭据</string>
+    <string name="progress_creating_album">创建专辑</string>
+    <string name="progress_setting_permissions">设置权限</string>
     <string name="progress_loading_groups">检索用户组</string>
     <string name="progress_loading_users">检索用户</string>
     <string name="progress_loading_album_permissions">检索相册权限</string>
-    <string name="progress_loading_group_details">检索组详细信息</string>
+    <string name="progress_loading_group_details">检索小组细节</string>
     <string name="progress_delete_group">删除用户组</string>
-    <string name="progress_loading_albums">检索相册</string>
+    <string name="progress_loading_albums">检索专辑</string>
     <string name="progress_loading_user_details">检索用户详细信息</string>
     <string name="progress_delete_user">删除用户</string>
-    <string name="alert_read_permissions_needed_for_file_upload">需要读取文件系统的权限才能选择和上传文件</string>
-    <string name="alert_file_permissions_needed_for_pattern">%1$s 文件系统需要权限。 目的：%2$s</string>
-    <string name="alert_write_permission_needed_for_video_caching">启用了视频文件的本地缓存。为此，必须授予对文件系统的写访问权限。如果被拒绝，本地缓存将被禁用。</string>
+    <string name="alert_read_permissions_needed_for_file_upload">需要许可才能读取文件系统以便选择和上载文件</string>
+    <string name="alert_file_permissions_needed_for_pattern">%1$s文件系统需要权限。目的：%2$s</string>
+    <string name="alert_write_permission_needed_for_video_caching">启用视频文件的本地缓存。要允许此方法，必须授予对文件系统的写访问。如果拒绝，将禁用本地缓存。</string>
     <string name="alert_error_tidying_video_cache">无法整理视频缓存。如果此问题仍然存在，请报告。</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">无法从缓存中复制文件。 %1$s</string>
-    <string name="gallery_empty_text">该相册当前为空</string>
-    <string name="alert_error_unable_to_clear_cached_content">无法删除缓存的内容。</string>
+    <string name="gallery_empty_text">这张专辑目前是空的</string>
+    <string name="alert_error_unable_to_clear_cached_content">无法删除缓存内容。</string>
     <string name="alert_clear_cached_content">清除此资源的缓存数据并强制从服务器重新下载？</string>
-    <string name="gallery_album_content_load_failed_text">无法加载相册内容</string>
+    <string name="gallery_album_content_load_failed_text">无法加载专辑内容</string>
     <string name="gallery_permissions_load_failed_text">无法加载相册权限详细信息</string>
-    <string name="gallery_update_failed_text">无法更新专辑详细信息</string>
+    <string name="gallery_update_failed_text">无法更新相册详细信息</string>
     <string name="progress_saving_changes">保存更改</string>
-    <string name="user_privacy_level_title">隐私等级</string>
-    <string name="progress_adding_user">新增使用者</string>
+    <string name="user_privacy_level_title">隐私水平</string>
+    <string name="progress_adding_user">添加用户</string>
     <string name="last_visit_never">绝不</string>
     <string name="user_password_title">密码</string>
     <string name="password_unchanged">********</string>
-    <string name="progress_reloading_album_permissions">重新计算相册访问权限</string>
-    <string name="group_is_default_title">是默认值吗？</string>
-    <string name="progress_adding_group">新增群组</string>
-    <string name="alert_error_unable_to_access_local_filesystem">如果无法访问本地文件系统，则无法执行此操作。对不起。</string>
-    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">如果无法访问本地文件系统，则无法执行此操作。作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
-    <string name="alert_error_admin_user_required">除非安装了社区插件，否则只有管理员用户可以上传。对不起。</string>
-    <string name="upload_username_title">上载为</string>
-    <string name="certificates_heading">证明书</string>
+    <string name="progress_reloading_album_permissions">重新计算专辑访问权限</string>
+    <string name="group_is_default_title">默认是默认的？</string>
+    <string name="progress_adding_group">添加组</string>
+    <string name="alert_error_unable_to_access_local_filesystem">如果没有访问本地文件系统，此操作无法继续。对不起。</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">如果没有访问本地文件系统，此操作无法继续。作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
+    <string name="alert_error_admin_user_required">除非安装了社区插件，否则只能上传管理员用户。对不起。</string>
+    <string name="upload_username_title">上传</string>
+    <string name="certificates_heading">证书</string>
 
-    <string name="alert_slideshow_out_of_sync_with_tag">此幻灯片显示不再准确反映当前标签内容</string>
-    <string name="alert_error_app_not_yet_configured">应用尚未配置，并已连接到PIWIGO服务器。在尝试与其共享项目之前，请手动打开该应用并进行配置。</string>
-    <string name="error_server_configuration_invalid">piwigo服务器详细信息不可接受，请检查应用程序连接配置</string>
-    <string name="alert_image_show_image_select_max_zoom">允许高达100倍变焦</string>
-    <string name="alert_image_show_image_select_rotation">旋转影像</string>
-    <string name="top_tips_menu_title">热门提示</string>
-    <string name="top_tips_heading">热门提示</string>
-    <string name="alert_error_please_select_upload_album">请选择要上传到的相册</string>
+    <string name="alert_slideshow_out_of_sync_with_tag">此幻灯片不再准确反映当前标签内容</string>
+    <string name="alert_error_app_not_yet_configured">应用程序尚未配置并连接到PIWIGO服务器。请手动打开应用程序并在尝试与其共享项目之前配置它。</string>
+    <string name="error_server_configuration_invalid">不可接受的Piwigo服务器详细信息，请检查应用连接配置</string>
+    <string name="alert_image_show_image_select_max_zoom">允许最多100倍变焦</string>
+    <string name="alert_image_show_image_select_rotation">旋转图像</string>
+    <string name="top_tips_menu_title">顶尖提示</string>
+    <string name="top_tips_heading">顶尖提示</string>
+    <string name="alert_error_please_select_upload_album">请选择一个上传的专辑</string>
 
     <string name="alert_title_select_album">选择专辑</string>
-    <string name="alert_title_set_album_thumbnail">更新相册缩略图？</string>
-    <string name="alert_message_set_album_thumbnail">将相册缩略图更新为该图像？</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">您确定要删除相册（%1$s）？\n\n没有撤消功能</string>
-    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">您正在删除相册（%1$s）with %2$d 相片。\n\n您想永久删除任何孤立内容吗？</string>
-    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">您正在删除相册（%1$s）with %2$d 照片和%3$d 包含一个进一步的儿童专辑%4$d 相片。\n\n您想永久删除任何孤立内容吗？</string>
-    <string name="alert_confirm_copy_items_here_pattern">复制%1$d 篮子里的物品在这里（%2$s）？</string>
-    <string name="alert_confirm_move_items_here_pattern">移动%1$d 篮子里的物品在这里（%2$s）？</string>
-    <string name="slideshow_image_details_linked_albums_title">连结相簿</string>
+    <string name="alert_title_set_album_thumbnail">更新专辑缩略图？</string>
+    <string name="alert_message_set_album_thumbnail">更新专辑缩略图到此图片？</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">您确定要删除相册（||| 1 |||）？\n\n没有撤消功能</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">您正在删除相册（||| 1 |||）with ||| 2 ||| 相片。\n\n您想永久删除任何孤立内容吗？</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">您正在删除相册（||| 1 |||）with ||| 2 ||| 照片和||| 3 |||| 包含一个进一步的儿童专辑||| 4 |||| 相片。\n\n您想永久删除任何孤立内容吗？</string>
+    <string name="alert_confirm_copy_items_here_pattern">复制%1$d篮子里的物品在这里（%2$s）？</string>
+    <string name="alert_confirm_move_items_here_pattern">移动%1$d篮子里的物品在这里（%2$s）？</string>
+    <string name="slideshow_image_details_linked_albums_title">联系相册</string>
     <string name="list_ok_button">好的</string>
-    <string name="alert_confirm_really_remove_album_permissions_pattern">您选择删除访问此专辑的访问并导航访问所有子专辑%1$d 组和%2$d 用户。 继续这个动作？</string>
-    <string name="alert_confirm_add_album_permissions_recursively_pattern">您选择添加访问此专辑的访问%1$d 组和%2$d 用户。 您想将这些更改应用于%3$d 儿童专辑？</string>
-    <string name="alert_information_own_user_readded_to_permissions_list">您所做的更改将阻止您访问此相册。您的用户名已添加到具有明确权限的用户列表中。</string>
-    <string name="alert_information_add_album_permissions_recursively_pattern">添加权限%1$d 儿童专辑也。</string>
-    <string name="alert_error_please_provide_an_album_name">必须提供此相册的名称。请添加一个，然后重试。</string>
-    <string name="error_upload_file_chunk_upload_failed_after_retries">上传文件部分%1$d 尝试。 请重新启动此上传后重试。</string>
-    <string name="error_upload_file_ext_missing_pattern">无法上传文件%1$s 因为它缺少文件扩展名，例如.jpg</string>
+    <string name="alert_confirm_really_remove_album_permissions_pattern">您选择删除访问此专辑的访问并导航访问所有子专辑%1$d组和%2$d用户。继续这个动作？</string>
+    <string name="alert_confirm_add_album_permissions_recursively_pattern">您选择添加访问此专辑的访问%1$d组和%2$d用户。您想将这些更改应用于%3$d儿童专辑？</string>
+    <string name="alert_information_own_user_readded_to_permissions_list">您的更改将阻止您访问此专辑。您的用户名已添加到具有显式权限的人的列表中。</string>
+    <string name="alert_information_add_album_permissions_recursively_pattern">添加权限%1$d儿童专辑也。</string>
+    <string name="alert_error_please_provide_an_album_name">必须提供此专辑的名称。请添加一个，然后再试一次。</string>
+    <string name="error_upload_file_chunk_upload_failed_after_retries">上传文件部分%1$d尝试。请重新启动此上传后重试。</string>
+    <string name="error_upload_file_ext_missing_pattern">无法上传文件%1$s因为它缺少文件扩展名，例如.jpg</string>
     <string name="error_upload_file_verification_failed">验证服务器上的文件失败%1$s</string>
-    <string name="alert_message_remove_file_server_state_incorrect">该文件已部分上传。 上传作业当前已暂停。 完成上传后，该文件将从服务器中删除</string>
+    <string name="alert_message_remove_file_server_state_incorrect">此文件已部分上传。上传作业当前暂停。完成上传时将从服务器中删除该文件</string>
     <string name="alert_message_file_upload_cancelled_pattern">上传文件（%1$s）取消。</string>
-    <string name="alert_message_upload_cancelled">上载已取消</string>
-    <string name="alert_message_upload_cancelled_message">如果您不希望以后再重新开始上传。您应该从上载作业中删除文件，然后单击上载。这将从服务器中清除已取消的上传状态。</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">您所连接的服务器本身不支持您选择的图像尺寸。服务器将返回“最近匹配”尺寸的图像。</string>
+    <string name="alert_message_upload_cancelled">上传取消了</string>
+    <string name="alert_message_upload_cancelled_message">如果您稍后不希望重新启动上传。您应该从上载作业中删除文件，然后单击“上载”。这将从服务器清除已取消的上载状态。</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">您所选择的图像大小并未由您连接的服务器本身支持。服务器将返回“最近匹配”大小的图像。</string>
     <string name="logging_out_of_piwigo_pattern">注销%1$s</string>
     <string name="loading_new_server_configuration">加载新的服务器连接配置</string>
-    <string name="alert_write_permission_needed_for_caching_to_disk">要允许缓存到磁盘，必须授予对文件系统的写访问权限。如果被拒绝，缓存将在内存中。</string>
-    <string name="error_request_timed_out">到服务器的呼叫已取消，因为完成时间太长。</string>
-    <string name="alert_information_video_caching_disabled">将视频缓存到磁盘已禁用</string>
-    <string name="error_building_http_engine">无法建立HTTP引擎</string>
-    <string name="error_unexpected_error_calling_server">意外的错误调用服务器或解析响应</string>
-    <string name="error_insufficient_permissions_for_cache_folder">需要对缓存文件夹的读写权限。检查应用程序设置。</string>
-    <string name="alert_title_error_talking_to_server">与服务器通话时出错</string>
-    <string name="alert_title_error_connecting_to_server">连接服务器时出错</string>
-    <string name="alert_error_adding_certificate_to_truststore">将证书添加到信任库时出错</string>
-    <string name="alert_add_cert_to_truststore_pattern">将证书链添加到受信任的CA列表吗？</string>
-    <string name="certificate_summary_pattern">主题：%1$s\n有效：%2$s  -  %3$s\n串行：%4$s</string>
-    <string name="alert_http_engine_shutdown">HTTP引擎关闭。将根据需要自动重启。</string>
+    <string name="alert_write_permission_needed_for_caching_to_disk">要允许缓存到磁盘，必须授予对文件系统的写访问。如果拒绝，缓存将在内存中。</string>
+    <string name="error_request_timed_out">呼叫服务器取消，因为需要太长了。</string>
+    <string name="alert_information_video_caching_disabled">将视频缓存禁用磁盘</string>
+    <string name="error_building_http_engine">无法构建HTTP引擎</string>
+    <string name="error_unexpected_error_calling_server">意外错误调用服务器或解析响应</string>
+    <string name="error_insufficient_permissions_for_cache_folder">需要读取对缓存文件夹的写入访问。检查应用设置。</string>
+    <string name="alert_title_error_talking_to_server">与服务器交谈时出错</string>
+    <string name="alert_title_error_connecting_to_server">连接到服务器时出错</string>
+    <string name="alert_error_adding_certificate_to_truststore">将证书添加到信任商店时出错</string>
+    <string name="alert_add_cert_to_truststore_pattern">将证书链添加到可信CA列表中？</string>
+    <string name="certificate_summary_pattern">主题：||| 1 |||\n有效：||| 2 ||||  -  ||| 3 ||||\n串行：||| 4 |||</string>
+    <string name="alert_http_engine_shutdown">HTTP引擎关闭。将根据需要自动重新启动。</string>
     
-    <string name="alert_clearing_certificate_use_history">重置选择为受信任的证书列表</string>
-    <string name="alert_delete_all_files_selected_for_upload">删除所有选择上传的文件？</string>
-    <string name="alert_partial_upload_deleted">在部分上载到服务器后取消文件上载将导致部分上载保留在服务器上。手动清理服务器上的上传文件夹（例如/ var / www / piwigo / upload / buffer）以节省空间。</string>
-    <string name="alert_album_created">相册已创建</string>
-    <string name="album_create_failed">无法创建相册，请重试</string>
+    <string name="alert_clearing_certificate_use_history">重置所选择的证书列表</string>
+    <string name="alert_delete_all_files_selected_for_upload">删除所选的所有文件用于上载？</string>
+    <string name="alert_partial_upload_deleted">取消文件上载后，它已部分传输到服务器将导致服务器上剩余的部分上载。手动清理服务器上的上传文件夹（例如，例如/ var / piwigo /上载/缓冲区）以节省空间。</string>
+    <string name="alert_album_created">专辑创建了</string>
+    <string name="album_create_failed">无法创建专辑，请重试</string>
     <string name="alert_failure">失败</string>
-    <string name="album_created_but_permissions_set_failed">相册已创建，但无法设置权限。尝试删除部分设置的相册失败。请直接检查服务器。</string>
-    <string name="alert_loading_certificates_from_selected_files">从所选文件中加载证书。</string>
-    <string name="x509_key_type_field_pattern">私有%1$s 钥匙</string>
-    <string name="x509_key_strength_field_pattern">力量：%1$d 比特</string>
+    <string name="album_created_but_permissions_set_failed">专辑创建，但无法设置权限。尝试删除部分设置的相册失败。请直接检查服务器。</string>
+    <string name="alert_loading_certificates_from_selected_files">从所选文件加载证书。</string>
+    <string name="x509_key_type_field_pattern">私有%1$s钥匙</string>
+    <string name="x509_key_strength_field_pattern">力量：%1$d比特</string>
     <string name="x509_cert_name_field_pattern">身份：%1$s</string>
     <string name="x509_cert_verified_by_field_pattern">验证：%1$s</string>
     <string name="x509_cert_valid_from_field_pattern">有效的：%1$s</string>
     <string name="x509_cert_valid_to_field_pattern">有效：%1$s</string>
-    <string name="alert_warning_multiple_users_found_pattern">有%1$d 发现其他用户共享此用户名（%2$s）。 选择此Piwigo服务器的最新用户，但如果可能在相同或类似的时间使用服务器，则这是不安全的。 请考虑更改这些用户名，因此用户名是给定类用户的唯一标识符。</string>
-    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">需要这些权限才能启动上传过程，然后在屏幕关闭后保持上传过程运行</string>
-    <string name="alert_files_larger_than_upload_threshold_pattern">以下%1$d 文件超出了警告阈值：%2$s。 您想从上传中删除这些吗？</string>
-    <string name="alert_files_larger_than_upload_threshold_compress">您要在上传之前压缩任何视频吗？</string>
+    <string name="alert_warning_multiple_users_found_pattern">有%1$d发现其他用户共享此用户名（%2$s）。选择此Piwigo服务器的最新用户，但如果可能在相同或类似的时间使用服务器，则这是不安全的。请考虑更改这些用户名，因此用户名是给定类用户的唯一标识符。</string>
+    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">需要这些权限来开始上传过程，然后在屏幕关闭后保持上载过程运行</string>
+    <string name="alert_files_larger_than_upload_threshold_pattern">以下%1$d文件超出了警告阈值：%2$s。您想从上传中删除这些吗？</string>
+    <string name="alert_files_larger_than_upload_threshold_compress">您想在上传前压缩所有视频吗？</string>
     <string name="download_link_clipboard_data_desc">下载链接%1$s</string>
-    <string name="alert_http_scheme_specified">您的服务器正在使用http。这不是一个好主意，因为用户名和密码以纯文本格式传输到服务器。我强烈建议您将服务器更改为使用https。</string>
+    <string name="alert_http_scheme_specified">您的服务器使用HTTP。这不是一个好主意，因为用户名和密码在纯文本中将发送到服务器。我强烈建议您更改服务器以使用HTTPS。</string>
     <string name="gallery_admin_albums_list_load_failed_text">无法加载相册的完整管理列表</string>
-    <string name="title_adding_item">新增项目</string>
+    <string name="title_adding_item">添加项目</string>
     <string name="title_editing_item">编辑项目</string>
-    <string name="alert_error_item_not_unique">抱歉，该商品已经存在。</string>
-    <string name="alert_warning_no_server_url_specified">未指定服务器uri。请添加服务器的位置，然后重试。</string>
+    <string name="alert_error_item_not_unique">对不起，该项目已经存在。</string>
+    <string name="alert_warning_no_server_url_specified">没有指定服务器URI。请添加服务器的位置并重试。</string>
     <string name="error_heading_unloadable_certificate_files">无法加载以下证书文件：</string>
     <string name="error_heading_unloadable_keystore_files">无法加载以下密钥库文件：</string>
     <string name="error_heading_unloadable_keystore_aliases">无法加载以下密钥库别名：</string>
-    <string name="heading_keystore_filename">密钥库</string>
+    <string name="heading_keystore_filename">keystore.</string>
     <string name="heading_keystore_alias">别名</string>
-    <string name="release_history">发行历史</string>
-    <string name="planned_releases">计划发行</string>
+    <string name="release_history">发布历史</string>
+    <string name="planned_releases">计划发布</string>
     <string name="tags_heading">标签</string>
     <string name="progress_loading_tags">检索标签</string>
-    <string name="alert_confirm_really_delete_tag">您确定要删除此标签吗？链接到它的任何资源都不会删除，但是此操作是永久的。</string>
+    <string name="alert_confirm_really_delete_tag">您确定要删除此标记吗？与其链接的任何资源都不会被删除，但此操作是永久性的。</string>
     <string name="alert_tag_delete_success_pattern">标记（%1$s）已成功删除</string>
-    <string name="alert_tag_delete_failed_pattern">删除标记时出错（%1$s）。 请重试。</string>
+    <string name="alert_tag_delete_failed_pattern">删除标记时出错（%1$s）。请重试。</string>
     <string name="tag_usage_count_pattern">（%1$d使用）</string>
-    <string name="progress_loading_tag_details">检索资源匹配标签</string>
+    <string name="progress_loading_tag_details">检索资源匹配标记</string>
     <string name="tags_menu_title">标签</string>
-    <string name="favorites_menu_title">收藏夹</string>
-    <string name="tag_empty_text">没有使用该标签标记的项目</string>
-    <string name="tag_content_load_failed_text">加载链接到标签的资源失败</string>
+    <string name="favorites_menu_title">最爱</string>
+    <string name="tag_empty_text">没有标记此标记的项目</string>
+    <string name="tag_content_load_failed_text">无法加载链接到标记的资源</string>
     <string name="tag_heading">标签</string>
     <string name="tag_tagname_title">标签名</string>
-    <string name="alert_paid_feature_only">此功能仅在付费应用中可用</string>
-    <string name="paid_feature_only">仅付费应用</string>
+    <string name="alert_paid_feature_only">此功能仅在付费应用程序中可用</string>
+    <string name="paid_feature_only">仅付费应用程序</string>
     <string name="slideshow_image_details_tags_title">标签</string>
     <string name="button_search">搜索</string>
 
     <string name="tag_heading_pattern">标签：%1$s</string>
     <string name="error_updating_tag_pattern">删除资源错误（%1$s）来自标签：%2$s</string>
-    <string name="alert_message_info_files_already_pending_approval_pattern">%1$d 文件未上传，因为它们已上传但待定管理员批准。</string>
-    <string name="piwigo_connection_profile_heading">连接配置文件</string>
-    <string name="folder_root_label">选择器根</string>
+    <string name="alert_message_info_files_already_pending_approval_pattern">%1$d文件未上传，因为它们已上传但待定管理员批准。</string>
+    <string name="piwigo_connection_profile_heading">连接档案</string>
+    <string name="folder_root_label">选择根根</string>
     <string name="folder_root_root">设备根</string>
     <string name="folder_root_userdata">用户数据</string>
     <string name="folder_extstorage">外部存储</string>
@@ -519,67 +519,67 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="button_show_none">全部藏起来</string>
     <string name="button_select_none">选择无</string>
     <string name="button_reset">重置</string>
-    <string name="alert_network_monitor_permission_needed_for_wifi_upload">应该允许进行网络监视以仅通过WIFI有效地使用WIFI上传</string>
+    <string name="alert_network_monitor_permission_needed_for_wifi_upload">应允许网络监控，以便有效地使用WiFi上传</string>
     <string name="inaccessible_remote_folder">** 私人的 **</string>
-    <string name="error_unable_to_acquire_valid_session">无法获取与服务器的有效会话</string>
-    <string name="upload_job_is_enabled_label">有效且已启用？</string>
+    <string name="error_unable_to_acquire_valid_session">无法使用服务器获取有效会话</string>
+    <string name="upload_job_is_enabled_label">有效并启用？</string>
     <string name="notification_title_foreground_upload_service">Piwigo上传服务</string>
     <string name="notification_message_upload_service">跑步</string>
     <string name="slideshow_image_tab_basic_info">基本信息</string>
     <string name="slideshow_image_tab_exif_data">EXIF数据</string>
-    <string name="alert_bad_request_http_to_https">使用HTTP对资源的错误请求。您是否要为此连接配置文件将所有HTTP URI重写为HTTPS？可以稍后在应用偏好中进行更改。</string>
-    <string name="alert_bad_request_follow_redirects">服务器返回了302重定向响应。您是否要允许对此服务器执行以下操作？</string>
-    <string name="picture_resource_exif_data_unavailable">尚无图像元数据</string>
-    <string name="video_caching_disabled_not_recommended">禁用视频缓存将严重影响性能</string>
+    <string name="alert_bad_request_http_to_https">使用HTTP对资源的不良请求。您是否希望将所有HTTP URI重写为此连接配置文件的HTTPS？可以在App Prefs中稍后改变。</string>
+    <string name="alert_bad_request_follow_redirects">服务器返回了302个重定向响应。您是否希望允许以下这些服务器？</string>
+    <string name="picture_resource_exif_data_unavailable">尚未提供图像元数据</string>
+    <string name="video_caching_disabled_not_recommended">禁用视频缓存会严重影响性能</string>
     <string name="video_caching_disabled_warning">警告。视频缓存已禁用。按需下载。</string>
-    <string name="alert_error_album_no_longer_on_server">无法从服务器加载此相册。移到父相册。</string>
+    <string name="alert_error_album_no_longer_on_server">此专辑无法从服务器加载。搬到父专辑。</string>
     <string name="button_show_details">查看详细</string>
     <string name="button_hide_details">隐藏细节</string>
-    <string name="alert_message_max_upload_file_count_reached">已达到上传文件的最大数量。要一次上传更多内容，请购买并使用此应用的付费版本。</string>
-    <string name="alert_message_advert_load_error">广告持续存在加载问题。请向我报告，因为这些对我构成了重要但很小的收入来源。请考虑购买付费版本以完全删除广告。该应用程序现在将冻结5秒，在此期间必须保持可见屏幕。如果讯息被隐藏，倒数计时将重新开始。 5秒钟后，您可以关闭此消息，然后继续正常使用该应用程序。</string>
+    <string name="alert_message_max_upload_file_count_reached">达到最大要上载的文件数。要一次上传更多，请购买并使用此应用的付费版本。</string>
+    <string name="alert_message_advert_load_error">广告持续加载问题。请向我汇报，因为这些形式是对我来说非常小的收入来源。请考虑购买付费版本以完全删除广告。该应用程序现在将在其中冻结5秒，此屏幕必须保持可见。如果隐藏消息，倒计时将重新启动。 5秒后，您可以关闭此消息并继续正常使用该应用程序。</string>
     <string name="alert_deleting_temporary_upload_album">删除临时上传相册</string>
     <string name="alert_invalid_uri_pattern">URI无效。 %1$s</string>
     <string name="album_section_heading_albums">专辑</string>
     <string name="album_section_heading_albums_pattern">专辑（%1$d）</string>
-    <string name="album_section_heading_resources">相册中的照片</string>
+    <string name="album_section_heading_resources">这张专辑中的照片</string>
     <string name="album_title_home">家</string>
-    <string name="upload_file_rating">我的评分</string>
+    <string name="upload_file_rating">我的评价</string>
     <string name="slideshow_image_details_rating_score_title">评分分数</string>
     <string name="rating_score_pattern">%1$.2f （%2$d价格）</string>
-    <string name="connection_reset_warning_pattern">服务器已关闭连接%1$d 过去的时间%2$d 分钟。 这可能表明服务器配置的问题。</string>
+    <string name="connection_reset_warning_pattern">服务器已关闭连接%1$d过去的时间%2$d分钟。这可能表明服务器配置的问题。</string>
     <string name="content_description_icon">图标</string>
     <string name="duplicates_ignored_pattern">重复忽略：%1$d</string>
-    <string name="alert_msg_using_fallback_piwigo_method_pattern">piwigo ws方法%1$s 在此服务器上不再可用，并返回%2$s 已经用过。 您是否刚刚停用或删除了服务器插件？</string>
-    <string name="alert_msg_piwigo_method_not_available_pattern">piwigo ws方法%1$s 此服务器不再可用。 在应用程序中禁用受影响的功能。 您是否刚刚停用或删除了服务器插件？</string>
-    <string name="removing_favorite">删除收藏夹</string>
-    <string name="adding_favorite">加入收藏</string>
-    <string name="alert_error_unsupported_features_pattern">此应用程序支持的某些功能在您的服务器上不可用。 启用：\n1.安装PiwigoClientWsExts插件。\n2.注销并重新登录此应用程序。\n\n我们会在一周内提醒您。</string>
-    <string name="tag_will_be_created_when_resource_is_saved">使用用户标签插件添加新标签。仅在保存资源后才创建标签。</string>
-    <string name="resource_details_updated_message">资源详细信息已更新</string>
-    <string name="alert_server_call_in_progress_please_wait">服务器调用正在进行中。请等待此操作完成，然后再试一次。</string>
-    <string name="upload_error_too_many_orphaned_files_exist_on_server">服务器上存在太多孤立图像，无法继续上载。请整理这些，然后重试。</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">piwigo ws方法%1$s在此服务器上不再可用，并返回%2$s已经用过。您是否刚刚停用或删除了服务器插件？</string>
+    <string name="alert_msg_piwigo_method_not_available_pattern">piwigo ws方法%1$s此服务器不再可用。在应用程序中禁用受影响的功能。您是否刚刚停用或删除了服务器插件？</string>
+    <string name="removing_favorite">删除最爱</string>
+    <string name="adding_favorite">添加收藏夹</string>
+    <string name="alert_error_unsupported_features_pattern">有些功能在您的服务器上不可用此应用支持。 启用：\n1.安装piwiglientwsexts插件。\n2.耗尽并返回此应用程序。\n\n你会在一周内提醒你。</string>
+    <string name="tag_will_be_created_when_resource_is_saved">使用用户标签插件添加新标记。只有在保存资源后，才会创建标记。</string>
+    <string name="resource_details_updated_message">资源详细信息更新</string>
+    <string name="alert_server_call_in_progress_please_wait">服务器呼叫正在进行中。在再次尝试之前，请等待此项完成。</string>
+    <string name="upload_error_too_many_orphaned_files_exist_on_server">在服务器上存在太多孤立图像以进行上传以继续。请在重试之前整理这些。</string>
     <string name="upload_error_orphaned_file_retrieval_failed">无法检索孤立图像列表。请重试。</string>
-    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">管理员用户无法访问预期的功能。 如果使用社区插件（非管理员用户的伪造管理状态）尚未正确安装此操作。 检查相关插件是否正确曝光了使用Web浏览器的方法：%1$s /tools/ws.htm</string>
-    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">此功能不可用。请在您的服务器上安装PiwigoClientWsExts插件。如果您已经安装了此软件，请将其更新为最新版本。</string>
-    <string name="alert_user_session_no_allowed_filetypes">服务器未提供可与用户会话信息一起上传的文件类型列表（通常仅为管理员用户提供）。请检查服务器配置是否正确，然后重试。如果问题仍然存在，请给我发送电子邮件，以帮助我为您诊断问题。</string>
-    <string name="job_not_found">找不到上传作业</string>
-    <string name="files_mid_data_transfer_title">文件已部分复制</string>
+    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">管理员用户无法访问预期的功能。如果使用社区插件（非管理员用户的伪造管理状态）尚未正确安装此操作。检查相关插件是否正确曝光了使用Web浏览器的方法：%1$s /tools/ws.htm</string>
+    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">此功能不可用。请在服务器上安装PiwiglientWsexts插件。如果已安装此安装，请将其更新到最新版本。</string>
+    <string name="alert_user_session_no_allowed_filetypes">服务器尚未提供可以使用用户会话信息上传的文件类型列表（这通常仅为管理员用户提供）。请检查服务器是否正确配置并重试。如果问题仍然存在，请给我发电子邮件，帮助我为您诊断问题。</string>
+    <string name="job_not_found">未找到上传作业</string>
+    <string name="files_mid_data_transfer_title">文件部分复制</string>
     <string name="files_awaiting_verification_title">等待数据完整性检查的文件</string>
     <string name="files_awaiting_transfer_title">等待数据传输的文件</string>
     <string name="files_awaiting_configuration_title">等待配置的文件</string>
     <string name="files_requiring_server_deletion_title">需要从服务器删除的文件</string>
-    <string name="files_fully_uploaded_title">文件已完全上传</string>
-    <string name="temporary_album_needs_deleting_title">临时相册需要删除</string>
+    <string name="files_fully_uploaded_title">文件完全上传</string>
+    <string name="temporary_album_needs_deleting_title">临时专辑需要删除</string>
     <string name="upload_job_status_heading">上传工作状态</string>
     <string name="file_count_pattern">%1$d文件</string>
-    <string name="errors_encountered_list_title">遇到的错误</string>
-    <string name="upload_error_orphaned_file_retrieval_unavailable">无法检查是否存在孤立图像。推荐安装PiwigoClientWsExts服务器插件</string>
+    <string name="errors_encountered_list_title">遇到错误</string>
+    <string name="upload_error_orphaned_file_retrieval_unavailable">无法检查孤儿图像的存在。建议安装piwigclientwsexts server插件</string>
     <string name="x_of_y">%1$s / %2$s</string>
-    <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">您的PiwigoClientWsExts版本已过期。请优先更新。</string>
+    <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">您的PiWigClientWsexts版本已过时。请将其更新为优先权。</string>
     <string name="child_album_detail_txt_pattern">%1$d儿童专辑</string>
-    <string name="please_read_and_agree_with_eula_first">请先阅读并确认同意EULA的条款</string>
-    <string name="alert_required_permissions_not_granted_action_cancelled">未授予所需的权限。动作已取消。</string>
-    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">未授予所需的权限。动作已取消。作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
+    <string name="please_read_and_agree_with_eula_first">请先阅读并确认与EULA的条款协议</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled">未获得所需的权限。行动取消了。</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">未获得所需的权限。行动取消了。作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
     <string name="copied_to_clipboard">复制到剪贴板</string>
     <string name="alert_plugin_required_pattern">%1$s服务器插件必填 - 版本%2$s或者更新</string>
 
@@ -590,146 +590,146 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">偏好%1$s是无可挽回的，默认为%2$s。请在应用设置中重置此值</string>
-    <string name="switch_to_cached_mode">该服务器目前不可用。使用缓存的数据？</string>
+    <string name="preference_corrupt_please_re_type_pattern">"偏好%1$s是无可挽回的，默认为%2$s。请在应用设置中重置此值"</string>
+    <string name="switch_to_cached_mode">服务器目前不可用。使用缓存数据？</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
-    <string name="compress_videos">压缩影片</string>
-    <string name="compress_images">压缩影像</string>
-    <string name="upload_tab_title_settings">设定值</string>
-    <string name="upload_tab_title_files">档案</string>
+    <string name="compress_videos">压缩视频</string>
+    <string name="compress_images">压缩图像</string>
+    <string name="upload_tab_title_settings">设置</string>
+    <string name="upload_tab_title_files">文件</string>
     <string name="alert_internal_server_exposed_pattern">意外权限%1$s在URL中找到并替换为%2$s。您的服务器可能会被配置错误。</string>
     <string name="buy_time_menu_title">隐藏广告</string>
-    <string name="watch_advert_to_buy_advert_free_time">您是否想观看广告购买短时间内没有任何广告？如果需要，您可以多次执行此操作以增加时间长度。</string>
-    <string name="reward_video_not_yet_loaded">抱歉，奖励视频尚未加载。请稍后再试。</string>
+    <string name="watch_advert_to_buy_advert_free_time">您想观看广告是否在没有任何广告的情况下购买短期？您可以多次执行此操作以增加如果需要的时间长度。</string>
+    <string name="reward_video_not_yet_loaded">对不起，但奖励视频尚未装载。请稍后再试。</string>
     <string name="bought_time_menu_title_pattern">广告%1$02d：%2$02d</string>
-    <string name="allow_upload_of_incompressible_videos">如果无法压缩则上传原始文件</string>
+    <string name="allow_upload_of_incompressible_videos">如果无法压缩，上传原始文件</string>
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">服务器不会接受%1$d选择用于上载的文件。如果这些是视频，则可以启用压缩。从上载中删除这些文件？</string>
     <string name="upload_status_tab_title_details">细节</string>
-    <string name="upload_status_tab_title_errors">失误</string>
+    <string name="upload_status_tab_title_errors">错误</string>
     <string name="message_piwigo_server_inconsistent_results">piwigo api call %1$s报告文件校验和匹配，但API呼叫%2$s报告它匹配。这可能是您使用的piwigo服务器或插件中的错误，并且可能值得报告。</string>
     <string name="alert_bulk_image_permissions_title">设置访问权限</string>
     <string name="alert_bulk_image_permissions_message">设置%1$d设置访问权限级别选择的资源</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">无法处理与“%1$s%1$s”共享的文件哑剧类型</string>
     <string name="alert_error_unsupported_file_extensions_pattern">无法上载具有以下扩展的文件并已删除：%1$s</string>
-    <string name="please_select_a_parent_album">请选择一个父相册</string>
-    <string name="unsupported_device">抱歉，不支持此设备。访问Google Play服务时出现问题。</string>
-    <string name="hint_album_view">点按屏幕底部以显示该相册的详细信息</string>
+    <string name="please_select_a_parent_album">请选择父专辑</string>
+    <string name="unsupported_device">对不起，不支持此设备。访问Google Play服务有一个问题。</string>
+    <string name="hint_album_view">点击屏幕底部以提交此专辑的详细信息</string>
     <string name="usage_hint_title">暗示</string>
-    <string name="hint_slideshow_base_view_1">点击屏幕底部或资源名称上的，以显示该资源的详细信息</string>
-    <string name="hint_slideshow_base_view_2">向左或向右滑动可在资源之间导航</string>
-    <string name="hint_slideshow_item_view_1">可以通过点击或滑动所需的星级来调整等级。这具有立竿见影的效果。</string>
-    <string name="hint_slideshow_paid_view_3">将此资源标记为收藏，请点击图像资源名称右侧的心脏图标</string>
-    <string name="hint_navigation_panel_1">点击上方的应用程序图标以强制服务器注销并登录</string>
-    <string name="user_details_not_found_on_server">在服务器上找不到用户详细信息</string>
+    <string name="hint_slideshow_base_view_1">点击屏幕底部或资源名称，为此资源带来详细信息</string>
+    <string name="hint_slideshow_base_view_2">向左或向右滑动以在资源之间导航</string>
+    <string name="hint_slideshow_item_view_1">可以通过攻丝或刷到所需的星级等级来调整额定值。这立即产生了影响。</string>
+    <string name="hint_slideshow_paid_view_3">要将此资源标记为最喜欢的，请点击图像资源名称的右侧的核心图标</string>
+    <string name="hint_navigation_panel_1">点击上面的应用程序图标以强制服务器注销并登录</string>
+    <string name="user_details_not_found_on_server">无法在服务器上找到用户详细信息</string>
     <string name="resource_queued_for_download">资源排队下载。它是位置%1$d在队列中。</string>
     <string name="alert_message_showing_images_of_size">显示大小服务器的图像%1$s</string>
     <string name="alert_message_showing_image_thumbnails_of_size">从大小的服务器显示图像缩略图%1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">显示来自size的服务器的专辑缩略图%1$s</string>
     
-    <string name="alert_error_upload_file_compression_error_message_pattern">压缩上传文件时出错%1$s。\n%2$s</string>
-    <string name="uploading_progress_bar_message">上载中</string>
-    <string name="compressing_progress_bar_message">压缩方式</string>
-    <string name="warning_missing_tags_links_removed_from_resource">并非所有与此项目链接的标记仍然存在于数据库中。 链接到%1$d 已被删除</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">压缩上传文件时出错||| 1 |||。\n|||| 2 |||</string>
+    <string name="uploading_progress_bar_message">上传</string>
+    <string name="compressing_progress_bar_message">压缩</string>
+    <string name="warning_missing_tags_links_removed_from_resource">并非所有与此项目链接的标记仍然存在于数据库中。链接到%1$d已被删除</string>
     <string name="button_stop_warning_me">不要再告诉我</string>
-    <string name="create_email_using_app">使用应用创建电子邮件</string>
+    <string name="create_email_using_app">使用应用程序创建电子邮件</string>
     <string name="open_files">在应用程序中打开文件</string>
-    <string name="files_unavailable_to_download_removed_pattern">您的选择包含无法处理的文件。 这些%1$d 文件已被忽略。 要共享视频文件，必须首先完全缓存它。</string>
-    <string name="alert_all_user_hints_will_be_shown_again">所有一次性用户提示将再次显示</string>
+    <string name="files_unavailable_to_download_removed_pattern">您的选择包含无法处理的文件。这些%1$d文件已被忽略。要共享视频文件，必须首先完全缓存它。</string>
+    <string name="alert_all_user_hints_will_be_shown_again">所有一次性用户提示都将再次显示</string>
     
     <string name="delete_uploaded_files_title">删除上传的文件</string>
     <string name="system_file_selector_label">系统文件选择</string>
     <string name="preference_uri_consumer_description_pattern">偏好：%1$s</string>
-    <string name="selected_files_missing_permissions_warning_message_pattern">所选某些文件不再可用所需的权限。 文件选择已取消。</string>
-    <string name="missing_permissions_warning_message_pattern">"自上次打开此应用程序以来，已删除了应用程序所需的文件权限\n\n%1$s\n\n请为这些设置选择新权限，以保持按预期工作的内容。"</string>
+    <string name="selected_files_missing_permissions_warning_message_pattern">所选某些文件不再可用所需的权限。文件选择已取消。</string>
+    <string name="missing_permissions_warning_message_pattern">"自上次打开此应用程序以来，已删除了应用程序所需的文件权限\n\n|||| 1 |||\n\n请为这些设置选择新权限，以保持按预期工作的内容。"</string>
     <string name="folder_selection_title">选择文件夹</string>
     <string name="files_selection_title">选择文件</string>
     <string name="all">全部</string>
-    <string name="user_high_definition_field">允许访问原始（完整大小）文件</string>
-    <string name="group_is_default_field">向该组分配新用户</string>
+    <string name="user_high_definition_field">允许访问原始（全尺寸）文件</string>
+    <string name="group_is_default_field">为此组分配新用户</string>
     <string name="createGallery_galleryCommentsAllowed_title">用户评论</string>
     <string name="uri_permission_justification_to_upload">用于上传到服务器</string>
     <string name="progress_loading_folder_content">加载文件夹内容</string>
     <string name="calculating_file_checksums">计算文件校验和</string>
-    <string name="alert_error_starting_download">开始下载文件时出错</string>
+    <string name="alert_error_starting_download">错误启动文件下载</string>
     <string name="progress_importing_files">导入文件</string>
-    <string name="content_filter">内容过滤</string>
-    <string name="alert_advert_importance_message">广告收入对我来说很重要。很抱歉，它们使您感到沮丧（他们也对我如此），但是如果您观看它们，它们会一直出现直到您观看一个。为避免此问题，请看着他们，直到他们提供关闭选项为止。或者，购买此应用程序的付费版本。非常感谢您的支持。</string>
+    <string name="content_filter">内容过滤器</string>
+    <string name="alert_advert_importance_message">广告的收入对我很重要。对不起，他们挫败了你（他们也是这样），但如果你看着他们，他们会继续出现，直到你看一个。为了避免这个问题，请注意它们，直到他们提供关闭的选择。或者，购买此应用程序的付费版本。非常感谢您的支持。</string>
     <string name="eula_privacy_title">隐私</string>
     <string name="privacy_policy_label">我们的隐私政策</string>
-    <string name="title_advert_consent">您的隐私</string>
-    <string name="personalised_adverts_label">您要个性化广告吗？</string>
+    <string name="title_advert_consent">你的隐私</string>
+    <string name="personalised_adverts_label">您想要广告是个性化的吗？</string>
     <string name="personalised_adverts_field">显示个性化广告</string>
-    <string name="open_link">开启网页</string>
-    <string name="no_adverts_label">喜欢这个应用程序的免费广告版吗？</string>
-    <string name="view_the_paid_version">带我去看免费广告版</string>
-    <string name="advert_providers">使用中的广告提供者</string>
-    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">抱歉，该文件无法使用，因为它是由未授权对该文件的请求的扩展访问权且该访问权已到期的应用共享的。</string>
-    <string name="files_shared_without_required_permissions_error">您用来选择文件的应用程序尚未将必要的文件权限委派给Piwigo Client。在Piwigo Client的付费版本中已添加了针对此问题的解决方案，但您也可以使用其他方法来选择文件。</string>
-    <string name="files_cached_from_other_apps">缓存的共享</string>
+    <string name="open_link">打开网页</string>
+    <string name="no_adverts_label">喜欢这个应用程序的广告免费版本吗？</string>
+    <string name="view_the_paid_version">带我去广告免费版本</string>
+    <string name="advert_providers">广告提供商使用</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">对不起，此文件无法使用，因为它是由未授权对此文件的请求的扩展访问的应用程序共享，并且该访问已过期。</string>
+    <string name="files_shared_without_required_permissions_error">您用于选择文件的应用程序尚未将必要的文件权限委托给piwigo客户端。在Piwigo客户端的付费版本中为此问题添加了一个解决方案，但或者，您可以使用不同的选择文件的方法。</string>
+    <string name="files_cached_from_other_apps">缓存股份</string>
     <string name="progress_copying_imported_files">复制导入的文件</string>
-    <string name="selected_files">选定文件</string>
-    <string name="uri_permission_justification_file_selection">选择此应用程序要使用的文件或文件夹</string>
-    <string name="alert_error_please_select_download_folder_and_retry">请在应用程序设置中选择一个文件夹下载文件，然后重试。</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">无法找到有效的输出文件扩展名（优先是%2$s）可以找到文件（视频：%3$b%4$b）服务器中的服务器可接受（%1$s %1$s）。 可以通过安装插件（如VideoJS）来在服务器上更改可接受的文件，或者编辑服务器PHP配置文件（本地/ config / config.inc.php）$ conf [\'file_ext \']。</string>
-    <string name="uuid_title">安装UUID</string>
-    <string name="alert_error_unable_add_files_previous_job_still_running">无法添加文件进行上传。上载作业正在进行中。</string>
-    <string name="alert_error_unable_add_files_previous_job_unfinished">无法添加文件进行上传。当前的上传作业需要先完成。</string>
-    <string name="removing_files_from_job">从上载作业中删除文件</string>
-    <string name="doc_provider_root_downloads_title">Piwigo下载</string>
+    <string name="selected_files">选定的文件</string>
+    <string name="uri_permission_justification_file_selection">选择此应用程序使用的文件或文件夹</string>
+    <string name="alert_error_please_select_download_folder_and_retry">请选择一个文件夹以在应用程序设置中下载文件，然后重试。</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">无法找到有效的输出文件扩展名（优先是%2$s）可以找到文件（视频：%3$b%4$b）服务器中的服务器可接受（%1$s %1$s）。可以通过安装插件（如VideoJS）来在服务器上更改可接受的文件，或者编辑服务器PHP配置文件（本地/ config / config.inc.php）$ conf [\'file_ext \']。</string>
+    <string name="uuid_title">安装uuid.</string>
+    <string name="alert_error_unable_add_files_previous_job_still_running">无法添加上传文件。上传作业正在进行中。</string>
+    <string name="alert_error_unable_add_files_previous_job_unfinished">无法添加上传文件。目前上传作业需要先完成。</string>
+    <string name="removing_files_from_job">从上传作业中删除文件</string>
+    <string name="doc_provider_root_downloads_title">piwigo下载</string>
     <string name="doc_provider_root_downloads_summary">从服务器下载的文件</string>
-    <string name="downloads_menu_title">资料下载</string>
-    <string name="view_exported_files">查看导出的文件</string>
-    <string name="generating_upload_job">根据您的选择配置上传作业</string>
-    <string name="alert_error_files_without_permissions">从您共享的应用程序未提供URI权限。 上传可以继续，但如果作业暂停，稍后恢复（例如通过Android电源管理），则不再可以继续上传这些文件。 要避免此问题，请选择要使用此应用上传的文件，如果可能的话。</string>
-    <string name="alert_error_files_without_permissions_pattern">所有文件都没有提供URI权限。 如果作业暂停，稍后恢复，则不会上传那些情况（例如Android电源管理）。 要避免此问题，请选择要使用此应用上传的文件，如果可能的话。 受影响的文件：%1$d。</string>
+    <string name="downloads_menu_title">下载</string>
+    <string name="view_exported_files">查看导出文件</string>
+    <string name="generating_upload_job">使用选择配置上传作业</string>
+    <string name="alert_error_files_without_permissions">从您共享的应用程序未提供URI权限。上传可以继续，但如果作业暂停，稍后恢复（例如通过Android电源管理），则不再可以继续上传这些文件。要避免此问题，请选择要使用此应用上传的文件，如果可能的话。</string>
+    <string name="alert_error_files_without_permissions_pattern">所有文件都没有提供URI权限。如果作业暂停，稍后恢复，则不会上传那些情况（例如Android电源管理）。要避免此问题，请选择要使用此应用上传的文件，如果可能的话。受影响的文件：%1$d。</string>
     <string name="button_compress">压缩</string>
-    <string name="unable_to_compress_without_data">没有设置就无法压缩</string>
+    <string name="unable_to_compress_without_data">没有设置无法压缩</string>
     <string name="video_compression_settings_invalid">视频压缩设置无效。请检查并重试。</string>
     <string name="alert_password_entry">要求输入密码</string>
-    <string name="import_x_of_type_y_cancelled_pattern">导入%2$s %1$s 取消</string>
+    <string name="import_x_of_type_y_cancelled_pattern">导入%2$s %1$s取消</string>
     <string name="import_cancelled">导入已取消</string>
-    <string name="alert_error_item_must_belong_to_at_least_one_album">该项目必须至少属于一个相册，除非被删除。 请选择一个，然后重试。</string>
-    <string name="orphans_menu_title">孤儿</string>
-    <string name="piwigo_server">Piwigo服务器</string>
+    <string name="alert_error_item_must_belong_to_at_least_one_album">除非被删除，否则该项目必须属于至少一个专辑。请选择一个并再试一次。</string>
+    <string name="orphans_menu_title">孤子</string>
+    <string name="piwigo_server">piwigo服务器</string>
     <string name="piwigo_server_plugin">服务器插件</string>
-    <string name="piwigo_server_updates_available_pattern">piwigo更新可用：\n\n%1$s\n%2$s</string>
+    <string name="piwigo_server_updates_available_pattern">Piwigo更新可用：\n\n|||| 1 |||\n|||| 2 |||</string>
     
-    <string name="localizedEmailHelp">此电子邮件模板是为了您的方便。\n如果您认为提供以下任何详细信息无关紧要，请删除它们。\n\nUUID使我可以过滤所有记录的数据，以仅显示与您相关的数据。 仅当我正在努力修复您遇到的错误时才需要这样做。</string>
-    <string name="try_enabling_privacy_plugin_media_uris">在服务器上找不到资源。 您想启用隐私插件多媒体uri修复程序吗？</string>
-    <string name="multimedia_playback_currently_disabled">多媒体播放已禁用。 您可能选择了此选项来保存数据。 启用按需播放，或在应用程序首选项中以幻灯片模式播放。</string>
+    <string name="localizedEmailHelp">此电子邮件模板为您方便起见。\n如果您觉得提供以下任何细节并不相关，请删除它们。\n\nUUID允许我过滤所有记录的数据以显示与您相关的数据。 如果我努力修复困难，那么这将是必要的。</string>
+    <string name="try_enabling_privacy_plugin_media_uris">无法在服务器上找到资源。您想启用隐私插件多媒体URI修复吗？</string>
+    <string name="multimedia_playback_currently_disabled">禁用多媒体播放。您可能选择此项保存数据。在App首选项中启用按需播放，或按需播放幻灯片模式。</string>
     <string name="release_changes">近期变动</string>
-    <string name="item_not_yet_loaded">物品尚未加载</string>
+    <string name="item_not_yet_loaded">物品尚未装载</string>
     <string name="button_refresh">刷新页面</string>
-    <string name="alert_slideshow_feature_refresh_coming_soon">此功能即将推出。 现在，在幻灯片显示中向前或向后移动几个项目，然后再返回该项目</string>
+    <string name="alert_slideshow_feature_refresh_coming_soon">这个功能即将推出。现在，在返回此项目之前，在幻灯片中向前或向后移动几个项目</string>
     <string name="cancelled_indicator">上传文件已取消</string>
-    <string name="media_type_indicator">媒体类型指示</string>
-    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">上载时发生错误。 您是否希望：\n\n在手动重新启动上传之前查看错误？\n\n重试错误操作？</string>
+    <string name="media_type_indicator">媒体类型指示器</string>
+    <string name="some_files_failed_to_upload_what_action_do_you_wish_to_take">上传时遇到错误。 你愿意：\n\n在手动重新启动上传之前查看错误？\n\n重试符号错误？</string>
     <string name="button_finish">结束</string>
     <string name="button_review">审查</string>
     <string name="error_file_not_found">文件未找到</string>
     <string name="no_errors_found_text">找不到错误</string>
-    <string name="no_errors_found_title">失误</string>
-    <string name="upload">上载</string>
-    <string name="supported_file_types">此文件类型列表是此服务器配置为接受的文件类型。\n\n可以在local / config / config.inc.php文件中更改它。</string>
+    <string name="no_errors_found_title">错误</string>
+    <string name="upload">上传</string>
+    <string name="supported_file_types">此文件类型列表是该服务器配置为接受的文件类型。\n\n它可以以本地/ config / config.inc.php文件更改。</string>
     <string name="deleting_tag">删除标签</string>
-    <string name="compressed_progress_bar_message">压缩的</string>
+    <string name="compressed_progress_bar_message">压缩</string>
     <string name="button_clipboard">剪贴板</string>
     <string name="button_email">电子邮件</string>
     <string name="button_this_app">这个应用程序</string>
-    <string name="connection_profile_amended_with_new_details_pattern">服务器连接配置文件\n  %1$s\n  已创建和或修改新细节</string>
+    <string name="connection_profile_amended_with_new_details_pattern">服务器连接配置文件\n  |||| 1 |||\n  已创建和或修改新细节</string>
     <string name="alert_create_or_update_server_connection_details">您想创建或更新App Piwigo Server连接详细信息吗？</string>
-    <string name="alert_error_unable_to_choose_folder_no_uri_permissions">该应用程序无法找到所选文件夹的必要文件权限。 请选择另一个。 如果它是根，请删除并重新添加root，然后再次选择。</string>
+    <string name="alert_error_unable_to_choose_folder_no_uri_permissions">该应用程序无法找到所选文件夹的必要文件权限。请选择另一个。如果它是根，请删除并重新添加root，然后再次选择。</string>
     <string name="upload_job_stopped_by_user">上传用户停止</string>
-    <string name="upload_error_server_resource_not_yet_retrieved">piwigo资源尚未检索。 无法使用姓名，权限，相册成员资格等详细信息配置</string>
-    <string name="upload_error_server_resource_not_retrieved_repaired">上载文件内容后未正确检索服务器资源。 已经尝试处理这个问题，但它可能无法正常工作。</string>
-    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">文件数据的最后一块块为文件上载，但服务器无法提供资源标识符。 它可能是可检索的。</string>
+    <string name="upload_error_server_resource_not_yet_retrieved">piwigo资源尚未检索。无法使用姓名，权限，相册成员资格等详细信息配置</string>
+    <string name="upload_error_server_resource_not_retrieved_repaired">上载文件内容后未正确检索服务器资源。已经尝试处理这个问题，但它可能无法正常工作。</string>
+    <string name="upload_error_final_chunk_uploaded_successfully_bu_no_server_resource_provided">文件数据的最后一块块为文件上载，但服务器无法提供资源标识符。它可能是可检索的。</string>
     <string name="checking_uri_permissions">更新文件权限的记录</string>
     <string name="please_wait_in_progress">请等待以前的要求完成</string>
     
-    <string name="upload_of_files_complete_finishing_up">上传文件完成。 只是完成。</string>
+    <string name="upload_of_files_complete_finishing_up">上传文件完成。只是完成。</string>
     <string name="uploaded_previously">上传之前</string>
     <string name="migrated_settings_from_previous_version">设置从以前的应用程序版本迁移</string>
-    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">并非所选的所有项目都可以接受此服务器。 那些需要重新压缩的人：%1$d</string>
+    <string name="alert_error_unsupported_file_extensions_require_compression_pattern">"并非所选的所有项目都可以接受此服务器。那些需要重新压缩的人：%1$d"</string>
     <string name="upload_uploadable_files_label">此服务器可接受的文件类型</string>
     <string name="upload_icon_key_label">图标颜色</string>
     <string name="compress_because_thats_the_default">将被压缩</string>

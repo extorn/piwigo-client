@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="hint_slideshow_free_view_1">Автоматический запуск слайд-шоу (переход по изображениям) доступен в платной версии.</string>
+    <string name="hint_slideshow_free_view_1">Автоматический привод слайд-шоу (прогрессирование с помощью изображений) доступен в платной версии</string>
     
 </resources>

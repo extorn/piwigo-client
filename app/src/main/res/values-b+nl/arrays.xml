@@ -6,14 +6,14 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0bps (—X)</item>
-        <item>zeer laag (frame van 0,025 b / pixels *)</item>
+        <item>0bps (-x)</item>
+        <item>Zeer laag (0.025 b / pixels * frame)</item>
         <item>lager (0,05 b / pixels * frame)</item>
         <item>laag (0,1 b / pixels * frame)</item>
-        <item>gemiddeld (0,15 b / pixels * frame)</item>
-        <item>hoog (0,2 b / pixels * frame)</item>
-        <item>zeer hoog (0,25 b / pixels * frame)</item>
-        <item>ultrahoog (0,3 b / pixels * frame)</item>
+        <item>Medium (0,15 b / pixels * frame)</item>
+        <item>Hoog (0,2 b / pixels * frame)</item>
+        <item>Zeer hoog (0,25 b / pixels * frame)</item>
+        <item>Ultra High (0.3 b / pixels * frame)</item>
     </string-array>
 
     
@@ -29,30 +29,30 @@
     
     <string-array name="preference_caching_level_items">
         <item>Caching uitgeschakeld</item>
-        <item>Cache naar geheugen</item>
+        <item>Cache voor geheugen</item>
         <item>Cache naar schijf</item>
     </string-array>
 
 
     <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
         <item>Standaard</item>
-        <item>passen op schermgrootte</item>
-        <item>vergroten en bijsnijden om op het scherm te passen</item>
-        <item>midden op het scherm</item>
+        <item>geschikt voor schermgrootte</item>
+        <item>vergroten en bijsnijden om het scherm te passen</item>
+        <item>Centrum op het scherm</item>
     </string-array>
 
     
 
     <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
-        <item>best passend</item>
+        <item>best</item>
         <item>vierkant</item>
         <item>duim</item>
-        <item>2klein</item>
+        <item>2sklein</item>
         <item>xsmall</item>
         <item>klein</item>
         <item>medium</item>
         <item>groot</item>
-        <item>xlarge</item>
+        <item>Xlarge</item>
         <item>xxlarge</item>
         
     </string-array>
@@ -62,18 +62,18 @@
     <string-array name="preference_gallery_item_thumbnail_size_entry_text">
         <item>vierkant</item>
         <item>duim</item>
-        <item>2klein</item>
+        <item>2sklein</item>
         <item>xsmall</item>
         <item>klein</item>
     </string-array>
 
     
     <string-array name="preference_gallery_child_resource_sort_order_entry_text">
-        <item>Server standaard</item>
-        <item>Bron-ID</item>
-        <item>Resource bestandsnaam</item>
+        <item>Standaard</item>
+        <item>Resource ID</item>
+        <item>Resource-bestandsnaam</item>
         <item>Naam van de bron</item>
-        <item>Aantal treffers</item>
+        <item>Aantal hits</item>
         <item>Gemiddelde beoordelingsscore</item>
         <item>Aanmaakdatum</item>
         <item>Datum beschikbaar</item>
@@ -81,7 +81,7 @@
     </string-array>
     
     <string-array name="server_ssl_certificate_hostname_verification_entries">
-        <item>Strikt</item>
+        <item>Streng</item>
         <item>Browser compatibel</item>
         <item>Uit</item>
     </string-array>
@@ -97,10 +97,10 @@
     
 
     <string-array name="privacy_levels_groups_array">
-        <item>Admins</item>
-        <item>Beheerders, familie</item>
-        <item>Beheerders, familie, vrienden</item>
-        <item>Beheerders, familie, vrienden, contacten</item>
+        <item>Administratie</item>
+        <item>Admins, Family</item>
+        <item>Admins, Family, Friends</item>
+        <item>Admins, Family, Friends, Contacten</item>
         <item>Iedereen</item>
     </string-array>
 
@@ -118,49 +118,52 @@
     <string-array name="rotation_array">
         <item>Links 90 graden</item>
         <item>Geen</item>
-        <item>Rechts 90 graden</item>
+        <item>Recht 90 graden</item>
         <item>Rechts 180 graden</item>
     </string-array>
 
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Als je problemen hebt met de app, gebruik dan een e-mail om me op de hoogte te stellen. Plaats desgewenst een negatieve recensie op Google Play, ik probeer dat niet te stoppen, maar stuur ook een e-mail. Bovenaan het uitschuifbare lademenu staat een link om mij een e-mail te sturen. Ik kan veel uitgebreidere ondersteuning bieden op een e-mailadres. Erg bedankt.</item>
-        <item>U kunt alleen bestanden zien om te selecteren om te uploaden die acceptabel zijn om op uw server te uploaden. Als u video\'s wilt uploaden, moet u het bestand van uw server config.inc.php wijzigen om $ Conf [Upload_Form_all_TYPES \'] = TRUE op te nemen; in plaats van false</item>
-        <item>Als een upload net niet lukt, probeer dan de voorkeur op de uploadpagina van de app-instellingen te gebruiken om eventuele resterende mislukte uploads van de server te wissen</item>
-        <item>Er treedt altijd een fout op bij het updaten van tags - "U mag geen tags verwijderen" - Zorg ervoor dat gebruikers tags zowel kunnen toevoegen als verwijderen (instelling voor serverplug-in)</item>
-        <item>Deel bestanden van een andere app met deze app om ze toe te voegen aan het uploadscherm, klaar om naar je huidige server te gaan</item>
-        <item>Klik lang op een afbeelding (miniatuur of diashow-item) die niet is geladen om deze opnieuw op te halen</item>
-        <item>Klik lang op een album om dat album en alle inhoud te verwijderen</item>
-        <item>Klik lang op een albumafbeelding om bulkselectie van afbeeldingen voor een actie mogelijk te maken</item>
-        <item>Wanneer u een afbeelding in de diavoorstelling bekijkt, klikt u lang om de weergegeven afbeelding te draaien / wijzigen / verder zoomen toe te staan</item>
-        <item>U kunt tijdens het bekijken van een diavoorstelling op een afbeelding inzoomen door twee vingers naar elkaar toe of uit elkaar te trekken op het scherm</item>
-        <item>Als u bent aangemeld als beheerder en voordat u uw apparaat aan een vriend overhandigt om uw foto\'s te bekijken, schakelt u de toepassingsvergrendelingsfunctie in om te voorkomen dat er onbedoelde wijzigingen in uw galerij worden aangebracht.</item>
-        <item>Als je eenmaal een volledige video hebt bekeken en lokale bestandscaching is ingeschakeld, is het mogelijk om die video op te slaan in je downloadmap</item>
-        <item>Klik lang op de verwijderknop op een \'bestand voor uploaden \' om alle te uploaden bestanden te verwijderen (als de taak niet in uitvoering is)</item>
-        <item>Als afbeeldingen traag worden geladen, controleer dan of uw server automatisch de grootte genereert die door deze app wordt gebruikt wanneer ze worden geüpload</item>
+        <item>"Als u problemen met de app hebt, gebruik dan e-mail om mij op de hoogte te stellen. Als u wilt, plaatst u een negatieve beoordeling op Google Play, ik probeer dat niet te stoppen, maar stuur het ook een e-mail. Er is een link om mij een e-mail te sturen bovenaan het uitschuiflademenu. Ik kan veel meer uitgebreide ondersteuning bieden aan een e-mailadres. Erg bedankt."</item>
+        <item>"U kunt alleen bestanden zien om te selecteren om te uploaden die acceptabel zijn om op uw server te uploaden. Als u video\'s wilt uploaden, moet u het bestand van uw server config.inc.php wijzigen om $ Conf [Upload_Form_all_TYPES \'] = TRUE op te nemen; in plaats van false"</item>
+        <item>Als een upload gewoon is gewonnen, probeer dan de voorkeur te gebruiken in de uploadpagina van app-instellingen om eventuele resterende uploads van de server te wissen</item>
+        <item>Fout gebeurt altijd bij het bijwerken van tags - "U mag geen tags verwijderen" - Zorg dat gebruikers beide tags kunnen toevoegen en verwijderen (Server Plugin-instelling)</item>
+        <item>Deel bestanden in een andere app met deze app om ze toe te voegen aan het uploadscherm klaar om naar uw huidige server te gaan</item>
+        <item>Lang klik op een afbeelding (miniatuur of diavoorstelling) die niet is geladen om het opnieuw op te halen</item>
+        <item>Long Klik op een album om dat album en alle inhoud te verwijderen</item>
+        <item>Lang klik op een albumbeeld om bulkselectie van afbeeldingen voor een actie mogelijk te maken</item>
+        <item>Bij het bekijken van een afbeelding in de diavoorstelling, klik nogmaals om het beeldformaat te draaien / wijzigen weergegeven / laat verder zoomen</item>
+        <item>U kunt inzoomen in een afbeelding bij het bekijken in een diavoorstelling door twee vingers samen of uit elkaar te trekken op het scherm</item>
+        <item>Wanneer u bent ingelogd als beheerder voordat u uw apparaat naar een vriend overhandigt om uw foto\'s te bekijken, betreft u de functie Toepassingsvergrendeling om onbedoelde wijzigingen in uw galerij te voorkomen</item>
+        <item>Zodra u een volledige video hebt bekeken, als het lokale bestandscaching is ingeschakeld, is het mogelijk om die video op te slaan op uw downloadmap</item>
+        <item>Lange klik op de knop verwijderen op een \'-bestand voor upload \' om alle bestanden te verwijderen die moeten worden geüpload (wanneer taak niet in uitvoering staat)</item>
+        <item>Als afbeeldingen traag zijn om te laden, controleert u of uw server automatisch de grootte genereert die door deze app wordt gebruikt wanneer ze worden geüpload</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>De toekomst</item>
         <item>"* Alleen voornamelijk bugfixes
                 * Mogelijk een compleet opnieuw schrijven van de app met een focus op eenvoud voor algemene gebruiker die aanvankelijk browsing"</item>
         
-        <item>1.4.0.140</item>
+        <item>1.4.0.141</item>
         <item>"Verandering:
                  - Vervanging van de opslag- en ophaalcode van het werkconfiguratie om grote banen beter te ondersteunen"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.140</item>
+        <item>"Verandering:
+                 - Nieuwe voorkeur is de diavoorstelling om de informatie overlay in de diavoorstelling te verbergen totdat u op de afbeelding klikt"</item>
         <item>1.4.0.139</item>
-        <item>\"Bugfix:
+        <item>"Bugfix:
                  - Crash bijwerken Album Sorteerorder
-                 - Crash-bestanden selecteren</item>
+                 - Crash-bestanden selecteren"</item>
         <item>1.4.0.138</item>
-        <item>\"Bugfix:
-                 - Alleen betaald: Minor Probleem met de upload-tracking-database</item>
+        <item>"Bugfix:
+                 - Alleen betaald: Minor Probleem met de upload-tracking-database"</item>
         <item>1.4.0.137</item>
-        <item>\"Verandering:
+        <item>"Verandering:
                  - Alleen betaald: Recordbestand-ID\'s die worden geüpload naar servers in een database op het apparaat om eerder filtering of etikettering toe te staan
-                 - herwerken van de upload om betere controle mogelijk te maken over welke bestanden worden gecomprimeerd (nieuwe pictogramkleuren)</item>
+                 - herwerken van de upload om betere controle mogelijk te maken over welke bestanden worden gecomprimeerd (nieuwe pictogramkleuren)"</item>
         <item>1.4.0.136</item>
         <item>"Bugfix:
                  - Gecorrigeerd probleem met app Thinking URI-machtigingen waren nog steeds nodig nadat een upload is voltooid"</item>
@@ -199,60 +202,60 @@
                 - wijziging in het opnieuw proberen Logica voor een reactie van 401/403 - laat het me weten als u op de hoogte bent van meer 401/403-fouten"</item>
         <item>1.4.0.129</item>
         <item>"Bugfix:
-                 - Correcte weeszoeker en laadcode"</item>
+                 - Correcte Orphan Locator en laadcode"</item>
         <item>1.4.0.128</item>
         <item>"Verandering:
-                - Als de sorteervolgorde van bronnen wordt omgekeerd, worden bronnen binnen een tag of favorietenlijst ook in omgekeerde volgorde weergegeven
+                - Als resource sorteervolgorde is omgekeerd, verschijnen er ook middelen binnen een tag of favorieten in omgekeerde volgorde
                Bugfix:
-                - toon onmiddellijk het pad naar de map nadat u het als root hebt toegevoegd in plaats van in eerste instantie alleen de mapnaam te tonen
-                - gepagineerd laden van favorieten en getagde items gecorrigeerd
-                - update onmiddellijk het aantal foto\'s in de onderliggende map die wordt weergegeven nadat items naar een map zijn verplaatst en de gebruiker vervolgens naar de bovenliggende map navigeert
-                - update de miniatuurweergave die voor de map wordt weergegeven onmiddellijk na het wijzigen van de representatieve afbeelding en vervolgens navigeert de gebruiker naar de bovenliggende map
-                - crashen als de gebruiker de sorteervolgorde omkeert tijdens het bekijken van een album, met foto\'s, en vervolgens de albuminhoud niet handmatig opnieuw laadt
-                - navigatie naar de root van de galerij opnieuw ingeschakeld met behulp van de broodkruimel bovenaan de albumweergave
-                - corrigeer het verbergen en uitvouwen van albums (onlangs verbroken)
-                - Miniaturen worden correct opnieuw getekend, waarbij de kop van de onderliggende albums herhaaldelijk wordt omgeschakeld"</item>
+                - Toon onmiddellijk pad naar map nadat u het als een root hebt toegevoegd in plaats van in eerste instantie alleen de mapnaam te tonen
+                - gecorrigeerde paged laden van favorieten en getagde items
+                - Update onmiddellijk de televoegde map bij kinderen die worden weergegeven nadat items naar een map worden verplaatst en vervolgens de gebruiker naar de ouder navigeert
+                - Werk onmiddellijk de thumbnail die worden weergegeven voor de map na het wijzigen van de representatieve afbeelding en vervolgens navigeert de gebruiker naar de ouder
+                - Crash Als de gebruiker de bestelling beoordeelt tijdens het bekijken van een album, met foto\'s, en dan niet handmatig de inhoud van het album opnieuw laden
+                - Herschakelende navigatie om te rooten van de galerij met behulp van het broodkruimel bovenaan het albumweergave
+                - Corrigeer de verstoppering van albums (onlangs gebroken)
+                - Miniaturen correct opnieuw geraasd schakelt de kop van het kind albums opnieuw"</item>
         <item>1.4.0.127</item>
         <item>"Bugfix:
-                 - alleen de eerste hoofdmap van een bepaalde naam was zichtbaar in de root-selector voor bestandsselectie
+                 - Alleen de eerste root-map van een bepaalde naam was zichtbaar in de selectie van bestanden Roots
                 Verandering:
-                 - implementeer de vernieuwingsknop op de pagina \'item niet geladen\' van de diavoorstelling
-                 - implementeer de terugknop op albumselectie - keer om door broodkruimels
-                 - implementeer de terugknop bij het selecteren van mappen - keer om door broodkruimels"</item>
+                 - Implementeer de knop Vernieuwen op het gedeelte Slideshow \'item niet geladen\'
+                 - Implementeer de back-knop op album Selecteer - omgekeerd door broodkruimels
+                 - Implementeer de knop Back op map Selecteer - achteruit door broodkruimels"</item>
         <item>1.4.0.126</item>
         <item>"Bugfix:
-                 - Crash waarbij een verbindingsprofiel-ID geen legale bestandsnaam zou zijn
-                 - Fix upload bevriezing aan het einde van meerdere chunk uploads"</item>
+                 - Crash waar een verbindingsprofiel-ID geen juridische bestandsnaam zou zijn
+                 - Fix upload bevriezing aan het einde van meerdere chunk-uploads"</item>
         <item>1.4.0.125</item>
         <item>"Bugfix:
-                 - Zorg er bij het herstarten van een job voor dat de originele jobinstellingen worden gebruikt
-                 - verwijder bij het verwijderen van een mislukte taak elk gecomprimeerd maar niet geüpload bestand
-                 - kan niet door fouten scrollen op de uploadstatuspagina
+                 - Zorg er bij het opnieuw opstarten van een taak of de originele taakinstellingen worden gebruikt
+                 - Verwijder bij het verwijderen van een mislukte taak een gecomprimeerd maar niet geüpload bestand
+                 - Kan niet door fouten scrollen in de uploadstatuspagina
                 Verandering:
-                 - Uploadstatusfouten worden nu als meest recent bovenaan weergegeven met een verbeterde lay-out
-                 - Enorme verbetering van de veerkracht van het uploaden van bestanden, veel bugs buiten het perfecte pad opgelost
-                 - Prestatieverbetering voor alle http-serveroproepen
-                 - Verwijder geen gecomprimeerd bestand als een taak mislukt (wacht tot het is verwijderd) - om opnieuw te proberen zonder opnieuw te comprimeren
-                 - zorg ervoor dat de geüploade brokken zo groot mogelijk zijn binnen de geconfigureerde maximale brokgrootte"</item>
+                 - Uploadstatusfouten worden nu eerst hersteld met een verbeterde lay-out
+                 - enorme verbetering van de veerkracht van het uploaden van bestanden, veel bugs van het perfecte pad gefixeerd
+                 - Performance-verbetering voor alle http-server-oproepen
+                 - Wis geen gecomprimeerd bestand als een taak mislukt (wacht totdat deze wordt verwijderd) - om opnieuw te laten knappen zonder opnieuw te comprimeren
+                 - Zorg ervoor dat Chunks geüpload zo groot mogelijk zijn binnen de geconfigureerde maximale brokgrootte"</item>
         <item>1.4.0.124</item>
         <item>"Bugfix:
                  - Verschillende onverwachte fouten
-                 - bestelfout op diavoorstellingen en albumpagina\'s"</item>
+                 - Bestel fout op diavoorstelling en albumpagina\'s"</item>
         <item>1.4.0.123</item>
         <item>"Bugfix:
-                 - Beheerderslijst met tags correct samengevoegd met gebruikerslijst bij het laden van tags
-                 - Sta het verwijderen van tags toe voor admin-gebruikers
-                 - Controle van versie van PiwigoClientWsExt-plug-in gecorrigeerd"</item>
+                 - Admin-lijst van tags samengevoegd met de gebruikerslijst op tags laden
+                 - Laat verwijderen van tags voor admin-gebruikers
+                 - Piwigoclientwsext-plug-in-versiecontrole gecorrigeerd"</item>
         <item>1.4.0.122</item>
         <item>"Bugfix:
-                 - crash op diavoorstelling (als je hier nog steeds crashes tegenkomt, stuur me dan een e-mail als je weet welke reeks gebeurtenissen dit veroorzaakt \'.
-                 - crash na het verwijderen van gebruiker of groep
-                 - gebruikers- en groepsweergave niet bijgewerkt na het toevoegen van een item"</item>
+                 - Crash op diavoorstelling (als je nog steeds tegenkomt, stuur me dan een e-mail als je werkt welke volgorde van gebeurtenissen het veroorzaakt \'.
+                 - Crash na het verwijderen van gebruiker of groep
+                 - Gebruikers- en groepsweergave niet bijgewerkt nadat u een item hebt toegevoegd"</item>
         <item>1.4.0.121</item>
         <item>"Bugfix:
-                 - PiwigoClientWsExts plug-in versiewaarschuwing verschijnt niet voor getroffen gebruikers
-                 - limiet toegevoegd aan de lengte van de serverreactie die wordt weergegeven bij het tonen van een foutreactie
-                 - bij het opnieuw proberen van de serveroproep na http 4xx, retourneer dan niet alleen fouten in de cache"</item>
+                 - PIWIGOCLIANDWSEXTS Plugin-versie WAARSCHUWING DIE NIET VOOR TOEGEPASTE GEBRUIKERS VERLIEZEN
+                 - Limiet toegevoegd aan de lengte van de serverrespons die wordt weergegeven bij het weergeven van foutreactie
+                 - Op het opnieuw proberen van de serveroproep na http 4xx, retourneer niet alleen in cache fouten"</item>
         <item>1.4.0.120</item>
         <item>"Verandering:
                 - Ondersteuning voor het downloaden van alternatieve resource-formaatbestanden die worden gehost in PWG_FORMAT-mappen binnen PIWIGO-sites. Opmerking: Privacy_Plugin ondersteunt dit op dit moment niet.
@@ -268,111 +271,111 @@
                 - Ondersteuning voor multimediabestanden die worden gehost op arbitary genaamd Piwigo-sites (zie &lt;server_uri&gt; /admin.php?page=site_manager) - PiwigoclientWSEXTS Plugin versie 1.0.15 moet worden geïnstalleerd"</item>
         <item>1.4.0.119</item>
         <item>"Bugfix:
-                 - crash op oudere versies als er geen toestemming is verleend om de cachemap te gebruiken
-                 - logboeken worden soms niet verzonden als de app te snel crasht na een logfout"</item>
+                 - Crash op oudere versies indien toestemming niet wordt verleend om de cachepap te gebruiken
+                 - Logs soms niet verzonden als de app te snel crasht na het aanpakken van fout"</item>
         <item>1.4.0.118</item>
         <item>"Verandering:
                  - Verbeterde ondersteuning voor het uploaden van audiobestanden"</item>
         <item>1.4.0.117</item>
         <item>"Bugfix:
-                 - het uploaden van bestanden die door sommige apps worden gedeeld, kan stil mislukken
-                 - taakstatusweergave voor taken die zijn voltooid met enkele fouten die niet beschikbaar zijn nadat de taak is voltooid
-                 - over scherm gaat niet open
-                 - alle geïdentificeerde oorzaken van app-crashes
+                 - het uploaden van bestanden die worden gedeeld door sommige apps kan stil falen
+                 - Baanstatusweergave voor banen die klaar zijn met sommige fouten die niet beschikbaar zijn na het werkafwerkingen
+                 - Over het scherm wordt niet geopend
+                 - alle geïdentificeerde oorzaken van app crashes
                 Verandering:
-                 - Een bestand waarvan het uploaden is geannuleerd door de uploadtaak vanwege een fout, zal een rode X weergeven
-                 - De uploadfouten zijn nu gegroepeerd per lokaal bestand op de statuspagina van de uploadtaak
-                 - Als het uploaden mislukt, verschijnt er een nieuw dialoogvenster met de opties voor probleemoplossing"</item>
+                 - een bestand dat zijn upload is geannuleerd door de uploadtaak vanwege de fout, wordt een rode x weergegeven
+                 - De uploadfouten worden nu gegroepeerd op lokaal bestand op het uploaden opdrachtstatuspagina
+                 - Als een upload mislukt, vraagt een nieuw dialoogvenster met de opties voor probleemresolutie"</item>
         <item>1.4.0.116</item>
         <item>"Bugfix:
-                 - bugs in diavoorstellingen die crashes veroorzaken"</item>
+                 - Slideshow-bugs die crashes veroorzaken"</item>
         <item>1.4.0.115</item>
         <item>"Bugfix:
-                 - video\'s die niet zijn geïdentificeerd bij gebruik van de privacy-plug-in en video\'s die toegankelijk zijn via / galleries.
-                 - diavoorstellingen en albumweergavepagina\'s verwerken oriëntatiewijzigingen niet correct
+                 - Video\'s niet geïdentificeerd als het gebruik van privacy plug-in en video\'s toegankelijk zijn van / galerijen.
+                 - Slideshow en album Bekijk pagina\'s niet omgaan met de geaardheidswijziging correct
                 Verandering:
-                 - app herkent nu dat sommige servers video\'s opslaan onder / galerijen in plaats van / uploaden"</item>
+                 - app erkent nu dat sommige servers video\'s onder / galerijen opslaan in plaats van / upload"</item>
         <item>1.4.0.114</item>
         <item>"Bugfix:
-                 - het laden van de pagina met verweesde items veroorzaakt een crash
+                 - Weesitempagina-lading die een crash veroorzaakt
                 Verandering:
-                 - naam gegeven aan voortgangstrackers van taken om het oplossen van fouten mogelijk te maken wanneer de onderliggende taak van een voortgangstracker onverwacht onvolledig is"</item>
+                 - Naam gegeven aan taakvoortgangstrackers om bugresolutie mogelijk te maken waar kindertaak van een voortgangstracker onverwacht onvolledig is"</item>
         <item>1.4.0.113</item>
         <item>"Bugfix:
-                 - Tenslotte! uitgewerkt waarom de app crashte in de diavoorstelling voor sommige gebruikers
-                 - enkele dialooglay-out aangepast
+                 - Tenslotte! Uitgewerkt waarom de app op de diavoorstelling crashte voor sommige gebruikers
+                 - Tweaked enkele dialoog lay-out
                 Verandering:
-                 - Dialoog met alle release-opmerkingen sinds de laatste update na een update"</item>
+                 - Dialoogvenster met alle release-opmerkingen sinds u voor het laatst bijgewerkt na een update"</item>
         <item>1.4.0.112</item>
         <item>"Verandering:
-                 - Ruim de pagina\'s met app-voorkeuren op"</item>
+                 - Tidy-up van de pagina-voorkeurenpagina\'s"</item>
         <item>1.4.0.111</item>
         <item>"Bugfix:
-                 - Multimedia URI\'s werken niet voor gebruikers die geen privacy-plug-in hebben.
-                 - het afspelen van video start niet als de voorkeur is ingesteld om geen video\'s op te nemen in diavoorstellingen
+                 - Multimedia Uris werkt niet voor gebruikers van niet-privacy plug-in.
+                 - Video-afspelen start niet als de voorkeursinstelling geen video\'s bevat in diavoorstellingen
                 Verandering:
-                 - er is een nieuwe instelling in de verbindingsvoorkeuren voor reparatie van de privacy-plug-in uri"</item>
+                 - Er is een nieuwe instelling in de aansluitvoorkeuren voor Privacy Plugin Uri Repair"</item>
         <item>1.4.0.110</item>
         <item>"Bugfix:
-                 - Crash meerdere kinderalbums naast elkaar met een oneven aantal aanwezige kinderalbums (liggende modus of apparaten met groot scherm)
-                 - Job uploaden - Uploaden naar Piwigo-serverlijst kan niet worden geselecteerd (gevolgen voor gebruikers met meer dan één serververbindingsprofiel geconfigureerd in de app)
-                 - serveralbums worden niet geladen bij de eerste invoer voor de automatische uploadtaak, selecteer een categorievoorkeur
-                 - miniaturen van serveralbums worden niet geladen voor onderliggende mappen bij uploaden naar mapselectie
-                 - Kan upload naar serveralbum niet selecteren voor automatische uploadtaak met een niet-standaardserver"</item>
+                 - Crash Multiple Child Albums Show naast elkaar met een oneven aantal aanwezige kinderalbums (landschapsmodus of groot schermapparaten)
+                 - Upload taak - upload naar piwigo-serverlijst, niet selecteerbaar (impact voor gebruikers met meer dan één serververbindingsprofiel geconfigureerd in de app)
+                 - Server-albums laden niet bij het eerste item naar automatische uploadtaak Selecteer een categorie-voorkeur
+                 - Server Album Thumbnails niet laden voor kindermappen bij uploaden naar map selectie
+                 - Kan niet selecteren Upload naar Server-album voor automatische uploadtaak met behulp van niet-standaardserver"</item>
         <item>1.4.0.109</item>
         <item>"Verandering:
-                 - Verklaring toegevoegd voor uw duidelijkheid bovenaan de e-mailsjabloon gemaakt door deze app voor ondersteuningsverzoeken
-                 - Alleen betaald: ondersteuning toegevoegd voor het melden van updates die beschikbaar zijn voor de server of plug-ins"</item>
+                 - Toegevoegd Verklaring voor uw duidelijkheid bovenaan de e-mailsjabloon die door deze app is gemaakt voor ondersteuningsaanvragen
+                 - alleen betaald: ondersteuning voor de melding van updates die beschikbaar zijn voor de server of plug-ins"</item>
         <item>1.4.0.108</item>
         <item>"Bugfix:
-                 - Ruim veel problemen op die crashes veroorzaken in de app na de laatste maand van wijzigingen
-                 - Standaardinstelling voor videocompressie gecorrigeerd
-                 - Opnieuw toegevoegde ondersteuning voor het minimaliseren van albums
-                 - repareer video\'s die niet worden gedetecteerd
+                 - opruimen van veel problemen die crashes veroorzaken in de app na de laatste maand van veranderingen
+                 - Standaardinstelling voor gecorrigeerde videocompressie
+                 - Ondersteuning opnieuw toegevoegd voor het minimaliseren van albums
+                 - Fix-video\'s die niet worden gedetecteerd
                Veranderingen:
-                 - Optie verwijderd om aan te geven welke bestanden video afspeelbaar zijn. Dit wordt gedaan op basis van het mime-type dat is afgeleid van de bestandsextensie"</item>
+                 - Verwijderde optie om aan te geven welke bestanden video-afspeelbaar zijn. Dit gebeurt op basis van bestandsextensie afgeleide mimetype"</item>
         <item>1.4.0.107</item>
         <item>"Bugfix:
-                 - Mogelijk dat één bron wordt gemist in de diavoorstelling van de albumbronnen (voorbeeld op volledig scherm)
-                 - crash bij voorbeeld van verweesd bestand
+                 - Potentieel voor één resource die moet worden gemist uit de diavoorstelling van het albumresource (volledige schermvoorbeeld)
+                 - Crash op Preview of Orphaned File
                 Verandering:
-                 - preview van verweesde bestanden en weergave in een diavoorstelling, indien gewenst, wordt nu ondersteund
-                 - de menuoptie wezen is alleen beschikbaar voor beheerders als de app niet alleen-lezen is"</item>
+                 - Voorbeeld van verweesde bestanden en weergave in een diavoorstelling als gewenst is nu ondersteund
+                 - weesmenu-optie is alleen beschikbaar om gebruikers te beheersen wanneer de app niet opnieuw is"</item>
         <item>1.4.0.106</item>
         <item>"Bugfix:
-                 - Hopelijk de laatste bug waarbij albumminiaturen niet correct leken te laden
+                 - Hopelijk bleek de laatste bug waar albumminiaturen niet correct lagen
                 Veranderingen:
-                 - Bij het verwijderen van een album kunnen onderliggende bronnen worden ontkoppeld of van de server worden verwijderd
-                 - Alleen betaald: er is een nieuwe beheerpagina voor verweesde bronnen"</item>
+                 - Bij het verwijderen van een album kunnen kinderbronnen worden ontkoppeld of verwijderd van de server
+                 - alleen betaald: er is een nieuwe geplande resource managementpagina"</item>
         <item>1.4.0.105</item>
         <item>"Bugfix:
-                 - Herschrijf het album, de tag en de favoriete sorteercode omdat deze vol zat met bugs
-                     : Als iets op dit gebied nu niet werkt zoals u verwacht, laat het me dan weten.
-                     : Dit zou crashes moeten oplossen die optraden op de diavoorstellingspagina
-                 - Het onlangs gewijzigde gele sterpictogram verscheen niet in een bepaalde volgorde
+                 - Herschrijven van het album, tag en favoriete sorteercode omdat het met beestjes werd bezaaid
+                     : Als iets op dit gebied nu niet werkt zoals je verwacht, laat het me dan weten.
+                     : Dit zou crashes moeten oplossen die op de pagina Slideshow plaatsvinden
+                 - Het onlangs gewijzigd Geel Star-pictogram verscheen niet in sommige sorteerbestellingen
                  - Corrigeer het laden van miniaturen
-                 - Bug verholpen waardoor handmatig opnieuw laden van mislukte miniaturen wordt voorkomen door te klikken - slechts één keer, zodat het niet te irritant is als u van album wilt veranderen
+                 - Fix bug voor het voorkomen van handmatige herlaad van mislukte thumbnail load door te klikken - slechts één keer, dus het is niet zo irriterend als u album wilt veranderen
                 Veranderingen:
-             - Nieuwe voorkeur om onafhankelijke omkering van de sorteervolgorde van onderliggende albums en bronnen mogelijk te maken"</item>
+             - Nieuwe voorkeur om onafhankelijke sorteerorder te laten omkeren van kinderalbums en middelen"</item>
         <item>1.4.0.104</item>
         <item>"Bugfix:
-                 - Problemen veroorzaakt bij het uploaden na het opnieuw bewerken van de bestandsselectie voor keystore en certificaten
-                     : Bedankt voor uw geduld, het beheer van Android-bestandsrechten is lastig
-                 - het verwijderen van albums in de root is nu altijd beschikbaar bij het laden van de app, indien van toepassing
-                 - items kunnen nu worden geselecteerd door ergens te klikken, niet alleen in het selectievakje"</item>
+                 - Problemen veroorzaakt in upload na het opnieuw werken van de bestandsselectie voor keystore en certificaten
+                     : Bedankt voor uw geduld, Android File Machtigingen Management is lastig
+                 - Verwijderen van albums in root nu altijd beschikbaar op de app lading indien van toepassing
+                 - Items kunnen nu worden geselecteerd door ergens in het selectievakje te klikken"</item>
         <item>1.4.0.103</item>
         <item>"Bugfix:
-                 - Bewerken van sleutelarchief en vertrouwd certificaatitem veroorzaakte een crash.
-                     : Stuur me een e-mail vanuit de app als dit soort belangrijke functies niet werken.
-                 - Soms niet in staat om uit recente bestanden te navigeren met systeembestandsselectie
+                 - Keystore en Trusted Certificate Item bewerken veroorzaakte crash.
+                     : Stuur me een e-mail van de app wanneer de belangrijkste functionaliteit zoals dit niet werkt.
+                 - Kan soms niet navigeren uit recente bestanden met systeembestandselectie
                  - Groepenlijst verticaal uitgelijnd met het midden van het scherm
                 Veranderingen:
-                 - Betere gebruikerservaring voor keystore en certificaatimport
-                 - Nieuwe voorkeur om de tijdsduur te bepalen dat de afbeeldingsdetails worden weergegeven in het volledige scherm of de diavoorstelling"</item>
+                 - Betere gebruikerservaring voor de import van keystore en certificaat
+                 - Nieuwe voorkeur Om de tijd van de afbeelding te besturen, wordt weergegeven in het volledige scherm of de diavoorstelling"</item>
         <item>1.4.0.102</item>
         <item>"Bugfix:
-                 - Recente wijzigingen maakten het onmogelijk om zowel de gratis als de betaalde versie tegelijkertijd op één apparaat te installeren
-                 - albumminiaturen worden niet altijd weergegeven voor de admin-gebruiker
-                 - getest tegen Piwigo 11. Het openen van een afbeelding werkte niet"</item>
+                 - Recente wijzigingen maakten het onmogelijk om zowel de gratis als betaalde versies tegelijkertijd op één apparaat geïnstalleerd te hebben
+                 - Album-miniaturen die niet altijd worden weergegeven voor de beheerder van de beheerder
+                 - Getest tegen Piwigo 11. Een afbeelding openen was niet werken"</item>
     </string-array>
 </resources>

@@ -4,12 +4,12 @@
 
     <string name="preference_page_auto_upload_jobs">自动上传</string>
     <string name="preference_data_upload_automatic_title">自动上传</string>
-    <string name="preference_data_upload_automatic_job_title">自动上传作业</string>
+    <string name="preference_data_upload_automatic_job_title">自动上传工作</string>
 
     
 
     
-    <string name="preference_data_upload_automatic_upload_enable_summary">启用后台上传</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">启用背景上传</string>
     <string name="preference_data_upload_automatic_upload_enable_title">自动上传</string>
     
 
@@ -29,22 +29,22 @@
 
     
     <string name="preference_data_upload_automatic_job_view_status_title">查看上传状态</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">查看上次作业运行的状态（如果可用）</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">查看上次作业运行的状态（如果有）</string>
 
     
-    <string name="preference_data_upload_automatic_job_is_valid_title">工作有效</string>
+    <string name="preference_data_upload_automatic_job_is_valid_title">工作是有效的</string>
 
     
-    <string name="preference_data_upload_automatic_job_enabled_summary">上传服务会使用此作业吗？</string>
-    <string name="preference_data_upload_automatic_job_enabled_title">已启用工作</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">上传服务是否会使用此作业？</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">启用作业</string>
     
 
-    <string name="preference_data_upload_automatic_job_server_title">上载到服务器</string>
+    <string name="preference_data_upload_automatic_job_server_title">上传到服务器</string>
     
     <string name="preference_data_upload_automatic_job_server_summary">配置文件：%1$s</string>
 
     
-    <string name="preference_data_upload_automatic_job_server_album_title">上载到相册</string>
+    <string name="preference_data_upload_automatic_job_server_album_title">上传到专辑</string>
     <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
@@ -76,7 +76,7 @@
 
     
     
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">最大文件大小已上传</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">最大文件中载</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB.</string>
 
     
@@ -84,7 +84,7 @@
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">文件扩展名</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">使用ext |上传文件%1$s</string>
 
-    <string name="preference_data_upload_automatic_job_privacy_level_title">隐私等级</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_title">隐私水平</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">上传的文件可见%1$s</string>
     
     

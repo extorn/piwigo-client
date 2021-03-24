@@ -14,26 +14,26 @@
     
     
     <string name="preference_test_server_connection_title">Test verbinding</string>
-    <string name="preference_test_server_connection_summary">Test de verbinding met de server</string>
+    <string name="preference_test_server_connection_summary">Testverbinding met de server</string>
 
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Schone server</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Opschonen mislukte PiwigoClient-uploads van de server</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Schone Piwigoclient Uploads van de server schoon</string>
 
     <string name="preference_page_connection">Verbinding</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
 
     
-    <string name="preference_connections_category_server_basic_auth">Server basisverificatie</string>
+    <string name="preference_connections_category_server_basic_auth">Server Basic-authenticatie</string>
 
     
-    <string name="preference_connections_category_client_certificate_auth">Verificatie van clientcertificaten</string>
+    <string name="preference_connections_category_client_certificate_auth">Klantcertificaatverificatie</string>
 
     
     <string name="preference_connections_category_advanced">Geavanceerde instellingen</string>
 
     
-    <string name="preference_connections_category_connections_caching">Caching van webreacties</string>
+    <string name="preference_connections_category_connections_caching">Webreactie Caching</string>
 
     <string name="server_connection_preference_summary_default">Selecteer een waarde</string>
     <string name="server_album_preference_summary_default">Selecteer een waarde</string>
@@ -42,72 +42,72 @@
     
 
     
-    <string name="preference_server_connection_max_redirects_title">Max. Serveromleidingen</string>
+    <string name="preference_server_connection_max_redirects_title">MAX Server-omleidingen</string>
     <string name="preference_server_connection_max_redirects_summary">%1$d</string>
     
 
     
-    <string name="preference_server_connection_force_https_title">Herschrijf Http-URL\'s naar Https</string>
-    <string name="preference_server_connection_force_https_summary">Alle http:// URL\'s herschreven naar https:// voor https-server</string>
+    <string name="preference_server_connection_force_https_title">Herschrijf HTTP URL\'s naar HTTPS</string>
+    <string name="preference_server_connection_force_https_summary">Alle http://-URL\'s herschreven naar https:// voor HTTPS-server</string>
     
 
     
-    <string name="preference_server_connection_offline_mode_title">Sta offline browsen toe</string>
-    <string name="preference_server_connection_offline_mode_summary">Gebruik cachegegevens indien beschikbaar</string>
+    <string name="preference_server_connection_offline_mode_title">Laat offline browsen toe</string>
+    <string name="preference_server_connection_offline_mode_summary">Gebruik cached-gegevens indien beschikbaar</string>
     
 
     
-    <string name="preference_server_connection_allow_redirects_title">Sta serveromleidingen toe</string>
-    <string name="preference_server_connection_allow_redirects_summary">Volg http 3xx-reacties</string>
+    <string name="preference_server_connection_allow_redirects_title">Server-omleidingen toestaan</string>
+    <string name="preference_server_connection_allow_redirects_summary">Volg HTTP 3XX-reacties</string>
     
 
     
-    <string name="preference_server_connection_timeout_secs_title">Time-out verbinding (seconden)</string>
+    <string name="preference_server_connection_timeout_secs_title">Verbindingstime-out (seconden)</string>
     <string name="preference_server_connection_timeout_secs_summary">%1$d seconden</string>
     
 
     
-    <string name="preference_server_response_timeout_secs_title">Reactietime-out (seconden)</string>
+    <string name="preference_server_response_timeout_secs_title">Responstime-out (seconden)</string>
     <string name="preference_server_response_timeout_secs_summary">%1$d seconden</string>
     
 
     
-    <string name="preference_server_alter_cache_directives_title">Wijzig Server Http Cache-richtlijnen</string>
-    <string name="preference_server_alter_cache_directives_summary">Schakel in om offline toegang tot galerij toe te staan</string>
+    <string name="preference_server_alter_cache_directives_title">Alter Server HTTP Cache-richtlijnen</string>
+    <string name="preference_server_alter_cache_directives_summary">Inschakelen om offline toegang tot de galerij toe te staan</string>
     
 
     
-    <string name="preference_server_connection_uri_path_segment_encoding_title">Codeer het URI-pad voor aanvragen voor bronnen</string>
-    <string name="preference_server_connection_uri_path_segment_encoding_summary">Probeer dit in te schakelen als u 404-fouten ontvangt voor bestaande bestanden</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_title">CONDEEER URI PATH VOOR VERZOEKEN VOOR MIDDELEN</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">Probeer dit in staat te stellen als u 404 fouten ontvangt voor bestanden die bestaan</string>
     
 
     
-    <string name="preference_server_connection_retries_title">De verbinding wordt opnieuw geprobeerd voordat de verbinding mislukt</string>
+    <string name="preference_server_connection_retries_title">Verbinding probeert vóór mislukking</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     
 
     
-    <string name="preference_server_basic_auth_username_title">Gebruikersnaam voor basisverificatie</string>
+    <string name="preference_server_basic_auth_username_title">Basic Authentication-gebruikersnaam</string>
 
     
-    <string name="preference_server_basic_auth_password_title">Wachtwoord voor basisverificatie</string>
+    <string name="preference_server_basic_auth_password_title">Basisverificatiewachtwoord</string>
 
     
     <string name="preference_server_use_basic_auth_title">Gebruik basisverificatie</string>
-    <string name="preference_server_use_basic_auth_summary">Schakel dit in als de server basisverificatie vereist</string>
+    <string name="preference_server_use_basic_auth_summary">Inschakelen Als de server eenvoudige authenticatie vereist</string>
     
 
     
     
-    <string name="preference_server_use_client_certs_title">Gebruik verificatie van clientcertificaten</string>
-    <string name="preference_server_use_client_certs_summary">Schakel dit in als de server op een certificaat gebaseerde clientverificatie vereist</string>
+    <string name="preference_server_use_client_certs_title">Gebruik clientcertificaatverificatie</string>
+    <string name="preference_server_use_client_certs_summary">Inschakelen Als server certificaatgebaseerde klantauthenticatie vereist</string>
 
     
-    <string name="preference_select_client_certificate_title">Clientcertificaten (en privésleutels)</string>
+    <string name="preference_select_client_certificate_title">Clientcertificaten (en privé-toetsen)</string>
     <string name="preference_select_client_certificate_summary">Selecteer Clientcertificaat voor authenticatie</string>
 
     
-    <string name="preference_piwigo_connection_profile_title">Selecteer Verbindingsprofiel</string>
+    <string name="preference_piwigo_connection_profile_title">Selecteer verbindingsprofiel</string>
     <string name="preference_piwigo_connection_profile_summary">%1$s</string>
 
     
@@ -128,38 +128,38 @@
     <string name="preference_piwigo_server_password_summary">%1$s</string>
 
     
-    <string name="preference_server_ssl_certificate_hostname_verification_title">SSL Certificaat Hostnaam validatie</string>
+    <string name="preference_server_ssl_certificate_hostname_verification_title">SSL-certificaat hostnaam validatie</string>
     <string name="preference_server_ssl_certificate_hostname_verification_summary">%1$s</string>
     
 
-    <string name="preference_caching_clearResponseCache_title">Wis de serverresponscache</string>
+    <string name="preference_caching_clearResponseCache_title">Clear server respons cache</string>
     
-    <string name="preference_caching_clearResponseCache_summary">Wist alle serverreacties die op schijf zijn opgeslagen</string>
+    <string name="preference_caching_clearResponseCache_summary">Wist alle serverreacties in de cache op schijf</string>
 
     
-    <string name="preference_caching_level_title">Antwoordcacheniveau</string>
+    <string name="preference_caching_level_title">Response cache-niveau</string>
     <string name="preference_caching_level_summary">%1$s</string>
     <string name="preference_caching_level_default">schijf</string>
 
     
-    <string name="preference_caching_max_cache_entries_title">Max. Aantal cache-itemsList</string>
+    <string name="preference_caching_max_cache_entries_title">Max Number Cache-entrieslijst</string>
     <string name="preference_caching_max_cache_entries_summary">%1$d</string>
     
 
     
-    <string name="preference_caching_max_cache_entry_size_title">Maximale cachegrootte (KB)</string>
+    <string name="preference_caching_max_cache_entry_size_title">Max Cache Entry Size (KB)</string>
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     
 
     
-    <string name="preference_connections_category_trusted_server_ca">Trusted Server Certificate CA\'s</string>
-    <string name="preference_server_use_custom_trusted_ca_certs_summary">Gebruik een aangepaste lijst met vertrouwde CA-certificaten om SSL-certificaten van de server te valideren</string>
-    <string name="preference_server_use_custom_trusted_ca_certs_title">Gebruik aangepaste vertrouwde certificeringsinstanties</string>
+    <string name="preference_connections_category_trusted_server_ca">Vertrouwde servercertificaat CAS</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_summary">Gebruik een aangepaste lijst van vertrouwde CA-certificaten om Server SSL-certificaten te valideren</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_title">Gebruik aangepaste vertrouwde certificaatautoriteiten</string>
     
     
 
     
-    <string name="preference_select_trusted_certificate_title">Selecteer vertrouwde CA-certificaten</string>
+    <string name="preference_select_trusted_certificate_title">Selecteer Vertrouwde CA-certificaten</string>
     <string name="preference_select_trusted_certificate_summary">Bekijk en bewerk de lijst met vertrouwde CA-certificaten</string>
 
     
@@ -170,20 +170,20 @@
     <string name="preference_page_slideshow">Diavoorstelling</string>
 
     
-    <string name="preference_gallery_slideshow_auto_drive_title">Automatische voortgang van de diavoorstelling</string>
+    <string name="preference_gallery_slideshow_auto_drive_title">Automatische progressie van de diavoorstelling</string>
     <string name="preference_gallery_slideshow_auto_drive_summary">Na de ingestelde tijd wordt de volgende afbeelding of video weergegeven</string>
 
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">Automatische beeldvertraging</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Auto Drive Beeldvertraging</string>
     <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecs</string>
     
 
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Automatische video-vertraging</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Auto Drive Video Delay</string>
     <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecs</string>
     
 
     <string name="preference_gallery_category_general">Algemeen</string>
     
-    <string name="preference_gallery_category_server_calls">Piwigo Server Oproepdetails</string>
+    <string name="preference_gallery_category_server_calls">PIWIGO Server Oproepdetails</string>
     <string name="preference_gallery_category_slideshow">Diavoorstelling</string>
 
     
@@ -194,164 +194,163 @@
 
 
     
-    <string name="preference_gallery_category_resources">Onderliggende bronnen</string>
+    <string name="preference_gallery_category_resources">Kindermiddelen</string>
     
     <string name="preference_gallery_category_albums">Kinderalbums</string>
 
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Landschap: kolommen met albums om weer te geven</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Landschap: kolommen van albums om te laten zien</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_gallery_show_image_name_title">Toon afbeeldingsnamen in album</string>
+    <string name="preference_gallery_show_image_name_title">Beeldnamen weergeven in album</string>
     <string name="preference_gallery_show_image_name_summary">Toont de naam van de afbeelding onder elke afbeelding</string>
     
 
     
-    <string name="preference_gallery_images_preferredColumnsLandscape_title">Landschap: kolommen met afbeeldingen om weer te geven</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_title">Landschap: kolommen van afbeeldingen om te laten zien</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Ingezoomde albumminiatuur weergeven</string>
-    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Albumminiaturen worden in het midden bijgesneden</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Toon ingezoomde album thumbnail</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Album thumbnails zijn midden bijgesneden</string>
     
 
+    
+    
+    <string name="preference_gallery_slideshow_item_detail_show_on_item_show_title">Toon resourcekop</string>
+    <string name="preference_gallery_slideshow_item_detail_show_on_item_show_summary">Toon hulpbronneninformatie wanneer er een bron wordt getoond</string>
 
     
-    <string name="preference_gallery_show_file_size_showing_title">Toon servergrootte van bekeken foto\'s</string>
+    <string name="preference_gallery_show_file_size_showing_title">Toon servergrootte van foto\'s bekeken</string>
     <string name="preference_gallery_show_file_size_showing_summary">Toon de grootte van elke weergegeven foto</string>
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portret: kolommen met albums om weer te geven</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portret: kolommen van albums om te laten zien</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_gallery_images_preferredColumnsPortrait_title">Portret: kolommen met afbeeldingen om weer te geven</string>
+    <string name="preference_gallery_images_preferredColumnsPortrait_title">Portret: kolommen van afbeeldingen om te laten zien</string>
     <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_gallery_include_videos_in_slideshow_title">Laat video\'s zien in een diavoorstelling</string>
-    <string name="preference_gallery_include_videos_in_slideshow_summary">Moeten video\'s worden weergegeven tijdens het bladeren door een galerij in de modus voor diavoorstellingen?</string>
+    <string name="preference_gallery_include_videos_in_slideshow_title">Toon video\'s in Slideshow</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">Moeten video\'s worden weergegeven bij het bladeren van een galerij in de modus Slideshow?</string>
     
 
     
-    <string name="preference_gallery_enable_video_playback_title">Sta video afspelen toe</string>
-    <string name="preference_gallery_enable_video_playback_summary">Schakel dit in als u video\'s op aanvraag wilt downloaden en afspelen</string>
+    <string name="preference_gallery_enable_video_playback_title">Videoweergave toestaan</string>
+    <string name="preference_gallery_enable_video_playback_summary">Inschakelen als u video\'s op aanvraag wilt downloaden en afspelen</string>
     
 
     
 
     
-    <string name="preference_check_for_server_updates_title">Kennisgeving van updates</string>
+    <string name="preference_check_for_server_updates_title">Melding van updates</string>
     <string name="preference_check_for_server_updates_summary">Ontvang een melding als er updates beschikbaar zijn voor uw server</string>
 
     
-    <string name="preference_video_cache_enabled_title">Cache video\'s die zijn bekeken naar een bestand</string>
-    <string name="preference_video_cache_enabled_summary">Indien ingeschakeld, worden alle gestreamde video\'s in de cache opgeslagen voor later afspelen</string>
+    <string name="preference_video_cache_enabled_title">Cache-video\'s bekeken om te besturen</string>
+    <string name="preference_video_cache_enabled_summary">Wanneer ingeschakeld, worden alle gestreamde video\'s in de cache opgeslagen voor later afspelen</string>
     
 
     
-    <string name="preference_video_cache_maxsize_mb_title">Maximale grootte videocache (MB)</string>
+    <string name="preference_video_cache_maxsize_mb_title">Maximale videocachegrootte (MB)</string>
     <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
     
 
     
-    <string name="preference_gallery_child_album_sort_order_title">Sorteervolgorde van onderliggende albums</string>
+    <string name="preference_gallery_child_album_sort_order_title">Sorteervolgorde van het kindalbum</string>
     <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
      
 
     
-    <string name="preference_gallery_child_album_sort_order_inverted_title">Keer de volgorde van albums om</string>
-    <string name="preference_gallery_child_album_sort_order_inverted_summary">Indien ingeschakeld, keert u de geselecteerde sorteervolgorde van albums om</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_title">Omkeren volgorde van albums</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">Wanneer ingeschakeld, keert u de geselecteerde sorteervolgorde van albums om</string>
     
 
     
-    <string name="preference_gallery_child_resource_sort_order_title">Sorteervolgorde van albumbronnen</string>
+    <string name="preference_gallery_child_resource_sort_order_title">Album Resource Sorteerorder</string>
     <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
     
 
     
-    <string name="preference_gallery_child_resource_sort_order_inverted_title">Keer de sorteervolgorde van albumbronnen om</string>
-    <string name="preference_gallery_child_resource_sort_order_inverted_summary">Indien ingeschakeld, keert u de geselecteerde sorteervolgorde van albumbronnen om</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Omkeren Album Resource Sorteerorder</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">Wanneer ingeschakeld, keert u de geselecteerde sorteervolgorde van albumbronnen om</string>
     
 
 
     
-    <string name="preference_gallery_unique_id_title">Unieke identificatie voor afbeeldingen</string>
+    <string name="preference_gallery_unique_id_title">Unieke ID voor afbeeldingen</string>
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
     
-    <string name="preference_fix_privacy_plugin_media_uris_title">Fix Media Uris verbroken bij gebruik van de privacy-plug-in</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">Alleen inschakelen als u een 4xx-fout krijgt voor multimediabronnen.</string>
+    <string name="preference_fix_privacy_plugin_media_uris_title">Fix Media Uris kapot bij het gebruik van de privacy-plug-in</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">Alleen inschakelen als u 4xx-fout krijgt voor multimediabronnen.</string>
     
 
 
-    <string name="preference_gallery_clearMemoryCache_title">Wis de cache in het geheugen</string>
+    <string name="preference_gallery_clearMemoryCache_title">Clear In-Memory Cache</string>
     
-    <string name="preference_gallery_clearMemoryCache_summary">Verwijdert alle afbeeldingen die in het geheugen zijn opgeslagen</string>
+    <string name="preference_gallery_clearMemoryCache_summary">Verwijdert alle afbeeldingen in de cache in het geheugen</string>
 
-    <string name="preference_gallery_clearVideoCache_title">Wis videocache</string>
+    <string name="preference_gallery_clearVideoCache_title">Duidelijke videocache</string>
     
-    <string name="preference_gallery_clearVideoCache_summary">Verwijdert alle video\'s in het cachegeheugen</string>
+    <string name="preference_gallery_clearVideoCache_summary">Wist alle video\'s in de cache op schijf</string>
     <string name="preference_gallery_clearVideoCache_summary_pattern">Wist alles %1$.2f MB van video\'s in de cache aan de schijf</string>
 
     
     
-    <string name="preference_gallery_recentlyAlteredAgeMillis_title">Max. Leeftijd recente items (dagen)</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_title">Max Leeftijd Recente items (dagen)</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d dagen</string>
      
     
 
-    
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">De lade voor diavoorstellingen is transparant</string>
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">De lade met informatie over de diavoorstelling is transparant</string>
-    
-
-    <string name="preference_gallery_slideshow_image_scaletype_title">Schalingstype diavoorstelling</string>
+    <string name="preference_gallery_slideshow_image_scaletype_title">Slideshow afbeelding Scaling type</string>
     
     <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
     
 
     
-    <string name="preference_gallery_slideshow_image_rotate_title">Draai de afbeelding zodat deze overeenkomt met de beeldverhouding van het scherm</string>
-    <string name="preference_gallery_slideshow_image_rotate_summary">Afbeelding gedraaid om op het scherm te passen</string>
+    <string name="preference_gallery_slideshow_image_rotate_title">Draai afbeelding om de beeldverhouding van het scherm te matchen</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">Afbeelding gedraaid om te passen</string>
     
 
     
-    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">Verberg itemdetails na verloop van tijd</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">Item detail na tijd verbergen</string>
     <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d milliseconden</string>
     
 
     
-    <string name="preference_groups_request_pagesize_title">Paginagrootte van de server voor groepen</string>
+    <string name="preference_groups_request_pagesize_title">Groups Server Request Page-Size</string>
     <string name="preference_groups_request_pagesize_summary">%1$d items</string>
     
 
     
-    <string name="preference_users_request_pagesize_title">Gebruikers server opvragen paginagrootte</string>
+    <string name="preference_users_request_pagesize_title">Gebruikers server aanvragen Page-Size</string>
     <string name="preference_users_request_pagesize_summary">%1$d items</string>
     
 
     
-    <string name="preference_album_request_pagesize_title">Paginagrootte voor albumserver</string>
+    <string name="preference_album_request_pagesize_title">Album Server aanvraagpagina-formaat</string>
     <string name="preference_album_request_pagesize_summary">%1$d items</string>
     
 
-    <string name="preference_gallery_item_thumbnail_size_title">Miniatuurgrootte van bron</string>
+    <string name="preference_gallery_item_thumbnail_size_title">Resource miniatuurafmeting</string>
     
     <string name="preference_gallery_item_thumbnail_size_summary">%1$s</string>
     
 
-    <string name="preference_gallery_album_thumbnail_size_title">Miniatuurgrootte van album</string>
+    <string name="preference_gallery_album_thumbnail_size_title">Album thumbnail size</string>
     
     <string name="preference_gallery_album_thumbnail_size_summary">%1$s</string>
     
 
-    <string name="preference_gallery_item_slideshow_image_size_title">Standaard afbeeldingsgrootte van de diavoorstelling</string>
+    <string name="preference_gallery_item_slideshow_image_size_title">Slideshow standaard beeldformaat</string>
     
     <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
     
@@ -367,7 +366,7 @@
     
     <string name="preference_upload_category_pre_data_upload_video_compression_title">Videocompressie vooraf uploaden</string>
     
-    <string name="preference_upload_category_piwigo_server_calls_title">Piwigo Server oproepdetails</string>
+    <string name="preference_upload_category_piwigo_server_calls_title">PIWIGO Server Oproepdetails</string>
 
     
 
@@ -379,7 +378,7 @@
     
     
     <string name="preference_data_upload_delete_uploaded_summary">Verwijder succesvol geüploade bestanden</string>
-    <string name="preference_data_upload_delete_uploaded_title">Standaard automatisch verwijderen</string>
+    <string name="preference_data_upload_delete_uploaded_title">Standaard Auto Verwijderen</string>
 
     
 
@@ -389,30 +388,30 @@
     <string name="preference_data_upload_default_privacy_level_title">Standaard privacyniveau</string>
 
     
-    <string name="preference_data_upload_chunkSizeKb_title">Max.upload chunkgrootte (KB)</string>
+    <string name="preference_data_upload_chunkSizeKb_title">MAX Upload Chunk Skom (KB)</string>
     <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>
     
 
     
-    <string name="preference_data_upload_chunk_auto_retries_title">Maximaal aantal automatische uploadpogingen voor bestandsdelen</string>
+    <string name="preference_data_upload_chunk_auto_retries_title">Max Automatische bestand Chunk Upload Pewries</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     
 
     
-    <string name="preference_data_upload_preferredColumnsPortrait_title">Portret: kolommen met afbeeldingen om weer te geven</string>
+    <string name="preference_data_upload_preferredColumnsPortrait_title">Portret: kolommen van afbeeldingen om te laten zien</string>
     <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_preferredColumnsLandscape_title">Landschap: kolommen met afbeeldingen om weer te geven</string>
+    <string name="preference_data_upload_preferredColumnsLandscape_title">Landschap: kolommen van afbeeldingen om te laten zien</string>
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_max_filesize_mb_title">Max. Bestandsgrootte om te uploaden zonder u te waarschuwen (in MB)</string>
+    <string name="preference_data_upload_max_filesize_mb_title">Max. Bestandsgrootte om te uploaden zonder te waarschuwen (in MB)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     
 
     
-    <string name="preference_data_upload_compress_videos_summary">Comprimeer video\'s voordat ze worden geüpload</string>
+    <string name="preference_data_upload_compress_videos_summary">Comprimeer video\'s voor uploaden</string>
     <string name="preference_data_upload_compress_videos_title">Comprimeer video\'s</string>
     
 
@@ -426,13 +425,13 @@
     
     
 
-    <string name="preference_data_upload_compress_videos_audio_bitrate_title">Audiobitsnelheid</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_title">Audiobitrate</string>
     <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Audio-bitrate %1$s</string>
     
     
 
     
-    <string name="preference_data_upload_compress_images_summary">Comprimeer afbeeldingen voordat u ze uploadt</string>
+    <string name="preference_data_upload_compress_images_summary">Comprimeer afbeeldingen voor uploaden</string>
     <string name="preference_data_upload_compress_images_title">Comprimeer afbeeldingen</string>
     
 
@@ -469,8 +468,8 @@
 
     
 
-    <string name="preference_page_other">Andere</string>
-    <string name="preference_other_category_file_selector">Bestandskiezer</string>
+    <string name="preference_page_other">Ander</string>
+    <string name="preference_other_category_file_selector">Bestandsselector</string>
 
     
 
@@ -480,27 +479,27 @@
     <string name="preference_data_file_selector_showFilenames_summary">Bestandsnamen weergegeven voor elk bestand</string>
 
     
-    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Landschap: kolommen met bestanden die moeten worden weergegeven</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Landschap: kolommen van bestanden om te laten zien</string>
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Portret: kolommen met bestanden om weer te geven</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Portret: kolommen van bestanden om te laten zien</string>
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Landschap: kolommen met mappen die moeten worden weergegeven</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Landschap: kolommen van mappen om te laten zien</string>
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Staand: kolommen met mappen om weer te geven</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Portret: kolommen van mappen om te laten zien</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 
     
 
     
     
-    <string name="preference_app_always_show_nav_buttons_title">Laat altijd navigatieknoppen zien</string>
-    <string name="preference_app_always_show_nav_buttons_summary">Schakel in om het automatisch verbergen van de navigatieknoppen te voorkomen</string>
+    <string name="preference_app_always_show_nav_buttons_title">Toon altijd navigatieknoppen</string>
+    <string name="preference_app_always_show_nav_buttons_summary">Inschakelen om de automatische huid van de navigatieknoppen te voorkomen</string>
 
     
     <string name="preference_app_default_download_folder_title">Downloaden naar map</string>
@@ -508,19 +507,19 @@
 
     
     
-    <string name="preference_app_always_show_status_bar_title">Laat altijd de statusbalk zien</string>
-    <string name="preference_app_always_show_status_bar_summary">Schakel dit in om automatisch verbergen van de statusbalk te voorkomen</string>
+    <string name="preference_app_always_show_status_bar_title">Toon altijd de statusbalk</string>
+    <string name="preference_app_always_show_status_bar_summary">Inschakelen om automatische huid van de statusbalk te voorkomen</string>
 
     
     <string name="preference_app_desired_language_title">Taal</string>
     <string name="preference_app_desired_language_summary">%1$s</string>
 
     
-    <string name="preference_app_clear_list_of_user_hints_shown_title">Toon alle gebruikershints opnieuw</string>
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Toon alle gebruiker hints opnieuw</string>
 
     
-    <string name="preference_app_uri_permissions_held_title">URI-machtigingen behouden</string>
-    <string name="preference_app_uri_permissions_held_summary">Het doel van alle URI-machtigingen die worden bewaard</string>
+    <string name="preference_app_uri_permissions_held_title">URI-machtigingen gehouden</string>
+    <string name="preference_app_uri_permissions_held_summary">Het doel voor alle URI-machtigingen gehouden</string>
 
 
     

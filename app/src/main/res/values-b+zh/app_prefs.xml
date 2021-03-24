@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
 
-    <string name="preferences_overall_heading">设定值</string>
+    <string name="preferences_overall_heading">设置</string>
 
     
 
@@ -14,20 +14,20 @@
     
     
     <string name="preference_test_server_connection_title">测试连接</string>
-    <string name="preference_test_server_connection_summary">测试与服务器的连接</string>
+    <string name="preference_test_server_connection_summary">测试连接到服务器</string>
 
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">清洁服务器</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">从服务器清除失败的PiwigoClient上传</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">从服务器上清洁失败的PiwiGoclient上传</string>
 
     <string name="preference_page_connection">联系</string>
-    <string name="preference_connections_category_piwigo">Piwigo</string>
+    <string name="preference_connections_category_piwigo">piwigo.</string>
 
     
     <string name="preference_connections_category_server_basic_auth">服务器基本身份验证</string>
 
     
-    <string name="preference_connections_category_client_certificate_auth">客户端证书认证</string>
+    <string name="preference_connections_category_client_certificate_auth">客户端证书身份验证</string>
 
     
     <string name="preference_connections_category_advanced">高级设置</string>
@@ -42,47 +42,47 @@
     
 
     
-    <string name="preference_server_connection_max_redirects_title">最大服务器重定向</string>
+    <string name="preference_server_connection_max_redirects_title">Max Server重定向</string>
     <string name="preference_server_connection_max_redirects_summary">%1$d</string>
     
 
     
-    <string name="preference_server_connection_force_https_title">将Http URL重写为Https</string>
-    <string name="preference_server_connection_force_https_summary">https服务器的所有http：// URL都重写为https：//</string>
+    <string name="preference_server_connection_force_https_title">重写HTTP URL到HTTPS</string>
+    <string name="preference_server_connection_force_https_summary">所有http：//重写为https：// for https服务器的URL</string>
     
 
     
     <string name="preference_server_connection_offline_mode_title">允许离线浏览</string>
-    <string name="preference_server_connection_offline_mode_summary">可用时使用缓存的数据</string>
+    <string name="preference_server_connection_offline_mode_summary">可用时使用缓存数据</string>
     
 
     
     <string name="preference_server_connection_allow_redirects_title">允许服务器重定向</string>
-    <string name="preference_server_connection_allow_redirects_summary">追踪http 3xx回应</string>
+    <string name="preference_server_connection_allow_redirects_summary">按照HTTP 3xx响应</string>
     
 
     
     <string name="preference_server_connection_timeout_secs_title">连接超时（秒）</string>
-    <string name="preference_server_connection_timeout_secs_summary">%1$d 秒</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d秒</string>
     
 
     
     <string name="preference_server_response_timeout_secs_title">响应超时（秒）</string>
-    <string name="preference_server_response_timeout_secs_summary">%1$d 秒</string>
+    <string name="preference_server_response_timeout_secs_summary">%1$d秒</string>
     
 
     
-    <string name="preference_server_alter_cache_directives_title">Alter Server Http缓存指令</string>
-    <string name="preference_server_alter_cache_directives_summary">启用以允许脱机访问画廊</string>
+    <string name="preference_server_alter_cache_directives_title">ALTER SERVER HTTP缓存指令</string>
+    <string name="preference_server_alter_cache_directives_summary">启用以允许离线访问库</string>
     
 
     
-    <string name="preference_server_connection_uri_path_segment_encoding_title">编码用于资源请求的URI路径</string>
-    <string name="preference_server_connection_uri_path_segment_encoding_summary">如果您收到针对现有文件的404错误，请尝试启用此功能</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_title">编码资源请求的URI路径</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">如果您收到存在的文件的404错误，请尝试启用此功能</string>
     
 
     
-    <string name="preference_server_connection_retries_title">连接失败前重试</string>
+    <string name="preference_server_connection_retries_title">在失败之前连接重试</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     
 
@@ -90,21 +90,21 @@
     <string name="preference_server_basic_auth_username_title">基本身份验证用户名</string>
 
     
-    <string name="preference_server_basic_auth_password_title">基本验证密码</string>
+    <string name="preference_server_basic_auth_password_title">基本身份验证密码</string>
 
     
     <string name="preference_server_use_basic_auth_title">使用基本身份验证</string>
-    <string name="preference_server_use_basic_auth_summary">如果服务器需要基本身份验证，则启用</string>
+    <string name="preference_server_use_basic_auth_summary">启用如果服务器需要基本身份验证</string>
     
 
     
     
-    <string name="preference_server_use_client_certs_title">使用客户端证书认证</string>
-    <string name="preference_server_use_client_certs_summary">如果服务器需要基于证书的客户端身份验证，则启用</string>
+    <string name="preference_server_use_client_certs_title">使用客户端证书身份验证</string>
+    <string name="preference_server_use_client_certs_summary">启用如果服务器需要基于证书的客户端身份验证</string>
 
     
     <string name="preference_select_client_certificate_title">客户证书（和私钥）</string>
-    <string name="preference_select_client_certificate_summary">选择客户端证书进行身份验证</string>
+    <string name="preference_select_client_certificate_summary">选择身份验证的客户端证书</string>
 
     
     <string name="preference_piwigo_connection_profile_title">选择连接配置文件</string>
@@ -134,15 +134,15 @@
 
     <string name="preference_caching_clearResponseCache_title">清除服务器响应缓存</string>
     
-    <string name="preference_caching_clearResponseCache_summary">删除所有缓存到磁盘的服务器响应</string>
+    <string name="preference_caching_clearResponseCache_summary">删除缓存到磁盘的所有服务器响应</string>
 
     
     <string name="preference_caching_level_title">响应缓存级别</string>
     <string name="preference_caching_level_summary">%1$s</string>
-    <string name="preference_caching_level_default">磁碟</string>
+    <string name="preference_caching_level_default">磁盘</string>
 
     
-    <string name="preference_caching_max_cache_entries_title">高速缓存条目数上限</string>
+    <string name="preference_caching_max_cache_entries_title">最大数字缓存entriesList</string>
     <string name="preference_caching_max_cache_entries_summary">%1$d</string>
     
 
@@ -153,38 +153,38 @@
 
     
     <string name="preference_connections_category_trusted_server_ca">可信服务器证书CA</string>
-    <string name="preference_server_use_custom_trusted_ca_certs_summary">使用受信任的CA证书的自定义列表来验证服务器SSL证书</string>
-    <string name="preference_server_use_custom_trusted_ca_certs_title">使用自定义的受信任证书颁发机构</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_summary">使用可信CA证书的自定义列表来验证服务器SSL证书</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_title">使用自定义可信证书颁发机构</string>
     
     
 
     
-    <string name="preference_select_trusted_certificate_title">选择受信任的CA证书</string>
-    <string name="preference_select_trusted_certificate_summary">查看和编辑受信任的CA证书列表</string>
+    <string name="preference_select_trusted_certificate_title">选择可信CA证书</string>
+    <string name="preference_select_trusted_certificate_summary">查看和编辑可信CA证书的列表</string>
 
     
 
     
 
     <string name="preference_page_gallery">专辑</string>
-    <string name="preference_page_slideshow">幻灯片放映</string>
+    <string name="preference_page_slideshow">幻灯片</string>
 
     
-    <string name="preference_gallery_slideshow_auto_drive_title">自动幻灯片进度</string>
-    <string name="preference_gallery_slideshow_auto_drive_summary">在设定的时间之后，将显示下一个图像或视频</string>
+    <string name="preference_gallery_slideshow_auto_drive_title">自动幻灯片进展</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">在设定时间之后，下一个图像或视频将显示</string>
 
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">自动驱动影像延迟</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s 毫秒</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">自动驱动图像延迟</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s毫秒</string>
     
 
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">自动驾驶视频延迟</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s 毫秒</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">自动驱动视频延迟</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s毫秒</string>
     
 
     <string name="preference_gallery_category_general">一般的</string>
     
-    <string name="preference_gallery_category_server_calls">Piwigo服务器呼叫详细信息</string>
-    <string name="preference_gallery_category_slideshow">幻灯片放映</string>
+    <string name="preference_gallery_category_server_calls">piwigo服务器呼叫详细信息</string>
+    <string name="preference_gallery_category_slideshow">幻灯片</string>
 
     
     
@@ -194,19 +194,19 @@
 
 
     
-    <string name="preference_gallery_category_resources">子资源</string>
+    <string name="preference_gallery_category_resources">儿童资源</string>
     
     <string name="preference_gallery_category_albums">儿童专辑</string>
 
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsLandscape_title">景观：要显示的相册列</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_title">景观：专栏显示</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
 
     
     <string name="preference_gallery_show_image_name_title">在相册中显示图像名称</string>
-    <string name="preference_gallery_show_image_name_summary">显示每个图像下的图像名称</string>
+    <string name="preference_gallery_show_image_name_summary">显示每个图像下图像的名称</string>
     
 
     
@@ -214,43 +214,47 @@
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_gallery_show_album_thumbnail_zoomed_title">显示放大的相册缩略图</string>
-    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">相册缩略图被中心裁切</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_title">显示缩放专辑缩略图</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">专辑缩略图是裁剪</string>
     
 
+    
+    
+    <string name="preference_gallery_slideshow_item_detail_show_on_item_show_title">显示资源标题</string>
+    <string name="preference_gallery_slideshow_item_detail_show_on_item_show_summary">显示资源时显示资源信息</string>
 
     
     <string name="preference_gallery_show_file_size_showing_title">显示已查看照片的服务器大小</string>
-    <string name="preference_gallery_show_file_size_showing_summary">显示显示的每张照片的大小</string>
+    <string name="preference_gallery_show_file_size_showing_summary">显示显示每张照片的大小</string>
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsPortrait_title">纵向：要显示的相册列</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_title">肖像：显示专辑列</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_gallery_images_preferredColumnsPortrait_title">纵向：要显示的图像列</string>
+    <string name="preference_gallery_images_preferredColumnsPortrait_title">肖像：要显示的图像列</string>
     <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
 
     
     <string name="preference_gallery_include_videos_in_slideshow_title">在幻灯片中显示视频</string>
-    <string name="preference_gallery_include_videos_in_slideshow_summary">以幻灯片模式浏览图库时是否应显示视频？</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">在浏览幻灯片模式下浏览库时应显示视频吗？</string>
     
 
     
     <string name="preference_gallery_enable_video_playback_title">允许视频播放</string>
-    <string name="preference_gallery_enable_video_playback_summary">如果要按需下载和播放视频，请启用</string>
+    <string name="preference_gallery_enable_video_playback_summary">如果您想按需下载和播放视频</string>
     
 
     
 
     
     <string name="preference_check_for_server_updates_title">更新通知</string>
-    <string name="preference_check_for_server_updates_summary">接收有关服务器可用更新的通知</string>
+    <string name="preference_check_for_server_updates_summary">如果您的服务器有更新，则收到通知</string>
 
     
-    <string name="preference_video_cache_enabled_title">缓存观看到文件的视频</string>
-    <string name="preference_video_cache_enabled_summary">启用后，所有流式传输的视频都将被缓存以供以后播放</string>
+    <string name="preference_video_cache_enabled_title">将缓存视频查看到文件</string>
+    <string name="preference_video_cache_enabled_summary">启用后，将缓存任何流式视频以供以后播放</string>
     
 
     
@@ -259,13 +263,13 @@
     
 
     
-    <string name="preference_gallery_child_album_sort_order_title">子相册排序顺序</string>
+    <string name="preference_gallery_child_album_sort_order_title">儿童专辑排序顺序</string>
     <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
      
 
     
-    <string name="preference_gallery_child_album_sort_order_inverted_title">反转相册顺序</string>
-    <string name="preference_gallery_child_album_sort_order_inverted_summary">启用后，反转所选相册的排序顺序</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_title">反转专辑订单</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">启用后，反转相册的所选排序顺序</string>
     
 
     
@@ -274,8 +278,8 @@
     
 
     
-    <string name="preference_gallery_child_resource_sort_order_inverted_title">反转相册资源排序顺序</string>
-    <string name="preference_gallery_child_resource_sort_order_inverted_summary">启用后，反转所选相册资源的排序顺序</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">反转专辑资源排序顺序</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">启用后，反转所选排序顺序的相册资源</string>
     
 
 
@@ -285,30 +289,25 @@
     
 
     
-    <string name="preference_fix_privacy_plugin_media_uris_title">修复使用隐私插件时媒体Uris损坏的问题</string>
-    <string name="preference_fix_privacy_plugin_media_uris_summary">仅当多媒体资源出现4xx错误时才启用。</string>
+    <string name="preference_fix_privacy_plugin_media_uris_title">使用隐私插件时修复媒体URIS</string>
+    <string name="preference_fix_privacy_plugin_media_uris_summary">仅在多媒体资源获得4xx错误时才启用。</string>
     
 
 
-    <string name="preference_gallery_clearMemoryCache_title">清除内存中的缓存</string>
+    <string name="preference_gallery_clearMemoryCache_title">清除内存缓存</string>
     
-    <string name="preference_gallery_clearMemoryCache_summary">删除所有缓存在内存中的图像</string>
+    <string name="preference_gallery_clearMemoryCache_summary">删除缓存在内存中的所有图像</string>
 
-    <string name="preference_gallery_clearVideoCache_title">清除影片快取</string>
+    <string name="preference_gallery_clearVideoCache_title">清除视频缓存</string>
     
-    <string name="preference_gallery_clearVideoCache_summary">删除所有缓存到磁盘的视频</string>
+    <string name="preference_gallery_clearVideoCache_summary">删除缓存到磁盘的所有视频</string>
     <string name="preference_gallery_clearVideoCache_summary_pattern">删除全部%1$.2f MB视频缓存到磁盘</string>
 
     
     
-    <string name="preference_gallery_recentlyAlteredAgeMillis_title">最近年龄上限（天）</string>
-    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d 天</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_title">最高年龄最近的物品（天）</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d天</string>
      
-    
-
-    
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">幻灯片抽屉是透明的</string>
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">幻灯片图像信息抽屉是透明的</string>
     
 
     <string name="preference_gallery_slideshow_image_scaletype_title">幻灯片图像缩放类型</string>
@@ -317,28 +316,28 @@
     
 
     
-    <string name="preference_gallery_slideshow_image_rotate_title">旋转图像以匹配屏幕的长宽比</string>
-    <string name="preference_gallery_slideshow_image_rotate_summary">图像旋转到适合屏幕的大小</string>
+    <string name="preference_gallery_slideshow_image_rotate_title">旋转图像以匹配屏幕的宽高比</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">图像旋转以适合屏幕</string>
     
 
     
-    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">时间后隐藏物品详细信息</string>
-    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d 毫秒</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">在时间后隐藏项目细节</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d毫秒</string>
     
 
     
     <string name="preference_groups_request_pagesize_title">组服务器请求页面大小</string>
-    <string name="preference_groups_request_pagesize_summary">%1$d 项目</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d项目</string>
     
 
     
     <string name="preference_users_request_pagesize_title">用户服务器请求页面大小</string>
-    <string name="preference_users_request_pagesize_summary">%1$d 项目</string>
+    <string name="preference_users_request_pagesize_summary">%1$d项目</string>
     
 
     
-    <string name="preference_album_request_pagesize_title">相册服务器请求页面大小</string>
-    <string name="preference_album_request_pagesize_summary">%1$d 项目</string>
+    <string name="preference_album_request_pagesize_title">专辑服务器请求页面大小</string>
+    <string name="preference_album_request_pagesize_summary">%1$d项目</string>
     
 
     <string name="preference_gallery_item_thumbnail_size_title">资源缩略图大小</string>
@@ -346,12 +345,12 @@
     <string name="preference_gallery_item_thumbnail_size_summary">%1$s</string>
     
 
-    <string name="preference_gallery_album_thumbnail_size_title">相册缩略图大小</string>
+    <string name="preference_gallery_album_thumbnail_size_title">专辑缩略图大小</string>
     
     <string name="preference_gallery_album_thumbnail_size_summary">%1$s</string>
     
 
-    <string name="preference_gallery_item_slideshow_image_size_title">幻灯片默认图像尺寸</string>
+    <string name="preference_gallery_item_slideshow_image_size_title">幻灯片默认图像大小</string>
     
     <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
     
@@ -359,15 +358,15 @@
 
     
 
-    <string name="preference_page_upload">上载</string>
+    <string name="preference_page_upload">上传</string>
     <string name="preference_upload_category_data_upload_display">显示选项</string>
-    <string name="preference_upload_category_data_upload">资料上传</string>
+    <string name="preference_upload_category_data_upload">数据上传</string>
     
-    <string name="preference_upload_category_pre_data_upload_image_compression_title">上载前图像压缩</string>
+    <string name="preference_upload_category_pre_data_upload_image_compression_title">预上传图像压缩</string>
     
-    <string name="preference_upload_category_pre_data_upload_video_compression_title">上载前视频压缩</string>
+    <string name="preference_upload_category_pre_data_upload_video_compression_title">预上传视频压缩</string>
     
-    <string name="preference_upload_category_piwigo_server_calls_title">Piwigo Server通话详细信息</string>
+    <string name="preference_upload_category_piwigo_server_calls_title">piwigo服务器呼叫详细信息</string>
 
     
 
@@ -389,17 +388,17 @@
     <string name="preference_data_upload_default_privacy_level_title">默认隐私级别</string>
 
     
-    <string name="preference_data_upload_chunkSizeKb_title">最大上传块大小（KB）</string>
+    <string name="preference_data_upload_chunkSizeKb_title">Max上传块大小（KB）</string>
     <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB.</string>
     
 
     
-    <string name="preference_data_upload_chunk_auto_retries_title">最大自动文件块上传重试次数</string>
+    <string name="preference_data_upload_chunk_auto_retries_title">最大自动文件块上传重试</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     
 
     
-    <string name="preference_data_upload_preferredColumnsPortrait_title">纵向：要显示的图像列</string>
+    <string name="preference_data_upload_preferredColumnsPortrait_title">肖像：要显示的图像列</string>
     <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
 
     
@@ -407,13 +406,13 @@
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_max_filesize_mb_title">最多上传文件大小而不会警告您（以MB为单位）</string>
+    <string name="preference_data_upload_max_filesize_mb_title">Max FileSize以上传而不警告您（在MB中）</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB.</string>
     
 
     
-    <string name="preference_data_upload_compress_videos_summary">上传前先压缩视频</string>
-    <string name="preference_data_upload_compress_videos_title">压缩影片</string>
+    <string name="preference_data_upload_compress_videos_summary">上传前压缩视频</string>
+    <string name="preference_data_upload_compress_videos_title">压缩视频</string>
     
 
     
@@ -432,8 +431,8 @@
     
 
     
-    <string name="preference_data_upload_compress_images_summary">上传前先压缩图像</string>
-    <string name="preference_data_upload_compress_images_title">压缩影像</string>
+    <string name="preference_data_upload_compress_images_summary">上传前压缩图像</string>
+    <string name="preference_data_upload_compress_images_title">压缩图像</string>
     
 
     <string name="preference_data_upload_compress_images_quality_title">画面质量</string>
@@ -477,7 +476,7 @@
     
     
     <string name="preference_data_file_selector_showFilenames_title">显示文件名</string>
-    <string name="preference_data_file_selector_showFilenames_summary">每个文件显示的文件名</string>
+    <string name="preference_data_file_selector_showFilenames_summary">为每个文件显示的文件名</string>
 
     
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">景观：要显示的文件列</string>
@@ -488,18 +487,18 @@
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">景观：要显示的文件夹列</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">景观：显示文件夹列</string>
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">纵向：要显示的文件夹列</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">肖像：要显示的文件夹列</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 
     
 
     
     
-    <string name="preference_app_always_show_nav_buttons_title">一律显示导航按钮</string>
+    <string name="preference_app_always_show_nav_buttons_title">始终显示导航按钮</string>
     <string name="preference_app_always_show_nav_buttons_summary">启用以防止自动隐藏导航按钮</string>
 
     
@@ -509,7 +508,7 @@
     
     
     <string name="preference_app_always_show_status_bar_title">始终显示状态栏</string>
-    <string name="preference_app_always_show_status_bar_summary">启用以防止状态栏自动隐藏</string>
+    <string name="preference_app_always_show_status_bar_summary">启用以防止自动隐藏状态栏</string>
 
     
     <string name="preference_app_desired_language_title">语言</string>
@@ -519,8 +518,8 @@
     <string name="preference_app_clear_list_of_user_hints_shown_title">再次显示所有用户提示</string>
 
     
-    <string name="preference_app_uri_permissions_held_title">持有的URI权限</string>
-    <string name="preference_app_uri_permissions_held_summary">保留所有URI权限的目的</string>
+    <string name="preference_app_uri_permissions_held_title">URI权限持有</string>
+    <string name="preference_app_uri_permissions_held_summary">所有URI权限的目的</string>
 
 
     

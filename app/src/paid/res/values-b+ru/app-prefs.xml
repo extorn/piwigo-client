@@ -3,14 +3,14 @@
     
 
     <string name="preference_page_auto_upload_jobs">Автоматическая загрузка</string>
-    <string name="preference_data_upload_automatic_title">Автоматическая загрузка</string>
-    <string name="preference_data_upload_automatic_job_title">Автоматическая загрузка задания</string>
+    <string name="preference_data_upload_automatic_title">Автоматические загрузки</string>
+    <string name="preference_data_upload_automatic_job_title">Авто загрузка работы</string>
 
     
 
     
-    <string name="preference_data_upload_automatic_upload_enable_summary">Включить фоновую загрузку</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Автоматическая загрузка</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Включить загрузку фона</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Автоматические загрузки</string>
     
 
     <string name="preference_data_upload_automatic_upload_wireless_only_summary">Используйте автоматическую загрузку на нетерируемой сети</string>
@@ -19,7 +19,7 @@
     
 
     
-    <string name="preference_data_upload_automatic_upload_jobs_title">Автозагрузка заданий</string>
+    <string name="preference_data_upload_automatic_upload_jobs_title">Автозагрузка рабочих мест</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Рабочие места</string>
 
     
@@ -29,13 +29,13 @@
 
     
     <string name="preference_data_upload_automatic_job_view_status_title">Просмотр статуса загрузки</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">Просмотр статуса последнего выполнения задания (если доступно)</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Просмотр статуса с последнего запуска задания (если есть)</string>
 
     
-    <string name="preference_data_upload_automatic_job_is_valid_title">Работа действительна</string>
+    <string name="preference_data_upload_automatic_job_is_valid_title">Работа действует</string>
 
     
-    <string name="preference_data_upload_automatic_job_enabled_summary">Будет ли служба загрузки использовать это задание?</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">Будет ли сервис загрузки использовать эту работу?</string>
     <string name="preference_data_upload_automatic_job_enabled_title">Работа включена</string>
     
 
@@ -54,7 +54,7 @@
 
     
     <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Удалить успешно загруженные файлы</string>
-    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Автоудаление</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Авто удаление</string>
     
 
     
@@ -76,7 +76,7 @@
 
     
     
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Максимальный размер загруженного файла</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Максимальный файл загружен</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d Мб</string>
 
     

@@ -2,15 +2,15 @@
 <resources>
     
 
-    <string name="preference_page_auto_upload_jobs">Automatisches Hochladen</string>
-    <string name="preference_data_upload_automatic_title">Automatisches Hochladen</string>
-    <string name="preference_data_upload_automatic_job_title">Job zum automatischen Hochladen</string>
+    <string name="preference_page_auto_upload_jobs">Automatischer Upload</string>
+    <string name="preference_data_upload_automatic_title">Automatische Uploads.</string>
+    <string name="preference_data_upload_automatic_job_title">Automatischer Upload-Job</string>
 
     
 
     
-    <string name="preference_data_upload_automatic_upload_enable_summary">Aktivieren Sie das Hochladen im Hintergrund</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Automatisches Hochladen</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Bilder hochladen aktivieren.</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Automatische Uploads.</string>
     
 
     <string name="preference_data_upload_automatic_upload_wireless_only_summary">Verwenden Sie nur AUTO-Upload auf dem nicht dosierten Netzwerk</string>
@@ -19,7 +19,7 @@
     
 
     
-    <string name="preference_data_upload_automatic_upload_jobs_title">Jobs automatisch hochladen</string>
+    <string name="preference_data_upload_automatic_upload_jobs_title">Automatische Upload-Jobs</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Arbeitsplätze</string>
 
     
@@ -28,8 +28,8 @@
     
 
     
-    <string name="preference_data_upload_automatic_job_view_status_title">Upload-Status anzeigen</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">Status vom letzten Joblauf anzeigen (falls verfügbar)</string>
+    <string name="preference_data_upload_automatic_job_view_status_title">Upload-Status anzeigen.</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Status des letzten Joblaufs anzeigen (falls vorhanden)</string>
 
     
     <string name="preference_data_upload_automatic_job_is_valid_title">Job ist gültig</string>
@@ -39,22 +39,22 @@
     <string name="preference_data_upload_automatic_job_enabled_title">Job aktiviert</string>
     
 
-    <string name="preference_data_upload_automatic_job_server_title">Auf Server hochladen</string>
+    <string name="preference_data_upload_automatic_job_server_title">Laden Sie zum Server hoch</string>
     
     <string name="preference_data_upload_automatic_job_server_summary">Profil: %1$s</string>
 
     
-    <string name="preference_data_upload_automatic_job_server_album_title">Zum Album hochladen</string>
+    <string name="preference_data_upload_automatic_job_server_album_title">Laden Sie zum Album hoch</string>
     <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
-    <string name="preference_data_upload_automatic_job_local_folder_title">Aus Ordner hochladen</string>
+    <string name="preference_data_upload_automatic_job_local_folder_title">Upload aus dem Ordner.</string>
     
     <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
 
     
-    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Löschen Sie erfolgreich hochgeladene Dateien</string>
-    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Automatisches Löschen</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Erfolgreich hochgeladene Dateien löschen</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Auto Delete.</string>
     
 
     
@@ -76,7 +76,7 @@
 
     
     
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max. Dateigröße hochgeladen</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Datei hochgeladen</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d Mb.</string>
 
     
@@ -84,7 +84,7 @@
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Dateierweiterungen</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Laden Sie Dateien mit ext %1$s hoch</string>
 
-    <string name="preference_data_upload_automatic_job_privacy_level_title">Datenschutzstufe</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Privatsphäre</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">Hochgeladene Dateien sichtbar für %1$s</string>
     
     

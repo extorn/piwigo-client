@@ -4,12 +4,12 @@
 
     <string name="preference_page_auto_upload_jobs">Automatische upload</string>
     <string name="preference_data_upload_automatic_title">Automatische uploads</string>
-    <string name="preference_data_upload_automatic_job_title">Automatische uploadtaak</string>
+    <string name="preference_data_upload_automatic_job_title">Auto Upload Job</string>
 
     
 
     
-    <string name="preference_data_upload_automatic_upload_enable_summary">Schakel uploaden op de achtergrond in</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Achtergrond uploaden inschakelen</string>
     <string name="preference_data_upload_automatic_upload_enable_title">Automatische uploads</string>
     
 
@@ -19,7 +19,7 @@
     
 
     
-    <string name="preference_data_upload_automatic_upload_jobs_title">Taken automatisch uploaden</string>
+    <string name="preference_data_upload_automatic_upload_jobs_title">Auto Upload taken</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Banen</string>
 
     
@@ -28,15 +28,15 @@
     
 
     
-    <string name="preference_data_upload_automatic_job_view_status_title">Bekijk de uploadstatus</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">Bekijk de status van de laatste uitgevoerde taak (indien beschikbaar)</string>
+    <string name="preference_data_upload_automatic_job_view_status_title">Bekijk uploadstatus</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Bekijk status van laatste taakrun (indien beschikbaar)</string>
 
     
     <string name="preference_data_upload_automatic_job_is_valid_title">Job is geldig</string>
 
     
     <string name="preference_data_upload_automatic_job_enabled_summary">Zal de uploadservice deze taak gebruiken?</string>
-    <string name="preference_data_upload_automatic_job_enabled_title">Taak ingeschakeld</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Werk ingeschakeld</string>
     
 
     <string name="preference_data_upload_automatic_job_server_title">Upload naar server</string>
@@ -44,17 +44,17 @@
     <string name="preference_data_upload_automatic_job_server_summary">Profiel: %1$s</string>
 
     
-    <string name="preference_data_upload_automatic_job_server_album_title">Uploaden naar album</string>
+    <string name="preference_data_upload_automatic_job_server_album_title">Upload naar album</string>
     <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
-    <string name="preference_data_upload_automatic_job_local_folder_title">Uploaden vanuit map</string>
+    <string name="preference_data_upload_automatic_job_local_folder_title">Uploaden vanuit de map</string>
     
     <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
 
     
     <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Verwijder succesvol geüploade bestanden</string>
-    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Automatisch verwijderen</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Auto Delete</string>
     
 
     
@@ -76,7 +76,7 @@
 
     
     
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max. Bestandsgrootte geüpload</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">MAX-bestandsgrootte geüpload</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
     

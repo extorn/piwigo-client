@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     
-    <string name="shortDesc">Parcourez et modifiez le contenu de la galerie de photos Piwigo de votre choix</string>
-    <string name="longDesc">Utilisez pour parcourir une galerie de photos PIWIGO.
+    <string name="shortDesc">Parcourez et modifiez le contenu de la galerie de photos de Piwigo de votre choix</string>
+    <string name="longDesc">Utilisez-vous pour parcourir une galerie de photos Piwigo.
 
-REMARQUE: le CLUF doit être accepté lors du téléchargement.
+Remarque: le CLUF doit être accepté au téléchargement.
 
-Cette application a toutes les fonctionnalités de la version gratuite avec quelques autres aussi. Aucune publicité.
+Cette application a toutes les fonctionnalités de la version gratuite avec quelques autres. Pas de publicité.
 
-** L\'application n\'est pas en cours de développement actif (correction de bogues uniquement) **
-** Si quelque chose ne fonctionne pas - envoyez-moi un e-mail - ce sera corrigé **
+** L\'application n\'est maintenant pas activement développée (corrections de bugs uniquement) **
+** Si quelque chose ne fonctionne pas - envoyez-moi un e-mail - Ça sera corrigé **
 
-** Pour une fonctionnalité complète, vous devez installer le plugin serveur PiwigoClientWsExts. **
+** Pour une fonctionnalité complète, vous devez installer le plug-in PiwigoclientWsexts Server. **
 
-Consultez la liste complète des fonctionnalités ci-dessous.
+Voir la liste complète des fonctionnalités ci-dessous.
 
 
-Connectez-vous à des serveurs fonctionnant sur des ports http ou https non standard
-Acceptez les certificats de serveur non valides (mauvais nom d\'hôte) ou auto-signés si nécessaire
-L\'épinglage de certificat de serveur est pris en charge (vérifiez les certificats par rapport à une copie locale)
-Affichez les images à une résolution optimisée pour votre écran (ou sélectionnez celle que vous souhaitez).
-Vue en lecture seule hors ligne de votre serveur
-Afficher et autoriser le zoom sur les images de toute taille disponibles sur le serveur
-Voir les vidéos MP4 (d\'autres devraient fonctionner aussi, mais je n\'ai pas testé d\'autres formats)
-Téléchargez des images.
+Connectez-vous à des serveurs en cours d\'exécution sur les ports HTTP ou HTTPS non standard
+Accepter des certificats de serveur non signés (nom d\'hôte incorrect) ou auto-signé si nécessaire
+Le certificat de serveur Pinning est pris en charge (vérifiez les certs contre une copie locale)
+Affichez des images à une résolution optimisée pour votre écran (ou sélectionnez celui que vous souhaitez).
+Hors ligne en lecture seule Vue de votre serveur
+Afficher et permettre de zoomer des images de n\'importe quelle taille disponibles sur le serveur
+Voir les vidéos MP4 (autres devraient travailler aussi, mais je n\'ai pas testé d\'autres formats)
+Télécharger des images.
 Enregistrer des vidéos entièrement téléchargées
-Exclure éventuellement des vidéos des diaporamas
-Évaluez les images et consultez les notes moyennes
-Télécharger de nouvelles images ou vidéos (peuvent être éventuellement compressées)
-Surveillance automatique des dossiers de périphériques et téléchargement des fichiers dans une tâche en arrière-plan
-Afficher, ajouter, modifier, supprimer des balises et des images balisées
-Définition et modification des autorisations, de la description et d\'autres détails des albums et des fichiers
-Ajouter ou modifier des albums, leurs autorisations, leur description, etc.
-Ajouter, afficher et modifier les utilisateurs de la galerie
-Ajouter, afficher et modifier des groupes de galeries
-Copiez ou déplacez des images dans la galerie
-Gérer les ressources orphelines (celles sans album)
-Sélectionnez les images à télécharger à l\'aide d\'autres applications et partagez-les avec PIWIGO
-Mode lecture seule de l\'application spéciale disponible pour éviter toute modification indésirable de la galerie
-Un certain contrôle sur la disposition des écrans sur l\'application (à utiliser pour personnaliser l\'écran de votre appareil)
-Prise en charge du téléchargement au format alternatif (par exemple, raw, psd, etc.) pour les éléments hébergés dans le dossier enfant pwg_format (sites synchronisés)
+Exclure éventuellement des vidéos des diapositives
+Taux d\'images et visualisez les évaluations moyennes
+Télécharger de nouvelles images ou vidéos (peut être éventuellement comprimé)
+Surveillance du dossier de périphérique automatique et téléchargement des fichiers dans un travail d\'arrière-plan
+Afficher, ajouter, modifier, supprimer des balises et des images marquées
+Définition et modification des autorisations, description et d\'autres détails des albums et des fichiers
+Ajouter ou modifier des albums, leurs autorisations, la description, etc.
+Ajouter, voir et modifier les utilisateurs de la galerie
+Ajouter, afficher et éditer des groupes de galeries
+Copier ou déplacer des images dans la galerie
+Gérer les ressources d\'orphelin (celles sans album)
+Sélectionnez Image (s) pour télécharger à l\'aide d\'autres applications et partagez-les avec PIWIGO
+Application spéciale en lecture seule en lecture seule pour éviter toute modification non désirée de la galerie
+Quelques contrôles sur la disposition des écrans de l\'application (utilisation pour personnaliser l\'écran sur votre appareil)
+Prise en charge du format alternatif (E.G. RAW, PSD, etc.) Télécharger pour les articles hébergés dans le dossier enfant PWG_Format (sites synchronisés)
 
-Plugins de serveur pris en charge: PiwigoClientWsExts, communauté, piwigo_privacy, videojs, user-tags, descriptions étendues.
+Plugins de serveur pris en charge: PIWIGOCLIENTWSEXTS, COMMUNAUTÉ, PIWIGO_PRIVACY, VIDEOJS, Tags utilisateur, Descriptions étendues.
 
-Vous voulez quelque chose d\'autre non répertorié? Essayez l\'appli. Si cela ne fait pas exactement ce dont vous avez besoin. Envoyez-moi un e-mail en utilisant le lien dans l\'application et je chercherai à ajouter la ou les fonctionnalités manquantes.
+Vous voulez quelque chose d\'autre non répertorié? Essayez l\'application. Si cela ne fait pas exactement ce dont vous avez besoin. Dressez-moi un email à l\'aide du lien dans l\'application et je vais aborder l\'ajout de la fonctionnalité manquante.
 
-Changements à venir:
+Modifications à venir:
 
-L\'intention est d\'améliorer progressivement l\'interface utilisateur, et l\'un des utilisateurs, David Klement, a gentiment fourni quelques suggestions pour les mises en page d\'écran que j\'ai commencé à utiliser à partir de la version 1.3.95 et dont je prendrai sans aucun doute plus d\'idées. Les propositions sont disponibles dans leur intégralité:
-https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
+L\'intention est d\'améliorer progressivement l\'interface utilisateur, et l\'un des utilisateurs, David Klement, a gentiment fourni certaines suggestions de mise en page d\'écran que j\'ai commencé à utiliser à partir de la version 1.3.95 et de prendre sans doute plus d\'idées de. Les propositions sont disponibles en totalité:
+https://api-8938561204297001672-604498.firebaseApp.com/design-proposals/index.html
 
 Limitations connues:
 
-1. Les commentaires ne sont actuellement pas pris en charge - vous ne pouvez ni voir les commentaires ni les ajouter. Si cette fonctionnalité manquante est importante pour vous, parlez-moi s\'il vous plaît.</string>
+1. Les commentaires sont actuellement non pris en charge - vous ne pouvez ni voir des commentaires ni les ajouter. Si cette fonctionnalité manquante est importante pour vous - parlez-moi s\'il vous plaît.</string>
 </resources>

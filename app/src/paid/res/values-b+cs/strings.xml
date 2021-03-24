@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     
-    <string name="notification_title_background_upload_service">Služba nahrávání na pozadí Piwigo</string>
-    <string name="notification_text_background_upload_running">Probíhá nahrávání úlohy</string>
+    <string name="notification_title_background_upload_service">Pozadí Piwigo Upload Service</string>
+    <string name="notification_text_background_upload_running">Běh Upload Job.</string>
     <string name="notification_text_background_upload_sleeping">Spící. Další běh na %1$tR</string>
-    <string name="notification_text_background_upload_polling">Dotazování na soubory k nahrání.</string>
+    <string name="notification_text_background_upload_polling">Dotazování pro soubory nahrávání.</string>
 
 
-    <string name="alert_warning_auto_upload_service_stopped">Pokud chcete, aby vaše úlohy běžely, nezapomeňte spustit službu nahrávání na pozadí</string>
-    <string name="alert_auto_upload_service_stopped">Služba nahrávání na pozadí byla zastavena</string>
-    <string name="alert_auto_upload_service_started">Služba nahrávání na pozadí byla spuštěna</string>
+    <string name="alert_warning_auto_upload_service_stopped">Zapomeňte na spuštění služby Upload pozadí, pokud chcete, aby vaše úlohy spustili</string>
+    <string name="alert_auto_upload_service_stopped">Pozadí Upload Service se zastavila</string>
+    <string name="alert_auto_upload_service_started">Začala služba nahrávání pozadí</string>
     <string name="alert_auto_upload_service_job_restarted">Začal nahrávání dříve neúplné úlohy serveru %1$s s %2$d Soubory</string>
     <string name="alert_auto_upload_service_job_started">Začátek uploading úlohy serveru %1$s s %2$d Soubory</string>
     <string name="alert_auto_upload_service_job_finished_success">Dokončené běžící pozadí Upload Úloha serveru %1$s.</string>
     <string name="alert_auto_upload_service_job_finished_partial_success">Dokončené běžící pozadí Upload Úloha serveru %1$s. Některé soubory se nepodařilo nahrát a budou opakovány později.</string>
     <string name="alert_auto_upload_service_job_finished_failure">Dokončené běžící pozadí Upload Úloha serveru %1$s. Žádné soubory nelze nahrát. Úloha bude opakována později.</string>
-    <string name="alert_auto_upload_service_checking_for_tasks">Služba nahrávání na pozadí kontroluje úkoly</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Pozadí Upload Service Kontrola úkolů</string>
     <string name="progress_creating_tag">Vytváření značky</string>
     <string name="error_updating_favorites_pattern">Chyba odstranění zdrojů (%1$s) z oblíbených: %2$s</string>
-    <string name="favorites_content_load_failed_text">Načtení zdrojů označených jako oblíbené se nezdařilo</string>
+    <string name="favorites_content_load_failed_text">Nepodařilo se načíst prostředky označené jako oblíbené</string>
     <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Požaduje se, abyste odstranili %1$d zdroje. Chcete tyto ze všech alb (a serveru) odstranit z všech alb (a serveru), nebo jen zrušit z nich z tohoto oblíbeného?</string>
-    <string name="progress_remove_favorite_resources">Odebrání zdrojů ze seznamu oblíbených</string>
+    <string name="progress_remove_favorite_resources">Odstranění zdrojů z seznamu oblíbených položek</string>
     <string name="favorites_empty_text">Momentálně nemáte žádné oblíbené</string>
     <string name="favorites_heading">Vaše oblíbené</string>
-    <string name="button_unfavorite">Není oblíbené</string>
+    <string name="button_unfavorite">Není favorit</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">Nastavení serveru</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Místní nastavení</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Komprese obrazu před nahráním</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Komprese videa před nahráním</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Pre-upload komprese obrázku</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Pre-upload komprese videa</string>
     <string name="ignoring_job_local_folder_not_found">Místní složka již neexistuje. Ignorování práce</string>
-    <string name="ignoring_job_no_file_types_selected_for_upload">Pro nahrání nebyly vybrány žádné přípony souborů. Ignorování práce</string>
-    <string name="ignoring_job_connection_profile_set_for_offline_access">Profil připojení nastaven do režimu offline. Ignorování práce</string>
-    <string name="slideshow_auto_drive_paused">Prezentace Autodrive pozastavena až do dalšího snímku</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">Žádné rozšíření souborů vybrané pro nahrání. Ignorování práce</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">Profil připojení Nastavený do režimu offline. Ignorování práce</string>
+    <string name="slideshow_auto_drive_paused">Slideshow Autodrive Zastaveno až do dalšího snímku</string>
     <string name="progress_loading_orphan_ids">Načítání sirotků</string>
     <string name="orphans_heading">Osamocené zdroje</string>
-    <string name="orphans_album_description">Všechny osiřelé zdroje shromážděné aplikací PiwigoClient</string>
-    <string name="orphans_no_orphans_found_on_server">Nebyly nalezeny žádné sirotky</string>
+    <string name="orphans_album_description">Všechny osamocené zdroje shromážděné aplikací PIWIGOCLIENT</string>
+    <string name="orphans_no_orphans_found_on_server">Žádné sirotci našli</string>
     <string name="orphans_found_on_server_pattern">Nalezeno sirotci: %1$d</string>
-    <string name="alert_confirm_okay_to_create_orphans_album">Jsou zde sirotci. Abychom je mohli zobrazit, musíme vytvořit soukromou složku přístupnou pouze pro správce. Poté můžete album kdykoli smazat. Pokud nesouhlasíte, budete je muset zpracovat na serveru sami.</string>
-    <string name="progress_rescuing_orphans">Záchrana sirotků</string>
-    <string name="piwigo_deep_link_login_email_pattern">Pomocí níže uvedeného odkazu nakonfigurujte kopii klientské aplikace PIWIGO se serverem URI, uživatelské jméno a heslo, abyste mohli začít.\n\n  %1$s</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Jsou zde přítomny sirotky. Chcete-li je zobrazit, musíme vytvořit soukromou složku přístupnou pouze správci. Album můžete odstranit kdykoliv poté. Pokud nesouhlasíte, musíte tyto zpracovat na serveru sami.</string>
+    <string name="progress_rescuing_orphans">Záchranné sirotky</string>
+    <string name="piwigo_deep_link_login_email_pattern">Pomocí níže uvedeného odkazu nakonfigurujte kopii klientské aplikace PIWIGO se serverem URI, uživatelské jméno a heslo, abyste mohli začít.\n\n  ||| 1 |||</string>
     <string name="deep_link_explanation">Vyberte cíl pro odkaz.\n\n\"Tato aplikace\" vytvoří nový profil v této aplikaci s těmito pověřeními, které vám umožní otestovat funkci</string>
     <string name="deep_link_warning_password">Chcete vytvořit hluboký odkaz, který lze použít ke konfiguraci kopie této aplikace s podrobnostmi serveru?\n\nMyšlenka je snazší, aby někdo začít.\n\nTato funkce není dostupná ve volné verzi.</string>
     <string name="deep_link_warning_no_password">Aktuální hluboký odkaz nebude mít heslo. Pokud chcete přidat heslo, musíte pro tento uživatel nastavit nové heslo.\n\nVytvořte hluboký odkaz bez hesla?</string>

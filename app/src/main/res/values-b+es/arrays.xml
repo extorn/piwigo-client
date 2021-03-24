@@ -6,14 +6,14 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0bps (—X)</item>
-        <item>muy bajo (0,025 b / píxeles * fotograma)</item>
-        <item>inferior (0,05 b / píxeles * fotograma)</item>
-        <item>bajo (0,1 b / píxeles * fotograma)</item>
-        <item>medio (0,15 b / píxeles * fotograma)</item>
-        <item>alto (0,2 b / píxeles * fotograma)</item>
-        <item>muy alto (0,25 b / píxeles * fotograma)</item>
-        <item>ultra alto (0,3 b / píxeles * fotograma)</item>
+        <item>0bps (-x)</item>
+        <item>Muy bajo (0.025 b / píxeles * marco)</item>
+        <item>Baje (0.05 b / píxeles * marco)</item>
+        <item>Bajo (0.1 b / píxeles * marco)</item>
+        <item>Medio (0.15 b / píxeles * marco)</item>
+        <item>Alto (0.2 b / píxeles * marco)</item>
+        <item>Muy alto (0.25 b / píxeles * marco)</item>
+        <item>ultra alto (0.3 b / píxeles * marco)</item>
     </string-array>
 
     
@@ -28,17 +28,17 @@
     </string-array>
     
     <string-array name="preference_caching_level_items">
-        <item>Almacenamiento en caché deshabilitado</item>
+        <item>Caché deshabilitado</item>
         <item>Caché a la memoria</item>
-        <item>Caché a disco</item>
+        <item>Caché al disco</item>
     </string-array>
 
 
     <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
         <item>Defecto</item>
-        <item>ajustar al tamaño de la pantalla</item>
-        <item>agrandar y recortar para ajustar la pantalla</item>
-        <item>centrar en la pantalla</item>
+        <item>ajuste al tamaño de la pantalla</item>
+        <item>Ampliar y recortar para que se ajuste a la pantalla.</item>
+        <item>centro en pantalla</item>
     </string-array>
 
     
@@ -47,13 +47,13 @@
         <item>mejor ajuste</item>
         <item>cuadrado</item>
         <item>pulgar</item>
-        <item>2pequeña</item>
-        <item>pequeño</item>
+        <item>2small</item>
+        <item>xsmall</item>
         <item>pequeño</item>
         <item>medio</item>
         <item>grande</item>
         <item>xlarge</item>
-        <item>xxlarge</item>
+        <item>XXLARGE</item>
         
     </string-array>
 
@@ -62,19 +62,19 @@
     <string-array name="preference_gallery_item_thumbnail_size_entry_text">
         <item>cuadrado</item>
         <item>pulgar</item>
-        <item>2pequeña</item>
-        <item>pequeño</item>
+        <item>2small</item>
+        <item>xsmall</item>
         <item>pequeño</item>
     </string-array>
 
     
     <string-array name="preference_gallery_child_resource_sort_order_entry_text">
-        <item>Servidor predeterminado</item>
+        <item>Valor predeterminado del servidor</item>
         <item>ID de recurso</item>
         <item>Nombre de archivo de recurso</item>
         <item>Nombre del recurso</item>
-        <item>Número de aciertos</item>
-        <item>Puntaje de calificación promedio</item>
+        <item>Número de hits</item>
+        <item>Puntuación de calificación media</item>
         <item>Fecha de creación</item>
         <item>Fecha disponible</item>
         <item>aleatorio</item>
@@ -82,7 +82,7 @@
     
     <string-array name="server_ssl_certificate_hostname_verification_entries">
         <item>Estricto</item>
-        <item>Compatible con navegador</item>
+        <item>Navegador compatible</item>
         <item>Apagado</item>
     </string-array>
     
@@ -99,7 +99,7 @@
     <string-array name="privacy_levels_groups_array">
         <item>Administradores</item>
         <item>Administradores, Familia</item>
-        <item>Administradores, Familia, Amigos</item>
+        <item>Administradores, Familia, Amigos.</item>
         <item>Administradores, Familia, Amigos, Contactos</item>
         <item>Todos</item>
     </string-array>
@@ -116,51 +116,54 @@
     
 
     <string-array name="rotation_array">
-        <item>90 grados a la izquierda</item>
+        <item>Izquierda 90 grados</item>
         <item>Ninguno</item>
-        <item>90 grados a la derecha</item>
-        <item>180 grados a la derecha</item>
+        <item>Derecha 90 grados</item>
+        <item>Derecha 180 grados</item>
     </string-array>
 
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una reseña negativa en Google Play, no estoy tratando de detener eso, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias.</item>
-        <item>Solo puede ver los archivos para seleccionar para Subir que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de alterar su archivo Config.inc.php para incluir $ CONF [\'UPLOAD_FORM_ALL_TYPES\'] = VERDADERO; en lugar de falso</item>
-        <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de la configuración de la aplicación para borrar cualquier carga fallida residual del servidor</item>
-        <item>Siempre se produce un error al intentar actualizar las etiquetas - "No se le permite eliminar etiquetas" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
-        <item>Comparta archivos de una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga listos para ir a su servidor actual</item>
-        <item>Haga clic largo en una imagen (ya sea en miniatura o en un elemento de presentación de diapositivas) que no se haya podido cargar para recuperarla nuevamente</item>
-        <item>Haga clic largo en un álbum para eliminar ese álbum y todo el contenido</item>
-        <item>Haga clic largo en la imagen de un álbum para habilitar la selección masiva de imágenes para una acción</item>
-        <item>Al ver cualquier imagen en la presentación de diapositivas, haga clic largo para rotar / cambiar el tamaño de la imagen mostrada / permitir un mayor zoom</item>
-        <item>Puede acercar una imagen al ver una presentación de diapositivas juntando o separando dos dedos en la pantalla</item>
-        <item>Cuando inicie sesión como administrador, antes de entregar su dispositivo a un amigo para que vea sus fotos, active la función de bloqueo de la aplicación para evitar que se realicen cambios involuntarios en su galería.</item>
-        <item>Una vez que haya visto un video completo, si el almacenamiento en caché de archivos local está habilitado, es posible guardar ese video en su carpeta de descargas</item>
-        <item>Haga clic prolongadamente en el botón eliminar en un \'archivo para cargar \' para eliminar todos los archivos que se cargarán (cuando el trabajo no está en curso)</item>
-        <item>Si las imágenes tardan en cargarse, compruebe que su servidor genera automáticamente el tamaño utilizado por esta aplicación cuando se cargan</item>
+        <item>"Si tiene algún problema con la aplicación, use el correo electrónico para notificarme. Si lo desea, publique una revisión negativa en Google Play, no estoy tratando de detenerlo, sino también por favor envíe un correo electrónico. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizante. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias."</item>
+        <item>"Solo puede ver los archivos para seleccionar para Subir que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de alterar su archivo Config.inc.php para incluir $ CONF [\'UPLOAD_FORM_ALL_TYPES\'] = VERDADERO; en lugar de falso"</item>
+        <item>Si una carga simplemente no ha tenido éxito, intente usar la preferencia en la página de carga de la configuración de la aplicación para borrar cualquier carga fallida residual del servidor</item>
+        <item>El error siempre ocurre al intentar actualizar las etiquetas: "No se le permite eliminar etiquetas": asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
+        <item>Comparta archivos de una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga lista para ir a su servidor actual</item>
+        <item>Haga clic a largo clic en una imagen (ya sea en miniatura o elemento de presentación de diapositivas) que no ha podido cargar para recuperarlo nuevamente</item>
+        <item>Haga clic en un clic largo en un álbum para eliminar ese álbum y todo el contenido.</item>
+        <item>Haga clic a largo clic en una imagen del álbum para habilitar la selección de imágenes a granel para una acción</item>
+        <item>Al ver cualquier imagen en la presentación de diapositivas, haga clic en LARGO para girar / cambiar el tamaño de la imagen mostrado / permitir un mayor zoom</item>
+        <item>Puede hacer un zoom en una imagen cuando se vea en una presentación de diapositivas dibujando dos dedos juntos o separados en la pantalla</item>
+        <item>Cuando se inicia sesión como administrador, antes de entregar su dispositivo a un amigo para ver sus fotos, active la función de bloqueo de la aplicación para evitar que se realicen cambios inadvertidos en su galería.</item>
+        <item>Una vez que haya visto un video completo, si el almacenamiento en caché de archivos local está habilitado, es posible guardar ese video en la carpeta de descargas</item>
+        <item>Haga clic a largo, haga clic en el botón Eliminar en un archivo \'File for Subir \' para eliminar todos los archivos que se cargarán (cuando el trabajo no está en curso)</item>
+        <item>Si las imágenes son lentas para cargar, verifique que su servidor genere automáticamente el tamaño utilizado por esta aplicación cuando se carguen</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
         <item>"* Principalmente de errores solamente
                 * Posiblemente una reconstrucción completa de la aplicación con un enfoque en la simplicidad para la navegación de usuarios generales inicialmente"</item>
         
-        <item>1.4.0.140</item>
+        <item>1.4.0.141</item>
         <item>"Cambio:
                  - Reemplazo del código de almacenamiento y recuperación de la configuración de trabajo para admitir mejor los trabajos grandes"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.140</item>
+        <item>"Cambio:
+                 - La nueva preferencia es la presentación de diapositivas para permitir que oculte la superposición de información en presentación de diapositivas hasta que haga clic en la imagen"</item>
         <item>1.4.0.139</item>
-        <item>\"Arreglo del fallo:
+        <item>"Arreglo del fallo:
                  - Crash Actualizando el álbum Orden de clasificación
-                 - Crash Selección de archivos</item>
+                 - Crash Selección de archivos"</item>
         <item>1.4.0.138</item>
-        <item>\"Arreglo del fallo:
-                 - Solo pago: problema menor con la base de datos de seguimiento de carga</item>
+        <item>"Arreglo del fallo:
+                 - Solo pago: problema menor con la base de datos de seguimiento de carga"</item>
         <item>1.4.0.137</item>
-        <item>\"Cambio:
+        <item>"Cambio:
                  - solo pagado: ID de archivo de registro cargado a servidores en una base de datos en el dispositivo para permitir filtrado anterior o etiquetar estos
-                 - Realización de la carga para permitir un mejor control sobre qué archivos se comprimen (nuevos colores de icono)</item>
+                 - Realización de la carga para permitir un mejor control sobre qué archivos se comprimen (nuevos colores de icono)"</item>
         <item>1.4.0.136</item>
         <item>"Arreglo del fallo:
                  - Problema corregido con la aplicación Pensando permisos de URI todavía se necesitaban después de una carga completada"</item>
@@ -199,60 +202,60 @@
                 - alteración en la lógica de reintento para una respuesta 401/403 Server, hágamelo saber si se le notifica más 401/403 errores"</item>
         <item>1.4.0.129</item>
         <item>"Arreglo del fallo:
-                 - Localizador de huérfanos y código de carga correctos"</item>
+                 - Corregir el localizador de huérfanos y el código de carga."</item>
         <item>1.4.0.128</item>
         <item>"Cambio:
-                - Si el orden de clasificación de los recursos está invertido, los recursos dentro de una etiqueta o lista de favoritos también aparecerán en orden inverso
+                - Si el pedido de clasificación de recursos se invierte, los recursos dentro de una etiqueta o lista de favoritos también aparecerán en orden inverso
                Arreglo del fallo:
-                - muestra inmediatamente la ruta a la carpeta después de agregarla como raíz en lugar de mostrar inicialmente solo el nombre de la carpeta
-                - Carga paginada corregida de favoritos y elementos etiquetados
-                - actualice inmediatamente el recuento de fotos en la carpeta secundaria que se muestra después de que los elementos se mueven a una carpeta y luego el usuario navega a la carpeta principal
-                - actualice inmediatamente la miniatura que se muestra para la carpeta después de cambiar su imagen representativa y luego el usuario navega a la carpeta principal
-                - falla si el usuario invierte el orden de clasificación mientras ve un álbum, con fotos, y luego no recarga manualmente el contenido del álbum
-                - volvió a habilitar la navegación a la raíz de la galería usando la ruta de navegación en la parte superior de la vista del álbum
-                - corregir la ocultación y expansión de álbumes (recientemente roto)
-                - miniaturas redibujadas correctamente alternando los títulos de los álbumes secundarios repetidamente"</item>
+                - Mostrar inmediatamente la ruta a la carpeta después de agregarla como una raíz en lugar de mostrarse inicialmente solo el nombre de la carpeta
+                - Corrige la carga de los favoritos y los artículos etiquetados.
+                - Actualice inmediatamente la cuenta de fotos en la carpeta de niños que se muestra después de que los elementos se muevan a una carpeta y luego el usuario navega a los padres
+                - Actualice inmediatamente la miniatura que se muestra para la carpeta después de cambiar su imagen representativa y luego el usuario navega a los padres
+                - Crash Si el usuario invierte un orden de clasificación al ver un álbum, con fotos y luego volver a cargar manualmente los contenidos del álbum
+                - Volver a habilitar la navegación en la raíz de la galería con la panorámica en la parte superior de la vista del álbum
+                - Corregir la Ocultar y expandir los álbumes (recientemente roto)
+                - Miniaturas correctamente redibujadas alternando los álbumes infantiles encabezados repetitivamente"</item>
         <item>1.4.0.127</item>
         <item>"Arreglo del fallo:
-                 - solo la primera carpeta raíz de un nombre dado estaba visible en el selector de raíces de selección de archivos
+                 - solo la primera carpeta raíz de un nombre dado fue visible en el selector de raíces de selección de archivos
                 Cambio:
-                 - implementar el botón de actualización en la página de presentación de diapositivas \'elemento no cargado\'
-                 - implementar el botón de retroceso en la selección de álbum - retroceder a través de migas de pan
-                 - implementar el botón de retroceso en la selección de carpeta - retroceder a través de migas de pan"</item>
+                 - Implementar el botón Actualizar en la página \'Artículo no cargado\' de diapositivas
+                 - Implementar el botón Atrás en el álbum Seleccionar - Invertir a través de las migas de pan
+                 - Implementar el botón Atrás en la carpeta Seleccione - Invertir a través de las migas de pan"</item>
         <item>1.4.0.126</item>
         <item>"Arreglo del fallo:
-                 - Fallo donde una identificación de perfil de conexión no sería un nombre de archivo legal
-                 - Se corrigió la congelación de la carga cerca del final de múltiples cargas de fragmentos"</item>
+                 - Crash donde una identificación de perfil de conexión no sería un nombre de archivo legal
+                 - Fijar la congelación de carga cerca del final de múltiples cargas de trozos"</item>
         <item>1.4.0.125</item>
         <item>"Arreglo del fallo:
-                 - al reiniciar un trabajo, asegúrese de utilizar la configuración original del trabajo
-                 - al eliminar un trabajo fallido, elimine cualquier archivo comprimido pero no cargado
-                 - incapaz de desplazarse por los errores en la página de estado de carga
+                 - Al reiniciar un trabajo, asegúrese de que se usen la configuración original del trabajo
+                 - Al eliminar un trabajo fallido, elimine cualquier archivo comprimido pero no cargado
+                 - No se puede desplazarse por errores en la página de estado de carga
                 Cambio:
-                 - Los errores de estado de carga ahora se enumeran primero los más recientes con un diseño mejorado
-                 - Gran mejora en la resistencia de la carga de archivos, muchos errores fuera de la ruta perfecta corregidos
-                 - Mejora del rendimiento para todas las llamadas al servidor http
-                 - No elimine un archivo comprimido si falla un trabajo (espere hasta que se elimine) - para permitir reintentar sin volver a comprimir
-                 - asegúrese de que los fragmentos cargados sean lo más grandes posible dentro del tamaño de fragmento máximo configurado"</item>
+                 - Los errores de estado de carga ahora se enumeran más recientes primero con un diseño mejorado
+                 - Gran mejora a la resistencia de la carga de archivos, muchos errores del camino perfecto fijo
+                 - Mejora del rendimiento para todas las llamadas del servidor HTTP
+                 - No elimine un archivo comprimido si falla un trabajo (espere hasta que se borra), para permitir reintentar sin volver a comprimir
+                 - Asegúrese de que los trozos cargados sean lo más grandes posible dentro del tamaño del trozo máximo configurado"</item>
         <item>1.4.0.124</item>
         <item>"Arreglo del fallo:
-                 - Varios errores inesperados
-                 - error de pedido en presentaciones de diapositivas y páginas de álbumes"</item>
+                 - Varios errores inesperados.
+                 - Ordenar un error en la presentación de diapositivas y las páginas del álbum"</item>
         <item>1.4.0.123</item>
         <item>"Arreglo del fallo:
-                 - La lista de administración de etiquetas se fusionó correctamente con la lista de usuarios al cargar las etiquetas
-                 - Permitir la eliminación de etiquetas para usuarios administradores
-                 - Se corrigió la verificación de la versión del complemento PiwigoClientWsExt"</item>
+                 - Lista de administración de etiquetas fusionadas correctamente con la lista de usuarios en las etiquetas de carga
+                 - Permitir eliminar etiquetas para usuarios de administrador
+                 - Comprobación de complemento PIWIGOCLIENTWSEXT CORREGIDO CORREGIDO"</item>
         <item>1.4.0.122</item>
         <item>"Arreglo del fallo:
-                 - bloqueo en la presentación de diapositivas (si todavía encuentra bloqueos aquí, envíeme un correo electrónico si averigua qué secuencia de eventos lo causa \'\'.
-                 - falla después de eliminar usuario o grupo
-                 - la visualización de usuario y grupo no se actualiza después de agregar un elemento"</item>
+                 - Crash en presentación de diapositivas (si aún encuentras se bloquea aquí, envíeme un correo electrónico si resuelve qué secuencia de los eventos lo causa \".
+                 - Crash después de eliminar al usuario o grupo
+                 - El usuario y la pantalla del grupo no se actualizan después de agregar un elemento"</item>
         <item>1.4.0.121</item>
         <item>"Arreglo del fallo:
-                 - La advertencia de la versión del complemento PiwigoClientWsExts no aparece para los usuarios afectados
-                 - límite agregado a la longitud de la respuesta del servidor que se muestra cuando se muestra la respuesta de error
-                 - al reintentar la llamada al servidor después de http 4xx, no devuelva los errores almacenados en caché"</item>
+                 - Versión de complemento PIWIGOCLIENTWSEXTS No aparece para los usuarios afectados
+                 - Límite agregado a la longitud de la respuesta del servidor mostrada al mostrar la respuesta de error
+                 - En reintento de la llamada del servidor después de HTTP 4XX, no solo devuelva los errores en caché"</item>
         <item>1.4.0.120</item>
         <item>"Cambio:
                 - Soporte para descargar archivos de formato de recursos alternativos alojados en carpetas PWG_FormAT dentro de los sitios PIWIGO. Nota: Privacy_Plugin no admite esto en la actualidad.
@@ -268,111 +271,111 @@
                 - Soporte para archivos multimedia alojados en Sitios de PIWIGO nombres arbitrarios (consulte &lt;server_uri&gt; /admin.php?page=site_manager) - Necesita PIWIGOCLIENTWSEXTS PLUGIN VERSION 1.0.15 para ser instalado"</item>
         <item>1.4.0.119</item>
         <item>"Arreglo del fallo:
-                 - falla en versiones anteriores si no se otorga permiso para usar la carpeta de caché
-                 - los registros a veces no se envían si la aplicación se bloquea demasiado rápido después del error de registro"</item>
+                 - Crash en versiones anteriores si no se le otorga permiso para usar la carpeta de caché
+                 - Los registros a veces no se envían si la aplicación se bloquea demasiado rápido después del error de registro"</item>
         <item>1.4.0.118</item>
         <item>"Cambio:
-                 - Soporte mejorado para la carga de archivos de audio"</item>
+                 - Soporte mejorado para la carga del archivo de audio."</item>
         <item>1.4.0.117</item>
         <item>"Arreglo del fallo:
-                 - la carga de archivos compartidos por algunas aplicaciones puede fallar silenciosamente
-                 - Vista del estado del trabajo para trabajos que terminaron con algunas fallas no disponible después de que finaliza el trabajo
-                 - acerca de la pantalla no se abre
-                 - cualquier causa identificada de fallas de la aplicación
+                 - Cargar archivos compartidos por algunas aplicaciones puede fallar en silencio
+                 - Vista de estado de trabajo para trabajos que terminó con algunas fallas no disponibles después de los acabados laborales
+                 - Acerca de la pantalla no se abrirá
+                 - Cualquier causa identificada de los choques de la aplicación.
                 Cambio:
-                 - Un archivo cuya carga haya sido cancelada por el trabajo de carga debido a un error mostrará una X roja
-                 - Los errores de carga ahora están agrupados por archivo local en la página de estado del trabajo de carga
-                 - Si una carga falla, aparece un nuevo cuadro de diálogo con las opciones para la resolución del problema."</item>
+                 - un archivo que tiene su carga cancelado por el trabajo de carga debido al error mostrará un rojo x
+                 - Los errores de carga ahora están agrupados por un archivo local en la página de estado del trabajo de carga
+                 - Si una carga falla, se solicita un nuevo cuadro de diálogo con las opciones para la resolución de problemas"</item>
         <item>1.4.0.116</item>
         <item>"Arreglo del fallo:
-                 - errores de presentación de diapositivas que causan bloqueos"</item>
+                 - Errores de presentación de diapositivas causando choques"</item>
         <item>1.4.0.115</item>
         <item>"Arreglo del fallo:
-                 - videos no identificados si se usa un complemento de privacidad y videos a los que se accede desde / galerías.
-                 - Las páginas de presentación de diapositivas y vista de álbum no manejan el cambio de orientación correctamente
+                 - Videos no identificados Si se usa el complemento de privacidad y los videos accedidos desde / galerías.
+                 - Páginas de visualización de presentación de diapositivas y álbumes No maneje el cambio de orientación correctamente
                 Cambio:
-                 - la aplicación ahora reconoce que algunos servidores almacenan videos en / galleries en lugar de / upload"</item>
+                 - La aplicación ahora reconoce que algunos servidores almacenan videos debajo / galerías en lugar de / subir"</item>
         <item>1.4.0.114</item>
         <item>"Arreglo del fallo:
-                 - carga de la página de un elemento huérfano que provoca un bloqueo
+                 - Carga de la página del artículo huérfano que causa un choque
                 Cambio:
-                 - nombre dado a los rastreadores de progreso de tareas para permitir la resolución de errores cuando la tarea secundaria de un rastreador de progreso está inesperadamente incompleta"</item>
+                 - Nombre dado a los rastreadores de progreso de la tarea para permitir la resolución de errores donde la tarea infantil de un rastreador de progreso es inesperadamente incompleto"</item>
         <item>1.4.0.113</item>
         <item>"Arreglo del fallo:
-                 - ¡Finalmente! descubrió por qué la aplicación fallaba en la presentación de diapositivas para algunos usuarios
-                 - modificó un diseño de diálogo
+                 - ¡Finalmente! Trabajó por qué la aplicación se estrelló en la presentación de diapositivas para algunos usuarios
+                 - Tweaked algún diseño de diálogo
                 Cambio:
-                 - Cuadro de diálogo que muestra todas las notas de la versión desde la última vez que se actualizó después de una actualización"</item>
+                 - Diálogo que muestra todas las notas de la versión desde que se actualizó por última vez después de una actualización"</item>
         <item>1.4.0.112</item>
         <item>"Cambio:
-                 - Ordena las páginas de preferencias de la aplicación"</item>
+                 - Ordenar las páginas de preferencias de la aplicación"</item>
         <item>1.4.0.111</item>
         <item>"Arreglo del fallo:
-                 - Los URI multimedia no funcionan para usuarios de complementos que no son de privacidad.
-                 - la reproducción de video no comienza si se establece la preferencia para no incluir videos en presentaciones de diapositivas
+                 - URIES MULTIMEDIA NO TRABAJANDO PARA LOS USUARIOS DE CIRMINIO NO PRIVACIDAD.
+                 - La reproducción de video no se inicia si se establece la preferencia para no incluir videos en presentaciones de diapositivas
                 Cambio:
-                 - hay una nueva configuración en las preferencias de conexión para la reparación de uri del complemento de privacidad"</item>
+                 - Hay una nueva configuración en las preferencias de conexión para la reparación de URI Plugin Privacy"</item>
         <item>1.4.0.110</item>
         <item>"Arreglo del fallo:
-                 - Bloquear varios álbumes secundarios que se muestran uno al lado del otro con un número impar de álbumes secundarios presentes (modo horizontal o dispositivos de pantalla grande)
-                 - Cargar trabajo: cargar a la lista de servidores Piwigo no seleccionable (impacto para usuarios con más de un perfil de conexión de servidor configurado en la aplicación)
-                 - los álbumes del servidor no se cargan en la primera entrada al trabajo de carga automática seleccione una preferencia de categoría
-                 - las miniaturas del álbum del servidor no se cargan para las carpetas secundarias al cargarlas en la selección de carpetas
-                 - No se puede seleccionar la carga al álbum del servidor para el trabajo de carga automática utilizando un servidor no predeterminado"</item>
+                 - Crash Múltiples álbumes infantiles se muestran uno junto al otro con un número impar de álbumes infantiles presentes (modo horizontal o dispositivos de pantalla grande)
+                 - Cargar trabajo - Cargar a la lista de servidores PIWIGO No se puede seleccionar (impacto para los usuarios con más de un perfil de conexión de servidor configurado en la aplicación)
+                 - Los álbumes de servidor no se cargan en la primera entrada al trabajo de carga automática, seleccione una preferencia de categoría
+                 - Minillas de miniaturas del álbum de servidor que no están cargando para carpetas infantiles en la selección de carga en carpeta
+                 - No se puede seleccionar Subir al álbum de servidor para el trabajo de carga automática utilizando servidor no predeterminado"</item>
         <item>1.4.0.109</item>
         <item>"Cambio:
-                 - Declaración agregada para su claridad en la parte superior de la plantilla de correo electrónico creada por esta aplicación para solicitudes de soporte
-                 - Solo pago: soporte agregado para la notificación de actualizaciones disponibles para el servidor o los complementos"</item>
+                 - declaración añadida para su claridad en la parte superior de la plantilla de correo electrónico creada por esta aplicación para solicitudes de soporte
+                 - SOLAMENTE PAGADO: Soporte adicional para la notificación de actualizaciones disponibles para el servidor o los complementos"</item>
         <item>1.4.0.108</item>
         <item>"Arreglo del fallo:
-                 - Arregle muchos problemas que causan fallas en la aplicación luego del último mes de cambios
-                 - Se corrigió la configuración predeterminada para la compresión de video
-                 - Soporte re-agregado para minimizar álbumes
-                 - corregir videos que no se detectan
+                 - Ordenarse de muchos problemas que causan accidentes a través de la aplicación siguiendo el último mes de cambios
+                 - Configuración predeterminada para la compresión de video corregida
+                 - Renovación de soporte para minimizar los álbumes.
+                 - arreglar videos que no se están detectando
                Cambios:
-                 - Opción eliminada para especificar qué archivos se pueden reproducir en video. Esto se hace en función del tipo mime derivado de la extensión de archivo"</item>
+                 - Opción eliminada para especificar qué archivos se pueden reproducir el video. Esto se hace basado en la extensión de archivo Derived Mimetype"</item>
         <item>1.4.0.107</item>
         <item>"Arreglo del fallo:
-                 - Posibilidad de que se pierda un recurso de la presentación de diapositivas de recursos del álbum (vista previa a pantalla completa)
-                 - falla en la vista previa del archivo huérfano
+                 - Potencial para que se pierda un recurso de la presentación de presentación de recursos del álbum (vista previa de pantalla completa)
+                 - Crash en vista previa del archivo huérfano
                 Cambio:
-                 - Vista previa de archivos huérfanos y ver dentro de una presentación de diapositivas si lo desea ahora es compatible
-                 - la opción de menú huérfanos solo está disponible para los usuarios administradores cuando la aplicación no es de solo lectura"</item>
+                 - Vista previa de los archivos huérfanos y la vista dentro de una presentación de diapositivas si se ha deseado ahora es compatible
+                 - La opción de menú huérfanos solo está disponible para los usuarios de administración cuando la aplicación no se puede leer."</item>
         <item>1.4.0.106</item>
         <item>"Arreglo del fallo:
-                 - Con suerte, el error final en el que las miniaturas de los álbumes parecían no cargarse correctamente
+                 - Esperemos que el error final donde aparezca las miniaturas del álbum para no estar cargando correctamente
                 Cambios:
-                 - Al eliminar un álbum, los recursos secundarios se pueden desvincular o eliminar del servidor
-                 - Solo pago: hay una nueva página de gestión de recursos huérfana"</item>
+                 - Al eliminar un álbum, los recursos infantiles pueden ser sin sentido, o eliminarse del servidor
+                 - Solo pagado: hay una nueva página de gestión de recursos huérfanos"</item>
         <item>1.4.0.105</item>
         <item>"Arreglo del fallo:
-                 - Reescriba el álbum, la etiqueta y el código de clasificación favorito porque estaba plagado de errores
-                     : Si algo en esta área ahora no funciona como esperaba, hágamelo saber.
-                     : Esto debería resolver los bloqueos que estaban ocurriendo en la página de la presentación de diapositivas.
-                 - El ícono de la estrella amarilla recientemente modificado no aparecía en algún orden de clasificación
-                 - Corregir la carga de miniaturas
-                 - Solucione el error que evita la recarga manual de la carga de miniaturas fallidas haciendo clic, solo una vez para que no sea demasiado irritante si desea cambiar el álbum
+                 - Reescribe del álbum, la etiqueta y el código de clasificación favorito porque estaba lleno de errores.
+                     : Si algo en esta área ahora no funciona como espera, hágamelo saber.
+                     : Esto debería resolver choques que se estaban ocurriendo en la página de presentación de diapositivas
+                 - el icono de estrella amarilla recientemente alterado no apareció en algunos pedidos de clasificación
+                 - Corregir la carga de miniaturas.
+                 - Fix Bug Evite la recarga manual de la carga de miniaturas fallidas haciendo clic en: solo una vez, por lo que no es demasiado iritante si desea cambiar el álbum
                 Cambios:
-             - Nueva preferencia para permitir la inversión de orden de clasificación independiente de álbumes y recursos secundarios"</item>
+             - Nueva preferencia para permitir una reversión de orden de orden independiente de los álbumes y recursos infantiles."</item>
         <item>1.4.0.104</item>
         <item>"Arreglo del fallo:
                  - Problemas causados en la carga después de volver a trabajar la selección de archivos para el almacén de claves y los certificados
-                     : Gracias por su paciencia, la gestión de permisos de archivos de Android es complicada
-                 - eliminar álbumes en la raíz ahora siempre está disponible en la carga de la aplicación si corresponde
-                 - los elementos ahora se pueden seleccionar haciendo clic en cualquier lugar, no solo en la casilla de verificación"</item>
+                     : Gracias por su paciencia, la administración de permisos de archivos de Android es complicada
+                 - Eliminar de los álbumes en Root ahora siempre disponible en la carga de la aplicación si corresponde
+                 - Ahora se pueden seleccionar los artículos haciendo clic en cualquier lugar no solo en la casilla de verificación"</item>
         <item>1.4.0.103</item>
         <item>"Arreglo del fallo:
-                 - La edición del elemento del certificado de confianza y del almacén de claves provocó un bloqueo.
-                     : Envíeme un correo electrónico desde la aplicación cuando una función clave como esta no funcione.
-                 - A veces no se puede navegar fuera de los archivos recientes con la selección de archivos del sistema
-                 - Lista de grupos alineados verticalmente al centro de la pantalla
+                 - KeyStore y edición de elementos de certificado de confianza causados.
+                     : Por favor, envíeme un correo electrónico de la aplicación cuando la funcionalidad clave como esta no funciona.
+                 - A veces no se puede navegar por archivos recientes con selección de archivos del sistema
+                 - Lista de grupos alineados verticalmente al centro de la pantalla.
                 Cambios:
-                 - Mejor experiencia de usuario para el almacén de claves y la importación de certificados
-                 - Nueva preferencia para controlar el tiempo que se muestra el detalle de la imagen en la vista de pantalla completa o presentación de diapositivas"</item>
+                 - Mejor experiencia de usuario para el almacén de claves y la importación de certificados.
+                 - Nueva preferencia para controlar la cantidad de tiempo que se muestra el detalle de la imagen en la pantalla completa o la vista de presentación de diapositivas"</item>
         <item>1.4.0.102</item>
         <item>"Arreglo del fallo:
-                 - Los cambios recientes hicieron imposible tener las versiones gratuitas y de pago instaladas al mismo tiempo en un solo dispositivo
-                 - las miniaturas de álbumes no siempre se muestran para el usuario administrador
-                 - probado contra Piwigo 11. Abrir una imagen no funcionaba"</item>
+                 - los cambios recientes hicieron imposible tener las versiones gratuitas y pagadas instaladas al mismo tiempo en un solo dispositivo
+                 - Miniaturas del álbum que no siempre se muestran para el usuario de administrador
+                 - Probado contra PIWIGO 11. Abrir una imagen no estaba funcionando"</item>
     </string-array>
 </resources>

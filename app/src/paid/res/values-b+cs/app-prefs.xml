@@ -3,14 +3,14 @@
     
 
     <string name="preference_page_auto_upload_jobs">Automatické nahrávání</string>
-    <string name="preference_data_upload_automatic_title">Automatické nahrávání</string>
-    <string name="preference_data_upload_automatic_job_title">Úloha automatického nahrávání</string>
+    <string name="preference_data_upload_automatic_title">Automatické uploads.</string>
+    <string name="preference_data_upload_automatic_job_title">Auto Upload Job.</string>
 
     
 
     
-    <string name="preference_data_upload_automatic_upload_enable_summary">Povolit nahrávání na pozadí</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Automatické nahrávání</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Povolit nahrávání pozadí</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Automatické uploads.</string>
     
 
     <string name="preference_data_upload_automatic_upload_wireless_only_summary">Používejte pouze AUTO Upload na non-měřená síť</string>
@@ -28,15 +28,15 @@
     
 
     
-    <string name="preference_data_upload_automatic_job_view_status_title">Zobrazit stav nahrávání</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">Zobrazit stav z posledního spuštění úlohy (je-li k dispozici)</string>
+    <string name="preference_data_upload_automatic_job_view_status_title">Zobrazení stavu nahrávání</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Zobrazení stavu z posledního spuštění úlohy (je-li k dispozici)</string>
 
     
     <string name="preference_data_upload_automatic_job_is_valid_title">Úloha je platná</string>
 
     
-    <string name="preference_data_upload_automatic_job_enabled_summary">Využije služba nahrávání tuto úlohu?</string>
-    <string name="preference_data_upload_automatic_job_enabled_title">Job Enabled</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">Použije se služba Upload Service?</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Povolena zaměstnání</string>
     
 
     <string name="preference_data_upload_automatic_job_server_title">Nahrát na server</string>
@@ -44,17 +44,17 @@
     <string name="preference_data_upload_automatic_job_server_summary">Profil: %1$s</string>
 
     
-    <string name="preference_data_upload_automatic_job_server_album_title">Nahrát do alba</string>
+    <string name="preference_data_upload_automatic_job_server_album_title">Nahrát na album</string>
     <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
-    <string name="preference_data_upload_automatic_job_local_folder_title">Nahrát ze složky</string>
+    <string name="preference_data_upload_automatic_job_local_folder_title">Upload ze složky</string>
     
     <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
 
     
-    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Smažte úspěšně nahrané soubory</string>
-    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Automatické mazání</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Smazat Úspěšně nahrány soubory</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Auto Smazat</string>
     
 
     
@@ -76,15 +76,15 @@
 
     
     
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Byla nahrána maximální velikost souboru</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max soubory nahrané</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d Mb.</string>
 
     
     
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Přípony souborů</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Rozšíření souborů</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Nahrát soubory s ext %1$s</string>
 
-    <string name="preference_data_upload_automatic_job_privacy_level_title">Úroveň ochrany osobních údajů</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Úroveň ochrany soukromí</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">Nahrané soubory Viditelné pro %1$s</string>
     
     

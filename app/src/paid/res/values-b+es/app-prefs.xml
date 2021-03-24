@@ -9,7 +9,7 @@
     
 
     
-    <string name="preference_data_upload_automatic_upload_enable_summary">Habilitar la carga en segundo plano</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Habilitar la carga de fondo</string>
     <string name="preference_data_upload_automatic_upload_enable_title">Cargas automáticas</string>
     
 
@@ -19,7 +19,7 @@
     
 
     
-    <string name="preference_data_upload_automatic_upload_jobs_title">Cargar trabajos automáticamente</string>
+    <string name="preference_data_upload_automatic_upload_jobs_title">Empleos de carga automática</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Trabajos</string>
 
     
@@ -28,23 +28,23 @@
     
 
     
-    <string name="preference_data_upload_automatic_job_view_status_title">Ver estado de carga</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">Ver el estado de la última ejecución del trabajo (si está disponible)</string>
+    <string name="preference_data_upload_automatic_job_view_status_title">Ver el estado de carga</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Ver el estado de la última ejecución de trabajos (si está disponible)</string>
 
     
     <string name="preference_data_upload_automatic_job_is_valid_title">El trabajo es válido</string>
 
     
-    <string name="preference_data_upload_automatic_job_enabled_summary">¿El servicio de carga utilizará este trabajo?</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">¿El servicio de carga usará este trabajo?</string>
     <string name="preference_data_upload_automatic_job_enabled_title">Trabajo habilitado</string>
     
 
-    <string name="preference_data_upload_automatic_job_server_title">Subir al servidor</string>
+    <string name="preference_data_upload_automatic_job_server_title">Sube al servidor</string>
     
     <string name="preference_data_upload_automatic_job_server_summary">Perfil: %1$s</string>
 
     
-    <string name="preference_data_upload_automatic_job_server_album_title">Subir al álbum</string>
+    <string name="preference_data_upload_automatic_job_server_album_title">Sube al álbum</string>
     <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
@@ -53,8 +53,8 @@
     <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
 
     
-    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Eliminar archivos cargados correctamente</string>
-    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Eliminación automática</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Eliminar archivos cargados con éxito</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Eliminar automáticamente</string>
     
 
     
@@ -76,7 +76,7 @@
 
     
     
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Tamaño máximo de archivo cargado</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filessize Subido</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MEGABYTE</string>
 
     
