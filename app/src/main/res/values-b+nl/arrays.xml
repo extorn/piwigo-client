@@ -125,8 +125,8 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Als u problemen met de app hebt, gebruik dan e-mail om mij op de hoogte te stellen. Als u wilt, plaatst u een negatieve beoordeling op Google Play, ik probeer dat niet te stoppen, maar stuur het ook een e-mail. Er is een link om mij een e-mail te sturen bovenaan het uitschuiflademenu. Ik kan veel meer uitgebreide ondersteuning bieden aan een e-mailadres. Erg bedankt."</item>
-        <item>"U kunt alleen bestanden zien om te selecteren om te uploaden die acceptabel zijn om op uw server te uploaden. Als u video\'s wilt uploaden, moet u het bestand van uw server config.inc.php wijzigen om $ Conf [Upload_Form_all_TYPES \'] = TRUE op te nemen; in plaats van false"</item>
+        <item>Als u problemen met de app hebt, gebruik dan e-mail om mij op de hoogte te stellen. Als u wilt, plaatst u een negatieve beoordeling op Google Play, ik probeer dat niet te stoppen, maar stuur het ook een e-mail. Er is een link om mij een e-mail te sturen bovenaan het uitschuiflademenu. Ik kan veel meer uitgebreide ondersteuning bieden aan een e-mailadres. Erg bedankt.</item>
+        <item>U kunt alleen bestanden zien om te selecteren om te uploaden die acceptabel zijn om op uw server te uploaden. Als u video\'s wilt uploaden, moet u het bestand van uw server config.inc.php wijzigen om $ Conf [Upload_Form_all_TYPES \'] = TRUE op te nemen; in plaats van false</item>
         <item>Als een upload gewoon is gewonnen, probeer dan de voorkeur te gebruiken in de uploadpagina van app-instellingen om eventuele resterende uploads van de server te wissen</item>
         <item>Fout gebeurt altijd bij het bijwerken van tags - "U mag geen tags verwijderen" - Zorg dat gebruikers beide tags kunnen toevoegen en verwijderen (Server Plugin-instelling)</item>
         <item>Deel bestanden in een andere app met deze app om ze toe te voegen aan het uploadscherm klaar om naar uw huidige server te gaan</item>

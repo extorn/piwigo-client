@@ -125,8 +125,8 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Si tiene algún problema con la aplicación, use el correo electrónico para notificarme. Si lo desea, publique una revisión negativa en Google Play, no estoy tratando de detenerlo, sino también por favor envíe un correo electrónico. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizante. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias."</item>
-        <item>"Solo puede ver los archivos para seleccionar para Subir que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de alterar su archivo Config.inc.php para incluir $ CONF [\'UPLOAD_FORM_ALL_TYPES\'] = VERDADERO; en lugar de falso"</item>
+        <item>Si tiene algún problema con la aplicación, use el correo electrónico para notificarme. Si lo desea, publique una revisión negativa en Google Play, no estoy tratando de detenerlo, sino también por favor envíe un correo electrónico. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizante. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias.</item>
+        <item>Solo puede ver los archivos para seleccionar para Subir que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de alterar su archivo Config.inc.php para incluir $ CONF [\'UPLOAD_FORM_ALL_TYPES\'] = VERDADERO; en lugar de falso</item>
         <item>Si una carga simplemente no ha tenido éxito, intente usar la preferencia en la página de carga de la configuración de la aplicación para borrar cualquier carga fallida residual del servidor</item>
         <item>El error siempre ocurre al intentar actualizar las etiquetas: "No se le permite eliminar etiquetas": asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
         <item>Comparta archivos de una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga lista para ir a su servidor actual</item>

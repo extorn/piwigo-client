@@ -125,8 +125,8 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Wenn Sie Probleme mit der App haben, verwenden Sie bitte E-Mail, um mich zu benachrichtigen. Wenn Sie möchten, posten Sie eine negative Überprüfung bei Google Play, ich versuche nicht, das zu stoppen, aber auch bitte eine E-Mail. Es gibt einen Link, um mir eine E-Mail an der Spitze des Slide-Out-Schubladenmenüs zu senden. Ich kann einer E-Mail-Adresse viel umfassender unterstützen. Danke vielmals."</item>
-        <item>"Sie können nur Dateien ansehen, um den Upload auszuwählen, der akzeptabel ist, um auf Ihrem Server hochzuladen. Wenn Sie Videos hochladen möchten, ändern Sie Ihre server config.inc.php-Datei, um $ conf [\'uppoload_form_all_types \"] = true; anstatt falsch"</item>
+        <item>Wenn Sie Probleme mit der App haben, verwenden Sie bitte E-Mail, um mich zu benachrichtigen. Wenn Sie möchten, posten Sie eine negative Überprüfung bei Google Play, ich versuche nicht, das zu stoppen, aber auch bitte eine E-Mail. Es gibt einen Link, um mir eine E-Mail an der Spitze des Slide-Out-Schubladenmenüs zu senden. Ich kann einer E-Mail-Adresse viel umfassender unterstützen. Danke vielmals.</item>
+        <item>Sie können nur Dateien ansehen, um den Upload auszuwählen, der akzeptabel ist, um auf Ihrem Server hochzuladen. Wenn Sie Videos hochladen möchten, ändern Sie Ihre server config.inc.php-Datei, um $ conf [\'uppoload_form_all_types "] = true; anstatt falsch</item>
         <item>Wenn ein Upload gerade erfolgreich ist, können Sie die Präferenz in der APP-Settings-Seite verwenden, um alle verbleibenden fehlgeschlagenen Uploads vom Server zu löschen</item>
         <item>Fehler tritt immer auf, wenn Sie versuchen, Tags zu aktualisieren - "Sie dürfen keine Tags löschen" - Stellen Sie sicher, dass Benutzer beide Tags hinzufügen und löschen können (Server-Plugin-Einstellung).</item>
         <item>Teilen Sie Dateien aus einer anderen App mit dieser App, um sie dem Upload-Bildschirm hinzuzufügen, der bereit ist, auf Ihren aktuellen Server zu gelangen</item>

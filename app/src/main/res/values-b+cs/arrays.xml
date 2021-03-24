@@ -125,8 +125,8 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Pokud máte nějaké problémy s aplikací, použijte prosím e-mail, abyste mě informovali. Pokud si přejete, pošlete negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím také e-mail. K dispozici je odkaz, který mi pošlete e-mail v horní části nabídky zásuvky. Poskytnu mnohem komplexnější podporu e-mailové adrese. Mnohokrát děkuji."</item>
-        <item>"Soubory můžete zobrazit pouze pro upload, který je přijatelný pro nahrání na serveru. Chcete-li nahrát videa, nezapomeňte si změnit soubor Server Config.inc.php, který chcete zahrnout $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivý"</item>
+        <item>Pokud máte nějaké problémy s aplikací, použijte prosím e-mail, abyste mě informovali. Pokud si přejete, pošlete negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím také e-mail. K dispozici je odkaz, který mi pošlete e-mail v horní části nabídky zásuvky. Poskytnu mnohem komplexnější podporu e-mailové adrese. Mnohokrát děkuji.</item>
+        <item>Soubory můžete zobrazit pouze pro upload, který je přijatelný pro nahrání na serveru. Chcete-li nahrát videa, nezapomeňte si změnit soubor Server Config.inc.php, který chcete zahrnout $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivý</item>
         <item>Je-li nahrát právě vyhráli "t uspět, zkuste použít předvolbu v nastavení aplikace Upload strana pro vymazání libovolných zbytkových neúspěšných nahrávek ze serveru</item>
         <item>Chyba vždy dochází při pokusu o aktualizaci tagů - "Nejste oprávněni odstranit značky" - Zkontrolujte, zda uživatelé mohou přidat a mazat značky (nastavení pluginu serveru)</item>
         <item>Sdílejte soubory z jiné aplikace s touto aplikací pro přidání do obrazovky Upload Připraveno pro přání na aktuální server</item>
