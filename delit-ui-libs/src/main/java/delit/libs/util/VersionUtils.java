@@ -1,12 +1,18 @@
 package delit.libs.util;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
+import delit.libs.core.util.Logging;
+
 public class VersionUtils {
+    private static final String TAG = "VersionUtils";
+
     public static @NonNull int[] parseVersionString(@Nullable String versionStr) {
         int[] version;
         if(versionStr == null || versionStr.isEmpty()) {
@@ -21,7 +27,12 @@ public class VersionUtils {
                 if(i == version.length-1) {
                     token = token.replaceAll("-.*$", "");
                 }
-                int versionNum = Integer.parseInt(token);
+                int versionNum = 0;
+                try {
+                    versionNum = Integer.parseInt(token);
+                } catch(NumberFormatException e) {
+                    Logging.log(Log.ERROR, TAG, "Non-parsable version part. Using 0. %1$s (%2$s)", versionStr, token);
+                }
                 if (i < version.length) {
                     version[i] = versionNum;
                 }
