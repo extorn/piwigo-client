@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="delit.piwigoclient">
+
+    <!--ignore errors for missing permissions etc (manifest is merged with the main one which is indexable) - its a bug in android studio (rebuild) -->
+    <!-- required for in-app one off purchases only - NOT subscriptions -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+    <application
+        android:name="delit.piwigoclient.ui.MyApplication"
+        android:fullBackupContent="@xml/backup_descriptor"
+        tools:ignore="UnusedAttribute">
+
+        <activity
+            tools:node="merge"
+            android:launchMode="singleTop"
+            android:name=".ui.AppPurchasesActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.App.EditPages"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:parentActivityName="delit.piwigoclient.ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

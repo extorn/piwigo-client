@@ -758,6 +758,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         if (progressIndicator == null) {
             Logging.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
         } else {
+            Logging.log(Log.INFO,TAG, "Requesting ProgressIndicator : SHOW");
             DisplayUtils.runOnUiThread(()->progressIndicator.showProgressIndicator(titleString, progress));
         }
     }
@@ -767,24 +768,16 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         if (progressIndicator == null) {
             Logging.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
         } else {
-            if (DisplayUtils.isRunningOnUIThread()) {
-                progressIndicator.setVisibility(View.VISIBLE);
-            } else {
-                // publish on the main thread
-                progressIndicator.post(new SafeRunnable(() -> progressIndicator.setVisibility(View.VISIBLE)));
-            }
+            Logging.log(Log.INFO,TAG, "Requesting ProgressIndicator : SHOW");
+            DisplayUtils.runOnUiThread(new SafeRunnable(() -> progressIndicator.setVisibility(View.VISIBLE)));
         }
     }
 
     public void hideProgressIndicator() {
         ProgressIndicator progressIndicator = getProgressIndicator();
-        if(progressIndicator != null && progressIndicator.isVisible()) {
-            if (DisplayUtils.isRunningOnUIThread()) {
-                progressIndicator.setVisibility(View.GONE);
-            } else {
-                // publish on the main thread
-                progressIndicator.post(new SafeRunnable(() -> progressIndicator.setVisibility(View.GONE)));
-            }
+        if(progressIndicator != null) {
+            Logging.log(Log.INFO, TAG, "Requesting ProgressIndicator : HIDE");
+            DisplayUtils.runOnUiThread(new SafeRunnable(() -> progressIndicator.setVisibility(View.GONE)));
         }
     }
 

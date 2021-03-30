@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:layout_width="300dp"
+    app:cardBackgroundColor="@color/color_album_item_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/product_title_field"
+            tools:text="Remove Adverts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="?textAppearanceHeadline6"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintTop_toBottomOf="@id/guideline_margin_top"
+            app:layout_constraintBottom_toTopOf="@id/product_description_field"
+            app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+            app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_weight="0"
+            app:layout_constraintHorizontal_bias="0"/>
+
+        <TextView
+            android:id="@+id/product_description_field"
+            tools:text="Remove Adverts for 3 months"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="?textAppearanceBody2"
+            app:layout_constraintTop_toBottomOf="@id/product_title_field"
+            app:layout_constraintBottom_toTopOf="@id/guideline_margin_bottom"
+            app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+            app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_weight="0"
+            app:layout_constraintHorizontal_bias="0"/>
+
+        <TextView
+            android:id="@+id/product_price_label"
+            android:labelFor="@+id/product_price_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?textAppearanceCaption"
+            android:text="@string/purchased_price_label"
+            app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+            app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+            app:layout_constraintTop_toTopOf="@id/product_price_field"
+            app:layout_constraintBottom_toBottomOf="@id/product_price_field"
+            app:layout_constraintHorizontal_bias="0"/>
+
+        <TextView
+            android:id="@+id/product_price_field"
+            tools:text="£2.99"
+            style="?textAppearanceBody1"
+            android:layout_height="wrap_content"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintTop_toBottomOf="@id/product_description_field"
+            app:layout_constraintStart_toEndOf="@id/product_price_label"
+            app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_weight="0"
+            app:layout_constraintHorizontal_bias="1"
+            android:paddingStart="0dp"
+            android:paddingEnd="10dp"
+            android:layout_width="wrap_content" />
+
+        <TextView
+            android:id="@+id/product_purchased_label"
+            android:labelFor="@+id/product_purchased_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?textAppearanceCaption"
+            android:text="@string/purchased_date"
+            app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+            app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+            app:layout_constraintTop_toTopOf="@id/product_purchased_field"
+            app:layout_constraintBottom_toBottomOf="@id/product_purchased_field"
+            app:layout_constraintHorizontal_bias="0"/>
+
+        <TextView
+            android:id="@+id/product_purchased_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?textAppearanceBody1"
+            tools:text="12/01/2021 12H04"
+            app:layout_constraintStart_toEndOf="@id/product_purchased_label"
+            app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+            app:layout_constraintTop_toBottomOf="@id/product_price_label"
+            app:layout_constraintHorizontal_bias="1"/>
+
+        <TextView
+            android:id="@+id/product_order_id_label"
+            android:labelFor="@+id/product_order_id_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?textAppearanceCaption"
+            android:text="@string/purchase_order_id"
+            app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+            app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+            app:layout_constraintTop_toTopOf="@id/product_order_id_field"
+            app:layout_constraintBottom_toBottomOf="@id/product_order_id_field"
+            app:layout_constraintHorizontal_bias="0"/>
+
+        <TextView
+            android:id="@+id/product_order_id_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?textAppearanceBody1"
+            tools:text="GPA.3398-0351-7343-98357..4"
+            app:layout_constraintStart_toEndOf="@id/product_order_id_label"
+            app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+            app:layout_constraintTop_toBottomOf="@id/product_purchased_label"
+            app:layout_constraintHorizontal_bias="1"/>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/product_purchase_recurring_field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/purchase_recurring"
+            android:paddingTop="0dp"
+            android:layout_marginTop="0dp"
+            android:enabled="false"
+            app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+            app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+            app:layout_constraintTop_toBottomOf="@id/product_order_id_label"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintHorizontal_bias="0"/>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/product_manage_subscription_button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/manage_subscription_button"
+            style="?materialButtonOutlinedStyle"
+            app:layout_constraintTop_toBottomOf="@id/product_purchase_recurring_field"
+            app:layout_constraintBottom_toTopOf="@id/guideline_margin_bottom"
+            app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+            app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintVertical_bias="1"
+            app:layout_constraintHorizontal_bias="1"/>
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_margin_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/fragment_margin_top"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_margin_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="@dimen/fragment_margin_bottom"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_margin_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/fragment_margin_start"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_margin_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/fragment_margin_end"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</com.google.android.material.card.MaterialCardView>

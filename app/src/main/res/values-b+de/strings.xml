@@ -598,7 +598,7 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="upload_tab_title_settings">die Einstellungen</string>
     <string name="upload_tab_title_files">Dateien</string>
     <string name="alert_internal_server_exposed_pattern">Unerwartete Autorität %1$s gefunden in URL und ersetzt durch %2$s. Ihr Server könnte falsch konfiguriert werden.</string>
-    <string name="buy_time_menu_title">Anzeigen ausblenden</string>
+    <string name="app_purchases_title">Anzeigen ausblenden</string>
     <string name="watch_advert_to_buy_advert_free_time">Möchten Sie eine Werbung ansehen, um einen kurzen Zeitraum ohne Anzeigen zu kaufen? Sie können dies mehrmals tun, um die Zeitdauer zu erhöhen, wenn Sie möchten.</string>
     <string name="reward_video_not_yet_loaded">Entschuldigung, aber das Belohnungsvideo ist noch nicht geladen. Bitte versuchen Sie es später erneut.</string>
     <string name="bought_time_menu_title_pattern">Anzeigen in %1$02d: %2$02d</string>

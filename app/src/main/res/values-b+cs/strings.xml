@@ -598,7 +598,7 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="upload_tab_title_settings">Nastavení</string>
     <string name="upload_tab_title_files">Soubory</string>
     <string name="alert_internal_server_exposed_pattern">Neočekávaná autorita %1$s nalezené v URL a nahrazeno %2$s. Váš server by mohl být nesprávně konfigurován.</string>
-    <string name="buy_time_menu_title">Skrýt reklamy</string>
+    <string name="app_purchases_title">Skrýt reklamy</string>
     <string name="watch_advert_to_buy_advert_free_time">Chtěli byste sledovat reklamu na nákup krátkého období bez jakýchkoliv inzerátů? To můžete udělat několikrát pro zvýšení času, pokud je to chtěl.</string>
     <string name="reward_video_not_yet_loaded">Omlouváme se, ale video odměn ještě nebylo naloženo. Prosím zkuste to znovu později.</string>
     <string name="bought_time_menu_title_pattern">Inzeráty v %1$02d: %2$02d</string>

@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -33,21 +32,17 @@ import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
-import com.google.android.gms.ads.reward.AdMetadataListener;
-import com.google.android.gms.ads.reward.RewardItem;
-import com.google.android.gms.ads.reward.RewardedVideoAd;
-import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.lang.ref.WeakReference;
-import java.math.BigInteger;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -63,8 +58,6 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.dialogmessage.QuestionResultAdapter;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.events.RewardUpdateEvent;
-import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 import static android.view.View.VISIBLE;
 
@@ -77,8 +70,8 @@ public class AdsManager {
     private static final String TAG = "AdMan";
     public static final String BLOCK_MILLIS_PREF = "BLOCK_MILLIS";
     private static AdsManager instance;
-    private InterstitialAd selectFileToUploadAd;
-    private InterstitialAd albumBrowsingAd;
+    private InterstitialAdLoader selectFileToUploadAdLoader;
+    private InterstitialAdLoader albumBrowsingAdLoader;
     private long lastShowedAdvert;
     private boolean showAds = true;
     private boolean appLicensed = false;
@@ -88,11 +81,11 @@ public class AdsManager {
     private boolean interstitialShowing;
     private Boolean lastAdPaid;
     private ConsentForm euConsentForm;
-    private MyRewardedAdControl rewardVideoAd;
     private static final int STOPPED = -1;
     private static final int INITIALISING = 0;
     private static final int STARTED = 1;
     private int status = STOPPED;
+
 
     private AdsManager() {
     }
@@ -119,15 +112,6 @@ public class AdsManager {
         this.advertsDisabled = advertsDisabled;
     }
 
-    public MyRewardedAdControl getRewardedVideoAd(Context context, OnRewardEarnedListener onRewardListener) {
-        // Use an activity context to get the rewarded video instance.
-        RewardedVideoAd rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(context);
-        MyRewardedAdControl listener = new MyRewardedAdControl(context, context.getString(R.string.ad_id_reward_ad), rewardedVideoAd, onRewardListener);
-        rewardedVideoAd.setRewardedVideoAdListener(listener);
-        listener.loadAdvert();
-        return listener;
-    }
-
     public synchronized void updateShowAdvertsSetting(Context context) {
 
         String serverAddress = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(getPrefs(context), context);
@@ -149,15 +133,107 @@ public class AdsManager {
             status = INITIALISING;
             getConsentInformationAndInitialiseAdverts(context);
         } else if (showAds && status == STARTED) {
-            if (!selectFileToUploadAd.isLoading() && !selectFileToUploadAd.isLoaded()) {
-                selectFileToUploadAd.loadAd(buildAdRequest(context));
-            }
-            if (!albumBrowsingAd.isLoading() && !albumBrowsingAd.isLoaded()) {
-                albumBrowsingAd.loadAd(buildAdRequest(context));
-            }
+            selectFileToUploadAdLoader.loadAdvert(context, buildAdRequest(context));
+            albumBrowsingAdLoader.loadAdvert(context, buildAdRequest(context));
         }
 
         updateConsentInformation(getConsentInformation(context));
+    }
+
+    private static class InterstitialAdLoader extends InterstitialAdLoadCallback {
+
+        private final String adUnitId;
+        private InterstitialAd targetAd;
+        private int retries = 0;
+
+        public InterstitialAdLoader(String adUnitId) {
+            this.adUnitId = adUnitId;
+        }
+
+        public String getAdUnitId() {
+            return adUnitId;
+        }
+
+        @Override
+        public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+            // The mInterstitialAd reference will be null until
+            // an ad is loaded.
+            targetAd = interstitialAd;
+            retries = 0;
+            advertLoadFailures = 0;
+            targetAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    super.onAdDismissedFullScreenContent();
+                    targetAd = null;
+                    //// perform your code that you wants todo after ad dismissed or closed
+                    onAdClosed();
+                }
+
+                @Override
+                public void onAdFailedToShowFullScreenContent(com.google.android.gms.ads.AdError adError) {
+                    super.onAdFailedToShowFullScreenContent(adError);
+                    targetAd = null;
+                    /// perform your action here when ad will not load
+                    onAdError();
+                }
+
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    super.onAdShowedFullScreenContent();
+                    targetAd = null;
+                }
+            });
+
+        }
+
+        public void onAdClosed() {
+        }
+
+        private void runLoad(@NonNull Context context, @NonNull AdRequest adRequest) {
+            InterstitialAd.load(context, getAdUnitId(), adRequest, this);
+        }
+
+        public void loadAdvert(@NonNull Context context, @NonNull AdRequest adRequest) {
+            if(isNeedsLoad()) {
+                Handler mainHandler = new Handler(context.getMainLooper());
+                Runnable myRunnable = new SafeRunnable(() -> runLoad(context, adRequest));
+                mainHandler.post(myRunnable);
+            }
+        }
+
+        @Override
+        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+            // Handle the error
+            targetAd = null;
+
+            onAdError();
+
+        }
+
+        private void onAdError() {
+            retries++;
+            if (retries < 3) {
+                Logging.log(Log.DEBUG, "InterstitialAd", "advert load failed, retry needed");
+            } else {
+                Logging.log(Log.DEBUG, "InterstitialAd", "Gave up trying to load advert after 3 attempts");
+                advertLoadFailures++;
+                retries = 0;
+            }
+        }
+
+        public boolean isNeedsLoad() {
+            return targetAd == null;
+        }
+
+        public boolean isLoaded() {
+            return targetAd != null;
+        }
+
+        public InterstitialAd getAd() {
+            return targetAd;
+        }
     }
 
     private void updateConsentInformation(ConsentInformation consentInformation) {
@@ -189,15 +265,8 @@ public class AdsManager {
                     new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
             MobileAds.setRequestConfiguration(configuration);
         }
-        selectFileToUploadAd = new InterstitialAd(context);
-        selectFileToUploadAd.setAdUnitId(context.getString(R.string.ad_id_uploads_interstitial));
-        selectFileToUploadAd.loadAd(buildAdRequest(context));
-        selectFileToUploadAd.setAdListener(new MyAdListener(context, selectFileToUploadAd));
-
-        albumBrowsingAd = new InterstitialAd(context);
-        albumBrowsingAd.setAdUnitId(context.getString(R.string.ad_id_album_interstitial));
-        albumBrowsingAd.loadAd(buildAdRequest(context));
-        albumBrowsingAd.setAdListener(new MyAdListener(context, albumBrowsingAd));
+        selectFileToUploadAdLoader = new InterstitialAdLoader(context.getString(R.string.ad_id_uploads_interstitial));
+        albumBrowsingAdLoader = new InterstitialAdLoader(context.getString(R.string.ad_id_album_interstitial));
         status = STARTED;
     }
 
@@ -213,7 +282,7 @@ public class AdsManager {
         return status == STARTED && showAds && !advertsDisabled;
     }
 
-    private synchronized boolean acceptableToShowAdvert(Context context, InterstitialAd ad, long minDelayBetweenAds) {
+    private synchronized boolean acceptableToShowAdvert(Context context, InterstitialAdLoader ad, long minDelayBetweenAds) {
 
         long currentTime = System.currentTimeMillis();
 
@@ -221,47 +290,38 @@ public class AdsManager {
             if (ad.isLoaded() && (null == lastAdPaid || !lastAdPaid || (currentTime - lastShowedAdvert) > minDelayBetweenAds)) {
                 lastShowedAdvert = currentTime;
                 return true;
-            } else if (!ad.isLoaded() && !ad.isLoading()) {
-                ad.loadAd(buildAdRequest(context));
+            } else if (!ad.isLoaded()) {
+                ad.loadAdvert(context, buildAdRequest(context));
             }
         }
         return false;
     }
 
-    public boolean showFileToUploadAdvertIfAppropriate(Context context) {
-        if (acceptableToShowAdvert(context, selectFileToUploadAd, 24 * 60 * 60000)) {
-            showInterstitialAd(context, selectFileToUploadAd);
+    public void showFileToUploadAdvertIfAppropriate(Activity activity) {
+        if (acceptableToShowAdvert(activity, selectFileToUploadAdLoader, 24 * 60 * 60000)) {
+            showInterstitialAd(activity, selectFileToUploadAdLoader.getAd());
             // show every 24 hours
-            return true;
         }
-        return false;
     }
 
-    private void showInterstitialAd(Context context, InterstitialAd ad) {
+    private void showInterstitialAd(Activity activity, InterstitialAd ad) {
         interstitialShowing = true;
         if(lastAdPaid == null) {
             lastAdPaid = false;
         }
         ad.setOnPaidEventListener(adValue -> lastAdPaid = true);
-        ad.setAdListener(new InterstitialAdListener(context));
-        ad.show();
-    }
-
-    public boolean isInterstitialShowing() {
-        return interstitialShowing;
+        ad.show(activity);
     }
 
     public boolean isLastAdShownAndUnpaid() {
         return lastAdPaid != null && !lastAdPaid;
     }
 
-    public boolean showAlbumBrowsingAdvertIfAppropriate(Context context) {
-        if (acceptableToShowAdvert(context, albumBrowsingAd, 24 * 60 * 60000)) {
-            showInterstitialAd(context, albumBrowsingAd);
+    public void showAlbumBrowsingAdvertIfAppropriate(Activity activity) {
+        if (acceptableToShowAdvert(activity, albumBrowsingAdLoader, 24 * 60 * 60000)) {
+            showInterstitialAd(activity, albumBrowsingAdLoader.getAd());
             // show every 24 hours
-            return true;
         }
-        return false;
     }
 
     public <FUIH extends FragmentUIHelper<FUIH,F>,F extends MyFragment<F,FUIH>> void showPleadingMessageIfNeeded(FUIH uiHelper) {
@@ -282,45 +342,6 @@ public class AdsManager {
         } else {
             buildNonEuConsentForm(context, consentInfo.getAdProviders());
         }
-    }
-
-    public void createRewardedVideoAd(Activity activity, long updateFrequency) {
-        if(status != STARTED) {
-            return;
-        }
-        rewardVideoAd = getRewardedVideoAd(activity, new AdsManager.OnRewardEarnedListener(activity, updateFrequency, BuildConfig.APPLICATION_ID));
-    }
-
-    public void pauseRewardVideoAd(Context context) {
-        if(rewardVideoAd == null) {
-            return;
-        }
-        rewardVideoAd.pause(context);
-    }
-
-    public void resumeRewardVideoAd(Context context) {
-        if(rewardVideoAd == null) {
-            return;
-        }
-        rewardVideoAd.resume(context);
-    }
-
-    public void destroyRewardVideoAd(Context context) {
-        if(rewardVideoAd == null) {
-            return;
-        }
-        rewardVideoAd.destroy(context);
-    }
-
-    public boolean hasRewardVideoAd(Context context) {
-        return rewardVideoAd != null;
-    }
-
-    public boolean showRewardVideoAd(Context context) {
-        if(rewardVideoAd == null) {
-            return false;
-        }
-        return rewardVideoAd.show();
     }
 
     public static class MyBannerAdListener extends AdListener {
@@ -399,323 +420,6 @@ public class AdsManager {
                 retries = 0;
                 loadAdvert(advertView.getContext());
             }
-        }
-    }
-
-    public static class OnRewardEarnedListener {
-
-
-        private final Context context;
-        private final SharedPreferences sharedPreferences;
-        private final SecurePrefsUtil prefUtil;
-        private final long rewardCountUpdateFrequency;
-
-        public OnRewardEarnedListener(Context context, long rewardCountUpdateFrequency, String appId) {
-            this.context = context;
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            prefUtil = SecurePrefsUtil.getInstance(context, appId);
-            this.rewardCountUpdateFrequency = rewardCountUpdateFrequency;
-        }
-
-        public void onRewardEarned(RewardItem rewardItem, long adDisplayTimeMaximum) {
-
-            byte[] oldVal = prefUtil.readSecurePreferenceRawBytes(context, sharedPreferences, context.getString(R.string.preference_advert_free_time_key), null);
-            BigInteger endsAt = BigInteger.valueOf(System.currentTimeMillis());
-            if (oldVal != null) {
-                endsAt = endsAt.max(new BigInteger(oldVal));
-            }
-            long rewardTime = Math.min(rewardItem.getAmount() * 1000, adDisplayTimeMaximum * 10); // time declared in advert portal for each advert vs 10 * time ad watched for
-            rewardTime = Math.min(rewardTime, 720000); // 12 minutes absolute maximum!
-            rewardTime = Math.max(rewardTime, 360000); // 6 minutes absolute minimum!
-            endsAt = endsAt.add(BigInteger.valueOf(rewardTime));
-
-            long totalRewardTime = endsAt.longValue() - System.currentTimeMillis();
-            Bundle bundle = new Bundle();
-            bundle.putLong("Reward_Time_Added", (rewardTime / 1000));
-            bundle.putLong("User_Reward_Time_Remaining", (totalRewardTime / 1000));
-            bundle.putInt("app_version", BuildConfig.VERSION_CODE);
-            bundle.putString("app_version_name", BuildConfig.VERSION_NAME);
-            Logging.logAnalyticEvent(context,"User_Rewarded", bundle);
-            prefUtil.writeSecurePreference(sharedPreferences, context.getString(R.string.preference_advert_free_time_key), endsAt.toByteArray());
-            AdsManager.RewardCountDownAction action = AdsManager.RewardCountDownAction.getInstance(context, rewardCountUpdateFrequency);
-            action.start();
-        }
-    }
-
-    public static final class MyRewardedAdControl extends AdMetadataListener implements RewardedVideoAdListener {
-
-        private final String advertId;
-        private final RewardedVideoAd rewardedVideoAd;
-        private final OnRewardEarnedListener listener;
-        private final Context appCtx;
-        private int retries;
-        private boolean isLoading;
-        private long adDisplayAt;
-        private Handler h;
-        private long adDisplayedFor;
-
-        public MyRewardedAdControl(Context context, String advertId, RewardedVideoAd rewardedVideoAd, OnRewardEarnedListener listener) {
-            this.appCtx = context.getApplicationContext();
-            this.rewardedVideoAd = rewardedVideoAd;
-            rewardedVideoAd.setAdMetadataListener(this);
-            if (BuildConfig.DEBUG) {
-                this.advertId = "ca-app-pub-3940256099942544/5224354917"; // test ID
-            } else {
-                this.advertId = advertId;
-            }
-            this.listener = listener;
-            h = new Handler(Looper.getMainLooper());
-        }
-
-        @Override
-        public void onAdMetadataChanged() {
-        }
-
-        @Override
-        public void onRewardedVideoAdLoaded() {
-            isLoading = false;
-        }
-
-        @Override
-        public void onRewardedVideoAdOpened() {
-            adDisplayedFor = 0;
-            adDisplayAt = System.currentTimeMillis();
-        }
-
-        @Override
-        public void onRewardedVideoStarted() {
-        }
-
-        @Override
-        public void onRewardedVideoAdClosed() {
-            loadAdvert();
-        }
-
-        public void pause(Context context) {
-            rewardedVideoAd.pause(context);
-        }
-
-        public boolean show() {
-            if (rewardedVideoAd.isLoaded()) {
-                rewardedVideoAd.show();
-                return true;
-            }
-            loadAdvert();
-            return false;
-        }
-
-        public void resume(Context context) {
-            rewardedVideoAd.resume(context);
-        }
-
-        public void destroy(Context context) {
-            rewardedVideoAd.destroy(context);
-        }
-
-        @Override
-        public void onRewarded(RewardItem rewardItem) {
-            adDisplayedFor = System.currentTimeMillis() - adDisplayAt;
-            listener.onRewardEarned(rewardItem, adDisplayedFor);
-
-
-        }
-
-        @Override
-        public void onRewardedVideoAdLeftApplication() {
-
-        }
-
-        @Override
-        public void onRewardedVideoAdFailedToLoad(int loadFailureCount) {
-            isLoading = false;
-            if (loadFailureCount == 3) {
-                retries++;
-            }
-            if (retries < 3) {
-                Logging.log(Log.DEBUG, "RewardVidAd", "advert load failed, retrying");
-                loadAdvert();
-            } else {
-                Logging.log(Log.DEBUG, "RewardVidAd", "Gave up trying to load advert after 3 attempts");
-                advertLoadFailures++;
-                retries = 0;
-            }
-        }
-
-        @Override
-        public void onRewardedVideoCompleted() {
-            loadAdvert();
-        }
-
-        void loadAdvert() {
-            if (!rewardedVideoAd.isLoaded() || !isLoading) {
-                if (Looper.myLooper() != Looper.getMainLooper()) {
-                    // always load adverts on the main thread!
-                    h.post(new SafeRunnable(this::loadAdvert));
-                    return;
-                }
-
-                isLoading = true;
-                rewardedVideoAd.loadAd(advertId, AdsManager.getInstance(appCtx).buildAdRequest(appCtx));
-            }
-        }
-    }
-
-    public final static class RewardCountDownAction implements Runnable {
-
-        private static RewardCountDownAction instance;
-        private final WeakReference<Context> contextWeakReference;
-        private final String prefKey;
-        private final long callFrequency;
-        private final Handler h;
-        private boolean stopped;
-        private long calledAt;
-
-        public RewardCountDownAction(Context c, long callFrequency) {
-            if (callFrequency < 1000) {
-                throw new IllegalArgumentException("Cannot be called more frequently than 1000ms");
-            }
-            this.contextWeakReference = new WeakReference<>(c);
-            prefKey = c.getString(R.string.preference_advert_free_time_key);
-            this.callFrequency = callFrequency;
-            h = new Handler(Looper.getMainLooper());
-        }
-
-        public static RewardCountDownAction getActiveInstance(Context c) {
-            return instance;
-        }
-
-        public static RewardCountDownAction getInstance(Context c, long callFrequency) {
-            if (instance == null) {
-                instance = new RewardCountDownAction(c, callFrequency);
-            }
-            return instance;
-        }
-
-        public void start() {
-            updatePreference(false, 0);
-            runInMillis(callFrequency);
-        }
-
-        public void runInMillis(long delay) {
-            synchronized (this) {
-                stopped = false;
-                calledAt = System.currentTimeMillis();
-                h.postDelayed(this, delay);
-            }
-        }
-
-        public void stop() {
-            h.removeCallbacks(this);
-            stopped = true;
-            synchronized (this) {
-                updatePreference(stopped);
-            }
-        }
-
-        @Override
-        public void run() {
-            synchronized (this) {
-                if (stopped) {
-                    return;
-                }
-                boolean runAgain = updatePreference(false);
-                if (runAgain) {
-                    runInMillis(callFrequency);
-                } else {
-                    stopped = true;
-                }
-            }
-        }
-
-        private boolean updatePreference(boolean stoppedEarly) {
-            long elapsedTime = Math.min(System.currentTimeMillis() - calledAt, callFrequency);
-            return updatePreference(stoppedEarly, elapsedTime);
-        }
-
-        private boolean updatePreference(boolean stoppedEarly, long elapsedTime) {
-            long now = System.currentTimeMillis();
-            Context c = contextWeakReference.get();
-            if (c == null) {
-                // somehow, this context has died without killing this background thread. Kill the thread too.
-                return false;
-            }
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(c, BuildConfig.APPLICATION_ID);
-            byte[] oldVal = prefUtil.readSecurePreferenceRawBytes(c, prefs, prefKey, null);
-            boolean showAds = true;
-            long timeRemainingWithoutAds = 0;
-            if (oldVal != null) {
-                BigInteger val = new BigInteger(oldVal);
-                if (val.longValue() > now) {
-                    val = val.subtract(BigInteger.valueOf(elapsedTime));
-                    prefUtil.writeSecurePreference(prefs, prefKey, val.toByteArray());
-                    timeRemainingWithoutAds = val.longValue() - now;
-                    timeRemainingWithoutAds = Math.max(timeRemainingWithoutAds, 0);
-                    showAds = timeRemainingWithoutAds <= 0;
-
-                }
-            }
-            EventBus.getDefault().post(new RewardUpdateEvent(timeRemainingWithoutAds));
-            AdsManager.getInstance(c).setAdvertsDisabled(!showAds);
-            return !stoppedEarly && !showAds;
-        }
-    }
-
-    static class MyAdListener extends AdListener {
-
-        private final InterstitialAd ad;
-        private final Context context;
-        private int onCloseActionId = -1;
-        private Intent onCloseIntent;
-        private int retries;
-
-        public MyAdListener(Context context, InterstitialAd ad) {
-            this.ad = ad;
-            this.context = context;
-        }
-
-        @Override
-        public void onAdClosed() {
-            if (onCloseIntent != null) {
-                Activity activity = (Activity) context;
-                activity.startActivityForResult(onCloseIntent, onCloseActionId);
-                onCloseIntent = null;
-                onCloseActionId = -1;
-            }
-            Handler mainHandler = new Handler(context.getMainLooper());
-            Runnable myRunnable = new SafeRunnable(() -> ad.loadAd(AdsManager.getInstance(context).buildAdRequest(context)));
-            mainHandler.post(myRunnable);
-
-        }
-
-        private void loadAdvert() {
-            ad.loadAd(new AdRequest.Builder().build());
-        }
-
-        @Override
-        public void onAdLoaded() {
-            retries = 0;
-            advertLoadFailures = 0;
-        }
-
-        @Override
-        public void onAdFailedToLoad(int var1) {
-            if (var1 == 3) {
-                retries++;
-            }
-            if (retries < 3) {
-                Logging.log(Log.DEBUG, "InterstitialAd", "advert load failed, retrying");
-                loadAdvert();
-            } else {
-                Logging.log(Log.DEBUG, "InterstitialAd", "Gave up trying to load advert after 3 attempts");
-                advertLoadFailures++;
-                retries = 0;
-            }
-        }
-
-        public void addAdCloseAction(Intent intent, int actionId) {
-            onCloseIntent = intent;
-            onCloseActionId = actionId;
         }
     }
 
@@ -812,8 +516,7 @@ public class AdsManager {
         editor.commit();
     }
 
-    //TODO Use this adrequest for all adverts.
-    //TODO work out what to do with the IABUSPrivacy_String consent!
+    //FIXME work out what to do with the IABUSPrivacy_String consent!
     private AdRequest buildAdRequest(Context context) {
         ConsentStatus consentStatus = getConsentInformation(context).getConsentStatus();
         Bundle networkExtrasBundle = new Bundle();

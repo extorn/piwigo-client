@@ -598,7 +598,7 @@ Les versions sont sur une base ad hoc pour le moment. La fréquence des versions
     <string name="upload_tab_title_settings">Réglages</string>
     <string name="upload_tab_title_files">Des dossiers</string>
     <string name="alert_internal_server_exposed_pattern">Autorité inattendue %1$s trouvé en URL et remplacé par %2$s. Votre serveur pourrait être mal configuré.</string>
-    <string name="buy_time_menu_title">Masquer les annonces</string>
+    <string name="app_purchases_title">Masquer les annonces</string>
     <string name="watch_advert_to_buy_advert_free_time">Souhaitez-vous regarder une publicité pour acheter une courte période sans adverts? Vous pouvez faire cela plusieurs fois pour augmenter la durée si vous le souhaitez.</string>
     <string name="reward_video_not_yet_loaded">Désolé, mais la vidéo de récompense n\'a pas encore été chargée. Veuillez réessayer plus tard.</string>
     <string name="bought_time_menu_title_pattern">Annonces dans le %1$02d: %2$02d</string>

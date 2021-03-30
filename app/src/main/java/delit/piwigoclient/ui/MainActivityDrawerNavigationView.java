@@ -8,14 +8,11 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.ui.events.RewardUpdateEvent;
 
 /**
  * Created by gareth on 08/06/17.
@@ -35,23 +32,6 @@ public class MainActivityDrawerNavigationView extends BaseActivityDrawerNavigati
 
     public MainActivityDrawerNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(RewardUpdateEvent event) {
-        MenuItem item = getMenu().findItem(R.id.nav_buy_time);
-        long millis = event.getRewardTimeRemaining();
-        if (millis > 0) {
-            long mins = millis / (60000);
-            long secs = (millis - (mins * 60000)) / 1000;
-            item.setTitle(getContext().getString(R.string.bought_time_menu_title_pattern, mins, secs));
-            if (mins > 30) {
-                item.setEnabled(false);
-            }
-        } else {
-            item.setEnabled(true);
-            item.setTitle(getContext().getString(R.string.buy_time_menu_title));
-        }
     }
 
     @Override
@@ -108,7 +88,7 @@ public class MainActivityDrawerNavigationView extends BaseActivityDrawerNavigati
         m.findItem(R.id.nav_lock).setVisible(!isReadOnly && sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isGuest());
         m.findItem(R.id.nav_unlock).setVisible(isReadOnly);
 
-        m.findItem(R.id.nav_buy_time).setVisible(!BuildConfig.PAID_VERSION);
+        m.findItem(R.id.nav_app_purchases).setVisible(!BuildConfig.PAID_VERSION);
 
         m.findItem(R.id.nav_offline_mode).setVisible(sessionDetails == null || !sessionDetails.isCached());
         m.findItem(R.id.nav_online_mode).setVisible(sessionDetails != null && sessionDetails.isCached());

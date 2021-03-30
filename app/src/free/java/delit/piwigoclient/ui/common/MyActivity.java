@@ -1,10 +1,16 @@
 package delit.piwigoclient.ui.common;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 
+import delit.libs.core.util.Logging;
+import delit.libs.ui.util.ExecutorManager;
+import delit.piwigoclient.R;
+import delit.piwigoclient.subscription.api.ExistingPurchases;
+import delit.piwigoclient.subscription.piwigo.PiwigoClientSubscriptionManager;
 import delit.piwigoclient.ui.AdsManager;
 
 /**
@@ -12,8 +18,9 @@ import delit.piwigoclient.ui.AdsManager;
  */
 
 public abstract class MyActivity<A extends MyActivity<A, AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends BaseMyActivity<A, AUIH> {
-    protected static final long REWARD_COUNT_UPDATE_FREQUENCY = 1000;
-    private AdsManager.RewardCountDownAction rewardsCountdownAction;
+
+    private static final String TAG = "MyActivity";
+    private ExecutorManager activityExecutorManager;
 
     public MyActivity(@LayoutRes int contentView) {
         super(contentView);
@@ -22,19 +29,37 @@ public abstract class MyActivity<A extends MyActivity<A, AUIH>, AUIH extends Act
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        rewardsCountdownAction = AdsManager.RewardCountDownAction.getInstance(getBaseContext(), REWARD_COUNT_UPDATE_FREQUENCY);
+        activityExecutorManager = new ExecutorManager(1,1,1,1);
+        activityExecutorManager.blockIfBusy(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        activityExecutorManager.submit(this::updateSettingsBasedOnSubscriptions);
+    }
+
+    private void updateSettingsBasedOnSubscriptions() {
+        PiwigoClientSubscriptionManager subscriptionManager = new PiwigoClientSubscriptionManager(this);
+        subscriptionManager.getProductPurchases(this);
+        ExistingPurchases purchases = subscriptionManager.getExistingPurchases();
+        purchases.waitForLoad(5000);
+        if(!purchases.isLoaded()) {
+            getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.unable_to_validate_subscription));
+            Logging.log(Log.ERROR, TAG, "Unable to validate subscription information");
+        }
+        subscriptionManager.closeConnection();
+        if(purchases.isLoaded() && purchases.getAllSubscriptions().isEmpty()) {
+            AdsManager.getInstance(this).setAdvertsDisabled(false);
+        }
         AdsManager.getInstance(this).updateShowAdvertsSetting(this);
     }
 
     @Override
     protected void onAppPaused() {
-        if (rewardsCountdownAction != null) {
-            rewardsCountdownAction.stop();
-        }
     }
 
     @Override
     protected void onAppResumed() {
-        rewardsCountdownAction.start();
     }
 }

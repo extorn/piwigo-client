@@ -954,7 +954,7 @@ SOFTWARE.
     <string name="upload_tab_title_settings">Settings</string>
     <string name="upload_tab_title_files">Files</string>
     <string name="alert_internal_server_exposed_pattern">Unexpected authority %1$s found in url and replaced with %2$s. Your server could be misconfigured.</string>
-    <string name="buy_time_menu_title">Hide Adverts</string>
+    <string name="app_purchases_title">App Purchases</string>
     <string name="watch_advert_to_buy_advert_free_time">Would you like to watch an advertisement to buy a short period without any adverts? You can do this multiple times to increase the length of time if wanted.</string>
     <string name="reward_video_not_yet_loaded">Sorry, but the reward video has not yet loaded. Please try again later.</string>
     <string name="bought_time_menu_title_pattern">Adverts in %1$02d:%2$02d</string>
@@ -1129,4 +1129,5 @@ App Install UUID: %5$s
     <string name="normal_mode">Normal</string>
     <string name="clear_individual_settings">clear individual settings</string>
     <string name="upload_icon_types_label">File types</string>
+    <string name="unable_to_validate_subscription">Unable to validate subscription.</string>
 </resources>

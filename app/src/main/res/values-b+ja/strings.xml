@@ -598,7 +598,7 @@ My Test Galleryには、.jpgと.mp4と.m4vファイルのみが含まれてい�
     <string name="upload_tab_title_settings">設定</string>
     <string name="upload_tab_title_files">ファイル</string>
     <string name="alert_internal_server_exposed_pattern">予期せぬ機関%1$s URLで見つけて、%2$sに置き換えられました。サーバーが誤って設定できます。</string>
-    <string name="buy_time_menu_title">広告を隠す</string>
+    <string name="app_purchases_title">広告を隠す</string>
     <string name="watch_advert_to_buy_advert_free_time">広告がなくても短期間を購入するために広告を見たいですか？必要に応じて時間の長さを長くするためにこれを複数回行うことができます。</string>
     <string name="reward_video_not_yet_loaded">申し訳ありませんが、報酬ビデオはまだロードされていません。後でもう一度やり直してください。</string>
     <string name="bought_time_menu_title_pattern">アドバタイズ%1$02d：%2$02d</string>

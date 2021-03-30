@@ -598,7 +598,7 @@ I rilasci sono su una base ad hoc al momento. La frequenza delle versioni dovreb
     <string name="upload_tab_title_settings">impostazioni</string>
     <string name="upload_tab_title_files">File</string>
     <string name="alert_internal_server_exposed_pattern">Autorità imprevista %1$s trovato in URL e sostituito con %2$s. Il tuo server potrebbe essere malfigurato.</string>
-    <string name="buy_time_menu_title">Nascondi annunci</string>
+    <string name="app_purchases_title">Nascondi annunci</string>
     <string name="watch_advert_to_buy_advert_free_time">Ti piacerebbe guardare un annuncio per comprare un breve periodo senza alcuna pubblicità? Puoi farlo più volte per aumentare il periodo di tempo se lo desiderato.</string>
     <string name="reward_video_not_yet_loaded">Siamo spiacenti, ma il video premio non ha ancora caricato. Per favore riprova più tardi.</string>
     <string name="bought_time_menu_title_pattern">Annunci in %1$02d: %2$02d</string>
