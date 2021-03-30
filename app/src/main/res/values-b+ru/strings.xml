@@ -598,7 +598,7 @@ SourceCode: https://github.com/extorn/piwigoClient.
     <string name="upload_tab_title_settings">Настройки</string>
     <string name="upload_tab_title_files">Файлы</string>
     <string name="alert_internal_server_exposed_pattern">Неожиданная власть %1$s Найдено в URL и заменено на %2$s. Ваш сервер может быть неправильно повержен.</string>
-    <string name="app_purchases_title">Скрыть рекламу</string>
+    <string name="app_purchases_title">Покупки приложений</string>
     <string name="watch_advert_to_buy_advert_free_time">Хотели бы вы посмотреть рекламу, чтобы купить короткий период без рекламы? Вы можете сделать это несколько раз, чтобы увеличить промежуток времени, если хотеть.</string>
     <string name="reward_video_not_yet_loaded">Извините, но видео награда еще не загружено. Пожалуйста, повторите попытку позже.</string>
     <string name="bought_time_menu_title_pattern">Реклама в %1$02d: %2$02d</string>
@@ -751,4 +751,5 @@ SourceCode: https://github.com/extorn/piwigoClient.
     <string name="normal_mode">Нормальный</string>
     <string name="clear_individual_settings">Очистить отдельные настройки</string>
     <string name="upload_icon_types_label">Типы файлов</string>
+    <string name="alert_please_select_a_connection_profile_with_upload_privilege">В настоящее время активное профиль не имеет разрешения на загрузку. Пожалуйста, выберите другой из списка в использовании вместо этого.</string>
 </resources>

@@ -2,4 +2,24 @@
 <resources>
     <string name="hint_slideshow_free_view_1">L\'entraînement automatique du diaporama (progression via des images) est disponible dans la version payante.</string>
     
+    <string name="product_title">Nom du produit</string>
+    <string name="product_purchased">Acheté</string>
+    <string name="heading_products_for_sale">Articles à vendre</string>
+    <string name="app_purchases_overall_heading">Achats d\'application</string>
+    <string name="alert_error_unable_to_retrieve_billing_information">Impossible de récupérer les informations de facturation. Veuillez réessayer plus tard. Si l\'erreur continue, veuillez me lâcher un email.</string>
+    <string name="buy_now_button">Acheter</string>
+    <string name="manage_app_purchases">Achats d\'application</string>
+    <string name="app_purchases_tab_shop">Magasin</string>
+    <string name="app_purchases_tab_my_purchases">Achats actifs</string>
+    <string name="error_retrieving_product_information">Impossible de récupérer des informations sur le produit pour le moment. S\'il vous plaît essayer à nouveau bientôt.</string>
+    <string name="purchased_price_label">Coût</string>
+    <string name="heading_products_purchased">Mes achats</string>
+    <string name="purchased_date">Acheté</string>
+    <string name="purchase_order_id">numéro de commande</string>
+    <string name="purchase_recurring">Ordre récurrent</string>
+    <string name="manage_subscription_button">Gérer sur google</string>
+    <string name="loading_product_details_please_wait">Chargement des détails du produit</string>
+    <string name="loading_purchase_details_please_wait">Chargement de détails de l\'achat</string>
+    <string name="no_active_purchases">Aucun achat actif</string>
+    <string name="unable_to_validate_subscription">Impossible de valider l\'abonnement.</string>
 </resources>

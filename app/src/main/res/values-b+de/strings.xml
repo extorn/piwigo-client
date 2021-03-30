@@ -598,7 +598,7 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="upload_tab_title_settings">die Einstellungen</string>
     <string name="upload_tab_title_files">Dateien</string>
     <string name="alert_internal_server_exposed_pattern">Unerwartete Autorität %1$s gefunden in URL und ersetzt durch %2$s. Ihr Server könnte falsch konfiguriert werden.</string>
-    <string name="app_purchases_title">Anzeigen ausblenden</string>
+    <string name="app_purchases_title">App-Käufe</string>
     <string name="watch_advert_to_buy_advert_free_time">Möchten Sie eine Werbung ansehen, um einen kurzen Zeitraum ohne Anzeigen zu kaufen? Sie können dies mehrmals tun, um die Zeitdauer zu erhöhen, wenn Sie möchten.</string>
     <string name="reward_video_not_yet_loaded">Entschuldigung, aber das Belohnungsvideo ist noch nicht geladen. Bitte versuchen Sie es später erneut.</string>
     <string name="bought_time_menu_title_pattern">Anzeigen in %1$02d: %2$02d</string>
@@ -751,4 +751,5 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="normal_mode">Normal</string>
     <string name="clear_individual_settings">Klare individuelle Einstellungen</string>
     <string name="upload_icon_types_label">Datentypen</string>
+    <string name="alert_please_select_a_connection_profile_with_upload_privilege">Das aktuell aktive Profil hat keine Berechtigung zum Hochladen. Bitte wählen Sie einen anderen aus der Liste, der stattdessen verwendet wird.</string>
 </resources>

@@ -598,7 +598,7 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
     <string name="upload_tab_title_settings">Instellingen</string>
     <string name="upload_tab_title_files">Bestanden</string>
     <string name="alert_internal_server_exposed_pattern">Onverwachte autoriteit %1$s gevonden in URL en vervangen door %2$s. Uw server kan verkeerd worden geconfigureerd.</string>
-    <string name="app_purchases_title">Advertenties verbergen</string>
+    <string name="app_purchases_title">App-aankopen</string>
     <string name="watch_advert_to_buy_advert_free_time">Wilt u een advertentie bekijken om een ​​korte periode te kopen zonder advertenties? Je kunt dit meerdere keren doen om de tijd van het gewenst te verhogen.</string>
     <string name="reward_video_not_yet_loaded">Sorry, maar de beloningvideo is nog niet geladen. Probeer het later opnieuw.</string>
     <string name="bought_time_menu_title_pattern">Advertenties in %1$02d: %2$02d</string>
@@ -751,4 +751,5 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
     <string name="normal_mode">Normaal</string>
     <string name="clear_individual_settings">Duidelijke individuele instellingen</string>
     <string name="upload_icon_types_label">Bestand types</string>
+    <string name="alert_please_select_a_connection_profile_with_upload_privilege">Het momenteel actieve profiel heeft geen toestemming om te uploaden. Selecteer in plaats daarvan een ander uit de lijst.</string>
 </resources>

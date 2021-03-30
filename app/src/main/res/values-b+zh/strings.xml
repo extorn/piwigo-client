@@ -598,7 +598,7 @@ Piwigo Server I测试的版本目前为11.0.3。
     <string name="upload_tab_title_settings">设置</string>
     <string name="upload_tab_title_files">文件</string>
     <string name="alert_internal_server_exposed_pattern">意外权限%1$s在URL中找到并替换为%2$s。您的服务器可能会被配置错误。</string>
-    <string name="app_purchases_title">隐藏广告</string>
+    <string name="app_purchases_title">应用购买</string>
     <string name="watch_advert_to_buy_advert_free_time">您想观看广告是否在没有任何广告的情况下购买短期？您可以多次执行此操作以增加如果需要的时间长度。</string>
     <string name="reward_video_not_yet_loaded">对不起，但奖励视频尚未装载。请稍后再试。</string>
     <string name="bought_time_menu_title_pattern">广告%1$02d：%2$02d</string>
@@ -751,4 +751,5 @@ Piwigo Server I测试的版本目前为11.0.3。
     <string name="normal_mode">普通的</string>
     <string name="clear_individual_settings">清除单个设置</string>
     <string name="upload_icon_types_label">文件类型</string>
+    <string name="alert_please_select_a_connection_profile_with_upload_privilege">当前活动的配置文件无权上传。 请从列表中选择另一个。</string>
 </resources>

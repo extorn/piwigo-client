@@ -145,11 +145,15 @@
         <item>"* Principalement de bugfixes seulement
                 * Peut-être une réécriture complète de l\'application en mettant l\'accent sur la simplicité pour la navigation d\'utilisateur général initialement"</item>
         
-        <item>1.4.0.141</item>
+        <item>1.5.0.1</item>
         <item>"Changement:
                  - Remplacement du code de stockage et de récupération de la configuration du travail pour mieux soutenir les gros emplois"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.0</item>
+        <item>"Changement:
+                 - Meilleur support pour plusieurs profils lors du partage de fichiers avec l\'application pour le téléchargement
+                 - Nouveau support d\'abonnement pour la suppression d\'adverts (Remarque: Cela ne donne pas de fonctionnalités supplémentaires, ne supprime que les annonces)"</item>
         <item>1.4.0.140</item>
         <item>"Changement:
                  - La nouvelle préférence est le diaporama pour permettre de masquer la superposition de l\'information dans le diaporama jusqu\'à cliquer sur l\'image"</item>

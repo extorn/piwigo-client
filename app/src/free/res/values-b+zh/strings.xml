@@ -2,4 +2,24 @@
 <resources>
     <string name="hint_slideshow_free_view_1">幻灯片的自动驱动器（通过图像的进展）可用于付费版本</string>
     
+    <string name="product_title">产品名称</string>
+    <string name="product_purchased">购买</string>
+    <string name="heading_products_for_sale">出售物品</string>
+    <string name="app_purchases_overall_heading">应用购买</string>
+    <string name="alert_error_unable_to_retrieve_billing_information">无法检索结算信息。 请稍后再试。 如果错误继续，请给我发一封电子邮件。</string>
+    <string name="buy_now_button">买</string>
+    <string name="manage_app_purchases">应用购买</string>
+    <string name="app_purchases_tab_shop">店铺</string>
+    <string name="app_purchases_tab_my_purchases">积极购买</string>
+    <string name="error_retrieving_product_information">此时无法检索产品信息。 请尽快再试一次。</string>
+    <string name="purchased_price_label">成本</string>
+    <string name="heading_products_purchased">我的购买</string>
+    <string name="purchased_date">购买</string>
+    <string name="purchase_order_id">订单ID.</string>
+    <string name="purchase_recurring">重复顺序</string>
+    <string name="manage_subscription_button">在Google上管理</string>
+    <string name="loading_product_details_please_wait">加载产品详情</string>
+    <string name="loading_purchase_details_please_wait">加载购买详细信息</string>
+    <string name="no_active_purchases">没有积极购买</string>
+    <string name="unable_to_validate_subscription">无法验证订阅。</string>
 </resources>

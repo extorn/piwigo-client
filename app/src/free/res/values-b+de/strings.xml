@@ -2,4 +2,24 @@
 <resources>
     <string name="hint_slideshow_free_view_1">Automatisches Laufwerk der Diashow (Progression durch Bilder) ist in der kostenpflichtigen Version verfügbar</string>
     
+    <string name="product_title">Produktname</string>
+    <string name="product_purchased">Gekauft</string>
+    <string name="heading_products_for_sale">Artikel zu verkaufen</string>
+    <string name="app_purchases_overall_heading">App-Käufe</string>
+    <string name="alert_error_unable_to_retrieve_billing_information">Rechnungsinformationen können nicht abgerufen werden. Bitte versuchen Sie es später erneut. Wenn der Fehler fortgesetzt wird, senden Sie mir bitte eine E-Mail.</string>
+    <string name="buy_now_button">Kaufen</string>
+    <string name="manage_app_purchases">App-Käufe</string>
+    <string name="app_purchases_tab_shop">Geschäft</string>
+    <string name="app_purchases_tab_my_purchases">Aktive Einkäufe</string>
+    <string name="error_retrieving_product_information">Produktinformationen können derzeit nicht abgerufen werden. Bitte versuchen Sie es bald erneut.</string>
+    <string name="purchased_price_label">Kosten</string>
+    <string name="heading_products_purchased">Meine Einkäufe</string>
+    <string name="purchased_date">Gekauft</string>
+    <string name="purchase_order_id">Auftragsnummer</string>
+    <string name="purchase_recurring">Wiederkehrende Reihenfolge</string>
+    <string name="manage_subscription_button">Verwalten bei Google</string>
+    <string name="loading_product_details_please_wait">Produktdetails laden.</string>
+    <string name="loading_purchase_details_please_wait">Kaufdetails werden geladen</string>
+    <string name="no_active_purchases">Keine aktiven Einkäufe</string>
+    <string name="unable_to_validate_subscription">Das Abonnement kann nicht bestätigt werden.</string>
 </resources>

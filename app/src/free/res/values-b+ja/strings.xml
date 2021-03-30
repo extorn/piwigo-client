@@ -2,4 +2,24 @@
 <resources>
     <string name="hint_slideshow_free_view_1">スライドショーの自動駆動（画像による進行）は有料版で入手可能です。</string>
     
+    <string name="product_title">商品名</string>
+    <string name="product_purchased">購入した</string>
+    <string name="heading_products_for_sale">販売商品</string>
+    <string name="app_purchases_overall_heading">アプリの購入</string>
+    <string name="alert_error_unable_to_retrieve_billing_information">請求情報を取得できません。 後でもう一度やり直してください。 エラーが続く場合は、電子メールをドロップしてください。</string>
+    <string name="buy_now_button">購入</string>
+    <string name="manage_app_purchases">アプリの購入</string>
+    <string name="app_purchases_tab_shop">ショップ</string>
+    <string name="app_purchases_tab_my_purchases">アクティブな購入</string>
+    <string name="error_retrieving_product_information">現時点では製品情報を取得できません。 もう一度もう一度やり直してください。</string>
+    <string name="purchased_price_label">費用</string>
+    <string name="heading_products_purchased">私の購入</string>
+    <string name="purchased_date">購入した</string>
+    <string name="purchase_order_id">注文ID</string>
+    <string name="purchase_recurring">繰り返し命令</string>
+    <string name="manage_subscription_button">Googleの管理</string>
+    <string name="loading_product_details_please_wait">製品の詳細を読み込む</string>
+    <string name="loading_purchase_details_please_wait">購入の詳細を読み込んでください</string>
+    <string name="no_active_purchases">アクティブな購入はありません</string>
+    <string name="unable_to_validate_subscription">サブスクリプションを検証できません。</string>
 </resources>

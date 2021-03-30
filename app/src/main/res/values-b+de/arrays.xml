@@ -145,11 +145,15 @@
         <item>"* In erster Linie nur Bugfixes
                 * Möglicherweise ein komplettes Neuschreiben der App mit einem Fokus auf Einfachheit halber für das allgemeine Benutzer"</item>
         
-        <item>1.4.0.141</item>
+        <item>1.5.0.1</item>
         <item>"Veränderung:
                  - Austausch des Auftragskonfigurationspeicher- und Abrufcode, um große Jobs besser zu unterstützen"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.0</item>
+        <item>"Veränderung:
+                 - Bessere Unterstützung für mehrere Profile, wenn Dateien mit der App zum Hochladen freigegeben werden
+                 - Neue Abonnementsupport für das Entfernen von Anzeigen (Hinweis: Dies gibt keine zusätzlichen Funktionen, nur die Anzeigen entfernt)"</item>
         <item>1.4.0.140</item>
         <item>"Veränderung:
                  - Neue Präferenz ist die Diashow, um die Informationsüberlagerung in der Diashow zu verbergen, bis Sie auf das Bild klicken"</item>

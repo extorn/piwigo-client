@@ -2,4 +2,24 @@
 <resources>
     <string name="hint_slideshow_free_view_1">La unidad automática de la presentación de diapositivas (progresión a través de imágenes) está disponible en la versión de pago.</string>
     
+    <string name="product_title">Nombre del producto</string>
+    <string name="product_purchased">Comprado</string>
+    <string name="heading_products_for_sale">productos en venta</string>
+    <string name="app_purchases_overall_heading">Compras de aplicaciones</string>
+    <string name="alert_error_unable_to_retrieve_billing_information">No se puede recuperar la información de facturación. Por favor, inténtelo de nuevo más tarde. Si el error continúa, por favor, escríbeme un correo electrónico.</string>
+    <string name="buy_now_button">Comprar</string>
+    <string name="manage_app_purchases">Compras de aplicaciones</string>
+    <string name="app_purchases_tab_shop">Tienda</string>
+    <string name="app_purchases_tab_my_purchases">Compras activas</string>
+    <string name="error_retrieving_product_information">No se puede recuperar la información del producto en este momento. Por favor, inténtalo de nuevo pronto.</string>
+    <string name="purchased_price_label">Costo</string>
+    <string name="heading_products_purchased">Mis compras</string>
+    <string name="purchased_date">Comprado</string>
+    <string name="purchase_order_id">Solicitar ID</string>
+    <string name="purchase_recurring">Orden recurrente</string>
+    <string name="manage_subscription_button">Gestionar en google</string>
+    <string name="loading_product_details_please_wait">Cargando detalles del producto</string>
+    <string name="loading_purchase_details_please_wait">Cargando detalles de compra</string>
+    <string name="no_active_purchases">No hay compras activas</string>
+    <string name="unable_to_validate_subscription">No se puede validar la suscripción.</string>
 </resources>

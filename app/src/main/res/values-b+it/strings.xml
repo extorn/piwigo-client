@@ -598,7 +598,7 @@ I rilasci sono su una base ad hoc al momento. La frequenza delle versioni dovreb
     <string name="upload_tab_title_settings">impostazioni</string>
     <string name="upload_tab_title_files">File</string>
     <string name="alert_internal_server_exposed_pattern">Autorità imprevista %1$s trovato in URL e sostituito con %2$s. Il tuo server potrebbe essere malfigurato.</string>
-    <string name="app_purchases_title">Nascondi annunci</string>
+    <string name="app_purchases_title">Acquisti di app.</string>
     <string name="watch_advert_to_buy_advert_free_time">Ti piacerebbe guardare un annuncio per comprare un breve periodo senza alcuna pubblicità? Puoi farlo più volte per aumentare il periodo di tempo se lo desiderato.</string>
     <string name="reward_video_not_yet_loaded">Siamo spiacenti, ma il video premio non ha ancora caricato. Per favore riprova più tardi.</string>
     <string name="bought_time_menu_title_pattern">Annunci in %1$02d: %2$02d</string>
@@ -751,4 +751,5 @@ I rilasci sono su una base ad hoc al momento. La frequenza delle versioni dovreb
     <string name="normal_mode">Normale</string>
     <string name="clear_individual_settings">Cancella le impostazioni individuali</string>
     <string name="upload_icon_types_label">Tipi di file</string>
+    <string name="alert_please_select_a_connection_profile_with_upload_privilege">Il profilo attualmente attivo non ha il permesso di caricare. Si prega di selezionare un altro dall\'elenco da utilizzare invece.</string>
 </resources>

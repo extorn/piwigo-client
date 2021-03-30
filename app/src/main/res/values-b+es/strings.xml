@@ -598,7 +598,7 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
     <string name="upload_tab_title_settings">Ajustes</string>
     <string name="upload_tab_title_files">Archivos</string>
     <string name="alert_internal_server_exposed_pattern">Autoridad inesperada %1$s Se encuentra en la URL y se reemplaza con %2$s. Su servidor podría ser mal configurado.</string>
-    <string name="app_purchases_title">Ocultar anuncios</string>
+    <string name="app_purchases_title">Compras de aplicaciones</string>
     <string name="watch_advert_to_buy_advert_free_time">¿Te gustaría ver un anuncio para comprar un corto período sin ningún anuncio? Puede hacer esto varias veces para aumentar el tiempo si desea.</string>
     <string name="reward_video_not_yet_loaded">Lo siento, pero el video de la recompensa aún no se ha cargado. Por favor, inténtelo de nuevo más tarde.</string>
     <string name="bought_time_menu_title_pattern">Anuncios en %1$02d: %2$02d</string>
@@ -751,4 +751,5 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
     <string name="normal_mode">Normal</string>
     <string name="clear_individual_settings">Ajustes individuales claros</string>
     <string name="upload_icon_types_label">Tipos de archivo</string>
+    <string name="alert_please_select_a_connection_profile_with_upload_privilege">El perfil actualmente activo no tiene permiso para cargar. Por favor, seleccione otra de la lista para usar en su lugar.</string>
 </resources>

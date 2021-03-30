@@ -2,4 +2,24 @@
 <resources>
     <string name="hint_slideshow_free_view_1">Automatische schijf van de diavoorstelling (progressie via afbeeldingen) is beschikbaar in de betaalde versie</string>
     
+    <string name="product_title">Productnaam</string>
+    <string name="product_purchased">Gekocht</string>
+    <string name="heading_products_for_sale">spullen te koop</string>
+    <string name="app_purchases_overall_heading">App-aankopen</string>
+    <string name="alert_error_unable_to_retrieve_billing_information">Kan factureringsinformatie niet ophalen. Probeer het later opnieuw. Als de fout doorgaat, stuur me dan een e-mail.</string>
+    <string name="buy_now_button">Kopen</string>
+    <string name="manage_app_purchases">App-aankopen</string>
+    <string name="app_purchases_tab_shop">Winkel</string>
+    <string name="app_purchases_tab_my_purchases">Actieve aankopen</string>
+    <string name="error_retrieving_product_information">Kan op dit moment geen productinformatie ophalen. Probeer het snel opnieuw.</string>
+    <string name="purchased_price_label">Kosten</string>
+    <string name="heading_products_purchased">Mijn aankopen</string>
+    <string name="purchased_date">Gekocht</string>
+    <string name="purchase_order_id">Order ID</string>
+    <string name="purchase_recurring">Terugkerende volgorde</string>
+    <string name="manage_subscription_button">Beheer op Google</string>
+    <string name="loading_product_details_please_wait">Productdetails laden</string>
+    <string name="loading_purchase_details_please_wait">Koopgegevens laden</string>
+    <string name="no_active_purchases">Geen actieve aankopen</string>
+    <string name="unable_to_validate_subscription">Kan het abonnement niet valideren.</string>
 </resources>

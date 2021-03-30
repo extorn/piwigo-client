@@ -2,4 +2,24 @@
 <resources>
     <string name="hint_slideshow_free_view_1">Автоматический привод слайд-шоу (прогрессирование с помощью изображений) доступен в платной версии</string>
     
+    <string name="product_title">Наименование товара</string>
+    <string name="product_purchased">Купленный</string>
+    <string name="heading_products_for_sale">вещи на продажу</string>
+    <string name="app_purchases_overall_heading">Покупки приложений</string>
+    <string name="alert_error_unable_to_retrieve_billing_information">Невозможно получить информацию о выставлении выставления счетов. Пожалуйста, повторите попытку позже. Если ошибка продолжается, пожалуйста, напишите мне письмо.</string>
+    <string name="buy_now_button">Купить</string>
+    <string name="manage_app_purchases">Покупки приложений</string>
+    <string name="app_purchases_tab_shop">Магазин</string>
+    <string name="app_purchases_tab_my_purchases">Активные покупки</string>
+    <string name="error_retrieving_product_information">Невозможно получить информацию о продукте в это время. Пожалуйста, попробуйте еще раз в ближайшее время.</string>
+    <string name="purchased_price_label">Расходы</string>
+    <string name="heading_products_purchased">Мои покупки</string>
+    <string name="purchased_date">Купленный</string>
+    <string name="purchase_order_id">номер заказа</string>
+    <string name="purchase_recurring">Повторяющий заказ</string>
+    <string name="manage_subscription_button">Управлять в Google</string>
+    <string name="loading_product_details_please_wait">Загрузка деталей продукта</string>
+    <string name="loading_purchase_details_please_wait">Загрузка деталей покупки</string>
+    <string name="no_active_purchases">Нет активных покупок</string>
+    <string name="unable_to_validate_subscription">Невозможно проверить подписку.</string>
 </resources>

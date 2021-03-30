@@ -2,4 +2,24 @@
 <resources>
     <string name="hint_slideshow_free_view_1">Automatický disk slideshow (progrese přes obrázky) je k dispozici v placené verzi</string>
     
+    <string name="product_title">Jméno výrobku</string>
+    <string name="product_purchased">Zakoupeno</string>
+    <string name="heading_products_for_sale">položky na prodej</string>
+    <string name="app_purchases_overall_heading">Nákupy aplikací</string>
+    <string name="alert_error_unable_to_retrieve_billing_information">Nelze načíst fakturační údaje. Prosím zkuste to znovu později. Pokud chyba pokračuje, prosím, odevzdejte mi e-mail.</string>
+    <string name="buy_now_button">Koupit</string>
+    <string name="manage_app_purchases">Nákupy aplikací</string>
+    <string name="app_purchases_tab_shop">Prodejna</string>
+    <string name="app_purchases_tab_my_purchases">Aktivní nákupy</string>
+    <string name="error_retrieving_product_information">Nelze načíst informace o produktu v tuto chvíli. Zkuste to prosím znovu.</string>
+    <string name="purchased_price_label">Náklady</string>
+    <string name="heading_products_purchased">Moje nákupy</string>
+    <string name="purchased_date">Zakoupeno</string>
+    <string name="purchase_order_id">číslo objednávky</string>
+    <string name="purchase_recurring">Opakující se pořadí</string>
+    <string name="manage_subscription_button">Spravovat na Google.</string>
+    <string name="loading_product_details_please_wait">Vkládání podrobností o produktu</string>
+    <string name="loading_purchase_details_please_wait">Podrobnosti o nákupu načítání</string>
+    <string name="no_active_purchases">Žádné aktivní nákupy</string>
+    <string name="unable_to_validate_subscription">Nelze ověřit předplatné.</string>
 </resources>

@@ -2,4 +2,24 @@
 <resources>
     <string name="hint_slideshow_free_view_1">L\'unità automatica della presentazione (progressione tramite immagini) è disponibile nella versione a pagamento</string>
     
+    <string name="product_title">Nome del prodotto</string>
+    <string name="product_purchased">Acquistato</string>
+    <string name="heading_products_for_sale">I prodotti in vendita</string>
+    <string name="app_purchases_overall_heading">Acquisti di app.</string>
+    <string name="alert_error_unable_to_retrieve_billing_information">Impossibile recuperare le informazioni di fatturazione. Per favore riprova più tardi. Se l\'errore continua, per favore, lasciami un\'e-mail.</string>
+    <string name="buy_now_button">Acquistare</string>
+    <string name="manage_app_purchases">Acquisti di app.</string>
+    <string name="app_purchases_tab_shop">Negozio</string>
+    <string name="app_purchases_tab_my_purchases">Acquisti attivi</string>
+    <string name="error_retrieving_product_information">Impossibile recuperare le informazioni sul prodotto in questo momento. Per favore riprova presto.</string>
+    <string name="purchased_price_label">Costo</string>
+    <string name="heading_products_purchased">I miei acquisti</string>
+    <string name="purchased_date">Acquistato</string>
+    <string name="purchase_order_id">ID ordine</string>
+    <string name="purchase_recurring">Ordine ricorrente</string>
+    <string name="manage_subscription_button">Gestisci su Google.</string>
+    <string name="loading_product_details_please_wait">Caricamento dei dettagli del prodotto</string>
+    <string name="loading_purchase_details_please_wait">Caricamento dei dettagli di acquisto</string>
+    <string name="no_active_purchases">Nessun acquisto attivo</string>
+    <string name="unable_to_validate_subscription">Impossibile convalidare l\'abbonamento.</string>
 </resources>

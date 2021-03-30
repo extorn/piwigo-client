@@ -145,11 +145,15 @@
         <item>"* Pouze bugfixy
                 * Možná kompletní re-zápis aplikace se zaměřením na jednoduchost pro procházení uživatelů pro uživatele pro uživatele uživatele"</item>
         
-        <item>1.4.0.141</item>
+        <item>1.5.0.1</item>
         <item>"Změna:
                  - nahrazení úložiště úlohy úlohy a vyhledávací kód pro lepší podporu velkých pracovních míst"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.0</item>
+        <item>"Změna:
+                 - lepší podporu pro více profilů při sdílení souborů s aplikací pro nahrání
+                 - Nová podpora předplatného pro odstraňování inzerátů (Poznámka: To nedává další funkce, odstraňuje pouze reklamy)"</item>
         <item>1.4.0.140</item>
         <item>"Změna:
                  - Nová preference je prezentace pro povolení skrytí informací o překrytí v prezentaci do kliknutí na obrázek"</item>

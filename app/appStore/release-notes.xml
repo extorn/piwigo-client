@@ -1,40 +1,50 @@
 <en-GB>
 Change:
-- New preference is slideshow to permit hiding the information overlay in slideshow until click on image
+- Better support for multiple profiles when sharing files with the app for upload
+- New subscription support for removing adverts (NOTE: This does NOT give extra features, only removes the adverts)
 </en-GB>
 <cs-CZ>
 Změna:
-- Nová preference je prezentace pro povolení skrytí informací o překrytí v prezentaci do kliknutí na obrázek
+- lepší podporu pro více profilů při sdílení souborů s aplikací pro nahrání
+- Nová podpora předplatného pro odstraňování inzerátů (Poznámka: To nedává další funkce, odstraňuje pouze reklamy)
 </cs-CZ>
 <de-DE>
 Veränderung:
-- Neue Präferenz ist die Diashow, um die Informationsüberlagerung in der Diashow zu verbergen, bis Sie auf das Bild klicken
+- Bessere Unterstützung für mehrere Profile, wenn Dateien mit der App zum Hochladen freigegeben werden
+- Neue Abonnementsupport für das Entfernen von Anzeigen (Hinweis: Dies gibt keine zusätzlichen Funktionen, nur die Anzeigen entfernt)
 </de-DE>
 <es-ES>
 Cambio:
-- La nueva preferencia es la presentación de diapositivas para permitir que oculte la superposición de información en presentación de diapositivas hasta que haga clic en la imagen
+- Mejor soporte para múltiples perfiles al compartir archivos con la aplicación para cargar
+- Nuevo soporte de suscripción para eliminar anuncios (Nota: Esto no da características adicionales, solo elimina los anuncios)
 </es-ES>
 <fr-FR>
 Changement:
-- La nouvelle préférence est le diaporama pour permettre de masquer la superposition de l\'information dans le diaporama jusqu\'à cliquer sur l\'image
+- Meilleur support pour plusieurs profils lors du partage de fichiers avec l\'application pour le téléchargement
+- Nouveau support d\'abonnement pour la suppression d\'adverts (Remarque: Cela ne donne pas de fonctionnalités supplémentaires, ne supprime que les annonces)
 </fr-FR>
 <it-IT>
 Modificare:
-- La nuova preferenza è la presentazione per consentire a nascondere la sovrapposizione delle informazioni nella presentazione fino a quando fai clic sull\'immagine
+- Meglio supporto per più profili durante la condivisione di file con l\'app per il caricamento
+- Nuovo supporto per l\'abbonamento per la rimozione di annunci (Nota: questo non fornisce funzionalità aggiuntive, rimuove solo le pubblicità)
 </it-IT>
 <ja-JP>
 変化する：
-- 画像をクリックするまで、スライドショーで情報オーバーレイを隠すことを許可するための新しい設定はスライドショーです。
+- アップロード用のアプリケーションとファイルを共有するときの複数のプロファイルのサポート
+- 広告を削除するための新しいサブスクリプションサポート（注：これは特徴を与えない、広告を削除するだけ）
 </ja-JP>
 <nl-NL>
 Verandering:
-- Nieuwe voorkeur is de diavoorstelling om de informatie overlay in de diavoorstelling te verbergen totdat u op de afbeelding klikt
+- Betere ondersteuning voor meerdere profielen bij het delen van bestanden met de app voor upload
+- Nieuwe inschrijvingsondersteuning voor het verwijderen van advertenties (OPMERKING: Dit geeft geen extra functies, verwijdert alleen de advertenties)
 </nl-NL>
 <ru-RU>
 Изменять:
-- Новое предпочтение является слайд-шоу, чтобы разрешить скрывать информацию о наложении в слайд-шоу, пока не нажму на изображение
+- Лучшая поддержка нескольких профилей при совместном использовании файлов с приложением для загрузки
+- Новая поддержка подписки для удаления рекламы (Примечание: это не дает дополнительных функций, только удаляет рекламу)
 </ru-RU>
 <zh-CN>
 改变：
-- 新的偏好是幻灯片，以允许在幻灯片中隐藏信息叠加，直到单击图像
+- 使用用于上传的应用程序共享文件时更好地支持多个配置文件
+- 用于删除广告的新订阅支持（注意：这不提供额外的功能，只会删除广告）
 </zh-CN>

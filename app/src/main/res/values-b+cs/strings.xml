@@ -598,7 +598,7 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="upload_tab_title_settings">Nastavení</string>
     <string name="upload_tab_title_files">Soubory</string>
     <string name="alert_internal_server_exposed_pattern">Neočekávaná autorita %1$s nalezené v URL a nahrazeno %2$s. Váš server by mohl být nesprávně konfigurován.</string>
-    <string name="app_purchases_title">Skrýt reklamy</string>
+    <string name="app_purchases_title">Nákupy aplikací</string>
     <string name="watch_advert_to_buy_advert_free_time">Chtěli byste sledovat reklamu na nákup krátkého období bez jakýchkoliv inzerátů? To můžete udělat několikrát pro zvýšení času, pokud je to chtěl.</string>
     <string name="reward_video_not_yet_loaded">Omlouváme se, ale video odměn ještě nebylo naloženo. Prosím zkuste to znovu později.</string>
     <string name="bought_time_menu_title_pattern">Inzeráty v %1$02d: %2$02d</string>
@@ -751,4 +751,5 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="normal_mode">Normální</string>
     <string name="clear_individual_settings">Vymazat jednotlivá nastavení</string>
     <string name="upload_icon_types_label">Typy souborů</string>
+    <string name="alert_please_select_a_connection_profile_with_upload_privilege">Aktivní profil aktuálně nemá povolení k odeslání. Prosím, vyberte jiný ze seznamu, který chcete použít.</string>
 </resources>
