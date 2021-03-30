@@ -119,6 +119,10 @@
             android:theme="@style/Theme.App"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:parentActivityName="delit.piwigoclient.ui.MainActivity">
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
             <intent-filter>
                 <action android:name="delit.piwigoclient.MANUAL_UPLOAD" />
                 <category android:name="android.intent.category.DEFAULT" />

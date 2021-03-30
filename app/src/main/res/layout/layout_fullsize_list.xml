@@ -7,17 +7,23 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/heading_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:paddingBottom="20dp">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/list_action_add_item_button"
             android:visibility="visible"
-            android:layout_alignParentEnd="true"
-            android:layout_alignEnd="@+id/heading"
-            android:layout_marginEnd="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/heading"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="1"
             app:fabSize="mini"
             app:icon="@drawable/ic_add_circle_black_24px"
             style="?extendedFloatingActionButtonStyle"/>
@@ -27,13 +33,27 @@
             android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginStart="5dp"
+            app:layout_constraintEnd_toStartOf="@+id/list_action_add_item_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Some Heading"
             android:textAppearance="?textAppearanceHeadline5"/>
 
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/heading_description"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/list_action_add_item_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintTop_toBottomOf="@+id/heading"
+            tools:text="This is a description to indicate why the user should select an item"
+            android:textAppearance="?textAppearanceBody1"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/button_action_bar"

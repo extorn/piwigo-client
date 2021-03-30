@@ -22,6 +22,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Set;
+
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
@@ -40,6 +42,8 @@ import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPrefer
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
+import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
+import delit.piwigoclient.ui.dialogs.SelectServerConnectionDetailsDialogHelper;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
@@ -74,6 +78,7 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
     private CustomToolbar toolbar;
     private AppBarLayout appBar;
     private Intent lastIntent;
+    private ConnectionPreferences.ProfilePreferences currentProfile;
 
     public UploadActivity() {
         super(R.layout.activity_upload);
@@ -126,13 +131,11 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
     public void onResume() {
         super.onResume();
 
-        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
-        if (!isCurrentUserAuthorisedToUpload(sessionDetails)) {
-            if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
-                runLogin(connectionPrefs);
-            } else {
-                createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
+        if(currentProfile == null) {
+            currentProfile = ConnectionPreferences.getActiveProfile();
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(currentProfile);
+            if (sessionDetails == null || !sessionDetails.isCurrentUserAuthorisedToUpload()) {
+                onUserLacksPermissionToUpload();
             }
         }
     }
@@ -181,7 +184,9 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
             if (savedInstanceState == null) { // the fragment will be created automatically from the fragment manager state if there is state :-)
-                showUploadFragment(connectionPrefs);
+                if(showUploadFragment(connectionPrefs)) {
+                    Logging.log(Log.WARN, TAG, "Unable to open upload fragment as active profile not logged in (will log in and retry)");
+                }
             }
         }
     }
@@ -290,23 +295,19 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
         }
     }
 
-    private boolean isCurrentUserAuthorisedToUpload(PiwigoSessionDetails sessionDetails) {
+    boolean showUploadFragment(ConnectionPreferences.ProfilePreferences connectionPrefs) {
 
-        boolean isAdminUser = sessionDetails != null && sessionDetails.isAdminUser();
-        boolean hasCommunityPlugin = sessionDetails != null && sessionDetails.isUseCommunityPlugin();
-        return isAdminUser || hasCommunityPlugin;
-    }
-
-    void showUploadFragment(ConnectionPreferences.ProfilePreferences connectionPrefs) {
-
+        currentProfile = connectionPrefs;
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
-        CategoryItemStub currentAlbum = getIntent().getParcelableExtra(INTENT_DATA_CURRENT_ALBUM);
 
-        if (isCurrentUserAuthorisedToUpload(sessionDetails)) {
+        if (sessionDetails != null && sessionDetails.isCurrentUserAuthorisedToUpload()) {
+            CategoryItemStub currentAlbum = getIntent().getParcelableExtra(INTENT_DATA_CURRENT_ALBUM);
             UploadFragment<?,?> f = UploadFragment.newInstance(currentAlbum, fileSelectionEventId);
             removeFragmentsFromHistory(UploadFragment.class);
             showFragmentNow(f);
+            return true;
         }
+        return false;
     }
 
     private void runLogin(ConnectionPreferences.ProfilePreferences connectionPrefs) {
@@ -416,15 +417,53 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
 
         @Override
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
+            Logging.log(Log.INFO,TAG,"Received login response");
             if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
-                if (((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails() != null) {
-                    getParent().showUploadFragment(((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails().getConnectionPrefs());
+                PiwigoSessionDetails sessionDetails = ((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails();
+                if (sessionDetails != null && sessionDetails.isCurrentUserAuthorisedToUpload()) {
+                    if(getParent().showUploadFragment(sessionDetails.getConnectionPrefs())) {
+                        Logging.log(Log.WARN, TAG, "Unable to open upload fragment after login (profile not permitted to upload)");
+                    }
                 } else {
-                    getParent().createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
+                    getParent().onUserLacksPermissionToUpload();
                 }
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }
+        }
+    }
+
+    protected void onUserLacksPermissionToUpload() {
+        Set<String> availableProfiles = ConnectionPreferences.getConnectionProfileList(getSharedPrefs(this), this);
+        if(availableProfiles.size() == 1) {
+            createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
+            return;
+        }
+        String activeId = ConnectionPreferences.getActiveProfile().getProfileId(getSharedPrefs(this), this);
+        SelectServerConnectionDetailsDialogHelper serverConnectionDetailsDialogHelper = new SelectServerConnectionDetailsDialogHelper(null);
+        serverConnectionDetailsDialogHelper.withMessage(R.string.alert_please_select_a_connection_profile_with_upload_privilege);
+        serverConnectionDetailsDialogHelper.buildDialog(this, new ServerProfileSelectListener(), activeId).show();
+    }
+
+    private class ServerProfileSelectListener implements SelectServerConnectionDetailsDialogHelper.DialogListener {
+        @Override
+        public void onSuccess(ServerConnectionsListPreference.ServerConnection selectedItem) {
+
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(selectedItem.getProfileName(), getSharedPrefs(), getApplicationContext());
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            if (sessionDetails == null || !sessionDetails.isCurrentUserAuthorisedToUpload()) {
+                if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
+                    runLogin(connectionPrefs);
+                } else {
+                    onUserLacksPermissionToUpload();
+                }
+            }
+        }
+
+        @Override
+        public void onCancel() {
+            Logging.log(Log.ERROR, TAG, "ON CANCEL");
+            createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
         }
     }
 }

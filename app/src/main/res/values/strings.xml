@@ -1129,5 +1129,5 @@ App Install UUID: %5$s
     <string name="normal_mode">Normal</string>
     <string name="clear_individual_settings">clear individual settings</string>
     <string name="upload_icon_types_label">File types</string>
-    <string name="unable_to_validate_subscription">Unable to validate subscription.</string>
+    <string name="alert_please_select_a_connection_profile_with_upload_privilege">The currently active profile does not have permission to upload. Please select another from the list to use instead.</string>
 </resources>

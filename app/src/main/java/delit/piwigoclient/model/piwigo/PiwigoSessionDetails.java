@@ -211,6 +211,10 @@ public class PiwigoSessionDetails {
         this.methodsAvailable = methodsAvailable;
     }
 
+    public boolean isCurrentUserAuthorisedToUpload() {
+        return isAdminUser() || isUseCommunityPlugin();
+    }
+
     public boolean isGuest() {
         return "guest".equals(userType);
     }

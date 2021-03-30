@@ -153,7 +153,7 @@ public class ServerConnectionsListPreference extends MyDialogPreference {
         }
     }
 
-    protected static class ServerConnection {
+    public static class ServerConnection {
 
         private String serverName;
         private String username;
