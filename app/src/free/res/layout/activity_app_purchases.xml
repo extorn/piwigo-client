@@ -10,7 +10,7 @@
     tools:context=".ui.AppPurchasesActivity">
 
     <include
-        layout="@layout/app_bar_prefs"
+        layout="@layout/app_bar_app_purchases"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
