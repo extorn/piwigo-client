@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string-array>
+        
+        <string name="name">Supprimer les annonces</string>
+        <string name="description">Causera toutes les annonces dans l\'application pour être masquée pendant 1 semaine</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Supprimer les annonces</string>
+        <string name="description">Va causer toutes les annonces dans l\'application pour être masquée pendant 4 semaines</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Activer Télécharger plusieurs ressources</string>
+        <string name="description">Active plusieurs fichiers à être sélectionnés pour le téléchargement d\'un album pendant 6 mois.</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Activer de grands travaux de téléchargement</string>
+        <string name="description">Permis Ajout de plus de 5 fichiers à un seul travail de téléchargement pendant 6 mois</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Activer de grands travaux de téléchargement</string>
+        <string name="description">Permis Ajout de plus de 5 fichiers à un seul travail de téléchargement pendant 4 semaines</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Ajouter un soutien aux tags, favoris et orphelins</string>
+        <string name="description">Ajoutez un soutien aux balises, aux favoris et à la gestion des ressources orphelinées pendant 1 semaine</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Ajouter un soutien aux tags, favoris et orphelins</string>
+        <string name="description">Ajoutez un soutien aux balises, aux favoris et à la gestion des ressources orphelins pendant 4 semaines</string>
+    </string-array>
+</resources>

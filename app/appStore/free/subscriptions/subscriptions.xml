@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array>
+        <string name="id" translatable="false">piwigoclient.adverts.remove.w01</string>
+        <string name="name">Remove adverts</string>
+        <string name="description">Will cause all adverts in the app to be hidden for 1 week</string>
+    </string-array>
+    <string-array>
+        <string name="id" translatable="false">piwigoclient.adverts.remove.w04</string>
+        <string name="name">Remove adverts</string>
+        <string name="description">Will cause all adverts in the app to be hidden for 4 weeks</string>
+    </string-array>
+    <string-array>
+        <string name="id" translatable="false">piwigoclient.allow_downloads.m06</string>
+        <string name="name">Enable download multiple resources feature</string>
+        <string name="description">Enables multiple files to be selected for download from an album for 6 months</string>
+    </string-array>
+    <string-array>
+        <string name="id" translatable="false">piwigoclient.allow_large_uploads.m06</string>
+        <string name="name">Enable large upload Jobs</string>
+        <string name="description">Permit adding more than 5 files to a single upload job for 6 months</string>
+    </string-array>
+    <string-array>
+        <string name="id" translatable="false">piwigoclient.allow_large_uploads.w04</string>
+        <string name="name">Enable large upload Jobs</string>
+        <string name="description">Permit adding more than 5 files to a single upload job for 4 weeks</string>
+    </string-array>
+    <string-array>
+        <string name="id" translatable="false">piwigoclient.tags_orphans_favs.w01</string>
+        <string name="name">Add support for tags, favourites, and orphans</string>
+        <string name="description">Add support for tags, favourites, and orphaned resource management for 1 week</string>
+    </string-array>
+    <string-array>
+        <string name="id" translatable="false">piwigoclient.tags_orphans_favs.w04</string>
+        <string name="name">Add support for tags, favourites, and orphans</string>
+        <string name="description">Add support for tags, favourites, and orphaned resource management for 4 weeks</string>
+    </string-array>
+</resources>

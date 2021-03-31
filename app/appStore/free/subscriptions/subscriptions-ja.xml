@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string-array>
+        
+        <string name="name">広告を削除します</string>
+        <string name="description">アプリ内のすべての広告を1週間隠されるようになります</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">広告を削除します</string>
+        <string name="description">アプリ内のすべての広告を4週間隠されるようになります</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">複数のリソースをダウンロードする</string>
+        <string name="description">6ヶ月間アルバムからダウンロードするために複数のファイルを選択できるようにします。</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">大きなアップロードジョブを有効にします</string>
+        <string name="description">5つ以上のファイルを1回のアップロードジョブに6ヶ月間追加する許可</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">大きなアップロードジョブを有効にします</string>
+        <string name="description">4週間の1回のアップロードジョブに5つ以上のファイルを追加することを許可</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">タグ、お気に入り、および孤児のサポートを追加します</string>
+        <string name="description">1週間のタグ、お気に入り、および孤立したリソース管理のサポートを追加する</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">タグ、お気に入り、および孤児のサポートを追加します</string>
+        <string name="description">4週間のタグ、お気に入り、および孤立したリソース管理のサポートを追加する</string>
+    </string-array>
+</resources>

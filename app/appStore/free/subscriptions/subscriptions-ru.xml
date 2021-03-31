@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string-array>
+        
+        <string name="name">Удалить рекламу</string>
+        <string name="description">Приведет к тому, что все объявления в приложении будут скрыты в течение 1 недели</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Удалить рекламу</string>
+        <string name="description">Приведет к тому, что все объявления в приложении будут скрыты в течение 4 недель</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Включить Загрузить функцию нескольких ресурсов</string>
+        <string name="description">Позволяет выбрать несколько файлов для загрузки с альбома в течение 6 месяцев</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Включить большие задания загрузки</string>
+        <string name="description">Разрешить добавление более 5 файлов на одну задание загрузки в течение 6 месяцев</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Включить большие задания загрузки</string>
+        <string name="description">Разрешить добавление более 5 файлов на одну задание загрузки в течение 4 недель</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Добавить поддержку для тегов, фаворитов и детей-сирот</string>
+        <string name="description">Добавить поддержку для метеров, фаворитов и осиротевших ресурсов на 1 неделю</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Добавить поддержку для тегов, фаворитов и детей-сирот</string>
+        <string name="description">Добавить поддержку для тегов, фаворитов и управлений для сиротных ресурсов в течение 4 недель</string>
+    </string-array>
+</resources>

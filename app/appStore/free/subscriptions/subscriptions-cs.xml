@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string-array>
+        
+        <string name="name">Odstraňte inzeráty</string>
+        <string name="description">Způsobí, že všechny inzeráty v aplikaci bude skryta po dobu 1 týdne</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Odstraňte inzeráty</string>
+        <string name="description">Způsobí, že všechny inzeráty v aplikaci budou skryté po dobu 4 týdnů</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Povolit Stáhnout více zdrojů</string>
+        <string name="description">Umožňuje více souborů, které mají být vybrány ke stažení z alba po dobu 6 měsíců</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Povolit velké úlohy upload</string>
+        <string name="description">Povolit přidání více než 5 souborů do jedné upload úlohy po dobu 6 měsíců</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Povolit velké úlohy upload</string>
+        <string name="description">Povolit přidání více než 5 souborů do jediné upload úlohy po dobu 4 týdnů</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Přidat podporu pro značky, oblíbené a sirotky</string>
+        <string name="description">Přidat podporu pro značky, oblíbené a osamocené správy zdrojů pro 1 týden</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Přidat podporu pro značky, oblíbené a sirotky</string>
+        <string name="description">Přidat podporu pro značky, oblíbené a osamocené řízení zdrojů po dobu 4 týdnů</string>
+    </string-array>
+</resources>

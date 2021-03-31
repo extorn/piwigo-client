@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string-array>
+        
+        <string name="name">Verwijder advertenties</string>
+        <string name="description">Zorgt ervoor dat alle advertenties in de app voor 1 week worden verborgen</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Verwijder advertenties</string>
+        <string name="description">Zal alle advertenties in de app voor 4 weken worden verborgen</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Schakel het downloaden van meerdere middelenfunctie</string>
+        <string name="description">Hiermee kunnen meerdere bestanden worden geselecteerd om te downloaden van een album gedurende 6 maanden</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Schakel grote uploadbanen in</string>
+        <string name="description">Permit toevoegen met meer dan 5 bestanden aan een enkele uploadtaak voor 6 maanden</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Schakel grote uploadbanen in</string>
+        <string name="description">Permit toevoegen met meer dan 5 bestanden aan een enkele uploadtaak voor 4 weken</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Ondersteuning toevoegen voor tags, favorieten en weeskinderen</string>
+        <string name="description">Voeg steun voor tags, favorieten en Orphaned Resource Management voor 1 week toe</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Ondersteuning toevoegen voor tags, favorieten en weeskinderen</string>
+        <string name="description">Voeg ondersteuning toe voor tags, favorieten en wees-resource management voor 4 weken</string>
+    </string-array>
+</resources>

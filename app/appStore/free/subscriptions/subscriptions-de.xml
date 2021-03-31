@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string-array>
+        
+        <string name="name">Anzeigen entfernen.</string>
+        <string name="description">Führt dazu, dass alle Anzeigen in der App 1 Woche versteckt werden</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Anzeigen entfernen.</string>
+        <string name="description">Führt dazu, dass alle Anzeigen in der App 4 Wochen versteckt werden</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Aktivieren Sie mehrere Ressourcen-Funktion herunterladen</string>
+        <string name="description">Ermöglicht mehr, dass mehrere Dateien für 6 Monate zum Download von einem Album ausgewählt werden</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Aktivieren Sie große Upload-Jobs</string>
+        <string name="description">Erlauben Sie mehr als 5 Dateien zu einem einzigen Upload-Job für 6 Monate</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Aktivieren Sie große Upload-Jobs</string>
+        <string name="description">Erlauben Sie mehr als 5 Dateien an einen einzelnen Upload-Job für 4 Wochen</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Unterstützung für Tags, Favoriten und Waisen hinzufügen</string>
+        <string name="description">Unterstützung für Tags, Favoriten und Waisenressourcenmanagement für 1 Woche hinzufügen</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Unterstützung für Tags, Favoriten und Waisen hinzufügen</string>
+        <string name="description">Unterstützung für Tags, Favoriten und Waisenressourcenmanagement für 4 Wochen hinzufügen</string>
+    </string-array>
+</resources>

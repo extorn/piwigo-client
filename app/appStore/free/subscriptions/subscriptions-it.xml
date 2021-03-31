@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string-array>
+        
+        <string name="name">Rimuovi annunci</string>
+        <string name="description">Farà nascondere tutte le inserzioni nell\'app per 1 settimana</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Rimuovi annunci</string>
+        <string name="description">Farà nascondere tutte le pubblicità nell\'app per 4 settimane</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Abilita Scarica la funzione di risorse multiple</string>
+        <string name="description">Consente di selezionare più file per il download da un album per 6 mesi</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Abilita i grandi lavori di caricamento</string>
+        <string name="description">Permesso aggiungendo più di 5 file a un singolo lavoro di caricamento per 6 mesi</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Abilita i grandi lavori di caricamento</string>
+        <string name="description">Permesso aggiungendo più di 5 file a un singolo lavoro di caricamento per 4 settimane</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Aggiungi supporto per tag, preferiti e orfani</string>
+        <string name="description">Aggiungi supporto per tag, preferiti e gestione delle risorse orfane per 1 settimana</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Aggiungi supporto per tag, preferiti e orfani</string>
+        <string name="description">Aggiungi supporto per tag, preferiti e gestione delle risorse orfane per 4 settimane</string>
+    </string-array>
+</resources>

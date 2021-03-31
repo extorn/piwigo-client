@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string-array>
+        
+        <string name="name">删除广告</string>
+        <string name="description">将导致应用程序中的所有广告隐藏1周</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">删除广告</string>
+        <string name="description">将导致应用程序中的所有广告隐藏4周</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">启用下载多个资源功能</string>
+        <string name="description">启用要选择的多个文件从专辑下载6个月</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">启用大型上传作业</string>
+        <string name="description">允许将超过5个文件添加到单个上传作业6个月</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">启用大型上传作业</string>
+        <string name="description">允许将超过5个文件添加到单个上传作业4周</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">为标签，收藏夹和孤儿添加支持</string>
+        <string name="description">为1周添加标签，收藏夹和孤立资源管理的支持</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">为标签，收藏夹和孤儿添加支持</string>
+        <string name="description">为标签，收藏夹和孤立资源管理添加支持4周</string>
+    </string-array>
+</resources>

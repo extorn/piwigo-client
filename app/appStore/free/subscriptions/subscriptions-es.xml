@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string-array>
+        
+        <string name="name">Eliminar anuncios</string>
+        <string name="description">Hará que todos los anuncios en la aplicación se oculten durante 1 semana.</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Eliminar anuncios</string>
+        <string name="description">Hará que todos los anuncios en la aplicación se oculten durante 4 semanas.</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Habilitar la función de descargar múltiples recursos</string>
+        <string name="description">Permite seleccionar múltiples archivos para descargar de un álbum durante 6 meses</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Habilitar grandes trabajos de carga</string>
+        <string name="description">Permitir agregar más de 5 archivos a un solo trabajo de carga durante 6 meses</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Habilitar grandes trabajos de carga</string>
+        <string name="description">Permitir agregar más de 5 archivos a un solo trabajo de carga durante 4 semanas</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Añadir soporte para etiquetas, favoritos y huérfanos</string>
+        <string name="description">Añadir soporte para etiquetas, favoritos y gestión de recursos huérfanos durante 1 semana</string>
+    </string-array>
+    <string-array>
+        
+        <string name="name">Añadir soporte para etiquetas, favoritos y huérfanos</string>
+        <string name="description">Añadir soporte para etiquetas, favoritos y gestión de recursos huérfanos durante 4 semanas</string>
+    </string-array>
+</resources>
