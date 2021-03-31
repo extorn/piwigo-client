@@ -144,14 +144,4 @@ public class BaseAppPreferences {
         }
         return historicalReleasesData;
     }
-
-    public static void setHidePaymentOptionForever(@NonNull SharedPreferences prefs, @NonNull Context context) {
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(context.getString(R.string.preference_hide_payments_option_key), true);
-        editor.apply();
-    }
-
-    public static boolean isHidePaymentOptionForever(@NonNull SharedPreferences prefs, @NonNull Context context) {
-        return prefs.getBoolean(context.getString(R.string.preference_hide_payments_option_key), false);
-    }
 }
