@@ -249,12 +249,15 @@
         Could Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
         Background async loading of images in the slideshow, perhaps not to bitmap them, just caching - if local http caching enabled - ?impact on videos?
         -->
-        <item>1.5.0.1</item>
+        <item>1.5.0.2</item>
         <item>"Change:
                 - Replacement of the job configuration storage and retrieval code to support large jobs better
             "</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.1</item>
+        <item>"Change:
+                - Added further subscription options to cover most of but not all features in the paid app"</item>
         <item>1.5.0.0</item>
         <item>"Change:
                 - Better support for multiple profiles when sharing files with the app for upload

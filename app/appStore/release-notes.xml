@@ -1,50 +1,40 @@
 <en-GB>
 Change:
-- Better support for multiple profiles when sharing files with the app for upload
-- New subscription support for removing adverts (NOTE: This does NOT give extra features, only removes the adverts)
+- Added further subscription options to cover most of but not all features in the paid app
 </en-GB>
 <cs-CZ>
 Změna:
-- lepší podporu pro více profilů při sdílení souborů s aplikací pro nahrání
-- Nová podpora předplatného pro odstraňování inzerátů (Poznámka: To nedává další funkce, odstraňuje pouze reklamy)
+- přidány další možnosti předplatného, aby se většina z nejvíce ne všechny funkce v placené aplikaci
 </cs-CZ>
 <de-DE>
 Veränderung:
-- Bessere Unterstützung für mehrere Profile, wenn Dateien mit der App zum Hochladen freigegeben werden
-- Neue Abonnementsupport für das Entfernen von Anzeigen (Hinweis: Dies gibt keine zusätzlichen Funktionen, nur die Anzeigen entfernt)
+- Weitere Abonnementoptionen hinzugefügt, um die meisten von nicht allen Funktionen in der kostenpflichtigen App zu decken
 </de-DE>
 <es-ES>
 Cambio:
-- Mejor soporte para múltiples perfiles al compartir archivos con la aplicación para cargar
-- Nuevo soporte de suscripción para eliminar anuncios (Nota: Esto no da características adicionales, solo elimina los anuncios)
+- Se agregaron opciones de suscripción adicionales para cubrir la mayoría de las características de la aplicación PAGA, pero no todas las características.
 </es-ES>
 <fr-FR>
 Changement:
-- Meilleur support pour plusieurs profils lors du partage de fichiers avec l\'application pour le téléchargement
-- Nouveau support d\'abonnement pour la suppression d\'adverts (Remarque: Cela ne donne pas de fonctionnalités supplémentaires, ne supprime que les annonces)
+- Ajout d\'options d\'abonnement supplémentaires pour couvrir la plupart des fonctionnalités de l\'application payante
 </fr-FR>
 <it-IT>
 Modificare:
-- Meglio supporto per più profili durante la condivisione di file con l\'app per il caricamento
-- Nuovo supporto per l\'abbonamento per la rimozione di annunci (Nota: questo non fornisce funzionalità aggiuntive, rimuove solo le pubblicità)
+- Aggiunte ulteriori opzioni di abbonamento per coprire la maggior parte ma non tutte le funzionalità nell\'app a pagamento
 </it-IT>
 <ja-JP>
 変化する：
-- アップロード用のアプリケーションとファイルを共有するときの複数のプロファイルのサポート
-- 広告を削除するための新しいサブスクリプションサポート（注：これは特徴を与えない、広告を削除するだけ）
+- 有料アプリのほとんどの機能を最大限にカバーするためのさらなるサブスクリプションオプションを追加しました
 </ja-JP>
 <nl-NL>
 Verandering:
-- Betere ondersteuning voor meerdere profielen bij het delen van bestanden met de app voor upload
-- Nieuwe inschrijvingsondersteuning voor het verwijderen van advertenties (OPMERKING: Dit geeft geen extra functies, verwijdert alleen de advertenties)
+- Verdere abonnementsopties toegevoegd om het grootste deel van, maar niet alle functies in de betaalde app
 </nl-NL>
 <ru-RU>
 Изменять:
-- Лучшая поддержка нескольких профилей при совместном использовании файлов с приложением для загрузки
-- Новая поддержка подписки для удаления рекламы (Примечание: это не дает дополнительных функций, только удаляет рекламу)
+- Добавлена дополнительная дополнительная подписка для покрытия большую часть, но не все функции в платном приложении
 </ru-RU>
 <zh-CN>
 改变：
-- 使用用于上传的应用程序共享文件时更好地支持多个配置文件
-- 用于删除广告的新订阅支持（注意：这不提供额外的功能，只会删除广告）
+- 添加了其他订阅选项，以涵盖付费应用程序中的大多数但不是所有功能
 </zh-CN>

@@ -145,11 +145,14 @@
         <item>"* Alleen voornamelijk bugfixes
                 * Mogelijk een compleet opnieuw schrijven van de app met een focus op eenvoud voor algemene gebruiker die aanvankelijk browsing"</item>
         
-        <item>1.5.0.1</item>
+        <item>1.5.0.2</item>
         <item>"Verandering:
                  - Vervanging van de opslag- en ophaalcode van het werkconfiguratie om grote banen beter te ondersteunen"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.1</item>
+        <item>"Verandering:
+                 - Verdere abonnementsopties toegevoegd om het grootste deel van, maar niet alle functies in de betaalde app"</item>
         <item>1.5.0.0</item>
         <item>"Verandering:
                  - Betere ondersteuning voor meerdere profielen bij het delen van bestanden met de app voor upload

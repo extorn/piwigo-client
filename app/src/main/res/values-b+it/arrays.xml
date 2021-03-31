@@ -145,11 +145,14 @@
         <item>"* Principalmente dei bugfix solo
                 * Forse una completa ri-scrittura dell\'app con un focus sulla semplicità per la navigazione generale dell\'utente inizialmente"</item>
         
-        <item>1.5.0.1</item>
+        <item>1.5.0.2</item>
         <item>"Modificare:
                  - Sostituzione del codice di archiviazione della configurazione del lavoro e del codice di recupero per supportare meglio i lavori di grandi dimensioni"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.1</item>
+        <item>"Modificare:
+                 - Aggiunte ulteriori opzioni di abbonamento per coprire la maggior parte ma non tutte le funzionalità nell\'app a pagamento"</item>
         <item>1.5.0.0</item>
         <item>"Modificare:
                  - Meglio supporto per più profili durante la condivisione di file con l\'app per il caricamento
