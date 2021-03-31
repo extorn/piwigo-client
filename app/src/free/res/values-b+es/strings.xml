@@ -22,4 +22,10 @@
     <string name="loading_purchase_details_please_wait">Cargando detalles de compra</string>
     <string name="no_active_purchases">No hay compras activas</string>
     <string name="unable_to_validate_subscription">No se puede validar la suscripción.</string>
+    <string name="alert_paid_or_subscription_feature_only">El acceso a esta función está disponible por suscripción o en la versión de pago de la aplicación en Google Play.</string>
+    <string name="alert_paid_or_subscription_feature_only_piwigo_client_plugin">El acceso a esta función está disponible por suscripción o en la versión de pago de la aplicación en Google Play. Nota: Deberá instalar el complemento PIWIGOCLIENTWSEXTS en su servidor. Este es un requisito esencial en este momento, ya que agrega la funcionalidad que falta a su servidor.</string>
+    <string name="not_interested_in_purchases">No estoy interesado en pagar dinero.</string>
+    <string name="alert_not_interested_in_paying">Muchas miles de horas se han gastado desarrollando esta aplicación.\n\nLos anuncios son irritantes y ofrecen ingresos significativos solo a Google.\n\nConsidere tomar una suscripción o instalar la versión de pago de esta aplicación si lo encuentra útil.\n\nSi realmente no está interesado en hacer pagos (o desea evitar esto por alguna razón), continúe y la opción de hacerlo se eliminará del menú. Para restablecer esta posibilidad, la eliminación y reinstalación de la APP es probable que sea necesaria.</string>
+    <string name="button_remove">Eliminar</string>
+    <string name="alert_purchases_option_removed_from_menu">La opción de compras se ha eliminado del menú de la aplicación.</string>
 </resources>

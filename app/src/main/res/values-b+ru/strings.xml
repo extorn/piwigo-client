@@ -752,4 +752,22 @@ SourceCode: https://github.com/extorn/piwigoClient.
     <string name="clear_individual_settings">Очистить отдельные настройки</string>
     <string name="upload_icon_types_label">Типы файлов</string>
     <string name="alert_please_select_a_connection_profile_with_upload_privilege">В настоящее время активное профиль не имеет разрешения на загрузку. Пожалуйста, выберите другой из списка в использовании вместо этого.</string>
+
+    <string name="progress_creating_tag">Создание тега</string>
+
+    <string name="error_updating_favorites_pattern">Ошибка удаления ресурса (%1$s) из избранного: %2$s</string>
+    <string name="favorites_content_load_failed_text">Не удалось загрузить ресурсы, отмеченные как любимый</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Вы просили удалить %1$d Ресурсы. Хотите удалить их из всех альбомов (и сервера) - навсегда, или просто не знаете их из этого любимого?</string>
+    <string name="progress_remove_favorite_resources">Удаление ресурсов из списка избранного</string>
+    <string name="favorites_empty_text">У вас сейчас нет фаворитов</string>
+    <string name="favorites_heading">Ваши любимые</string>
+    <string name="button_unfavorite">Не любитель</string>
+
+    <string name="progress_loading_orphan_ids">Загрузка сирот</string>
+    <string name="orphans_heading">Сиротные ресурсы</string>
+    <string name="orphans_album_description">Все сирофы, собранные приложением Piwigoclient</string>
+    <string name="orphans_no_orphans_found_on_server">Не обнаружено сирот</string>
+    <string name="orphans_found_on_server_pattern">Сиротаны нашли: %1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Есть присутствующие сироты. Чтобы просмотреть их, мы должны создать частную папку, доступную только для администраторов. Вы можете удалить альбом в любое время после этого. Если вы не согласны, вам придется обработать их на сервере самостоятельно.</string>
+    <string name="progress_rescuing_orphans">Спасание сирот</string>
 </resources>

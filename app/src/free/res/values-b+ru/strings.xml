@@ -22,4 +22,10 @@
     <string name="loading_purchase_details_please_wait">Загрузка деталей покупки</string>
     <string name="no_active_purchases">Нет активных покупок</string>
     <string name="unable_to_validate_subscription">Невозможно проверить подписку.</string>
+    <string name="alert_paid_or_subscription_feature_only">Доступ к этой функции доступен по подписке или в платной версии приложения в Google Play.</string>
+    <string name="alert_paid_or_subscription_feature_only_piwigo_client_plugin">Доступ к этой функции доступен по подписке или в платной версии приложения в Google Play. Примечание. Вам нужно будет установить плагин PiwigoclientWsexts на вашем сервере. Это необходимое требование в это время, поскольку добавляет недостающие функции на ваш сервер.</string>
+    <string name="not_interested_in_purchases">Я не заинтересован в оплате денег.</string>
+    <string name="alert_not_interested_in_paying">Многие тысячи часов были потрачены на разработку этого приложения.\n\nРеклама раздражают и предлагают значимые доходы только для Google.\n\nПожалуйста, рассмотрите возможность либо принимать подписку или установку платной версии этого приложения, если вы найдете его полезным.\n\nЕсли вы искренне не заинтересованы в предоставлении каких-либо платежей (или хотите предотвратить это по какой-то причине), продолжить и возможность сделать это, будет удален из меню. Для восстановления этой возможности удаление и переустановка приложения, вероятно, понадобится.</string>
+    <string name="button_remove">Удалять</string>
+    <string name="alert_purchases_option_removed_from_menu">Вариант покупок был удален из меню приложения</string>
 </resources>

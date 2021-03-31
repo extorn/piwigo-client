@@ -2,6 +2,12 @@
 <resources>
     
 
+    <string name="preference_data_upload_automatic_job_category_server_settings">Paramètres du serveur</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Paramètres locaux</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Compression d\'image pré-téléchargée</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Compression vidéo pré-téléchargée</string>
+
+
     <string name="preference_page_auto_upload_jobs">Télécharger automatique</string>
     <string name="preference_data_upload_automatic_title">Téléchargement automatique</string>
     <string name="preference_data_upload_automatic_job_title">Travail de téléchargement automatique</string>

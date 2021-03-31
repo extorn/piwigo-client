@@ -752,4 +752,22 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="clear_individual_settings">Klare individuelle Einstellungen</string>
     <string name="upload_icon_types_label">Datentypen</string>
     <string name="alert_please_select_a_connection_profile_with_upload_privilege">Das aktuell aktive Profil hat keine Berechtigung zum Hochladen. Bitte wählen Sie einen anderen aus der Liste, der stattdessen verwendet wird.</string>
+
+    <string name="progress_creating_tag">Tag erstellen</string>
+
+    <string name="error_updating_favorites_pattern">Fehler beim Entfernen der Ressource (%1$s) Aus Favoriten: %2$s</string>
+    <string name="favorites_content_load_failed_text">Fehler beim Laden von Ressourcen, die als Favorit gekennzeichnet sind</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Sie haben aufgefordert, zu löschen %1$d Ressourcen. Möchten Sie diese von allen Alben (und dem Server) löschen - dauerhaft oder einfach von diesem Favoriten nicht verknüpfen?</string>
+    <string name="progress_remove_favorite_resources">Ressourcen aus Favoriten entfernt</string>
+    <string name="favorites_empty_text">Sie haben derzeit keine Favoriten</string>
+    <string name="favorites_heading">Deine Favoriten</string>
+    <string name="button_unfavorite">Nicht favorit</string>
+
+    <string name="progress_loading_orphan_ids">Waisenkinder geladen</string>
+    <string name="orphans_heading">Verwaistierte Ressourcen</string>
+    <string name="orphans_album_description">Alle von der PiwigoClient-App gesammelten verworrenen Ressourcen</string>
+    <string name="orphans_no_orphans_found_on_server">Keine Waisenkinder gefunden</string>
+    <string name="orphans_found_on_server_pattern">Waisenkinder gefunden: %1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Es gibt Waisenkinder vorhanden. Um dies anzuzeigen, müssen wir einen privaten Ordner erstellen, der nur für Admins zugänglich ist. Sie können das Album jederzeit danach löschen. Wenn Sie nicht einverstanden sind, müssen Sie diese selbst auf dem Server selbst verarbeiten.</string>
+    <string name="progress_rescuing_orphans">Waisenkinder retteln.</string>
 </resources>

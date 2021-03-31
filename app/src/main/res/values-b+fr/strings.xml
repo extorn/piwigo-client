@@ -752,4 +752,22 @@ Les versions sont sur une base ad hoc pour le moment. La fréquence des versions
     <string name="clear_individual_settings">Paramètres individuels clairs</string>
     <string name="upload_icon_types_label">Types de fichier</string>
     <string name="alert_please_select_a_connection_profile_with_upload_privilege">Le profil actuellement actif n\'a pas la permission de télécharger. Veuillez sélectionner un autre dans la liste à utiliser à la place.</string>
+
+    <string name="progress_creating_tag">Créer une balise</string>
+
+    <string name="error_updating_favorites_pattern">Erreur lors de l\'élimination des ressources (%1$s) des favoris: %2$s</string>
+    <string name="favorites_content_load_failed_text">Échec de chargement des ressources marquées comme favori</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Vous avez demandé à supprimer %1$d Ressources. Souhaitez-vous les supprimer de tous les albums (et le serveur) - de manière permanente ou simplement de les dissimuler de ce favori?</string>
+    <string name="progress_remove_favorite_resources">Supprimer des ressources de la liste des favoris</string>
+    <string name="favorites_empty_text">Vous n\'avez actuellement aucun favoris</string>
+    <string name="favorites_heading">Vos favoris</string>
+    <string name="button_unfavorite">Pas préféré</string>
+
+    <string name="progress_loading_orphan_ids">Chargement des orphelins</string>
+    <string name="orphans_heading">Ressources orphelines</string>
+    <string name="orphans_album_description">Toutes les ressources orphelines collectées par l\'application Piwigoclient</string>
+    <string name="orphans_no_orphans_found_on_server">Aucun orphelin trouvé</string>
+    <string name="orphans_found_on_server_pattern">Orphelins trouvés: %1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Il y a des orphelins présents. Pour les voir, nous devons créer un dossier privé accessible uniquement aux administrateurs. Vous pouvez supprimer l\'album à tout moment. Si vous êtes en désaccord, vous devez vous en traiter sur le serveur vous-même.</string>
+    <string name="progress_rescuing_orphans">Sauver des orphelins</string>
 </resources>

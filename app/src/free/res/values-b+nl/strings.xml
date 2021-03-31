@@ -22,4 +22,10 @@
     <string name="loading_purchase_details_please_wait">Koopgegevens laden</string>
     <string name="no_active_purchases">Geen actieve aankopen</string>
     <string name="unable_to_validate_subscription">Kan het abonnement niet valideren.</string>
+    <string name="alert_paid_or_subscription_feature_only">Toegang tot deze functie is beschikbaar op abonnement of in de betaalde versie van de app op Google Play.</string>
+    <string name="alert_paid_or_subscription_feature_only_piwigo_client_plugin">Toegang tot deze functie is beschikbaar op abonnement of in de betaalde versie van de app op Google Play. Opmerking: u moet de PIWIGOCLIANTWSEXTS-plug-in op uw server installeren. Dit is op dit moment een essentiële vereiste omdat het ontbrekende functionaliteit aan uw server toevoegt.</string>
+    <string name="not_interested_in_purchases">Ik ben niet geïnteresseerd in het betalen van geld.</string>
+    <string name="alert_not_interested_in_paying">Vele duizenden uren zijn besteed aan het ontwikkelen van deze app.\n\nAdvertenties zijn irritant en bieden alleen een zinvolle inkomsten aan Google.\n\nOverweeg een abonnement of het installeren van de betaalde versie van deze app als u het nuttig vindt.\n\nAls u echt niet geïnteresseerd bent in het doen van betalingen (of wens dit om een of andere reden te voorkomen), gaat u door en de optie hiervoor wordt uit het menu verwijderd. Om deze mogelijkheid opnieuw te installeren, zal het verwijderen van de app waarschijnlijk nodig zijn.</string>
+    <string name="button_remove">Verwijderen</string>
+    <string name="alert_purchases_option_removed_from_menu">De optie van de aankopen is verwijderd uit het App-menu</string>
 </resources>

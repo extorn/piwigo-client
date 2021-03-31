@@ -752,4 +752,22 @@ My Test Galleryには、.jpgと.mp4と.m4vファイルのみが含まれてい�
     <string name="clear_individual_settings">個々の設定を明確にする</string>
     <string name="upload_icon_types_label">ファイルタイプ</string>
     <string name="alert_please_select_a_connection_profile_with_upload_privilege">現在アクティブなプロファイルにアップロードする権限がありません。 代わりに使用するリストから別のものを選択してください。</string>
+
+    <string name="progress_creating_tag">タグを作成します</string>
+
+    <string name="error_updating_favorites_pattern">リソースの削除（%1$s）からのエラー：%2$s</string>
+    <string name="favorites_content_load_failed_text">お気に入りとしてマークされているリソースをロードできませんでした</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">削除を要求されたve %1$dリソースこれらをすべてのアルバム（およびサーバー）から削除したいですか - 恒久的に、またはこのお気に入りからリンクします。</string>
+    <string name="progress_remove_favorite_resources">お気に入りリストからリソースを削除します</string>
+    <string name="favorites_empty_text">あなたは現在お気に入りはありません</string>
+    <string name="favorites_heading">あなたのお気に入り</string>
+    <string name="button_unfavorite">お気に入りではありません</string>
+
+    <string name="progress_loading_orphan_ids">孤児を読み込む</string>
+    <string name="orphans_heading">孤立したリソース</string>
+    <string name="orphans_album_description">PiwigoClientアプリによって収集されたすべての孤立リソース</string>
+    <string name="orphans_no_orphans_found_on_server">孤児は見つかりませんでした</string>
+    <string name="orphans_found_on_server_pattern">孤児箱が見つかりました：%1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">孤立している孤児があります。これらを表示するには、管理者にのみアクセス可能なプライベートフォルダを作成する必要があります。後でいつでもアルバムを削除できます。同意しない場合は、サーバー上でこれらを自分で処理する必要があります。</string>
+    <string name="progress_rescuing_orphans">孤児を救う</string>
 </resources>

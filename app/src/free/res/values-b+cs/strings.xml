@@ -22,4 +22,10 @@
     <string name="loading_purchase_details_please_wait">Podrobnosti o nákupu načítání</string>
     <string name="no_active_purchases">Žádné aktivní nákupy</string>
     <string name="unable_to_validate_subscription">Nelze ověřit předplatné.</string>
+    <string name="alert_paid_or_subscription_feature_only">Přístup k této funkci je k dispozici předplatným nebo v placené verzi aplikace ve službě Google Play.</string>
+    <string name="alert_paid_or_subscription_feature_only_piwigo_client_plugin">Přístup k této funkci je k dispozici předplatným nebo v placené verzi aplikace ve službě Google Play. Poznámka: Budete muset nainstalovat plugin PIWIGOCLIENTWSEXTS na serveru. Jedná se o základní požadavek v této době, protože přidává chybějící funkčnost vašeho serveru.</string>
+    <string name="not_interested_in_purchases">Nemám zájem o placení peněz.</string>
+    <string name="alert_not_interested_in_paying">Vývoj této aplikace bylo vynaloženo mnoho tisíc hodin.\n\nInzeráty podráždějí a nabízejí smysluplné výnosy pouze do společnosti Google.\n\nProsím, zvážit buď pořizování předplatného nebo instalace placené verze této aplikace, pokud je to užitečné.\n\nPokud se opravdu nezajímáte o provedení plateb (nebo si to přejete zabránit tomu z nějakého důvodu), pokračujte a možnost, aby tak učinila, bude z nabídky odstraněna. Pro obnovení této možnosti bude pravděpodobně nutné odstranění a přeinstalace aplikace.</string>
+    <string name="button_remove">Odstranit</string>
+    <string name="alert_purchases_option_removed_from_menu">Možnost nákupu byla odstraněna z nabídky App</string>
 </resources>

@@ -22,4 +22,10 @@
     <string name="loading_purchase_details_please_wait">購入の詳細を読み込んでください</string>
     <string name="no_active_purchases">アクティブな購入はありません</string>
     <string name="unable_to_validate_subscription">サブスクリプションを検証できません。</string>
+    <string name="alert_paid_or_subscription_feature_only">この機能へのアクセスは、購読またはGoogle Play上のアプリの有料版で入手できます。</string>
+    <string name="alert_paid_or_subscription_feature_only_piwigo_client_plugin">この機能へのアクセスは、購読またはGoogle Play上のアプリの有料版で入手できます。 注：サーバーにPIWiGoClientWSEXTプラグインをインストールする必要があります。 これは、サーバーに機能しない機能を追加するため、この時期に必須の要件です。</string>
+    <string name="not_interested_in_purchases">私はお金を払うことには興味がありません。</string>
+    <string name="alert_not_interested_in_paying">このアプリの開発に費やされています。\n\n広告は刺激的であり、そしてGoogleにのみ意味のある収益を提供します。\n\nあなたがそれが役に立つと感じるならば、購読またはこのアプリの有料版のインストールを考慮してください。\n\nあなたが本当に興味を持っていないのであれば（または何らかの理由でこれを予防したい）、続けると、そのオプションはメニューから削除されます。 この可能性を回復するために、アプリの取り外しと再取り付けが必要になる可能性があります。</string>
+    <string name="button_remove">削除する</string>
+    <string name="alert_purchases_option_removed_from_menu">購入オプションはAppメニューから削除されました</string>
 </resources>

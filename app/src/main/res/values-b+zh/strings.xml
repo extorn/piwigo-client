@@ -752,4 +752,22 @@ Piwigo Server I测试的版本目前为11.0.3。
     <string name="clear_individual_settings">清除单个设置</string>
     <string name="upload_icon_types_label">文件类型</string>
     <string name="alert_please_select_a_connection_profile_with_upload_privilege">当前活动的配置文件无权上传。 请从列表中选择另一个。</string>
+
+    <string name="progress_creating_tag">创建标记</string>
+
+    <string name="error_updating_favorites_pattern">错误删除资源（%1$s）来自收藏夹：%2$s</string>
+    <string name="favorites_content_load_failed_text">无法将标记为最喜欢的资源</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">你请求删除%1$d资源。您是否希望永久地从所有相册（和服务器）中删除这些（以及从此收藏夹中删除它们？</string>
+    <string name="progress_remove_favorite_resources">从收藏列表中删除资源</string>
+    <string name="favorites_empty_text">你目前没有收藏</string>
+    <string name="favorites_heading">你的最爱</string>
+    <string name="button_unfavorite">不是最爱</string>
+
+    <string name="progress_loading_orphan_ids">装载孤儿</string>
+    <string name="orphans_heading">孤儿资源</string>
+    <string name="orphans_album_description">所有孤立资源都由PiwiGlient应用程序收集</string>
+    <string name="orphans_no_orphans_found_on_server">没有找到孤儿</string>
+    <string name="orphans_found_on_server_pattern">孤儿发现：%1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">有孤儿存在。要查看这些，我们必须创建仅为管理员访问的私有文件夹。您可以随时删除专辑。如果你不同意，你必须自己在服务器上处理这些。</string>
+    <string name="progress_rescuing_orphans">救援孤儿</string>
 </resources>

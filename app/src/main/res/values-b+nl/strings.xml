@@ -752,4 +752,22 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
     <string name="clear_individual_settings">Duidelijke individuele instellingen</string>
     <string name="upload_icon_types_label">Bestand types</string>
     <string name="alert_please_select_a_connection_profile_with_upload_privilege">Het momenteel actieve profiel heeft geen toestemming om te uploaden. Selecteer in plaats daarvan een ander uit de lijst.</string>
+
+    <string name="progress_creating_tag">Tag maken</string>
+
+    <string name="error_updating_favorites_pattern">Fout verwijderen Resource (%1$s) van favorieten: %2$s</string>
+    <string name="favorites_content_load_failed_text">Mislukt om middelen te laden gemarkeerd als een favoriet</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">U hebt gevraagd om te verwijderen %1$d middelen. Wenst u deze uit alle albums (en de server) - permanent, of maakt u gewoon los van deze favoriet?</string>
+    <string name="progress_remove_favorite_resources">Middelen verwijderen uit favorietenlijst</string>
+    <string name="favorites_empty_text">Je hebt momenteel geen favorieten</string>
+    <string name="favorites_heading">Je favorieten</string>
+    <string name="button_unfavorite">Niet favoriet</string>
+
+    <string name="progress_loading_orphan_ids">Wees laden</string>
+    <string name="orphans_heading">Orphaned Resources</string>
+    <string name="orphans_album_description">Alle Orphaned Resources verzameld door de Piwigoclient-app</string>
+    <string name="orphans_no_orphans_found_on_server">Geen weeskinderen gevonden</string>
+    <string name="orphans_found_on_server_pattern">Weeskinderen gevonden: %1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Er zijn wezen aanwezig. Om deze te bekijken, moeten we een particuliere map alleen toegankelijk maken voor admins. U kunt het album op elk moment achteraf verwijderen. Als u het niet eens bent, moet u deze op de server zelf verwerken.</string>
+    <string name="progress_rescuing_orphans">Het redden van weeskinderen</string>
 </resources>

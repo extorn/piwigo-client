@@ -6,7 +6,6 @@
     <string name="notification_text_background_upload_sleeping">Schlafen. Weiter läuft bei %1$tR</string>
     <string name="notification_text_background_upload_polling">Umfrage für Dateien zum Hochladen.</string>
 
-
     <string name="alert_warning_auto_upload_service_stopped">Vergessen Sie nicht, den Hintergrund-Upload-Service zu starten, wenn Sie möchten, dass Ihre Jobs ausgeführt werden soll</string>
     <string name="alert_auto_upload_service_stopped">Hintergrund-Upload-Service angehalten</string>
     <string name="alert_auto_upload_service_started">Hintergrund-Upload-Dienst gestartet</string>
@@ -16,29 +15,12 @@
     <string name="alert_auto_upload_service_job_finished_partial_success">Fertiger laufender Hintergrund-Upload-Job an den Server %1$s. Einige Dateien konnte nicht hochgeladen und werden später erneut erholt.</string>
     <string name="alert_auto_upload_service_job_finished_failure">Fertiger laufender Hintergrund-Upload-Job an den Server %1$s. Es können keine Dateien hochgeladen werden. Der Job wird später wiederholt.</string>
     <string name="alert_auto_upload_service_checking_for_tasks">Hintergrund hochladen Serviceprüfung auf Aufgaben</string>
-    <string name="progress_creating_tag">Tag erstellen</string>
-    <string name="error_updating_favorites_pattern">Fehler beim Entfernen der Ressource (%1$s) Aus Favoriten: %2$s</string>
-    <string name="favorites_content_load_failed_text">Fehler beim Laden von Ressourcen, die als Favorit gekennzeichnet sind</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Sie haben aufgefordert, zu löschen %1$d Ressourcen. Möchten Sie diese von allen Alben (und dem Server) löschen - dauerhaft oder einfach von diesem Favoriten nicht verknüpfen?</string>
-    <string name="progress_remove_favorite_resources">Ressourcen aus Favoriten entfernt</string>
-    <string name="favorites_empty_text">Sie haben derzeit keine Favoriten</string>
-    <string name="favorites_heading">Deine Favoriten</string>
-    <string name="button_unfavorite">Nicht favorit</string>
-    <string name="preference_data_upload_automatic_job_category_server_settings">Server Einstellungen</string>
-    <string name="preference_data_upload_automatic_job_category_device_settings">Lokale Einstellungen</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Bildkomprimierung vorladen</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Video-Komprimierung vorladen</string>
+
     <string name="ignoring_job_local_folder_not_found">Lokaler Ordner existiert nicht mehr. Job ignorieren.</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">Keine Dateierweiterungen, die zum Hochladen ausgewählt wurden. Job ignorieren.</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Verbindungsprofil auf den Offline-Modus eingestellt. Job ignorieren.</string>
     <string name="slideshow_auto_drive_paused">Diashow Autodrive Pause bis zur nächsten Folie</string>
-    <string name="progress_loading_orphan_ids">Waisenkinder geladen</string>
-    <string name="orphans_heading">Verwaistierte Ressourcen</string>
-    <string name="orphans_album_description">Alle von der PiwigoClient-App gesammelten verworrenen Ressourcen</string>
-    <string name="orphans_no_orphans_found_on_server">Keine Waisenkinder gefunden</string>
-    <string name="orphans_found_on_server_pattern">Waisenkinder gefunden: %1$d</string>
-    <string name="alert_confirm_okay_to_create_orphans_album">Es gibt Waisenkinder vorhanden. Um dies anzuzeigen, müssen wir einen privaten Ordner erstellen, der nur für Admins zugänglich ist. Sie können das Album jederzeit danach löschen. Wenn Sie nicht einverstanden sind, müssen Sie diese selbst auf dem Server selbst verarbeiten.</string>
-    <string name="progress_rescuing_orphans">Waisenkinder retteln.</string>
+
     <string name="piwigo_deep_link_login_email_pattern">Bitte benutzen Sie den untenstehenden Link, um Ihre Kopie der Piwigo Client-App mit dem Server-URI, dem Benutzernamen und dem Kennwort zu konfigurieren, um Sie zu beginnen.\n\n  %1$s</string>
     <string name="deep_link_explanation">Bitte wählen Sie ein Ziel für den Link.\n\n\'Diese App \' erstellt in dieser App ein neues Profil mit diesen Anmeldeinformationen, mit denen Sie die Funktion testen können</string>
     <string name="deep_link_warning_password">Möchten Sie einen tiefen Link erstellen, mit dem Sie eine Kopie dieser App mit den Serverdetails konfigurieren können?\n\nDie Idee ist, dass jemand den Einstieg erleichtert.\n\nDiese Funktion ist in der freien Version nicht verfügbar.</string>

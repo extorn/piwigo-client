@@ -2,6 +2,12 @@
 <resources>
     
 
+    <string name="preference_data_upload_automatic_job_category_server_settings">Serverinstellingen</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Lokale instellingen</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Pre-upload beeldcompressie</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Videocompressie vooraf uploaden</string>
+
+
     <string name="preference_page_auto_upload_jobs">Automatische upload</string>
     <string name="preference_data_upload_automatic_title">Automatische uploads</string>
     <string name="preference_data_upload_automatic_job_title">Auto Upload Job</string>

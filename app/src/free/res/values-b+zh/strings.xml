@@ -22,4 +22,10 @@
     <string name="loading_purchase_details_please_wait">加载购买详细信息</string>
     <string name="no_active_purchases">没有积极购买</string>
     <string name="unable_to_validate_subscription">无法验证订阅。</string>
+    <string name="alert_paid_or_subscription_feature_only">通过订阅或在Google Play上的应用程序的付费版本提供对此功能的访问。</string>
+    <string name="alert_paid_or_subscription_feature_only_piwigo_client_plugin">通过订阅或在Google Play上的应用程序的付费版本提供对此功能的访问。 注意：您需要在服务器上安装PiwiGlientWsexts插件。 这是此时的基本要求，因为它为您的服务器增加了缺失的功能。</string>
+    <string name="not_interested_in_purchases">我对付钱不感兴趣。</string>
+    <string name="alert_not_interested_in_paying">已经花了数千小时开发这个应用程序。\n\n广告令人恼火，只向谷歌提供有意义的收入。\n\n如果您发现它很有用，请考虑进行订阅或安装此应用程序的付费版本。\n\n如果您真的不感兴趣地在制作任何付款（或希望以某种原因防止此项），请继续和选项将从菜单中删除。 要恢复这种可能性，可能需要删除和重新安装应用程序。</string>
+    <string name="button_remove">去掉</string>
+    <string name="alert_purchases_option_removed_from_menu">购买选项已从App菜单中删除</string>
 </resources>

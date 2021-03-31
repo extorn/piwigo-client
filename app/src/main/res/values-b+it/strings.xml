@@ -752,4 +752,22 @@ I rilasci sono su una base ad hoc al momento. La frequenza delle versioni dovreb
     <string name="clear_individual_settings">Cancella le impostazioni individuali</string>
     <string name="upload_icon_types_label">Tipi di file</string>
     <string name="alert_please_select_a_connection_profile_with_upload_privilege">Il profilo attualmente attivo non ha il permesso di caricare. Si prega di selezionare un altro dall\'elenco da utilizzare invece.</string>
+
+    <string name="progress_creating_tag">Creazione di tag</string>
+
+    <string name="error_updating_favorites_pattern">Errore durante la rimozione della risorsa (%1$s) dai preferiti: %2$s</string>
+    <string name="favorites_content_load_failed_text">Impossibile caricare le risorse contrassegnate come preferiti</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Hai richiesto di eliminare %1$d risorse. Desideri eliminare questi da tutti gli album (e al server) - permanentemente, o semplicemente svuotarli da questo preferito?</string>
+    <string name="progress_remove_favorite_resources">Rimozione delle risorse dall\'elenco dei preferiti</string>
+    <string name="favorites_empty_text">Attualmente non hai preferiti</string>
+    <string name="favorites_heading">I TUOI PREFERITI</string>
+    <string name="button_unfavorite">Non preferito</string>
+
+    <string name="progress_loading_orphan_ids">Caricamento orfani.</string>
+    <string name="orphans_heading">Risorse orfane</string>
+    <string name="orphans_album_description">Tutte le risorse orfanete raccolte dall\'app Piwigoclient</string>
+    <string name="orphans_no_orphans_found_on_server">Nessun orfano trovato</string>
+    <string name="orphans_found_on_server_pattern">Orphans ha trovato: %1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Ci sono orfani presenti. Per vederli, dobbiamo creare una cartella privata accessibile solo agli amministratori. È possibile eliminare l\'album in qualsiasi momento in seguito. Se non sei d\'accordo, dovrai elaborarli sul server da solo.</string>
+    <string name="progress_rescuing_orphans">Salvataggio degli orfani</string>
 </resources>

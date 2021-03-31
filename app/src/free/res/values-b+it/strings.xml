@@ -22,4 +22,10 @@
     <string name="loading_purchase_details_please_wait">Caricamento dei dettagli di acquisto</string>
     <string name="no_active_purchases">Nessun acquisto attivo</string>
     <string name="unable_to_validate_subscription">Impossibile convalidare l\'abbonamento.</string>
+    <string name="alert_paid_or_subscription_feature_only">L\'accesso a questa funzione è disponibile in abbonamento o nella versione a pagamento dell\'app su Google Play.</string>
+    <string name="alert_paid_or_subscription_feature_only_piwigo_client_plugin">L\'accesso a questa funzione è disponibile in abbonamento o nella versione a pagamento dell\'app su Google Play. Nota: è necessario installare il plugin PiwigoclientWSexts sul tuo server. Questo è un requisito essenziale in questo momento in quanto aggiunge funzionalità mancanti al tuo server.</string>
+    <string name="not_interested_in_purchases">Non sono interessato a pagare soldi.</string>
+    <string name="alert_not_interested_in_paying">Molte migliaia di ore sono state spese sviluppando questa app.\n\nGli annunci sono irritanti e offrono entrate significative solo a Google.\n\nSi prega di considerare un abbonamento o installare la versione a pagamento di questa app se lo trovi utile.\n\nSe non sei sinceramente interessato a effettuare pagamenti (o desideri impedire questo motivo per qualche motivo), continuare e l\'opzione di farlo sarà rimossa dal menu. Per ripristinare questa possibilità, rimozione e reinstallare l\'app probabilmente necessaria.</string>
+    <string name="button_remove">Rimuovere</string>
+    <string name="alert_purchases_option_removed_from_menu">L\'opzione Acquisti è stata rimossa dal menu dell\'app</string>
 </resources>

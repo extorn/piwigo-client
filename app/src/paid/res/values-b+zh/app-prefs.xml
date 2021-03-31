@@ -2,6 +2,12 @@
 <resources>
     
 
+    <string name="preference_data_upload_automatic_job_category_server_settings">服务器设置</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">本地设置，本地配置</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">预上传图像压缩</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">预上传视频压缩</string>
+
+
     <string name="preference_page_auto_upload_jobs">自动上传</string>
     <string name="preference_data_upload_automatic_title">自动上传</string>
     <string name="preference_data_upload_automatic_job_title">自动上传工作</string>

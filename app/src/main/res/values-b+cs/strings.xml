@@ -752,4 +752,22 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="clear_individual_settings">Vymazat jednotlivá nastavení</string>
     <string name="upload_icon_types_label">Typy souborů</string>
     <string name="alert_please_select_a_connection_profile_with_upload_privilege">Aktivní profil aktuálně nemá povolení k odeslání. Prosím, vyberte jiný ze seznamu, který chcete použít.</string>
+
+    <string name="progress_creating_tag">Vytváření značky</string>
+
+    <string name="error_updating_favorites_pattern">Chyba odstranění zdrojů (%1$s) z oblíbených: %2$s</string>
+    <string name="favorites_content_load_failed_text">Nepodařilo se načíst prostředky označené jako oblíbené</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Požaduje se, abyste odstranili %1$d zdroje. Chcete tyto ze všech alb (a serveru) odstranit z všech alb (a serveru), nebo jen zrušit z nich z tohoto oblíbeného?</string>
+    <string name="progress_remove_favorite_resources">Odstranění zdrojů z seznamu oblíbených položek</string>
+    <string name="favorites_empty_text">Momentálně nemáte žádné oblíbené</string>
+    <string name="favorites_heading">Vaše oblíbené</string>
+    <string name="button_unfavorite">Není favorit</string>
+
+    <string name="progress_loading_orphan_ids">Načítání sirotků</string>
+    <string name="orphans_heading">Osamocené zdroje</string>
+    <string name="orphans_album_description">Všechny osamocené zdroje shromážděné aplikací PIWIGOCLIENT</string>
+    <string name="orphans_no_orphans_found_on_server">Žádné sirotci našli</string>
+    <string name="orphans_found_on_server_pattern">Nalezeno sirotci: %1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Jsou zde přítomny sirotky. Chcete-li je zobrazit, musíme vytvořit soukromou složku přístupnou pouze správci. Album můžete odstranit kdykoliv poté. Pokud nesouhlasíte, musíte tyto zpracovat na serveru sami.</string>
+    <string name="progress_rescuing_orphans">Záchranné sirotky</string>
 </resources>

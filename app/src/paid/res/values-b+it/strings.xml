@@ -6,7 +6,6 @@
     <string name="notification_text_background_upload_sleeping">Dormire. Avanti Corri a %1$tR</string>
     <string name="notification_text_background_upload_polling">Polling per i file da caricare.</string>
 
-
     <string name="alert_warning_auto_upload_service_stopped">Non dimenticare di avviare il servizio di caricamento in background se vuoi che i tuoi lavori siano eseguiti</string>
     <string name="alert_auto_upload_service_stopped">Il servizio di caricamento in background si è fermato</string>
     <string name="alert_auto_upload_service_started">Il servizio di caricamento in background è iniziato</string>
@@ -16,29 +15,12 @@
     <string name="alert_auto_upload_service_job_finished_partial_success">Finito in esecuzione Sfondo Carica lavoro sul server %1$s. Alcuni file non sono riusciti a caricare e verranno ritentati in seguito.</string>
     <string name="alert_auto_upload_service_job_finished_failure">Finito in esecuzione Sfondo Carica lavoro sul server %1$s. Nessun file potrebbe essere caricato. Il lavoro sarà ritentato in seguito.</string>
     <string name="alert_auto_upload_service_checking_for_tasks">Sfondo Carica il servizio di controllo per le attività</string>
-    <string name="progress_creating_tag">Creazione di tag</string>
-    <string name="error_updating_favorites_pattern">Errore durante la rimozione della risorsa (%1$s) dai preferiti: %2$s</string>
-    <string name="favorites_content_load_failed_text">Impossibile caricare le risorse contrassegnate come preferiti</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Hai richiesto di eliminare %1$d risorse. Desideri eliminare questi da tutti gli album (e al server) - permanentemente, o semplicemente svuotarli da questo preferito?</string>
-    <string name="progress_remove_favorite_resources">Rimozione delle risorse dall\'elenco dei preferiti</string>
-    <string name="favorites_empty_text">Attualmente non hai preferiti</string>
-    <string name="favorites_heading">I TUOI PREFERITI</string>
-    <string name="button_unfavorite">Non preferito</string>
-    <string name="preference_data_upload_automatic_job_category_server_settings">Impostazioni del server</string>
-    <string name="preference_data_upload_automatic_job_category_device_settings">Impostazioni locali</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Pre-caricare la compressione dell\'immagine</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Pre-caricare la compressione video</string>
+
     <string name="ignoring_job_local_folder_not_found">La cartella locale non esiste più. Ignorando il lavoro</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">Nessuna estensione di file selezionata per il caricamento. Ignorando il lavoro</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Profilo di connessione impostato sulla modalità offline. Ignorando il lavoro</string>
     <string name="slideshow_auto_drive_paused">Slideshow AutoDrive si fermò fino alla prossima diapositiva</string>
-    <string name="progress_loading_orphan_ids">Caricamento orfani.</string>
-    <string name="orphans_heading">Risorse orfane</string>
-    <string name="orphans_album_description">Tutte le risorse orfanete raccolte dall\'app Piwigoclient</string>
-    <string name="orphans_no_orphans_found_on_server">Nessun orfano trovato</string>
-    <string name="orphans_found_on_server_pattern">Orphans ha trovato: %1$d</string>
-    <string name="alert_confirm_okay_to_create_orphans_album">Ci sono orfani presenti. Per vederli, dobbiamo creare una cartella privata accessibile solo agli amministratori. È possibile eliminare l\'album in qualsiasi momento in seguito. Se non sei d\'accordo, dovrai elaborarli sul server da solo.</string>
-    <string name="progress_rescuing_orphans">Salvataggio degli orfani</string>
+
     <string name="piwigo_deep_link_login_email_pattern">Si prega di utilizzare il link sottostante per configurare la copia dell\'app client PIWIGO con URI del server, nome utente e password per iniziare.\n\n  %1$s.</string>
     <string name="deep_link_explanation">Si prega di selezionare una destinazione per il collegamento.\n\n\'Questa app \' creerà un nuovo profilo in questa app con queste credenziali che consente di testare la funzione</string>
     <string name="deep_link_warning_password">Volete creare un link profondo che può essere utilizzato per configurare una copia di questa app con i dettagli del server?\n\nL\'idea è quella di rendere più facile per far iniziare qualcuno.\n\nQuesta funzione non è disponibile nella versione gratuita.</string>

@@ -2,6 +2,12 @@
 <resources>
     
 
+    <string name="preference_data_upload_automatic_job_category_server_settings">サーバー設定</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">ローカル設定</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">画像圧縮をアップロードする</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">ビデオ圧縮をアップロードします</string>
+
+
     <string name="preference_page_auto_upload_jobs">自動アップロード</string>
     <string name="preference_data_upload_automatic_title">自動アップロード</string>
     <string name="preference_data_upload_automatic_job_title">自動アップロードジョブ</string>

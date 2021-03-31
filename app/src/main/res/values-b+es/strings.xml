@@ -752,4 +752,22 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
     <string name="clear_individual_settings">Ajustes individuales claros</string>
     <string name="upload_icon_types_label">Tipos de archivo</string>
     <string name="alert_please_select_a_connection_profile_with_upload_privilege">El perfil actualmente activo no tiene permiso para cargar. Por favor, seleccione otra de la lista para usar en su lugar.</string>
+
+    <string name="progress_creating_tag">Creando etiqueta</string>
+
+    <string name="error_updating_favorites_pattern">Error al eliminar el recurso (%1$s) de favoritos: %2$s</string>
+    <string name="favorites_content_load_failed_text">Error al cargar los recursos marcados como favoritos</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Usted ha solicitado eliminar %1$d recursos. ¿Desea eliminarlos de todos los álbumes (y el servidor), permanentemente, o simplemente desvincularlos de este favorito?</string>
+    <string name="progress_remove_favorite_resources">Eliminar recursos de la lista de favoritos</string>
+    <string name="favorites_empty_text">Actualmente no tiene favoritos</string>
+    <string name="favorites_heading">Tus favoritos</string>
+    <string name="button_unfavorite">No favorito</string>
+
+    <string name="progress_loading_orphan_ids">Cargando huérfanos</string>
+    <string name="orphans_heading">Recursos huérfanos</string>
+    <string name="orphans_album_description">Todos los recursos huérfanos recolectados por la aplicación Piwigoclient.</string>
+    <string name="orphans_no_orphans_found_on_server">No se encontraron huérfanos.</string>
+    <string name="orphans_found_on_server_pattern">Huérfanos encontrados: %1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">Hay huérfanos presentes. Para verlos, debemos crear una carpeta privada accesible solo para administradores. Puede eliminar el álbum en cualquier momento posterior. Si no está de acuerdo, tendrá que procesarlos en el servidor usted mismo.</string>
+    <string name="progress_rescuing_orphans">Rescatando a los huérfanos</string>
 </resources>
