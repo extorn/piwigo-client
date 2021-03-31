@@ -412,7 +412,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
     }
 
     private Basket getBasket() {
-        MainActivity<?> activity = (MainActivity<?>)requireActivity();
+        MainActivity<?,?> activity = (MainActivity<?,?>)requireActivity();
         return activity.getBasket();
     }
 

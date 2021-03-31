@@ -18,7 +18,11 @@ public class PiwigoClientSubscriptionManager extends SubscriptionManager {
 
     public static final String SUB_REMOVE_ADVERTS_W01 = "piwigoclient.adverts.remove.w01";
     public static final String SUB_REMOVE_ADVERTS_W04 = "piwigoclient.adverts.remove.w04";
-//    public static final String SUB_ALLOW_LARGE_UPLOADS_W04 = "allow.large.uploads.w04";
+    public static final String SUB_ALLOW_LARGE_UPLOADS_W04 = "piwigoclient.allow_large_uploads.w04";
+    public static final String SUB_ALLOW_LARGE_UPLOADS_M06 = "piwigoclient.allow_large_uploads.m06";
+    public static final String SUB_TAG_ORPHAN_FAVS_W01 = "piwigoclient.tags_orphans_favs.w01";
+    public static final String SUB_TAG_ORPHAN_FAVS_W04 = "piwigoclient.tags_orphans_favs.w04";
+    public static final String SUB_RES_DOWNLOAD_M06 = "piwigoclient.allow_downloads.m06";
 
     public PiwigoClientSubscriptionManager(@NonNull Context context) {
         super(new PiwigoPurchaseListUpdateListener(context, new PiwigoClientPurchaseVerifier()));
@@ -37,6 +41,9 @@ public class PiwigoClientSubscriptionManager extends SubscriptionManager {
         int val = Integer.parseInt(Objects.requireNonNull(m.group(2)));
         int hours;
         switch (unit) {
+            case "m":
+                hours = val * 31 * 24; // presume every month has 31 days (lazy but safe)
+            break;
             case "w":
                 hours = val * 7 * 24;
             break;
@@ -57,7 +64,11 @@ public class PiwigoClientSubscriptionManager extends SubscriptionManager {
         List<String> skuList = new ArrayList<>();
         skuList.add(SUB_REMOVE_ADVERTS_W01);
         skuList.add(SUB_REMOVE_ADVERTS_W04);
-//        skuList.add(SUB_ALLOW_LARGE_UPLOADS_W04);
+        skuList.add(SUB_ALLOW_LARGE_UPLOADS_W04);
+        skuList.add(SUB_ALLOW_LARGE_UPLOADS_M06);
+        skuList.add(SUB_TAG_ORPHAN_FAVS_W01);
+        skuList.add(SUB_TAG_ORPHAN_FAVS_W04);
+        skuList.add(SUB_RES_DOWNLOAD_M06);
         return skuList;
     }
 

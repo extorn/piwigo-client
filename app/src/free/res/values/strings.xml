@@ -22,4 +22,10 @@
     <string name="loading_purchase_details_please_wait">Loading purchase details</string>
     <string name="no_active_purchases">No active Purchases</string>
     <string name="unable_to_validate_subscription">Unable to validate subscription.</string>
+    <string name="alert_paid_or_subscription_feature_only">Access to this feature is available by subscription or in the paid version of the app on google play.</string>
+    <string name="alert_paid_or_subscription_feature_only_piwigo_client_plugin">Access to this feature is available by subscription or in the paid version of the app on google play. NOTE: You will need to install the PiwigoClientWsExts plugin on your server. This is an essential requirement at this time as it adds missing functionality to your server.</string>
+    <string name="not_interested_in_purchases">I am not interested in paying money.</string>
+    <string name="alert_not_interested_in_paying">Many thousands of hours have been spent developing this app.\n\nAdverts are irritating, and offer meaningful revenue only to Google.\n\nPlease consider either taking a subscription or installing the paid version of this app if you find it useful.\n\nIf you are genuinely not interested in making any payments (or wish to prevent this for some reason), continue and the option to do so will be removed from the menu. To reinstate this possibility, removal and reinstall of the app will likely be needed.</string>
+    <string name="button_remove">Remove</string>
+    <string name="alert_purchases_option_removed_from_menu">The purchases option has been removed from the app menu</string>
 </resources>

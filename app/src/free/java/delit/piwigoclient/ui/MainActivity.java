@@ -3,10 +3,18 @@ package delit.piwigoclient.ui;
 import android.content.ActivityNotFoundException;
 import android.os.Bundle;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
+import delit.piwigoclient.ui.events.ViewTagEvent;
+import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
+import delit.piwigoclient.ui.subscription.PermittedActions;
 
 /**
  * Created by gareth on 07/04/18.
@@ -55,18 +63,50 @@ public class MainActivity<A extends MainActivity<A, AUIH>, AUIH extends Activity
         }
     }
 
-    @Override
     protected void showFavorites() {
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_feature_only), R.string.button_close);
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if (!obtainViewModel(PermittedActions.class).hasFavorites()) {
+            if (sessionDetails.getPiwigoClientPluginVersion() == null) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_or_subscription_feature_only_piwigo_client_plugin), R.string.button_close);
+            } else {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_or_subscription_feature_only), R.string.button_close);
+            }
+            return;
+        }
+        super.showFavorites();
     }
 
-    @Override
     protected void showOrphans() {
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_feature_only), R.string.button_close);
+        if (!obtainViewModel(PermittedActions.class).hasOrphans()) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_or_subscription_feature_only), R.string.button_close);
+            return;
+        }
+        super.showOrphans();
     }
 
-    @Override
     protected void showTags() {
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_feature_only), R.string.button_close);
+        if (!obtainViewModel(PermittedActions.class).hasTags()) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_or_subscription_feature_only), R.string.button_close);
+            return;
+        }
+        super.showTags();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ViewTagEvent event) {
+        if (!obtainViewModel(PermittedActions.class).hasTags()) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_or_subscription_feature_only), R.string.button_close);
+            return;
+        }
+        super.onEvent(event);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(TagSelectionNeededEvent event) {
+        if (!obtainViewModel(PermittedActions.class).hasTags()) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_or_subscription_feature_only), R.string.button_close);
+            return;
+        }
+        super.onEvent(event);
     }
 }

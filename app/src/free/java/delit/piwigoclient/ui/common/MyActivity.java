@@ -12,6 +12,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.subscription.api.ExistingPurchases;
 import delit.piwigoclient.subscription.piwigo.PiwigoClientSubscriptionManager;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.subscription.PermittedActions;
 
 /**
  * Created by gareth on 26/05/17.
@@ -52,6 +53,8 @@ public abstract class MyActivity<A extends MyActivity<A, AUIH>, AUIH extends Act
         if(purchases.isLoaded() && purchases.getAllSubscriptions().isEmpty()) {
             AdsManager.getInstance(this).setAdvertsDisabled(false);
         }
+        PermittedActions permittedActions = obtainViewModel(this, PermittedActions.class);
+        permittedActions.populate(purchases.getAllSubscriptions());
         AdsManager.getInstance(this).updateShowAdvertsSetting(this);
     }
 

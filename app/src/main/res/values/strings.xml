@@ -1130,4 +1130,22 @@ App Install UUID: %5$s
     <string name="clear_individual_settings">clear individual settings</string>
     <string name="upload_icon_types_label">File types</string>
     <string name="alert_please_select_a_connection_profile_with_upload_privilege">The currently active profile does not have permission to upload. Please select another from the list to use instead.</string>
+
+    <string name="progress_creating_tag">Creating Tag</string>
+
+    <string name="error_updating_favorites_pattern">Error removing resource (%1$s) from favorites: %2$s</string>
+    <string name="favorites_content_load_failed_text">Failed to load resources marked as a favorite</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">You\'ve requested to delete %1$d resources. Do you wish to delete these from all albums (and the server) - permanently, or just unlink them from this favorite?</string>
+    <string name="progress_remove_favorite_resources">Removing resources from favorites list</string>
+    <string name="favorites_empty_text">You currently have no favorites</string>
+    <string name="favorites_heading">Your Favorites</string>
+    <string name="button_unfavorite">Not Favorite</string>
+
+    <string name="progress_loading_orphan_ids">Loading Orphans</string>
+    <string name="orphans_heading">Orphaned Resources</string>
+    <string name="orphans_album_description">All orphaned Resources collected by the PiwigoClient App</string>
+    <string name="orphans_no_orphans_found_on_server">No Orphans Found</string>
+    <string name="orphans_found_on_server_pattern">Orphans Found : %1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">There are orphans present. To view these, we must create a private folder accessible only to admins. You can delete the album at any time afterwards. If you disagree, you\'ll have to process these on the server yourself.</string>
+    <string name="progress_rescuing_orphans">Rescuing Orphans</string>
 </resources>

@@ -3,8 +3,9 @@ package delit.piwigoclient.ui.preferences;
 import java.util.List;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 
-public class PreferencesFragment extends CommonPreferencesFragment {
+public class PreferencesFragment<F extends PreferencesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends CommonPreferencesFragment<F,FUIH> {
 
     @Override
     protected List<String> getTabTitles() {

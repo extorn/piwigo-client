@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,32 +16,20 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.HashSet;
-
 import delit.libs.ui.view.ProgressIndicator;
-import delit.libs.util.VersionUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.events.ServerUpdatesAvailableEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
-import delit.piwigoclient.ui.favorites.ViewFavoritesFragment;
-import delit.piwigoclient.ui.orphans.ViewOrphansFragment;
-import delit.piwigoclient.ui.tags.TagRecyclerViewAdapter;
-import delit.piwigoclient.ui.tags.TagSelectFragment;
-import delit.piwigoclient.ui.tags.TagsListFragment;
-import delit.piwigoclient.ui.tags.ViewTagFragment;
 import delit.piwigoclient.ui.upload.status.UploadJobStatusDetailsFragment;
 
 /**
  * Created by gareth on 07/04/18.
  */
 
-public class MainActivity<AUIH extends ActivityUIHelper<AUIH, MainActivity<AUIH>>> extends AbstractMainActivity<MainActivity<AUIH>, AUIH> {
+public class MainActivity<A extends MainActivity<A, AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends AbstractMainActivity<A, AUIH> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,64 +41,6 @@ public class MainActivity<AUIH extends ActivityUIHelper<AUIH, MainActivity<AUIH>
         super.onStart();
     }
 
-    @Override
-    protected void showFavorites() {
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        int[] pluginVersion = VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion());
-        boolean versionSupported = VersionUtils.versionExceeds(new int[]{1,0,8}, pluginVersion);
-        if(versionSupported) {
-            showFragmentNow(ViewFavoritesFragment.newInstance());
-        } else {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_plugin_required_pattern, "PiwigoClientWsExts", "1.0.8"), R.string.button_close);
-        }
-    }
-
-    @Override
-    protected void showOrphans() {
-        boolean restore = false;
-        // check if we've shown any albums before. If so, pop everything off the stack.
-        if (null == getSupportFragmentManager().findFragmentByTag(ViewOrphansFragment.class.getName())) {
-            // we're opening the activity freshly.
-
-            // check for reopen details and use them instead if possible.
-            if (ViewOrphansFragment.canHandleReopenAction(getUiHelper())) {
-                restore = true;
-            }
-        }
-        AdsManager.getInstance(this).showAlbumBrowsingAdvertIfAppropriate(this);
-
-        if (restore) {
-            showFragmentNow(ViewOrphansFragment.newInstance());
-        } else {
-            showFragmentNow(ViewOrphansFragment.newInstance(), false);
-        }
-    }
-
-    @Override
-    protected void showTags() {
-        TagRecyclerViewAdapter.TagViewAdapterPreferences prefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences();
-        prefs.setEnabled(true);
-        prefs.setAllowItemAddition(true);
-        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-            prefs.deletable();
-        }
-        TagsListFragment<?,?> fragment = TagsListFragment.newInstance(prefs);
-        showFragmentNow(fragment);
-    }
-
-    private void showTagSelectionFragment(int actionId, TagRecyclerViewAdapter.TagViewAdapterPreferences prefs, HashSet<Long> initialSelection, HashSet<Tag> unsavedTags) {
-        TagSelectFragment<?,?> fragment = TagSelectFragment.newInstance(prefs, actionId, initialSelection, unsavedTags);
-        showFragmentNow(fragment);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(TagSelectionNeededEvent event) {
-        TagRecyclerViewAdapter.TagViewAdapterPreferences prefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-//        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-//            prefs.deletable();
-//        }
-        showTagSelectionFragment(event.getActionId(), prefs , event.getInitialSelection(), event.getNewUnsavedTags());
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ServerUpdatesAvailableEvent event) {
@@ -129,6 +58,16 @@ public class MainActivity<AUIH extends ActivityUIHelper<AUIH, MainActivity<AUIH>
         if(showMsg) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.piwigo_server_updates_available_pattern, serverText, pluginsText));
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(TagSelectionNeededEvent event) {
+        super.onEvent(event);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ViewTagEvent event) {
+        super.onEvent(event);
     }
 
     protected void showPrivacy() {
@@ -159,12 +98,6 @@ public class MainActivity<AUIH extends ActivityUIHelper<AUIH, MainActivity<AUIH>
         dialogBuilder.setPositiveButton(android.R.string.ok, (dialog, which) -> {});
 
         dialogBuilder.show();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(ViewTagEvent event) {
-        ViewTagFragment<?,?> fragment = ViewTagFragment.newInstance(event.getTag());
-        showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

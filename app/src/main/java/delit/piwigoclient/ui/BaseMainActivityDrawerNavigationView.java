@@ -13,24 +13,23 @@ import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.ui.common.ViewGroupUIHelper;
 
 /**
  * Created by gareth on 08/06/17.
  */
 
-public class MainActivityDrawerNavigationView extends BaseActivityDrawerNavigationView {
+public class BaseMainActivityDrawerNavigationView<V extends BaseMainActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends BaseActivityDrawerNavigationView<V,VUIH> {
 
-    private static final String TAG = "MainNavView";
-
-    public MainActivityDrawerNavigationView(Context context) {
+    public BaseMainActivityDrawerNavigationView(Context context) {
         this(context, null);
     }
 
-    public MainActivityDrawerNavigationView(Context context, AttributeSet attrs) {
+    public BaseMainActivityDrawerNavigationView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MainActivityDrawerNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BaseMainActivityDrawerNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

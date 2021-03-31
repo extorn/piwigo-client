@@ -22,8 +22,8 @@ import delit.libs.util.IOUtils;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.R;
 
-public class AppPreferences {
-    private static final String TAG = "AppPrefs";
+public class BaseAppPreferences {
+    private static final String TAG = "BaseAppPrefs";
 
     public static boolean isAlwaysShowNavButtons(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_app_always_show_nav_buttons_key), context.getResources().getBoolean(R.bool.preference_app_always_show_nav_buttons_default));
@@ -145,4 +145,13 @@ public class AppPreferences {
         return historicalReleasesData;
     }
 
+    public static void setHidePaymentOptionForever(@NonNull SharedPreferences prefs, @NonNull Context context) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(context.getString(R.string.preference_hide_payments_option_key), true);
+        editor.apply();
+    }
+
+    public static boolean isHidePaymentOptionForever(@NonNull SharedPreferences prefs, @NonNull Context context) {
+        return prefs.getBoolean(context.getString(R.string.preference_hide_payments_option_key), false);
+    }
 }

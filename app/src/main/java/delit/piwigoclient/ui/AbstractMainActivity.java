@@ -85,6 +85,7 @@ import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;
+import delit.piwigoclient.ui.events.ViewTagEvent;
 import delit.piwigoclient.ui.events.ViewUserEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
@@ -92,7 +93,10 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEve
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
+import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.favorites.ViewFavoritesFragment;
+import delit.piwigoclient.ui.orphans.ViewOrphansFragment;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupRecyclerViewAdapter;
@@ -104,6 +108,10 @@ import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsersListFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
 import delit.piwigoclient.ui.slideshow.item.AlbumVideoItemFragment;
+import delit.piwigoclient.ui.tags.TagRecyclerViewAdapter;
+import delit.piwigoclient.ui.tags.TagSelectFragment;
+import delit.piwigoclient.ui.tags.TagsListFragment;
+import delit.piwigoclient.ui.tags.ViewTagFragment;
 import delit.piwigoclient.ui.util.download.DownloadManager;
 import delit.piwigoclient.util.MyDocumentProvider;
 import hotchemi.android.rate.MyAppRate;
@@ -376,9 +384,63 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         showFragmentNow(EulaFragment.newInstance());
     }
 
-    protected abstract void showFavorites();
+    protected void showFavorites() {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
-    protected abstract void showOrphans();
+        int[] pluginVersion = VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion());
+        boolean versionSupported = VersionUtils.versionExceeds(new int[]{1,0,8}, pluginVersion);
+        if(versionSupported) {
+            showFragmentNow(ViewFavoritesFragment.newInstance());
+        } else {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_plugin_required_pattern, "PiwigoClientWsExts", "1.0.8"), R.string.button_close);
+        }
+    }
+
+    protected void showOrphans() {
+        boolean restore = false;
+        // check if we've shown any albums before. If so, pop everything off the stack.
+        if (null == getSupportFragmentManager().findFragmentByTag(ViewOrphansFragment.class.getName())) {
+            // we're opening the activity freshly.
+
+            // check for reopen details and use them instead if possible.
+            if (ViewOrphansFragment.canHandleReopenAction(getUiHelper())) {
+                restore = true;
+            }
+        }
+        AdsManager.getInstance(this).showAlbumBrowsingAdvertIfAppropriate(this);
+
+        if (restore) {
+            showFragmentNow(ViewOrphansFragment.newInstance());
+        } else {
+            showFragmentNow(ViewOrphansFragment.newInstance(), false);
+        }
+    }
+
+    protected void showTags() {
+        TagRecyclerViewAdapter.TagViewAdapterPreferences prefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences();
+        prefs.setEnabled(true);
+        prefs.setAllowItemAddition(true);
+        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+            prefs.deletable();
+        }
+        TagsListFragment<?,?> fragment = TagsListFragment.newInstance(prefs);
+        showFragmentNow(fragment);
+    }
+
+    public void onEvent(TagSelectionNeededEvent event) {
+
+        TagRecyclerViewAdapter.TagViewAdapterPreferences prefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences(event.isAllowEditing(), event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+//        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+//            prefs.deletable();
+//        }
+        TagSelectFragment<?,?> fragment = TagSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection(), event.getNewUnsavedTags());
+        showFragmentNow(fragment);
+    }
+
+    public void onEvent(ViewTagEvent event) {
+        ViewTagFragment<?,?> fragment = ViewTagFragment.newInstance(event.getTag());
+        showFragmentNow(fragment);
+    }
 
     private void showGallery(final CategoryItem gallery) {
         boolean restore = false;
@@ -583,8 +645,6 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
     public void setOnLoginActionMethodName(String onLoginActionMethodName) {
         this.onLoginActionMethodName = onLoginActionMethodName;
     }
-
-    protected abstract void showTags();
 
     private void showAlbumPermissions(final ArrayList<CategoryItemStub> availableAlbums, final HashSet<Long> directAlbumPermissions, final HashSet<Long> indirectAlbumPermissions, boolean allowEdit, int actionId) {
         AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences(allowEdit);

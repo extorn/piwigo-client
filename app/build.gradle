@@ -31,7 +31,7 @@ android {
 
     defaultConfig {
         //NB: non standard fields must be defined (def)
-        versionCode 403
+        versionCode 406
         versionName "1.5.0.0"
         applicationId "delit.piwigoclient"
 

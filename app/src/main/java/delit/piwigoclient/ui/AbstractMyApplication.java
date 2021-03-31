@@ -30,6 +30,7 @@ import delit.libs.util.ProjectUtils;
 import delit.libs.util.Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator226;
@@ -76,7 +77,9 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         return DisplayUtils.updateContext(context, new Locale(language));
     }
 
-    protected abstract String getDesiredLanguage(Context context);
+    protected String getDesiredLanguage(Context context) {
+        return AppPreferences.getDesiredLanguage(getPrefs(context), context);
+    }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {

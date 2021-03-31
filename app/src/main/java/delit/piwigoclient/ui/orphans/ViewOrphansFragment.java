@@ -36,6 +36,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetPermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageAddToAlbumResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImagesListOrphansResponseHandler;
+import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -52,7 +53,6 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     public static final String CATEGORY_NAME_PIWIGO_CLIENT_ORPHANS = "PiwigoClient.Orphans";
     public static final String ORPHANS_PAGE_LOAD_PREFIX = "orphans_";
     private final Set<Long> orphanRescueCalls = new HashSet<>();
-    private long orphanAlbumCreateActionId;
     private int nextOrphansListPageToLoad = -1;
     private BasicProgressTracker orphanRescueTracker;
     private final Set<Long> orphanResourceIds = new HashSet<>();
@@ -79,9 +79,8 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
 
     /**
      * This is needed to stop the album reopen being used.
-     * @param uiHelper
-     * @param <UIH>
-     * @return
+     * @param uiHelper uiHelper
+     * @return true if can reopen an album using the resume action data
      */
     public static <UIH extends UIHelper<UIH,?>> boolean canHandleReopenAction(UIH uiHelper) {
         ConnectionPreferences.ResumeActionPreferences resumePrefs = uiHelper.getResumePrefs();
@@ -94,7 +93,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     }
 
     /**
-     * @return
+     * @return #RESUME_ACTION
      */
     @Override
     protected String getResumeAction() {
@@ -144,7 +143,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
     public void userActionCreateRescuedOrphansAlbum() {
         String galleryDescription = getString(R.string.orphans_album_description);
         PiwigoGalleryDetails orphanAlbumDetail = new PiwigoGalleryDetails(CategoryItemStub.ROOT_GALLERY, null, CATEGORY_NAME_PIWIGO_CLIENT_ORPHANS, galleryDescription, false, true);
-        orphanAlbumCreateActionId = addActiveServiceCall(R.string.progress_creating_album, new AlbumCreateResponseHandler(orphanAlbumDetail, false));
+        addActiveServiceCall(R.string.progress_creating_album, new AlbumCreateResponseHandler(orphanAlbumDetail, false));
     }
     protected void onPiwigoResponseOrphanAlbumCreated(AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse response) {
         CategoryItem orphansAlbum = response.getAlbumDetails().asCategoryItem(new Date(), 0, 0, 0, null);
@@ -156,8 +155,6 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
         if(nextOrphansListPageToLoad > 0) {
             actionLoadOrphanedResourceIdsPage(nextOrphansListPageToLoad);
             nextOrphansListPageToLoad = -1;
-        } else {
-
         }
     }
 
@@ -391,7 +388,7 @@ public class ViewOrphansFragment<F extends ViewOrphansFragment<F,FUIH>, FUIH ext
         return new ViewOrphansPiwigoResponseListener<>();
     }
 
-    private static class ViewOrphansPiwigoResponseListener<F extends ViewOrphansFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends ViewAlbumPiwigoResponseListener<F,FUIH> {
+    private static class ViewOrphansPiwigoResponseListener<F extends ViewOrphansFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends AbstractViewAlbumFragment.CustomPiwigoResponseListener<F,FUIH> {
 
         @Override
         protected void processAlbumPiwigoResponse(PiwigoResponseBufferingHandler.Response response) {

@@ -17,12 +17,21 @@
         android:visibility="visible"
         android:text="@string/manage_app_purchases" />
 
+    <Button
+        android:id="@+id/not_interested_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/heading"
+        app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_margin_end"
+        android:text="@string/not_interested_in_purchases"/>
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_alignWithParentIfMissing="true"
-        app:layout_constraintTop_toBottomOf="@id/heading"
+        app:layout_constraintTop_toBottomOf="@id/not_interested_button"
         app:layout_constraintBottom_toBottomOf="@id/guideline_margin_bottom"
         app:layout_constraintStart_toEndOf="@id/guideline_margin_start"
         app:layout_constraintEnd_toStartOf="@id/guideline_margin_end"

@@ -2,6 +2,12 @@
 <resources>
     <!-- Automatic Upload Jobs page -->
 
+    <string name="preference_data_upload_automatic_job_category_server_settings">Server Settings</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Local Settings</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_image_compression_settings">Pre-Upload Image Compression</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_video_compression_settings">Pre-Upload Video Compression</string>
+
+
     <string name="preference_page_auto_upload_jobs">Automatic Upload</string>
     <string name="preference_data_upload_automatic_title">Automatic Uploads</string>
     <string name="preference_data_upload_automatic_job_title">Auto Upload Job</string>

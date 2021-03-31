@@ -86,6 +86,7 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
 
     @Override
     public void onDrawerOpened() {
+        setMenuVisibilityToMatchSessionState();
         uiHelper.showUserHint(TAG, 1, R.string.hint_navigation_panel_1);
     }
 

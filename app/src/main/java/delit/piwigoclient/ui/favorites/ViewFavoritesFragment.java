@@ -371,7 +371,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
     }
 
     private Basket getBasket() {
-        MainActivity<?> activity = (MainActivity<?>)requireActivity();
+        MainActivity<?,?> activity = (MainActivity<?,?>)requireActivity();
         return activity.getBasket();
     }
 

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="preference_check_for_server_updates_default">false</bool>
+
+    <string name="preference_hide_payments_option_key" translatable="false">preference_hide_payments_option</string>
 </resources>
