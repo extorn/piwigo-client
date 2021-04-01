@@ -273,22 +273,21 @@ Hinweis: Die Versionen divergieren im Laufe der Zeit. Die meisten Änderungen we
 
 Derzeit hat die kostenpflichtige Version Unterstützung für Tags hinzugefügt:
         Piwigo unterstützt Tags in einen Grad aus dem Feld, aber das User-Tags-Plugin fügt weitere Funktionen (grundlegende Tests ausgeführt).
-        Wenn es eine Funktion mit den gewünschten Tags gibt, die Sie möchten, aber die App nicht bereitstellt, fragen Sie bitte an.
 
-Im Moment bietet es eine grundlegende Funktionalität der Funktionen, um die Navigation in der Nähe einer vorhandenen Galerie, ein Upload neuer Fotos und Videos zu ermöglichen, und neue Kategorien in einer Galerie erstellen. Einige Felder können einmal geändert werden, aber viele werden noch nur gelesen .... Vorschau!
-
-Bitte kann ich fragen, dass Sie, wenn Sie die App deinstallieren, den Link im App-Menü verwenden, um mir eine E-Mail mitzuteilen, warum die App Ihre Bedürfnisse nicht erfüllt, damit ich diese ansprechen kann.
+Im Moment bietet es eine grundlegende Funktionalität der Funktionen, um die Navigation in der Nähe einer vorhandenen Galerie, ein Upload neuer Fotos und Videos zu ermöglichen, und neue Kategorien in einer Galerie erstellen. Einige Felder können einmal geändert werden
 
 Die Version des PIWIGO-Servers I Test dagegen ist derzeit 11.0.3.
 
-Meine Testgalerie enthält nur .jpg und .mp4- und .m4v-Dateien nur. Wenn Ihre andere enthält, können Sie Probleme auftreten - wenn ja, bitte sagen Sie mir und priorisieren Sie die Arbeit an diesen Dateitypen.
+Meine Testgalerie enthält nur .jpg und .mp4- und .m4v-Dateien nur. Wenn Ihre andere enthält, können Sie Probleme auftreten - wenn ja, bitte sagen Sie mir, und wenn es nicht zu viel Mühe ist, sehen Sie, ob der Support leicht zur Verfügung gestellt wird.
 
 Ich habe mit einer Kopie des installierten Piwigo_Privacy-Plugins getestet, und auch das Videojs-Plugin installiert.
-* Hinweis: Ich musste einige Änderungen an dem Datenschutz-Plugin für einige jüngste Änderungen anfordern. Wenn Sie Probleme mit diesem Plugin haben, kann ich möglicherweise helfen (dieses Plugin ist jedoch nicht meine Arbeit).Ich habe eine Kopie des erweiterten Beschreibung Plugin installiert, und habe für einige der Funktionen, die er liefert, installiert und erfordert, dass Sie mein Plugin auf Ihrem Server installieren - PIWIGOClientWExts.
+* Hinweis: Ich musste einige Änderungen an dem Datenschutz-Plugin für einige jüngste Änderungen anfordern. Wenn Sie Probleme mit diesem Plugin haben, kann ich möglicherweise helfen (dieses Plugin ist jedoch nicht meine Arbeit).
 
-Bitte melden Sie sich an, wenn Sie keine E-Mails senden, wenn Sie auf Fehler stoßen. Ich habe das auf dem Android-Emulator, einem Samsung-Telefon und einem Samsung-Tablet getestet, aber es ist meine erste App, also bin ich mir sicher, dass die Dinge für jemanden schief gehen.
+Ich habe eine Kopie des erweiterten Beschreibung Plugin installiert, und habe für einige der Funktionen, die er liefert, installiert und erfordert, dass Sie mein Plugin auf Ihrem Server installieren - PIWIGOClientWExts.
 
-Ein großes Dankeschön an alle, die mir mit Vorschlägen oder Fehlern per E-Mail geschickt haben. Ich werde mich bemühen, alle Ihre Vorschläge so schnell wie möglich anzusprechen.
+Bitte melden Sie sich an, wenn Sie keine E-Mails senden, wenn Sie auf Fehler stoßen.Ich habe das auf dem Android-Emulator, einem Samsung-Telefon und einem Samsung-Tablet getestet, aber es ist meine erste App, also bin ich mir sicher, dass die Dinge für jemanden schief gehen.
+
+Ein großes Dankeschön an jeden, der mir mit Vorschlägen oder Bugs per E-Mail geschickt hat, hoffe ich, dass Sie festgestellt haben, dass diese nach Möglichkeit eingebunden wurden.
 
 Bitte entscheiden Sie sich, jeden Absturz zu melden, der auftritt. Wenn Sie feststellen, dass der Fehler nach dem nächsten Update immer noch auftritt, nehmen Sie sich die Zeit, um mir eine E-Mail zu senden. Es ist wahrscheinlich, dass ich ein bisschen mehr Kontext brauche, was gerade vor dem Fehler passiert, bevor der Fehler auftritt.
 

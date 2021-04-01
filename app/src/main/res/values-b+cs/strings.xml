@@ -273,22 +273,21 @@ Poznámka: Verze se časem liší. Většina změn bude provedena na volné i pl
 
 Placená verze byla v současné době přidána podpora značek:
         PIWIGO podporuje značky do stupně z krabice, ale zástrčka uživatelů přidává více funkcí (provedeno základní testování).
-        Pokud je funkce s pozdravem značek, které chcete, ale aplikace neposkytuje, zeptejte se.
 
-V současné době poskytuje základní úroveň funkčnosti, která umožňuje navigaci kolem existující galerie, nahrát nových fotografií a videí a vytváření nových kategorií v galerii. Některá pole mohou být změněna jednou vytvořenou, ale mnozí jsou stále číst pouze .... prozatím!
-
-Prosím, mohu se zeptat, že pokud aplikace odinstalujete, použijte odkaz na menu App, abyste mi mohli říci, proč aplikace nesplnila vaše potřeby, abychom to mohli řešit.
+V současné době poskytuje základní úroveň funkčnosti, která umožňuje navigaci kolem existující galerie, nahrát nových fotografií a videí a vytváření nových kategorií v galerii. Některá pole mohou být změněna jednou vytvořenou
 
 Verze testu PIWIGO Server I Proti je v současné době 11.0.3.
 
-Moje testovací galerie obsahuje pouze souboryJPG a .mp4 a .m4v. Pokud vaše obsahuje ostatní, můžete se vyskytnout problémy - pokud ano, prosím, řekněte mi a budu upřednostňovat práci na těchto typech souborů.
+Moje testovací galerie obsahuje pouze souboryJPG a .mp4 a .m4v. Pokud vaše obsahuje ostatní, můžete dobře setkat se s problémy - pokud ano, řekněte mi to, a pokud to není příliš mnoho obtěžování, uvidím, zda je podpora snadno poskytnuta.
 
 Byl jsem testován s kopií instalovaného pluginu PIWIGO_PRIVACY a také instalovaného pluginu videa.
-* Poznámka: Musel jsem požádat o některé změny pluginu soukromí pro některé nedávné změny. Pokud máte problémy s tímto pluginem, mohl bych být schopen pomoci (tento plugin není moje práce).Mám kopii rozšířeného popisu PLUGIN nainstalován a přidali podporu pro některé funkce, které poskytují, ale bude to vyžadovat, abyste nainstalovali svůj plugin na serveru - PIWIGOCLIENTWSEXTS.
+* Poznámka: Musel jsem požádat o některé změny pluginu soukromí pro některé nedávné změny. Pokud máte problémy s tímto pluginem, mohl bych být schopen pomoci (tento plugin není moje práce).
 
-Oznámte mi prosím e-mail, pokud narazíte na chyby. Testoval jsem to na emulátoru Android, telefon Samsung a Samsung tabletu, ale je to moje první aplikace, takže jsem si jistý, že se věci budou pro někoho špatné.
+Mám kopii rozšířeného popisu PLUGIN nainstalován a přidali podporu pro některé funkce, které poskytují, ale bude to vyžadovat, abyste nainstalovali svůj plugin na serveru - PIWIGOCLIENTWSEXTS.
 
-Velký Děkuji všem, kteří mi e-mailem e-mailem s návrhy nebo chyby. Budu se snažit řešit všechny vaše návrhy co nejdříve prakticky.
+Oznámte mi prosím e-mail, pokud narazíte na chyby.Testoval jsem to na emulátoru Android, telefon Samsung a Samsung tabletu, ale je to moje první aplikace, takže jsem si jistý, že se věci budou pro někoho špatné.
+
+Velký Děkujeme všem, kteří mi e-mailem s návrhy nebo chyby, doufám, že jste byli včleněni, pokud je to možné.
 
 Prosím, rozhodněte se hlásit každou zhroucení, ke kterému dochází. Pokud zjistíte, že chyba se stále vyskytuje po další aktualizaci, prosím, vezměte si čas na e-mail mi. Je pravděpodobné, že potřebuji trochu více kontextu kolem toho, co se děje těsně před chybou.
 

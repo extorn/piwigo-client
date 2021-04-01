@@ -273,22 +273,21 @@ Opmerking: de versies zullen in de loop van de tijd uiteenlopen. De meeste wijzi
 
 Momenteel heeft de betaalde versie ondersteuning voor tags toegevoegd:
         Piwigo ondersteunt tags in een mate out of the box, maar de plug-in van de gebruiker tags voegt meer functies toe (basistests uitgevoerd).
-        Als er een functie is met betrekking tot tags die u wilt, maar de app niet biedt, vraag dan alstublieft.
 
-Op dit moment biedt het een basisniveau van functionaliteit om navigatie rond een bestaande galerij, upload van nieuwe foto\'s en video\'s te maken en nieuwe categorieën binnen een galerij te maken. Sommige velden kunnen worden gewijzigd als eenmaal zijn gemaakt, maar velen worden nog steeds alleen gelezen .... voor nu!
-
-Kan ik alstublieft vragen of u de app verwijdert, gebruik u de link in het menu App om mij te e-mailen. Waarom de app niet aan uw behoeften voldeed, zodat ik dit kan aanpakken.
+Op dit moment biedt het een basisniveau van functionaliteit om navigatie rond een bestaande galerij, upload van nieuwe foto\'s en video\'s te maken en nieuwe categorieën binnen een galerij te maken. Sommige velden kunnen worden gewijzigd als eenmaal is gemaakt
 
 De versie van de Piwigo-server die ik test is momenteel 11.0.3.
 
-Mijn testgalerie bevat alleen .jpg en .mp4 en .m4v-bestanden. Als de uwe anderen bevat, kunt u problemen ondervinden - als dit het geval is, vertel het mij dan en ik prioriteit geeft aan het werk op die bestandstypen.
+Mijn testgalerie bevat alleen .jpg en .mp4 en .m4v-bestanden. Als de jouwe anderen bevat, kunt u problemen ondervinden, zo ja, vertel het me alsjeblieft en als het niet te veel moeite neemt, zal ik zien of ondersteuning gemakkelijk wordt verstrekt.
 
 Ik heb met een kopie getest van de Piwigo_Privacy-plug-in geïnstalleerd en ook de Plug-in van Videojs geïnstalleerd.
-* Opmerking: ik heb een aantal recente wijzigingen aan de privacy-plug-in aanvragen. Als u problemen hebt met deze plug-in, kunt u wel goed helpen (deze plug-in is echter niet mijn werk).Ik heb een kopie van de uitgebreide beschrijving plug-in geïnstalleerd en heeft ondersteuning toegevoegd voor enkele van de functies die het levert, maar het vereist dat u mijn plug-in installeert op uw server - piwigoclientwsexts.
+* Opmerking: ik heb een aantal recente wijzigingen aan de privacy-plug-in aanvragen. Als u problemen hebt met deze plug-in, kunt u wel goed helpen (deze plug-in is echter niet mijn werk).
 
-Meld eventueel een e-mail als u bugs tegenkomt. Ik heb dit getest op de Android-emulator, een Samsung-telefoon en een Samsung-tablet, maar het is mijn eerste app, dus ik weet zeker dat dingen fout gaan voor iemand.
+Ik heb een kopie van de uitgebreide beschrijving plug-in geïnstalleerd en heeft ondersteuning toegevoegd voor enkele van de functies die het levert, maar het vereist dat u mijn plug-in installeert op uw server - piwigoclientwsexts.
 
-Een grote dank aan iedereen die me heeft gemaild met suggesties of bugs. Ik zal ernaar streven al uw suggesties aan te pakken zodra praktisch is.
+Meld eventueel een e-mail als u bugs tegenkomt.Ik heb dit getest op de Android-emulator, een Samsung-telefoon en een Samsung-tablet, maar het is mijn eerste app, dus ik weet zeker dat dingen fout gaan voor iemand.
+
+Een grote dank aan iedereen die mij heeft gemaild met suggesties of bugs, ik hoop dat je dat je bent gevonden waar mogelijk zijn opgenomen.
 
 Kies ervoor om elke crash die optreedt te melden. Als u vindt dat de fout nog steeds plaatsvindt na de volgende update, neem dan de tijd om mij te e-mailen. Het is waarschijnlijk dat ik een beetje meer context nodig heb om wat er gebeurt vlak voordat de fout optreedt.
 

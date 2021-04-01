@@ -273,22 +273,21 @@ Remarque: les versions vont diverger au fil du temps. La plupart des modificatio
 
 Actuellement, la version payante a ajouté une prise en charge des balises:
         Piwigo prend en charge les balises à un degré hors de la boîte, mais le plugin Tags utilisateur ajoute plus de fonctionnalités (test de base effectué).
-        S\'il y a une fonctionnalité avec des tags que vous voulez, mais l\'application ne fournit pas, veuillez demander.
 
-Pour le moment, il fournit un niveau de fonctionnalité de base pour permettre la navigation autour d\'une galerie existante, un téléchargement de nouvelles photos et des vidéos et de créer de nouvelles catégories au sein d\'une galerie. Certains champs peuvent être modifiés une fois créé, mais beaucoup sont encore en lecture seule ... pour l\'instant!
-
-Puis-je demander que si vous désinstallez l\'application, vous utilisez le lien dans le menu de l\'application pour m\'envoyer un e-mail que l\'application n\'a pas répondu à vos besoins afin que je puisse résoudre ce problème.
+Pour le moment, il fournit un niveau de fonctionnalité de base pour permettre la navigation autour d\'une galerie existante, un téléchargement de nouvelles photos et des vidéos et de créer de nouvelles catégories au sein d\'une galerie. Certains champs peuvent être modifiés une fois créé
 
 La version du serveur Piwigo que je test est actuellement 11.0.3.
 
-Ma galerie de test contient des fichiers .jpg et .mp4 et .m4v uniquement. Si le vôtre contient les autres, vous pouvez rencontrer des problèmes - si oui, dites-moi s\'il vous plaît et je donne la priorité à travailler sur ces types de fichiers.
+Ma galerie de test contient des fichiers .jpg et .mp4 et .m4v uniquement. Si le vôtre contient d\'autres, vous pouvez rencontrer des problèmes - si oui, dites-moi s\'il vous plaît et si cela ne vous empêche pas si le support est facilement fourni.
 
 J\'ai testé avec une copie du plug-in Piwigo_Privacy installé et que le plug-in vidéoJS installé.
-* Remarque: j\'ai dû demander quelques modifications au plugin de confidentialité pour quelques modifications récentes. Si vous avez des problèmes avec ce plugin, je pourrai bien pouvoir aider (ce plugin n\'est pas mon travail).J\'ai une copie du plug-in d\'une description étendue installée et j\'ai ajouté une prise en charge de certaines des fonctionnalités qu\'il fournit, mais il nécessitera de l\'installer mon plugin sur votre serveur - PIWIGOCLIENTWSEXTS.
+* Remarque: j\'ai dû demander quelques modifications au plugin de confidentialité pour quelques modifications récentes. Si vous avez des problèmes avec ce plugin, je pourrai bien pouvoir aider (ce plugin n\'est pas mon travail).
 
-Veuillez signaler tout chronométrage d\'un email si vous rencontrez des bugs. Je l\'ai testé sur l\'émulateur Android, un téléphone Samsung et une tablette Samsung, mais c\'est ma première application alors je suis sûr que les choses vont mal tourner à quelqu\'un.
+J\'ai une copie du plug-in d\'une description étendue installée et j\'ai ajouté une prise en charge de certaines des fonctionnalités qu\'il fournit, mais il nécessitera de l\'installer mon plugin sur votre serveur - PIWIGOCLIENTWSEXTS.
 
-Un grand merci à tous ceux qui m\'ont envoyé un courriel avec des suggestions ou des bugs. Je m\'efforcerai de répondre à toutes vos suggestions dès que possible.
+Veuillez signaler tout chronométrage d\'un email si vous rencontrez des bugs.Je l\'ai testé sur l\'émulateur Android, un téléphone Samsung et une tablette Samsung, mais c\'est ma première application alors je suis sûr que les choses vont mal tourner à quelqu\'un.
+
+Un grand merci à tous ceux qui m\'ont envoyé envoyé par courrier électronique avec des suggestions ou des insectes, j\'espère que vous avez constaté que celles-ci ont été incorporées dans la mesure du possible.
 
 Veuillez choisir de signaler chaque crash qui se produit. Si vous trouvez que le bogue se produit toujours après la prochaine mise à jour, prenez le temps de m\'envoyer un email. Il est probable que j\'ai besoin d\'un peu plus de contexte autour de ce qui se passe juste avant que le bogue ne se produise.
 

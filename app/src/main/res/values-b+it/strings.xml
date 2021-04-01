@@ -273,24 +273,23 @@ Nota: le versioni divergono nel tempo. La maggior parte delle modifiche verrà e
 
 Attualmente, la versione a pagamento ha aggiunto il supporto per i tags:
         PIWIGO supporta i tags a una laurea fuori dalla scatola, ma il plugin dei tag utente aggiunge più funzioni (test di base eseguiti).
-        Se c\'è una funzionalità per quanto riguarda i tag che desideri, ma l\'app non fornisce, si prega di chiedere.
 
-Al momento, fornisce un livello fondamentale di funzionalità per consentire la navigazione attorno a una galleria esistente, caricamento di nuove foto e video e creare nuove categorie all\'interno di una galleria. Alcuni campi possono essere modificati una volta creati, ma molti sono ancora letti solo .... per ora!
-
-Per favore posso chiederlo se si disinstalla l\'app, si utilizza il link nel menu App per un\'e-mail che mi dice perché l\'app non ha soddisfatto le tue esigenze, quindi posso affrontare questo.
+Al momento, fornisce un livello fondamentale di funzionalità per consentire la navigazione attorno a una galleria esistente, caricamento di nuove foto e video e creare nuove categorie all\'interno di una galleria. Alcuni campi possono essere modificati una volta creati
 
 La versione del test del server PIWIGO IT contro è attualmente 11.0.3.
 
-La mia galleria di test contiene solo file .jpg e .mp4 e .m4v. Se il tuo contiene altri, potresti incontrare problemi - se sì, per favore dimmi e avrò la priorità a lavorare su quei tipi di file.
+La mia galleria di test contiene solo file .jpg e .mp4 e .m4v. Se il tuo contiene altri, potresti incontrare problemi - se sì, per favore dimmi e se non è troppo fastidio vedrò se il supporto è facilmente fornibile.
 
 Ho provato con una copia del plugin PIWIGO_PRIVACY installato e installato anche il plugin Videojs.
-* Nota: ho dovuto richiedere alcune modifiche al plug-in sulla privacy per alcune modifiche recenti. Se hai problemi con questo plugin, potrei essere in grado di aiutare (questo plugin non è il mio lavoro però).Ho una copia del plugin Descrizione esteso installato e ha aggiunto il supporto per alcune delle funzionalità che fornisce forniture, ma richiederà di installare il mio plug-in sul server - piwigoclientwsexts.
+* Nota: ho dovuto richiedere alcune modifiche al plug-in sulla privacy per alcune modifiche recenti. Se hai problemi con questo plugin, potrei essere in grado di aiutare (questo plugin non è il mio lavoro però).
 
-Si prega di segnalare qualsiasi drop me un\'e-mail se si incontrano bug. Ho testato questo sull\'emulatore Android, un telefono Samsung e un tablet Samsung, ma la mia prima app è sicuramente che le cose andranno male per qualcuno.
+Ho una copia del plugin Descrizione esteso installato e ha aggiunto il supporto per alcune delle funzionalità che fornisce forniture, ma richiederà di installare il mio plug-in sul server - piwigoclientwsexts.
 
-Un grande ringraziamento a tutti coloro che mi hanno mandato un\'email con suggerimenti o bug. Cercherò di affrontare tutti i tuoi suggerimenti non appena pratici.
+Si prega di segnalare qualsiasi drop me un\'e-mail se si incontrano bug.Ho testato questo sull\'emulatore Android, un telefono Samsung e un tablet Samsung, ma la mia prima app è sicuramente che le cose andranno male per qualcuno.
 
-Si prega di scegliere di segnalare ogni incidente che si verifica. Se trovi che il bug si verifica ancora dopo il prossimo aggiornamento, ti preghiamo di prenditi il ​​tempo per un\'e-mail. È probabile che abbia bisogno di un po \'più di contesto intorno a ciò che sta accadendo poco prima che si verifichi il bug.
+Un grande ringraziamento a tutti coloro che mi hanno mandato un\'email con suggerimenti o bug, spero che tu abbia trovato questi sono stati incorporati dove possibile.
+
+Si prega di scegliere di segnalare ogni incidente che si verifica. Se trovi che il bug si verifica ancora dopo il prossimo aggiornamento, ti preghiamo di prenditi il tempo per un\'e-mail. È probabile che abbia bisogno di un po \'più di contesto intorno a ciò che sta accadendo poco prima che si verifichi il bug.
 
 I rilasci sono su una base ad hoc al momento. La frequenza delle versioni dovrebbe ridurre come l\'app matura. Il programma di rilascio e la cronologia sono mostrati di seguito. Questo può cambiare e le cose potrebbero essere ritardate, ma puoi vedere cosa c\'è nell\'elenco."</string>
     <string name="licences_heading">Licenze per risorse utilizzate all\'interno di questa app</string>

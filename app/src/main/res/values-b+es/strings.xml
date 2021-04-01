@@ -273,22 +273,21 @@ Nota: Las versiones divergerán con el tiempo. La mayoría de los cambios se har
 
 Actualmente, la versión de pago ha agregado soporte para etiquetas:
         Piwigo admite etiquetas en un grado fuera de la caja, pero el complemento de etiquetas de usuario agrega más funciones (pruebas básicas realizadas).
-        Si hay una característica con respecto a las etiquetas que desea, pero la aplicación no proporciona, por favor pregunte.
 
-En este momento, proporciona un nivel básico de funcionalidad para permitir la navegación alrededor de una galería existente, la carga de nuevas fotos y videos, y creando nuevas categorías dentro de una galería. Algunos campos se pueden modificar una vez creados, pero muchos todavía se leen solo ... ¡Por ahora!
-
-¿Puedo preguntarle si desinstala la aplicación, use el enlace en el menú de la aplicación para enviarme un correo electrónico a decirme por qué la aplicación no cumplió con sus necesidades para que pueda abordar esto?
+En este momento, proporciona un nivel básico de funcionalidad para permitir la navegación alrededor de una galería existente, la carga de nuevas fotos y videos, y creando nuevas categorías dentro de una galería. Algunos campos se pueden modificar una vez creado
 
 La versión del servidor PIWIGO I Realice actualmente 11.0.3.
 
-Mi galería de prueba contiene archivos .jpg y .mp4 y .m4v solamente. Si los suyos contienen otros, puede encontrar problemas, de ser así, dígame y priorizaré el trabajo en esos tipos de archivos.
+Mi galería de prueba contiene archivos .jpg y .mp4 y .m4v solamente. Si los suyos contienen otros, puede encontrar problemas, de ser así, por favor, dígame y si no es demasiado molestado, veré si se proporciona un soporte fácilmente.
 
 He estado probando con una copia del complemento PIWIGO_PRIVYCY y también se instaló el complemento de Videojs.
-* Nota: He tenido que solicitar algunos cambios en el complemento de privacidad para algunos cambios recientes. Si tiene problemas con este complemento, podría ser capaz de ayudar (este complemento no es mi trabajo).Tengo una copia del complemento de descripción extendido instalado, y ha agregado soporte para algunas de las funciones que suministra, pero requerirá que instale mi complemento en su servidor - PIWIGOCLIENTWSEXTS.
+* Nota: He tenido que solicitar algunos cambios en el complemento de privacidad para algunos cambios recientes. Si tiene problemas con este complemento, podría ser capaz de ayudar (este complemento no es mi trabajo).
 
-POR FAVOR, INFORME CUALQUIER DÍ MÁS UN CORREO ELECTRÓNICO Si encuentra algún error. He probado esto en el emulador de Android, un teléfono Samsung y una tableta Samsung, pero es mi primera aplicación, así que estoy seguro de que las cosas se equivocarán por alguien.
+Tengo una copia del complemento de descripción extendido instalado, y ha agregado soporte para algunas de las funciones que suministra, pero requerirá que instale mi complemento en su servidor - PIWIGOCLIENTWSEXTS.
 
-Un gran agradecimiento a todos los que me han enviado un correo electrónico con sugerencias o errores. Me esforzaré por abordar todas sus sugerencias tan pronto como sea práctico.
+POR FAVOR, INFORME CUALQUIER DÍ MÁS UN CORREO ELECTRÓNICO Si encuentra algún error.He probado esto en el emulador de Android, un teléfono Samsung y una tableta Samsung, pero es mi primera aplicación, así que estoy seguro de que las cosas se equivocarán por alguien.
+
+Un gran agradecimiento a todos los que me han enviado un correo electrónico con sugerencias o errores, espero que haya encontrado que se hayan incorporado donde sea posible.
 
 Por favor, elija informar cada choque que ocurra. Si encuentra que el error aún ocurre después de la siguiente actualización, tómese el tiempo para enviarme un correo electrónico. Es probable que necesite un poco más de contexto alrededor de lo que está sucediendo justo antes de que ocurra el error.
 

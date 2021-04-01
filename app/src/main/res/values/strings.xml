@@ -275,15 +275,12 @@ Note: The versions will diverge over time. Most changes will be made to both fre
 
 Presently, the paid version has added support for tags:
         Piwigo supports tags to a degree out of the box, but the User Tags plugin adds more features (basic testing performed).
-        If there is a feature with regards tags that you want but the app doesn't provide, please ask.
 
-At the moment, it provides a basic level of functionality to allow navigation around an existing gallery, upload of new photos and videos, and creating new categories within a gallery. Some fields can be amended once created, but many are still read only.... for now!
-
-Please can I ask that if you uninstall the app, you use the link on the app menu to email me telling me why the app did not meet your needs so I can address this.
+At the moment, it provides a basic level of functionality to allow navigation around an existing gallery, upload of new photos and videos, and creating new categories within a gallery. Some fields can be amended once created
 
 The version of the PIWIGO server I test against is currently 11.0.3.
 
-My test gallery contains .jpg and .mp4 and .m4v files only. If yours contains others, you may well encounter problems - if so, please tell me and I'll prioritise work on those file types.
+My test gallery contains .jpg and .mp4 and .m4v files only. If yours contains others, you may well encounter problems - if so, please tell me and if it's not too much bother I'll see if support is easily provided.
 
 I have been testing with a copy of the piwigo_privacy plugin installed and also the VideoJS plugin installed.
 * Note: I have had to request some changes to the privacy plugin for some recent changes. If you're having issues with this plugin, I might well be able to help (this plugin is not my work though).
@@ -292,7 +289,7 @@ I have a copy of the Extended Description plugin installed, and have added suppo
 
 Please report any drop me an email if you encounter any bugs. I\'ve tested this on the android emulator, a Samsung phone and a Samsung tablet, but it\'s my first app so I\'m sure things will go wrong for someone.
 
-A big thank you to everyone who has emailed me with suggestions or bugs. I will endeavor to address all of your suggestions as soon as practical.
+A big thank you to everyone who has emailed me with suggestions or bugs, I hope you've found these have been incorporated where possible.
 
 Please do choose to report every crash that occurs. If you find the bug still occurs after the next update, please take the time to email me. It's likely I need a little bit more context around what is happening just before the bug occurs.
 
