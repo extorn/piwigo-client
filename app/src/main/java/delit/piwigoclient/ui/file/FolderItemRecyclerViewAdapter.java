@@ -162,7 +162,8 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         SortedSet<String> acceptableFileExts = getAdapterPrefs().getAcceptableFileExts(getFileExtsAndMimesInCurrentFolder());
         if(currentDisplayContent != null) {
             for (FolderItem item : currentDisplayContent) {
-                if (acceptableFileExts.contains(item.getExt())) {
+                String itemExt = item.getExt();
+                if (itemExt != null && acceptableFileExts.contains(itemExt)) {
                     selectedIds.add(item.getUid());
                 }
             }
