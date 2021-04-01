@@ -3,6 +3,8 @@ package com.squareup.picasso;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import com.drew.metadata.Metadata;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,9 +20,9 @@ import delit.libs.ui.util.ExecutorManager;
 public class MyPicasso extends Picasso {
 
     private List<RequestHandler> myRequestHandlers;
-    private BaseLruExifCache cache;
+    private final BaseLruExifCache<Metadata> cache;
 
-    MyPicasso(Context context, Dispatcher dispatcher, BaseLruExifCache cache, Listener listener, RequestTransformer requestTransformer, List<RequestHandler> extraRequestHandlers, Stats stats, Bitmap.Config defaultBitmapConfig, boolean indicatorsEnabled, boolean loggingEnabled) {
+    MyPicasso(Context context, Dispatcher dispatcher, BaseLruExifCache<Metadata> cache, Listener listener, RequestTransformer requestTransformer, List<RequestHandler> extraRequestHandlers, Stats stats, Bitmap.Config defaultBitmapConfig, boolean indicatorsEnabled, boolean loggingEnabled) {
         super(context, dispatcher, cache, listener, requestTransformer, extraRequestHandlers, stats, defaultBitmapConfig, indicatorsEnabled, loggingEnabled);
         this.cache = cache;
     }
@@ -46,7 +48,7 @@ public class MyPicasso extends Picasso {
         private final Context context;
         private Downloader downloader;
         private ExecutorService service;
-        private BaseLruExifCache cache;
+        private BaseLruExifCache<Metadata> cache;
         private Listener listener;
         private RequestTransformer transformer;
         private List<RequestHandler> requestHandlers;
@@ -229,7 +231,7 @@ public class MyPicasso extends Picasso {
         }
     }
 
-    public BaseLruExifCache getCache() {
+    public BaseLruExifCache<Metadata> getCache() {
         return cache;
     }
 }

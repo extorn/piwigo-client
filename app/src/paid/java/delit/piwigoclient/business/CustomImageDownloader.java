@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.drew.metadata.Metadata;
 import com.squareup.picasso.BaseLruExifCache;
+import com.squareup.picasso.MyPicasso;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -37,9 +38,12 @@ public class CustomImageDownloader extends AbstractBaseCustomImageDownloader {
         String exifWantedStr = uri.getQueryParameter(EXIF_WANTED_URI_PARAM);
         boolean exifEventWanted = Boolean.parseBoolean(exifWantedStr);
         if(metadata != null && exifEventWanted) {
-            BaseLruExifCache<Metadata> cache = PicassoFactory.getInstance().getPicassoSingleton().getCache();
+            MyPicasso picasso = PicassoFactory.getInstance().getPicassoSingleton();
             String uriStr = uri.toString();
-            cache.setMetadata(uriStr, metadata);
+            if(picasso != null) {
+                BaseLruExifCache<Metadata> cache = picasso.getCache();
+                cache.setMetadata(uriStr, metadata);
+            }
             EventBus.getDefault().post(new ExifDataRetrievedEvent(uriStr, metadata));
         }
         return metadata;
