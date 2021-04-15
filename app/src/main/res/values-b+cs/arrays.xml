@@ -146,9 +146,12 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.2.1</item>
+        <item>"Oprava chyby:
+             - Opravená chyba způsobující chybné inzeráty na celé obrazovce, aby se vykazovaly mnohem častěji než zamýšlené"</item>
         <item>1.5.0.2</item>
-        <item>Oprava chyby:
-                 - potenciální havárie pevné</item>
+        <item>"Oprava chyby:
+                 - potenciální havárie pevné"</item>
         <item>1.5.0.1</item>
         <item>"Změna:
                  - přidány další možnosti předplatného, aby se většina z nejvíce ne všechny funkce v placené aplikaci"</item>

@@ -1,40 +1,40 @@
 <en-GB>
 Bugfix:
-- potential crash fixed
+- Corrected bug causing full screen adverts incorrectly to show much more frequently than intended
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- potenciální havárie pevné
+- Opravená chyba způsobující chybné inzeráty na celé obrazovce, aby se vykazovaly mnohem častěji než zamýšlené
 </cs-CZ>
 <de-DE>
-Bug-Fix:
-- Möglicher Absturz fixiert
+Fehlerbehebung:
+- Korrigierte Fehler, der Vollbild-Anzeigen fällt, um ärgerlich zu zeigen, um viel häufiger zu zeigen als beabsichtigt
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Choque potencial fijo
+- error correcto que causa anuncios de pantalla completa incorrectamente para mostrar mucho más frecuentemente de lo previsto
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- crash potentiel fixé
+- BOGUE corrigé provoquant de manière incorrecte des annonces à écran complet pour montrer beaucoup plus fréquemment que prévu
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Crash potenziale fisso
+- Il bug corretto provocando erroneamente annunci a schermo intero per mostrare molto più frequentemente del previsto
 </it-IT>
 <ja-JP>
 バグ修正：
-- 潜在的なクラッシュが固定されています
+- 完全スクリーン広告を誤って誤って頻繁に表示させていないバグを修正しました
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Potentiële crash gefixeerd
+- Gecorrigeerd bug veroorzaakt volledig schermadvertenties onjuist om veel vaker te tonen dan bedoeld
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- потенциальная авария исправлена
+- скорректированная ошибка, вызывающая полноценное реклама экрана неправильно, чтобы показать намного чаще, чем предполагаемое
 </ru-RU>
 <zh-CN>
 错误修正：
-- 固定潜在的崩溃
+- 更正的错误导致全屏广告不正确地显示比预期更频繁的
 </zh-CN>

@@ -143,11 +143,13 @@ public class AdsManager {
     private static class InterstitialAdLoader extends InterstitialAdLoadCallback {
 
         private final String adUnitId;
+        private final InterstitialAdListener adListener;
         private InterstitialAd targetAd;
         private int retries = 0;
 
-        public InterstitialAdLoader(String adUnitId) {
+        public InterstitialAdLoader(String adUnitId, InterstitialAdListener listener) {
             this.adUnitId = adUnitId;
+            this.adListener = listener;
         }
 
         public String getAdUnitId() {
@@ -169,6 +171,7 @@ public class AdsManager {
                     targetAd = null;
                     //// perform your code that you wants todo after ad dismissed or closed
                     onAdClosed();
+                    adListener.onAdDismissedFullScreenContent();
                 }
 
                 @Override
@@ -177,15 +180,16 @@ public class AdsManager {
                     targetAd = null;
                     /// perform your action here when ad will not load
                     onAdError();
+                    adListener.onAdFailedToShowFullScreenContent(adError);
                 }
 
                 @Override
                 public void onAdShowedFullScreenContent() {
                     super.onAdShowedFullScreenContent();
                     targetAd = null;
+                    adListener.onAdShowedFullScreenContent();
                 }
             });
-
         }
 
         public void onAdClosed() {
@@ -265,8 +269,8 @@ public class AdsManager {
                     new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
             MobileAds.setRequestConfiguration(configuration);
         }
-        selectFileToUploadAdLoader = new InterstitialAdLoader(context.getString(R.string.ad_id_uploads_interstitial));
-        albumBrowsingAdLoader = new InterstitialAdLoader(context.getString(R.string.ad_id_album_interstitial));
+        selectFileToUploadAdLoader = new InterstitialAdLoader(context.getString(R.string.ad_id_uploads_interstitial), new InterstitialAdListener(context));
+        albumBrowsingAdLoader = new InterstitialAdLoader(context.getString(R.string.ad_id_album_interstitial), new InterstitialAdListener(context));
         status = STARTED;
     }
 
@@ -534,7 +538,7 @@ public class AdsManager {
                 .build();
     }
 
-    private class InterstitialAdListener extends AdListener {
+    private class InterstitialAdListener extends FullScreenContentCallback {
 
         private final WeakReference<Context> contextRef;
         long startedAt = System.currentTimeMillis();
@@ -550,13 +554,8 @@ public class AdsManager {
         }
 
         @Override
-        public void onAdOpened() {
-            super.onAdOpened();
-        }
-
-        @Override
-        public void onAdClosed() {
-            super.onAdClosed();
+        public void onAdDismissedFullScreenContent() {
+            super.onAdDismissedFullScreenContent();
             if(lastAdPaid == null || !lastAdPaid) {
                 long adShowingFor = System.currentTimeMillis() - startedAt;
                 if (adShowingFor > 8000) {

@@ -146,9 +146,12 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.2.1</item>
+        <item>"Risoluzione del problema:
+             - Il bug corretto provocando erroneamente annunci a schermo intero per mostrare molto più frequentemente del previsto"</item>
         <item>1.5.0.2</item>
-        <item>Risoluzione del problema:
-                 - Crash potenziale fisso</item>
+        <item>"Risoluzione del problema:
+                 - Crash potenziale fisso"</item>
         <item>1.5.0.1</item>
         <item>"Modificare:
                  - Aggiunte ulteriori opzioni di abbonamento per coprire la maggior parte ma non tutte le funzionalità nell\'app a pagamento"</item>

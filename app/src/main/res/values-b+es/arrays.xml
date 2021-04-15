@@ -146,9 +146,12 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.2.1</item>
+        <item>"Arreglo del fallo:
+             - error correcto que causa anuncios de pantalla completa incorrectamente para mostrar mucho más frecuentemente de lo previsto"</item>
         <item>1.5.0.2</item>
-        <item>Arreglo del fallo:
-                 - Choque potencial fijo</item>
+        <item>"Arreglo del fallo:
+                 - Choque potencial fijo"</item>
         <item>1.5.0.1</item>
         <item>"Cambio:
                  - Se agregaron opciones de suscripción adicionales para cubrir la mayoría de las características de la aplicación PAGA, pero no todas las características."</item>
