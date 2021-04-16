@@ -114,20 +114,7 @@ public class AdsManager {
 
     public synchronized void updateShowAdvertsSetting(Context context) {
 
-        String serverAddress = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(getPrefs(context), context);
         showAds = !BuildConfig.PAID_VERSION;
-        if (showAds) {
-            // can we disable the ads another way?
-            if (!serverAddress.equals("")) {
-                try {
-                    String host = URI.create(serverAddress).getHost();
-                    showAds = BuildConfig.DEBUG || !"sail2port.ddns.net".equals(host);
-                } catch (IllegalArgumentException e) {
-                    Logging.log(Log.DEBUG, TAG, "Error parsing URI - adverts enabled");
-                    showAds = true;
-                }
-            }
-        }
 
         if (!appLicensed && showAds && status == STOPPED) {
             status = INITIALISING;
