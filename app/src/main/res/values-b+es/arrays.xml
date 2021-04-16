@@ -146,7 +146,10 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.5.0.2.1</item>
+        <item>1.5.0.4</item>
+        <item>"Arreglo del fallo:
+             - un par de bichos fijados"</item>
+        <item>1.5.0.3</item>
         <item>"Arreglo del fallo:
              - error correcto que causa anuncios de pantalla completa incorrectamente para mostrar mucho más frecuentemente de lo previsto"</item>
         <item>1.5.0.2</item>

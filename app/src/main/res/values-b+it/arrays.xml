@@ -146,7 +146,10 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.5.0.2.1</item>
+        <item>1.5.0.4</item>
+        <item>"Risoluzione del problema:
+             - un paio di bug fissi"</item>
+        <item>1.5.0.3</item>
         <item>"Risoluzione del problema:
              - Il bug corretto provocando erroneamente annunci a schermo intero per mostrare molto più frequentemente del previsto"</item>
         <item>1.5.0.2</item>
