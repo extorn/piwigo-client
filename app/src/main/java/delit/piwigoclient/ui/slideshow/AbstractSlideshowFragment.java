@@ -322,11 +322,12 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
 
-        // overrride the gallery item adapter settings restored with up to date user choices
+        // override the gallery item adapter settings restored with up to date user choices
         boolean shouldShowVideos = BaseSlideshowViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
         // update settings with newest values.
-        galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
-
+        if(galleryItemAdapter != null) {
+            galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
+        }
     }
 
     @Override

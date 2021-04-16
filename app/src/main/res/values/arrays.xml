@@ -250,7 +250,10 @@
         -->
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.5.0.2.1</item>
+        <item>1.5.0.4</item>
+        <item>"Bugfix:
+            - A couple of bugs fixed"</item>
+        <item>1.5.0.3</item>
         <item>"Bugfix:
             - Corrected bug causing full screen adverts incorrectly to show much more frequently than intended"</item>
         <item>1.5.0.2</item>

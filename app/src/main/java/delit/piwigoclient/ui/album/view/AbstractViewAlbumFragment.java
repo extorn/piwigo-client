@@ -744,6 +744,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             sortOrderChanged |= galleryModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
         } catch(IllegalStateException e) {
             galleryModel.removeAllResources();
+
             sortOrderChanged = galleryModel.setRetrieveResourcesInReverseOrder(invertResourceSortOrder);
         }
         if(galleryModel.setResourceSortOrder(AlbumViewPreferences.getResourceSortOrder(prefs, requireContext()))) {

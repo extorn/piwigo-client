@@ -249,7 +249,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
      * @param itemsToAdd
      * @return
      */
-    public int addItemPage(int page, /*int pages, */ int pageSize, List<T> itemsToAdd) {
+    public synchronized int addItemPage(int page, /*int pages, */ int pageSize, List<T> itemsToAdd) {
         List<T> newItems = itemsToAdd;
         if(pageSize < newItems.size()) {
             String errorMessage = String.format(Locale.UK, "Expected page size (%1$d) did not match number of items contained in page (%2$d) for page %3$d of %4$s", pageSize, itemsToAdd.size(), page, Utils.getId(this));
@@ -520,7 +520,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
     }
 
     @Override
-    public T remove(int idx) {
+    public synchronized T remove(int idx) {
         T item = sortedItems.remove(idx);
         items.remove(item);//FIXME - this is potentially not the right item if we used id (not available here!) to find the index and sort order isn't original
         if(!updatePageLoadedCount(idx, -1)) {
@@ -531,7 +531,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
     }
 
     @Override
-    public boolean removeByEquality(T item) {
+    public synchronized boolean removeByEquality(T item) {
         int idx = sortedItems.indexOf(item);
         if(idx >= 0) {
             remove(idx);
@@ -541,7 +541,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
     }
 
     @Override
-    public boolean remove(T item) {
+    public synchronized boolean remove(T item) {
         int idx = getItemIdx(item);
         if(idx >= 0) {
             remove(idx);
@@ -601,7 +601,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
     }
 
     @Override
-    public boolean removeAllByEquality(Collection<T> itemsForDeletion) {
+    public synchronized boolean removeAllByEquality(Collection<T> itemsForDeletion) {
         boolean changed = false;
         for(T item : itemsForDeletion) {
             boolean removed;
@@ -613,7 +613,7 @@ public abstract class PagedList<T extends Parcelable> implements ItemStore<T>, P
         return changed;
     }
 
-    public boolean addMissingItems(Collection<? extends T> newItems) {
+    public synchronized boolean addMissingItems(Collection<? extends T> newItems) {
         if (newItems == null) {
             return false;
         }

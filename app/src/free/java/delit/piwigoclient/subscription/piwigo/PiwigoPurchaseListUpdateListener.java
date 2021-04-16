@@ -19,7 +19,7 @@ import delit.piwigoclient.ui.AdsManager;
 public class PiwigoPurchaseListUpdateListener implements PurchaseListUpdateListener {
     private static final String TAG = "PiwigoPurchaseListUpdateListener";
     private final PiwigoClientPurchaseVerifier purchaseVerifier;
-    private ExecutorManager executorManager;
+    private final ExecutorManager executorManager;
     private SubscriptionManager purchaseManager;
     private final Context context;
 
@@ -54,30 +54,63 @@ public class PiwigoPurchaseListUpdateListener implements PurchaseListUpdateListe
 
     private void handleProductPurchaseComplete(Purchase purchase) {
         if(isPurchaseAuthentic(purchase)) {
+            Logging.log(Log.ERROR, TAG, "Purchase complete : %1%s,%2$s",purchase.getSku(), purchase.getPurchaseToken());
             //TODO is it possible for it to be inauthentic at this point?
             purchaseVerifier.recordPurchase(purchase);
             switch(purchase.getSku()) {
                 case PiwigoClientSubscriptionManager.SUB_REMOVE_ADVERTS_W01:
+                    {
+                        Logging.log(Log.ERROR, TAG, "Recognised purchase" + purchase.getSku());
+                        long expires = PiwigoClientSubscriptionManager.getProductExpiry(purchase);
+                        AdsManager.getInstance(context).setAdvertsDisabled(System.currentTimeMillis() < expires);
+                    }
+                    break;
                 case PiwigoClientSubscriptionManager.SUB_REMOVE_ADVERTS_W04:
-                    long expires = PiwigoClientSubscriptionManager.getProductExpiry(purchase);
-                    AdsManager.getInstance(context).setAdvertsDisabled(System.currentTimeMillis() < expires);
+                    {
+                        Logging.log(Log.ERROR, TAG, "Recognised purchase" + purchase.getSku());
+                        long expires = PiwigoClientSubscriptionManager.getProductExpiry(purchase);
+                        AdsManager.getInstance(context).setAdvertsDisabled(System.currentTimeMillis() < expires);
+                    }
+                    break;
+                case PiwigoClientSubscriptionManager.SUB_ALLOW_LARGE_UPLOADS_M06:
+                    break;
+                case PiwigoClientSubscriptionManager.SUB_ALLOW_LARGE_UPLOADS_W04:
+                    break;
+                case PiwigoClientSubscriptionManager.SUB_RES_DOWNLOAD_M06:
+                    break;
+                case PiwigoClientSubscriptionManager.SUB_TAG_ORPHAN_FAVS_W01:
+                    break;
+                case PiwigoClientSubscriptionManager.SUB_TAG_ORPHAN_FAVS_W04:
                     break;
                 default:
-                    Logging.log(Log.ERROR, TAG, "Unrecognised purchase");
+                    Logging.log(Log.ERROR, TAG, "Unrecognised purchase" + purchase.getSku());
             }
         } else {
-            Logging.log(Log.ERROR, TAG, "Purchase could not be verified as authentic");
+            Logging.log(Log.ERROR, TAG, "Purchase could not be verified as authentic " + purchase.getSku());
         }
     }
 
-    private void handleProductPurchaseRemoved(Purchase purchase) {
+    private void handleProductPurchaseRemoved(@NonNull Purchase purchase) {
+        Logging.log(Log.ERROR, TAG, "Purchase removed : %1%s,%2$s",purchase.getSku(), purchase.getPurchaseToken());
         switch(purchase.getSku()) {
             case PiwigoClientSubscriptionManager.SUB_REMOVE_ADVERTS_W01:
+                AdsManager.getInstance(context).setAdvertsDisabled(false);
+                break;
             case PiwigoClientSubscriptionManager.SUB_REMOVE_ADVERTS_W04:
                 AdsManager.getInstance(context).setAdvertsDisabled(false);
                 break;
+            case PiwigoClientSubscriptionManager.SUB_ALLOW_LARGE_UPLOADS_M06:
+                break;
+            case PiwigoClientSubscriptionManager.SUB_ALLOW_LARGE_UPLOADS_W04:
+                break;
+            case PiwigoClientSubscriptionManager.SUB_RES_DOWNLOAD_M06:
+                break;
+            case PiwigoClientSubscriptionManager.SUB_TAG_ORPHAN_FAVS_W01:
+                break;
+            case PiwigoClientSubscriptionManager.SUB_TAG_ORPHAN_FAVS_W04:
+                break;
             default:
-                Logging.log(Log.ERROR, TAG, "Unrecognised purchase");
+                Logging.log(Log.ERROR, TAG, "Unrecognised purchase : " + purchase.getSku());
         }
     }
 
@@ -104,7 +137,7 @@ public class PiwigoPurchaseListUpdateListener implements PurchaseListUpdateListe
 
     @Override
     public void onProductPurchaseRemoved(@NonNull Purchase purchase) {
-        throw new IllegalStateException("No product purchases are currently accepted");
+        throw new IllegalStateException("No product purchases are currently accepted: " + purchase.getSku());
     }
 
     @Override
@@ -117,7 +150,7 @@ public class PiwigoPurchaseListUpdateListener implements PurchaseListUpdateListe
     }
 
     @Override
-        public void onProductPurchaseAdded(@NonNull Purchase purchase) {
-            throw new IllegalStateException("No product purchases are currently accepted");
-        }
+    public void onProductPurchaseAdded(@NonNull Purchase purchase) {
+        throw new IllegalStateException("No product purchases are currently accepted: " + purchase.getSku());
     }
+}
