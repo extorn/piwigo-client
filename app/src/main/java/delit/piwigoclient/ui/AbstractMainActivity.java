@@ -306,9 +306,8 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
                     CategoryItem nextAlbumToShow = ((ViewAlbumFragment<?,?>) currentFragment).getParentAlbum();
                     if (nextAlbumToShow != null) {
                         Logging.log(Log.INFO, TAG, "removing from activity to show next (parent) album");
-                        getSupportFragmentManager().popBackStack();
                         // open this fragment again, but with new album
-                        showGallery(nextAlbumToShow);
+                        showGallery(nextAlbumToShow, true);
                         blockDefaultBackOperation = true;
                     }
                 }
@@ -443,6 +442,10 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
     }
 
     private void showGallery(final CategoryItem gallery) {
+        showGallery(gallery, false);
+    }
+
+    private void showGallery(final CategoryItem gallery, boolean forceReplace) {
         boolean restore = false;
         if (gallery != null && gallery.isRoot()) {
             // check if we've shown any albums before. If so, pop everything off the stack.
@@ -460,7 +463,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         if (restore) {
             showFragmentNow(new ViewAlbumFragment<>(), !gallery.isRoot());
         } else {
-            showFragmentNow(ViewAlbumFragment.newInstance(gallery), gallery != null && !gallery.isRoot());
+            showFragmentNow(ViewAlbumFragment.newInstance(gallery), gallery != null && !gallery.isRoot(), forceReplace);
         }
     }
 

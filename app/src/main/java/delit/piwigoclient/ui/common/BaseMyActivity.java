@@ -593,6 +593,10 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
     }
 
     protected void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
+        showFragmentNow(f, addDuplicatePreviousToBackstack, false);
+    }
+
+    protected void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack, boolean forceReplace) {
 
         Logging.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), Utils.getId(f)));
         checkLicenceIfNeeded();
@@ -607,15 +611,17 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
 
         if (!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
             Logging.log(Log.INFO, TAG, "removing from activity immediately as want to show and dups not allowed");
-            getSupportFragmentManager().popBackStackImmediate();
+            if(!getSupportFragmentManager().popBackStackImmediate()) {
+                // nothing popped.
+            }
         }
 
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        if(getSupportFragmentManager().getFragments().size() > 0) {
+        if(forceReplace || getSupportFragmentManager().getFragments().size() == 0) {
+            tx.replace(R.id.main_view, f, f.getClass().getName());
+        } else {
             tx.addToBackStack(f.getClass().getName());
             tx.add(R.id.main_view, f, f.getClass().getName()); // don't use replace because that causes the view to be recreated each time from scratch
-        } else {
-            tx.replace(R.id.main_view, f, f.getClass().getName());
         }
 
         tx.commit();
