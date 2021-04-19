@@ -133,10 +133,15 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
 
         if(currentProfile == null) {
             currentProfile = ConnectionPreferences.getActiveProfile();
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(currentProfile);
-            if (sessionDetails == null || !sessionDetails.isCurrentUserAuthorisedToUpload()) {
-                onUserLacksPermissionToUpload();
-            }
+        }
+        PiwigoSessionDetails sessionDetails = null;
+        if(currentProfile != null) {
+            sessionDetails = PiwigoSessionDetails.getInstance(currentProfile);
+        }
+        if(currentProfile != null && (sessionDetails == null || !sessionDetails.isFullyLoggedIn())) {
+            runLogin(currentProfile);
+        } else {
+            onUserLacksPermissionToUpload();
         }
     }
 

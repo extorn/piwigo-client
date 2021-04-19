@@ -79,7 +79,7 @@ public class SelectServerConnectionDetailsDialogHelper {
         builder1.setPositiveButton(R.string.button_ok, (dialog, which) -> onClickOkayButton(listener));
         builder1.setCancelable(true);
         AlertDialog dialog = builder1.create();
-        loadListValues(context, selectedItem);
+        loadListValues(builder1.getContext(), selectedItem);
         return dialog;
     }
 
@@ -133,7 +133,7 @@ public class SelectServerConnectionDetailsDialogHelper {
         return connections;
     }
 
-    public View createDialogView(Context context, @Nullable ViewGroup rootView) {
+    public View createDialogView(@NonNull Context context, @Nullable ViewGroup rootView) {
         View view = LayoutInflater.from(context).inflate(R.layout.layout_fullsize_list, rootView, false);
         AdView adView = view.findViewById(R.id.list_adView);
         if (AdsManager.getInstance(context).shouldShowAdverts()) {
