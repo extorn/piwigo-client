@@ -372,8 +372,8 @@ public class AdsManager {
         }
 
         @Override
-        public void onAdFailedToLoad(int var1) {
-            if (var1 == 3) {
+        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+            if (loadAdError.getCode() == 3) {
                 retries++;
             }
             if (retries < 3) {
