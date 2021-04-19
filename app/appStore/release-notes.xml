@@ -1,40 +1,50 @@
 <en-GB>
 Bugfix:
-- A couple of bugs fixed
+- Login not starting if required when sharing files with the app for upload
+- Back button not working correctly if previously opened folder is automatically opened by the app on start
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Pár chyb
+- Přihlaste se, pokud je to nutné, pokud je to nutné při sdílení souborů s aplikací pro upload
+- tlačítko zpět nefunguje správně, pokud je dříve otevřená složka automaticky otevřena aplikací při startu
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- ein paar Fehler behoben
+- Melden Sie sich bei Bedarf nicht an, wenn Sie Dateien mit der App zum Hochladen teilen
+- Die BACK-Taste funktioniert nicht ordnungsgemäß, wenn zuvor geöffneter Ordner automatisch von der App beim Start geöffnet wird
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- un par de bichos fijados
+- Iniciar sesión No iniciar si es necesario al compartir archivos con la aplicación para cargar
+- Botón Atrás No funciona correctamente Si la aplicación se abre automáticamente a la carpeta previamente abierta.
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- quelques bugs fixés
+- Connectez-vous non en commençant si nécessaire lors du partage des fichiers avec l\'application pour le téléchargement
+- Bouton Back ne fonctionne pas correctement si le dossier précédemment ouvert est automatiquement ouvert par l\'application au début.
 </fr-FR>
 <it-IT>
-Risoluzione del problema:
-- un paio di bug fissi
+Testo = BUGFIX:
+- Accedi Non iniziando se necessario durante la condivisione di file con l\'app per il caricamento
+- Pulsante Indietro Non funziona correttamente Se la cartella aperta in precedenza viene automaticamente aperta dall\'app per iniziare
 </it-IT>
 <ja-JP>
 バグ修正：
-- 修正されたいくつかのバグ
+- アップロードのためのアプリとファイルを共有するときに必要な場合はログインしない
+- 先に開始されたフォルダが開始時に自動的に開かれた場合は、戻るボタンが正しく機能しない
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Een paar bugs gefixeerd
+- Log in niet te beginnen indien nodig bij het delen van bestanden met de app voor upload
+- Back-knop werkt niet correct als de eerder geopende map automatisch wordt geopend door de app bij Start
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Пара ошибок исправлена
+- Логин не начинается при необходимости при совместном использовании файлов с приложением для загрузки
+- Назад кнопка не работает правильно, если ранее открытая папка автоматически открывается приложением при запуске
 </ru-RU>
 <zh-CN>
 错误修正：
-- 修复了几个错误
+- 使用应用程序的应用程序共享文件时，请登录未开始
+- 如果以前打开的文件夹在启动时自动打开，则返回按钮无法正常工作
 </zh-CN>

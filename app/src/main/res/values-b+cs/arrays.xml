@@ -146,6 +146,10 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.5</item>
+        <item>"Oprava chyby:
+             - Přihlaste se, pokud je to nutné, pokud je to nutné při sdílení souborů s aplikací pro upload
+             - tlačítko zpět nefunguje správně, pokud je dříve otevřená složka automaticky otevřena aplikací při startu"</item>
         <item>1.5.0.4</item>
         <item>"Oprava chyby:
              - Pár chyb"</item>

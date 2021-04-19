@@ -146,6 +146,10 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.5</item>
+        <item>"Bugfix:
+             - Log in niet te beginnen indien nodig bij het delen van bestanden met de app voor upload
+             - Back-knop werkt niet correct als de eerder geopende map automatisch wordt geopend door de app bij Start"</item>
         <item>1.5.0.4</item>
         <item>"Bugfix:
              - Een paar bugs gefixeerd"</item>
