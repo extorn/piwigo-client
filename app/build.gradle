@@ -226,8 +226,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:20.0.0'
 //    implementation 'com.google.android.gms:play-services-ads-lite:19.8.0'
     implementation 'com.google.android.ads.consent:consent-library:1.0.8'
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.13.3'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.13.3'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.8.2'//2.13.3 will require api alterations and testing.
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.2'
     //implementation 'com.google.android.exoplayer:exoplayer-dash:2.8.2'
     //implementation 'com.google.android.exoplayer:exoplayer-hls:2.8.2'
     //implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.8.2'
