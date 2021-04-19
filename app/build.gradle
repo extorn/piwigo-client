@@ -31,8 +31,8 @@ android {
 
     defaultConfig {
         //NB: non standard fields must be defined (def)
-        versionCode 413
-        versionName "1.5.0.4"
+        versionCode 415
+        versionName "1.5.0.5"
         applicationId "delit.piwigoclient"
 
         def latestPiwigoClientWsExtsPluginVersion = "1.0.17"
@@ -223,11 +223,11 @@ dependencies {
     //implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
     // drawers, snackbars etc
     implementation 'com.google.android.material:material:1.3.0'
-    implementation 'com.google.android.gms:play-services-ads:19.8.0'
+    implementation 'com.google.android.gms:play-services-ads:20.0.0'
 //    implementation 'com.google.android.gms:play-services-ads-lite:19.8.0'
     implementation 'com.google.android.ads.consent:consent-library:1.0.8'
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.8.2'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.2'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.13.3'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.13.3'
     //implementation 'com.google.android.exoplayer:exoplayer-dash:2.8.2'
     //implementation 'com.google.android.exoplayer:exoplayer-hls:2.8.2'
     //implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.8.2'
@@ -247,7 +247,7 @@ dependencies {
     // vector graphics support
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     // annotations support
-    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.annotation:annotation:1.2.0'
     // custom tab support
     implementation 'androidx.browser:browser:1.3.0'
     //EXIF Support
@@ -256,7 +256,7 @@ dependencies {
     implementation 'androidx.mediarouter:mediarouter:1.2.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.preference:preference:1.1.1'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
     // v14 stuff
     implementation 'androidx.transition:transition:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout-solver:2.0.4' //2.0.0-alpha2
