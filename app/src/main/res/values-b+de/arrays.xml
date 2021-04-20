@@ -146,7 +146,7 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.5.0.5</item>
+        <item>1.5.0.6</item>
         <item>"Fehlerbehebung:
              - Melden Sie sich bei Bedarf nicht an, wenn Sie Dateien mit der App zum Hochladen teilen
              - Die BACK-Taste funktioniert nicht ordnungsgemäß, wenn zuvor geöffneter Ordner automatisch von der App beim Start geöffnet wird"</item>

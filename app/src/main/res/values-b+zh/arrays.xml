@@ -146,7 +146,7 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.5.0.5</item>
+        <item>1.5.0.6</item>
         <item>"错误修正：
               - 使用应用程序的应用程序共享文件时，请登录未开始
               - 如果以前打开的文件夹在启动时自动打开，则返回按钮无法正常工作"</item>

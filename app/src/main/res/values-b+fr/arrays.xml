@@ -146,7 +146,7 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.5.0.5</item>
+        <item>1.5.0.6</item>
         <item>"Correction d\'un bug:
              - Connectez-vous non en commençant si nécessaire lors du partage des fichiers avec l\'application pour le téléchargement
              - Bouton Back ne fonctionne pas correctement si le dossier précédemment ouvert est automatiquement ouvert par l\'application au début."</item>

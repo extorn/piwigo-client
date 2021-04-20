@@ -140,7 +140,7 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
         }
         if(currentProfile != null && (sessionDetails == null || !sessionDetails.isFullyLoggedIn())) {
             runLogin(currentProfile);
-        } else {
+        } else if(sessionDetails.isFullyLoggedIn() && !sessionDetails.isCurrentUserAuthorisedToUpload()) {
             onUserLacksPermissionToUpload();
         }
     }
