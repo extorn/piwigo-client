@@ -1,7 +1,6 @@
 package delit.piwigoclient.business.video.capture;
 
 import android.content.Context;
-import android.media.MediaCodec;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -10,13 +9,13 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.audio.AudioCapabilities;
 import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.audio.DefaultAudioSink;
 import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
-import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.mediacodec.MediaCodecAdapter;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.util.MediaClock;
 
@@ -32,13 +31,8 @@ public class AudioTrackDumpingRenderer extends MediaCodecAudioRenderer {
     private final boolean VERBOSE = false;
     private long lastPosition = -1;
 
-    public AudioTrackDumpingRenderer(Context context, MediaCodecSelector mediaCodecSelector, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable AudioRendererEventListener eventListener) {
-        super(context, mediaCodecSelector, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, new DefaultAudioSink(AudioCapabilities.getCapabilities(context), new AudioProcessor[0]));
-    }
-
-    @Override
-    protected boolean allowPassthrough(String mimeType) {
-        return true;
+    public AudioTrackDumpingRenderer(Context context, MediaCodecSelector mediaCodecSelector, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable AudioRendererEventListener eventListener) {
+        super(context, mediaCodecSelector, playClearSamplesWithoutKeys, eventHandler, eventListener, new DefaultAudioSink(AudioCapabilities.getCapabilities(context), new AudioProcessor[0]));
     }
 
     @Override
@@ -58,7 +52,19 @@ public class AudioTrackDumpingRenderer extends MediaCodecAudioRenderer {
     }
 
     @Override
-    protected boolean processOutputBuffer(long positionUs, long elapsedRealtimeUs, MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean shouldSkip) {
+    protected boolean processOutputBuffer(
+            long positionUs,
+            long elapsedRealtimeUs,
+            @Nullable MediaCodecAdapter codec,
+            @Nullable ByteBuffer buffer,
+            int bufferIndex,
+            int bufferFlags,
+            int sampleCount,
+            long bufferPresentationTimeUs,
+            boolean isDecodeOnlyBuffer,
+            boolean isLastBuffer,
+            Format format)
+            throws ExoPlaybackException {
         if (bufferPresentationTimeUs > positionUs + 500000 || positionUs == lastPosition) {
             lastPosition = positionUs;
             if (VERBOSE) {

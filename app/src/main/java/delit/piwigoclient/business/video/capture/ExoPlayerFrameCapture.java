@@ -12,22 +12,20 @@ import androidx.annotation.RequiresApi;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.ExoTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 
 import java.lang.ref.WeakReference;
@@ -70,7 +68,7 @@ public class ExoPlayerFrameCapture {
 
     private class SingletonExoPlayerFrameCaptureThread extends ExoPlayerFrameCaptureThread {
         private Lock lock = new ReentrantLock();
-        private boolean waitForLock = false;
+        private boolean waitForLock;
 
         public SingletonExoPlayerFrameCaptureThread(Context context, FrameHandler frameHandler, boolean waitForLock) {
             super(context, frameHandler);
@@ -116,7 +114,7 @@ public class ExoPlayerFrameCapture {
         }
     }
 
-    private static class PlayerMonitor extends Player.DefaultEventListener {
+    private static class PlayerMonitor implements Player.EventListener {
         private final FrameHandler frameHandler;
         private final Looper looper;
         private SimpleExoPlayer player;
@@ -137,7 +135,7 @@ public class ExoPlayerFrameCapture {
         }
 
         @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        public void onPlaybackStateChanged(int playbackState) {
             if (!exiting && (frameHandler.isCaptureComplete() || playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE)) {
                 exiting = true;
                 new Thread() {
@@ -157,17 +155,10 @@ public class ExoPlayerFrameCapture {
                     }
                 }.start();
             }
-            super.onPlayerStateChanged(playWhenReady, playbackState);
         }
 
         @Override
         public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-            super.onTracksChanged(trackGroups, trackSelections);
-        }
-
-        @Override
-        public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
-            super.onTimelineChanged(timeline, manifest, reason);
         }
     }
 
@@ -286,24 +277,25 @@ public class ExoPlayerFrameCapture {
         }
 
         private void invokeFrameCapture() {
-            TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
+            ExoTrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory();
             LoadControl loadControl = new DefaultLoadControl();
-            TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+            TrackSelector trackSelector = new DefaultTrackSelector(getContext(), videoTrackSelectionFactory);
 
             Uri inputFile = frameHandler.getVideoFileUri();
             FrameCaptureRenderersFactory renderersFactory = new FrameCaptureRenderersFactory(getContext(), frameHandler);
-            player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+            player = new SimpleExoPlayer.Builder(getContext(), renderersFactory).setTrackSelector(trackSelector).setLoadControl(loadControl).build();
+            player.setThrowsWhenUsingWrongThread(false);
             // no errors will get caught by the listener until this point.
             frameHandler.setListener(new InternalFrameCaptureListener(player, frameHandler));
 
             PlayerMonitor playerMonitor = new PlayerMonitor(player, frameHandler, Looper.myLooper(), inputFile);
             player.addListener(playerMonitor); // watch for errors and report them
-            ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new DefaultDataSourceFactory(getContext(), "PiwigoCompression"));
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-            factory.setExtractorsFactory(extractorsFactory);
+            ProgressiveMediaSource.Factory factory = new ProgressiveMediaSource.Factory(new DefaultDataSourceFactory(getContext(), "PiwigoCompression"), extractorsFactory);
             frameHandler.getListener().onCaptureStarted(inputFile);
-            ExtractorMediaSource videoSource = factory.createMediaSource(inputFile);
-            player.prepare(videoSource);
+            ProgressiveMediaSource videoSource = factory.createMediaSource(new MediaItem.Builder().setUri(inputFile).build());
+            player.setMediaSource(videoSource);
+            player.prepare();
             PlaybackParameters playbackParams = new PlaybackParameters(1.0f);
             player.setPlaybackParameters(playbackParams);
             player.seekTo(Math.min(1000, player.getDuration()));

@@ -3,7 +3,6 @@ package delit.piwigoclient.business.video.capture;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Handler;
@@ -13,14 +12,14 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.FormatHolder;
+import com.google.android.exoplayer2.Renderer;
+import com.google.android.exoplayer2.decoder.DecoderReuseEvaluation;
+import com.google.android.exoplayer2.mediacodec.MediaCodecAdapter;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
-import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
@@ -44,18 +43,27 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
     private MediaFormat mediaFormat;
     private FrameHandler frameListener;
     private int pendingRotationDegrees;
+    private Format inputFormat;
 
-    public VideoFrameCaptureRenderer(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify, FrameHandler frameListener) {
-        super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, maxDroppedFramesToNotify);
+    public VideoFrameCaptureRenderer(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify, FrameHandler frameListener) {
+        super(context, mediaCodecSelector, allowedJoiningTimeMs, playClearSamplesWithoutKeys, eventHandler, eventListener, maxDroppedFramesToNotify);
         this.frameListener = frameListener;
     }
 
     @Override
     protected void onDisabled() {
+        inputFormat = null;
         super.onDisabled();
         releaseTranscoder(); // can't do when we release the codec as that is called when we set surface (in configureTranscoder)
         ht.quitSafely();
         Log.d(TAG, "Codec released");
+    }
+
+    @Override
+    protected DecoderReuseEvaluation onInputFormatChanged(FormatHolder formatHolder) throws ExoPlaybackException {
+        DecoderReuseEvaluation result = super.onInputFormatChanged(formatHolder);
+        this.inputFormat = formatHolder.format;
+        return result;
     }
 
     @Override
@@ -64,12 +72,13 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
     }
 
     @Override
-    protected boolean shouldDropBuffersToKeyframe(long earlyUs, long elapsedRealtimeUs) {
+    protected boolean shouldDropBuffersToKeyframe(
+            long earlyUs, long elapsedRealtimeUs, boolean isLastBuffer) {
         return false; // never drop a buffer
     }
 
     @Override
-    protected void dropOutputBuffer(MediaCodec codec, int index, long presentationTimeUs) {
+    protected void dropOutputBuffer(MediaCodecAdapter codec, int index, long presentationTimeUs) {
         if (VERBOSE_LOGGING) {
             Log.w(TAG, "Dropping output buffer at position " + presentationTimeUs);
         }
@@ -77,12 +86,7 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
     }
 
     @Override
-    protected boolean shouldDropOutputBuffer(long earlyUs, long elapsedRealtimeUs) {
-        return false; // never drop a buffer
-    }
-
-    @Override
-    protected void skipOutputBuffer(MediaCodec codec, int index, long presentationTimeUs) {
+    protected void skipOutputBuffer(MediaCodecAdapter codec, int index, long presentationTimeUs) {
         // never skip a buffer
     }
 
@@ -108,7 +112,8 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
      * @param index              The index of the output buffer to drop.
      * @param presentationTimeUs The presentation time of the output buffer, in microseconds.
      */
-    protected void renderOutputBuffer(MediaCodec codec, int index, long presentationTimeUs) {
+    @Override
+    protected void renderOutputBuffer(MediaCodecAdapter codec, int index, long presentationTimeUs) {
         super.renderOutputBuffer(codec, index, presentationTimeUs);
         processDecodedSurfaceData(presentationTimeUs);
     }
@@ -123,8 +128,9 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
      * @param releaseTimeNs      The wallclock time at which the frame should be displayed, in nanoseconds.
      */
     @TargetApi(21)
+    @Override
     protected void renderOutputBufferV21(
-            MediaCodec codec, int index, long presentationTimeUs, long releaseTimeNs) {
+            MediaCodecAdapter codec, int index, long presentationTimeUs, long releaseTimeNs) {
         if (VERBOSE_LOGGING) {
             Log.e(TAG, "Rendering to encoder input surface " + presentationTimeUs + " " + releaseTimeNs);
         }
@@ -183,25 +189,31 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
         } catch (ExoPlaybackException e) {
             throw e;
         } catch (Exception e) {
-            throw ExoPlaybackException.createForRenderer(e, getIndex());
+            throw createRendererException(e, inputFormat);
         }
     }
 
     @Override
-    protected void onEnabled(boolean joining) throws ExoPlaybackException {
+    protected void onEnabled(boolean joining, boolean mayRenderStartOfStream) throws ExoPlaybackException {
         try {
-            super.onEnabled(joining);
+            super.onEnabled(joining, mayRenderStartOfStream);
             ht.start();
         } catch (ExoPlaybackException e) {
             throw e;
         } catch (Exception e) {
-            throw ExoPlaybackException.createForRenderer(e, getIndex());
+            throw createRendererException(e, inputFormat);
         }
     }
 
     @Override
-    protected MediaFormat getMediaFormat(Format format, CodecMaxValues codecMaxValues, boolean deviceNeedsAutoFrcWorkaround, int tunnelingAudioSessionId) {
-        MediaFormat inputMediaFormat = super.getMediaFormat(format, codecMaxValues, deviceNeedsAutoFrcWorkaround, tunnelingAudioSessionId);
+    protected MediaFormat getMediaFormat(
+            Format format,
+            String codecMimeType,
+            CodecMaxValues codecMaxValues,
+            float codecOperatingRate,
+            boolean deviceNeedsNoPostProcessWorkaround,
+            int tunnelingAudioSessionId) {
+        MediaFormat inputMediaFormat = super.getMediaFormat(format, codecMimeType, codecMaxValues, codecOperatingRate, deviceNeedsNoPostProcessWorkaround, tunnelingAudioSessionId);
         this.mediaFormat = inputMediaFormat;
 
         if (inputMediaFormat.containsKey(KEY_ROTATION)) {
@@ -222,13 +234,6 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
         }
 
         return inputMediaFormat;
-    }
-
-    @Override
-    protected MediaCodecInfo getDecoderInfo(MediaCodecSelector mediaCodecSelector, Format format, boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
-        MediaCodecInfo info = super.getDecoderInfo(mediaCodecSelector, format, requiresSecureDecoder);
-//        initialiseOutputSurface(format.width, format.height);
-        return info;
     }
 
     @Override
@@ -253,7 +258,7 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
 //            decoderOutputSurface = new OutputSurface(width, height, new Handler(ht.getLooper()));
             // ensure the decoded data gets written to this surface
             try {
-                handleMessage(C.MSG_SET_SURFACE, decoderOutputSurface.getSurface());
+                handleMessage(Renderer.MSG_SET_SURFACE, decoderOutputSurface.getSurface());
             } catch (ExoPlaybackException e) {
                 // this shouldn't ever occur as its an internal well used library call
                 throw new RuntimeException("Error setting decoder output surface", e);

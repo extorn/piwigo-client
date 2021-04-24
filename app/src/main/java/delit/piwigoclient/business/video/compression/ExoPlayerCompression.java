@@ -16,17 +16,17 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.ExoTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -556,9 +556,13 @@ public class ExoPlayerCompression {
         }
 
         private void invokeCompressor(CompressionParameters compressionSettings) throws IOException {
-            TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
+            if(!compressionSettings.isAddAudioTrack() && !compressionSettings.isAddVideoTrack()) {
+                throw new IllegalArgumentException(context.getString(R.string.video_compression_settings_invalid));
+            }
+            DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder(context).build();
+            ExoTrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory();
             LoadControl loadControl = new DefaultLoadControl();
-            TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+            TrackSelector trackSelector = new DefaultTrackSelector(context, videoTrackSelectionFactory);
 
             CompressionListener listenerWrapper = new InternalCompressionListener(listener, compressionSettings.isEnableFastStart());
 
@@ -566,15 +570,16 @@ public class ExoPlayerCompression {
             mediaMuxerControl = new MediaMuxerControl(getContext(), inputFile, outputFile, listenerWrapper);
 
             CompressionRenderersFactory renderersFactory = new CompressionRenderersFactory(getContext(), mediaMuxerControl, compressionSettings);
-            player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+            player = new SimpleExoPlayer.Builder(getContext(), renderersFactory).setTrackSelector(trackSelector).setLoadControl(loadControl).build();
+            player.setThrowsWhenUsingWrongThread(false);
             PlayerMonitor playerMonitor = new PlayerMonitor(player, mediaMuxerControl, listenerWrapper, Looper.myLooper());
             player.addListener(playerMonitor); // watch for errors and report them
-            ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new DefaultDataSourceFactory(getContext(), "PiwigoCompression"));
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-            factory.setExtractorsFactory(extractorsFactory);
+            ProgressiveMediaSource.Factory factory = new ProgressiveMediaSource.Factory(new DefaultDataSourceFactory(getContext(), "PiwigoCompression"), extractorsFactory);
             listenerWrapper.onCompressionStarted(inputFile, outputFile);
-            ExtractorMediaSource videoSource = factory.createMediaSource(inputFile);
-            player.prepare(videoSource);
+            ProgressiveMediaSource videoSource = factory.createMediaSource(new MediaItem.Builder().setUri(inputFile).build());
+            player.setMediaSource(videoSource);
+            player.prepare();
             PlaybackParameters playbackParams = new PlaybackParameters(1.0f);
             player.setPlaybackParameters(playbackParams);
             player.setPlayWhenReady(true);

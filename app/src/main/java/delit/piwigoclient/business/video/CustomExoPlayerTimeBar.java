@@ -190,7 +190,7 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
     private final Formatter formatter;
     private final Runnable stopScrubbingRunnable;
     private final CopyOnWriteArraySet<OnScrubListener> listeners;
-
+    private final float density;
     private int keyCountIncrement;
     private long keyTimeIncrement;
     private int lastCoarseScrubXPosition;
@@ -230,6 +230,7 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
         // Calculate the dimensions and paints for drawn elements.
         Resources res = context.getResources();
         DisplayMetrics displayMetrics = res.getDisplayMetrics();
+        this.density = displayMetrics.density;
         fineScrubYThreshold = dpToPx(displayMetrics, FINE_SCRUB_Y_THRESHOLD_DP);
         int defaultBarHeight = dpToPx(displayMetrics, DEFAULT_BAR_HEIGHT_DP);
         int defaultTouchTargetHeight = dpToPx(displayMetrics, DEFAULT_TOUCH_TARGET_HEIGHT_DP);
@@ -458,6 +459,11 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
             stopScrubbing(true);
         }
         update();
+    }
+
+    public long getPreferredUpdateDelay() {
+        int timeBarWidthDp = pxToDp(this.density, this.progressBar.width());
+        return timeBarWidthDp != 0 && this.duration != 0L && this.duration != -9223372036854775807L ? this.duration / (long)timeBarWidthDp : 9223372036854775807L;
     }
 
     @Override
@@ -855,5 +861,9 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
     public void updateCachedContent(CachedContent cacheFileContent, long clipDurationBytes) {
         this.locallyCachedRanges = cacheFileContent.getCachedRanges();
         this.durationBytes = clipDurationBytes;
+    }
+
+    private static int pxToDp(float density, int px) {
+        return (int)((float)px / density);
     }
 }

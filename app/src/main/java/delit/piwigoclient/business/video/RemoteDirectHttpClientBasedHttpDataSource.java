@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+import androidx.core.util.Predicate;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.exoplayer2.C;
@@ -14,7 +16,6 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
-import com.google.android.exoplayer2.util.Predicate;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.DataAsyncHttpResponseHandler;
 
@@ -51,7 +52,7 @@ import delit.piwigoclient.util.UriUtils;
  * <p>
  * By default this implementation will not follow cross-protocol redirects (i.e. redirects from
  * HTTP to HTTPS or vice versa). Cross-protocol redirects can be enabled by using the
- * {@link #RemoteDirectHttpClientBasedHttpDataSource(Context, String, Predicate, TransferListener, int, int,
+ * {@link #RemoteDirectHttpClientBasedHttpDataSource(Context, String, int, int,
  * RequestProperties)} constructor and passing {@code true} as the second last argument.
  */
 public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource {
@@ -73,9 +74,9 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private final int connectTimeoutMillis;
     private final int readTimeoutMillis;
     private final String userAgent;
-    private final Predicate<String> contentTypePredicate;
+    private Predicate<String> contentTypePredicate;
     private final RequestProperties requestProperties;
-    private final TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener;
+    private TransferListener listener;
     private final Context context;
     private final boolean logEnabled = false;
     private final SharedPreferences sharedPrefs;
@@ -96,54 +97,29 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private ConnectionPreferences.ProfilePreferences activeConnectionPreferences;
     private boolean performUriPathSegmentEncoding;
 
-
     /**
      * @param userAgent            The User-Agent string that should be used.
-     * @param contentTypePredicate An optional {@link Predicate}. If a content type is rejected by the
-     *                             predicate then a {@link HttpDataSource.InvalidContentTypeException} is thrown from
-     *                             {@link #open(DataSpec)}.
      */
-    public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate) {
-        this(context, userAgent, contentTypePredicate, null);
-    }
-
-    /**
-     * @param userAgent            The User-Agent string that should be used.
-     * @param contentTypePredicate An optional {@link Predicate}. If a content type is rejected by the
-     *                             predicate then a {@link HttpDataSource.InvalidContentTypeException} is thrown from
-     *                             {@link #open(DataSpec)}.
-     * @param listener             An optional listener.
-     */
-    public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate,
-                                                     TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener) {
-        this(context, userAgent, contentTypePredicate, listener, DEFAULT_CONNECT_TIMEOUT_MILLIS,
+    public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent) {
+        this(context, userAgent, DEFAULT_CONNECT_TIMEOUT_MILLIS,
                 DEFAULT_READ_TIMEOUT_MILLIS);
     }
 
     /**
      * @param userAgent            The User-Agent string that should be used.
-     * @param contentTypePredicate An optional {@link Predicate}. If a content type is rejected by the
-     *                             predicate then a {@link HttpDataSource.InvalidContentTypeException} is thrown from
-     *                             {@link #open(DataSpec)}.
-     * @param listener             An optional listener.
      * @param connectTimeoutMillis The connection timeout, in milliseconds. A timeout of zero is
      *                             interpreted as an infinite timeout.
      * @param readTimeoutMillis    The read timeout, in milliseconds. A timeout of zero is interpreted
      *                             as an infinite timeout.
      */
-    public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate,
-                                                     TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener, int connectTimeoutMillis,
-                                                     int readTimeoutMillis) {
-        this(context, userAgent, contentTypePredicate, listener, connectTimeoutMillis, readTimeoutMillis,
+    public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent,
+                                                     int connectTimeoutMillis, int readTimeoutMillis) {
+        this(context, userAgent, connectTimeoutMillis, readTimeoutMillis,
                 null);
     }
 
     /**
      * @param userAgent                The User-Agent string that should be used.
-     * @param contentTypePredicate     An optional {@link Predicate}. If a content type is rejected by the
-     *                                 predicate then a {@link HttpDataSource.InvalidContentTypeException} is thrown from
-     *                                 {@link #open(DataSpec)}.
-     * @param listener                 An optional listener.
      * @param connectTimeoutMillis     The connection timeout, in milliseconds. A timeout of zero is
      *                                 interpreted as an infinite timeout. Pass {@link #DEFAULT_CONNECT_TIMEOUT_MILLIS} to use
      *                                 the default value.
@@ -152,19 +128,22 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
      * @param defaultRequestProperties The default request properties to be sent to the server as
      *                                 HTTP headers or {@code null} if not required.
      */
-    public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate,
-                                                     TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener, int connectTimeoutMillis,
+    public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent,
+                                                     int connectTimeoutMillis,
                                                      int readTimeoutMillis,
                                                      RequestProperties defaultRequestProperties) {
         this.userAgent = Assertions.checkNotEmpty(userAgent);
-        this.contentTypePredicate = contentTypePredicate;
-        this.listener = listener;
         this.requestProperties = new RequestProperties();
         this.connectTimeoutMillis = connectTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
         this.context = context;
         this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         startClient();
+    }
+
+    @Override
+    public void addTransferListener(TransferListener transferListener) {
+        this.listener = transferListener;
     }
 
     public void setDownloadListener(DownloadListener downloadListener) {
@@ -176,6 +155,10 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             activeConnectionPreferences = ConnectionPreferences.getPreferences(null, sharedPrefs, context);
             client = HttpClientFactory.getInstance(context).getVideoDownloadSyncHttpClient(activeConnectionPreferences, context);
         }
+    }
+
+    public void setContentTypePredicate(@Nullable Predicate<String> contentTypePredicate) {
+        this.contentTypePredicate = contentTypePredicate;
     }
 
     @Override
@@ -190,6 +173,11 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             }
             return Uri.parse(header.getValue());
         }
+    }
+
+    @Override
+    public int getResponseCode() {
+        return httpResponse == null || httpResponse.getStatusLine() == null || httpResponse.getStatusLine().getStatusCode() <= 0 ? -1 : httpResponse.getStatusLine().getStatusCode();
     }
 
     @Override
@@ -260,7 +248,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         // Check for a valid content type.
         Header contentTypeHeader = httpResponse.getEntity().getContentType();
         String contentType = contentTypeHeader.getValue();
-        if (contentTypePredicate != null && !contentTypePredicate.evaluate(contentType)) {
+        if (contentTypePredicate != null && !contentTypePredicate.test(contentType)) {
             closeConnectionQuietly();
             throw new InvalidContentTypeException(contentType, dataSpec);
         }
@@ -297,7 +285,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
 
         opened = true;
         if (listener != null) {
-            listener.onTransferStart(this, dataSpec);
+            listener.onTransferStart(this, dataSpec, true);
         }
 
         return bytesToRead;
@@ -344,7 +332,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             if (opened) {
                 opened = false;
                 if (listener != null) {
-                    listener.onTransferEnd(this);
+                    listener.onTransferEnd(this, dataSpec, true);
                 }
             }
         }
@@ -388,24 +376,22 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
      */
     private void makeConnection(DataSpec dataSpec) throws IOException {
         URL url = new URL(dataSpec.uri.toString());
-        byte[] postBody = dataSpec.postBody;
         long position = dataSpec.position;
         long length = dataSpec.length;
         boolean allowGzip = dataSpec.isFlagSet(DataSpec.FLAG_ALLOW_GZIP);
 
-        makeConnection(url, postBody, position, length, allowGzip);
+        makeConnection(url, position, length, allowGzip);
     }
 
     /**
      * Configures a connection and opens it.
      *
      * @param url       The url to connect to.
-     * @param postBody  The body data for a POST request.
      * @param position  The byte offset of the requested data.
      * @param length    The length of the requested data, or {@link C#LENGTH_UNSET}.
      * @param allowGzip Whether to allow the use of gzip.
      */
-    private void makeConnection(URL url, byte[] postBody, long position,
+    private void makeConnection(URL url, long position,
                                 long length, boolean allowGzip) {
 
         client.setConnectTimeout(connectTimeoutMillis);
@@ -542,7 +528,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             downloadedBytesSinceLastReport += read;
             bytesSkipped += read;
             if (listener != null) {
-                listener.onBytesTransferred(this, read);
+                listener.onBytesTransferred(this, dataSpec, true, read);
             }
             if (downloadListener != null) {
                 long now = System.currentTimeMillis();
@@ -606,7 +592,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
 
         bytesRead += read;
         if (listener != null) {
-            listener.onBytesTransferred(this, read);
+            listener.onBytesTransferred(this, dataSpec, true, read);
         }
         if (downloadListener != null) {
             downloadedBytesSinceLastReport += read;

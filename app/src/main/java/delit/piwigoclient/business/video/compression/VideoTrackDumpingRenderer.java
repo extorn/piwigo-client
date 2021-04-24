@@ -10,9 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
-import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.mediacodec.MediaCodecAdapter;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.util.MediaClock;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
@@ -27,8 +27,8 @@ public class VideoTrackDumpingRenderer extends MediaCodecVideoRenderer {
     private final boolean VERBOSE = false;
     private final MediaMuxerControl mediaMuxerControl;
 
-    public VideoTrackDumpingRenderer(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify, MediaMuxerControl mediaMuxerControl) {
-        super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, maxDroppedFramesToNotify);
+    public VideoTrackDumpingRenderer(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify, MediaMuxerControl mediaMuxerControl) {
+        super(context, mediaCodecSelector, allowedJoiningTimeMs, playClearSamplesWithoutKeys, eventHandler, eventListener, maxDroppedFramesToNotify);
         this.mediaMuxerControl = mediaMuxerControl;
     }
 
@@ -41,7 +41,7 @@ public class VideoTrackDumpingRenderer extends MediaCodecVideoRenderer {
     }
 
     @Override
-    protected void onQueueInputBuffer(DecoderInputBuffer buffer) {
+    protected void onQueueInputBuffer(DecoderInputBuffer buffer) throws ExoPlaybackException {
         int byteCount = buffer.data.remaining();
         if(byteCount > 0) {
             mediaMuxerControl.writeDumpedInputData(byteCount);
@@ -58,7 +58,25 @@ public class VideoTrackDumpingRenderer extends MediaCodecVideoRenderer {
     }
 
     @Override
-    protected boolean processOutputBuffer(long positionUs, long elapsedRealtimeUs, MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean shouldSkip) {
+    protected boolean processOutputBuffer(
+            long positionUs,
+            long elapsedRealtimeUs,
+            @Nullable MediaCodecAdapter codec,
+            @Nullable ByteBuffer buffer,
+            int bufferIndex,
+            int bufferFlags,
+            int sampleCount,
+            long bufferPresentationTimeUs,
+            boolean isDecodeOnlyBuffer,
+            boolean isLastBuffer,
+            Format format)
+            throws ExoPlaybackException {
+
+        boolean outputDone = (bufferFlags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0;
+        if(outputDone) {
+            setPendingOutputEndOfStream();
+        }
+
         if (bufferPresentationTimeUs > positionUs + 500000) {
             if (VERBOSE) {
                 Log.e(TAG, "Video Processor - Giving up render to audio at position " + positionUs);

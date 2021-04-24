@@ -1,7 +1,6 @@
 package delit.piwigoclient.business.video.compression;
 
 import android.content.Context;
-import android.media.MediaCodec;
 import android.media.MediaCrypto;
 import android.media.MediaFormat;
 import android.os.Build;
@@ -13,12 +12,13 @@ import androidx.annotation.RequiresApi;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.FormatHolder;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.audio.AudioSink;
 import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
-import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.decoder.DecoderReuseEvaluation;
+import com.google.android.exoplayer2.mediacodec.MediaCodecAdapter;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.util.MediaClock;
@@ -37,10 +37,11 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
     private final ExoPlayerCompression.AudioCompressionParameters compressionSettings;
     private final CompressionAudioSink audioSink;
     private MediaFormat currentOverallOutputMediaFormat;
+    private Format inputFormat;
 
 
-    public AudioTrackMuxerCompressionRenderer(Context context, MediaCodecSelector mediaCodecSelector, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable AudioRendererEventListener eventListener, MediaMuxerControl mediaMuxerControl, AudioSink audioSink, ExoPlayerCompression.AudioCompressionParameters compressionSettings) {
-        super(context, mediaCodecSelector, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, audioSink);
+    public AudioTrackMuxerCompressionRenderer(Context context, MediaCodecSelector mediaCodecSelector, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable AudioRendererEventListener eventListener, MediaMuxerControl mediaMuxerControl, AudioSink audioSink, ExoPlayerCompression.AudioCompressionParameters compressionSettings) {
+        super(context, mediaCodecSelector, playClearSamplesWithoutKeys, eventHandler, eventListener, audioSink);
         this.mediaMuxerControl = mediaMuxerControl;
         this.compressionSettings = compressionSettings;
         if(!(audioSink instanceof CompressionAudioSink)) {
@@ -56,22 +57,40 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
     }
 
     @Override
-    protected void onEnabled(boolean joining) throws ExoPlaybackException {
+    protected void onEnabled(boolean joining, boolean mayRenderStartOfStream) throws ExoPlaybackException {
         try {
             mediaMuxerControl.setHasAudio();
-            super.onEnabled(joining);
+            super.onEnabled(joining, mayRenderStartOfStream);
         } catch (ExoPlaybackException e) {
             throw e;
         } catch (Exception e) {
-            throw ExoPlaybackException.createForRenderer(e, getIndex());
+            throw createRendererException(e, inputFormat);
         }
     }
 
     @Override
-    protected void configureCodec(MediaCodecInfo codecInfo, MediaCodec streamDecoderCodec, Format format, MediaCrypto crypto) {
-        super.configureCodec(codecInfo, streamDecoderCodec, format, crypto);
+    protected void onDisabled() {
+        inputFormat = null;
+        super.onDisabled();
+    }
+
+    @Override
+    protected DecoderReuseEvaluation onInputFormatChanged(FormatHolder formatHolder) throws ExoPlaybackException {
+        DecoderReuseEvaluation result = super.onInputFormatChanged(formatHolder);
+        this.inputFormat = formatHolder.format;
+        return result;
+    }
+
+    @Override
+    protected void configureCodec(
+            MediaCodecInfo codecInfo,
+            MediaCodecAdapter codecAdapter,
+            Format format,
+            @Nullable MediaCrypto crypto,
+            float codecOperatingRate) {
+        super.configureCodec(codecInfo, codecAdapter, format, crypto, codecOperatingRate);
         int codecMaxInputSize = getCodecMaxInputSize(codecInfo, format, getStreamFormats());
-        MediaFormat currentDecodedMediaFormat = getMediaFormat(format, format.sampleMimeType, codecMaxInputSize);
+        MediaFormat currentDecodedMediaFormat = getMediaFormat(format, format.sampleMimeType, codecMaxInputSize, codecOperatingRate);
         if(compressionSettings.isTranscodeDesired()) {
             MediaFormat outputMediaFormat = getOutputMediaFormat(currentDecodedMediaFormat);
             currentOverallOutputMediaFormat = outputMediaFormat;
@@ -81,17 +100,10 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
     }
 
     @Override
-    protected void onOutputFormatChanged(MediaCodec codec, MediaFormat decoderOutputFormat) throws ExoPlaybackException {
+    protected void onOutputFormatChanged(Format format, @Nullable MediaFormat decoderOutputFormat) throws ExoPlaybackException {
         audioSink.configure(decoderOutputFormat, currentOverallOutputMediaFormat);
-        super.onOutputFormatChanged(codec, decoderOutputFormat);
+        super.onOutputFormatChanged(format, decoderOutputFormat);
 
-    }
-
-    @Override
-    protected boolean allowPassthrough(String mimeType) {
-        //boolean passthrough = super.allowPassthrough(mimeType);
-        boolean passthrough = compressionSettings.getBitRate() == ExoPlayerCompression.AudioCompressionParameters.AUDIO_PASSTHROUGH_BITRATE || "audio/raw".equals(mimeType); // this means that the data is not run through a decoder by the super class.
-        return passthrough;
     }
 
     @Override
@@ -156,7 +168,7 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
             super.renderToEndOfStream();
         } catch(RuntimeException e) {
             if(CompressionAudioSink.SUCCESS_ERROR_CODE.equals(e.getMessage())) {
-                throw ExoPlaybackException.createForRenderer(new CompressionSuccessException(),getIndex());
+                throw createRendererException(new CompressionSuccessException(), inputFormat);
             }
             Logging.log(Log.ERROR, TAG, "Unexpected runtime exception while finishing stream");
             throw e;

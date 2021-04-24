@@ -5,10 +5,10 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
@@ -48,7 +48,7 @@ import static com.google.android.exoplayer2.upstream.HttpDataSource.HttpDataSour
 public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
 
     private static final String TAG = "RemFileCacheDS";
-    private final TransferListener<? super DataSource> listener;
+    private TransferListener listener;
     private final Map<String, String> defaultRequestProperties;
     private final boolean logEnabled = false;
     private final SharedPreferences sharedPrefs;
@@ -67,13 +67,10 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     private int maxRedirects;
     private long readFromFilePosition;
     private boolean performUriPathSegmentEncoding;
+    private int responseCode;
 
-    /**
-     * @param listener An optional listener.
-     */
-    public RemoteAsyncFileCachingDataSource(Context context, TransferListener<? super DataSource> listener, CacheListener cacheListener, RequestProperties defaultRequestProperties, String userAgent) {
+    public RemoteAsyncFileCachingDataSource(Context context, CacheListener cacheListener, RequestProperties defaultRequestProperties, String userAgent) {
         this.context = context.getApplicationContext();
-        this.listener = listener;
         this.userAgent = userAgent;
         this.cacheListener = cacheListener;
         this.defaultRequestProperties = defaultRequestProperties.getSnapshot();
@@ -253,6 +250,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                     }
                 }
             }
+            responseCode = responseHandler.getStatusCode();
             if (responseHandler.isFailed()) {
                 HttpIOException exception = new HttpIOException(responseHandler.getStatusCode(), responseHandler.getResponseData(), responseHandler.getRequestURI().toString());
                 httpResponseHandler = null; // clear the http response handler so we get a new one next time.
@@ -321,6 +319,11 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     }
 
     @Override
+    public void addTransferListener(@NonNull TransferListener transferListener) {
+        this.listener = transferListener;
+    }
+
+    @Override
     public long open(DataSpec dataSpec) throws HttpDataSourceException {
         if (logEnabled && BuildConfig.DEBUG) {
             if (dataSpec.length >= 0) {
@@ -330,7 +333,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             }
         }
         if (listener != null) {
-            listener.onTransferStart(this, dataSpec);
+            listener.onTransferStart(this, dataSpec, true);
         }
         if (cacheMetaData == null) {
             cacheMetaData = loadCacheAndReturnCacheMetaData(dataSpec.uri);
@@ -543,7 +546,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                     readFromFilePosition += bytesRead;
                     bytesAvailableToRead -= bytesRead;
                     if (listener != null) {
-                        listener.onBytesTransferred(this, bytesRead);
+                        listener.onBytesTransferred(this, dataSpec, true, bytesRead);
                     }
                 } else {
                     if (cacheMetaData.getTotalBytes() == currentPosition) {
@@ -579,6 +582,11 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     }
 
     @Override
+    public int getResponseCode() {
+        return httpResponseHandler == null || responseCode <= 0 ? -1 : responseCode;
+    }
+
+    @Override
     public Map<String, List<String>> getResponseHeaders() {
         return null;
     }
@@ -607,7 +615,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             localCachedDataFile = null;
             if (closingFile) {
                 if (listener != null) {
-                    listener.onTransferEnd(this);
+                    listener.onTransferEnd(this, dataSpec, true);
                 }
             }
             dataSpec = null;

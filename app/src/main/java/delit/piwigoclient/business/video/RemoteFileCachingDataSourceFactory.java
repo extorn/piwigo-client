@@ -4,7 +4,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
 
@@ -19,7 +18,7 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
      */
     public static final int DEFAULT_READ_TIMEOUT_MILLIS = 8 * 1000;
 
-    private final TransferListener<? super DataSource> transferListener;
+    private final TransferListener transferListener;
     private final String userAgent;
     private final Context context;
     private final RemoteAsyncFileCachingDataSource.CacheListener cacheListener;
@@ -33,7 +32,7 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
     private boolean performUriPathSegmentEncoding;
 
 
-    public RemoteFileCachingDataSourceFactory(Context context, TransferListener<? super DataSource> transferListener, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, RemoteDirectHttpClientBasedHttpDataSource.DownloadListener directDownloadListener, String userAgent) {
+    public RemoteFileCachingDataSourceFactory(Context context, TransferListener transferListener, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, RemoteDirectHttpClientBasedHttpDataSource.DownloadListener directDownloadListener, String userAgent) {
         this.transferListener = transferListener;
         this.context = context.getApplicationContext();
         this.userAgent = userAgent;
@@ -57,8 +56,8 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
     }
 
     private HttpDataSource createDirectDataSource(HttpDataSource.RequestProperties defaultRequestProperties) {
-        RemoteDirectHttpClientBasedHttpDataSource ds = new RemoteDirectHttpClientBasedHttpDataSource(context, userAgent, null, transferListener, connectTimeoutMillis,
-                readTimeoutMillis, defaultRequestProperties);
+        RemoteDirectHttpClientBasedHttpDataSource ds = new RemoteDirectHttpClientBasedHttpDataSource(context, userAgent, connectTimeoutMillis, readTimeoutMillis, defaultRequestProperties);
+        ds.addTransferListener(transferListener);
         ds.setEnableRedirects(redirectsAllowed);
         ds.setMaxRedirects(maxRedirects);
         ds.setDownloadListener(directDownloadListener);
@@ -68,7 +67,8 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
     }
 
     private HttpDataSource createCachingDataSource(HttpDataSource.RequestProperties defaultRequestProperties) {
-        RemoteAsyncFileCachingDataSource ds = new RemoteAsyncFileCachingDataSource(context, transferListener, cacheListener, defaultRequestProperties, userAgent);
+        RemoteAsyncFileCachingDataSource ds = new RemoteAsyncFileCachingDataSource(context, cacheListener, defaultRequestProperties, userAgent);
+        ds.addTransferListener(transferListener);
         ds.setEnableRedirects(redirectsAllowed);
         ds.setMaxRedirects(maxRedirects);
         ds.setConnectTimeoutMillis(connectTimeoutMillis);

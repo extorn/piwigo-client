@@ -1,9 +1,7 @@
 package delit.piwigoclient.business.video;
 
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.upstream.DefaultAllocator;
 
 /**
  * The default {@link LoadControl} implementation.
@@ -17,7 +15,7 @@ public final class PausableLoadControl extends DefaultLoadControl {
      * Constructs a pkg instance, using the {@code DEFAULT_*} constants defined in this class.
      */
     public PausableLoadControl() {
-        super(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE));
+        super();
     }
 
     public void setListener(Listener listener) {
@@ -25,11 +23,11 @@ public final class PausableLoadControl extends DefaultLoadControl {
     }
 
     @Override
-    public boolean shouldStartPlayback(long bufferedDurationUs, float playbackSpeed, boolean rebuffering) {
+    public boolean shouldStartPlayback(long bufferedDurationUs, float playbackSpeed, boolean rebuffering, long targetLiveOffsetUs) {
         if (paused) {
             return false;
         }
-        return super.shouldStartPlayback(bufferedDurationUs, playbackSpeed, rebuffering);
+        return super.shouldStartPlayback(bufferedDurationUs, playbackSpeed, rebuffering, targetLiveOffsetUs);
     }
 
     public void pauseBuffering() {
@@ -47,11 +45,11 @@ public final class PausableLoadControl extends DefaultLoadControl {
     }
 
     @Override
-    public boolean shouldContinueLoading(long bufferedDurationUs, float playbackSpeed) {
+    public boolean shouldContinueLoading(long playbackPositionUs, long bufferedDurationUs, float playbackSpeed) {
         if (paused) {
             return false;
         }
-        return super.shouldContinueLoading(bufferedDurationUs, playbackSpeed);
+        return super.shouldContinueLoading(playbackPositionUs, bufferedDurationUs, playbackSpeed);
     }
 
     public boolean isPaused() {

@@ -4,15 +4,12 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.Renderer;
-import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.audio.AudioSink;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.metadata.MetadataOutput;
 import com.google.android.exoplayer2.text.TextOutput;
@@ -33,19 +30,26 @@ public class CompressionRenderersFactory extends DefaultRenderersFactory {
     }
 
     @Override
-    public Renderer[] createRenderers(Handler eventHandler, VideoRendererEventListener videoRendererEventListener, AudioRendererEventListener audioRendererEventListener, TextOutput textRendererOutput, MetadataOutput metadataRendererOutput, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
-        return super.createRenderers(eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput, drmSessionManager);
+    public Renderer[] createRenderers(Handler eventHandler, VideoRendererEventListener videoRendererEventListener, AudioRendererEventListener audioRendererEventListener, TextOutput textRendererOutput, MetadataOutput metadataRendererOutput) {
+        return super.createRenderers(eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput);
     }
 
 
     @Override
-    protected void buildVideoRenderers(Context context, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, long allowedVideoJoiningTimeMs, Handler eventHandler, VideoRendererEventListener eventListener, int extensionRendererMode, final ArrayList<Renderer> out) {
+    protected void buildVideoRenderers(
+            Context context,
+            @ExtensionRendererMode int extensionRendererMode,
+            MediaCodecSelector mediaCodecSelector,
+            boolean enableDecoderFallback,
+            Handler eventHandler,
+            VideoRendererEventListener eventListener,
+            long allowedVideoJoiningTimeMs,
+            ArrayList<Renderer> out) {
         if (compressionParameters.isAddVideoTrack()) {
             out.add(new VideoTrackMuxerCompressionRenderer(
                     context,
                     MediaCodecSelector.DEFAULT,
                     allowedVideoJoiningTimeMs,
-                    drmSessionManager,
                     false,
                     eventHandler,
                     eventListener,
@@ -54,7 +58,6 @@ public class CompressionRenderersFactory extends DefaultRenderersFactory {
             out.add(new VideoTrackDumpingRenderer(context,
                     MediaCodecSelector.DEFAULT,
                     allowedVideoJoiningTimeMs,
-                    drmSessionManager,
                     false,
                     eventHandler,
                     eventListener,
@@ -63,12 +66,19 @@ public class CompressionRenderersFactory extends DefaultRenderersFactory {
     }
 
     @Override
-    protected void buildAudioRenderers(Context context, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, AudioProcessor[] audioProcessors, Handler eventHandler, AudioRendererEventListener eventListener, int extensionRendererMode, ArrayList<Renderer> out) {
+    protected void buildAudioRenderers(
+            Context context,
+            @ExtensionRendererMode int extensionRendererMode,
+            MediaCodecSelector mediaCodecSelector,
+            boolean enableDecoderFallback,
+            AudioSink audioSink,
+            Handler eventHandler,
+            AudioRendererEventListener eventListener,
+            ArrayList<Renderer> out) {
         if (compressionParameters.isAddAudioTrack()) {
 
             out.add(new AudioTrackMuxerCompressionRenderer(context,
                     MediaCodecSelector.DEFAULT,
-                    drmSessionManager,
                     false,
                     eventHandler,
                     eventListener,
@@ -80,7 +90,6 @@ public class CompressionRenderersFactory extends DefaultRenderersFactory {
             // needed to empty the buffered data extracted from the source else the extractor will block as the buffers fill.
             out.add(new AudioTrackDumpingRenderer(context,
                     MediaCodecSelector.DEFAULT,
-                    drmSessionManager,
                     false,
                     eventHandler,
                     eventListener,

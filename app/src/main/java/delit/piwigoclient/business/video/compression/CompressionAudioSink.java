@@ -9,9 +9,11 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioSink;
+import com.google.android.exoplayer2.audio.AuxEffectInfo;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -65,8 +67,22 @@ public class CompressionAudioSink implements AudioSink {
     }
 
     @Override
-    public boolean isEncodingSupported(int encoding) {
-        return true; // we'll handle it all here (passthough is fine too - we'll decide later if we want to use that)
+    public boolean supportsFormat(Format format) {
+        return transcoding || "audio/raw".equals(format.sampleMimeType); // we'll handle it all here (passthough is fine too - we'll decide later if we want to use that)
+    }
+
+    @Override
+    public int getFormatSupport(Format format) {
+        if(transcoding) {
+            return SINK_FORMAT_SUPPORTED_WITH_TRANSCODING;
+        } else {
+            if("audio/raw".equals(format.sampleMimeType)) {
+                return SINK_FORMAT_SUPPORTED_DIRECTLY;
+            } else {
+                Logging.log(Log.ERROR, TAG, "Unsupported audio format. transcoding:%1$b Format:%2$s", transcoding,  format.sampleMimeType);
+                return SINK_FORMAT_UNSUPPORTED;
+            }
+        }
     }
 
     @Override
@@ -78,7 +94,7 @@ public class CompressionAudioSink implements AudioSink {
     }
 
     @Override
-    public void configure(int inputEncoding, int inputChannelCount, int inputSampleRate, int specifiedBufferSize, @Nullable int[] outputChannels, int trimStartFrames, int trimEndFrames) throws ConfigurationException {
+    public void configure(Format inputFormat, int specifiedBufferSize, @Nullable int[] outputChannels) throws ConfigurationException {
         //this is called in onOutputFormatChanged (can set this directly so it correctly matches the decoder output there)
     }
 
@@ -108,12 +124,12 @@ public class CompressionAudioSink implements AudioSink {
     }
 
     @Override
-    public boolean handleBuffer(ByteBuffer buffer, long presentationTimeUs) throws InitializationException, WriteException {
+    public boolean handleBuffer(ByteBuffer buffer, long presentationTimeUs, int encodedAccessUnitCount) throws InitializationException, WriteException {
         initialised = true;
         try {
             mediaMuxerControl.markDataRead(true);
             if(transcoding) {
-                    configureEncoderIfNeeded();
+                configureEncoderIfNeeded();
                 processAnyEncoderOutput();
             }
             boolean bufferWritten = onDecoderOutputReceived(buffer, presentationTimeUs);
@@ -267,14 +283,23 @@ public class CompressionAudioSink implements AudioSink {
     }
 
     @Override
-    public PlaybackParameters setPlaybackParameters(PlaybackParameters playbackParameters) {
+    public void setPlaybackParameters(PlaybackParameters playbackParameters) {
         this.playbackParameters = playbackParameters;
-        return playbackParameters; //realAudioSink.setPlaybackParameters(playbackParameters); // ignore.
     }
 
     @Override
     public PlaybackParameters getPlaybackParameters() {
         return playbackParameters; //realAudioSink.getPlaybackParameters();
+    }
+
+    @Override
+    public void setSkipSilenceEnabled(boolean skipSilenceEnabled) {
+        // we won't bother
+    }
+
+    @Override
+    public boolean getSkipSilenceEnabled() {
+        return false;
     }
 
     @Override
@@ -288,7 +313,12 @@ public class CompressionAudioSink implements AudioSink {
     }
 
     @Override
-    public void enableTunnelingV21(int tunnelingAudioSessionId) {
+    public void setAuxEffectInfo(AuxEffectInfo auxEffectInfo) {
+        // we won't bother
+    }
+
+    @Override
+    public void enableTunnelingV21() {
         // we won't bother
     }
 
@@ -348,8 +378,13 @@ public class CompressionAudioSink implements AudioSink {
     }
 
     @Override
-    public void release() {
+    public void flush() {
         //clear all buffers and memory used.
+    }
+
+    @Override
+    public void experimentalFlushWithoutAudioTrackRelease() {
+
     }
 
     private void initialiseOutputEncoder(MediaFormat outputMediaFormat) throws IOException {

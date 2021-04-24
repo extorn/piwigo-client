@@ -21,15 +21,16 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.ExoTrackSelection;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -180,9 +181,9 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
     @Override
     public void onCreate(Bundle savedInstanceState) {
         logStatus("creating all the essentials");
-        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder(getContext()).build();
+        ExoTrackSelection.Factory videoTrackSelectionFactory =
+                new AdaptiveTrackSelection.Factory();
         trackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
 
@@ -284,8 +285,9 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
 
         CustomExoPlayerTimeBar timebar = itemContentView.findViewById(R.id.exo_progress);
         cacheListener.setTimebar(timebar);
-
-        player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
+        RenderersFactory renderersFactory = new DefaultRenderersFactory(getContext());
+        player = new SimpleExoPlayer.Builder(getContext(), renderersFactory).setTrackSelector(trackSelector).setLoadControl(loadControl).build();
+        player.setThrowsWhenUsingWrongThread(false);
         player.addListener(buildNewPlayerEventListener());
         simpleExoPlayerView.setPlayer(player);
         View exoPlayerControlsView = simpleExoPlayerView.findViewById(R.id.exo_player_controls_container);
@@ -523,9 +525,8 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
             if (connectionPrefs.isForceHttps(prefs, getContext()) && "http".equalsIgnoreCase(videoUri.getScheme())) {
                 videoUri = videoUri.buildUpon().scheme("https").build();
             }
-            ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(dataSourceFactory);
-            factory.setExtractorsFactory(extractorsFactory);
-            ExtractorMediaSource videoSource = factory.createMediaSource(videoUri);
+            ProgressiveMediaSource.Factory factory = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory);
+            ProgressiveMediaSource videoSource = factory.createMediaSource(new MediaItem.Builder().setUri(videoUri).build());
             if (player.getCurrentPosition() != videoPlaybackPosition && videoPlaybackPosition >= 0) {
                 logStatus("moving playback position to last position (" + player.getCurrentPosition() + ")");
                 player.seekTo(videoPlaybackPosition);
@@ -546,8 +547,9 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
                         player.seekTo(0);
                         player.setPlayWhenReady(false);
                         Uri videoUri = Uri.parse(getModel().getFileUrl(getModel().getFullSizeFile().getName()));
-                        ExtractorMediaSource videoSource = factory.createMediaSource(videoUri);
-                        player.prepare(videoSource, false, false);
+                        ProgressiveMediaSource videoSource = factory.createMediaSource(new MediaItem.Builder().setUri(videoUri).build());
+                        player.setMediaSource(videoSource);
+                        player.prepare();
                         loadControl.resumeBuffering();
                     }
                 }
@@ -717,10 +719,17 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
         }
     }
 
-    protected class MyPlayerEventListener extends Player.DefaultEventListener {
+    protected class MyPlayerEventListener implements Player.EventListener {
+
+        private boolean playWhenReady;
 
         @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
+            this.playWhenReady = playWhenReady;
+        }
+
+        @Override
+        public void onPlaybackStateChanged(int playbackState) {
             if(Player.STATE_ENDED == playbackState && playWhenReady) {
                 player.stop();
                 player.seekTo(0); // get ready to play again.
@@ -784,19 +793,19 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
 
 
         private final Set<ResourceItem> items;
-        private final String selectedPiwigoFilesizeName;
+        private final String selectedPiwigoFileSizeName;
 
 
 
         public OnFilesUnavailableToDownloadQuestionResult(FUIH uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
             super(uiHelper);
             this.items = items;
-            this.selectedPiwigoFilesizeName = selectedPiwigoFilesizeName;
+            this.selectedPiwigoFileSizeName = selectedPiwigoFilesizeName;
         }
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            doDownloadAction(items, selectedPiwigoFilesizeName, true);
+            doDownloadAction(items, selectedPiwigoFileSizeName, true);
         }
     }
 
