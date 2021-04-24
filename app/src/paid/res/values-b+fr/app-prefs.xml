@@ -64,6 +64,12 @@
     
 
     
+    <string name="preference_data_upload_automatic_job_require_external_power_summary">Seulement tout en bruyant</string>
+    <string name="preference_data_upload_automatic_job_require_external_power_title">Besoin d\'une puissance externe</string>
+    
+
+
+    
     
     
     

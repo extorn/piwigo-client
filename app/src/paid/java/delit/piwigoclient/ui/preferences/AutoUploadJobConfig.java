@@ -303,6 +303,10 @@ public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable
         return Objects.hash(jobId);
     }
 
+    public boolean isUploadWithExternalPowerOnly(Context context) {
+        return getBooleanValue(context, R.string.preference_data_upload_automatic_job_require_external_power_key, R.bool.preference_data_upload_automatic_job_require_external_power_default);
+    }
+
     public static class PriorUploads implements Parcelable {
 
         private static final String TAG = "PriorUploads";

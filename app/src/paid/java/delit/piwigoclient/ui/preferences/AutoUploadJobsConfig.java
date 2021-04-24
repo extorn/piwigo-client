@@ -15,40 +15,40 @@ import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 
 public class AutoUploadJobsConfig {
-    private SharedPreferences prefs;
+    private final SharedPreferences prefs;
 
     public AutoUploadJobsConfig(SharedPreferences prefs) {
         this.prefs = prefs;
     }
 
-    public AutoUploadJobsConfig(Context c) {
+    public AutoUploadJobsConfig(@NonNull Context c) {
         prefs = PreferenceManager.getDefaultSharedPreferences(c);
     }
 
-    private boolean getBooleanValue(Context c, @StringRes int prefKeyId) {
+    private boolean getBooleanValue(@NonNull Context c, @StringRes int prefKeyId) {
         if(!prefs.contains(c.getString(prefKeyId))) {
             throw new IllegalStateException("Job misconfigured");
         }
         return prefs.getBoolean(c.getString(prefKeyId), false);
     }
 
-    private boolean getBooleanValue(Context c, @StringRes int prefKeyId, boolean defaultVal) {
+    private boolean getBooleanValue(@NonNull Context c, @StringRes int prefKeyId, boolean defaultVal) {
         return prefs.getBoolean(c.getString(prefKeyId), defaultVal);
     }
 
-    private int getIntValue(Context c, @StringRes int prefKeyId) {
+    private int getIntValue(@NonNull Context c, @StringRes int prefKeyId) {
         if(!prefs.contains(c.getString(prefKeyId))) {
             throw new IllegalStateException("Job misconfigured");
         }
         return prefs.getInt(c.getString(prefKeyId), -1);
     }
 
-    private String getStringValue(Context c, @StringRes int prefKeyId) {
+    private String getStringValue(@NonNull Context c, @StringRes int prefKeyId) {
         String value = prefs.getString(c.getString(prefKeyId), null);
         return value;
     }
 
-    private @NonNull List getCsvListValue(Context c, @StringRes int prefKeyId) {
+    private @NonNull List getCsvListValue(@NonNull Context c, @StringRes int prefKeyId) {
         String value = getStringValue(c, prefKeyId);
         if(value != null) {
             String[] values = value.split(",");
@@ -57,19 +57,19 @@ public class AutoUploadJobsConfig {
         return new ArrayList(0);
     }
 
-    public boolean isBackgroundUploadEnabled(Context c) {
+    public boolean isBackgroundUploadEnabled(@NonNull Context c) {
         return getBooleanValue(c, R.string.preference_data_upload_automatic_upload_enabled_key, c.getResources().getBoolean(R.bool.preference_data_upload_automatic_upload_enabled_default));
     }
 
-    public boolean isUploadOnUnMeteredNetworkOnly(Context c) {
+    public boolean isUploadOnUnMeteredNetworkOnly(@NonNull Context c) {
         return getBooleanValue(c, R.string.preference_data_upload_automatic_upload_wireless_only_key, c.getResources().getBoolean(R.bool.preference_data_upload_automatic_upload_wireless_only_default));
     }
 
-    public boolean hasUploadJobs(Context c) {
+    public boolean hasUploadJobs(@NonNull Context c) {
         return getCsvListValue(c, R.string.preference_data_upload_automatic_upload_jobs_key).size() > 0;
     }
 
-    public int countEnabledUploadJobs(Context c) {
+    public int countEnabledUploadJobs(@NonNull Context c) {
         List<AutoUploadJobConfig> uploadJobs = getAutoUploadJobs(c);
         int count = 0;
         if (uploadJobs != null) {
@@ -82,7 +82,7 @@ public class AutoUploadJobsConfig {
         return count;
     }
 
-    public List<AutoUploadJobConfig> getAutoUploadJobs(Context c) {
+    public List<AutoUploadJobConfig> getAutoUploadJobs(@NonNull Context c) {
         String jobIdsStr = getStringValue(c, R.string.preference_data_upload_automatic_upload_jobs_key);
         ArrayList<Integer> uploadJobIds = CollectionUtils.integersFromCsvList(jobIdsStr);
         List<AutoUploadJobConfig> jobs = new ArrayList<>(uploadJobIds.size());
@@ -92,12 +92,21 @@ public class AutoUploadJobsConfig {
         return jobs;
     }
 
-    public AutoUploadJobConfig getAutoUploadJobConfig(int jobConfigId, Context context) {
+    public AutoUploadJobConfig getAutoUploadJobConfig(int jobConfigId, @NonNull Context context) {
         for(AutoUploadJobConfig cfg : getAutoUploadJobs(context)) {
             if(cfg.getJobId() == jobConfigId) {
                 return cfg;
             }
         }
         return null;
+    }
+
+    public boolean isExistsABackgroundJobRequiringExternalPower(@NonNull Context context) {
+        for(AutoUploadJobConfig job : getAutoUploadJobs(context)) {
+            if(job.isUploadWithExternalPowerOnly(context)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

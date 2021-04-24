@@ -64,6 +64,12 @@
     
 
     
+    <string name="preference_data_upload_automatic_job_require_external_power_summary">Pouze při připojeném</string>
+    <string name="preference_data_upload_automatic_job_require_external_power_title">Vyžadují externí výkon</string>
+    
+
+
+    
     
     
     

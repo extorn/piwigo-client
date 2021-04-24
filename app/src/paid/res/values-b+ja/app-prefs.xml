@@ -64,6 +64,12 @@
     
 
     
+    <string name="preference_data_upload_automatic_job_require_external_power_summary">イングを差し込んでいる間だけ</string>
+    <string name="preference_data_upload_automatic_job_require_external_power_title">外部の電力を必要とします</string>
+    
+
+
+    
     
     
     

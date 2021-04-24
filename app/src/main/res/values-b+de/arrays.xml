@@ -146,6 +146,10 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.7</item>
+        <item>"Veränderung:
+                 - Benutzeranfrage - Fähigkeit, den Hintergrund des Hintergrunds hochzuladen, um nur zu leiten, wenn das Gerät eingesteckt ist
+                 - Hinweis: Diese Änderung wird nicht getestet, aber ich denke, es wird in Ordnung sein, wenn es funktioniert, lass es mich wissen lassen, wenn nicht, wenn nicht, lass es mich wissen lassen."</item>
         <item>1.5.0.6</item>
         <item>"Fehlerbehebung:
              - Melden Sie sich bei Bedarf nicht an, wenn Sie Dateien mit der App zum Hochladen teilen

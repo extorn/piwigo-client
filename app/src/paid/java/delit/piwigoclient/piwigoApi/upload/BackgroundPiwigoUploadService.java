@@ -35,6 +35,7 @@ import delit.piwigoclient.piwigoApi.upload.actors.JobLoadActor;
 import delit.piwigoclient.piwigoApi.upload.actors.PriorUploadsActor;
 import delit.piwigoclient.piwigoApi.upload.actors.UploadNotificationManager;
 import delit.piwigoclient.piwigoApi.upload.network.NetworkUtils;
+import delit.piwigoclient.piwigoApi.upload.power.PowerConnectionReceiver;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadCheckingForTasksEvent;
@@ -189,7 +190,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService<Backg
 
         AutoUploadJobsConfig autoUploadJobsConfig = new AutoUploadJobsConfig(context);
 
-        networkManager.registerBroadcastReceiver(context, new UploadServiceNetworkListener(context, autoUploadJobsConfig));
+        UploadServiceNetworkListener uploadEventListener = new UploadServiceNetworkListener(context, autoUploadJobsConfig);
+
+        networkManager.registerBroadcastReceiver(context, uploadEventListener);
+
+        PowerConnectionReceiver powerStatusReceiver = new PowerConnectionReceiver(uploadEventListener);
+        powerStatusReceiver.registerBroadcastReceiver(context);
 
         Map<Uri, UriWatcher> runningObservers = new HashMap<>();
 
@@ -201,20 +207,20 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService<Backg
 
                 EventBus.getDefault().post(new BackgroundUploadThreadCheckingForTasksEvent());
                 if(networkManager.isOkayToUpload()) {
-                    pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(context, autoUploadJobsConfig, runningObservers, jobListener);
+                    pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(context, autoUploadJobsConfig, runningObservers, uploadEventListener, jobListener);
                 }
                 sendServiceToSleep();
             }
         } finally {
             // unable to remove from keyset iterator hence the temporary list.
             removeAllContentObservers(runningObservers);
-
+            powerStatusReceiver.unregisterBroadcastReceiver(context);
             networkManager.unregisterBroadcastReceiver(context);
             EventBus.getDefault().post(new BackgroundUploadThreadTerminatedEvent());
         }
     }
 
-    private void pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(Context context, AutoUploadJobsConfig jobs, Map<Uri, UriWatcher> runningObservers, BackgroundPiwigoFileUploadResponseListener<?,?> jobListener) {
+    private void pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(Context context, AutoUploadJobsConfig jobs, Map<Uri, UriWatcher> runningObservers, UploadServiceNetworkListener uploadEventListener, BackgroundPiwigoFileUploadResponseListener<?,?> jobListener) {
         getUploadNotificationManager().updateNotificationText(R.string.notification_text_background_upload_polling, true);
         UploadJob unfinishedJob;
         BackgroundJobLoadActor jobLoadActor = getJobLoadActor();
@@ -222,25 +228,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService<Backg
             // if there's an old incomplete job, try and finish that first.
             unfinishedJob = jobLoadActor.getActiveBackgroundJob();
             if (unfinishedJob != null) {
-                ConnectionPreferences.ProfilePreferences jobConnProfilePrefs = unfinishedJob.getConnectionPrefs();
-                boolean jobIsValid = jobConnProfilePrefs != null && jobConnProfilePrefs.isValid(getPrefs(), getApplicationContext());
-                if(!jobIsValid) {
-                    new AutoUploadJobConfig(unfinishedJob.getJobConfigId()).setJobValid(this, false);
-                }
-                if (!unfinishedJob.isStatusFinished() && jobIsValid) {
-                    if(0 == unfinishedJob.getActionableFilesCount()) {
-                        // ALL Files not uploaded are in error state. Cancel them all so the server will be cleaned of any partial uploads
-                        unfinishedJob.cancelAllFailedUploads();
-                        jobLoadActor.saveStateToDisk(unfinishedJob);
-                    }
 
-                    runJob(jobLoadActor, unfinishedJob, this, true);
-                    if (unfinishedJob.hasJobCompletedAllActionsSuccessfully()) {
-                        jobLoadActor.removeJob(unfinishedJob, false);
-                    }
+                AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(unfinishedJob.getJobConfigId());
+                if(!uploadEventListener.isPermitUploadOfJob(jobConfig)) {
+                    unfinishedJob = null; // allows to break out of loop and try any remaining job configs
                 } else {
-                    // no longer valid (connection doesn't exist any longer).
-                    jobLoadActor.removeJob(unfinishedJob, true);
+                    processUnfinishedJob(jobConfig, unfinishedJob, jobLoadActor);
                 }
             }
         } while (unfinishedJob != null && !terminateUploadServiceThreadAsap);
@@ -267,7 +260,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService<Backg
                         runningObservers.put(observer.getWatchedUri(), observer);
                         observer.startWatching();
                     }
-                    if (!terminateUploadServiceThreadAsap && jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
+                    if(!uploadEventListener.isPermitUploadOfJob(jobConfig) && !terminateUploadServiceThreadAsap && jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
                         BackgroundJobLoadActor jobLoaderActor = getJobLoadActor();
                         UploadJob uploadJob = jobLoaderActor.getUploadJob(jobConfig, jobListener);
                         if (uploadJob != null) {
@@ -280,6 +273,29 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService<Backg
                     }
                 }
             }
+        }
+    }
+
+    private void processUnfinishedJob(AutoUploadJobConfig jobConfig, UploadJob unfinishedJob, JobLoadActor jobLoadActor) {
+        ConnectionPreferences.ProfilePreferences jobConnProfilePrefs = unfinishedJob.getConnectionPrefs();
+        boolean jobIsValid = jobConnProfilePrefs != null && jobConnProfilePrefs.isValid(getPrefs(), getApplicationContext());
+        if (!jobIsValid) {
+            jobConfig.setJobValid(this, false);
+        }
+        if (!unfinishedJob.isStatusFinished() && jobIsValid) {
+            if (0 == unfinishedJob.getActionableFilesCount()) {
+                // ALL Files not uploaded are in error state. Cancel them all so the server will be cleaned of any partial uploads
+                unfinishedJob.cancelAllFailedUploads();
+                jobLoadActor.saveStateToDisk(unfinishedJob);
+            }
+
+            runJob(jobLoadActor, unfinishedJob, this, true);
+            if (unfinishedJob.hasJobCompletedAllActionsSuccessfully()) {
+                jobLoadActor.removeJob(unfinishedJob, false);
+            }
+        } else {
+            // no longer valid (connection doesn't exist any longer).
+            jobLoadActor.removeJob(unfinishedJob, true);
         }
     }
 

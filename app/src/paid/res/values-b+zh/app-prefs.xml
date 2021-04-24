@@ -64,6 +64,12 @@
     
 
     
+    <string name="preference_data_upload_automatic_job_require_external_power_summary">只在插入时</string>
+    <string name="preference_data_upload_automatic_job_require_external_power_title">要求外部电力</string>
+    
+
+
+    
     
     
     

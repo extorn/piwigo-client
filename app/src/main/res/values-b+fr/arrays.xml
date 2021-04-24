@@ -146,6 +146,10 @@
         
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.5.0.7</item>
+        <item>"Changer:
+                 - Demande utilisateur - Possibilité de limiter les travaux de téléchargement des antécédents pour exécuter uniquement lorsque le périphérique est branché
+                 - Note: Ce changement n\'est pas testé mais je pense que je vais aller, si cela fonctionne, faites-moi savoir, sinon, faites le moi savoir."</item>
         <item>1.5.0.6</item>
         <item>"Correction d\'un bug:
              - Connectez-vous non en commençant si nécessaire lors du partage des fichiers avec l\'application pour le téléchargement

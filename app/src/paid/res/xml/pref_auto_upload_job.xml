@@ -33,6 +33,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_data_upload_automatic_job_require_external_power_default"
+            android:key="@string/preference_data_upload_automatic_job_require_external_power_key"
+            android:summary="@string/preference_data_upload_automatic_job_require_external_power_summary"
+            android:title="@string/preference_data_upload_automatic_job_require_external_power_title" />
 
         <androidx.preference.PreferenceCategory
             android:layout_width="match_parent"

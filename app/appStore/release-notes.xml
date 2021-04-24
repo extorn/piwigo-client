@@ -1,50 +1,50 @@
 <en-GB>
-Bugfix:
-- Login not starting if required when sharing files with the app for upload
-- Back button not working correctly if previously opened folder is automatically opened by the app on start
+Change:
+- User request - Ability to limit background upload job to run only when device is plugged in
+- NOTE: this change isn't tested but I think will be okay, if it works, let me know, if not, let me know.
 </en-GB>
 <cs-CZ>
-Oprava chyby:
-- Přihlaste se, pokud je to nutné, pokud je to nutné při sdílení souborů s aplikací pro upload
-- tlačítko zpět nefunguje správně, pokud je dříve otevřená složka automaticky otevřena aplikací při startu
+Změna:
+- Požadavek uživatele - možnost omezit úlohu pro ukládání pozadí Chcete-li spustit pouze v případě, že je zařízení zapojeno
+- Poznámka: Tato změna není testována, ale myslím, že bude v pořádku, pokud to funguje, dejte mi vědět, ne-li, dejte mi vědět.
 </cs-CZ>
 <de-DE>
-Fehlerbehebung:
-- Melden Sie sich bei Bedarf nicht an, wenn Sie Dateien mit der App zum Hochladen teilen
-- Die BACK-Taste funktioniert nicht ordnungsgemäß, wenn zuvor geöffneter Ordner automatisch von der App beim Start geöffnet wird
+Veränderung:
+- Benutzeranfrage - Fähigkeit, den Hintergrund des Hintergrunds hochzuladen, um nur zu leiten, wenn das Gerät eingesteckt ist
+- Hinweis: Diese Änderung wird nicht getestet, aber ich denke, es wird in Ordnung sein, wenn es funktioniert, lass es mich wissen lassen, wenn nicht, wenn nicht, lass es mich wissen lassen.
 </de-DE>
 <es-ES>
-Arreglo del fallo:
-- Iniciar sesión No iniciar si es necesario al compartir archivos con la aplicación para cargar
-- Botón Atrás No funciona correctamente Si la aplicación se abre automáticamente a la carpeta previamente abierta.
+Cambio:
+- Solicitud de usuario: capacidad para limitar el trabajo de carga de fondo para ejecutarse solo cuando el dispositivo está enchufado
+- Nota: este cambio no está probado, pero creo que estará bien, si funciona, hágamelo saber, si no, avíseme.
 </es-ES>
 <fr-FR>
-Correction d\'un bug:
-- Connectez-vous non en commençant si nécessaire lors du partage des fichiers avec l\'application pour le téléchargement
-- Bouton Back ne fonctionne pas correctement si le dossier précédemment ouvert est automatiquement ouvert par l\'application au début.
+Changer:
+- Demande utilisateur - Possibilité de limiter les travaux de téléchargement des antécédents pour exécuter uniquement lorsque le périphérique est branché
+- Note: Ce changement n\'est pas testé mais je pense que je vais aller, si cela fonctionne, faites-moi savoir, sinon, faites le moi savoir.
 </fr-FR>
 <it-IT>
-Testo = BUGFIX:
-- Accedi Non iniziando se necessario durante la condivisione di file con l\'app per il caricamento
-- Pulsante Indietro Non funziona correttamente Se la cartella aperta in precedenza viene automaticamente aperta dall\'app per iniziare
+Modificare:
+- richiesta dell\'utente - Possibilità di limitare il lavoro di caricamento in background da eseguire solo quando il dispositivo è inserito
+- Nota: questo cambiamento non è testato ma penso che andrà bene, se funziona, fammi sapere, se no, fammelo sapere.
 </it-IT>
 <ja-JP>
-バグ修正：
-- アップロードのためのアプリとファイルを共有するときに必要な場合はログインしない
-- 先に開始されたフォルダが開始時に自動的に開かれた場合は、戻るボタンが正しく機能しない
+変化する：
+- ユーザー要求 - バックグラウンドアップロードジョブを制限する機能デバイスが接続されているときだけ実行する機能
+- 注：この変更はテストされていませんが、それがうまくいっても、そうでなければ私に知らせてください、私に知らせてください。
 </ja-JP>
 <nl-NL>
-Bugfix:
-- Log in niet te beginnen indien nodig bij het delen van bestanden met de app voor upload
-- Back-knop werkt niet correct als de eerder geopende map automatisch wordt geopend door de app bij Start
+Verandering:
+- Gebruikersverzoek - Mogelijkheid om achtergrondopdracht te beperken om alleen te laten werken wanneer het apparaat is aangesloten
+- Opmerking: deze verandering is niet getest, maar ik denk dat het goed komt, als het werkt, laat het me weten, zo niet, laat het me weten.
 </nl-NL>
 <ru-RU>
-Исправлена ошибка:
-- Логин не начинается при необходимости при совместном использовании файлов с приложением для загрузки
-- Назад кнопка не работает правильно, если ранее открытая папка автоматически открывается приложением при запуске
+Изменять:
+- Запрос пользователя - возможность ограничения задания загрузки фона для запуска только при подключении устройства
+- Примечание: это изменение не проверяется, но я думаю, будет в порядке, если это работает, дайте мне знать, если нет, дайте мне знать.
 </ru-RU>
 <zh-CN>
-错误修正：
-- 使用应用程序的应用程序共享文件时，请登录未开始
-- 如果以前打开的文件夹在启动时自动打开，则返回按钮无法正常工作
+改变：
+- 用户请求 - 能够限制后台上传作业仅在插入设备时运行
+- 注意：此更改未测试，但我认为如果它有效，请告诉我，如果没有，请告诉我。
 </zh-CN>
