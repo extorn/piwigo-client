@@ -21,7 +21,7 @@ public class UploadFileCompressionListener extends UploadActor implements VideoC
 
     private boolean compressionComplete;
     private Exception compressionError;
-    private DividableProgressTracker singleFileCompressionProgressTracker;
+    private final DividableProgressTracker singleFileCompressionProgressTracker;
 
     public UploadFileCompressionListener(@NonNull Context context, @NonNull UploadJob uploadJob, @NonNull ActorListener listener, @NonNull DividableProgressTracker singleFileCompressionProgressTracker) {
         super(context, uploadJob, listener);
@@ -86,8 +86,8 @@ public class UploadFileCompressionListener extends UploadActor implements VideoC
     }
 
     @Override
-    public void notifyUsersOfError(long jobId, PiwigoUploadFileLocalErrorResponse piwigoUploadFileLocalErrorResponse) {
-        getListener().postNewResponse(jobId, piwigoUploadFileLocalErrorResponse);
+    public void notifyUsersOfError(UploadJob uploadJob, PiwigoUploadFileLocalErrorResponse piwigoUploadFileLocalErrorResponse) {
+        getListener().recordAndPostNewResponse(uploadJob, piwigoUploadFileLocalErrorResponse);
     }
 
     @Override

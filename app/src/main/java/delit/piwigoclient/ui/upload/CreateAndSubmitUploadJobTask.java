@@ -68,20 +68,25 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
 
         if (activeJob == null) {
             ForegroundJobLoadActor jobLoadActor = new ForegroundJobLoadActor(getContext());
-            activeJob = jobLoadActor.createUploadJob(ConnectionPreferences.getActiveProfile(), model, uploadToAlbum, privacyWanted, piwigoListenerId);
             UploadJob.VideoCompressionParams vidCompParams = getOwner().buildVideoCompressionParams();
             UploadJob.ImageCompressionParams imageCompParams = getOwner().buildImageCompressionParams();
+            //First check the params
             if (vidCompParams != null) {
-                activeJob.setPlayableMediaCompressionParams(vidCompParams);
-                activeJob.setAllowUploadOfRawVideosIfIncompressible(getOwner().isRawVideoUploadPermittedIfNeeded());
                 if(!vidCompParams.hasAStream()) {
                     DisplayUtils.runOnUiThread(()-> getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.video_compression_settings_invalid)));
                     return null;
                 }
             }
-            if (imageCompParams != null) {
-                activeJob.setImageCompressionParams(imageCompParams);
+            // if the params are good, use them.
+            UploadJob uploadJob = jobLoadActor.createUploadJob(ConnectionPreferences.getActiveProfile(), model, uploadToAlbum, privacyWanted, piwigoListenerId);
+            if (vidCompParams != null) {
+                uploadJob.setPlayableMediaCompressionParams(vidCompParams);
+                uploadJob.setAllowUploadOfRawVideosIfIncompressible(getOwner().isRawVideoUploadPermittedIfNeeded());
             }
+            if (imageCompParams != null) {
+                uploadJob.setImageCompressionParams(imageCompParams);
+            }
+            activeJob = uploadJob;
         }
         return activeJob;
     }

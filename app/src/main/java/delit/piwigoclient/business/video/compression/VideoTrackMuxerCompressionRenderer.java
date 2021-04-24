@@ -202,7 +202,6 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         } else {
             return selectEncoderCodecV20(mimeType);
         }
-
     }
 
     /**

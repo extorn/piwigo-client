@@ -43,7 +43,7 @@ public class FileUploadConfigureActor extends UploadActor {
                 if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
 
                     // notify the listener of the final error we received from the server
-                    getListener().postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadFileAddToAlbumFailedResponse(getNextMessageId(), fileForUpload, false, response));
+                    getListener().recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileAddToAlbumFailedResponse(getNextMessageId(), fileForUpload, false, response));
 
                 } else {
                     fud.setStatusConfigured();

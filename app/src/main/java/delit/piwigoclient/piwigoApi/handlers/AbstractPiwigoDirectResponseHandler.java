@@ -23,7 +23,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     private boolean publishResponses = true;
     private Worker worker;
     private boolean runAsync;
-    private static List<Long> blockedMessageIds = new ArrayList<>();
+    private static final List<Long> blockedMessageIds = new ArrayList<>();
 
     public AbstractPiwigoDirectResponseHandler(String tag) {
         super(tag);

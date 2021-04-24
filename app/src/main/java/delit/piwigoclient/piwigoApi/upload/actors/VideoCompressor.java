@@ -38,7 +38,7 @@ public class VideoCompressor extends Thread {
 
         boolean isUnsupportedVideoFormat();
 
-        void notifyUsersOfError(long jobId, PiwigoUploadFileLocalErrorResponse piwigoUploadFileLocalErrorResponse);
+        void notifyUsersOfError(UploadJob uploadJob, PiwigoUploadFileLocalErrorResponse piwigoUploadFileLocalErrorResponse);
 
         void onCompressionSuccess(Uri inputFile, DocumentFile outputVideo);
     }
@@ -62,7 +62,7 @@ public class VideoCompressor extends Thread {
         try {
             outputFileExt = compressionSettings.getOutputFileExt(context, serverAcceptedFileExts);
         } catch (IllegalStateException e) {
-            listener.notifyUsersOfError(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, e));
+            listener.notifyUsersOfError(uploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, e));
         }
         DocumentFile outputVideo;
 
@@ -79,7 +79,7 @@ public class VideoCompressor extends Thread {
                 // cancel the upload of this file
                 fud.setProcessingFailed();
                 // notify listeners that this file encountered an error
-                listener.notifyUsersOfError(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, new Exception(msg)));
+                listener.notifyUsersOfError(uploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, new Exception(msg)));
                 outputVideo = null;
             }
         } else {
@@ -106,6 +106,7 @@ public class VideoCompressor extends Thread {
                         Logging.log(Log.ERROR, TAG, "Unable to delete corrupt compressed file.");
                     }
                 }
+                outputVideo = null;
 
                 Exception e = listener.getCompressionError();
                 if (listener.isUnsupportedVideoFormat() && uploadJob.isAllowUploadOfRawVideosIfIncompressible()) {
@@ -119,7 +120,7 @@ public class VideoCompressor extends Thread {
                     // mark the upload for this file as cancelled
                     fud.setProcessingFailed();
                     // notify the listener of the error
-                    listener.notifyUsersOfError(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, e));
+                    listener.notifyUsersOfError(uploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, true, e));
                 }
             } else {
                 if (outputVideo.exists()) {

@@ -70,7 +70,7 @@ public class FileCompressionActor extends UploadActor {
         imageCompressor.compressImage(getUploadJob(), fileUploadDetails.getFileUri(), new ImageCompressor.ImageCompressorListener() {
             @Override
             public void onError(long jobId, PiwigoUploadFileLocalErrorResponse piwigoUploadFileLocalErrorResponse) {
-                getListener().postNewResponse(jobId, piwigoUploadFileLocalErrorResponse);
+                getListener().recordAndPostNewResponse(getUploadJob(), piwigoUploadFileLocalErrorResponse);
                 progressTracker.releaseParent();
             }
 

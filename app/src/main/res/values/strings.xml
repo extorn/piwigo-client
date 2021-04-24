@@ -1038,6 +1038,7 @@ SOFTWARE.
     <string name="button_compress">Compress</string>
     <string name="unable_to_compress_without_data">Unable to compress without the settings</string>
     <string name="video_compression_settings_invalid">Video compression settings are invalid. Please check and try again.</string>
+    <string name="video_compression_settings_invalid_no_audio_or_video_track">At least one track type (audio or video) MUST be desired for compression to proceed.</string>
     <string name="alert_password_entry">Password Required</string>
     <string name="import_x_of_type_y_cancelled_pattern">Import of %2$s %1$s cancelled</string>
     <string name="import_cancelled">Import cancelled</string>
