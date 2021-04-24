@@ -588,7 +588,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
 
     @Override
     public Map<String, List<String>> getResponseHeaders() {
-        return null;
+        return httpResponseHandler.getResponseHeaders();
     }
 
     @Override

@@ -34,6 +34,11 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,6 +72,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
     private Throwable error;
     private int statusCode;
     private byte[] responseData;
+    private Map<String, List<String>> responseHeaders = Collections.emptyMap();
 
     public RandomAccessFileAsyncHttpResponseHandler(CachedContent cacheMetaData, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, boolean usePoolThread) {
         super(cacheMetaData.getCachedDataFile(), false, false, usePoolThread);
@@ -79,6 +85,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
         failed = true;
         error = throwable;
         this.statusCode = statusCode;
+        setResponseHeaders(headers);
     }
 
     public byte[] getResponseData() {
@@ -99,6 +106,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
 
     @Override
     public void onSuccess(int statusCode, Header[] headers, File file) {
+        setResponseHeaders(headers);
         loadSucceeded = true;
     }
 
@@ -316,5 +324,25 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
 
     public boolean isIdle() {
         return isIdle;
+    }
+
+    public Map<String, List<String>> getResponseHeaders() {
+        return responseHeaders;
+    }
+
+    public void setResponseHeaders(Header[] headers) {
+        Map<String, List<String>> responseHeaders = new HashMap<>();
+        for(Header header : headers) {
+            List<String> headerValues = responseHeaders.get(header.getName());
+            if(headerValues == null) {
+                headerValues = new ArrayList<>();
+                responseHeaders.put(header.getName(), headerValues);
+            }
+//            for(HeaderElement elem : h.getElements()) {
+//                vals.add(elem.getValue());
+//            }
+            headerValues.add(header.getValue());
+        }
+        this.responseHeaders = responseHeaders;
     }
 }
