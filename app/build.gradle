@@ -188,7 +188,7 @@ android {
 
 dependencies {
     // room database persistence libs used to track files previously uploaded
-    def room_version = "2.2.6"
+    def room_version = '2.3.0'
 
     // debugImplementation because LeakCanary should only run in debug builds.
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.3'
@@ -258,7 +258,7 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.0'
     // v14 stuff
-    implementation 'androidx.transition:transition:1.4.0'
+    implementation 'androidx.transition:transition:1.4.1'
     implementation 'androidx.constraintlayout:constraintlayout-solver:2.0.4' //2.0.0-alpha2
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4' //2.0.0-alpha2
     implementation 'androidx.documentfile:documentfile:1.0.1'
