@@ -684,6 +684,7 @@ I rilasci sono su una base ad hoc al momento. La frequenza delle versioni dovreb
     <string name="button_compress">Comprimere</string>
     <string name="unable_to_compress_without_data">Impossibile comprimere senza le impostazioni</string>
     <string name="video_compression_settings_invalid">Le impostazioni di compressione video non sono valide. Si prega di verificare e riprovare.</string>
+    <string name="video_compression_settings_invalid_no_audio_or_video_track">È necessario desiderare almeno un tipo di traccia (audio o video) per la compressione per procedere.</string>
     <string name="alert_password_entry">Password richiesta</string>
     <string name="import_x_of_type_y_cancelled_pattern">Importa di %2$s %1$s. annullato</string>
     <string name="import_cancelled">Importa annullata</string>

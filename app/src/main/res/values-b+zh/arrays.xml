@@ -147,7 +147,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.5.0.7</item>
-        <item>"改变：
+        <item>"错误修正：
+                  - 如果用户选择从视频从视频中删除音频和视频轨迹，则上传将挂起的错误，即使它们在提示时纠正了此问题
+                改变：
+                  - 升级到Exoplayer Library版本（这已经过时了）。 任何播放或压缩的问题，让我知道，但应该至少工作
                   - 用户请求 - 能够限制后台上传作业仅在插入设备时运行
                   - 注意：此更改未测试，但我认为如果它有效，请告诉我，如果没有，请告诉我。"</item>
         <item>1.5.0.6</item>

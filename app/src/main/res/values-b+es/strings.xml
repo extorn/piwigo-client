@@ -684,6 +684,7 @@ Las versiones son de forma ad hoc en este momento. Se espera que la frecuencia d
     <string name="button_compress">Comprimir</string>
     <string name="unable_to_compress_without_data">No se puede comprimir sin la configuración</string>
     <string name="video_compression_settings_invalid">Los ajustes de compresión de video no son válidos. Por favor revisa e intenta de nuevo.</string>
+    <string name="video_compression_settings_invalid_no_audio_or_video_track">Al menos un tipo de pista (audio o video) debe desearse para la compresión para continuar.</string>
     <string name="alert_password_entry">Se requiere contraseña</string>
     <string name="import_x_of_type_y_cancelled_pattern">Importación de %2$s %1$s cancelado</string>
     <string name="import_cancelled">Importar cancelado</string>

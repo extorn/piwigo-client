@@ -1,50 +1,75 @@
 <en-GB>
+Bugfix:
+- Error where upload would hang if user selected to remove audio and video track from a video when compressing, even if they corrected this when prompted
 Change:
+- Upgrade to ExoPlayer library version (this had gotten VERY out of date). Any issues with playback or compression, let me know, but should work at least as well
 - User request - Ability to limit background upload job to run only when device is plugged in
-- NOTE: this change isn't tested but I think will be okay, if it works, let me know, if not, let me know.
+- NOTE: this change isn't tested but I think will be okay, if it works..."
 </en-GB>
 <cs-CZ>
+Oprava chyby:
+- Chyba, kde by nahrávání visel, pokud byl uživatel vybrán pro odebrání zvukové a video stopy z videa při kompresi, i když toto při zobrazení výzvy opravili
 Změna:
+- Upgrade na verzi Exoplayer knihovny (to se dostal velmi zastaralé). Jakékoliv problémy s přehráváním nebo kompresí, dejte mi vědět, ale měl bychom pracovat alespoň stejně
 - Požadavek uživatele - možnost omezit úlohu pro ukládání pozadí Chcete-li spustit pouze v případě, že je zařízení zapojeno
-- Poznámka: Tato změna není testována, ale myslím, že bude v pořádku, pokud to funguje, dejte mi vědět, ne-li, dejte mi vědět.
+- Poznámka: Tato změn..."
 </cs-CZ>
 <de-DE>
+Fehlerbehebung:
+- Fehler, in dem der Upload hängen würde, wenn der Benutzer ausgewählt wurde, um Audio- und Video-Spur aus einem Video zu entfernen, wenn er komprimiert wird, auch wenn sie dies bei der Anforderung korrigiert haben
 Veränderung:
-- Benutzeranfrage - Fähigkeit, den Hintergrund des Hintergrunds hochzuladen, um nur zu leiten, wenn das Gerät eingesteckt ist
-- Hinweis: Diese Änderung wird nicht getestet, aber ich denke, es wird in Ordnung sein, wenn es funktioniert, lass es mich wissen lassen, wenn nicht, wenn nicht, lass es mich wissen lassen.
+- Upgrade auf die Exoplayer-Bibliotheksversion (dies war sehr aktuell aufgetreten). Alle Probleme mit der Wiedergabe oder Komprimierung, lassen Sie es mich wissen, sollte aber auch so gut funktionieren
+- Benutzeranfrage - Fähigkeit, den Hintergrund des..."
 </de-DE>
 <es-ES>
+Arreglo del fallo:
+- Error donde la carga se colgaría si se seleccionó el usuario para eliminar la pista de audio y video de un video cuando se comprime, incluso si se corrigieron esto cuando se le solicite
 Cambio:
-- Solicitud de usuario: capacidad para limitar el trabajo de carga de fondo para ejecutarse solo cuando el dispositivo está enchufado
-- Nota: este cambio no está probado, pero creo que estará bien, si funciona, hágamelo saber, si no, avíseme.
+- Actualizar a la versión de la biblioteca de exoplayer (esto se había quedado muy fuera de fecha). Cualquier problema con la reproducción o la compresión, hágamelo saber, pero debe trabajar al menos también
+- Solicitud de usuario: capacidad para limitar el trabajo de carga de fon..."
 </es-ES>
 <fr-FR>
+Correction d\'un bug:
+- Erreur lors de laquelle le téléchargement accrocherait si l\'utilisateur sélectionné pour supprimer la piste audio et vidéo d\'une vidéo lors de la compression, même s\'ils corrigèrent cela lorsque vous y êtes invité.
 Changer:
-- Demande utilisateur - Possibilité de limiter les travaux de téléchargement des antécédents pour exécuter uniquement lorsque le périphérique est branché
-- Note: Ce changement n\'est pas testé mais je pense que je vais aller, si cela fonctionne, faites-moi savoir, sinon, faites le moi savoir.
+- Mise à niveau vers la version de la bibliothèque ExoPlayer (cela avait été très obsolète). Toutes les problèmes de lecture ou de compression, laissez-moi savoir, mais devriez travailler au moins aussi
+- Demande utilisateur - Possibilité de lim..."
 </fr-FR>
 <it-IT>
+Risoluzione del problema:
+- Errore in cui il caricamento appenderebbe se l\'utente selezionato per rimuovere la traccia audio e video da un video quando si comprime, anche se ha corretto questo quando richiesto
 Modificare:
-- richiesta dell\'utente - Possibilità di limitare il lavoro di caricamento in background da eseguire solo quando il dispositivo è inserito
-- Nota: questo cambiamento non è testato ma penso che andrà bene, se funziona, fammi sapere, se no, fammelo sapere.
+- Aggiornamento alla versione della biblioteca EXOPlayer (questo è stato ottenuto molto aggiornato). Eventuali problemi con la riproduzione o la compressione, fammi sapere, ma dovrebbe funzionare almeno
+- richiesta dell\'utente - Possibilità di limitare il lavoro di carica..."
 </it-IT>
 <ja-JP>
+バグ修正：
+- プロンプトが指示されたときであっても、圧縮時にオーディオとビデオトラックを削除すると、アップロードがハングアップされる場合、
 変化する：
+-  Exoplayerライブラリーバージョンにアップグレードする（これは最新の状態にはありませんでした）。 再生または圧縮に関する問題は私に知らせてくださいが、少なくとも働くべきである
 - ユーザー要求 - バックグラウンドアップロードジョブを制限する機能デバイスが接続されているときだけ実行する機能
 - 注：この変更はテストされていませんが、それがうまくいっても、そうでなければ私に知らせてください、私に知らせてください。
 </ja-JP>
 <nl-NL>
+Bugfix:
+- Fout bij het uploaden zou hangen als de gebruiker is geselecteerd om audio- en videotrack uit een video te verwijderen bij het comprimeren, zelfs als ze dit hebben gecorrigeerd wanneer deze wordt ingegeven
 Verandering:
-- Gebruikersverzoek - Mogelijkheid om achtergrondopdracht te beperken om alleen te laten werken wanneer het apparaat is aangesloten
-- Opmerking: deze verandering is niet getest, maar ik denk dat het goed komt, als het werkt, laat het me weten, zo niet, laat het me weten.
+- Upgrade naar exoplayer-bibliotheekversie (dit was zeer verouderd geworden). Eventuele problemen met afspelen of compressie, laat het me weten, maar moet er minstens ook werken
+- Gebruikersverzoek - Mogelijkheid om achtergrondopdracht te beperken om alleen te laten ..."
 </nl-NL>
 <ru-RU>
+Исправлена ошибка:
+- Ошибка, где загрузка будет зависать, если пользователь выбрал для удаления аудио и видеоугольника с видео при сжимании, даже если они исправили это при появлении запроса
 Изменять:
+- Обновление до библиотеки экзоплайверов (это очень устарело). Любые проблемы с воспроизведением или сжатием, дайте мне знать, но должны работать хотя бы
 - Запрос пользователя - возможность ограничения задания загрузки фона для запуска только при подключении устройства
-- Примечание: это изменение не проверяется, но я думаю, будет в порядке, если это работает, дайте мне знать, если нет, дайте мне знать.
+- Примечание: это изменен..."
 </ru-RU>
 <zh-CN>
+错误修正：
+- 如果用户选择从视频从视频中删除音频和视频轨迹，则上传将挂起的错误，即使它们在提示时纠正了此问题
 改变：
+- 升级到Exoplayer Library版本（这已经过时了）。 任何播放或压缩的问题，让我知道，但应该至少工作
 - 用户请求 - 能够限制后台上传作业仅在插入设备时运行
 - 注意：此更改未测试，但我认为如果它有效，请告诉我，如果没有，请告诉我。
 </zh-CN>

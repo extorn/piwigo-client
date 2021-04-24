@@ -684,6 +684,7 @@ Releases zijn op dit moment op ad-hoc basis. De frequentie van releases zal naar
     <string name="button_compress">Samendrukken</string>
     <string name="unable_to_compress_without_data">Kan niet comprimeren zonder de instellingen</string>
     <string name="video_compression_settings_invalid">Video-compressie-instellingen zijn ongeldig. Controleer en probeer het opnieuw.</string>
+    <string name="video_compression_settings_invalid_no_audio_or_video_track">Ten minste één tracktype (audio of video) moet gewenst zijn voor compressie om door te gaan.</string>
     <string name="alert_password_entry">Wachtwoord benodigd</string>
     <string name="import_x_of_type_y_cancelled_pattern">Import van %2$s %1$s geannuleerd</string>
     <string name="import_cancelled">Import geannuleerd</string>

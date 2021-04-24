@@ -684,6 +684,7 @@ Releases sind momentan auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit 
     <string name="button_compress">Kompresse</string>
     <string name="unable_to_compress_without_data">Ohne die Einstellungen kann nicht komprimiert werden</string>
     <string name="video_compression_settings_invalid">Videokomprimierungseinstellungen sind ungültig. Bitte überprüfen und versuchen Sie es erneut.</string>
+    <string name="video_compression_settings_invalid_no_audio_or_video_track">Für die Komprimierung muss mindestens ein Track-Typ (Audio oder Video) erwünscht sein, um fortzufahren.</string>
     <string name="alert_password_entry">Passwort erforderlich</string>
     <string name="import_x_of_type_y_cancelled_pattern">Import von %2$s %1$s abgebrochen</string>
     <string name="import_cancelled">Import storniert</string>

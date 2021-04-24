@@ -147,7 +147,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.5.0.7</item>
-        <item>"Změna:
+        <item>"Oprava chyby:
+                 - Chyba, kde by nahrávání visel, pokud byl uživatel vybrán pro odebrání zvukové a video stopy z videa při kompresi, i když toto při zobrazení výzvy opravili
+                Změna:
+                 - Upgrade na verzi Exoplayer knihovny (to se dostal velmi zastaralé). Jakékoliv problémy s přehráváním nebo kompresí, dejte mi vědět, ale měl bychom pracovat alespoň stejně
                  - Požadavek uživatele - možnost omezit úlohu pro ukládání pozadí Chcete-li spustit pouze v případě, že je zařízení zapojeno
                  - Poznámka: Tato změna není testována, ale myslím, že bude v pořádku, pokud to funguje, dejte mi vědět, ne-li, dejte mi vědět."</item>
         <item>1.5.0.6</item>

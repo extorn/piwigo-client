@@ -684,6 +684,7 @@ Uvolnění jsou v tuto chvíli na ad-hoc. Očekává se, že frekvence vydání 
     <string name="button_compress">Komprimovat</string>
     <string name="unable_to_compress_without_data">Nelze komprimovat bez nastavení</string>
     <string name="video_compression_settings_invalid">Nastavení komprese videa jsou neplatné. Zkontrolujte prosím a zkuste to znovu.</string>
+    <string name="video_compression_settings_invalid_no_audio_or_video_track">Alespoň jeden typ trati (audio nebo video) musí být žádoucí, aby komprese pokračovala.</string>
     <string name="alert_password_entry">Požadováno heslo</string>
     <string name="import_x_of_type_y_cancelled_pattern">Dovoz %2$s %1$s zrušen</string>
     <string name="import_cancelled">Import zrušen</string>

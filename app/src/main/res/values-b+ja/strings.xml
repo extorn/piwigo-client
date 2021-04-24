@@ -684,6 +684,7 @@ My Test Galleryには、.jpgと.mp4と.m4vファイルのみが含まれてい�
     <string name="button_compress">圧迫する</string>
     <string name="unable_to_compress_without_data">設定なしで圧縮できません</string>
     <string name="video_compression_settings_invalid">ビデオ圧縮設定が無効です。確認してもう一度やり直してください。</string>
+    <string name="video_compression_settings_invalid_no_audio_or_video_track">少なくとも1つのトラックタイプ（オーディオまたはビデオ）が、圧縮を続行するために必要でなければならない。</string>
     <string name="alert_password_entry">パスワードが必要</string>
     <string name="import_x_of_type_y_cancelled_pattern">%2$sのインポート%1$sキャンセル</string>
     <string name="import_cancelled">インポートはキャンセルされました</string>

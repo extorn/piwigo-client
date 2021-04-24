@@ -147,7 +147,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.5.0.7</item>
-        <item>"Changer:
+        <item>"Correction d\'un bug:
+                 - Erreur lors de laquelle le téléchargement accrocherait si l\'utilisateur sélectionné pour supprimer la piste audio et vidéo d\'une vidéo lors de la compression, même s\'ils corrigèrent cela lorsque vous y êtes invité.
+                Changer:
+                 - Mise à niveau vers la version de la bibliothèque ExoPlayer (cela avait été très obsolète). Toutes les problèmes de lecture ou de compression, laissez-moi savoir, mais devriez travailler au moins aussi
                  - Demande utilisateur - Possibilité de limiter les travaux de téléchargement des antécédents pour exécuter uniquement lorsque le périphérique est branché
                  - Note: Ce changement n\'est pas testé mais je pense que je vais aller, si cela fonctionne, faites-moi savoir, sinon, faites le moi savoir."</item>
         <item>1.5.0.6</item>

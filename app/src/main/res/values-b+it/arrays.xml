@@ -147,7 +147,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.5.0.7</item>
-        <item>"Modificare:
+        <item>"Risoluzione del problema:
+                 - Errore in cui il caricamento appenderebbe se l\'utente selezionato per rimuovere la traccia audio e video da un video quando si comprime, anche se ha corretto questo quando richiesto
+                Modificare:
+                 - Aggiornamento alla versione della biblioteca EXOPlayer (questo è stato ottenuto molto aggiornato). Eventuali problemi con la riproduzione o la compressione, fammi sapere, ma dovrebbe funzionare almeno
                  - richiesta dell\'utente - Possibilità di limitare il lavoro di caricamento in background da eseguire solo quando il dispositivo è inserito
                  - Nota: questo cambiamento non è testato ma penso che andrà bene, se funziona, fammi sapere, se no, fammelo sapere."</item>
         <item>1.5.0.6</item>

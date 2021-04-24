@@ -147,7 +147,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.5.0.7</item>
-        <item>"Verandering:
+        <item>"Bugfix:
+                 - Fout bij het uploaden zou hangen als de gebruiker is geselecteerd om audio- en videotrack uit een video te verwijderen bij het comprimeren, zelfs als ze dit hebben gecorrigeerd wanneer deze wordt ingegeven
+                Verandering:
+                 - Upgrade naar exoplayer-bibliotheekversie (dit was zeer verouderd geworden). Eventuele problemen met afspelen of compressie, laat het me weten, maar moet er minstens ook werken
                  - Gebruikersverzoek - Mogelijkheid om achtergrondopdracht te beperken om alleen te laten werken wanneer het apparaat is aangesloten
                  - Opmerking: deze verandering is niet getest, maar ik denk dat het goed komt, als het werkt, laat het me weten, zo niet, laat het me weten."</item>
         <item>1.5.0.6</item>

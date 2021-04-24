@@ -684,6 +684,7 @@ SourceCode: https://github.com/extorn/piwigoClient.
     <string name="button_compress">Компресс</string>
     <string name="unable_to_compress_without_data">Невозможно сжать без настроек</string>
     <string name="video_compression_settings_invalid">Настройки сжатия видео недействительны. Пожалуйста проверьте и попробуйте снова.</string>
+    <string name="video_compression_settings_invalid_no_audio_or_video_track">По крайней мере, один тип трека (аудио или видео) должен быть желательным для сжатия для сжатия.</string>
     <string name="alert_password_entry">Требуется пароль</string>
     <string name="import_x_of_type_y_cancelled_pattern">Импорт %2$s %1$s отменил</string>
     <string name="import_cancelled">Импорт отменен</string>

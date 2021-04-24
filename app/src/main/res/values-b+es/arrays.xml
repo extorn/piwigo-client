@@ -147,7 +147,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.5.0.7</item>
-        <item>"Cambio:
+        <item>"Arreglo del fallo:
+                 - Error donde la carga se colgaría si se seleccionó el usuario para eliminar la pista de audio y video de un video cuando se comprime, incluso si se corrigieron esto cuando se le solicite
+                Cambio:
+                 - Actualizar a la versión de la biblioteca de exoplayer (esto se había quedado muy fuera de fecha). Cualquier problema con la reproducción o la compresión, hágamelo saber, pero debe trabajar al menos también
                  - Solicitud de usuario: capacidad para limitar el trabajo de carga de fondo para ejecutarse solo cuando el dispositivo está enchufado
                  - Nota: este cambio no está probado, pero creo que estará bien, si funciona, hágamelo saber, si no, avíseme."</item>
         <item>1.5.0.6</item>

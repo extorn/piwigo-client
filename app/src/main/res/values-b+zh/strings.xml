@@ -684,6 +684,7 @@ Piwigo Server I测试的版本目前为11.0.3。
     <string name="button_compress">压缩</string>
     <string name="unable_to_compress_without_data">没有设置无法压缩</string>
     <string name="video_compression_settings_invalid">视频压缩设置无效。请检查并重试。</string>
+    <string name="video_compression_settings_invalid_no_audio_or_video_track">必须需要至少一个轨道类型（音频或视频）以进行压缩以继续。</string>
     <string name="alert_password_entry">要求输入密码</string>
     <string name="import_x_of_type_y_cancelled_pattern">导入%2$s %1$s取消</string>
     <string name="import_cancelled">导入已取消</string>
